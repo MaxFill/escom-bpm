@@ -1,0 +1,107 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:include src="/view/templ/tree/tree-confirm-dlg.xhtml"/>
+
+    <p:commandButton id="createTreeCardBtn" actionListener="#{explorerBean.onCreateTreeItem()}" style="display: none;"> 
+        <p:ajax event="dialogReturn" 
+                update="#{_frmTree} #{_frmExpl}"
+                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+    </p:commandButton>
+    <p:commandButton id="createRootTreeCardBtn" actionListener="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
+        <p:ajax event="dialogReturn" 
+                update="#{_frmTree} #{_frmExpl}"
+                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+    </p:commandButton>
+    <p:commandButton id="openTreeCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;"> 
+        <p:ajax event="dialogReturn" 
+                update="#{_frmTree} #{_frmExpl}"
+                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+    </p:commandButton>
+    <p:commandButton id="viewTreeCardBtn" actionListener="#{explorerBean.onViewContentItem()}" style="display: none;"> 
+        <p:ajax event="dialogReturn" oncomplete="initDND()"/>
+    </p:commandButton>
+
+    <p:accordionPanel id="accord">
+        <p:ajax event="tabChange" listener="#{explorerBean.onTreeTabChange}" 
+                update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                oncomplete="initDND()"/>
+
+        <p:tab id="tabTree" title="#{bundle.Groups}" rendered="#{_treeBean != null}">
+            <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
+
+            <p:tree id="tree" value="#{explorerBean.tree}" var="treeItem"  
+                    selectionMode="single" animate="true" 
+                    selection="#{explorerBean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
+
+                <p:treeNode type="#{explorerBean.typeRoot}" icon="#{treeItem.iconTree}">
+                    <h:outputText value="#{treeItem.name}"/>
+                </p:treeNode>
+                
+                <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                    <h:outputText value="#{treeItem.name}"/>
+                </p:treeNode>
+
+                <p:ajax event="select" listener="#{explorerBean.onTreeNodeSelect}"
+                        update="centerHeaderLabel #{_frmTree}:accord:menuTree #{_frmExpl} #{_updates}"
+                        oncomplete="initDND()"/>
+                <p:ajax event="contextMenu" listener="#{explorerBean.onTreeNodeSelect}"
+                        update="centerHeaderLabel #{_frmExpl} #{_updates}"
+                        oncomplete="initDND()"/>
+                <p:ajax event="expand"  listener="#{explorerBean.onNodeExpand}" />
+                <p:ajax event="collapse" listener="#{explorerBean.onNodeCollapse}" />
+            </p:tree>
+            
+            <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
+                <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
+                            rendered="#{explorerBean.selectorViewMode}"
+                            action="#{_treeBean.onSelectTreeItem()}"/>
+                <p:separator rendered="#{explorerBean.selectorViewMode}"/>
+                <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
+                            oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>
+                <p:separator />
+                <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
+                            update="#{_frmTree}"
+                            actionListener="#{explorerBean.onExpandNode()}"/>
+                <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
+                            update="#{_frmTree}"
+                            actionListener="#{explorerBean.onCollapseNode()}"/>                
+                <p:separator />
+                <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
+                            oncomplete="document.getElementById('#{_frmTree}:viewTreeCardBtn').click();"/>
+                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
+                            oncomplete="document.getElementById('#{_frmTree}:openTreeCardBtn').click();"/>
+                <p:separator />
+
+                <p:menuitem value="#{bundle.Copy}" icon="ui-icon-copy"
+                            actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
+                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
+                            actionListener="#{explorerBean.onPasteItemToTree()}"/>
+                <p:separator/>
+                
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                            update="#{_frmTree}:accord:tree #{_frmExpl} centerHeaderLabel #{_updates}"
+                            actionListener="#{explorerBean.onMoveTreeItemToTrash()}">
+                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                </p:menuitem> 
+                
+                <p:separator/>
+                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
+                            actionListener="#{explorerBean.onAddContentInFavorites()}"/>
+                <p:separator/>
+
+                <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
+                            rendered="#{sessionBean.userAdmin}"
+                            actionListener="#{explorerBean.onOpenAdmCardForm()}"/>
+            </p:contextMenu>
+        </p:tab>
+
+        <p:tab id="tabFilter" title="#{bundle.Filters}">
+            <ui:include src="/view/templ/tree/tree-filters.xhtml" />
+        </p:tab>
+
+    </p:accordionPanel>
+
+</ui:composition>

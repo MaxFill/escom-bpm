@@ -1,0 +1,80 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <p:confirmDialog widgetVar="MoveItemToNotActual" severity="info" global="true" header="#{bundle.Move}" message="#{bundle.Confirm}" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="#{bundle.Move}" process="@this" 
+                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                         actionListener="#{explorerBean.dropItemToNotActual()}" 
+                         update="#{_frmTree} #{_frmExpl} centerHeaderLabel #{_updates}"
+                         onclick="PF('MoveItemToNotActual').hide();"
+                         oncomplete="initDND()">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                         styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
+                         update="#{_frmExpl} #{_frmTree}"
+                         onclick="PF('MoveItemToNotActual').hide();"
+                         oncomplete="initDND()"/>
+    </p:confirmDialog>
+    
+    <p:confirmDialog widgetVar="MoveItemToTrashDlg" severity="info" global="true" header="#{bundle.Move}" message="#{bundle.ConfirmMoveToTrash}" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="#{bundle.Move}" process="@this" 
+                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                         actionListener="#{explorerBean.dropItemToTrash()}" 
+                         update="#{_frmTree} #{_frmExpl} centerHeaderLabel #{_updates}"
+                         onclick="PF('MoveItemToTrashDlg').hide();"
+                         oncomplete="initDND()">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                         styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
+                         update="#{_frmExpl} #{_frmTree}"
+                         onclick="PF('MoveItemToTrashDlg').hide();"
+                         oncomplete="initDND()"/>
+    </p:confirmDialog>
+    
+    <p:confirmDialog widgetVar="MoveTreeDlg"  severity="info" global="true" header="#{bundle.Move}" message="#{bundle.ConfirmMove}" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="#{bundle.Move}" process="@this" 
+                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                         actionListener="#{explorerBean.moveGroupToGroup()}" 
+                         update="#{_frmTree} #{_frmExpl} centerHeaderLabel #{_updates}"
+                         onclick="PF('MoveTreeDlg').hide();"
+                         oncomplete="initDND()">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                         styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
+                         update="#{_frmExpl} #{_frmTree}"
+                         onclick="PF('MoveTreeDlg').hide();"
+                         oncomplete="initDND()"/>
+    </p:confirmDialog>
+
+    <p:confirmDialog widgetVar="AddTblDlg" severity="info" global="true" header="#{bundle.Add}" message="#{bundle.ConfirmAddToGroup}" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="#{bundle.Add}" process="@this" 
+                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
+                         actionListener="#{explorerBean.addItemToGroup()}" 
+                         update="#{_frmTree} #{_frmExpl} centerHeaderLabel #{_updates}"
+                         onclick="PF('AddTblDlg').hide();"
+                         oncomplete="initDND()">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                         styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
+                         update="#{_frmExpl} #{_frmTree}"
+                         onclick="PF('AddTblDlg').hide();"
+                         oncomplete="initDND()"/>
+    </p:confirmDialog>
+    
+    <p:confirmDialog widgetVar="MoveTblDlg" global="true" severity="info" header="#{bundle.Move}" message="#{bundle.ConfirmMove}" showEffect="fade" hideEffect="fade">
+        <p:commandButton value="#{bundle.Move}" process="@this"
+                         styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                         actionListener="#{explorerBean.moveItemToGroup()}"
+                         update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                         onclick="PF('MoveTblDlg').hide();"
+                         oncomplete="initDND()">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                         styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                         update="#{_frmExpl}"
+                         onclick="PF('MoveTblDlg').hide();"
+                         oncomplete="initDND()"/>
+    </p:confirmDialog>
+</ui:composition>

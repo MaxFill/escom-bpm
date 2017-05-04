@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="body">
+
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}">
+            <pe:layoutPane position="center" resizable="true">
+                <f:facet name="header"  >  
+                    <p:outputLabel value="#{bundle.LogEventHistory}" />
+                </f:facet> 
+                <h:form id="centerFRM" style="font-size: 80%;">
+                    <ui:include src="/view/services/common/log-events.xhtml"/>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position ="south" >
+                <h:form id="southFRM" style="font-size: 80%;">
+                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
+                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
+                                         value="#{bundle.Close}"
+                                         actionListener="#{_bean.onCloseForm()}"/>
+                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
+                                         title="#{bundle.SaveServiceSettings}" style="float: right;"
+                                         onclick="document.getElementById('westFRM:btnWestSaves').click();
+                                                 document.getElementById('eastFRM:btnEastSave').click();"
+                                         actionListener="#{_bean.onSaveSettings()}"/>
+                    </p:outputPanel>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position="west" resizable="true" >
+                <f:facet name="header"  >  
+                    <p:outputLabel value="#{bundle.ServiceSchedule}"/>
+                </f:facet> 
+                <h:form id="westFRM" style="font-size: 80%;">
+                    <ui:include src="/view/services/common/sheduler.xhtml"/>
+                    <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;" /> 
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
+                        <p:separator />
+                        <p:commandButton icon="ui-icon-gear" value="#{bundle.Perform}"
+                                         title="#{bundle.StartImmediately}"
+                                         actionListener="#{_bean.doRunService()}"
+                                         onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                                         update="centerFRM, logFRM:logDetailPanel" />
+                    </p:panelGrid>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position="east" resizable="true" >
+                <f:facet name="header">  
+                    <p:outputLabel value="#{bundle.ServiceParams}"/>
+                </f:facet> 
+                <h:form id="eastFRM" style="font-size: 80%;">
+                    <p:outputPanel styleClass="ui-grid-col-12">
+                        <ui:insert name="serviceParams"/>
+                    </p:outputPanel>
+                    <p:commandButton id="btnEastSave" update="eastFRM" style="display: none;" />
+                </h:form>
+            </pe:layoutPane>
+
+        </pe:layout>
+    </ui:define>    
+
+    <ui:define name="dialogs">
+        <p:dialog header="#{bundle.Detail}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgDetail">            
+            <h:form id="logFRM">
+                <p:outputPanel id="logDetailPanel" style="width: 600px; height: 400px;">
+                    <p:inputTextarea value="#{_bean.selectedEvent.details}" style="width: 100%; height: 100%;" readonly="true"/>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+        <ui:insert name="dialogsAdd"></ui:insert>
+    </ui:define>
+
+</ui:composition>
+

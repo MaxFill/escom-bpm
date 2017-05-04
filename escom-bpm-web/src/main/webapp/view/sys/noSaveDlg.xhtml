@@ -1,0 +1,39 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog header="#{bundle.DataNoSave}" widgetVar="confirm" width="400" height="200" modal="true"
+              maximizable="false" closeOnEscape="true">
+        <h:form>
+            <p:panel styleClass="ui-grid-col-12">
+                <p:panelGrid columns="1" styleClass="ui-grid-col-12 ui-panelgrid-blank">
+                    <br/>
+                    <br/>
+                    #{bundle.PressSaveOrCancel}
+                    <p:spacer/>
+                    <p:spacer/>
+                </p:panelGrid>
+            </p:panel>
+
+            <p:toolbar styleClass="ui-grid-col-12">
+                <f:facet name="right">
+                    <p:commandButton value="#{bundle.ExitNoSave}" style="float:right;"
+                                     title="#{bundle.ExitWithoutSaving}"
+                                     action="#{_bean.onFinalCancelSave()}"
+                                     onclick="PF('confirm').hide();"
+                                     icon="ui-icon-circle-close">
+                    </p:commandButton>
+                    <p:commandButton value="#{bundle.Back}" style="float:right;"
+                                     title="#{bundle.GoBackCard}"
+                                     onclick="PF('confirm').hide();"
+                                     icon="ui-icon-arrowreturnthick-1-w">
+                    </p:commandButton>
+                </f:facet>
+            </p:toolbar>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

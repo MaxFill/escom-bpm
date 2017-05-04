@@ -1,0 +1,55 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"                
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{foldersCardBean}"/>  
+
+    <ui:define name="page_body">
+
+        <p:tab title="#{bundle.Explorer}">
+            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank ">
+
+                <p:outputLabel value="#{bundle.Name}:" />
+                <h:panelGrid columns="2" style="width: 100%;">
+                    <p:inputText value="#{_bean.editedItem.name}" id="name" style="width: 100%;"
+                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                     readonly="#{!_bean.isHaveRightEdit()}"
+                                     onchange="return itemChange = 1;"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="true"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                    </p:inputText>
+                    <p:message for="name" display="icon"/>
+                </h:panelGrid>
+        
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.isModeration}" itemLabel="#{bundle.Moderation}:"
+                                        disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;"/> 
+                </p:selectBooleanCheckbox>
+                <p:spacer/>
+                
+                <p:outputLabel value="#{bundle.DocTypesForNewDocs}:"/>
+                    <ui:include src="/view/common/item-select-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
+                        <ui:param name="_required" value="#{false}" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_converter" value="docsTypesConvertor" />
+                        <ui:param name="_itemPanel" value="docTypePanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
+                        <ui:param name="_selectorBean" value="#{docTypeBean}"/>
+                        <ui:param name="_items" value="#{foldersCardBean.docTypes}"/>
+                        <ui:param name="_actionClear" value="setDocTypeDefault"/>
+                        <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.RightsDoc}">
+            <ui:include src="/view/folders/folder-docs-rights.xhtml"/>
+        </p:tab>   
+
+    </ui:define>
+</ui:composition>

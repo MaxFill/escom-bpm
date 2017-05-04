@@ -1,0 +1,27 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <p:toolbar id="toolbarTree" >                                       
+        <f:facet name="left">
+            <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
+                             process="@this"
+                             actionListener="#{explorerBean.onReloadTreeItems()}"
+                             update="#{_frmTree} #{_frmExpl}"
+                             oncomplete="initDND()"/>                       
+            
+            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+            <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
+                            rendered="#{false}">
+                <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateChildGroup}" title="#{bundle.CreateChildGroup}"                            
+                            oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>                
+                <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateInNullLevel}" title="#{bundle.CreateInNullLevel}"
+                            oncomplete="document.getElementById('#{_frmTree}:createRootTreeCardBtn').click();"/>
+            </p:splitButton>
+                                
+        </f:facet>
+    </p:toolbar>
+
+</ui:composition>

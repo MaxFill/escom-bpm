@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{partnerTypesCardBean}"/>
+    
+    <ui:define name="page_body">
+
+        <p:tab id="cardTab" title="#{bundle.Explorer}">     
+            <p:panelGrid columns="1" styleClass="ui-grid-col-12 ui-panelgrid-blank" layout="grid" columnClasses="ui-grid-col-8 col-padding" >
+                <p:outputLabel value="#{bundle.ShortName}" />
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <p:inputText id="name" value="#{_bean.editedItem.name}" 
+                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                     onchange="return itemChange = 1;"
+                                     styleClass="ui-grid-col-4"
+                                     maxlength="50"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="true" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.ShortName}] #{bundle.MustBeFilled}"/>
+                    <p:message for="name"/>
+                </h:panelGroup>
+                
+                <p:outputLabel value="#{bundle.FullName}" />
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <p:inputText id="fullName" value="#{_bean.editedItem.fullName}" 
+                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                     maxlength="256"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     onchange="return itemChange = 1;"
+                                     styleClass="ui-grid-col-12"/>
+                    <p:message for="fullName"/>
+                </h:panelGroup>
+            </p:panelGrid>                                
+        </p:tab>    
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="com.maxfill.escombpm2PU" transaction-type="JTA">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <jta-data-source>java:/EscomJavaJNDI</jta-data-source>
+    <class>com.maxfill.model.docs.DocStatus</class>
+    <class>com.maxfill.model.users.User</class>
+    <class>com.maxfill.model.users.UserLog</class>
+    <class>com.maxfill.model.states.StateLog</class>
+    <class>com.maxfill.model.states.State</class>
+    <class>com.maxfill.model.attaches.Attaches</class>
+    <class>com.maxfill.model.rights.Right</class>
+    <class>com.maxfill.model.docs.Doc</class>
+    <class>com.maxfill.model.docs.DocLog</class>
+    <class>com.maxfill.model.docs.DocDou</class>
+    <class>com.maxfill.model.numPuttern.NumeratorPattern</class>
+    <class>com.maxfill.model.numPuttern.NumeratorPatternLog</class>
+    <class>com.maxfill.model.docs.docsTypes.DocTypeLog</class>
+    <class>com.maxfill.model.docs.docsTypes.DocType</class>
+    <class>com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups</class>
+    <class>com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog</class>
+    <class>com.maxfill.model.docs.statuses.DocsStatus</class>
+    <class>com.maxfill.model.statuses.StatusesDocLog</class>
+    <class>com.maxfill.model.statuses.StatusesDoc</class>
+    <class>com.maxfill.model.numPuttern.counter.Counter</class>
+    <class>com.maxfill.model.companies.CompanyLog</class>
+    <class>com.maxfill.model.companies.Company</class>
+    <class>com.maxfill.model.staffs.StaffLog</class>
+    <class>com.maxfill.model.staffs.Staff</class>
+    <class>com.maxfill.model.departments.DepartamentLog</class>
+    <class>com.maxfill.model.departments.Department</class>
+    <class>com.maxfill.model.posts.Post</class>
+    <class>com.maxfill.model.posts.PostLog</class>
+    <class>com.maxfill.model.users.groups.UserGroupsLog</class>
+    <class>com.maxfill.model.users.groups.UserGroups</class>
+    <class>com.maxfill.model.folders.FoldersLog</class>
+    <class>com.maxfill.model.folders.Folders</class>
+    <class>com.maxfill.model.partners.PartnersLog</class>
+    <class>com.maxfill.model.partners.Partner</class>
+    <class>com.maxfill.model.filters.FiltersLog</class>
+    <class>com.maxfill.model.filters.Filters</class>
+    <class>com.maxfill.model.favorites.FavoriteObj</class>
+    <class>com.maxfill.model.partners.groups.PartnerGroups</class>
+    <class>com.maxfill.model.partners.groups.PartnerGroupsLog</class>
+    <class>com.maxfill.model.partners.contacts.PartnersContacts</class>
+    <class>com.maxfill.model.partners.types.PartnerTypesLog</class>
+    <class>com.maxfill.model.partners.types.PartnerTypes</class>
+    <class>com.maxfill.services.common.history.ServicesEvents</class>
+    <class>com.maxfill.services.Services</class>
+    <class>com.maxfill.services.mail.Mailbox</class>
+    <class>com.maxfill.model.metadates.MetadatesLog</class>
+    <class>com.maxfill.model.metadates.Metadates</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
+      <property name="show_sql" value="true"/>
+      <property name="showSql" value="true"/>
+      <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="eclipselink.logging.logger" value="JavaLogger"/>
+      <property name="eclipselink.logging.level.sql" value="FINE"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
+    </properties>
+  </persistence-unit>
+</persistence>

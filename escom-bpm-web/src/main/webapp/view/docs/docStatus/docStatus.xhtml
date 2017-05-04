@@ -1,0 +1,85 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:tab title="#{bundle.Statuses}" >
+        <p:toolbar id="explToolBar" style="margin-bottom: 5px;">
+            <f:facet name="left">
+                <p:commandButton value="#{bundle.Add}" icon="ui-icon-plusthick"
+                                 title="#{bundle.AddStatusFromAllList}"                                 
+                                 disabled="#{_bean.isReadOnly()}"
+                                 action="#{statusesDocBean.onManySelectItem()}">
+                    <p:ajax event="dialogReturn" listener="#{_bean.onAddStatusesFromSelector}" update="docStatusTbl, explToolBar"/>
+                </p:commandButton>
+                <p:commandButton value="#{bundle.Load}" icon="ui-icon-plusthick"
+                                 update="docStatusTbl, explToolBar" title="#{bundle.LoadStatusesFromDocTemplete}"                                 
+                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.docType == null}"
+                                 action="#{_bean.onLoadDocStatusFromDocType()}"/>
+                <p:commandButton icon="ui-icon-trash" value="#{bundle.DeleteAll}"                            
+                                 update="docStatusTbl, explToolBar" 
+                                 action="#{_bean.onDeleteAllStatus()}"
+                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.docsStatusList.isEmpty()}">
+                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                </p:commandButton>
+            </f:facet>
+        </p:toolbar>
+        
+        <p:dataTable id="docStatusTbl" var="item" value="#{_bean.editedItem.docsStatusList}" 
+                     editable="#{_bean.isHaveRightEdit()}"
+                     emptyMessage="#{bundle.EmptyTable}"
+                     rows="10" paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100" 
+                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                     editMode="cell" widgetVar="docsStatus">
+
+            <p:column headerText="#{bundle.Value}" width="100">
+                <p:selectBooleanCheckbox value="#{item.value}">
+                    <p:ajax update="docStatusTbl" oncomplete="#{_bean.FRM_NAME}Change = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
+                </p:selectBooleanCheckbox>
+            </p:column>
+
+            <p:column headerText="#{bundle.DocStatus}">                                    
+                <h:outputLabel value="#{item.status.localName}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.DateStatus}" width="90">
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputLabel value="#{item.dateStatus}">
+                            <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                        </h:outputLabel>
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:calendar value="#{item.dateStatus}"                                     
+                                    required="true" 
+                                    showButtonPanel="true"
+                                    disabled="#{ _bean.isReadOnly()}"
+                                    pattern="dd.MM.yyyy" mask="99.99.9999"
+                                    navigator="true" yearRange="c-120:c+20"                                    
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
+                            <p:ajax event="dateSelect" listener="#{_bean.onChangeDocStatus(item)}" update="docStatusTbl" />
+                        </p:calendar> 
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column headerText="#{bundle.CreatorInfo}">
+                #{item.author.shortFIO}
+            </p:column>
+
+            <p:column style="text-align: center;" >
+                <p:menuButton  value="#{bundle.Menu}">
+                    <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"  
+                                disabled="#{ _bean.isReadOnly()}"
+                                update="docStatusTbl" action="#{_bean.onDeleteStatus(item)}">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                    </p:menuitem>
+                </p:menuButton>
+            </p:column>
+
+        </p:dataTable>
+    </p:tab>
+</ui:composition>

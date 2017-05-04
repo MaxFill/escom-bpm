@@ -1,0 +1,115 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"    
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"    
+    xmlns:h="http://java.sun.com/jsf/html" 
+    xmlns:p="http://primefaces.org/ui">
+    
+    <p:toolbar id="explToolBar">
+        <f:facet name="left">            
+            <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
+                             title="#{bundle.Refresh}"                                  
+                             actionListener="#{explorerBean.reloadDetailsItems()}"
+                             update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                             oncomplete="initDND()"/> 
+
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
+
+            <p:commandButton icon="ui-icon-arrowreturnthick-1-n" title="#{bundle.Up}"
+                             actionListener="#{explorerBean.onGotoUpLevelContent()}"
+                             disabled="#{explorerBean.treeSelectedNode == null or explorerBean.isSelectRootItem()}"
+                             rendered="#{_treeBean != null}"
+                             update="#{_frmExpl} #{_frmTree}"
+                             oncomplete="initDND()"/>
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
+
+            <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-document" id="createItemBtn"
+                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
+                             rendered="#{!explorerBean.isTrashSelected()}"
+                             actionListener="#{explorerBean.onCreateDetailItem()}">
+                <p:ajax event="dialogReturn"
+                        update="#{_frmExpl}"
+                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+            </p:commandButton>
+
+            <p:commandButton value="#{_CreateGroupLabel}" icon="ui-icon-folder-open"
+                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
+                             rendered="#{_treeBean != null and !explorerBean.isTrashSelected()}"
+                             actionListener="#{explorerBean.onCreateTreeItem()}">
+                <p:ajax event="dialogReturn" 
+                        update="#{_frmTree} #{_frmExpl}" 
+                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+            </p:commandButton>
+
+        </f:facet> 
+    
+        <f:facet name="right">
+            <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 
+                            title="#{bundle.SelectChecked}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{explorerBean.multySelectMode}"
+                            action="#{_detailBean.onMultySelect()}">
+            </p:commandButton>
+                
+            <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
+                           rendered="#{!explorerBean.isTrashSelected()}">
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            update="#{_frmTree} #{_frmExpl}"
+                            actionListener="#{explorerBean.onMoveCheckedContentToTrash()}"
+                            oncomplete="initDND()">
+                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:separator />
+                <p:menuitem icon="ui-icon-star" value="#{bundle.AddCheckedToFavorites}" title="#{bundle.AddToFavorites}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{!explorerBean.isFavoriteSelected()}"
+                            actionListener="#{explorerBean.onAddCheckedContentInFavorites()}"/>
+                <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteCheckedFromFavorites}" title="#{bundle.DeleteFromFavorites}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{explorerBean.isFavoriteSelected()}"
+                            update="#{_frmExpl}"
+                            actionListener="#{explorerBean.onDelCheckedFromFavorites()}"/>
+                <p:separator />
+
+                <ui:insert name="addMenuActions" />
+
+                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"                                  
+                            actionListener="#{explorerBean.onPasteItemToTable()}">
+                </p:menuitem>
+            </p:splitButton>
+
+            <!-- Кнопка для Корзины -->
+            <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
+                           rendered="#{sessionBean.userAdmin and explorerBean.isTrashSelected()}">
+                <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
+                            disabled="#{explorerBean.detailItems.isEmpty()}"
+                            update="#{_frmExpl}"
+                            actionListener="#{explorerBean.onClearTrash()}"
+                            oncomplete="initDND()">
+                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+                </p:menuitem>
+                <p:menuitem value="#{bundle.ClearCheckedTrash}" icon="ui-icon-close"                                                 
+                            update="#{_frmExpl}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            actionListener="#{explorerBean.onClearCheckedContentTrash()}"
+                            oncomplete="initDND()">
+                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+                </p:menuitem> 
+                <p:separator/>
+                <p:menuitem value="#{bundle.RestoreChecked}" icon="ui-icon-arrowreturnthick-1-w"                                                 
+                            update="#{_frmExpl}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            actionListener="#{explorerBean .onRestoreCheckedContentTrash()}"
+                            oncomplete="initDND()">
+                </p:menuitem>
+            </p:splitButton>
+        </f:facet>
+
+    </p:toolbar>  
+</ui:composition>
+

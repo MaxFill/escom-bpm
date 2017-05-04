@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/view/templ/templ.xhtml">
+
+    <ui:param name="_explorerHeader" value="#{bundle.Rights}"/>        
+
+    <ui:define name="body">
+
+        <pe:layout fullPage="true" widgetVar="wvFoldersExpl" options="#{metadatesBean.layoutOptions}">
+            <pe:layoutPane id="luFrmObjTree" position="west"  resizable="true" > 
+                <h:form style="font-size: 90%;">
+                    <p:dataTable value="#{metadatesBean.allItems}" rowKey="#{item.id}" selectionMode="single"
+                                 selection="#{metadatesBean.selectedObject}" var="item">
+                        <p:ajax event="rowSelect" update=":frmFldDefRight:mainTab:dataGrid" listener="#{metadatesBean.onSelectedItem}"  />                
+
+                        <p:column headerText="ID" width="15">
+                            #{item.id}
+                        </p:column>
+                        <p:column headerText="#{bundle.Objects}">
+                            #{item.name}
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane id="luFrmDocs" position="center" resizable="true">                 
+                <h:form id="frmFldDefRight" style="font-size: 90%;"> 
+                    <p:tabView id="mainTab">
+                        <p:tab title="#{bundle.Rights}" > 
+                            <ui:include src="/view/admin/rights/objectsRight.xhtml"/>
+                        </p:tab>
+                    </p:tabView>
+                </h:form>
+            </pe:layoutPane>
+
+            <ui:include src="/view/templ/expl/expl-southpane.xhtml"/>
+            
+        </pe:layout>
+
+    </ui:define>
+</ui:composition>
+

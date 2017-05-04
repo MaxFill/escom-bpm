@@ -1,0 +1,29 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:form id="fileUploadFRM" style="font-size: 90%;">
+        <p:fileUpload id="file" disabled="#{explorerBean.treeSelectedNode == null}"
+                      rendered="#{!explorerBean.isTrashSelected()}"
+                      style="width: 100%;"
+                      allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
+                      sizeLimit="#{docsBean.maxFileSize}"
+                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                      process="@this"
+                      mode="advanced" auto="true"
+                      dragDropSupport="true"
+                      label="#{bundle.SelectFile}" 
+                      cancelLabel="#{bundle.Cancel}"
+                      uploadLabel="#{bundle.SaveFiles}"
+                      fileUploadListener="#{docsBean.onUploadFileAndCreateDoc}"                      
+                      oncomplete="document.getElementById('#{_frmExpl}createItemBtn').click();">
+        </p:fileUpload>
+        <pe:tooltip for="file" value="#{bundle.DragAndDropFile}"/>
+
+    </h:form>
+    
+</ui:composition>

@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <!-- стандартный обозреватель/селектор -->
+    
+    <ui:param name="_treeBean" value="#{docTypeGroupsBean}" />   
+    <ui:param name="_detailBean" value="#{docTypeBean}" /> 
+    <ui:param name="_searcheBean" value="#{docTypeBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocTypeSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsTypes')}"/>
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateChildGroup}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateDocType}" />
+    
+    <ui:define name="explorerColumns"> 
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}">
+            #{item.code}
+        </p:column>
+    </ui:define>   
+
+</ui:composition>

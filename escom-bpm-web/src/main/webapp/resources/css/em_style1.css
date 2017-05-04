@@ -1,0 +1,236 @@
+@media all and (max-width: 480px){
+    .dialog{
+        width: 320px;
+        overflow: auto;   
+        max-height: 600px;
+    }
+}
+
+@media all and (orientation: landscape) and (max-height: 300px) { 
+    .dialog{
+        width: auto;
+        overflow: auto;   
+        height: 250px;
+    } 
+}
+
+@media all and (orientation: landscape) and (min-width: 480px) { 
+    .dialog{
+        width: auto;
+        max-width: 1024px;
+        overflow: auto;   
+        max-height: 600px;
+    } 
+}
+
+body{
+    background-color:  antiquewhite;
+    font-size: smaller;
+    margin: 2px;
+}
+
+.without-spaces {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.notifBar{
+    opacity: 0.9;
+    background-color: thistle;
+}
+
+.widthMin100{
+    width: 100% !important;    
+    min-width: 150px !important; 
+}
+
+.widthMin95{
+    width: 95% !important;    
+    min-width: 150px !important; 
+}
+
+.widthFix250{
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important; 
+}
+
+.error-info {
+    color: red;
+}
+
+.colTblCenter{
+    font-size: 80%; 
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    text-align: center;
+} 
+
+.colCenter{
+  text-align: center !important;  
+}
+
+.ui-outputlabel{ 
+    text-align: left;
+    vertical-align: central;
+    font-weight: bold;
+    width: 100%;
+}
+
+.bt_action{
+        width: 100% !important;
+        max-width: 600px !important;
+        min-width: 140px !important;
+}
+
+.btABC{
+    width: 28px;
+    height: 20px;
+    padding: 0 !important;
+}
+
+.bt_command{
+        width: 100% !important;
+}
+
+.droppoint{
+    
+}
+
+.hoverClass{
+    font-weight: bold;
+    background-color: aquamarine;
+}
+
+.col10r{
+        width:5% !important; 
+        text-align: right !important;
+}
+.col40r{
+        width:40% !important; 
+        text-align: right !important;
+}
+
+.colAuto{width:auto !important; float: left !important;}
+.col100{width:100% !important; float: left !important;}
+.col15{
+        width:15% !important; 
+        min-width: 110px !important;
+        float: left !important;
+}
+.col20{width:20% !important;}
+.col30{width:30% !important; float: left !important;}
+.col40{width:40% !important; float: left !important;}
+.col50{width:50% !important; float: left !important;}
+.col60{
+        width:60% !important; 
+        min-width: 320px !important;
+        float: left !important;}
+.col70{width:70% !important; float: left !important;}
+.col80{width:80% !important; float: left !important;}
+.col90{width:90% !important; float: left !important;}
+.colFix300{width: 300px !important;}
+
+.top-alignment {
+    vertical-align: top;
+    text-align: right;
+    font-weight: bold;
+}
+
+.panelLogin{
+    margin: auto;
+    margin-top: 60px; 
+    max-width: 800px;
+    min-width: 650px;
+}
+
+.center-alignment {
+    vertical-align: central;
+    text-align: center;
+}
+        
+.ui-panelgrid-content {
+    border: none !important;
+}
+.col-padding{
+    padding-left: 0px !important;
+    padding-bottom: 2px !important;
+    padding-top: 2px !important;
+    padding-right: 0px !important;
+}
+
+.pull-right{
+  float: right !important;
+}
+.pull-left{
+  float: left !important;
+}
+
+.ui-panelgrid>*>tr,
+.ui-panelgrid .ui-panelgrid-cell {
+    border: none! important;
+} 
+
+.ui-menu{width: auto !important;}    
+.ui-menuitem-text{
+    float: none !important;
+    white-space: nowrap !important;
+    display: list-item !important;
+    margin-right: 2em !important;
+    word-wrap: normal !important;
+    word-break: normal !important;  
+    text-wrap: normal !important;
+}
+        
+.value{
+    text-align: left;  
+    font-size: small;
+    word-wrap: normal;
+    word-break: normal; 
+    text-wrap: normal;
+    width: auto;
+    float: left;
+  }
+
+.title{
+  font-weight:bold ;  
+  font-size: 160%;
+}
+
+.label_small{
+    font-size:x-small !important;
+    font-weight:normal !important;
+}
+
+.calendar{
+  width:150px !important;
+}
+
+.ico_doc16 {background-image: url('../resources/icon/doc16.png') !important;}
+.ico_doc32 {background-image: url('../resources/icon/doc32.png') !important;}
+.ico_done {background-image: url('../resources/icon/done.png') !important;}
+.ico_add {background-image: url('../resources/icon/add.png') !important;}
+.ico_back {background-image: url('../resources/icon/back.png') !important;}
+.ico_run {background-image: url('../resources/icon/run.png') !important;}
+.ico_refresh {background-image: url('../resources/icon/refresh.png') !important;}
+.ico_execute {background-image: url('../resources/icon/execute.png') !important;}
+.ico_sign {background-image: url('../resources/icon/sign.png') !important;}
+.ico_16_inspector{background-image: url('../resources/icon/inspector.png') !important;}
+.ico_outdoc{background-image: url('../resources/icon/outdoc.png') !important;}
+.ico_look{background-image: url('../resources/icon/look.png') !important;}
+.ico_importante{background-image: url('../resources/icon/importante.png') !important;}
+.ico_flag_green{background-image: url('../resources/icon/flag_green.png') !important;}
+.ico_control{background-image: url('../resources/icon/control.png') !important;}
+.ico_doc_check{background-image: url('../resources/icon/doc_check.png') !important;}
+.ico_searche{background-image: url('../resources/icon/searche_book.png') !important;}
+.ico_newTask{background-image: url('../resources/icon/newtask.png') !important;}
+.ico_doc_return{background-image: url('../resources/icon/doc_return.png') !important; }
+.ico_on-line{background-image: url('../resources/icon/on-line.png') !important; }
+.ico_off-line{background-image: url('../resources/icon/off-line.png') !important; }
+.ico_info{background-image: url('../resources/icon/info.png') !important; }
+.ico_key{background-image: url('../resources/icon/key.png') !important;} 
+.ico_internalDoc {background-image: url('../resources/icon/internalDoc.png') !important;}
+.ico_cancel{background-image: url('../resources/icon/cancel.png') !important; }
+.ico_info{background-image: url('../resources/icon/info.png') !important; }
+.ico_inspector{background-image: url('../resources/icon/inspector.png') !important;} 
+.ico_folder_open{background-image: url('../resources/icon/folder_open.png') !important;} 

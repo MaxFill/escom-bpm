@@ -1,0 +1,74 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{staffCardBean}"/>
+
+    <ui:define name="page_body">
+
+        <p:tab title="#{bundle.Explorer}">     
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank " >       
+
+                <p:outputLabel value="#{bundle.OrgUnit}"/>                
+                <p:inputText value="#{_bean.editedItem.orgUnit}" disabled="true" styleClass="ui-grid-col-12" />                
+
+                <p:outputLabel value="#{bundle.Post}"/>
+                <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.post}"/>
+                    <ui:param name="_required" value="#{false}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="postConverter" />
+                    <ui:param name="_itemPanel" value="postPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Post}"/>
+                    <ui:param name="_selectorBean" value="#{postBean}"/>
+                    <ui:param name="_items" value="#{_bean.posts}"/>
+                    <ui:param name="_actionClear" value="setPost"/>
+                    <ui:param name="_actionSelect" value="onPostSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+
+                <p:outputLabel value="#{bundle.Employee}"/>
+                <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.employee}"/>
+                    <ui:param name="_required" value="#{false}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="usersConvertor" />
+                    <ui:param name="_itemPanel" value="userPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.User}"/>
+                    <ui:param name="_selectorBean" value="#{userBean}"/>
+                    <ui:param name="_items" value="#{_bean.users}"/>
+                    <ui:param name="_actionClear" value="setEmployee"/>
+                    <ui:param name="_actionSelect" value="onEmployeeSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+                
+                <p:outputLabel value="#{bundle.Name}" />
+                <h:panelGroup layout="grid" styleClass="ui-grid-col-12">
+                    <h:panelGroup id="staffGroup" styleClass="ui-grid-col-12">
+                        <p:inputTextarea id="name" value="#{_bean.editedItem.name}" 
+                                         rows="3" styleClass="ui-grid-col-12"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                         onchange="return itemChange = 1;"
+                                         required="#{param['isRequired'] == 'true'}"                                         
+                                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                        <p:message for="name" display="tooltip"/>
+                    </h:panelGroup>
+
+                    <p:commandButton value="#{bundle.ToForm}" title="#{bundle.MakeName}"
+                                     update="staffGroup"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     actionListener="#{_bean.makeName()}"
+                                     oncomplete="return itemChange = 1;">                        
+                    </p:commandButton>    
+                </h:panelGroup>
+
+            </p:panelGrid>
+        </p:tab>
+
+    </ui:define>
+    
+</ui:composition>

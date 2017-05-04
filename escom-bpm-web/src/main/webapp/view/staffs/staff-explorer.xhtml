@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <!-- стандарный обозреватель/селектор для Штатных единиц -->
+    
+    <ui:param name="_rootBean"    value="#{companyBean}"/> 
+    <ui:param name="_treeBean"    value="#{departmentBean}"/> 
+    <ui:param name="_detailBean"  value="#{staffBean}"/>     
+    <ui:param name="_filterBean"  value="#{filtersBean}"/>     
+    <ui:param name="_searcheBean" value="#{_detailBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('StaffSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('OrgStructureExplorer')}"/>
+    
+    <ui:param name="_showAuthor"     value="#{false}"/>
+    <ui:param name="_showDateCreate" value="#{false}"/>
+    <ui:param name="_showDateChange" value="#{true}"/>
+    <ui:param name="_showCompany"    value="#{true}"/>
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateDepartament}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateStaff}" />    
+       
+    <!-- специфичные поля таблицы обозревателя для "Штатной единицы"-->
+    <ui:define name="specDetailColumns">       
+        <p:column headerText="#{bundle.Employee}" sortBy="#{item.employee.shortFIO}" 
+                  rendered="#{explorerBean.isNowShowDetail()}">
+            #{item.employee.shortFIO}
+        </p:column>
+    </ui:define> 
+    
+    <!-- специфичные поля таблицы обозревателя для "Подразделения"-->
+    <ui:define name="specTreeColumns"> 
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowTree()}">
+            #{item.code}
+        </p:column>
+    </ui:define>
+    
+    <!-- специфичные поля таблицы обозревателя для "Компания"-->
+    <ui:define name="specRootColumns"> 
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowRoot()}">
+            #{item.code}
+        </p:column>
+    </ui:define>
+        
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche">       
+        <p:outputLabel value="#{bundle.Post}"/>        
+        <p:inputText title="#{bundle.HelpSearcheContext}"
+                     styleClass="ui-grid-col-12"
+                     value="#{_detailBean.model.postSearche}"
+                     onkeypress="keyPress();">
+        </p:inputText>
+        <p:outputLabel value="#{bundle.SecondName}"/>        
+        <p:inputText title="#{bundle.HelpSearcheContext}"
+                     styleClass="ui-grid-col-12"
+                     value="#{_detailBean.model.secondNameSearche}"
+                     onkeypress="keyPress();">
+        </p:inputText>
+    </ui:define>
+    
+</ui:composition>
+

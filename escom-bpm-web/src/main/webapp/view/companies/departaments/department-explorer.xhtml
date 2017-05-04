@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <!-- Используется как селектор Подразделений -->
+    
+    <ui:param name="_rootBean" value="#{companyBean}"/>
+    <ui:param name="_detailBean" value="#{staffBean}"/> 
+    <ui:param name="_treeBean" value="#{departmentBean}"/> 
+    <ui:param name="_searcheBean" value="#{_treeBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DepartmentSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('Departaments')}"/>
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateCompany}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateDepartament}" />
+    
+    <ui:define name="explorerColumns"> 
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}">
+            #{item.code}
+        </p:column>
+    </ui:define>
+
+</ui:composition>
+

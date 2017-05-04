@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:commandButton id="openDocBtn" actionListener="#{docsBean.onOpenSelectedItemCard()}" style="display: none;"> 
+        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseDocForm}"/>
+    </p:commandButton>
+    
+    <p:dataTable id="tblDocs" value="#{_docs}" var="doc"
+                 emptyMessage="#{bundle.EmptyTable}"
+                 paginator="true" paginatorPosition="bottom" 
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                 rowsPerPageTemplate="5, 10, 20, 35" 
+                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                 sortBy="#{doc.regNumber}" rowKey="#{doc.id}">
+
+        <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"                                         
+                oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();"/>
+
+        <p:column style="width:20px; font-size: 90%;" sortBy="#{doc.iconName}">
+            <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
+        </p:column>
+        <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" >
+            <h:outputText value="#{doc.regNumber}"/>
+        </p:column>
+        <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
+            <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
+                           actionListener="#{docsBean.setSelectedItem(doc)}"
+                           oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();"/>
+        </p:column>
+        
+        <p:column headerText="#{bundle.State}" sortBy="#{doc.state.name}">
+            <h:outputText  value="#{doc.state.name}" />
+        </p:column> 
+        
+        <p:column headerText="#{bundle.DateChange}" sortBy="#{doc.dateChange}">
+            <h:outputText value="#{doc.dateChange}" >
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputText>    
+        </p:column>
+        
+        <p:column headerText="#{bundle.AuthorChanges}" sortBy="#{doc.author.shortFIO}">
+            #{doc.author.shortFIO}
+        </p:column>
+
+        <p:column headerText="#{bundle.Commands}" > 
+            <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
+                            actionListener="#{_bean.setSelectedItem(doc)}"
+                            oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();">
+                <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
+                            process="@this"
+                            disabled="#{doc.attache == null}"
+                            actionListener="#{docsBean.viewAttache(doc)}"/>
+                <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" title="#{bundle.ShowInFolder}"
+                            url="#{docsBean.onShowDocInFolder(doc)}" target="_blank"/>
+                <p:separator />
+                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
+                            process="@this"
+                            actionListener="#{docsBean.addInFavorites(doc)}"/>
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                            update="tblDocs"
+                            disabled="#{!docsBean.isHaveRightDelete(doc)}"
+                            actionListener="#{docsBean.moveItemToTrash(doc)}"/>
+            </p:splitButton>
+
+        </p:column>
+    </p:dataTable>
+</ui:composition>

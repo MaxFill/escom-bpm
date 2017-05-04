@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{userGroupsCardBean}"/>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Explorer}"> 
+            
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12" >
+
+                <p:outputLabel value="#{bundle.Name}:" />                
+                <p:inputText id="name" value="#{_bean.editedItem.name}"
+                            styleClass="ui-grid-col-12"
+                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                            onchange="return itemChange = 1;"
+                            required="true"
+                            disabled="#{_bean.isReadOnly()}"
+                            requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                    <p:message for="name" display="icon"/>
+                </p:inputText>                
+
+            </p:panelGrid>
+
+        </p:tab>    
+    </ui:define>
+</ui:composition>

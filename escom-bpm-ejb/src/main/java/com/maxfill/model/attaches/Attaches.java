@@ -1,0 +1,226 @@
+package com.maxfill.model.attaches;
+
+import com.maxfill.model.docs.Doc;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.model.users.User;
+import com.maxfill.utils.EscomUtils;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import static javax.persistence.GenerationType.TABLE;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
+
+/**
+ * Вложения
+ * @author mfilatov
+ */
+@Entity
+@Table(name = "attaches")
+public class Attaches implements Serializable {
+    private static final long serialVersionUID = -4633936978772232516L;
+
+    @TableGenerator(
+        name="attacheIdGen", 
+        table="SYS_ID_GEN", 
+        pkColumnName="GEN_KEY", 
+        valueColumnName="GEN_VALUE", 
+        pkColumnValue="ATTACHE_ID", allocationSize = 1)
+    
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @GeneratedValue(strategy=TABLE, generator="attacheIdGen")
+    @Column(name = "Id")
+    private Integer id;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "Number")
+    private short number;
+            
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 128)
+    @Column(name = "Name")
+    private String name;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "Size")
+    private int size;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "DateCreate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreate;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "Type")
+    private String type;
+    
+    @Size(min = 1, max = 10)
+    @Column(name = "Extension")
+    private String extension;
+        
+    @Column(name = "Guide")
+    private String guid;
+    
+    @JoinColumn(name = "Author", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private User author;  
+        
+    @JoinColumn(name = "Doc", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Doc doc;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "IsCurrent")
+    private Boolean current = true;
+            
+    @Transient
+    @XmlTransient
+    private Integer tempId;
+
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
+           
+    public Attaches() {
+        tempId = COUNT.incrementAndGet();
+        guid = EscomUtils.generateGUID();
+    }
+
+    /**
+     * Возвращает полное имя файла на сервере
+     * @return 
+     */
+    public String getFullName(){
+        return SysParams.UPLOAD_PATCH + getGuid()+ "." + getExtension();
+    }
+    
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public short getNumber() {
+        return number;
+    }
+    public void setNumber(short number) {
+        this.number = number;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getSize() {
+        return size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public Date getDateCreate() {
+        return dateCreate;
+    }
+    public void setDateCreate(Date dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Doc getDoc() {
+        return doc;
+    }
+    public void setDoc(Doc doc) {
+        this.doc = doc;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
+    public Integer getTempId() {
+        return tempId;
+    }
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
+    }
+
+    public Boolean getCurrent() {
+        return current;
+    }
+    public void setCurrent(Boolean current) {
+        this.current = current;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Attaches)) {
+            return false;
+        }
+        Attaches other = (Attaches) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.maxfill.escombpm2.model.docs.attaches.Attaches[ id=" + id + " ]";
+    }
+    
+}

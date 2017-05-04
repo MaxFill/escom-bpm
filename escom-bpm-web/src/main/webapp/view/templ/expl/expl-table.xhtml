@@ -1,0 +1,164 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"    
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:p="http://primefaces.org/ui">
+
+    <p:dataTable id="tblDetail" value="#{explorerBean.detailItems}" var="item"
+                 emptyMessage="#{bundle.EmptyTable}"
+                 paginator="true" paginatorPosition="bottom" first="#{explorerBean.currentPage}"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75, 100" rows="#{explorerBean.rowsInPage}"
+                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                 sortMode="multiple" sortBy="#{explorerBean.sortOrder}"
+                 selection="#{explorerBean.checkedItems}"
+                 rowKey="#{item.itemKey}">
+
+        <p:ajax event="rowDblselect" 
+                listener="#{explorerBean.onRowDblClckOpen}"
+                oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
+        <p:ajax event="rowSelectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="rowUnselectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="page" listener="#{explorerBean.onPageChange}" oncomplete="initDND()"/>
+
+        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+
+        <p:column id="colIcon" style="width:16px; font-size: 90%;" sortBy="#{item.iconName}">
+            <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/>  
+        </p:column>
+
+        <p:column style="width:16px; font-size: 90%;">
+            <h:graphicImage id="iconDone" value="/resources/icon/done.png"
+                            rendered="#{item.actual and !item.deleted}" title="#{bundle.Actual}"/>
+            <h:graphicImage id="iconLock" value="/resources/icon/doc_lock.png"
+                            rendered="#{!item.actual and !item.deleted}" title="#{bundle.NoActual}"/>
+            <h:graphicImage id="iconTrash" value="/resources/icon/red_stop.png" title="#{bundle.Deleted}"
+                            rendered="#{item.deleted}"/>
+        </p:column>
+
+        <p:column headerText="#{bundle.State}" sortBy="#{item.state.name}">
+            <h:outputLabel value="#{item.state.name}" />
+        </p:column>
+
+        <p:column headerText="#{bundle.ShortName}" sortBy="#{item.nameEndElipse}" id="shortName">
+            <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
+                           rendered="#{explorerBean.isItemTreeType(item)}"
+                           actionListener="#{explorerBean.onLoadGroupContent(item)}"
+                           update="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}" 
+                           oncomplete="initDND()"/>
+            <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
+                           rendered="#{explorerBean.isItemDetailType(item) or explorerBean.isItemRootType(item)}"
+                           actionListener="#{explorerBean.onSetCurrentItem(item)}"                                                                                      
+                           oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();">
+            </p:commandLink>
+        </p:column>
+
+        <ui:insert name="specDetailColumns"/>
+        <ui:insert name="specTreeColumns"/>
+        <ui:insert name="specRootColumns"/>
+
+        <p:column headerText="#{bundle.DateChange}" priority="2"
+                  rendered="#{_showDateChange != false}"
+                  sortBy="#{item.dateChange}">
+            <h:outputLabel value="#{item.dateChange}">
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputLabel>
+        </p:column>
+
+        <p:column headerText="#{bundle.DateCreate}" width="90" priority="3"
+                  rendered="#{_showDateCreate != false}"
+                  sortBy="#{item.dateCreate}">
+            <h:outputLabel value="#{item.dateCreate}">
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputLabel>
+        </p:column>
+
+        <p:column headerText="#{bundle.AuthorChanges}" priority="4"
+                  rendered="#{_showAuthor != false}"
+                  sortBy="#{item.author.shortFIO}">
+            #{item.author.shortFIO}
+        </p:column>
+
+        <p:column headerText="Id" style="width:15px;" priority="5">
+            #{item.id}
+        </p:column>
+
+        <p:column style="text-align: center;" width="90" >
+            <p:splitButton  value="#{bundle.Select}"
+                            rendered="#{!item.deleted and item.actual and explorerBean.selectorViewMode}" 
+                            action="#{_detailBean.onSelect(item)}">
+                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
+                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"
+                            rendered="#{!item.deleted}"/>
+                <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
+                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
+            </p:splitButton>
+            
+            <p:splitButton value="#{bundle.Edit}" title="#{bundle.Edit}"
+                           actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                           oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"
+                           rendered="#{!item.deleted and explorerBean.explorerViewMode}">
+                <p:menuitem icon="ui-icon-search" value="#{bundle.View}" title="#{bundle.View}"
+                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
+                <p:separator/>
+
+                <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
+                            title="#{bundle.Copy}"
+                            update="#{_frmExpl}:menuTbl"
+                            actionListener="#{explorerBean.onCopyItem(item)}"/>
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}" 
+                            title="#{bundle.MoveToTrash}"
+                            update="#{_frmTree} #{_frmExpl}"
+                            actionListener="#{explorerBean.onMoveContentToTrash(item)}"
+                            oncomplete="initDND()">
+                    <p:confirm header="#{bundle.Move}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />
+                </p:menuitem>
+
+                <p:separator/>
+                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
+                            rendered="#{!explorerBean.isFavoriteSelected()}"
+                            actionListener="#{explorerBean.onAddContentInFavorites(item)}"/>
+                <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" title="#{bundle.DeleteFromFavorites}"
+                            rendered="#{explorerBean.isFavoriteSelected()}"
+                            actionListener="#{explorerBean.onDelContentFromFavorites(item)}"
+                            update="#{_frmExpl}"
+                            oncomplete="initDND()"/>
+                <p:separator/>
+                <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
+                            rendered="#{sessionBean.userAdmin}"
+                            actionListener="#{explorerBean.onOpenAdmCardForm(item)}"/>
+                <ui:insert name="addItemMenu" />
+            </p:splitButton>                           
+
+            <p:splitButton value="#{bundle.Delete}" title="#{bundle.Delete}" 
+                            rendered="#{item.deleted}"
+                            disabled="#{!sessionBean.userAdmin}"
+                            update="#{_frmExpl} #{_frmTree}"
+                            actionListener="#{explorerBean.onDeleteContentFromTrash(item)}"
+                            oncomplete="initDND()">
+                <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+                <p:menuitem value="#{bundle.Restore}"
+                            icon="ui-icon-arrowreturnthick-1-w"
+                            update="#{_frmExpl} #{_frmTree}"
+                            actionListener="#{explorerBean.onRestoreContentFromTrash(item)}"
+                            oncomplete="initDND()">
+                </p:menuitem>                
+            </p:splitButton>
+        </p:column>
+    </p:dataTable>
+
+    <p:contextMenu id="menuTbl" for="tblDetail" >
+        <p:menuitem value="#{bundle.CopySelected}" icon="ui-icon-copy"
+                    actionListener="#{explorerBean.onCopySelectedItem()}"/>
+        <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
+                    actionListener="#{explorerBean.onPasteItemToTable()}"/>
+    </p:contextMenu>
+
+    <ui:include src="/view/common/confirm-dlg.xhtml"/>
+</ui:composition>
+

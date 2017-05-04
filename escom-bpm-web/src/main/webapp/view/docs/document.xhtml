@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+     
+    <!-- эта форма используется для скачивания документа по ссылке -->
+    
+    <ui:define name="title">
+        #{bundle.Download}
+    </ui:define> 
+    
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewParam name="docId" value="#{docCardBean.documentId}" />
+            <f:event listener="#{docCardBean.downloadCurrentVersion()}" type="preRenderView" />
+        </f:metadata>  
+    </ui:define>
+    
+    <ui:define name="body">
+
+        <h:form id="downloadDocFRM">            
+            <p:panel styleClass="panelLogin">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12">
+                    <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                    <h:panelGroup style="width: 100%;">
+                        <h4>
+                            <h:outputLabel value="#{msg.LoadedDocHelp}"/> 
+                        </h4>
+                        <p:commandLink value="#{bundle.Download}" update="downloadDocFRM"/>
+                    </h:panelGroup>
+                    <p:spacer />
+                    <p:commandButton value="#{bundle.Back}" title="#{bundle.GotoIndex}" icon="ui-icon-arrowreturnthick-1-w" 
+                                    type="submit" action="#{sessionBean.goToIndex() }"/>   
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+    </ui:define>
+    
+</ui:composition>
+

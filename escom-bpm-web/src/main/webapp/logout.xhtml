@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width" />   
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Cache-Control" content="no-store" />
+        <meta http-equiv="Cache-Control" content="no-cache" />
+        <meta http-equiv="Cache-Control" content="must-revalidate" />  
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <title>
+            #{bundle.SessionIsClose}
+        </title> 
+        <h:outputStylesheet library="css" name="em_style1.css"/> 
+        <link rel="shortcut icon" href="#{resource['icon/done.png']}" type="image/png"/>
+    </h:head>
+
+    <h:body>          
+
+        <p:panel styleClass="panelLogin">             
+            <p:panelGrid id="panelLogin" columns="3" layout="grid" columnClasses="col20, colAuto, colAuto,">
+                <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                <h:panelGroup>
+                    <h3>
+                        <h:outputLabel value="#{msg.YouExitFromProgramm}"/> 
+                    </h3>
+                </h:panelGroup>    
+
+            </p:panelGrid>
+        </p:panel>
+
+    </h:body>
+
+</html>

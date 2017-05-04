@@ -1,0 +1,55 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"      
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <p:tab title="#{bundle.Info}">
+        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2 col-padding, ui-grid-col-7 col-padding" >            
+            <p:outputLabel value="#{bundle.Actual}"/>            
+            <h:panelGroup id="cbActualInfoPanel">
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
+                                         title="#{_bean.getActualInfo()}"
+                                         disabled="#{_bean.isReadOnly()}">
+                    <p:ajax process="@this" 
+                            update="cbActualInfoPanel" 
+                            oncomplete="itemChange = 1;"/>
+                </p:selectBooleanCheckbox> 
+            </h:panelGroup>                        
+            
+            <p:outputLabel value="#{bundle.State}"/>
+            <p:inputText  value="#{_bean.editedItem.state.name}" readonly="true"
+                           onkeypress="checkEsc(#{_bean.cancelBtnName});">
+            </p:inputText>
+           
+            <p:outputLabel value="#{bundle.DateCreate}" />                            
+            <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
+                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
+                <f:convertDateTime parent="dd.mm.yy"/>
+            </p:inputText>
+            
+            <p:outputLabel value="#{bundle.DateChange}" />
+            <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
+                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
+                <f:convertDateTime parent="dd.mm.yy"/>
+            </p:inputText>
+            
+            <p:outputLabel value="#{bundle.AuthorChanges}" />
+            <p:inputText value="#{_bean.editedItem.author.shortFIO}" readonly="true"
+                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
+                <f:convertDateTime parent="dd.mm.yy"/>
+            </p:inputText>
+            
+            <p:outputLabel value="Id:" />
+            <p:inputText value="#{_bean.editedItem.id}" readonly="true"
+                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
+            </p:inputText>
+            
+            <p:outputLabel value="Mask:" />
+            <p:inputText value="#{_bean.editedItem.rightMask}" readonly="true"
+                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
+            </p:inputText>
+            
+        </p:panelGrid>
+    </p:tab>
+</ui:composition>    

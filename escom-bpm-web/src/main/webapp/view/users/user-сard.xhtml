@@ -1,0 +1,113 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{userCardBean}"/>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Explorer}">  
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
+                         columnClasses="ui-grid-col-6 col-padding" >
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
+                             columnClasses="ui-grid-col-12 col-padding" >
+
+                    <p:outputLabel value="#{bundle.SecondName}" />
+                    <p:inputText id="secondName" value="#{_bean.editedItem.secondName}" 
+                                 styleClass="ui-grid-col-12"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"/>
+
+                    <p:outputLabel value="#{bundle.FirstName}" />
+                    <p:inputText id="firstName" value="#{_bean.editedItem.firstName}"
+                                 styleClass="ui-grid-col-12"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 required="true"
+                                 requiredMessage="#{bundle.Field} [#{bundle.FirstName}] #{bundle.MustBeFilled}"/>
+
+                    <p:outputLabel value="#{bundle.LastName}" />
+                    <p:inputText id="lastName" value="#{_bean.editedItem.lastName}"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 styleClass="ui-grid-col-12"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"/>
+
+                    <p:outputLabel value="#{bundle.EMail}" />
+                    <p:inputText id="email" value="#{_bean.editedItem.email}" 
+                                 styleClass="ui-grid-col-12"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 maxlength="1024"
+                                 validatorMessage="#{bundle.EMail}: #{validator.INVALID_EMAIL}"
+                                 onchange="return itemChange = 1;">
+                        <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
+                        <f:validator validatorId="escom.emailValidator" />
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.MobilePhone}" />
+                    <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 mask="(999) 999-99-99"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"/>
+
+                    <p:outputLabel value="#{bundle.Login}" />
+                    <p:inputText id="login" value="#{_bean.editedItem.login}"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;">
+                    </p:inputText>
+
+                    <p:outputLabel value="#{bundle.password}" />
+                    <p:password id="pwl" value="#{_bean.editedItem.password}" 
+                                feedback="true"
+                                disabled="#{_bean.isReadOnly()}"
+                                onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                onchange="return itemChange = 1;"/>
+                </p:panelGrid>
+                
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
+                             columnClasses="ui-grid-col-12 col-padding" >
+                        <p:outputLabel value="#{bundle.VisibleName}" />
+                        <p:inputText id="visbleName" value="#{_bean.editedItem.name}"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     styleClass="ui-grid-col-12"
+                                     required="#{param['isRequired'] == 'true'}"                                         
+                                     requiredMessage="#{bundle.Field} [#{bundle.VisibleName}] #{bundle.MustBeFilled}"
+                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                     onchange="return itemChange = 1;"/>
+                        <p:commandButton value="#{bundle.Generate}" title="#{bundle.MakeName}"
+                                         actionListener="#{_bean.makeName()}"
+                                         update="visbleName"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onchange="return itemChange = 1;">                            
+                        </p:commandButton>
+                </p:panelGrid>
+            </p:panelGrid>
+        </p:tab>    
+
+        <p:tab title="#{bundle.Other}">
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >
+                <p:outputLabel value="#{bundle.EmailSign}" />
+                <h:panelGrid columns="1" styleClass="ui-grid-col-12">
+                    <p:editor value="#{_bean.editedItem.emailSign}" 
+                              style="width: 100%; height: 200px;"
+                              disabled="#{_bean.isReadOnly()}"
+                              onchange="return itemChange = 1;"/>
+                </h:panelGrid>         
+            </p:panelGrid>
+        </p:tab>
+
+        <ui:include src="/view/common/dict-item-groups.xhtml" >
+            <ui:param name="_groups" value="#{_bean.editedItem.usersGroupsList}" />
+            <ui:param name="_selectorBean" value="#{userGroupsBean}" />
+            <ui:param name="_showOwner" value="#{false}" />
+        </ui:include>
+
+    </ui:define>
+</ui:composition>

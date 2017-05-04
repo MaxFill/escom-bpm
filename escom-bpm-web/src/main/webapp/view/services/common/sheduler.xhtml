@@ -1,0 +1,91 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
+        <p:selectBooleanCheckbox value="#{_bean.scheduler.autoStart}" 
+                                 itemLabel="#{bundle.AutoStart}"
+                                 disabled="#{_bean.service.started}">
+            <p:ajax update="westFRM"/> 
+        </p:selectBooleanCheckbox>
+
+        <h:panelGrid columns="2" rendered="#{_bean.service.started}">
+            <p:outputLabel value="#{bundle.DateNextStart}"/>
+            <p:inputText value="#{_bean.service.dateNextStart}" readonly="true">
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+            </p:inputText>
+        </h:panelGrid>
+
+        <h:panelGrid columns="1" style="width: 100%;" rendered="#{_bean.scheduler.autoStart}">
+
+            <p:panelGrid columns="2">                
+
+                <h:panelGroup>
+                    <p:outputLabel value="#{bundle.Repeat}"/>
+                    <p:selectOneRadio value="#{_bean.scheduler.repeatType}" layout="grid" columns="1" 
+                                      disabled="#{_bean.service.started}">
+                        <f:selectItems value="#{_bean.repeatTypes}" /> 
+                        <p:ajax update="westFRM"/> 
+                    </p:selectOneRadio>
+                </h:panelGroup>                
+                
+                <h:panelGroup rendered="#{_bean.scheduler.repeatType == 1}">
+                    <p:outputLabel value="#{bundle.StartIn}"/>
+                    <p:selectManyCheckbox value="#{_bean.scheduler.dayOfWeek}" layout="grid" columns="2"
+                                          disabled="#{_bean.service.started}">
+                        <f:selectItems value="#{_bean.daysOfWeek}" />
+                    </p:selectManyCheckbox>
+                </h:panelGroup>
+                            
+                <h:panelGroup rendered="#{_bean.scheduler.repeatType != 1}">
+                    <p:outputLabel value="#{bundle.StartInDate}" />
+                    <p:calendar value="#{_bean.scheduler.startDate}" 
+                                disabled="#{_bean.service.started}"
+                                showButtonPanel="true" showHour="true" showMinute="true"
+                                pattern="dd.MM.yyyy HH:mm" mask="99.99.9999 99:99"
+                                navigator="true" locale="ru" yearRange="1900:+0" mindate="#{currentDate}"                  
+                                required="true" 
+                                requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
+                    </p:calendar>
+                </h:panelGroup>    
+                
+                <p:outputLabel id="repeatEacheLabel" value="#{_bean.scheduler.repeatEachType == 1 ? bundle.RepeatEach : bundle.RepeatEachF}"/>
+                <p:panelGrid columns="2" layout="grid">
+                    <p:spinner value="#{_bean.scheduler.interval}" size="2" min="1" max="100"
+                                 disabled="#{_bean.service.started}"
+                                 required="true"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}"
+                                 title="#{bundle.IntervalRunService}"/>
+                    <p:selectOneMenu value="#{_bean.scheduler.repeatEachType}" required="true" title="#{bundle.IntervalTypeRunService}"
+                                     disabled="#{_bean.service.started}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{_bean.intervalTypes}" />
+                        <p:ajax update="repeatEacheLabel"/>
+                    </p:selectOneMenu>
+                </p:panelGrid>
+            </p:panelGrid> 
+            
+            <br/>
+            
+            <h:panelGrid columns="2">
+                <p:commandButton icon="ui-icon-circle-triangle-e" value="#{bundle.Start}"
+                             title="#{bundle.RunOnSchedule}"
+                             disabled="#{_bean.service.started}"
+                             actionListener="#{_bean.onStartService()}"
+                             update="westFRM"
+                             onclick="document.getElementById('eastFRM:btnEastSaves').click();"/>
+                <p:commandButton icon="ui-icon-squaresmall-close" value="#{bundle.Stop}"
+                             title="#{bundle.Stop}"
+                             disabled="#{!_bean.service.started}"
+                             actionListener="#{_bean.onStopService()}"
+                             update="westFRM, centerFRM"/>
+            </h:panelGrid>
+        </h:panelGrid>
+                
+    </p:panelGrid>
+
+</ui:composition>
+

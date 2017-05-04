@@ -1,0 +1,1744 @@
+package com.maxfill.escom.beans.explorer;
+
+import com.maxfill.escom.beans.BaseBean;
+import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.filters.Filters;
+import com.maxfill.facade.FiltersFacade;
+import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.FoldersNavigation;
+import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.dictionary.DictDetailSource;
+import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictExplForm;
+import com.maxfill.dictionary.DictFilters;
+import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
+import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.component.api.UIColumn;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.*;
+import org.primefaces.event.data.PageEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.SortMeta;
+import org.primefaces.model.SortOrder;
+import org.primefaces.model.TreeNode;
+import javax.ejb.EJB;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import static com.maxfill.utils.EscomUtils.*;
+
+/**
+ * Контролер формы обозревателя
+ * @author mfilatov
+ */
+@Named
+@ViewScoped
+public class ExplorerBean implements Serializable {
+    private static final long serialVersionUID = 5230153127233924868L;   
+    static final protected Logger LOGGER = Logger.getGlobal();
+    
+    private static final String TREE_ITEMS_NAME  = "explorer_west:accord:tree:";
+    private static final String TREE_FILTERS_NAME = "explorer_west:accord:filtersTree:";
+    
+    private static final String TABLE_NAME = "explorer:tblDetail:";
+    private static final String NAVIG_NAME = "explorer:navigator";
+    private static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
+    private static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
+    private static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
+    private static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
+    
+    @Inject
+    private SessionBean sessionBean;
+    
+    @EJB
+    private FiltersFacade filtersFacade;
+     
+    protected BaseTreeBean rootBean;
+    protected BaseTreeBean treeBean;
+    protected BaseExplBean tableBean;
+    protected BaseExplBean searcheBean;
+    
+    private BaseDict currentItem;    
+    private BaseDict editItem; 
+    private Set<BaseDict> copiedItems;
+    
+    private TreeNode tree;
+    private TreeNode filterTree;
+    
+    private TreeNode filterSelectedNode;
+    private TreeNode treeSelectedNode;
+    private TreeNode dragNode, dropNode;
+        
+    private Deque navigator; 
+
+    private final String typeMixed = "mixed";        
+    private String currentType = typeMixed;
+    
+    private String typeDetail;
+    private String typeTree;
+    private String typeRoot;
+
+    private Integer typeEdit;                   //режим редактирования записи
+    
+    private List<BaseDict> checkedItems = new ArrayList<>();  //список выбранных объектов на форме обозревателя/селектора
+    private List<BaseDict> detailItems = new ArrayList<>();   //список подчинённых объектов
+    
+    private final Map<String, Object> createParams = new HashMap<>();
+    private BaseDict dropItem; 
+    
+    /* *** ПОЛЯ ОБОЗРЕВАТЕЛЯ *** */
+    private String jurnalHeader;
+    private String selectorHeader;
+    private String explorerHeader;
+    private String currentTab = DictExplForm.TAB_FILTER;
+    private List<SortMeta> sortOrder;
+    private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
+    private Integer currentPage = 0;
+    
+    /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
+    private Integer source = DictDetailSource.TREE_SOURCE;
+    private Integer viewMode;          //режим отображения формы
+    private Integer selectMode;        //режим выбора для селектора        
+    
+    /**
+     *  ФОРМА: событие при открытии формы 
+     */
+    public void onOpen(){
+        if (viewMode == null){
+            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            if (params.containsKey("selectMode")){
+                selectMode = Integer.valueOf(params.get("selectMode"));
+                viewMode = DictExplForm.SELECTOR_MODE;
+            } else {
+                viewMode = DictExplForm.EXPLORER_MODE;
+            }
+        }    
+    }
+
+    /* *** КАРТОЧКИ ОБЪЕКТОВ *** */
+    
+    /**
+     * КАРТОЧКИ: открытие карточки объекта для просмотра
+     */
+    public void onViewContentItem(){
+        BaseDict item = getCurrentItem();
+        setTypeEdit(DictEditMode.VIEW_MODE);
+        editItem = sessionBean.prepViewItem(item);       
+    }
+    
+    /**
+     * КАРТОЧКИ: открытие карточки объекта для редактирование
+     */
+    public void onEditContentItem(){
+        BaseDict item = getCurrentItem();
+        setTypeEdit(DictEditMode.EDIT_MODE);
+        if (!isItemDetailType(item)){
+            makeSelectedGroup(item);
+        }           
+        editItem = sessionBean.prepEditItem(item);        
+    }
+       
+    /* КАРТОЧКИ: создание объекта в дереве с открытием карточки */
+    public void onCreateTreeItem() {
+        BaseDict selected = (BaseDict) treeSelectedNode.getData();
+        if (selected == null){
+            return;
+        }
+        BaseDict owner = null;
+        BaseDict parent = null;
+        if (isItemTreeType(selected)){
+            parent = selected;
+            owner = selected.getOwner();
+        } else   
+            if (isItemRootType(selected)){
+                parent = null;
+                owner = selected;
+            }
+        typeEdit = DictEditMode.INSERT_MODE;
+        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeTree, createParams);
+    }
+    
+    /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне  */
+    public void onCreateRootItem() {
+        BaseDict owner = null;
+        BaseDict parent = null;
+        typeEdit = DictEditMode.INSERT_MODE;
+        if (treeSelectedNode != null){
+            treeSelectedNode.setSelected(false);
+        }
+        treeSelectedNode = tree;
+        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeRoot, createParams);
+    }
+    
+    /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
+     public void onCreateDetailItem(){
+        typeEdit = DictEditMode.INSERT_MODE;
+        BaseDict parent = null;
+        BaseDict owner = null;
+        if (treeSelectedNode != null){
+            owner = (BaseDict) treeSelectedNode.getData();
+        }
+        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeDetail, createParams);   
+    }
+    
+    /**
+     * КАРТОЧКИ: обработка после закрытия карточки
+     * @param event 
+     */
+    public void onUpdateAfterCloseForm(SelectEvent event){
+        Tuple<Boolean, String> tuple = (Tuple) event.getObject();
+        Boolean isNeedUdate = tuple.a;
+        if (isNeedUdate) {            
+            switch (typeEdit){
+                case DictEditMode.EDIT_MODE: {
+                    try {                    
+                        BeanUtils.copyProperties(currentItem, editItem);
+                    } catch (IllegalAccessException | InvocationTargetException ex) {
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                }
+                case DictEditMode.INSERT_MODE:{
+                    if (isItemTreeType(editItem) || isItemRootType(editItem)){
+                        addNewItemInTree(editItem, treeSelectedNode);
+                    }
+                    break;
+                }
+            }
+            EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{currentItem.getName()});
+        }        
+        if (isItemDetailType(editItem)){
+            tableBean.afterCloseItemCard();
+        } else
+            if (isItemTreeType(editItem)){
+                treeBean.afterCloseItemCard();
+            } else
+                if (isItemRootType(editItem)){
+                    rootBean.afterCloseItemCard();
+                }
+        createParams.clear();
+        reloadDetailsItems(); 
+    }
+    
+    public boolean isItemDetailType(BaseDict item){
+        return Objects.equals(typeDetail, item.getClass().getSimpleName());
+    }    
+    public boolean isItemTreeType(BaseDict item){
+        return Objects.equals(typeTree, item.getClass().getSimpleName());
+    }
+    public boolean isItemRootType(BaseDict item){
+        return Objects.equals(typeRoot, item.getClass().getSimpleName());
+    }    
+    
+    /* *** ИЗБРАННОЕ *** */
+    
+    /**
+     * ИЗБРАННОЕ: удаление из избранных отмеченных записей. Вызов с панели инструментов формы обозревателя
+     */    
+    public void onDelCheckedFromFavorites() {
+        getCheckedItems().stream().forEach(item -> {
+            if (isItemDetailType(item)){
+                tableBean.delFromFavorites(item);
+            } else
+                if (isItemTreeType(item)){
+                    treeBean.delFromFavorites(item);
+                }
+        });
+        getDetailItems().removeAll(getCheckedItems());        
+    }
+    
+    /**
+     * ИЗБРАННОЕ: удаление из избранного записи контента.
+     * @param item
+     */  
+    public void onDelContentFromFavorites(BaseDict item){
+        if (isItemDetailType(item)){
+            tableBean.delFromFavorites(item);
+        } else
+            if (isItemTreeType(item)){
+                treeBean.delFromFavorites(item);
+            }
+        getDetailItems().remove(item);         
+    }
+    
+    /**
+     * ИЗБРАННОЕ: добавление записи контента в избранное
+     */
+    public void onAddContentInFavorites(){
+        onAddContentInFavorites(currentItem);
+    }    
+    public void onAddContentInFavorites(BaseDict item){
+        if (item == null){
+            return;
+        }
+        if (isItemDetailType(item)){
+            tableBean.addInFavorites(item);
+        } else
+            if (isItemTreeType(item)){
+                treeBean.addInFavorites(item);
+            } else
+                if (isItemRootType(item)){
+                    rootBean.addInFavorites(item);
+                }
+    } 
+    
+    /**
+     * ИЗБРАННОЕ: добавление отмеченных записей контента в избранное
+     */
+    public void onAddCheckedContentInFavorites() {
+        getCheckedItems().stream().forEach(item -> {
+            if (isItemDetailType(item)){
+                tableBean.addInFavorites(item);
+            } else
+                if (isItemTreeType(item)){
+                    treeBean.addInFavorites(item);
+                }
+        });
+    }
+    
+    /* *** КОРЗИНА *** */
+    
+    /**
+     * КОРЗИНА: восстановление из корзины отмеченных записей 
+     */
+    public void onRestoreCheckedContentTrash(){
+        getCheckedItems().stream().forEach(item -> {
+                if (isItemDetailType(item)){
+                    tableBean.doRestoreItemFromTrash(item);
+                } else
+                    if (isItemTreeType(item)){
+                        treeBean.doRestoreItemFromTrash(item);
+                        restoreItemInTree(item);
+                    } else
+                        if (isItemRootType(item)){
+                            rootBean.doRestoreItemFromTrash(item);
+                            restoreItemInTree(item);
+                        }
+            });
+        getDetailItems().removeAll(getCheckedItems());     
+    } 
+    
+    /**
+     * КОРЗИНА: восстановление в дереве из корзины объекта 
+     *
+     * @param item
+     */
+    public void restoreItemInTree(BaseDict item) {
+        BaseDict parent = item.getParent();
+        TreeNode parentNode;
+        if (parent == null) {
+            parentNode = getTree();
+        } else {
+            parentNode = EscomBeanUtils.findTreeNode(tree, parent);
+        }
+        if (parentNode != null) {
+            addNewItemInTree(item, parentNode); //нужно
+        }
+    }
+    
+    /**
+     * КОРЗИНА: восстановление объекта из корзины - вызов с экранной формы
+     *
+     * @param item
+     */
+    public void onRestoreContentFromTrash(BaseDict item) {
+        if (isItemDetailType(item)){
+            tableBean.doRestoreItemFromTrash(item);
+        } else
+            if (isItemTreeType(item)){
+                treeBean.doRestoreItemFromTrash(item);
+            }      
+        getDetailItems().remove(item);         
+    }
+    
+    /**
+     * КОРЗИНА: помещение в корзину отмеченных записей контента
+     */
+    public void onMoveCheckedContentToTrash(){
+        Set<String> errors = new HashSet<>();
+        getCheckedItems().stream()
+                .forEach(item -> {
+                    if (isItemDetailType(item)){
+                        tableBean.moveToTrash(item, errors);
+                    } else
+                        if (isItemTreeType(item)){
+                            treeBean.moveToTrash(item, errors);
+                        } else
+                            if (isItemRootType(item)){
+                                rootBean.moveToTrash(item, errors);
+                            }
+                });
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);
+        } else {            
+            getDetailItems().removeAll(getCheckedItems());
+        }
+    }
+    
+    /**
+     * КОРЗИНА: перемещение контента в корзину
+     * @param item
+     */
+    public void onMoveContentToTrash(BaseDict item){
+        if (item == null){
+            return;
+        }
+        Set<String> errors = new HashSet<>();
+        if (isItemDetailType(item)){
+            tableBean.moveToTrash(item, errors);            
+        } else
+            if (isItemTreeType(item)){
+                treeBean.moveToTrash(item, errors); 
+            } else
+                if (isItemRootType(item)){
+                    rootBean.moveToTrash(item, errors);
+                }
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);            
+        } else 
+            if (getDetailItems().contains(item)){
+                getDetailItems().remove(item);
+            }        
+    }
+    
+    /**
+     * КОРЗИНА: перемещение записи из дерева в корзину
+     */
+    public void onMoveTreeItemToTrash(){
+        if (treeSelectedNode == null){
+            return;
+        }
+        onMoveContentToTrash(currentItem);
+        removeItemFromTree(treeSelectedNode);
+    }
+    
+    /**
+     * КОРЗИНА: удаление - полная очистка корзины - вызов с экранной формы
+     * Удаление записей без проверки на наличие зависимых связей Очистка удаляет
+     * все дочерние и детальные объекты. При очисте не требуется проверять
+     * доступ Команда доступна только администратору
+     */
+    public void onClearTrash() {        
+        getDetailItems().stream().forEach((item -> {
+            if (isItemDetailType(item)){
+                tableBean.deleteItem(item);
+            } else
+                if (isItemTreeType(item)){
+                    treeBean.deleteItem(item);
+                }
+        }));
+        reloadDetailsItems();
+    }
+    
+    /**
+     * КОРЗИНА: удаление из корзины выбранных записей контента
+     */
+    public void onClearCheckedContentTrash(){
+        getCheckedItems().stream().forEach((item -> {
+            if (isItemDetailType(item)){
+                tableBean.deleteItem(item);
+            } else
+                if (isItemTreeType(item)){
+                    treeBean.deleteItem(item);
+                }
+        }));
+        getDetailItems().removeAll(getCheckedItems());
+    }
+    
+    /**
+     * КОРЗИНА: удаление из корзины объекта контента
+     * @param item
+     */
+    public void onDeleteContentFromTrash(BaseDict item){
+        if (isItemDetailType(item)){
+            tableBean.deleteItem(item);
+        } else
+            if (isItemTreeType(item)){
+                treeBean.deleteItem(item);
+            }
+        getDetailItems().remove(item);        
+    }
+    
+    /* *** ФИЛЬТРЫ *** */
+    
+    /**
+     * ДЕРЕВО ФИЛЬТРОВ: Формирует дерево фильтров
+     *
+     * @return
+     */
+    public TreeNode getFilterTree() {
+        if (filterTree == null) {
+            filterTree = new DefaultTreeNode("Root", null);
+            filterTree.setExpanded(true);
+            
+            //формируем корневой элемент для фильтров detail объекта
+            List<Filters> sourceTreeItems = filtersFacade.findDetailItems(null);                         
+            final String tableJurnalName = tableBean.getMetadatesObj().getBundleJurnalName();
+            sourceTreeItems.stream()
+                    .forEach(treeItem -> {
+                        treeItem.setIcon(tableBean.getMetadatesObj().getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeDetail, tableJurnalName);
+                    }
+            );
+
+            //формируем корневой элемент для фильтров tree объекта
+            if (treeBean != null){
+                sourceTreeItems = filtersFacade.findDetailItems(null);
+                final String treeJurnalName = treeBean.getMetadatesObj().getBundleJurnalName();
+                sourceTreeItems.stream()
+                    .forEach(treeItem -> {
+                        treeItem.setIcon(treeBean.getMetadatesObj().getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeTree, treeJurnalName);
+                    }
+                );
+            }
+            //формируем корневой элемент для фильтров root объекта
+            if (rootBean != null){
+                sourceTreeItems = filtersFacade.findDetailItems(null);
+                final String treeJurnalName = rootBean.getMetadatesObj().getBundleJurnalName();
+                sourceTreeItems.stream()
+                    .forEach(treeItem -> {
+                        treeItem.setIcon(rootBean.getMetadatesObj().getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeRoot, treeJurnalName);
+                    }
+                );
+            }
+        }
+        return filterTree;
+    }
+    
+    /**
+     * ДЕРЕВО ФИЛЬТРОВ: добавление узла в дерево фильтров при его формировании
+     *
+     * @param parentNode Узел дерева, в который добавляется объект
+     * @return
+     */
+    private TreeNode addFilterInTree(TreeNode parentNode, BaseDict item, String nodeType, String nodeName) {           
+        TreeNode newNode;
+
+        synchronized (this) {
+            newNode = new DefaultTreeNode(nodeType, item, parentNode);
+            newNode.setExpanded(true);
+        }
+
+        String bundleName = EscomBeanUtils.getBandleLabel(nodeName);
+        item.setName(bundleName);
+
+        List<Filters> childs = filtersFacade.findChilds((Filters)item);
+        childs.stream()
+                .forEach(itemChild -> addFilterInTree(newNode, itemChild, nodeType, itemChild.getName())
+        );        
+
+        return newNode;
+    }
+    
+    /**
+     * ФИЛЬТР: обработка события щелчка по фильтру на форме
+     * @param event 
+     */
+    public void onFilterTreeNodeSelect(NodeSelectEvent event) {
+        filterSelectedNode = event.getTreeNode();
+        doFilterTreeNodeSelect(filterSelectedNode);
+    }
+    
+    /**
+     * ФИЛЬТР: обработка события выбора фильтра
+     */
+    private void doFilterTreeNodeSelect(TreeNode node){
+        if (node == null){
+            return;
+        }
+        setCurrentTab(DictExplForm.TAB_FILTER);
+        Filters filter = (Filters) node.getData();
+        if (filter == null){
+            return;
+        }
+        doMakeFilterJurnalHeader(node, filter);                   
+        if (node.getType().equals(typeDetail)){
+            tableBean.makeFilteredContent(filter);
+            setCurrentViewModeDetail();
+        } else
+            if (node.getType().equals(typeTree)){
+                treeBean.makeFilteredContent(filter);
+                setCurrentViewModeTree();
+            } else
+                if (node.getType().equals(typeRoot)){
+                    rootBean.makeFilteredContent(filter);
+                    setCurrentViewModeRoot();
+                }
+    }
+
+    /* ФИЛЬТР: формирование заголовка журнала для разделов фильтров */
+    private void doMakeFilterJurnalHeader(TreeNode node, Filters filter){
+        TreeNode parentNode = node.getParent();
+        String firstName = "";
+        if (!parentNode.equals(filterTree)){
+            Filters parentFilter = (Filters) parentNode.getData();
+            if (parentFilter.getParent() == null){
+                firstName = parentFilter.getName();
+            }
+        }
+        makeJurnalHeader(firstName, filter.getName());
+    }
+    
+    /**
+     * ФИЛЬТР: проверят, является ли фильтр "Корзина" текущим элементом в дереве
+     * @return 
+     */
+    public boolean isTrashSelected(){
+        TreeNode node = filterSelectedNode;
+        if (node == null || !currentTab.equals(DictExplForm.TAB_FILTER)){
+            return false;
+        }
+        Filters filter = (Filters) node.getData(); 
+        return filter.getId().equals(DictFilters.TRASH_ID);         
+    }
+
+    /**
+     * ФИЛЬТР: проверят, отображается ли сейчас дерево
+     * @return 
+     */
+    public boolean isShowTree(){
+        return Objects.equals(currentTab, DictExplForm.TAB_TREE);
+    }
+    
+    /**
+     * ФИЛЬТР: проверят, является ли фильтр "Избранные" текущим элементом в дереве
+     * @return 
+     */
+    public boolean isFavoriteSelected(){
+        TreeNode node = filterSelectedNode;
+        if (node == null || !currentTab.equals(DictExplForm.TAB_FILTER)){
+            return false;
+        }        
+        Filters filter = (Filters) node.getData(); 
+        return filter.getId().equals(DictFilters.FAVORITE_ID);         
+    } 
+    
+    /**
+     * ФИЛЬТРЫ: обработка события переключения между панелью фильтров и панелью
+     * дерева в аккордионе
+     *
+     * @param event
+     */
+    public void onTreeTabChange(TabChangeEvent event) {
+        Tab tab = event.getTab();
+        currentTab = tab.getId();        
+        switch (currentTab) {
+            case DictExplForm.TAB_TREE: {                
+                onSelectInTree(treeSelectedNode);
+                break;
+            }
+            case DictExplForm.TAB_FILTER: {
+                doFilterTreeNodeSelect(filterSelectedNode);
+                break;
+            }
+        }
+    }
+    
+    /* *** ОБОЗРЕВАТЕЛь ТАБЛИЦА *** */
+    
+    /**
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка текущего объекта по двойному клику в таблице обозревателя
+     *
+     * @param event
+     */
+    public void onRowDblClckOpen(SelectEvent event){
+        BaseDict item = (BaseDict) event.getObject();
+        sessionBean.prepEditItem(item);
+    }
+    
+    /**
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: обновление данных в таблице обозревателя
+     */
+    public void reloadDetailsItems() {        
+        detailItems = null;
+    }        
+
+    /**
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя
+     *
+     * @return
+     */
+    public List<BaseDict> getDetailItems(){
+        if (detailItems == null) {
+            switch (getSource()){
+                case DictDetailSource.FILTER_SOURCE:{
+                    if (filterSelectedNode != null){
+                        tableBean.makeFilteredContent((Filters) filterSelectedNode.getData());
+                    }
+                    break;
+                }
+                case DictDetailSource.TREE_SOURCE:{
+                    onSelectInTree(treeSelectedNode);
+                    break;
+                }
+                case DictDetailSource.SEARCHE_SOURCE:{
+                    onSearcheItem();
+                    break;
+                }
+            }
+        }
+        return detailItems;
+    }
+    
+    /** 
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка списка таблицы обозревателя
+     * @param details
+     * @param source 
+     */
+    public void setDetails(List<BaseDict> details, int source) {
+        setSource(source);
+        this.detailItems = details;
+        this.checkedItems.clear();
+    }        
+    
+    /**
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)
+     * @param item
+     */ 
+    public void onLoadGroupContent(BaseDict item) {
+        onSetCurrentItem(item);
+        if (isItemDetailType(item)){            
+        } else
+            if (isItemTreeType(item)){
+                makeSelectedGroup(item);
+            } else
+                if (isItemRootType(item)){
+                    makeSelectedGroup(item);
+                }
+    }
+    
+    /** 
+     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: переход на уровень вверх в таблице 
+     */ 
+    public void onGotoUpLevelContent() {
+        if (treeSelectedNode == null){
+            return;
+        }
+        currentItem = (BaseDict) treeSelectedNode.getData();        
+        if (currentItem.getParent() != null) {           
+            makeSelectedGroup(currentItem.getParent());
+        } else 
+            if (currentItem.getOwner() != null){                
+                makeSelectedGroup(currentItem.getOwner());
+            }
+    }
+    
+    /* *** ДЕРЕВО ОБЪЕКТОВ *** */
+    
+    /**
+     * ДЕРЕВО: обновление дерева объектов
+     */
+    public void onReloadTreeItems() {
+        tree = null;
+        treeSelectedNode = null;
+        reloadDetailsItems();
+        setSource(DictDetailSource.TREE_SOURCE);        
+    }
+    
+    /**
+     * ДЕРЕВО: свернуть ветви
+     */
+    public void collapseTree() {
+        getTree().getChildren().stream().forEach(node -> node.setExpanded(false));
+    } 
+
+    /**
+     * ДЕРЕВО: получение дерева
+     * @return 
+     */
+    public TreeNode getTree() {
+        if (tree == null){
+            if (rootBean != null){
+                tree = rootBean.makeTree();
+            } else {
+                tree = treeBean.makeTree();
+            }
+        }
+        return tree;
+    }    
+    
+    /**
+     * ДЕРЕВО: обработка события установки текущего элемента в дереве
+     *
+     * @param event
+     */
+    public void onTreeNodeSelect(NodeSelectEvent event) {
+        TreeNode node = event.getTreeNode();
+        onSelectInTree(node);
+    }
+    
+    /**
+     * ДЕРЕВО: выполнение действий при установке текущего элемента в дереве -
+     * вызов с экранной формы
+     *
+     * @param node
+     */
+    public void onSelectInTree(TreeNode node) {        
+        treeSelectedNode = node;
+        setCurrentTab(DictExplForm.TAB_TREE);
+        if (treeSelectedNode == null) {
+            return;
+        }
+        treeSelectedNode.setSelected(true);
+        currentItem = (BaseDict) treeSelectedNode.getData();
+        List<BaseDict> details = null; 
+        if (isItemTreeType(currentItem)){
+            details = treeBean.makeGroupContent(currentItem);
+        } else
+            if (isItemRootType(currentItem)){
+                details = rootBean.makeGroupContent(currentItem);
+            }
+        setDetails(details, DictDetailSource.TREE_SOURCE); 
+                       
+        makeNavigator(currentItem);         
+        setCurrentViewModeMixed();
+       
+        BaseDict rootItem = (BaseDict) tree.getChildren().get(0).getData();            
+        makeJurnalHeader(rootItem.getName(), currentItem.getName());        
+    }        
+    
+    /**
+     * ДЕРЕВО: установка текущего элемента (группы) в дереве
+     * @param item
+     */
+    public void makeSelectedGroup(BaseDict item){      
+        if (item == null){
+            return;
+        }                             
+        //сброс предыдущей установки текущей node в дереве
+        if (treeSelectedNode != null) {
+            treeSelectedNode.setSelected(false);
+        }
+        
+        TreeNode node = EscomBeanUtils.findTreeNode(tree, item);
+         
+        if (node != null){
+            onSelectInTree(node);
+        }
+    }
+    
+    /**
+     * ДЕРЕВО: обработка события двойного клика в дереве
+     *
+     * @param event
+     */
+    public void onRowDblClckInTree(SelectEvent event) {
+        treeSelectedNode = (TreeNode) event.getObject();
+        if (treeSelectedNode == null){
+            return;
+        }
+        currentItem = (BaseDict) treeSelectedNode.getData();
+        makeSelectedGroup(currentItem);        
+        onEditContentItem();        
+    }
+    
+    /**
+     * ДЕРЕВО: добавление нового объекта в дерево
+     * @param item
+     * @param parentNode
+     */
+    public void addNewItemInTree(BaseDict item, TreeNode parentNode){        
+        if (item == null){
+            return;
+        }
+        treeSelectedNode.setSelected(false);
+        if (parentNode == null){
+            parentNode = tree;
+        }
+        parentNode.setExpanded(true);
+        String type = "tree";
+        if (isItemRootType(item)){
+            type = typeRoot;
+        }
+        treeSelectedNode = new DefaultTreeNode(type, item, parentNode);        
+        onSelectInTree(treeSelectedNode);        
+    }    
+         
+    /**
+     * ДЕРЕВО: удаление узла в дереве
+     * @param node 
+     */
+    public void removeItemFromTree(TreeNode node){
+        if (node == null){
+            return;
+        }
+        TreeNode parent = node.getParent();
+        parent.getChildren().remove(node);        
+        if (!parent.equals(tree)){ //если удалён элемент не верхнего уровня, то делаем выделение его родителя
+            onSelectInTree(parent);
+        } else { //если был удалён элемент верхнего уровня, то ничего в дереве не выделяем
+            treeSelectedNode = null;
+            currentItem = null;
+        }
+    }
+    
+    /**
+     * ДЕРЕВО: определяет, является ли текущее выделение в дереве root уровнем
+     * @return 
+     */
+    public boolean isSelectRootItem(){
+        if (treeSelectedNode == null){
+            return true; //так надо
+        }
+        return treeSelectedNode.getParent().equals(tree);
+    }
+    
+    /**
+     * ДЕРЕВО: разворачивает текущую ветку от текущего элемента вглубь   
+     */
+    public void onExpandNode(){
+        doExpandNode(treeSelectedNode);
+    };
+    /**
+     * ДЕРЕВО: разворачивает ветку
+     * @param node 
+     */
+    private void doExpandNode(TreeNode node){
+        if (node == null){
+            return;
+        }
+        node.setExpanded(true);
+        node.getChildren().stream().forEach(childNode -> doExpandNode(childNode));
+    }
+    
+    /**
+     * ДЕРЕВО: сворачивает текущую ветку от текущего элемента вглубь     
+     */
+    public void onCollapseNode(){
+        doCollapseNode(treeSelectedNode);
+    };
+    /**
+     * ДЕРЕВО: сворачивает ветку
+     * @param node 
+     */
+    private void doCollapseNode(TreeNode node){
+        if (node == null){
+            return;
+        }
+        node.setExpanded(false);
+        node.getChildren().stream().forEach(childNode -> doCollapseNode(childNode));
+    }
+    
+    /**
+     * ДЕРЕВО: обработка события развёртывания node 
+     * @param event
+     */
+    public void onNodeExpand(NodeExpandEvent event){
+        TreeNode node = event.getTreeNode();
+        if (node == null){
+            return;
+        }
+        node.setExpanded(true);
+    }
+    
+    /**
+     * ДЕРЕВО: обработка события свёртывания node 
+     * @param event
+     */
+    public void onNodeCollapse(NodeCollapseEvent event){
+        TreeNode node = event.getTreeNode();
+        if (node == null){
+            return;
+        }
+        node.setExpanded(false);
+    }        
+
+    /* *** НАВИГАТОР *** */
+
+    /**
+     * НАВИГАТОР: установка текущей папки по нажатию на кнопку навигатора
+     * @param nv
+     */ 
+    public void navigationSetSelected(FoldersNavigation nv) {
+        BaseDict group = (BaseDict) nv.getFolder();
+        makeSelectedGroup(group);
+    }
+    
+    /**
+     * НАВИГАТОР: формирование навигационной цепочки
+     * @param item
+     */ 
+    public void makeNavigator(BaseDict item) {
+        navigator = new LinkedList();        
+        navigator.addFirst(new FoldersNavigation(item));
+        while (item.getParent() != null) {
+            item = (BaseDict) item.getParent();
+            navigator.addFirst(new FoldersNavigation(item));
+        }
+        if (rootBean != null && !isItemRootType(item)){
+            navigator.addFirst(new FoldersNavigation(item.getOwner()));            
+        }
+    }
+    
+    /* *** КОПИРОВАНИЕ И ВСТАВКА *** */
+    /* Следует помнить, что при копировании группы/папки копируются ссылка на дочерние объекты!  */
+    
+    /* КОПИРОВАНИЕ: вызов копирования отмеченных объектов в таблице */
+    public void onCopySelectedItem() {
+        if (checkedItems.isEmpty()){
+            EscomBeanUtils.WarnMsgAdd("Warning", "NoCheckedItems");
+            return;
+        }
+        doCopyItems(checkedItems);
+    }
+
+    /* КОПИРОВАНИЕ: вызов копирования объекта из дерева */
+    public void onCopySelectedTreeItem() {
+        onCopyItem(currentItem);
+    }
+
+    /* КОПИРОВАНИЕ: вызов копирования объекта из таблицы обозревателя */
+    public void onCopyItem(BaseDict item) {
+        if (item == null){return;}
+        List<BaseDict> sourceItems = new ArrayList<>();
+        sourceItems.add(item);
+        doCopyItems(sourceItems);
+    }
+
+    /* КОПИРОВАНИЕ: копирование объектов в память  */
+    public void doCopyItems(List<BaseDict> sourceItems) {
+        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem))
+                .collect(Collectors.toSet());
+        copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
+    }
+
+
+    /* ВСТАВКА: вставка объекта в дерево */
+    public void onPasteItemToTree(){
+        doPasteItem(currentItem);
+    }
+
+    /* ВСТАВКА: вставка объекта в таблицу обозревателя */
+    public void onPasteItemToTable(){
+        BaseDict parent = null;
+        if (treeSelectedNode != null){
+            parent = (BaseDict)treeSelectedNode.getData();
+        }
+        doPasteItem(parent);
+    }
+    
+    /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
+    /* Реальный parent будет установлен в бине объекта */
+    private void doPasteItem(BaseDict parent) {
+        Set<String> errors = new HashSet<>();
+        copiedItems.stream().forEach(item-> sessionBean.onPasteItem(item, parent, errors));
+        if (!errors.isEmpty()){            
+            EscomBeanUtils.showErrorsMsg(errors);
+        }
+    }
+    
+    /* *** ПОИСК *** */
+
+    /**
+     * ПОИСК: Обработка нажатия на кнопку алфавитной панели
+     *
+     * @param event
+     */
+    public void abcSearche(ActionEvent event) {
+        String action = (String) event.getComponent().getAttributes().get("action");
+        searcheBean.getModel().setNameSearche(action);
+        onSearcheItem();
+    }
+    
+    /**
+     * ПОИСК: Обработка действия по нажатию кнопки Поиск
+     */
+    public void onSearcheItem() {
+        if (searcheBean.getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
+            EscomBeanUtils.ErrorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
+        } else {
+            searcheBean.doSearcheItems();
+            if (getDetailItems().isEmpty()) {
+                EscomBeanUtils.WarnMsgAdd("Info", "NO_SEARCHE_FIND");
+                return;
+            }
+            switch (currentTab) {
+                case DictExplForm.TAB_TREE: {
+                    if (treeSelectedNode != null) {
+                        treeSelectedNode.setSelected(false);
+                        treeSelectedNode = null;
+                    }
+                    break;
+                }
+                case DictExplForm.TAB_FILTER: {
+                    if (filterSelectedNode != null) {
+                        filterSelectedNode.setSelected(false);
+                        filterSelectedNode = null;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    
+     /* *** DRAG & DROP *** */          
+    
+    /**
+     * Формирование списка объектов для перетаскивания
+     * В список включается перетаскиваемый объект и уже отмеченные объекты 
+     * @return 
+     */
+    private void makeDragList(BaseDict dragItem){
+        if (dragItem == null){
+            checkedItems.clear();
+            return;
+        }
+        if (!checkedItems.contains(dragItem)){
+            checkedItems.add(dragItem);
+        }
+    }
+    
+    /**
+     * Обработка события drop в дерево объектов
+     */
+    public void dropToTree(){
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        
+        String dragId = params.get("dragId"); //определяем приёмник запись в дереве
+        String dropId = params.get("dropId"); //получаем приёмник TreeNode куда поместили объект 
+        
+        switch (currentTab){ //в зависимости от того, какое открыто дерево
+            case DictExplForm.TAB_TREE:{
+                String rkNode = dropId.substring(LEH_TREE_ITEMS, dropId.length());
+                dropNode = EscomBeanUtils.findUiTreeNode(tree, rkNode);  
+                break;
+            }
+            case DictExplForm.TAB_FILTER:{
+                String rkNode = dropId.substring(LEH_TREE_FILTERS, dropId.length());
+                dropNode = EscomBeanUtils.findUiTreeNode(filterTree, rkNode);  
+                break;
+            }
+        }
+        
+        if (dropNode != null) {            
+            dropItem = (BaseDict) dropNode.getData();   //определили получателя
+
+            //определям источник : объект тянется из дерева             
+            if (dragId.substring(0, LEH_TREE_ITEMS).equals(TREE_ITEMS_NAME)) {
+                String rkNode = dragId.substring(LEH_TREE_ITEMS, dragId.length());
+                dragNode = EscomBeanUtils.findUiTreeNode(getTree(), rkNode);
+                BaseDict dragItem = (BaseDict) dragNode.getData();                
+                checkedItems.clear();
+                makeDragList(dragItem);
+                if (!checkedItems.isEmpty()){
+                    //проверяем, что тянем, так как может быть тянем root, а это пока не допустимо!
+                    if (isItemTreeType(dragItem)){
+                        Set<String> errors = new HashSet<>();
+                        // если тянем treeItem и бросаем в treeItem
+                        if (treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
+                            onShowMovedDlg("MoveTreeDlg");
+                        }
+                        if (!errors.isEmpty()) {
+                            EscomBeanUtils.showErrorsMsg(errors);
+                        } 
+                    }
+                }
+                return;
+            }
+
+            //определям источник : объект тянется из таблицы обозревателя
+            if (dragId.substring(0, LEH_TABLE_NAME).equals(TABLE_NAME)) { 
+                String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
+                String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+                Integer tbKey = Integer.parseInt(rwKey);
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, getDetailItems());
+                makeDragList(dragItem);
+                if (!checkedItems.isEmpty()){
+                    switch (currentTab){ //в зависимости от того, какое открыто дерево
+                        case DictExplForm.TAB_TREE:{
+                            doDropToTree(checkedItems);
+                            break;
+                        }
+                        case DictExplForm.TAB_FILTER:{
+                            doDropToFilter(checkedItems, (Filters) dropItem);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Обработка drop помещения объекта в фильтр
+     */
+    private void doDropToFilter(List<BaseDict> dragItems, Filters filter){        
+        Set<String> errors = new HashSet<>();
+        switch (filter.getId()){
+            case DictFilters.TRASH_ID:{
+                checkedItems =
+                    dragItems.stream().filter(dragItem -> 
+                        (isItemDetailType(dragItem) && tableBean.prepareDropItemToTrash(dragItem, errors))
+                        ||
+                        (isItemTreeType(dragItem) && treeBean.prepareDropItemToTrash(dragItem, errors))
+                        || 
+                        (isItemRootType(dragItem) && rootBean.prepareDropItemToTrash(dragItem, errors))                      
+                    ).collect(Collectors.toList());
+                onShowMovedDlg("MoveItemToTrashDlg");
+                break;
+            }
+            case DictFilters.NOTACTUAL_ID:{
+                checkedItems =
+                    dragItems.stream().filter(dragItem -> 
+                        (isItemDetailType(dragItem) && tableBean.prepareDropItemToNotActual(dragItem, errors))
+                        ||
+                        (isItemTreeType(dragItem) && treeBean.prepareDropItemToNotActual(dragItem, errors))
+                        ||
+                        (isItemRootType(dragItem) && rootBean.prepareDropItemToNotActual(dragItem, errors))
+                    ).collect(Collectors.toList());
+                onShowMovedDlg("MoveItemToNotActual");
+                break;
+            }
+            case DictFilters.FAVORITE_ID:{
+                dragItems.stream().forEach(dragItem -> onAddContentInFavorites(dragItem));
+                break;
+            }
+        }
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);
+        }    
+    }
+    
+    /**
+     * Обработка drop помещения объекта в дерево
+     */
+    private void doDropToTree(List<BaseDict> dragItems){
+        Set<String> errors = new HashSet<>();
+        switch (source){
+            case DictDetailSource.TREE_SOURCE:{    //если источник для detail дерево, то будем перемещать объект                            
+                checkedItems =
+                    dragItems.stream().filter(dragItem -> 
+                        // если тянем datailItem и бросаем в treeItem
+                        (isItemDetailType(dragItem) && isItemTreeType(dropItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors))
+                        || // если тянем treeItem и бросаем в treeItem
+                        (isItemTreeType(dragItem) && isItemTreeType(dropItem) && treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors))
+                        || // если тянем datailItem и бросаем в rootItem
+                        (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors))
+                    ).collect(Collectors.toList());
+                onShowMovedDlg("MoveTblDlg");
+                break;
+            }
+            case DictDetailSource.SEARCHE_SOURCE:{ //если источник для detail поиск, то будем добавлять в группу
+                checkedItems =
+                    dragItems.stream().filter(dragItem -> 
+                        // если тянем datailItem и бросаем в treeItem
+                        (isItemDetailType(dragItem) && isItemTreeType(dropItem) && tableBean.prepareAddItemToGroup(dropItem, dragItem, errors))
+                        || // если тянем datailItem и бросаем в treeItem
+                        (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.prepareAddItemToGroup(dropItem, dragItem, errors))                  
+                    ).collect(Collectors.toList()); 
+                onShowMovedDlg("AddTblDlg");
+                break;
+            }
+        }
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);
+        }
+    }
+        
+    /**
+     * Обработка события drop в таблицу обозревателя объектов
+     */
+    public void dropToTable(){
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+
+        String dropId = params.get("dropId"); //получаем id приёмника, куда поместили объект
+        String dragId = params.get("dragId"); //получаем id источника 
+
+        //ищем в таблице запись приёмника
+        String rkTbl = dropId.substring(LEH_TABLE_NAME, dropId.length());
+        String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+        Integer tbKey = Integer.parseInt(rwKey);
+        dropItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+        if (dropItem != null) {
+            //ищем в таблице запись источника    
+            rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
+            rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+            tbKey = Integer.parseInt(rwKey);
+            BaseDict dragItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+            makeDragList(dragItem);
+            if (!checkedItems.isEmpty()) { 
+                Set<String> errors = new HashSet<>();
+                if (isItemDetailType(dragItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
+                   onShowMovedDlg("MoveTblDlg");
+                } else{
+                    dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
+                    dropNode = EscomBeanUtils.findTreeNode(tree, dropItem);
+                    if (isItemTreeType(dragItem) && isItemTreeType(dropItem) && treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
+                        onShowMovedDlg("MoveTreeDlg");
+                    }
+                }
+                if (!errors.isEmpty()) {
+                    EscomBeanUtils.showErrorsMsg(errors);
+                }    
+            }
+        } else {
+            EscomBeanUtils.ErrorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+        } 
+    } 
+    
+    /**
+     * DRAG & DROP: обработка drop в навигаторе
+     */ 
+    public void dropToNavig() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        String dragId = params.get("dragId"); //получаем источник 
+        String dropId = params.get("dropId"); //получаем приёмник 
+
+        Integer lenDrop = dropId.length();
+
+        String rkTbl = dropId.substring(LEH_NAVIG_NAME, lenDrop);
+        String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+        
+        dropItem = (Folders) EscomBeanUtils.findUiNavigatorItem(getNavigator(), Integer.parseInt(rwKey));
+        dropNode = EscomBeanUtils.findTreeNode(tree, (Folders) dropItem);
+
+        if (dragId.substring(0, LEH_TABLE_NAME).equals(TABLE_NAME)) {
+            rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
+            rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+            Integer tbKey = Integer.parseInt(rwKey);
+            BaseDict flDrag = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+            BaseDict dragItem = flDrag;
+            Set<String> errors = new HashSet<>();
+            if (isItemDetailType(flDrag)){
+                tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors);            
+            } else
+                if (isItemTreeType(flDrag)){
+                    dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
+                    treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
+                }                
+            if (!errors.isEmpty()) {
+                EscomBeanUtils.showErrorsMsg(errors);
+            }    
+        }
+        EscomBeanUtils.ErrorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+    }
+    
+    /**
+     * DRAG & DROP: отработка команды на перемещение в дереве
+     */
+    public void moveGroupToGroup() {
+        checkedItems.stream().forEach(dragItem -> {
+            treeBean.moveGroupToGroup(dropItem, dragItem); //делаем изменения в модели данных
+
+            //удаляем позицию из его предыдущего родителя
+            TreeNode dragParentNode = dragNode.getParent();
+            dragParentNode.getChildren().remove(dragNode);
+
+            //добавляем объект к новому родителю
+            dropNode.getChildren().add(dragNode);
+            makeNavigator(dragItem);
+        });        
+        reloadDetailsItems();
+    }
+    
+    /**
+     * DRAG & DROP: отработка команды на перемещение из таблицы в дерево
+     */
+    public void moveItemToGroup(){
+        checkedItems.stream().forEach(dragItem -> {            
+            tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
+        });
+        getDetailItems().removeAll(checkedItems);
+    }
+    
+    /**
+     * DRAG & DROP добавление объекта в группу
+     */
+    public void addItemToGroup(){
+        if (!isItemTreeType(dropItem)){ //если бросили в treeItem               
+            return;
+        }
+        checkedItems.stream()
+                .filter(dragItem -> !isItemRootType(dragItem))
+                .forEach(dragItem -> {
+                    if (sessionBean.addItemToGroup(dragItem, dropItem)){
+                        EscomBeanUtils.SuccesFormatMessage("Successfully", "AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
+                    }
+                });
+    }
+    
+    /**
+     * DRAG & DROP: перемещение объекта в корзину
+     */
+    public void dropItemToTrash(){
+        checkedItems.stream().forEach(dragItem ->  onMoveContentToTrash(dragItem));
+    }
+    
+    /**
+     * DRAG & DROP: перемещение объекта в не актулаьные
+     */
+    public void dropItemToNotActual(){
+        checkedItems.stream().forEach(dragItem -> {
+            if (isItemDetailType(dragItem)){
+                tableBean.moveItemToNotActual(dragItem);
+            }
+        });    
+    }
+            
+    /* *** СЕЛЕКТОР *** */
+    
+    /**
+     * СЕЛЕКТОР: определяет режим множественного выбора в селекторе
+     * @return 
+     */
+    public boolean isMultySelectMode(){
+        return Objects.equals(selectMode, DictExplForm.MULTY_SELECT_MODE);
+    }
+    
+    /**
+     * СЕЛЕКТОР: определяет режим единичного выбора в селекторе
+     * @return 
+     */
+    public boolean isSinglSelectMode(){
+        return Objects.equals(selectMode, DictExplForm.SING_SELECT_MODE);
+    }    
+    
+    /**
+     * СЕЛЕКТОР: определяет, является ли объект доступным для выбора в селекторе
+     * @param item
+     * @return 
+     */
+    public boolean isCanSelectedItem(BaseDict item){
+        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemClass().getSimpleName());
+    }
+    
+    /* *** ПРОЧИЕ МЕТОДЫ *** */
+    
+    /**
+     * АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: Открытие формы администрирования
+     */  
+    public void onOpenAdmCardForm() {
+        onOpenAdmCardForm(currentItem);
+    }    
+    public void onOpenAdmCardForm(BaseDict item) {
+        if (item == null){
+            return;
+        }
+        onSetCurrentItem(item);
+        if (isItemDetailType(item)){
+            doOpenAdmCardForm(tableBean);
+        } else
+            if (isItemTreeType(item)){
+                doOpenAdmCardForm(treeBean);                
+            } else
+                if (isItemRootType(item)){
+                    doOpenAdmCardForm(rootBean);
+                }
+    }    
+    private void doOpenAdmCardForm(BaseBean bean){ 
+        sessionBean.addSourceBean(bean);
+        String beanName = bean.toString();
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", 600);
+        options.put("height", 350);
+        options.put("maximizable", false);
+        options.put("closable", true);
+        options.put("closeOnEscape", true);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(beanName);
+        paramMap.put("beanName", beanNameList);
+        RequestContext.getCurrentInstance().openDialog("object-admin", options, paramMap);       
+    }
+       
+    /**
+     * Установка текущей страницы списка данных в обозревателе/селекторе
+     *
+     * @param event
+     */
+    public void onPageChange(PageEvent event) {
+        setCurrentPage(((DataTable) event.getSource()).getFirst());
+    }   
+    
+    public String getLabelFromBundle(String key){
+        return EscomBeanUtils.getBandleLabel(key);
+    }
+            
+    /**
+     * СЛУЖЕБНЫЕ МЕТОДЫ: построение объекта для сортировки таблицы обозревателя
+     * @return 
+     */
+    public List<SortMeta> getSortOrder() {
+        if (sortOrder == null){
+            sortOrder = new ArrayList<>();
+            UIViewRoot viewRoot =  FacesContext.getCurrentInstance().getViewRoot();
+            UIComponent columnIcon = viewRoot.findComponent("explorer:tblDetail:colIcon"); 
+            UIComponent columnName = viewRoot.findComponent("explorer:tblDetail:shortName"); 
+            SortMeta sm1 = new SortMeta();
+            sm1.setSortBy((UIColumn)columnIcon);
+            sm1.setSortField("iconName");
+            sm1.setSortOrder(SortOrder.DESCENDING);                        
+            SortMeta sm2 = new SortMeta();
+            sm2.setSortBy((UIColumn)columnName);
+            sm2.setSortField("nameEndElipse");
+            sm2.setSortOrder(SortOrder.ASCENDING);
+            sortOrder.add(sm1);
+            sortOrder.add(sm2);
+        }
+        return sortOrder;
+    }    
+    
+    /**
+     * СЛУЖЕБНЫЕ МЕТОДЫ: формирование заголовка журнала обозревателя
+     * @param firstName
+     * @param secondName
+     * @return 
+     */ 
+    public String makeJurnalHeader(String firstName, String secondName){      
+        StringBuilder sb = new StringBuilder(firstName);
+        sb.append(": ");
+        sb.append(secondName); 
+        setJurnalHeader(sb.toString());
+        setCurrentPage(0);
+        return sb.toString();
+    }
+    
+    /**
+     * СЛУЖЕБНЫЕ МЕТОДЫ: отображает диалог перемещения объекта
+     *    
+     * @param dlgName
+     */
+    public void onShowMovedDlg(String dlgName) {
+        RequestContext.getCurrentInstance().execute("PF('" + dlgName + "').show();");
+    }   
+    
+    /**
+     * Признак текущего режима отображения контента
+     * @return 
+     */
+    public boolean isNowShowDetail(){
+        return Objects.equals(currentType, typeDetail);
+    }
+    public boolean isNowShowTree(){
+        return Objects.equals(currentType, typeTree);
+    }   
+    public boolean isNowShowRoot(){
+        return Objects.equals(currentType, typeRoot);
+    }
+    public boolean isNowShowMix(){
+        return Objects.equals(currentType, typeMixed);
+    }  
+        
+    /**
+     * Определяет режим отображения: обозреватель или селектор
+     * @return 
+     */
+    public boolean isSelectorViewMode(){
+        return Objects.equals(viewMode, DictExplForm.SELECTOR_MODE);
+    }
+    public boolean isExplorerViewMode(){
+        return Objects.equals(viewMode, DictExplForm.EXPLORER_MODE);
+    }
+    
+    /**
+     * Установка текущего элемента в таблице обозревателя
+     * @param item 
+     */
+    public void onSetCurrentItem(BaseDict item){
+        currentItem = item;        
+        getCheckedItems().clear();
+        getCheckedItems().add(item);  
+    }
+
+    /**
+     * Установка режима отображения в обозревателе в зависимости от того, какой(ие) тип(ы) объектов отображаются
+     * @param item 
+     */
+    public void setCurrentViewType(BaseDict item){
+         if (isItemDetailType(item)){
+            setCurrentViewModeDetail();
+        } else 
+            if (isItemTreeType(item)){
+                setCurrentViewModeTree();                
+            } else
+                if (isItemRootType(item)){
+                    setCurrentViewModeRoot();
+                }
+    }
+    public void setCurrentViewModeDetail(){
+        currentType = typeDetail;
+    }
+    public void setCurrentViewModeTree(){
+        currentType = typeTree;
+    }
+    public void setCurrentViewModeRoot(){
+        currentType = typeRoot;
+    }
+    public void setCurrentViewModeMixed(){
+        currentType = typeMixed;
+    }
+    
+    /* *** GET & SET *** */
+
+    public BaseDict getCurrentItem() {
+        return currentItem;
+    }
+        
+    public void setCheckedItems(List<BaseDict> items) {
+        checkedItems = items;
+    }
+    public List<BaseDict> getCheckedItems() {
+        return checkedItems;
+    }      
+
+    public void setRootBean(BaseTreeBean rootBean) {
+        this.rootBean = rootBean;
+        this.typeRoot = rootBean.getItemClass().getSimpleName();
+    }
+    public BaseTreeBean getRootBean() {
+        return rootBean;
+    }    
+    
+    public BaseTreeBean getTreeBean() {
+        return treeBean;
+    }
+    public void setTreeBean(BaseTreeBean treeBean) {
+        this.treeBean = treeBean;
+        this.typeTree = treeBean.getItemClass().getSimpleName();
+        currentTab = DictExplForm.TAB_TREE;
+    }
+    
+    public void setTableBean(BaseExplBean tableBean) {
+        this.tableBean = tableBean; 
+        this.typeDetail = tableBean.getItemClass().getSimpleName();
+    }
+    public BaseExplBean getTableBean() {
+        return tableBean;
+    }
+
+    public BaseExplBean getSearcheBean() {
+        return searcheBean;
+    }
+    public void setSearcheBean(BaseExplBean searcheBean) {
+        this.searcheBean = searcheBean;
+    }
+
+    public String getTypeRoot() {
+        return typeRoot;
+    }
+    public String getTypeDetail() {
+        return typeDetail;
+    }
+    public String getTypeOwner() {
+        return typeTree;
+    }
+
+    public TreeNode getFilterSelectedNode() {
+        return filterSelectedNode;
+    }
+    public void setFilterSelectedNode(TreeNode filterSelectedNode) {
+        this.filterSelectedNode = filterSelectedNode;
+    }
+
+    public TreeNode getTreeSelectedNode() {
+        return treeSelectedNode;
+    }
+    public void setTreeSelectedNode(TreeNode treeSelectedNode) {
+        this.treeSelectedNode = treeSelectedNode;
+    }
+
+    public String getCurrentType() {
+        return currentType;
+    }
+
+    public Set<BaseDict> getCopiedItems() {
+        return copiedItems;
+    }
+    
+    public Integer getRowsInPage() {
+        return rowsInPage;
+    }
+    public void setRowsInPage(Integer rowsInPage) {
+        this.rowsInPage = rowsInPage;
+    }
+
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+    public void setCurrentPage(Integer currentPage) {
+        this.currentPage = currentPage;
+    }
+    
+    public Integer getSource() {
+        return source;
+    }
+    public void setSource(Integer source) {
+        this.source = source;
+    }
+    
+    public String getJurnalHeader() {
+        if (jurnalHeader == null){            
+            if (isSelectorViewMode()){
+                jurnalHeader = selectorHeader;
+            }else {
+                jurnalHeader = explorerHeader;
+            }            
+        }
+        return jurnalHeader;
+    }
+    public void setJurnalHeader(String jurnalHeader) {
+        this.jurnalHeader = jurnalHeader;
+    }
+
+    public String getSelectorHeader() {
+        return selectorHeader;
+    }
+    public void setSelectorHeader(String selectorHeader) {
+        this.selectorHeader = selectorHeader;
+    }
+
+    public String getExplorerHeader() {
+        return explorerHeader;
+    }
+    public void setExplorerHeader(String explorerHeader) {
+        this.explorerHeader = explorerHeader;
+    }
+     
+    public String getCurrentTab() {
+        return currentTab;
+    }
+    public void setCurrentTab(String currentTab) {
+        this.currentTab = currentTab;
+    }
+    
+    public void setTypeEdit(Integer typeEdit) {
+        this.typeEdit = typeEdit;
+    }
+
+    public Integer getSelectMode() {
+        return selectMode;
+    }
+    
+    public Deque getNavigator() {
+        return navigator;
+    }
+
+    public Map<String, Object> getCreateParams() {
+        return createParams;
+    }
+
+}

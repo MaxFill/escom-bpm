@@ -1,0 +1,80 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{bundle.Scan}
+    </ui:define>
+    
+    <ui:define name="body">
+        <h:form id="productform">
+            <p:panel styleClass="ui-grid-col-12" >
+                <h:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-datagrid-data ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.FileFormat}" />
+                    <p:selectOneMenu id="fileExtension" 
+                        required="true" widgetVar="fileExtensionWidget"
+                        onchange="Neoflex.changeFileExtension()"
+                        value="#{scanBean.model.fileExtensionValue}">
+                        <f:selectItems value="#{scanBean.model.fileExtensions}"
+                                       var="_fileExtension" itemLabel="#{_fileExtension.label}"
+                                       itemValue="#{_fileExtension.value}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                
+                <!-- Scripts and css for DWTwain -->
+                <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/DWTwain/Resources/dynamsoft.webtwain.initiate.js"/>
+                <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/DWTwain/Resources/dynamsoft.webtwain.config.js"/>
+                <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/DWTwain/Resources/dynamsoft.webtwain.install.js"/>
+                <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/DWTwain/Resources/reference/hint.css" />
+                <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/resources/DWTwain/Resources/reference/html5_editor.css"/>
+
+                <!-- Our custom script and properties for DWTwain -->
+                <h:outputScript library="js" name="custom-dwtwain.js" />
+                <h:inputHidden id="maxFileSize" value="#{scanBean.scanHelper.maxFileSize}" />
+                <h:inputHidden id="productKey" value="#{scanBean.scanHelper.productKey}" />
+                <h:inputHidden id="isTrial" value="#{scanBean.scanHelper.isTrial}" />
+
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-datagrid-data">
+                    <h:outputLabel value="#{bundle.SCAN_DOCUMENT}" />
+                    <div id="dwtControlViewer" style="float:left; width:100%; height: 350px">
+                        <span id="dwtControlViewer-noDevice" style="display:none" class="ui-messages-error-summary">SCAN_NO_DEVICES!</span>
+                        <span id="dwtControlViewer-initError" style="display:none" class="ui-messages-error-summary">SCAN_DWTWAIN_INIT_ERROR!</span>
+                        <span id="dwtControlViewer-keyNotValid" style="display:none" class="ui-messages-error-summary">SCAN_DWTWAIN_KEY_NOT_VALID!</span>
+                    </div>
+                </p:panelGrid>
+
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-datagrid-data">
+                    <h:outputLabel value="#{bundle.SCAN_SCANED_DOCUMENT}"/>
+                    <div id="dwtControlThumb" style="float:left; width:100%; height:150px">
+                    </div>
+                </p:panelGrid>
+                <h:inputHidden id="image" value="#{scanBean.model.imageStringBase64}" />
+            </p:panel>
+
+            <p:toolbar styleClass="ui-grid-col-12" >
+                <f:facet name="left">
+                    <p:commandButton widgetVar="scanButtonWidget" value="#{bundle.Scaning}" title="#{bundle.Scaning}"
+                                     icon="ui-icon-circle-arrow-e"
+                                     process="@this"/>
+                    <p:commandButton widgetVar="deleteButtonWidget" value="#{bundle.Delete}" title="#{bundle.Delete}"
+                                     icon="ui-icon-trash"
+                                     process="@this"/> 
+                </f:facet>
+                <f:facet name="right">
+                    <p:commandButton widgetVar="saveButtonWidget" value="#{bundle.Save}" title="#{bundle.SaveAndClose}"
+                                     icon="ui-icon-disk"
+                                     onclick="Neoflex.prepareScannedImageToSave()"
+                                     action="#{scanBean.onSaveAndClose()}"/>
+                    <p:commandButton value="#{bundle.Cancel}" title="#{bundle.Cancel}"
+                                     icon="ui-icon-close"                                     
+                                     action="#{scanBean.onClose()}"/>        
+                </f:facet>
+            </p:toolbar>
+            
+        </h:form>
+    </ui:define>
+
+</ui:composition>

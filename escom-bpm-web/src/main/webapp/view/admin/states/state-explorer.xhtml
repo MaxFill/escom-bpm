@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <ui:param name="_detailBean" value="#{stateBean}" />  
+
+    <ui:param name="_explorerHeader" value="#{_detailBean.getLabelFromBundle('States')}"/>
+        
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateState}" />
+    
+    <ui:define name="explorerColumns">           
+    </ui:define>   
+
+</ui:composition>

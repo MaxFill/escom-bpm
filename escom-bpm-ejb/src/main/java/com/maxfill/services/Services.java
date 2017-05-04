@@ -1,0 +1,171 @@
+
+package com.maxfill.services;
+
+import com.maxfill.services.common.history.ServicesEvents;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import static javax.persistence.GenerationType.TABLE;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+/**
+ * Класс сущности служб
+ * @author mfilatov
+ */
+@Entity
+@Table(name = "services")
+public class Services implements Serializable {
+    @Lob
+    @Column(name = "TimeHandle")
+    private byte[] timeHandle;
+    private static final long serialVersionUID = -4878024303594842658L;
+    
+    @TableGenerator(
+        name="ServicesIdGen", 
+        table="SYS_ID_GEN", 
+        pkColumnName="GEN_KEY", 
+        valueColumnName="GEN_VALUE", 
+        pkColumnValue="Services_ID", allocationSize = 1)
+        
+    @Id
+    @Basic(optional = false)
+    @NotNull
+    @GeneratedValue(strategy=TABLE, generator="ServicesIdGen")
+    @Column(name = "Id")
+    private Integer id;
+    
+    @Size(max = 50)
+    @Column(name = "Name")
+    private String name;
+    
+    @Size(max = 2147483647)
+    @Column(name = "Settings")
+    private String settings;
+
+    @Size(max = 2147483647)
+    @Column(name = "Sheduler")
+    private String sheduler;
+       
+    /**
+     * Признак того, что сервис
+     */
+    @Column(name = "Started")
+    private Boolean started = false;
+    
+    @Column(name = "DateNextStart")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateNextStart;
+        
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId", orphanRemoval=true)
+    private List<ServicesEvents> servicesEventsList;
+        
+    public Services() {
+    }
+
+    public Services(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String settings) {
+        this.settings = settings;
+    }
+
+    public String getSheduler() {
+        return sheduler;
+    }
+
+    public void setSheduler(String sheduler) {
+        this.sheduler = sheduler;
+    }
+    
+    public List<ServicesEvents> getServicesEventsList() {
+        return servicesEventsList;
+    }
+
+    public void setServicesEventsList(List<ServicesEvents> servicesEventsList) {
+        this.servicesEventsList = servicesEventsList;
+    }
+
+    public Boolean getStarted() {
+        return started;
+    }
+
+    public void setStarted(Boolean started) {
+        this.started = started;
+    }
+        
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Services)) {
+            return false;
+        }
+        Services other = (Services) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.maxfill.escombpm2.system.services.Services[ id=" + id + " ]";
+    }
+
+    public Date getDateNextStart() {
+        return dateNextStart;
+    }
+
+    public void setDateNextStart(Date dateNextStart) {
+        this.dateNextStart = dateNextStart;
+    }
+
+    public byte[] getTimeHandle() {
+        return timeHandle;
+    }
+
+    public void setTimeHandle(byte[] timeHandle) {
+        this.timeHandle = timeHandle;
+    }
+    
+}

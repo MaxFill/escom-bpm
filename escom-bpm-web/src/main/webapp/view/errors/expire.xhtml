@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{msg.SessionExpired}
+    </ui:define>
+
+    <ui:define name="body">
+
+        <h:form >
+            <p:panel styleClass="panelLogin">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12">
+                    <p:graphicImage name="/images/escom_logo.jpg"  />
+                    <h:panelGroup style="width: 100%;">
+                        <h3>
+                            <h:outputText value="#{msg.SessionTimeout}"></h:outputText> 
+                        </h3>
+                        <h4>
+                            <h:outputText value="#{msg.SessionTimeoutError}"/>
+                        </h4>
+                    </h:panelGroup>
+                    <p:spacer />
+                    <p:commandLink value="#{bundle.GotoLogin}" 
+                                   ajax="false"
+                                   type="submit"
+                                   action="/login?faces-redirect=true" />  
+                </p:panelGrid>
+            </p:panel>
+        </h:form> 
+
+    </ui:define>
+</ui:composition>
+

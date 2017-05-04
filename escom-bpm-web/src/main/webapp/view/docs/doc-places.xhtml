@@ -1,0 +1,12 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui">
+
+    <p:tab title="#{bundle.PlacesDocStorage}" >
+        <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" >
+            <p:outputLabel value="#{bundle.Folder}:" />
+            <p:inputText value="#{_bean.editedItem.path}" readonly="true" styleClass="ui-grid-col-12"/>            
+        </p:panelGrid>
+    </p:tab>
+
+</ui:composition>

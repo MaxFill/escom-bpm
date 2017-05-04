@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"                
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <ui:param name="_detailBean" value="#{numeratorPatternBean}" />  
+
+    <ui:param name="_explorerHeader" value="#{_detailBean.getLabelFromBundle('Numerators')}"/>
+            
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />
+    
+    <ui:define name="explorerColumns">
+        <p:column headerText="#{bundle.Pattern}" sortBy="#{item.pattern}">
+            #{item.pattern}
+        </p:column>
+        <p:column headerText="#{bundle.Type}" sortBy="#{_detailBean.model.getLabel(item.typeCode)}">
+            #{_detailBean.model.getLabel(item.typeCode)}
+        </p:column>
+    </ui:define>   
+
+</ui:composition>

@@ -1,0 +1,202 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{applicationBean.APP_NAME}
+    </ui:define>
+
+    <ui:define name="body">
+        <f:event listener="#{sessionBean.showNotifBar()}" type="preRenderView" />
+
+        <h:form id="mainFRM" style="font-size: 90%">           
+            <style type="text/css">
+                .ui-dashboard-column {
+                    width: 300px !important;
+                }
+                .dash-panel{
+                    margin: 5px !important;
+                }
+            </style>
+
+            <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="bar">               
+                <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
+                                 icon="ui-icon-circle-close"
+                                 onclick="PF('bar').hide()" type="button" />
+                <br/>
+                <h:panelGrid columns="1">
+                    <p:outputLabel value="#{msg.NeedUpdateSystem}" style="font-size:18px;" />
+                    <br/>
+                    <h:outputLink value="http://www.escom-bpm.com" target="_blank">
+                        <h:outputText value="#{msg.GetInfoAboutNewversion}" />
+                    </h:outputLink>
+                </h:panelGrid>
+            </p:notificationBar>
+
+            <p:toolbar style="">
+                <f:facet name="left">
+
+                </f:facet>
+                <f:facet name="right">
+                    <p:menuButton value="#{bundle.Help}">
+                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"/>
+                        <p:separator />
+                        <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench"/>
+                        <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"/>
+                        <p:menuitem value="#{bundle.EscomWWW}" url="http://www.escom-bpm.com" icon="ui-icon-home"/>
+                        <p:separator />
+                        <p:menuitem value="#{bundle.About}" icon="ui-icon-note" 
+                                    process="@this" update="logFRM:aboutPanel"
+                                    onclick="PF('dlgAbout').show();"/>
+                    </p:menuButton>
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                    <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+                                     ajax="false" icon="ui-icon-extlink"
+                                     action="#{sessionBean.onSessionExit()}"/>
+                </f:facet>
+            </p:toolbar>
+
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
+
+                    <p:panel id="admObjects" header="#{bundle.Administation}" 
+                             rendered="#{sessionBean.userAdmin}"
+                             toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                            <p:commandLink value="#{bundle.SettigsObject}"
+                                           ajax="false"
+                                           action="objectsExpl"/>
+                            <p:commandLink value="#{bundle.ExplorerStates}"
+                                           ajax="false"
+                                           action="state-explorer"/>
+                            <p:commandLink value="#{bundle.Users}"
+                                           ajax="false"
+                                           action="user-explorer"/>
+                            <p:commandLink value="#{bundle.Numerators}" title="#{bundle.NumeratorsPatterns}"
+                                           ajax="false"
+                                           action="numPatternsExpl"/>
+                            <p:commandLink value="TEST" 
+                                           action="#{sessionBean.test()}"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="services" header="#{bundle.Services}" 
+                             rendered="#{sessionBean.userAdmin}"
+                             toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
+                            <p:commandLink value="#{bundle.MailService}" title="#{bundle.MailService}"
+                                           actionListener="#{sessionBean.openMailService()}"/>
+                            <p:commandLink value="#{bundle.LdapService}" title="#{bundle.LdapService}"
+                                           actionListener="#{sessionBean.openLdapService()}"/>
+                        </p:panelGrid>
+                    </p:panel>
+                    
+                    <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:outputLabel value="#{sessionBean.currentUser.staff.post.nameEndElipse}"/>
+                            <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
+                            
+                            <p:separator />
+                            
+                            <p:commandLink value="#{bundle.Settings}" 
+                                           actionListener="#{sessionBean.openSettingsForm()}"/>
+                            <p:commandLink value="#{bundle.ChangePassword}"
+                                           actionListener="#{userBean.openChangePassword()}"/>
+                            
+                            <p:outputLabel value="#{bundle.ChooseTheme} "/>
+                            <p:themeSwitcher effect="fade" var="t">
+                                <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
+                                <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item.displayName}" itemValue="#{item}"/>
+                                <p:column>
+                                    <h:outputText value="#{t.displayName}"/>
+                                </p:column>
+                                <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
+                            </p:themeSwitcher>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:commandLink value="#{bundle.DocsExplorer}"
+                                           ajax="false"
+                                           action="doc-explorer"/>
+                            <p:commandLink value="#{bundle.DocsTypes}"
+                                           ajax="false"
+                                           action="doctype-explorer"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
+                            <p:commandLink value="#{bundle.Posts}"
+                                           ajax="false"
+                                           action="post-explorer"/> 
+                            <p:commandLink value="#{bundle.OrgStructureExplorer}" 
+                                           ajax="false"
+                                           action="staff-explorer"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:commandLink value="#{bundle.Partners}"
+                                           ajax="false"
+                                           action="partner-explorer"/>
+                            <p:commandLink value="#{bundle.PartnerTypes}"
+                                           ajax="false"
+                                           action="partnertype-explorer"/>
+                        </p:panelGrid>
+                    </p:panel>
+
+                </p:dashboard>  
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="dialogs">        
+
+        <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgAbout">
+            <h:form id="logFRM">
+                <p:outputPanel id="aboutPanel" style="width: 600px; height: 400px;">
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:outputLabel value="#{bundle.Version}"/>
+                            <p:inputText value="#{applicationBean.licence.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+
+                            <p:outputLabel value="#{bundle.Release}"/>
+                            <p:inputText value="#{applicationBean.licence.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+
+                            <p:outputLabel value="#{bundle.DateLastUpdate}"/>
+                            <p:inputText value="#{applicationBean.licence.dateUpdate}" readonly="true" styleClass="ui-grid-col-12">
+                                <f:convertDateTime pattern="dd.MM.yyyy" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                            </p:inputText>
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
+                            <p:outputLabel value="#{bundle.LicenceTypeName}"/>
+                            <p:inputText value="#{applicationBean.licence.licenceName}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:outputLabel value="#{bundle.LicenceTotal}"/>
+                            <p:inputText value="#{applicationBean.licence.totalLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:outputLabel value="#{bundle.LicenceBusy}"/>
+                            <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:outputLabel value="#{bundle.TermLicense}"/>
+                            <p:inputText value="#{applicationBean.licence.termLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/>                                                   
+                            <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

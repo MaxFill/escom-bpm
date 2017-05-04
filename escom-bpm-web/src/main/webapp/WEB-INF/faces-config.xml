@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    <application>
+        <action-listener>org.primefaces.application.DialogActionListener</action-listener>
+        <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+                
+        <resource-bundle>
+            <base-name>locale.Bundle</base-name>
+            <var>bundle</var>
+        </resource-bundle>
+        <resource-bundle>
+            <base-name>locale.Validator</base-name>
+            <var>validator</var>
+        </resource-bundle>
+        <resource-bundle>
+            <base-name>locale.messages</base-name>
+            <var>msg</var>
+        </resource-bundle> 
+        <message-bundle>
+            locale.validation_msg
+        </message-bundle>     
+        <locale-config>
+            <default-locale>ru</default-locale>
+            <supported-locale>en</supported-locale>
+        </locale-config>
+    </application>
+    
+    <navigation-rule>
+        <from-view-id>*</from-view-id>        
+        
+        <navigation-case>
+            <from-outcome>rightForm</from-outcome>
+            <to-view-id>/view/admin/rights/rightForm.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+       
+        <navigation-case>
+            <from-outcome>doc-viewer</from-outcome>
+            <to-view-id>/view/docs/doc-viewer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+         
+        <navigation-case>
+            <from-outcome>document</from-outcome>
+            <to-view-id>/view/docs/document.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>doc-explorer</from-outcome>
+            <to-view-id>/view/docs/doc-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>scanning</from-outcome>
+            <to-view-id>/view/scaner/scanning.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>doc-card</from-outcome>
+            <to-view-id>/view/docs/doc-card.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>mail-message</from-outcome>
+            <to-view-id>/view/services/mail-message.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>mail-service</from-outcome>
+            <to-view-id>/view/services/mail-service.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>ldap-user</from-outcome>
+            <to-view-id>/view/services/ldap-users.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>change-password</from-outcome>
+            <to-view-id>/view/admin/users/change-password.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>sessions</from-outcome>
+            <to-view-id>/view/admin/users/sessions.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>numPatternsExpl</from-outcome>
+            <to-view-id>/view/admin/numPattern/num-pattern-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>numeratorPattern-card</from-outcome>
+            <to-view-id>/view/admin/numPattern/num-pattern-сard.xhtml</to-view-id>
+        </navigation-case>
+         
+        <navigation-case>
+            <from-outcome>objectsExpl</from-outcome>
+            <to-view-id>/view/admin/objects-expl.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>      
+        
+        <navigation-case>
+            <from-outcome>noSaveDlg</from-outcome>
+            <to-view-id>/view/sys/noSaveDlg.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>department-explorer</from-outcome>
+            <to-view-id>/view/companies/departaments/department-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>department-card</from-outcome>
+            <to-view-id>/view/companies/departaments/department-card.xhtml</to-view-id>
+        </navigation-case>        
+
+        <navigation-case>
+            <from-outcome>user-explorer</from-outcome>
+            <to-view-id>/view/users/user-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>user-card</from-outcome>
+            <to-view-id>/view/users/user-сard.xhtml</to-view-id>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>usergroups-card</from-outcome>
+            <to-view-id>/view/users/groupsUsers/usergroup-card.xhtml</to-view-id>
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>usergroups-explorer</from-outcome>
+            <to-view-id>/view/users/groupsUsers/usergroup-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>state-card</from-outcome>
+            <to-view-id>/view/admin/states/state-сard.xhtml</to-view-id>
+        </navigation-case>
+    
+        <navigation-case>
+            <from-outcome>state-explorer</from-outcome>
+            <to-view-id>/view/admin/states/state-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>doctype-explorer</from-outcome>
+            <to-view-id>/view/docs/docTypes/doctype-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>docgrouptype-card</from-outcome>
+            <to-view-id>/view/docs/docTypes/doctype-group-card.xhtml</to-view-id>
+        </navigation-case>
+    
+        <navigation-case>
+            <from-outcome>doctype-card</from-outcome>
+            <to-view-id>/view/docs/docTypes/doctype-card.xhtml</to-view-id>
+        </navigation-case>    
+   
+        <navigation-case>
+            <from-outcome>partnertype-card</from-outcome>
+            <to-view-id>/view/partners/types/partnertype-сard.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+             
+        <navigation-case>
+            <from-outcome>partnertype-explorer</from-outcome>
+            <to-view-id>/view/partners/types/partnertype-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>partnergroup-card</from-outcome>
+            <to-view-id>/view/partners/groups/partnergroup-card.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+    
+        <navigation-case>
+            <from-outcome>partnergroup-explorer</from-outcome>
+            <to-view-id>/view/partners/groups/partnergroup-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>partner-explorer</from-outcome>
+            <to-view-id>/view/partners/partner-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>partner-card</from-outcome>
+            <to-view-id>/view/partners/partner-сard.xhtml</to-view-id>
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>post-card</from-outcome>
+            <to-view-id>/view/staffs/posts/post-сard.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+                
+        <navigation-case>
+            <from-outcome>post-explorer</from-outcome>
+            <to-view-id>/view/staffs/posts/post-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+       
+        <navigation-case>
+            <from-outcome>staff-explorer</from-outcome>
+            <to-view-id>/view/staffs/staff-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>              
+        
+        <navigation-case>
+            <from-outcome>staff-card</from-outcome>
+            <to-view-id>/view/staffs/staff-card.xhtml</to-view-id>
+        </navigation-case>                 
+
+        <navigation-case>
+            <from-outcome>folder-card</from-outcome>
+            <to-view-id>/view/folders/folder-сard.xhtml</to-view-id>
+        </navigation-case>
+    
+       <navigation-case>
+            <from-outcome>folder-explorer</from-outcome>
+            <to-view-id>/view/folders/folder-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>company-card</from-outcome>
+            <to-view-id>/view/companies/company-card.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>company-explorer</from-outcome>
+            <to-view-id>/view/companies/company-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+        
+        <navigation-case>
+            <from-outcome>object-admin</from-outcome>
+            <to-view-id>/view/admin/object-admin.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+          
+        <navigation-case>
+            <from-outcome>error</from-outcome>
+            <to-view-id>/view/errors/error.xhtml</to-view-id>
+            <redirect />
+        </navigation-case> 
+    </navigation-rule>
+    
+    <managed-bean>
+        <managed-bean-name>currentDate</managed-bean-name>
+        <managed-bean-class>java.util.Date</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    
+</faces-config>

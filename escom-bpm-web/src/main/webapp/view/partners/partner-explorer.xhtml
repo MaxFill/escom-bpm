@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"                
+                xmlns:p="http://primefaces.org/ui"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <ui:param name="_detailBean" value="#{partnersBean}" />
+    <ui:param name="_treeBean" value="#{partnersGroupsBean}" /> 
+    
+    <ui:param name="_showAuthor"     value="#{true}"/>
+    <ui:param name="_showDateCreate" value="#{false}"/>
+    <ui:param name="_showDateChange" value="#{true}"/>    
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreatePartner}" />
+        
+    <ui:param name="_selectorHeader" value="#{partnersBean.getLabelFromBundle('PartnerSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{partnersBean.getLabelFromBundle('Partners')}"/>
+    
+    <!-- специфичные поля таблицы обозревателя Detail -->
+    <ui:define name="specDetailColumns">
+        <p:column headerText="#{bundle.Code}" style="text-align: center;" sortBy="#{item.code}">
+            #{item.code}
+        </p:column>
+    </ui:define> 
+        
+    <!-- специфичные поля таблицы обозревателя Tree -->
+    <ui:define name="specOwnerColumns">    
+    </ui:define>
+        
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche">
+        <p:outputLabel value="#{bundle.Code}"/>        
+        <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}"
+                     styleClass="widthMin100"
+                     value="#{_detailBean.model.codeSearche}"
+                     onkeypress="keyPress();">
+        </p:inputText>
+    </ui:define>
+        
+</ui:composition>

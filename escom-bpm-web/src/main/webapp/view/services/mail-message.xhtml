@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{bundle.MailMessage}
+    </ui:define> 
+    
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{mailBoxBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+    
+    <ui:define name="body">
+
+        <h:form id="messageFRM">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                <p:toolbar style="margin-bottom: 5px;">
+                    <f:facet name="right">
+                        <p:commandButton value="#{bundle.Cancel}" icon="ui-icon-close"
+                                         style="float: right;" immediate="true"
+                                         actionListener="#{mailBoxBean.cancel()}"/>
+                        <p:commandButton value="#{bundle.Send}"
+                                         icon="ui-icon-mail-closed"
+                                         update="messageFRM:msgPanel"
+                                         type="submit" style="float: right;"
+                                         action="#{mailBoxBean.sendMail()}"/>
+                    </f:facet>
+                </p:toolbar>
+
+                <h:panelGroup id="msgPanel">
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
+                        <p:outputLabel value="#{bundle.Subject}"/>
+                        <h:panelGroup>
+                            <p:inputText value="#{mailBoxBean.selected.subject}" id="subject" title="#{bundle.Subject}"
+                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Subject}] #{bundle.MustBeFilled}"
+                                         maxlength="1024"
+                                         style="width: 100%;"/>
+                            <p:message for="subject" />
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.Sender}"/>
+                        <h:panelGroup>
+                            <p:inputText value="#{mailBoxBean.selected.sender}" id="sender" title="#{bundle.Sender}"
+                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Sender}] #{bundle.MustBeFilled}"
+                                         maxlength="1024"
+                                         style="width: 100%;">
+                                <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
+                            </p:inputText>
+                            <p:message for="sender"/>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.Addresses}"/>
+                        <h:panelGroup>
+                            <p:inputText value="#{mailBoxBean.selected.addresses}" id="addresses" title="#{msg.SeparatedMultipleAddresses}"
+                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Addresses}] #{bundle.MustBeFilled}"
+                                         maxlength="1024"
+                                         style="width: 100%;">
+                                <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
+                            </p:inputText>
+                            <p:message for="addresses"/>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.Copies}"/>
+                        <p:inputText value="#{mailBoxBean.selected.сopies}" id="сopies" title="#{msg.SeparatedMultipleAddresses}"                                     
+                                     maxlength="1024"
+                                     style="width: 100%;">
+                            <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
+                        </p:inputText>
+
+                        <p:outputLabel value="#{bundle.Attachment}"/>
+                        <p:panel id="attaches" style="width: 100%; font-size: 80%;">
+                            <ui:repeat var="attache" value="#{mailBoxBean.attaches}">
+                                <p:commandButton icon="ui-icon-close" value="#{attache.name}" title="#{bundle.Delete}"
+                                                 actionListener="#{mailBoxBean.removeAttache(attache)}"
+                                                 update="messageFRM:attaches"/>
+                            </ui:repeat>
+                        </p:panel>
+
+                        <p:outputLabel value="#{bundle.Content}"/>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                        <p:editor value="#{mailBoxBean.selected.msgContent}" style="width: 100%; height: 100%;"  />                        
+                    </p:panelGrid>
+                </h:panelGroup>
+
+            </p:panelGrid>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

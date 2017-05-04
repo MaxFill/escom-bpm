@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"    
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width" />   
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Cache-Control" content="no-store" />
+        <meta http-equiv="Cache-Control" content="no-cache" />
+        <meta http-equiv="Cache-Control" content="must-revalidate" />
+        <meta http-equiv="Expires" content="Mon, 8 Aug 2006 10:00:00 GMT" />   
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        
+        <ui:insert name="initBeans">            
+        </ui:insert>
+            
+        <title>
+            <ui:insert name="title"/>
+        </title> 
+        
+        <h:outputStylesheet library="css" name="em_style1.css"/> 
+        <link rel="shortcut icon" href="#{resource['icon/done.png']}" type="image/png"/>
+    </h:head>
+
+    <ui:insert name="preRendered"/>
+    
+    <h:body>        
+        <script type="text/javascript">
+            PrimeFaces.locales ['ru'] = {
+                closeText: 'Закрыть',
+                prevText: 'Назад',
+                nextText: 'Вперёд',
+                currentText: 'Сегодня',
+                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+                dayNamesShort: ['Воск', 'Пон', 'Вт', 'Ср', 'Четв', 'Пят', 'Суб'],
+                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                weekHeader: 'Неделя',
+                FirstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Только время',
+                timeText: 'Время',
+                hourText: 'Час',
+                minuteText: 'Минута',
+                secondText: 'Секунда',
+                ampm: false,
+                month: 'Месяц',
+                week: 'неделя',
+                day: 'День',
+                allDayText: 'Весь день'
+            };
+        </script>       
+        
+        <ui:insert name="dialogs"/>
+        <ui:insert name="systems"/>
+        <ui:insert name="body" />                   
+
+        <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />        
+    
+        <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false"
+                  resizable="false" showHeader="false">
+            <p:graphicImage name="/images/wait.gif" />
+        </p:dialog>   
+
+    </h:body>
+
+</html>

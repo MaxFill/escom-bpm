@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{bundle.enter}
+    </ui:define> 
+
+    <ui:define name="body">
+        <f:metadata>
+            <f:viewParam name="from" value="#{loginBean.targetPage}" />
+        </f:metadata>
+        
+        <h:form id="loginFRM">
+            <p:panel styleClass="panelLogin"> 
+                <p:messages id="messages" showDetail="true" closable="true"/> 
+
+                <p:outputPanel id="panelLogin">
+                    <p:poll interval="60" listener="#{loginBean.resetLoginLock()}" update="loginFRM" 
+                            stop="#{!loginBean.isLoginLock()}" autoStart="false" widgetVar="poll" />
+
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" >
+                        <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                        <h:panelGroup style="width: 100%;">
+                            <h2>                                    
+                                <h:outputLabel value="#{bundle.welcom}"/> 
+                            </h2>
+                            <h3>
+                                <h:outputLabel value="#{bundle.welcom1}"/> 
+                            </h3>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.changeLanguage}:" style="text-align: right; font-weight:bold;"/>
+                        <h:panelGroup id="langPanel">
+                            <p:selectOneMenu var="lng" value="#{loginBean.selectedLang}" converter="langConverter" disabled="#{loginBean.isLoginLock()}">
+                                <f:selectItems value="#{loginBean.languages}" var="items" itemLabel="#{items.displayName}" itemValue="#{items}"/>
+                                <p:ajax event="change" listener="#{loginBean.changeLocale()}" update="@form"/>
+                                <p:column style="width:10%">
+                                    <p:graphicImage value="/resources/images/#{lng.name}.png" /> 
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{lng.displayName}" />
+                                </p:column>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.User}:"/>
+                        <h:panelGroup id="userPanel">
+                            <p:inputText id="j_username" value="#{loginBean.userName}" title="#{bundle.welcom2}"
+                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
+                                         style="width: 80%;"
+                                         disabled="#{loginBean.isLoginLock()}"/>
+                            <p:message for="j_username" />
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.password}:"/>
+                        <h:panelGroup id="passwordPanel">
+                            <p:password id="j_password" value="#{loginBean.password}"
+                                        required="true" requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
+                                        disabled="#{loginBean.isLoginLock()}"                                        
+                                        style="width: 80%;"/>
+                            <p:message for="j_password" />
+                        </h:panelGroup>
+
+                        <p:spacer/>
+
+                        <p:commandButton id="btnLogin" value="#{bundle.enter}" title="#{bundle.EnterProgram}"
+                                         icon="ui-icon-circle-triangle-e"
+                                         update="panelLogin" ajax="false"
+                                         disabled="#{loginBean.isLoginLock()}"
+                                         action="#{loginBean.login()}"/>
+                        <p:spacer/>
+                        <br/>
+                        <p:spacer/>
+                        <p:outputLabel value="#{bundle.DeveloperInfo}" style="font-size: x-small;" /> 
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:panel>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

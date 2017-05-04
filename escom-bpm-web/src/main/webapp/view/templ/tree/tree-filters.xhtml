@@ -1,0 +1,27 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <p:tree id="filtersTree" value="#{explorerBean.filterTree}" var="filterItem"  
+            selectionMode="single" 
+            selection="#{explorerBean.filterSelectedNode}" style="width: 100%; overflow-y: auto;">
+
+        <p:treeNode icon="#{filterItem.icon}" type="#{explorerBean.typeDetail}">
+            <h:outputText value="#{filterItem.name}"/>
+        </p:treeNode>
+
+        <p:treeNode icon="#{filterItem.icon}" type="#{explorerBean.typeOwner}">
+            <h:outputText value="#{filterItem.name}"/>
+        </p:treeNode>
+        
+        <p:treeNode icon="#{filterItem.icon}" type="#{explorerBean.typeRoot}">
+            <h:outputText value="#{filterItem.name}"/>
+        </p:treeNode>
+        
+        <p:ajax event="select" listener="#{explorerBean.onFilterTreeNodeSelect}" 
+                update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                oncomplete="initDND()"/>
+    </p:tree> 
+   
+</ui:composition>

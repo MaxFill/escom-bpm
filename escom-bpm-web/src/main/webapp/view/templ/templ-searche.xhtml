@@ -1,0 +1,166 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <script type="text/javascript" >
+        function keyPress() {
+            if (event.keyCode === 13) {
+                document.getElementById('searcheBtn').click();
+                return;
+            }
+        }
+    </script> 
+
+    <p:focus for="nameSearche"/>
+
+    <pe:layoutPane position ="center" >
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" style="padding: 0px;">        
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12" style="padding: 0px;">
+                <p:selectOneRadio value="#{_searcheBean.model.searcheInGroups}" layout="pageDirection" rendered="#{explorerBean.treeBean != null}">
+                    <f:selectItem itemLabel="#{bundle.SearcheWitchOutGroup}" itemValue="#{false}" />
+                    <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{true}" />
+                </p:selectOneRadio>
+                
+                <p:selectBooleanCheckbox itemLabel="#{bundle.SearcheOnlyActualItems}" 
+                                         title="#{bundle.SearcheOnlyActualItemsComments}" 
+                                         value="#{_searcheBean.model.onlyActualItem}">
+                </p:selectBooleanCheckbox> 
+
+                <p:outputLabel value="#{bundle.Name}"/>
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <p:inputText id="nameSearche" 
+                                 value="#{_searcheBean.model.nameSearche}"
+                                 styleClass="ui-grid-col-12"
+                                 onkeypress="keyPress();">
+                    </p:inputText>
+                    <p:watermark for="nameSearche" value="#{bundle.InputCreteriaForSearche}" />
+                </h:panelGroup>
+
+                <ui:insert name="searche"/>
+
+                <p:outputLabel value="#{bundle.Author}"/>
+                <p:selectOneMenu value="#{_searcheBean.model.authorSearche}" filter="true" converter="usersConvertor" 
+                                 styleClass="ui-grid-col-12">
+                    <f:selectItems value="#{_searcheBean.users}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                    <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+                </p:selectOneMenu>        
+
+                <p:outputLabel value="#{bundle.States}"/>
+                <p:selectCheckboxMenu id="stateChecks" value="#{_searcheBean.model.stateSearche}" label="#{bundle.Select}" 
+                                      styleClass="ui-grid-col-12">
+                    <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state.id}"/>
+                </p:selectCheckboxMenu>
+            </p:panelGrid>
+
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12" style="padding: 0px;">
+                <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" 
+                                         title="#{bundle.SearcheDateCreate}" 
+                                         value="#{_searcheBean.model.dateCreateSearche}">
+                    <p:ajax event="change" partialSubmit="true" update="pnDateCreateSearche"/>
+                </p:selectBooleanCheckbox>   
+
+                <h:panelGroup id="pnDateCreateSearche"> 
+                    <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_searcheBean.model.dateCreateSearche}">
+                        #{bundle.With}
+                        <p:calendar value="#{_searcheBean.model.dateCreateStart}" id="dateCreateStart" 
+                                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                    pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                    required="#{_searcheBean.model.dateCreateSearche}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.With}] #{bundle.MustBeFilled}"
+                                    disabled="#{!_searcheBean.model.dateCreateSearche}">
+                            <p:ajax event="dateSelect" update="dateCreateEnd" listener="#{_searcheBean.dateCreateStartChange()}"/>
+                        </p:calendar>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_searcheBean.model.dateCreateSearche}">
+                        #{bundle.At}
+                        <p:calendar value="#{_searcheBean.model.dateCreateEnd}" id="dateCreateEnd" 
+                                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                    pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                    required="#{_searcheBean.model.dateCreateSearche}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.At}] #{bundle.MustBeFilled}"
+                                    disabled="#{!_searcheBean.model.dateCreateSearche}">
+                        </p:calendar>
+                    </p:panelGrid>
+                </h:panelGroup>
+                <p:selectBooleanCheckbox itemLabel="#{bundle.DateChange}" 
+                                         title="#{bundle.SearcheDateChange}" 
+                                         value="#{_searcheBean.model.dateChangeSearche}">
+                    <p:ajax event="change" partialSubmit="true" update="pnDateChangeSearche"/>
+                </p:selectBooleanCheckbox> 
+
+                <h:panelGroup id="pnDateChangeSearche">          
+                    <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_searcheBean.model.dateChangeSearche}">
+                        #{bundle.With}
+                        <p:calendar value="#{_searcheBean.model.dateChangeStart}" id="dateChangeStart" 
+                                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                    pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                    required="#{_searcheBean.model.dateChangeSearche}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.With}] #{bundle.MustBeFilled}"
+                                    disabled="#{!_searcheBean.model.dateChangeSearche}">
+                            <p:ajax event="dateSelect" update="dateChangeEnd" listener="#{_searcheBean.dateChangeStartChange()}"/>
+                        </p:calendar>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_searcheBean.model.dateChangeSearche}">
+                        #{bundle.At}
+                        <p:calendar value="#{_searcheBean.model.dateChangeEnd}" id="dateChangeEnd"
+                                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                    pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                    required="#{_searcheBean.model.dateChangeSearche}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.At}] #{bundle.MustBeFilled}"
+                                    disabled="#{!_searcheBean.model.dateChangeSearche}">
+                        </p:calendar>
+                    </p:panelGrid>
+                </h:panelGroup>
+
+                <p:separator />
+
+                <p:commandButton id="searcheBtn" title="#{bundle.MakeSearche}"
+                                 icon="ui-icon-search" value="#{bundle.Find}"
+                                 action="#{explorerBean.onSearcheItem}"
+                                 update="#{_tblUpdate}"
+                                 oncomplete="initDND()">
+                </p:commandButton>
+            </p:panelGrid>
+        </p:panelGrid>
+    </pe:layoutPane>
+
+    <pe:layoutPane position="west">
+        <h:panelGrid columns="2" id="abcGrid">
+            <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btABC"
+                             actionListener="#{explorerBean.abcSearche}"
+                             update="#{_tblUpdate}"
+                             oncomplete="initDND()">
+                <f:attribute name="action" value="#{'*'}" />
+            </p:commandButton>
+            <p:commandButton value="0-9" title="#{bundle.StartDigital}" style="width: 30px;"
+                             actionListener="#{explorerBean.abcSearche}"
+                             update="#{_tblUpdate}"
+                             oncomplete="initDND()">
+                <f:attribute name="action" value="#{'[0-9]'}" />
+            </p:commandButton>
+
+            <ui:repeat var="abcEngl" value="#{_searcheBean.model.abcEnglSearche}">
+                <p:commandButton value="#{abcEngl}" styleClass="btABC"                       
+                                 actionListener="#{explorerBean.abcSearche}"
+                                 update="#{_tblUpdate}"
+                                 oncomplete="initDND()">
+                    <f:attribute name="action" value="#{abcEngl}" />
+                </p:commandButton>
+            </ui:repeat>
+
+            <ui:repeat var="abcLocal" value="#{_searcheBean.model.abcLocalSearche}">
+                <p:commandButton value="#{abcLocal}" styleClass="btABC"
+                                 actionListener="#{explorerBean.abcSearche}"
+                                 update="#{_tblUpdate}"
+                                 oncomplete="initDND()">                                
+                    <f:attribute name="action" value="#{abcLocal}" />
+                </p:commandButton>
+            </ui:repeat>
+
+        </h:panelGrid>
+    </pe:layoutPane>
+
+</ui:composition>

@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{docTypeCardBean}"/>
+
+    <ui:define name="page_body">
+
+        <p:tab title="#{bundle.Explorer}">     
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank "
+                         columnClasses="ui-grid-col-8 col-padding" >
+
+                <p:outputLabel value="#{bundle.Name}" />
+                <p:inputText id="docTypeName" value="#{_bean.editedItem.name}" 
+                             styleClass="ui-grid-col-12"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             disabled="#{!_bean.isHaveRightEdit()}"
+                             onchange="return itemChange = 1;"
+                             required="true"
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+
+                <p:outputLabel value="#{bundle.Code}" />
+                <p:inputText id="docTypeCode" value="#{_bean.editedItem.code}" 
+                             title="#{bundle.StringArbitrary}"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             disabled="#{!_bean.isHaveRightEdit()}"
+                             onchange="return itemChange = 1;">
+                    <f:validateLength for="docTypeCode" maximum="10"/>
+                </p:inputText>
+
+                <p:outputLabel value="#{bundle.Numerator}" />
+                <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
+                                 disabled="#{!_bean.isHaveRightEdit()}"
+                                 onchange="return itemChange = 1;"
+                                 style="width: 100%;" var="pattern" 
+                                 required="false"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
+                    <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
+                    <f:selectItems value="#{numeratorPatternBean.allItems}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
+
+                    <p:column style="font-size: 80%;">
+                        #{numeratorPatternBean.model.getLabel(pattern.typeCode)}
+                    </p:column>
+
+                    <p:column style="font-size: 80%;">
+                        <h:outputLabel value="#{pattern.name}" />
+                    </p:column>
+
+                </p:selectOneMenu>
+
+                <p:outputLabel value="#{bundle.Statuses}" />
+                <p:selectManyMenu id="statesMenu" value="#{_bean.editedItem.statusDocList}" converter="statusesDocConvertor"
+                                  var="st" showCheckbox="true"
+                                  onchange="return itemChange = 1;"
+                                  style="width: 100%;">
+                    <f:selectItems value="#{statusesDocBean.getAllItems()}" var="status" itemLabel="#{status.name}" itemValue="#{status}" />
+                    <p:column>
+                        <h:outputText value="#{st.localName}" />
+                    </p:column>
+                </p:selectManyMenu>
+                <pe:tooltip for="statesMenu" value="#{bundle.StatusesForTypeDoc}"/>
+                <pe:tooltip for="numeratorMenu" value="#{bundle.NumeratorPatternForTypeDoc}"/>
+            </p:panelGrid>
+        </p:tab>
+
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,58 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+
+    <composite:interface>
+        <composite:attribute name="inputValue" required="true"/>
+        <composite:attribute name="itemChange" required="true"/>
+        <composite:attribute name="isDisabled" required="true"/>
+        <composite:attribute name="isRequired" required="true"/>
+        <composite:attribute name="sourceBean" required="true"/>
+        <composite:attribute name="convertor"  required="true"/>
+        <composite:attribute name="caption"    required="true"/>
+        <composite:attribute name="update"     required="false"/>
+        <composite:attribute name="mainTitle"  required="false"/>
+        <composite:attribute name="clearItemAction"
+                             method-signature="void listener()"/>
+        <!--composite:attribute name="selectButtonAction"
+                             method-signature="void listener(org.primefaces.event.SelectEvent)"/-->
+        <composite:attribute name="selectListAction"
+                             method-signature="void listener(javax.faces.event.ValueChangeEvent)"/>
+    </composite:interface>
+
+    <composite:implementation>
+                <p:selectOneMenu id="itemListMenu" styleClass="widthFix250"
+                                 value="#{cc.attrs.inputValue}"
+                                 title="#{cc.attrs.mainTitle}"
+                                 required="#{cc.attrs.isRequired}"
+                                 disabled="#{cc.attrs.isDisabled}"
+                                 valueChangeListener="#{cc.attrs.selectListAction}"
+                                 requiredMessage="#{bundle.Field} [#{cc.attrs.caption}] #{bundle.MustBeFilled}"
+                                 filter="true" filterMatchMode="startsWith">
+                    <p:ajax update="itemInputPanel #{cc.attrs.update}" 
+                            partialSubmit="true"
+                            oncomplete="#{cc.attrs.itemChange} = 1;"/>
+                    <f:selectItems value="#{cc.attrs.sourceBean.getAllItems()}" var="item" itemValue="#{item}" itemLabel="#{item.name}"/>
+                    <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                    <f:converter converterId="#{cc.attrs.convertor}" />
+                </p:selectOneMenu>
+                
+                <p:menuButton  iconPos="right" value="..." disabled="#{cc.attrs.isDisabled}">                
+                    <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
+                                actionListener="#{cc.attrs.sourceBean.prepEditItem(cc.attrs.inputValue)}"
+                                disabled="#{cc.attrs.inputValue == null}"
+                                process="@this"/>    
+                    <p:separator/>
+                    <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"
+                                actionListener="#{cc.attrs.clearItemAction}"
+                                oncomplete="#{cc.attrs.itemChange} = 1;"
+                                update="itemInputPanel"/>
+                </p:menuButton>
+
+    </composite:implementation>
+</html>
+
+

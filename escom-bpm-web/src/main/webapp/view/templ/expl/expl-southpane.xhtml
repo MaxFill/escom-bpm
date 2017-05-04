@@ -1,0 +1,32 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"    
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+    
+    <pe:layoutPane position="south" >
+        <h:form style="font-size: 85%;" id="explorer_south">
+            <h:panelGrid columns="2" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
+                <h:panelGroup>
+                    <p:commandButton value="#{bundle.GotoIndex}" title="#{bundle.GotoIndex}"
+                                     id="btnCancel" ajax="false"
+                                     styleClass="without-spaces"
+                                     action="#{sessionBean.goToIndex() }"
+                                     rendered="#{explorerBean.explorerViewMode}"
+                                     onclick="return isClose = 1;"/>
+                    <p:commandButton id="btnClose" icon="ui-icon-close" value="#{bundle.Close}" title="#{bundle.Close}"
+                                     styleClass="without-spaces"
+                                     rendered="#{explorerBean.selectorViewMode}"
+                                     action="#{_detailBean.onClose()}">
+                    </p:commandButton>
+                </h:panelGroup>
+                <h:panelGroup styleClass="without-spaces pull-right">
+                    <p:outputLabel value="#{sessionBean.currentUser.staff.post.name}" styleClass="without-spaces"/>
+                    <p:outputLabel value="#{' '}" styleClass="without-spaces"/>
+                    <p:outputLabel value="#{sessionBean.currentUser.shortFIO}" styleClass="without-spaces"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </pe:layoutPane>
+</ui:composition>

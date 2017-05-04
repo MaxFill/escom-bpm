@@ -1,0 +1,71 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    template="/view/templ/templ-explorer.xhtml">  
+
+    <ui:define name="title">
+        <h:outputText value="#{bundle.FolderExplorer}"></h:outputText>
+    </ui:define>
+
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche">        
+        <p:outputLabel value="#{bundle.Number}"/>
+        <p:inputText title="#{bundle.HelpSearcheContext}"
+                     value="#{docsBean.model.numberSearche}"
+                     styleClass="ui-grid-col-12"
+                     onkeypress="keyPress();">
+        </p:inputText>
+    </ui:define>
+
+    <ui:define name="preRenderAction">        
+        <f:viewParam name="docId" value="#{docsBean.model.selectedDocId}" />
+        <f:event type="preRenderView" listener="#{docsBean.doShowDocInFolder()}"/>        
+    </ui:define>
+    
+    <!-- специфичные пункты в меню тулбара обозревателя -->
+    <ui:define name="addMenuActions">
+        <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
+                    disabled="#{explorerBean.checkedItems.isEmpty()}"
+                    actionListener="#{docsBean.prepareSendMailDocs('asAttache')}"/>
+        <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsLink}" title="#{bundle.SendToEmailAsLink}"
+                    disabled="#{explorerBean.checkedItems.isEmpty()}"
+                    actionListener="#{docsBean.prepareSendMailDocs('asLink')}"/> 
+        <p:separator />
+    </ui:define>    
+    
+    <ui:param name="_detailBean" value="#{docsBean}" />
+    <ui:param name="_treeBean" value="#{foldersBean}" /> 
+    <ui:param name="_searcheBean" value="#{_detailBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsExplorer')}"/>
+    
+    <ui:param name="_showAuthor"      value="#{true}"/>
+    <ui:param name="_showDateCreate"  value="#{false}"/>
+    <ui:param name="_showDateChange"  value="#{true}"/>    
+    <ui:param name="_showUploadPanel" value="#{true}"/>
+    <ui:param name="_showCompany"     value="#{true}"/>
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateDoc}" />
+    <ui:param name="_updates" value="#{fileUploadFRM}" />
+    
+    <!-- специфичные поля таблицы обозревателя -->
+    <ui:define name="explorerColumns">
+        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
+            <h:outputText value="#{item.regNumber}"/>
+        </p:column>
+    </ui:define> 
+    
+    <ui:define name="addItemMenu">
+         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}"                    
+                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                     disabled="#{item.attache == null}"
+                     actionListener="#{docsBean.onViewAttache(item)}"/>
+    </ui:define>
+    
+    
+</ui:composition>

@@ -1,0 +1,135 @@
+package com.maxfill.escom.beans;
+
+import com.maxfill.model.BaseDict;
+import org.primefaces.event.SelectEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Реализация методов для объектов с группами (пользователи, контрагенты и т.п.)
+ * @author mfilatov
+ * @param <T>
+ * @param <O>
+ */
+public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseCardBean<T> {
+    private static final long serialVersionUID = -3667710671312550624L;
+
+    private List<O> checkedGroups = new ArrayList<>(); 
+    protected final List<O> deleteGroups = new ArrayList<>();
+    protected final List<O> addGroups = new ArrayList<>();
+    
+    public abstract List<O> getGroups(T item);          //возвращает список групп объекта 
+    
+    /**
+     * Установка владельца объекта в виде основной группы
+     * @param group 
+     */
+    public void makeMainGroup(O group) {
+        getEditedItem().setOwner(group);
+        setIsItemChange(Boolean.TRUE);
+    }
+    
+    /**
+    * Удаление отмеченных групп из редактируемого объекта. Вызов с карточки объекта
+    */
+    public void deleteFromCheckedGroups(){        
+        checkedGroups.stream()
+                .filter(group -> group.getId() != 0)
+                .forEach(group -> deleteFromGroup(group, getEditedItem())
+        );
+        setIsItemChange(Boolean.TRUE);
+    }    
+    
+    /**
+     * Удаление группы из редактируемого объекта
+     * @param group 
+     */
+    public void deleteFromGroup(O group){
+        T item = getEditedItem();
+        if (item == null){
+            throw new NullPointerException("Edited item is null!");
+        }
+        deleteFromGroup(group, item);
+        setIsItemChange(Boolean.TRUE);
+    }
+    
+    /**
+     * Удаление группы из объекта
+     * @param group 
+     * @param item 
+     */
+    private void deleteFromGroup(O group, T item){
+        deleteGroups.add(group);        
+        getGroups(item).remove(group);
+        O owner = (O) item.getOwner();
+        if (group.equals(owner)){       //сброс owner, если он был удалён из списка групп
+            item.setOwner(null);
+        }
+    }
+    
+    /**
+     * Добавление групп в редактируемый объект из селектора с деревом
+     * @param event
+     */
+    public void addGroupsFromSelector(SelectEvent event){
+        if (event.getObject() == null){
+            throw new NullPointerException("Selected object is null!");
+        }
+        List<O> items = (List<O>) event.getObject();
+        if (items.isEmpty()){return;}
+        onItemChange();
+        items.stream().forEach(group -> addItemInGroup(getEditedItem(), group));
+    }
+    
+    /**
+     * Добавление групы в объект
+     * @param item
+     * @param group 
+     */
+    @Override
+    protected void addItemInGroup(T item, BaseDict group) {
+        if (group != null){
+            List<O> groups = getGroups(item);
+            O addGroup = (O) group;
+            if (!groups.contains(addGroup)){
+                groups.add(addGroup);
+            } 
+            if(!addGroups.contains(addGroup)){
+                addGroups.add(addGroup);
+            }
+            if(item.getOwner() == null){
+                group = getOwnerAndAddGroups(item, addGroup);
+                item.setOwner(group);
+            }
+            setIsItemChange(Boolean.TRUE);
+        }
+    }
+    
+    /**
+     * Возвращает группу верхнего уровня и добавляет промежуточные группы в список групп объекта
+     * @param item
+     * @param group
+     * @return 
+     */
+    public O getOwnerAndAddGroups(T item, O group) {                      
+        List<O> groups = getGroups(item);
+        if (!groups.contains(group)){
+            groups.add(group);
+        } 
+        if(!addGroups.contains(group)){
+            addGroups.add(group);
+        }            
+        if (group.getParent() != null){
+            group = getOwnerAndAddGroups(item, (O) group.getParent());
+        }
+        return group;
+    }         
+   
+    public List<O> getCheckedGroups() {
+        return checkedGroups;
+    }
+    public void setCheckedGroups(List<O> checkedGroups) {
+        this.checkedGroups = checkedGroups;
+    }
+}
