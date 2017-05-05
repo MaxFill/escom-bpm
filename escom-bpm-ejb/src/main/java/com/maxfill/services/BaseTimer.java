@@ -1,7 +1,7 @@
 
 package com.maxfill.services;
 
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.history.ServicesEventsFacade;

@@ -15,9 +15,7 @@ import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import com.maxfill.utils.FileUtils;
-import com.maxfill.utils.ItemUtils;
+import com.maxfill.escom.utils.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -169,7 +167,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         setIsItemChange(Boolean.TRUE);
         Doc doc = getEditedItem();
         UploadedFile file = FileUtils.handleUploadFile(event);
-        Attaches attache = FileUtils.doUploadAtache(file, currentUser);
+        Attaches attache = uploadAtache(file);
         Short version = doc.getNextVersionNumber();            
         attache.setNumber(version);
         attache.setDoc(doc);
@@ -254,7 +252,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             if (getItemFacade().isHaveRightView(doc)) {
                 Attaches attache = attacheService.findAttacheByDoc(doc);                               
                 if (attache != null){
-                    FileUtils.attacheDownLoad(attache);
+                    attacheDownLoad(attache);                    
                 } else {
                     EscomBeanUtils.WarnMsgAdd("Error", "FileNotFound");
                 }
@@ -366,7 +364,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
                         sessionBean.getDocStatusFacade().remove(docsStatus);
-                        getItemFacade().addLogEvent(getEditedItem(), getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
+                        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
                     });
         }        
         if (!forAddStatus.isEmpty()){            
@@ -385,7 +383,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
      */   
     public void onChangeDocStatus(DocsStatus docsStatus){
         docsStatus.setAuthor(currentUser);
-        getItemFacade().addLogEvent(getEditedItem(), getBandleLabel("ChangeDocStatus"), docsStatus.toString(), currentUser);
+        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), docsStatus.toString(), currentUser);
         onItemChange();
     }
     

@@ -1,7 +1,7 @@
 
 package com.maxfill.escom.system;
 
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;

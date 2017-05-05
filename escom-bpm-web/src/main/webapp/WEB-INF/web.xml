@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">    
     <context-param>
         <param-name>LdapServer</param-name>
         <param-value>ldap://192.168.0.100:389</param-value>
@@ -9,16 +9,8 @@
         <param-value>test@test.ru</param-value>
     </context-param>
     <context-param>
-        <param-name>FilesUploadPath</param-name>
-        <param-value>c:\\share\\</param-value>
-    </context-param>
-    <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>#{sessionBean.primefacesTheme} </param-value>
-    </context-param>
-    <context-param>
-        <param-name>Encoding</param-name>
-        <param-value>UTF-8</param-value>
     </context-param>
     <context-param>
         <param-name>sessionExpiredRedirect</param-name>

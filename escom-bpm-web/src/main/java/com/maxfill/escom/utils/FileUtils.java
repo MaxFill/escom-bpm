@@ -1,7 +1,8 @@
-package com.maxfill.utils;
+package com.maxfill.escom.utils;
 
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.ItemUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,26 +25,17 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
- *
+ * Утилиты для работы с файлами
  * @author mfilatov
  */
 public final class FileUtils {
     public static final int MAX_FILE_SIZE = 1000000;
-
-    /* Путь загрузки файлов вложений */
-    public static final String UPLOAD_PATCH = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("FilesUploadPath");
     
     private FileUtils() {
     }
 
-    /**
-     * Просмотр вложения
-     *
-     * @param attache
-     */
-    public static void viewAttache(Attaches attache) {
-        String path = attache.getFullName();
-        String contentType = attache.getType();
+    /* Просмотр файла вложения */
+    public static void viewAttache(String path, String contentType) {
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
@@ -89,15 +81,10 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Открытие (скачивание) файла вложения для просмотра
-     *
-     * @param attache
-     */
-    public static void attacheDownLoad(Attaches attache) {       
-        try {
-            String filePathName = attache.getFullName();            
-            String fileName = MimeUtility.encodeText(attache.getName(), "UTF-8", null);
+    /* Открытие (скачивание) файла вложения для просмотра  */
+    public static void attacheDownLoad(String filePathName, String fileName) {       
+        try {                      
+            fileName = MimeUtility.encodeText(fileName, "UTF-8", null);
 
             File file = new File(filePathName);
 
@@ -138,15 +125,8 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Загрузка файла на сервер
-     *
-     * @param uploadFile
-     * @param user
-     * @return
-     * @throws java.io.IOException
-     */
-    public static Attaches doUploadAtache(UploadedFile uploadFile, User user) throws IOException {
+    /* Загрузка файла на сервер  */
+    public static Attaches doUploadAtache(UploadedFile uploadFile, User user, String uploadPath) throws IOException {
         Attaches attache = new Attaches();
         if (uploadFile != null) {
             int length = uploadFile.getContents().length;
@@ -161,7 +141,8 @@ public final class FileUtils {
             attache.setAuthor(user);
             attache.setDateCreate(new Date());
 
-            String basePath = UPLOAD_PATCH + attache.getGuid() + "." + fileExt;
+            StringBuilder sb = new StringBuilder();
+            String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
             File outputFilePath = new File(basePath);
 
             InputStream inputStream = null;

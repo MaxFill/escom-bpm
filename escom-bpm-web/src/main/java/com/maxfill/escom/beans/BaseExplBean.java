@@ -4,18 +4,15 @@ import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.beans.explorer.ExplorerBean;
 import com.maxfill.model.filters.Filters;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -647,7 +644,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      */
     public void delFromFavorites(BaseDict item) {
         favoriteService.delFromFavorites(item, getMetadatesObj(), currentUser);
-    }          
+    }
 
     /* *** ПОИСК ***  */   
 
@@ -765,6 +762,5 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         explorerBean.setCurrentViewModeDetail();
         explorerBean.makeJurnalHeader(EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
     }
-    
-
+   
 }

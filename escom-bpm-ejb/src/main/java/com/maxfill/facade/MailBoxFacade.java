@@ -1,7 +1,6 @@
 package com.maxfill.facade;
 
 import com.maxfill.services.mail.Mailbox;
-import com.maxfill.facade.BaseFacade;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;

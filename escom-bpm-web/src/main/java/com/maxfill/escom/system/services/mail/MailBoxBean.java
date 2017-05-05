@@ -10,10 +10,8 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.primefaces.context.RequestContext;
@@ -28,6 +26,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -39,12 +38,13 @@ import java.util.stream.Collectors;
 @ViewScoped
 public class MailBoxBean implements Serializable{    
     private static final long serialVersionUID = 9011875090040784420L;
-    private static final Logger LOG = Logger.getLogger(MailBoxBean.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MailBoxBean.class.getName());
     private static final String ADRESS_SEPARATOR = ",";
     private static final String ATTACHE_MODE = "asAttache";
     private static final String LINK_MODE = "asLink";
     private final LayoutOptions layoutOptions = new LayoutOptions(); 
-    
+    private static final String DEFAULT_SENDER = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("DefSenderEmail");
+        
     @Inject
     private SessionBean workPlaceBean;
     @EJB
@@ -61,7 +61,7 @@ public class MailBoxBean implements Serializable{
     public void init(){
         String senderEmail = workPlaceBean.getCurrentUser().getEmail();
         if (StringUtils.isBlank(senderEmail)){
-            senderEmail = SysParams.DEFAULT_SENDER;
+            senderEmail = DEFAULT_SENDER;
         }
         selected = new Mailbox();
         selected.setActual(true);
@@ -190,6 +190,7 @@ public class MailBoxBean implements Serializable{
             try {
                 InternetAddress internetAddress = new InternetAddress(adress);
             } catch (AddressException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
                 return false;
             }
         }

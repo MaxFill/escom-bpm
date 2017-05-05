@@ -6,7 +6,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.EscomUtils;
@@ -49,6 +49,7 @@ import org.primefaces.context.RequestContext;
 public class LoginBean implements Serializable{    
     private static final long serialVersionUID = 4390983938416752289L;
     protected static final Logger LOG = Logger.getLogger(LoginBean.class.getName());
+    private static final String LDAP_SERVER = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("LdapServer");
     
     private String userName;
     private String password;
@@ -154,14 +155,14 @@ public class LoginBean implements Serializable{
      */
     private void checkLdapUser(Set<String> bundleKeys, RequestContext context){
         try {      
-            LdapUtils.initLDAP(userName, password, SysParams.LDAP_SERVER);
+            LdapUtils.initLDAP(userName, password, LDAP_SERVER);
         } catch (AuthenticationException e){
             bundleKeys.add("BadUserOrPassword");
             makeCountErrLogin(context, bundleKeys);
-        } catch (Exception e){
+        } catch (Exception ex){
             bundleKeys.add("ConnectLDAPFailed");
-            EscomBeanUtils.ErrorMessage(e.getLocalizedMessage());
-            LOG.log(Level.SEVERE, null, e);
+            EscomBeanUtils.ErrorMessage(ex.getLocalizedMessage());
+            LOG.log(Level.SEVERE, null, ex);
         }
     }
     

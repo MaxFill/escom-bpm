@@ -6,7 +6,7 @@ import com.maxfill.model.licence.Licence;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;

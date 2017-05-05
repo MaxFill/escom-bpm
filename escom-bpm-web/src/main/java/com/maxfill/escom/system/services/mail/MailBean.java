@@ -10,8 +10,6 @@ import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.mail.MailTimer;
 import com.maxfill.services.mail.MailUtils;
 import com.maxfill.services.mail.Mailbox;
-import static com.maxfill.services.mail.MailUtils.serverConnect;
-import com.maxfill.utils.EscomUtils;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -51,8 +49,8 @@ public class MailBean extends BaseServicesBean<MailSettings>{
         
         try {
             String adress = getSettings().getAdressSender();
-            Session session = serverConnect(getSettings(), auth);
-            MailUtils.sendMultiMessage(session, adress, adress, "", content, subject, new HashMap<>());
+            Session session = MailUtils.serverConnect(getSettings(), auth, conf.getEncoding());
+            MailUtils.sendMultiMessage(session, adress, adress, "", content, subject, conf.getEncoding(), new HashMap<>());
             EscomBeanUtils.SuccesFormatMessage("Successfully", "MessageSent",  new Object[]{adress});
 
         } catch (SecurityException | MessagingException | UnsupportedEncodingException ex) {

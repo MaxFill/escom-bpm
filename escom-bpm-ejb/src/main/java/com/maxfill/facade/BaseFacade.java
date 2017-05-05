@@ -4,6 +4,8 @@ import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -24,6 +26,7 @@ public abstract class BaseFacade<T> {
     
     @PersistenceContext(unitName = "com.maxfill.escombpm2PU")
     private EntityManager entityManager;
+    
     /*
     @Resource (lookup = "java:jboss/ee/concurrency/executor/default")
     private ManagedExecutorService executorService;

@@ -1,7 +1,6 @@
 
 package com.maxfill.services.mail;
 
-import com.maxfill.dictionary.SysParams;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Properties;
@@ -26,17 +25,17 @@ import javax.mail.internet.MimeUtility;
  */
 public final class MailUtils {
     private static final Logger LOG = Logger.getLogger(MailUtils.class.getName());
-    
-    public static void sendMultiMessage(Session session, String sender, String recipients, String copyes, String content, String subject, Map<String,String> attachments) throws MessagingException, UnsupportedEncodingException {
+        
+    public static void sendMultiMessage(Session session, String sender, String recipients, String copyes, String content, String subject, String encoding, Map<String,String> attachments) throws MessagingException, UnsupportedEncodingException {
         MimeMessage msg = new MimeMessage(session); 
  
         msg.setFrom(new InternetAddress(sender)); 
         msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients)); 
         msg.addRecipients(Message.RecipientType.CC, InternetAddress.parse(copyes));
-        msg.setSubject(subject, SysParams.ENCODING); 
+        msg.setSubject(subject, encoding); 
 
         BodyPart messageBodyPart = new MimeBodyPart(); 
-        messageBodyPart.setContent(content, "text/html; charset=" + SysParams.ENCODING + ""); 
+        messageBodyPart.setContent(content, "text/html; charset=" + encoding + ""); 
         Multipart multipart = new MimeMultipart(); 
         multipart.addBodyPart(messageBodyPart); 
  
@@ -52,19 +51,14 @@ public final class MailUtils {
         Transport.send(msg); 
     } 
 
-    /**
-     * Устанавливает соединение с почтовым сервером
-     * @param settings
-     * @param auth
-     * @return 
-     */
-    public static Session serverConnect(MailSettings settings, Authenticator auth){
+    /* Устанавливает соединение с почтовым сервером */
+    public static Session serverConnect(MailSettings settings, Authenticator auth, String encoding){
         try {
             Properties props = System.getProperties(); 
             props.put("mail.smtp.port", settings.getSmtpPort()); 
             props.put("mail.smtp.host", settings.getServerAdress()); 
             props.put("mail.smtp.auth", "true"); 
-            props.put("mail.mime.charset", SysParams.ENCODING); 
+            props.put("mail.mime.charset", encoding); 
             return Session.getInstance(props, auth); 
         } catch(SecurityException e) {
             LOG.log(Level.SEVERE, null, e);

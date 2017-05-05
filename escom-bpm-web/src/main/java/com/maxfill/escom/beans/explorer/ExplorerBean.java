@@ -14,7 +14,6 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;

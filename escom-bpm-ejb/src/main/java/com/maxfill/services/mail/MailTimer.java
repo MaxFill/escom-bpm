@@ -2,12 +2,12 @@
 package com.maxfill.services.mail;
 
 import com.google.gson.Gson;
+import com.maxfill.Configuration;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.DateUtils;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.Authenticator;
@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static com.maxfill.services.mail.MailUtils.serverConnect;
-
 /**
  * Таймер службы MAIL
  * @author Maxim
@@ -30,6 +28,8 @@ public class MailTimer extends BaseTimer<MailSettings>{
     
     @EJB
     private MailBoxFacade mailBoxFacade;
+    @EJB
+    private Configuration conf;
     
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings){
@@ -46,7 +46,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
             List<Mailbox> messages = mailBoxFacade.findAll();
             if (!messages.isEmpty()){
                 Authenticator auth = new MailAuth(settings.getUser(), settings.getPassword());
-                Session session = serverConnect(settings, auth);
+                Session session = MailUtils.serverConnect(settings, auth, conf.getEncoding());
                 detailInfoAddRow(detailInfo, "The connection is established...");
                 if (session != null){
                     for (Mailbox message : messages){
@@ -58,7 +58,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
                         String from = message.getSender();                
                         String to = message.getAddresses();
                         String copyes = message.getCopies();
-                        MailUtils.sendMultiMessage(session, from, to, copyes, content, subject, attachments);
+                        MailUtils.sendMultiMessage(session, from, to, copyes, content, subject, conf.getEncoding(), attachments);
                         detailInfoAddRow(detailInfo, "The message id=" + message.getId() + " is sent!");
                         mailBoxFacade.remove(message);
                     }

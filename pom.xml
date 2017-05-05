@@ -11,5 +11,6 @@
     <module>escom-bpm-web</module>
     <module>escom-bpm-ejb</module>
     <module>escom-bpm-resource</module>
+    <module>escom-bpm-liquibase</module>
   </modules>
 </project>

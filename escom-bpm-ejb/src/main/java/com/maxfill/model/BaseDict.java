@@ -3,7 +3,7 @@ package com.maxfill.model;
 import com.maxfill.model.states.State;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.util.ArrayList;

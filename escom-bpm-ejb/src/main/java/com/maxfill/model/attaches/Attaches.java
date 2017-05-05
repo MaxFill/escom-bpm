@@ -1,7 +1,7 @@
 package com.maxfill.model.attaches;
 
 import com.maxfill.model.docs.Doc;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;
@@ -111,7 +111,8 @@ public class Attaches implements Serializable {
      * @return 
      */
     public String getFullName(){
-        return SysParams.UPLOAD_PATCH + getGuid()+ "." + getExtension();
+        StringBuilder sb = new StringBuilder();
+        return sb.append(getGuid()).append(".").append(getExtension()).toString();
     }
     
     public Integer getId() {

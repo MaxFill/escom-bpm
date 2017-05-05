@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.BaseDictFacade;
@@ -11,7 +12,8 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
-import com.maxfill.utils.FileUtils;
+import com.maxfill.escom.utils.FileUtils;
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
@@ -20,6 +22,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.primefaces.model.UploadedFile;
 
 /**
  * Базовый бин
@@ -32,7 +35,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     @Inject
     protected SessionBean sessionBean;
-    
+    @EJB
+    protected Configuration conf;
     @EJB
     protected PrintService printService;
     @EJB
@@ -156,7 +160,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
      * @param attache
      */
     public void onViewAttache(Attaches attache) {
-        FileUtils.viewAttache(attache);
+        String path = conf.getUploadPath() + attache.getFullName();
+        FileUtils.viewAttache(path, attache.getType());
     }
     
     /**
@@ -164,7 +169,12 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
      * @param attache 
      */
     public void attacheDownLoad(Attaches attache){
-       FileUtils.attacheDownLoad(attache);
+        String path = conf.getUploadPath() + attache.getFullName(); 
+        FileUtils.attacheDownLoad(path, attache.getName());
+    }
+    
+    public Attaches uploadAtache(UploadedFile file)throws IOException{
+        return FileUtils.doUploadAtache(file, currentUser, conf.getUploadPath());
     }
     
     public Integer getMaxFileSize(){

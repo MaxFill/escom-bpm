@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
+    <dependencies>        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>escom-bpm-resource</artifactId>
@@ -102,7 +102,7 @@
             <artifactId>jsf-impl</artifactId>
             <version>2.2.10</version>
             <type>jar</type>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>

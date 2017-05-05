@@ -7,7 +7,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;

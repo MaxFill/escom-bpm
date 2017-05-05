@@ -1,6 +1,7 @@
 
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import com.maxfill.facade.ServicesFacade;
@@ -40,6 +41,8 @@ public abstract class BaseServicesBean<P> implements Serializable{
     
     @EJB
     private ServicesFacade servicesFacade;    
+    @EJB
+    protected Configuration conf;
     
     protected Services service;
     

@@ -8,7 +8,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.utils.SysParams;
 import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Map;

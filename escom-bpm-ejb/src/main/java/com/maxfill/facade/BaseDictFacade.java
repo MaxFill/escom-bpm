@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.Configuration;
 import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
@@ -53,8 +54,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @EJB
     protected NumeratorService numeratorService;
     @EJB
-    protected RightFacade rightFacade;
-        
+    protected RightFacade rightFacade;    
+    @EJB
+    protected Configuration configuration;    
+    
     /**
      * Выполняет замену объекта
      * @param oldItem
@@ -273,10 +276,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* ПРОСМОТР: подготовка к просмотру объекта на карточке */
     public BaseDict prepViewItem(BaseDict item, User user) {
-        String objName = ItemUtils.getBandleLabel(getMetadatesObj().getBundleName()) + ": " + item.getName();
         BaseDict cloneItem = (BaseDict) find(item.getId());   //получаем копию объекта для просмотра 
         makeRightItem(cloneItem, user);        
-        if (!isHaveRightView(cloneItem)){            
+        if (!isHaveRightView(cloneItem)){ 
             return null;
         }
         return cloneItem;

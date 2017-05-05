@@ -9,7 +9,7 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.folders.Folders;
-import com.maxfill.utils.FileUtils;
+import com.maxfill.escom.utils.FileUtils;
 import com.maxfill.utils.ItemUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
@@ -55,7 +55,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
      */
     public void onUploadFile(FileUploadEvent event) throws IOException{        
         UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
-        Attaches attache = FileUtils.doUploadAtache(uploadedFile, currentUser);
+        Attaches attache = FileUtils.doUploadAtache(uploadedFile, currentUser, conf.getUploadPath());
         explorerBean.getCreateParams().put("attache", attache);
     }
     
