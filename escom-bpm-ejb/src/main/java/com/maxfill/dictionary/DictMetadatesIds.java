@@ -27,7 +27,6 @@ public final class DictMetadatesIds {
     public static final Integer OBJ_DEPARTAMENTS = 11;
     public static final Integer OBJ_POST = 12;
     public static final Integer OBJ_DOCS_STATUS = 13;
-    public static final Integer OBJ_PARTNERS_LEGAL_TYPE = 14;
     public static final Integer OBJ_METADATES = 15;
     public static final Integer OBJ_DOC_TYPE_GROUP = 16;
     public static final Integer OBJ_NUMERATOR = 17;

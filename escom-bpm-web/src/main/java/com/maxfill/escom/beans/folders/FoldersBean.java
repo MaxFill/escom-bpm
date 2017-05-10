@@ -1,17 +1,17 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.facade.FoldersFacade;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.utils.SysParams;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -30,7 +30,7 @@ import java.util.Set;
 
 @Named(value = "foldersBean")
 @ViewScoped
-public class FoldersBean extends BaseTreeBean<Folders, Folders> {
+public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private static final long serialVersionUID = 2678662239530806110L;
     private static final String BEAN_NAME = "foldersBean";
     private static final Integer ROOT_FOLDER_ID = 0;
@@ -55,13 +55,13 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
         TreeNode tree = new DefaultTreeNode("Root", null);
         tree.setExpanded(true);       
         //To do! тут нужно получать видимо права для тек. пользователя?      
-        Folders rootFolder = getItemFacade().find(ROOT_FOLDER_ID);
+        Folder rootFolder = getItemFacade().find(ROOT_FOLDER_ID);
         if (rootFolder == null){
             throw new NullPointerException("RootFolder null in make tree metod!"); 
         }
         Rights docRight = (Rights) JAXB.unmarshal(new StringReader(rootFolder.getAccessDocs()), Rights.class);
         setChildRights(docRight);
-        getItemFacade().settingRightForChild(rootFolder, docRight); 
+        sessionBean.settingRightForChild(rootFolder, docRight); 
         addNode(tree, rootFolder, docRight);
         return tree;
     }
@@ -73,7 +73,7 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
         if (sessionBean.preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
             Rights folderRight = folder.getRightItem();
             //актуализируем права документов папки
-            Rights rightDoc = makeRightChild((Folders)folder, parRightDoc); //получаем права документов для текущей папки
+            Rights rightDoc = makeRightChild((Folder)folder, parRightDoc); //получаем права документов для текущей папки
             folder.setRightForChild(rightDoc); //сохраняем права документов в папку
             
             TreeNode newNode;
@@ -82,7 +82,7 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
             }
 
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
-            getItemFacade().findChilds((Folders)folder)
+            getItemFacade().findChilds((Folder)folder)
                     .stream()
                     .forEach(folderChild -> addNode(newNode, folderChild, rightDoc));
             
@@ -99,11 +99,11 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
      * @return 
     */ 
     @Override
-    public List<BaseDict> makeGroupContent(Folders folder) {
+    public List<BaseDict> makeGroupContent(Folder folder) {
         Rights docRights = getChildRights();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
-        List<Folders> folders = getItemFacade().findChilds((Folders)folder);        
+        List<Folder> folders = getItemFacade().findChilds((Folder)folder);        
         folders.stream()
                 .forEach(fl -> addFolderInCnt(fl, cnt, docRights)
         );        
@@ -123,8 +123,8 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
      * @return 
      */ 
     private void addFolderInCnt(BaseDict folder, List<BaseDict> cnts, Rights defDocRight) {
-        Rights rights = makeRightChild((Folders)folder, defDocRight);
-        getItemFacade().settingRightForChild((Folders)folder, rights); //сохраняем права к документам
+        Rights rights = makeRightChild((Folder)folder, defDocRight);
+        sessionBean.settingRightForChild((Folder)folder, rights); //сохраняем права к документам
         cnts.add(folder);
     }
 
@@ -140,7 +140,7 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
             rd = (Rights) JAXB.unmarshal(new StringReader(doc.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
         }
         doc.setRightItem(rd);
-        doc.setRightMask(getItemFacade().getAccessMask(doc.getState(), rd, currentUser)); //получаем маску доступа для текущего пользователя  
+        doc.setRightMask(sessionBean.getAccessMask(doc.getState(), rd, currentUser)); //получаем маску доступа для текущего пользователя  
         cnts.add(doc);
     }
     
@@ -152,8 +152,8 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
      * @return 
      */
     public boolean isHaveRightDeleteContent(BaseDict content){
-        if (content instanceof Folders){            
-            return isHaveRightDelete((Folders)content);
+        if (content instanceof Folder){            
+            return isHaveRightDelete((Folder)content);
         } else {
             return getDetailBean().isHaveRightDelete(content);
         }
@@ -163,7 +163,7 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
     
     //TODO Права доступа из родителя получаются некорректно!!!
     //получение кэшированных прав документов папки (используется при загрузке дерева) без подгрузки прав из базы
-    public Rights makeRightChild(Folders folder, Rights parentRight) {
+    public Rights makeRightChild(Folder folder, Rights parentRight) {
         Rights docRight;
         if (folder == null || folder.isInherits() || folder.getAccessDocs().isEmpty()) { //если права наследуются или у папки нет прав для документов
             docRight = parentRight; //то берём права от родителя 
@@ -174,29 +174,15 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
     }    
 
     /* *** Cоздание и редактирование папки *** */
-    
+       
     /**
      * Действия перед удалением папки
      * @param folder 
      */
     @Override
-    protected void preDeleteItem(Folders folder) {        
+    protected void preDeleteItem(Folder folder) {        
        clearDetail(folder);
     }
-
-    @Override
-    protected void postDeleteItem(Folders folder) {
-        TreeNode delNode = EscomBeanUtils.findTreeNode(explorerBean.getTree(), folder);
-        TreeNode parNode = delNode.getParent();
-        parNode.getChildren().remove(delNode);
-        Folders parentFolder = folder.getParent();        
-
-        TreeNode selected = getSelectedNode();
-        if (delNode.equals(selected)) { //если удалена текущая папка
-            explorerBean.makeSelectedGroup(parentFolder); //установка новой текушей папки
-            parNode.setSelected(true);
-        }
-    }  
 
     @Override
     protected void initAddLayoutOptions(LayoutOptions layoutOptions){
@@ -219,7 +205,7 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
      * @param rezult 
      */
     @Override
-    public void doGetCountUsesItem(Folders folder,  Map<String, Integer> rezult){
+    public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){
         rezult.put("Documents", folder.getDocsList().size());
         rezult.put("Folders", folder.getFoldersList().size());
     }    
@@ -229,24 +215,24 @@ public class FoldersBean extends BaseTreeBean<Folders, Folders> {
      * @param folder
      */
     @Override
-    protected void checkAllowedDeleteItem(Folders folder, Set<String> errors){
+    protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
         super.checkAllowedDeleteItem(folder, errors);
     }  
     
     /* *** GETS & SETS *** */    
 
     @Override
-    public List<Folders> getGroups(Folders item) {
+    public List<Folder> getGroups(Folder item) {
         return null;
     }       
 
     @Override
-    public Class<Folders> getItemClass() {
-        return Folders.class;
+    public Class<Folder> getItemClass() {
+        return Folder.class;
     }
 
     @Override
-    public Class<Folders> getOwnerClass() {
+    public Class<Folder> getOwnerClass() {
         return null;
     }
 }

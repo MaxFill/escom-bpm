@@ -1,7 +1,8 @@
 
-package com.maxfill.model.folders;
+package com.maxfill.model.filters;
 
 import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.folders.Folder;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -17,18 +18,18 @@ import javax.validation.constraints.NotNull;
  * @author mfilatov
  */
 @Entity
-@Table(name = "foldersLog")
+@Table(name = "filtersLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class FoldersLog extends BaseLogTable<Folders>{
-    private static final long serialVersionUID = 3958438152438492100L;
-
+public class FilterLog extends BaseLogTable<Filter>{
+    private static final long serialVersionUID = -713405574133991564L;
+    
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "Id")
     private Integer id;    
            
-    public FoldersLog() {
+    public FilterLog() {
     }
 
     @Override
@@ -50,10 +51,10 @@ public class FoldersLog extends BaseLogTable<Folders>{
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof FoldersLog)) {
+        if (!(object instanceof FilterLog)) {
             return false;
         }
-        FoldersLog other = (FoldersLog) object;
+        FilterLog other = (FilterLog) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

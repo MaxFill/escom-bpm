@@ -1,17 +1,15 @@
 package com.maxfill.facade;
 
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.model.users.groups.UserGroupsLog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -19,7 +17,6 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
@@ -51,17 +48,10 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();  
     }
-
-    
+  
     @Override
     public String getFRM_NAME() {
         return UserGroups.class.getSimpleName().toLowerCase();
-    }
-    
-    @Override
-    public void pasteItem(UserGroups pasteItem, BaseDict target, Set<String> errors){
-        pasteItem.setParent((UserGroups)target);
-        doPaste(pasteItem, errors);        
     }
     
     @Override
@@ -102,11 +92,6 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     }  
 
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
-    }
-
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_GROUPS_USERS;
     }
@@ -137,5 +122,9 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public void preparePasteItem(UserGroups pasteItem, BaseDict target){
+        pasteItem.setParent((UserGroups)target);    
+    }
     
 }

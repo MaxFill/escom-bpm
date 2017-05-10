@@ -91,4 +91,8 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
         makeCode();
     }
         
+    @Override
+    public Class<Department> getItemClass() {
+        return Department.class;
+    }
 }

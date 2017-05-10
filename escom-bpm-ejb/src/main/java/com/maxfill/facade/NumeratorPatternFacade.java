@@ -3,13 +3,9 @@ package com.maxfill.facade;
 
 import com.maxfill.model.numPuttern.NumeratorPatternLog;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -29,16 +25,6 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
     @Override
     public String getFRM_NAME() {
         return NumeratorPattern.class.getSimpleName().toLowerCase();
-    }
- 
-    @Override
-    public void pasteItem(NumeratorPattern pasteItem, BaseDict target, Set<String> errors){
-        doPaste(pasteItem, errors);
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
     }
 
     @Override

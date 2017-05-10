@@ -22,7 +22,7 @@
                     </p:commandButton>
                 </h:panelGroup>
                 <h:panelGroup styleClass="without-spaces pull-right">
-                    <p:outputLabel value="#{sessionBean.currentUser.staff.post.name}" styleClass="without-spaces"/>
+                    <p:outputLabel value="#{sessionBean.getCurrentUserPost().name}" styleClass="without-spaces"/>
                     <p:outputLabel value="#{' '}" styleClass="without-spaces"/>
                     <p:outputLabel value="#{sessionBean.currentUser.shortFIO}" styleClass="without-spaces"/>
                 </h:panelGroup>

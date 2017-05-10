@@ -14,14 +14,14 @@
     <ui:define name="searche">        
         <p:outputLabel value="#{bundle.Number}"/>
         <p:inputText title="#{bundle.HelpSearcheContext}"
-                     value="#{docsBean.model.numberSearche}"
+                     value="#{docsBean.numberSearche}"
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
         </p:inputText>
     </ui:define>
 
     <ui:define name="preRenderAction">        
-        <f:viewParam name="docId" value="#{docsBean.model.selectedDocId}" />
+        <f:viewParam name="docId" value="#{docsBean.selectedDocId}" />
         <f:event type="preRenderView" listener="#{docsBean.doShowDocInFolder()}"/>        
     </ui:define>
     

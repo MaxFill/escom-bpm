@@ -9,14 +9,14 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author mfilatov
  */
-public class FoldersNavigation implements Serializable{
+public class FolderNavigation implements Serializable{
     private static final long serialVersionUID = -6899928486498837884L;
 
     private BaseDict folder;
     private String name; 
     private String label;
 
-    public FoldersNavigation(BaseDict folder) {
+    public FolderNavigation(BaseDict folder) {
         this.folder = folder;
         this.name = StringUtils.abbreviate(folder.getName(), 25);
         this.label = folder.getName();

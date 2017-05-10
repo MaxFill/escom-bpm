@@ -1,15 +1,13 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.folders.FoldersLog;
-import com.maxfill.model.folders.Folders;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.folders.FolderLog;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.utils.SysParams;
-import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,46 +24,37 @@ import javax.persistence.criteria.Root;
  * @author Maxim
  */
 @Stateless
-public class FoldersFacade extends BaseDictFacade<Folders, Folders, FoldersLog> {
+public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
     @EJB
     private DocTypeFacade docTypeFacade;
     
     public FoldersFacade() {
-        super(Folders.class, FoldersLog.class);
+        super(Folder.class, FolderLog.class);
     }        
      
     @Override
     public String getFRM_NAME() {
-        return Folders.class.getSimpleName().toLowerCase();
+        return Folder.class.getSimpleName().toLowerCase();
     }
-    
+      
     @Override
-    public void pasteItem(Folders pasteItem, BaseDict target, Set<String> errors){        
-        pasteItem.setParent((Folders)target);
-        doPaste(pasteItem, errors);
-    }
+    public void preparePasteItem(Folder pasteItem, BaseDict target){        
+        pasteItem.setParent((Folder)target);
+    } 
     
     /* Установка специфичных атрибутов при создании новой папки  */
     @Override
-    public void setSpecAtrForNewItem(Folders folder, Map<String, Object> params) {
-        User currentUser = folder.getAuthor();
-        folder.setModerator(currentUser);
-        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
-        
-        Rights rights = getRightItemFromParent(folder);
-        makeRightItem(folder, rights, currentUser);
-        
-        Folders parentFolder = (Folders) folder.getParent();
-        Rights parentRights = getRightItemFromOwner(parentFolder);
-        settingRightForChild(folder, parentRights);  //сохраняем права документов в папке
+    public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
+        folder.setModerator(folder.getAuthor());
+        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));                                        
     }
     
     /* Возвращает все папки */
-    public List<Folders> findAllFolders(){ 
-        getEntityManager().getEntityManagerFactory().getCache().evict(Folders.class);
+    public List<Folder> findAllFolders(){ 
+        getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Folders> cq = builder.createQuery(Folders.class);
-        Root<Folders> c = cq.from(Folders.class);
+        CriteriaQuery<Folder> cq = builder.createQuery(Folder.class);
+        Root<Folder> c = cq.from(Folder.class);
         cq.orderBy(builder.asc(c.get("name")));
         Query q = getEntityManager().createQuery(cq);      
         return q.getResultList(); 
@@ -76,22 +65,17 @@ public class FoldersFacade extends BaseDictFacade<Folders, Folders, FoldersLog> 
      * @param docType
      * @return 
      */
-    public List<Folders> findFoldersByDocTyper(DocType docType){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Folders.class);
+    public List<Folder> findFoldersByDocTyper(DocType docType){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Folders> cq = builder.createQuery(Folders.class);
-        Root<Folders> c = cq.from(Folders.class);        
+        CriteriaQuery<Folder> cq = builder.createQuery(Folder.class);
+        Root<Folder> c = cq.from(Folder.class);        
         Predicate crit1 = builder.equal(c.get("docTypeDefault"), docType);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-       
-    }
+    }    
 
     @Override
     protected Integer getMetadatesObjId() {
@@ -99,7 +83,7 @@ public class FoldersFacade extends BaseDictFacade<Folders, Folders, FoldersLog> 
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Folders oldItem, Folders newItem) {
+    public Map<String, Integer> replaceItem(Folder oldItem, Folder newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

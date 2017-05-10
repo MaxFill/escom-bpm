@@ -99,7 +99,7 @@
                     
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                            <p:outputLabel value="#{sessionBean.currentUser.staff.post.nameEndElipse}"/>
+                            <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                             
                             <p:separator />

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.filters;
 
-import com.maxfill.model.filters.Filters;
+import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.dictionary.DictObjectName;
@@ -15,7 +15,7 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class FiltersCardBean extends BaseCardBean<Filters> {
+public class FiltersCardBean extends BaseCardBean<Filter> {
     private static final long serialVersionUID = 4085679062161705562L;
                  
     @EJB
@@ -30,8 +30,12 @@ public class FiltersCardBean extends BaseCardBean<Filters> {
     }
 
     @Override
-    protected void onAfterCreateItem(Filters item) {        
+    protected void onAfterCreateItem(Filter item) {        
     }
 
-
+    @Override
+    public Class<Filter> getItemClass() {
+        return Filter.class;
+    }
+    
 }

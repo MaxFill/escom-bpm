@@ -1,13 +1,11 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.escom.beans.BaseBean;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.companies.Company;
 import com.maxfill.facade.CompanyFacade;
 import com.maxfill.facade.DepartmentFacade;
-import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.facade.DocFacade;
@@ -33,6 +31,10 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.RightFacade;
+import com.maxfill.model.posts.Post;
+import com.maxfill.model.rights.Rights;
+import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.states.State;
 import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -52,6 +54,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -61,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXB;
 
 /**
  * Бин формы рабочего стола пользователя, а так же сессионный бин приложения
@@ -74,12 +78,11 @@ public class SessionBean implements Serializable{
     private static final String PAGE_LOGOUT = "/faces/logout.xhtml";
     
     //служебное поле для передачи ссылки на вызвавший бин
-    private final HashMap<String, BaseBean> sourceBeans = new HashMap<>(); 
+    private final HashMap<String, BaseBean> sourceBeansMap = new HashMap<>(); 
     //служебное поле для передачи ссылки на право доступа 
-    private final HashMap<String, Right> sourceRight = new HashMap<>(); 
+    private final HashMap<String, Right> sourceRightMap = new HashMap<>(); 
     
     private User currentUser;
-    private Company selectedCompany;
 
     private DashboardModel dashboardModel;
     private Boolean canShowNotifBar = true;
@@ -126,10 +129,7 @@ public class SessionBean implements Serializable{
     @EJB
     private FiltersFacade filtersFacade;
     @EJB
-    private StateFacade stateFacade;
-    
-    public SessionBean(){         
-    };
+    private StateFacade stateFacade;   
     
     @PostConstruct
     public void init() {
@@ -159,60 +159,40 @@ public class SessionBean implements Serializable{
     
     /* *** БУФЕР ИСТОЧНИКОВ *** */
     
-    /**
-     * Добавление бина источника в буфер
-     * @param bean
-     */
+    /* Добавление бина источника в буфер */
     public void addSourceBean(BaseBean bean){
         String key = bean.toString();
-        sourceBeans.put(key, bean);                
+        sourceBeansMap.put(key, bean);                
     }
     
-    /**
-     * Получение из буфера бина по его ключу
-     * @param key
-     * @return 
-     */
+    /* Получение из буфера бина по его ключу  */
     public BaseBean getSourceBean(String key){
-       return sourceBeans.get(key);
+       return sourceBeansMap.get(key);
     }
     
-    /**
-     * Удаление из буфера бина по его ключу
-     * @param key 
-     */
+    /* Удаление из буфера бина по его ключу  */
     public void removeSourceBean(String key){
-        sourceBeans.remove(key);
+        sourceBeansMap.remove(key);
     }
     
-    /**
-     * Добавление права объекта источника в буфер
-     * @param key
-     * @param right
-     */
+    /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
-        sourceRight.put(key, right);
+        sourceRightMap.put(key, right);
     }
     
-    /**
-     * Получение из буфера права объекта по его ключу
-     * @param key
-     * @return 
-     */
+    /* Получение из буфера права объекта по его ключу  */
     public Right getSourceRight(String key){
-       return sourceRight.get(key);
+       return sourceRightMap.get(key);
     }
     
-    /**
-     * Удаление из буфера права объекта по его ключу
-     * @param key 
-     */
+    /* Удаление из буфера права объекта по его ключу   */
     public void removeSourceRight(String key){
-        sourceRight.remove(key);
+        sourceRightMap.remove(key);
     }
     
     /* *** ----  *** */
     
+    /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
     public void showNotifBar(){
         Boolean needUpadateSystem = appBean.getNeedUpadateSystem();
         if (canShowNotifBar && needUpadateSystem){
@@ -222,18 +202,12 @@ public class SessionBean implements Serializable{
         canShowNotifBar = false;
     }          
     
-    /**
-     * Метод завершения сессии вызывается со страницы рабочего места пользователя
-     * @throws IOException 
-     */
+    /* Метод завершения сессии вызывается со страницы рабочего места пользователя */
     public void onSessionExit() throws IOException{
         doSessionExit(PAGE_LOGOUT);
     }
     
-    /**
-     * Завершение сессии пользователя
-     * @param page
-     */           
+    /* Завершение сессии пользователя  */           
     private void doSessionExit(String page) throws IOException{
         doSaveUserSettings();
         appBean.clearUserLock(currentUser);
@@ -259,10 +233,7 @@ public class SessionBean implements Serializable{
         userFacade.edit(currentUser);
     }
     
-    /**
-     * Возвращает обновлённую версию текущего пользователя
-     * @return 
-     */
+    /* Возвращает обновлённую версию текущего пользователя  */
     public User getRefreshCurrentUser(){
         currentUser = userFacade.find(currentUser.getId());
         return currentUser;
@@ -280,9 +251,7 @@ public class SessionBean implements Serializable{
         return groupAdmin != null;
     }
     
-    /**
-     * Открытие формы настроек пользователя
-     */
+    /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", false);
@@ -297,9 +266,7 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/admin/users/settings", options, null); 
     }
     
-    /**
-     * Открытие формы почтовой службы 
-     */
+    /* Открытие формы почтовой службы */
     public void openMailService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -314,9 +281,7 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/services/mail-service.xhtml", options, null);  
     }
     
-    /**
-     *  Открытие формы службы интеграции с LDAP
-     */
+    /* Открытие формы службы интеграции с LDAP */
     public void openLdapService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -331,11 +296,7 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }
     
-    /**
-     * Закрытие диалога сохранения изменений
-     * @param isCancelSave 
-     * @return  
-     */
+    /* Закрытие диалога сохранения изменений */
     /*
     public void onCloseDialog(Boolean isCancelSave){
         RequestContext.getCurrentInstance().closeDialog(isCancelSave);        
@@ -384,43 +345,358 @@ public class SessionBean implements Serializable{
         themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
         themes.add(new Theme(37, "Vader", "vader"));
     }
+        
+    /* *** ПРАВА ДОСТУПА *** */
     
-    /* ПРАВА ДОСТУПА: актуализация прав доступа к объекту */
-    public void actualizeRightItem(BaseDict item){
-        getItemFacade(item).actualizeRightItem(item, currentUser);
+    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
+    private void makeRightForChilds(BaseDict item, BaseDict parent){
+        Rights parentRights = getRightItemFromOwner(parent);
+        settingRightForChild(item, parentRights);  //сохраняем права документов в папке
     }
-    
+       
+    /* ПРАВА ДОСТУПА: получение дефолтных прав объекта */
+    public Rights getDefaultRights(BaseDict item){
+        return appBean.getDefaultRights(item.getClass().getSimpleName());
+    }
+            
+    /* ПРАВА ДОСТУПА: актуализация прав доступа к объекту */    
     public boolean checkMaskEdit(BaseDict item){
-        return getItemFacade(item).isHaveRightEdit(item);
+        return isHaveRightEdit(item);
     }
     
+    /* ПРАВА ДОСТУПА: */
     public boolean checkMaskDelete(BaseDict item){
-        return getItemFacade(item).checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
     }
     
+    /* ПРАВА ДОСТУПА: */
     public boolean checkMaskRightChangeRight(BaseDict item){
-        return getItemFacade(item).checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
     }
     
-    public boolean preloadCheckRightView(BaseDict item){
-        return getItemFacade(item).preloadCheckRightView(item, currentUser);
-    }    
+    /* ПРАВА ДОСТУПА: акутализация прав доступа объекта */
+    public void actualizeRightItem(BaseDict item){
+        BaseDict freshItem = (BaseDict)getItemFacade(item).find(item.getId()); //актуализируем объект, т.к. он может быть удалён!
+        if (freshItem == null){
+            item.setRightItem(null); //обнулим права у объекта так как он скорее всего удалён ...
+            item.setRightMask(null);
+            return;
+        }
+        Rights freshRights = getRightItem(freshItem);
+        settingRightItem(item, freshRights);
+    }
     
-    /* *** --- ITEM HELPER --- *** */                
+    /* ПРАВА ДОСТУПА: формирование прав для объекта  */
+    public Rights makeRightItem(BaseDict item) {
+        Rights rights = getRightItem(item);
+        settingRightItem(item, rights); 
+        return rights;
+    }
     
-    public void onPasteItem(BaseDict sourcreItem, BaseDict recipient, Set<String> errors){
-        BaseDictFacade facade = getItemFacade(sourcreItem);
-        if (facade.isNeedCopyOnPaste()){
-            BaseDict pasteItem = facade.doCopy(sourcreItem, currentUser);
+    /* ПРАВА ДОСТУПА: Установка и проверка прав при загрузке объекта */
+    public Boolean preloadCheckRightView(BaseDict item) {
+        Rights rights = getRightItem(item);
+        settingRightItem(item, rights);
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
+    }
+    
+    /* ПРАВА ДОСТУПА: проверка маски доступа к объекту */
+    public boolean checkMaskAccess(Integer mask, Integer right) {
+        if (mask == null) {
+            return false;
+        }
+        return (mask & right) == right;
+    }
+    
+    /* ПРАВА ДОСТУПА: Получение прав объекта  */
+    private Rights getRightItem(BaseDict item) {
+        Rights rights;
+        if (item == null) {
+            return null;
+        }                
+        if (!item.isInherits()) {
+            rights = getActualRightItem(item);
+        } else 
+            if (item.getOwner() != null) {
+                rights = getRightItemFromOwner(item.getOwner()); //получаем права от владельца
+            } else 
+                if (item.getParent() != null) {
+                    rights = getRightItemFromParent(item.getParent()); //получаем права от родителя
+                } else {
+                    rights = getDefaultRights(item);
+                }
+        return rights;
+    }
+    
+    /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
+    public Rights getRightItemFromOwner(BaseDict ownerItem) {
+        if (ownerItem == null) {
+            return null;
+        }    
+        if (ownerItem.isInherits()) { //если владелец наследует права
+            if (ownerItem.getParent() == null){
+                return getDefaultRights(ownerItem);
+            }
+            return getRightItemFromOwner(ownerItem.getParent()); //то идём в следующего Родителя !                
+        } // если права не наследуются
+        return getActualRightItemFromOwner(ownerItem); //то получаем права        
+    }
+    
+    /* ПРАВА ДОСТУПА: получение (рекурсивное) прав объекта от его родителя */
+    public Rights getRightItemFromParent(BaseDict item) {
+        if (item == null) {
+            return null; //дефолтные права справочника
+        }
+        if (item.getParent() != null) { //если есть родитель                
+            BaseDict nextParent = item.getParent();
+            if (nextParent.isInherits()) {
+                return getRightItemFromParent(nextParent); //раз права наследуется, то идём в следующего родителя
+            } 
+            return getRightItem(nextParent); //права не наследуется, получаем реальные права родителя этой папки            
+        } 
+        return getDefaultRights(item); //не нашли родителя, который не наследует прав, поэтому получаем дефолтные        
+    }
+    
+    /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
+    public void settingRightItem(BaseDict item, Rights newRight) {
+        if (item != null) {
+            item.setRightItem(newRight);
+            Integer mask = getAccessMask(item.getState(), newRight, currentUser);
+            item.setRightMask(mask);
+            item.setAccess(newRight.toString()); //сохраняем права в виде XML
+        }
+    } 
+        
+    /* ПРАВА ДОСТУПА: Установка прав дочерних объектов их владельцу  */
+    public void settingRightForChild(BaseDict ownerItem, Rights newRight) {
+        if (ownerItem != null && newRight != null) {
+            ownerItem.setRightForChild(newRight);
+            ownerItem.setXmlAccessChild(newRight.toString());
+        }
+    }   
+    
+    /* ПРАВА ДОСТУПА: получение актуальных прав объекта  */
+    private Rights getActualRightItem(BaseDict item) {
+        Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(item.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
+        return actualRight;
+    }
+    
+    /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
+    private Rights getActualRightItemFromOwner(BaseDict ownerItem) {
+        //ownerItem = (O) getOwnerBean().getItemFacade().find(ownerItem); //получаем свежую копию владельца из базы
+        //TODO Тут вероятно нужно через вызов абстрактного метода актуализировать данные по правам т.к. в XmlAccessChild ни хрена нет!
+        Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(ownerItem.getXmlAccessChild()), Rights.class);
+        return actualRight;
+    }
+    
+    /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
+    public Integer getAccessMask(State state, Rights sourcesRight, User user) {
+        Integer userId = user.getId();
+        Integer accessMask = 0;
+        for (Right right : sourcesRight.getRights()) {  //распарсиваем права 
+            if (right.getState().equals(state)) {
+                switch (right.getObjType()) {
+                    case 1: {    //права указаны для пользователя
+                        if (right.getObjId().equals(userId)) { //это текущий пользователь, добавляем ему права
+                            accessMask = accessMask | makeAccessMask(right, accessMask);
+                        }
+                        break;
+                    }
+                    case 0: {    //права указаны для группы
+                        if (checkUserInGroup(right.getObjId(), user)) {
+                            accessMask = accessMask | makeAccessMask(right, accessMask);
+                        }
+                        break;
+                    }
+                }
+                if (accessMask == 248) {
+                    break; //дальше проверять права не нужно, т.к. установлены максимальные права
+                }
+            }
+        }
+        return accessMask;
+    } 
+    
+    /* ПРАВА ДОСТУПА: формирование битовой маски доступа */
+    private Integer makeAccessMask(Right right, Integer accessMask) {
+        if (right.isRead()) {
+            accessMask = accessMask | 8;
+        }
+        if (right.isUpdate()) {
+            accessMask = accessMask | 16;
+        }
+        if (right.isCreate()) {
+            accessMask = accessMask | 32;
+        }
+        if (right.isDelete()) {
+            accessMask = accessMask | 64;
+        }
+        if (right.isChangeRight()) {
+            accessMask = accessMask | 128;
+        }
+        return accessMask;
+    }
+    
+    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
+    private boolean checkUserInGroup(Integer groupId, User user) {
+        for (UserGroups group : user.getUsersGroupsList()) {
+            if (group.getId().equals(groupId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+            
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на просмотр объекта */
+    public boolean isHaveRightView(BaseDict item) {
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);         
+    }     
+    
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание объекта  */
+    public boolean isHaveRightCreate(BaseDict item) {        
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CREATE);
+    }        
+    
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на редактирование объекта  */
+    public Boolean isHaveRightEdit(BaseDict item) {
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EDIT);                 
+    }
+    
+    /* *** --- ITEM HELPER --- *** */                    
+    
+    /* Вставка объекта. Возвращает вставленный объект и список ошибок */
+    public BaseDict doPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
+        BaseDictFacade facade = getItemFacade(sourceItem);
+        if (facade.isNeedCopyOnPaste(sourceItem, recipient)){
+            BaseDict pasteItem = (BaseDict)facade.doCopy(sourceItem, currentUser);
             String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
             pasteItem.setName(name);
+            pasteItem.setDetailItems(null);
+            pasteItem.setChildItems(null);
             pasteItem.setId(null);                    //нужно сбросить скопированный id!
             pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
-            facade.pasteItem(pasteItem, recipient, errors);
+            facade.preparePasteItem(pasteItem, recipient);
+            prepCreate(pasteItem, pasteItem.getParent(), pasteItem.getOwner(), errors, null);            
+            if (!errors.isEmpty()){
+                EscomBeanUtils.showErrorsMsg(errors);
+                return null;
+            }
+            facade.create(pasteItem);
+            List<List<?>> dependency = facade.doGetDependency(sourceItem);
+            if (dependency != null){
+                copyPasteDependency(dependency, pasteItem, errors);
+                pasteItem = (BaseDict)facade.find(pasteItem.getId());
+            }
+            return pasteItem;
         } else {
-            facade.pasteItem(sourcreItem, recipient, errors);
+            facade.preparePasteItem(sourceItem, recipient);
+            return null;
         }
     }
+    
+    /* Копирование зависимых объектов */
+    private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
+        for (List<?> depend : dependency){
+            depend.stream().forEach(detailItem -> doPasteItem((BaseDict)detailItem, pasteItem, errors));
+        }        
+    }
+    
+    /* Создание объекта с открытием карточки */
+    public BaseDict createItemAndOpenCard(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getItemFacadeByClassName(itemClassName); 
+        BaseDict newItem = facade.createItem(owner, currentUser);
+        prepCreate(newItem, newItem.getParent(), newItem.getOwner(), errors, params);                
+        doOpenItem(newItem, DictEditMode.INSERT_MODE, errors);        
+        return newItem;
+    }
+
+    /* Действия перед созданием объекта */
+    private void prepCreate(BaseDict newItem, BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
+        boolean isAllowedEditOwner = true;
+        BaseDictFacade facade = getItemFacade(newItem);
+        if (owner != null) {
+            actualizeRightItem(owner);
+            isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
+        }
+        if (isAllowedEditOwner) {
+            makeRightItem(newItem);
+            if (isHaveRightCreate(newItem)) {
+                newItem.setParent(parent);
+                if (parent != null){
+                    makeRightForChilds(newItem, parent);
+                }    
+                facade.setSpecAtrForNewItem(newItem, params);
+                facade.addLogEvent(newItem, DictLogEvents.CREATE_EVENT, currentUser);
+            } else {
+                String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
+                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+                errors.add(error);
+            }
+        } else {
+            String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
+            String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{objName});
+            errors.add(error);
+        }
+    }           
+    
+    /* Подготовка к редактированию объекта на карточке  */      
+    public BaseDict prepEditItem(BaseDict item){
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getItemFacade(item);
+        BaseDict editItem = (BaseDict)facade.find(item.getId());   //получаем копию объекта для редактирования 
+        makeRightItem(editItem);
+        if (!isHaveRightEdit(editItem)){            
+            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
+            String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
+            errors.add(error);
+        }
+        doOpenItem(editItem, DictEditMode.EDIT_MODE, errors);
+        return editItem;
+    }
+    
+    /* Подготовка к просмотру оюъекта на карточке */
+    public BaseDict prepViewItem(BaseDict item){
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getItemFacade(item);        
+        BaseDict editItem = (BaseDict) facade.find(item.getId());   //получаем копию объекта для просмотра 
+        makeRightItem(editItem);        
+        if (!isHaveRightView(editItem)){ 
+            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
+            String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
+            errors.add(error);
+        }
+        doOpenItem(editItem, DictEditMode.VIEW_MODE, errors);
+        return editItem;
+    }
+    
+    /* Открытие карточки объекта*/
+    public void doOpenItem(BaseDict item, Integer editMode, Set<String> errors){
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        
+        String itemKey = item.getItemKey();
+        
+        if (editMode.equals(DictEditMode.EDIT_MODE)){
+            Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
+            if (userLockId != null){
+                User user = rightFacade.findUserById(userLockId);
+                String objName = user.getName();
+                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
+                return;
+            }
+        }
+
+        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
+        String cardName = item.getClass().getSimpleName().toLowerCase() + "-card";
+        EscomBeanUtils.openItemForm(cardName, itemOpenKey);
+    }              
+    
+    public BaseDict doCopy(BaseDict copyItem){
+        return getItemFacade(copyItem).doCopy(copyItem, currentUser);
+    }        
     
     public boolean addItemToGroup(BaseDict item, BaseDict targetGroup){ 
         return getItemFacade(item).addItemToGroup(item, targetGroup);
@@ -430,7 +706,7 @@ public class SessionBean implements Serializable{
         return getItemFacadeByClassName(item.getClass().getSimpleName());
     }
     
-    private BaseDictFacade getItemFacadeByClassName(String className){
+    public BaseDictFacade getItemFacadeByClassName(String className){
         BaseDictFacade itemFacade = null;
         switch(className){
             case DictObjectName.STATE:{
@@ -498,87 +774,25 @@ public class SessionBean implements Serializable{
         return itemFacade;
     }
     
-    public BaseDict prepEditItem(BaseDict item){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getItemFacade(item);
-        BaseDict editItem = facade.prepEditItem(item, currentUser);
-        if (editItem == null){
-            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
-            String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
-            errors.add(error);
-        }
-        doOpenItem(editItem, DictEditMode.EDIT_MODE, errors);
-        return editItem;
-    }
-    
-    public BaseDict prepViewItem(BaseDict item){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getItemFacade(item);
-        BaseDict editItem = facade.prepViewItem(item, currentUser);
-        if (editItem == null){
-            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
-            String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
-            errors.add(error);
-        }
-        doOpenItem(editItem, DictEditMode.VIEW_MODE, errors);
-        return editItem;
-    }
-    
-    /* КАРТОЧКА: открытие карточки объекта*/
-    public void doOpenItem(BaseDict item, Integer editMode, Set<String> errors){
-        if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
-            return;
-        }
-        
-        String itemKey = item.getItemKey();
-        
-        if (editMode.equals(DictEditMode.EDIT_MODE)){
-            Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
-            if (userLockId != null){
-                User user = rightFacade.findUserById(userLockId);
-                String objName = user.getName();
-                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
-                return;
-            }
-        }
-
-        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
-        EscomBeanUtils.openItemForm(getItemCardName(item), itemOpenKey);
-    } 
-    
-    public String getItemCardName(BaseDict item) {
-        return item.getClass().getSimpleName().toLowerCase() + "-card";
-    }
-         
-    /* Создание объекта и открытие карточки */
-    public BaseDict createItemAndOpenCard(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
-        Set<String> errors = new HashSet<>();
-        params.put("user", currentUser);
-        BaseDict newItem = getItemFacadeByClassName(itemClassName).createItemAndOpenCard(parent, owner, params, errors);        
-        doOpenItem(newItem, DictEditMode.INSERT_MODE, errors);        
-        return newItem;
-    }
-    
-    public BaseDict doCopy(BaseDict copyItem){
-        return getItemFacade(copyItem).doCopy(copyItem, currentUser);
-    }
-            
     /* *** GET & SET *** */
     
+    public Staff getCurrentUserStaff(){        
+        List<Staff> staffs = staffFacade.findStaffsByUser(currentUser);
+        if (staffs.isEmpty()){
+            return null;
+        }
+        return staffs.get(0);
+    }
+    public Post getCurrentUserPost(){
+        if (getCurrentUserStaff() == null){
+            return null;
+        }
+        return getCurrentUserStaff().getPost();
+    }
+            
     public DashboardModel getDashboardModel() {
         return dashboardModel;
     }  
-
-    public Company getSelectedCompany() {
-        if (selectedCompany == null){
-            Staff staff = getCurrentUser().getStaff();
-            if (staff != null){
-                selectedCompany = staff.getOwner().getOwner();
-            }
-        }
-        return selectedCompany;
-    }
     
     public User getCurrentUser() {
         return currentUser;
@@ -615,34 +829,4 @@ public class SessionBean implements Serializable{
         this.userSettings = userSettings;
     }
 
-    public UserFacade getUserFacade() {
-        return userFacade;
-    }
-    public CompanyFacade getCompanyFacade() {
-        return companyFacade;
-    }
-    public StaffFacade getStaffFacade() {
-        return staffFacade;
-    }
-    public DocTypeFacade getDocTypeFacade() {
-        return docTypeFacade;
-    }
-    public PartnersFacade getPartnersFacade() {
-        return partnersFacade;
-    }
-    public DocFacade getDocsFacade() {
-        return docsFacade;
-    }
-    public DocStatusFacade getDocStatusFacade() {
-        return docStatusFacade;
-    }
-    public FoldersFacade getFoldersFacade() {
-        return foldersFacade;
-    }
-    public PostFacade getPostFacade() {
-        return postFacade;
-    }
-    public DepartmentFacade getDepartmentFacade() {
-        return departmentFacade;
-    }
 }

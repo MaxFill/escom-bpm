@@ -2,21 +2,17 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.partners.Partner;
-import com.maxfill.model.partners.PartnerModel;
 import com.maxfill.model.partners.PartnersLog;
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.users.User;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -41,17 +37,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     @Override
     public String getFRM_NAME() {
         return Partner.class.getSimpleName().toLowerCase();
-    }  
-    
-    @Override
-    public void pasteItem(Partner pasteItem, BaseDict recipient, Set<String> errors){        
-        addItemToGroup(pasteItem, recipient);        
-    }
-    
-    @Override
-    public boolean isNeedCopyOnPaste(){
-        return false;
-    }
+    }      
     
     @Override
     public boolean addItemToGroup(Partner partner, BaseDict targetGroup){
@@ -64,16 +50,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
             return true;
         }
         return false;
-    }
-    
-    /* Установка специфичных атрибутов контрагента при его создании */
-    @Override
-    public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
-        String counterName = getFRM_NAME();
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
-        item.setCode(number); 
-    }
+    }    
     
     public PartnersFacade() {
         super(Partner.class, PartnersLog.class);
@@ -147,16 +124,36 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         return detailItems;
     }
     
+    /* Установка специфичных атрибутов контрагента при его создании */
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel baseDataModel) {
-        PartnerModel model = (PartnerModel) baseDataModel;        
-
-        String code = model.getCodeSearche().trim();
+    public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
+        String counterName = getFRM_NAME();
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
+        item.setCode(number);
+    }
+    
+    /* Контрагента нужно копировать в случае если он вставляется не в группу. Если в группу, то это только добавление ссылки */
+    @Override
+    public boolean isNeedCopyOnPaste(Partner pasteItem, BaseDict recipient){
+        return !(recipient instanceof PartnerGroups);
+    }
+    
+    @Override
+    public void preparePasteItem(Partner pasteItem, BaseDict recipient){        
+        if (!isNeedCopyOnPaste(pasteItem, recipient)){
+            addItemToGroup(pasteItem, recipient);
+        }
+    } 
+    
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
+        String code = (String) addParams.get("codeSearche");
         if (StringUtils.isNotBlank(code)){
             predicates.add(builder.like(root.<String>get("code"), code));            
         }
     }
-
+    
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_PARTNERS;

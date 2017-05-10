@@ -156,7 +156,8 @@
         <p:menuitem value="#{bundle.CopySelected}" icon="ui-icon-copy"
                     actionListener="#{explorerBean.onCopySelectedItem()}"/>
         <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
-                    actionListener="#{explorerBean.onPasteItemToTable()}"/>
+                    actionListener="#{explorerBean.onPasteItemToTable()}"
+                    update="#{_frmExpl} #{_frmTree}"/>
     </p:contextMenu>
 
     <ui:include src="/view/common/confirm-dlg.xhtml"/>

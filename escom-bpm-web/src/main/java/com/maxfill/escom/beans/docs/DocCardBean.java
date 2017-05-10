@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.statuses.DocsStatus;
+import com.maxfill.model.docs.docStatus.DocsStatus;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.numPuttern.NumeratorPattern;
@@ -16,6 +16,10 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.facade.DocStatusFacade;
+import com.maxfill.facade.DocTypeFacade;
+import com.maxfill.facade.PartnersFacade;
+import com.maxfill.facade.StaffFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -53,11 +57,18 @@ public class DocCardBean extends BaseCardBean<Doc>{
 
     @EJB
     private DocNumerator docNumeratorService;
-
-    /**
-     * Специфические действия при отмене сохранения изменённого документа
-     * @return 
-     */
+    @EJB
+    private DocFacade itemFacade;
+    @EJB
+    private DocTypeFacade docTypeFacade;
+    @EJB
+    private DocStatusFacade docStatusFacade;
+    @EJB
+    private PartnersFacade partnersFacade;
+    @EJB
+    private StaffFacade staffFacade;
+    
+    /*Специфические действия при отмене сохранения изменённого документа  */
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -66,10 +77,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         return super.doFinalCancelSave();
     }
     
-    /**
-     * Специфические действия при открытии карточки документа
-     * @param doc 
-     */
+    /* Специфические действия при открытии карточки документа  */
     @Override
     protected void doPrepareOpen(Doc doc) {
         if (getTypeEdit().equals(DictEditMode.INSERT_MODE) && getEditedItem().getAttachesList().size() >0){
@@ -77,10 +85,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
      
-    /**
-     * Проверка корректности полей документа
-     * @param doc
-     */
+    /* Проверка корректности полей документа  */
     @Override
     protected void checkItemBeforeSave(Doc doc, Set<String> errors){        
         checkRegNumber(doc, errors);
@@ -89,7 +94,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     @Override
     public DocFacade getItemFacade() {
-        return sessionBean.getDocsFacade();
+        return itemFacade;
     }         
     
     @Override
@@ -102,11 +107,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         addDocStatusFromType(doc, doc.getDocType());
     }
      
-    /**
-     * Запрос на формирование ссылки URL для просмотра документа
-     * @param doc
-     * @return 
-     */
+    /* Запрос на формирование ссылки URL для просмотра документа  */
     public String onGetDocViewURL(Doc doc){
         return EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
     }
@@ -157,12 +158,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* *** ВЛОЖЕНИЯ *** */
     
-    /**
-     * Добавление версии к документу
-     * @param event
-     * @return 
-     * @throws IOException 
-     */
+    /* Добавление версии к документу   */
     public Attaches addAttache(FileUploadEvent event) throws IOException{
         setIsItemChange(Boolean.TRUE);
         Doc doc = getEditedItem();
@@ -203,11 +199,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         setIsItemChange(Boolean.TRUE);
     }
     
-    /**
-     * Установка текущей версии в документе
-     * @param doc
-     * @param version
-     */
+    /* Установка текущей версии в документе  */
     public void makeCurrentVersion(Doc doc, Attaches version){
         for(Attaches attache : doc.getAttachesList()){
             if (Boolean.TRUE.equals(attache.getCurrent())){
@@ -249,7 +241,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Doc doc = getEditedItem();        
         if (doc != null){
             actualizeRightItem(doc);
-            if (getItemFacade().isHaveRightView(doc)) {
+            if (sessionBean.isHaveRightView(doc)) {
                 Attaches attache = attacheService.findAttacheByDoc(doc);                               
                 if (attache != null){
                     attacheDownLoad(attache);                    
@@ -321,11 +313,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         addDocStatusFromType(getEditedItem(), docType);
     }      
   
-    /** 
-     * СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа
-     * @param doc
-     * @param docType
-     */
+    /* СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа   */
     private int addDocStatusFromType(Doc doc, DocType docType){
         int loadCounter = 0;
         if (docType != null && !docType.getStatusDocList().isEmpty()){               
@@ -363,14 +351,14 @@ public class DocCardBean extends BaseCardBean<Doc>{
             forDelStatus.stream()
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
-                        sessionBean.getDocStatusFacade().remove(docsStatus);
+                        docStatusFacade.remove(docsStatus);
                         getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
                     });
         }        
         if (!forAddStatus.isEmpty()){            
             forAddStatus.stream().forEach(docsStatus -> {
                 docsStatus.setId(null);
-                sessionBean.getDocStatusFacade().create(docsStatus);
+                docStatusFacade.create(docsStatus);
             });
         }
     }
@@ -434,11 +422,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }    
     }
     
-    /**
-     * Проверка регистрационного номера
-     * @param doc
-     * @param errors
-     */
+    /* Проверка регистрационного номера   */
     public void checkRegNumber(Doc doc, Set<String> errors) {
         String regNumber = doc.getRegNumber();
         if (StringUtils.isNotBlank(regNumber)){
@@ -450,7 +434,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
 
     public List<DocType> getDocTypes() {
         if (docTypes == null){
-            docTypes = sessionBean.getDocTypeFacade().findAll().stream()
+            docTypes = docTypeFacade.findAll().stream()
                     .filter(item -> sessionBean.preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
@@ -459,7 +443,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
 
     public List<Staff> getStaffs() {
         if (staffs == null) {
-            staffs = sessionBean.getStaffFacade().findAll().stream()
+            staffs = staffFacade.findAll().stream()
                     .filter(item -> sessionBean.preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
@@ -468,7 +452,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
 
     public List<Partner> getPartners() {
         if (partners == null){
-            partners = sessionBean.getPartnersFacade().findAll().stream()
+            partners = partnersFacade.findAll().stream()
                     .filter(item -> sessionBean.preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
@@ -494,5 +478,10 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     public void setDocumentId(Integer documentId) {
         this.documentId = documentId;
+    }
+    
+    @Override
+    public Class<Doc> getItemClass() {
+        return Doc.class;
     }
 }

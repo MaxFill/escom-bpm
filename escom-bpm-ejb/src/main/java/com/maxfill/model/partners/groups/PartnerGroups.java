@@ -44,6 +44,7 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     @Column(name = "Id")
     private Integer id;
 
+    @Column(name = "Code")
     private String code;
         
     @ManyToMany(mappedBy = "partnersGroupsList", fetch = FetchType.EAGER)

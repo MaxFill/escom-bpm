@@ -4,7 +4,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.favorites.FavoriteObj;
@@ -104,14 +104,8 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     @Size(max = 2048)
     private String emailSign;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
-    private List<FavoriteObj> favoriteObjList;
-        
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "moderator")
-    private List<Folders> foldersList;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<Attaches> attachesList;
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
+    private List<FavoriteObj> favoriteObjList;        
     
     @JoinTable(name = "usersInGroup", joinColumns = {
         @JoinColumn(name = "UserId", referencedColumnName = "Id")}, inverseJoinColumns = {
@@ -119,21 +113,8 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     @ManyToMany
     private List<UserGroups> usersGroupsList = new ArrayList<>();
                
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
-    private List<Staff> staffsList;
-    
-    @JoinColumn(name = "Staff", referencedColumnName = "Id")
-    @ManyToOne
-    private Staff staff;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<PartnerGroups> partnersGroupsList;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<Partner> partnersList;    
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "author")
-    private List<Doc> docsList;     
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "employee")
+    private List<Staff> staffsList;            
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserLog> itemLogs = new ArrayList<>();
@@ -218,13 +199,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
         this.gender = gender;
     }
 
-    public List<Doc> getDocsList() {
-        return docsList;
-    }
-    public void setDocsList(List<Doc> docsList) {
-        this.docsList = docsList;
-    }
-
     public List<Staff> getStaffsList() {
         return staffsList;
     }
@@ -232,48 +206,12 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
         this.staffsList = staffsList;
     }
 
-    public Staff getStaff() {
-        return staff;
-    }
-    public void setStaff(Staff staff) {
-        this.staff = staff;
-    }
-
     public List<UserGroups> getUsersGroupsList() {
         return usersGroupsList;
     }
     public void setUsersGroupsList(List<UserGroups> usersGroupsList) {
         this.usersGroupsList = usersGroupsList;
-    }
-
-    @XmlTransient
-    public List<Folders> getFoldersList() {
-        return foldersList;
-    }
-    public void setFoldersList(List<Folders> foldersList) {
-        this.foldersList = foldersList;
-    }
-
-    public List<Partner> getPartnersList() {
-        return partnersList;
-    }
-    public void setPartnersList(List<Partner> partnersList) {
-        this.partnersList = partnersList;
-    }
-
-    public List<PartnerGroups> getPartnersGroupsList() {
-        return partnersGroupsList;
-    }
-    public void setPartnersGroupsList(List<PartnerGroups> partnersGroupsList) {
-        this.partnersGroupsList = partnersGroupsList;
-    }
-
-    public List<Attaches> getAttachesList() {
-        return attachesList;
-    }
-    public void setAttachesList(List<Attaches> attachesList) {
-        this.attachesList = attachesList;
-    }
+    }   
 
     public String getUserSettings() {
         return userSettings;

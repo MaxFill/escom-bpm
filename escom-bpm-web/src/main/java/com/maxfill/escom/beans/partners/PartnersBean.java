@@ -2,17 +2,15 @@ package com.maxfill.escom.beans.partners;
 
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.model.partners.PartnerModel;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
+import com.maxfill.model.departments.Department;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -42,10 +40,18 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     private PartnersFacade itemsFacade;    
     @EJB 
     private DocFacade docFacade;
-        
+     
+    private String codeSearche;
+    
     public PartnersBean() {
     }    
 
+    @Override
+    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<PartnerGroups> searcheGroups, Map<String, Object> addParams){
+       addParams.put("codeSearche", codeSearche); 
+       super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+    }
+    
     @Override
     protected String getBeanName() {
         return BEAN_NAME;
@@ -60,12 +66,8 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     public BaseExplBean getDetailBean(){
         return null;
     }      
-
-    /**
-     * Возвращает список групп контрагента
-     * @param partner
-     * @return 
-     */
+    
+    /* Возвращает список групп контрагента  */
     @Override
     public List<PartnerGroups> getGroups(Partner partner){
         return partner.getPartnersGroupsList();
@@ -109,12 +111,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         }                             
         partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
         getItemFacade().edit(partner);
-    }    
-    
-    @Override
-    protected BaseDataModel createModel() {
-        return new PartnerModel();
-    }
+    }        
 
     @Override
     public Class<Partner> getItemClass() {
@@ -124,6 +121,13 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     @Override
     public Class<PartnerGroups> getOwnerClass() {
         return PartnerGroups.class;
+    }
+    
+    public String getCodeSearche() {
+        return codeSearche;
+    }
+    public void setCodeSearche(String codeSearche) {
+        this.codeSearche = codeSearche;
     }
     
     @FacesConverter("partnersConvertors")

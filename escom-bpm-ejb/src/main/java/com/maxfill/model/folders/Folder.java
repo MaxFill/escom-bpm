@@ -31,10 +31,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "folders")
-@NamedQueries({
-    @NamedQuery(name = "Folders.findAll", query = "SELECT f FROM Folders f")})
 @DiscriminatorColumn(name="REF_TYPE")
-public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
+public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     private static final long serialVersionUID = -7531636538666889579L;
 
     @TableGenerator(
@@ -51,8 +49,8 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
     @GeneratedValue(strategy=TABLE, generator="idGen")
     private Integer id;
         
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
-    private List<Folders> foldersList;    
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "parent")
+    private List<Folder> foldersList;    
     
     @JoinColumn(name = "Moderator", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -68,7 +66,7 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
     @Column(name = "IsLocked")
     private boolean isLocked = false;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
     private List<Doc> docsList = new ArrayList<>();
     
     @Size(max = 2147483647)
@@ -84,17 +82,17 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
     private DocType docTypeDefault;    
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<FoldersLog> itemLogs = new ArrayList<>();
+    private List<FolderLog> itemLogs = new ArrayList<>();
         
-    public Folders(){
+    public Folder(){
     }
 
     @Override
-    public List<FoldersLog> getItemLogs() {
+    public List<FolderLog> getItemLogs() {
         return itemLogs;
     }
     @Override
-    public void setItemLogs(List<FoldersLog> itemLogs) {
+    public void setItemLogs(List<FolderLog> itemLogs) {
         this.itemLogs = itemLogs;
     }       
     
@@ -126,7 +124,7 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
         }
     }
     
-    public Folders(Integer id) {  
+    public Folder(Integer id) {  
         this.id = id;
     }
                
@@ -149,8 +147,8 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
     public User getModerator() { return moderator;    }
     public void setModerator(User moderator) {        this.moderator = moderator;    }
     
-    public List<Folders> getFoldersList() {        return foldersList;    }
-    public void setFoldersList(List<Folders> foldersList) {     this.foldersList = foldersList;   }
+    public List<Folder> getFoldersList() {        return foldersList;    }
+    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }
     
     public String getAccessDocs() { return accessDocs; }
     public void setAccessDocs(String accessDocs) { this.accessDocs = accessDocs; }
@@ -189,10 +187,10 @@ public class Folders extends BaseDict<Folders, Folders, Doc, FoldersLog>{
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Folders)) {
+        if (!(object instanceof Folder)) {
             return false;
         }
-        Folders other = (Folders) object;
+        Folder other = (Folder) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

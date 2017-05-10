@@ -30,4 +30,9 @@ public class DocTypeGroupsCardBean extends BaseCardBean<DocTypeGroups>{
     protected void onAfterCreateItem(DocTypeGroups item) {        
     }
 
+    @Override
+    public Class<DocTypeGroups> getItemClass() {
+        return DocTypeGroups.class;
+    }
+    
 }

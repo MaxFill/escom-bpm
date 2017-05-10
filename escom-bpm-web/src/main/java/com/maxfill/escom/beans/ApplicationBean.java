@@ -8,12 +8,19 @@ import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.utils.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.MetadatesFacade;
+import com.maxfill.facade.RightFacade;
+import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.rights.Right;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.ExternalContext;
@@ -30,7 +37,22 @@ public class ApplicationBean implements Serializable{
     private static final long serialVersionUID = 2445940557149889740L;
     
     private Boolean needUpadateSystem = false;
-    private Licence licence;
+    private Licence licence;    
+    
+    @EJB
+    private RightFacade rightFacade;
+    @EJB
+    private MetadatesFacade metadatesFacade;
+    
+    //открытые сессии пользователей
+    private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
+    
+    //буфер открытых объектов (key - ключ ItemKey, Tuple(режим открытия(0-чтение, 1 - изменение), сам_объект)
+    private final ConcurrentHashMap<String, Tuple<Integer, BaseDict>> openedItems = new ConcurrentHashMap<>();
+    
+    //объекты (ItemKey), заблокированные пользователем (UserId) 
+    private final ConcurrentHashMap<String, Integer> itemsLock = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Rights> defRights = new ConcurrentHashMap<>();
     
     @PostConstruct
     public void init() {
@@ -41,17 +63,27 @@ public class ApplicationBean implements Serializable{
         licence.setLicenceNumber(ectx.getInitParameter("LicenceNumber")); //TODO передалать получение!
         licence.setDateUpdate(DateUtils.strLongToDate(ectx.getInitParameter("LastUpdate")));
         licence.setTotalLicence(5); //TODO надо откуда то получать!
-        licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType"));       
+        licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType")); 
+        loadDefaultRights();
     }
     
-    //открытые сессии пользователей
-    private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
-    
-    //буфер открытых объектов (key - ключ ItemKey, Tuple(режим открытия(0-чтение, 1 - изменение), сам_объект)
-    private final ConcurrentHashMap<String, Tuple<Integer, BaseDict>> openedItems = new ConcurrentHashMap<>();
-    
-    //объекты (ItemKey), заблокированные пользователем (UserId) 
-    private final ConcurrentHashMap<String, Integer> itemsLock = new ConcurrentHashMap<>();
+    /* Получение дефолтных прав доступа объектов */
+    private void loadDefaultRights(){
+        List<Metadates> metadates = metadatesFacade.findAll();
+        metadates.stream().forEach(metadatesObj -> {
+            Rights rights = rightFacade.getObjectDefaultRights(metadatesObj);
+            defRights.put(metadatesObj.getObjectName(), rights);
+        });                
+    }
+            
+    /* Возвращает дефолтные права доступа */
+    public Rights getDefaultRights(String metadateId){
+        Rights rights = defRights.get(metadateId);
+        if (rights == null){
+            throw new NullPointerException("Escom: for object " + metadateId + " no have default rights!");
+        }
+        return rights;
+    }
     
     /* *** РАБОТА C БЛОКИРОВКАМИ ОБЪЕКТОВ *** */
     

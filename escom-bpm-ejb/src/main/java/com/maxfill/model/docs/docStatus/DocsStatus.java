@@ -1,5 +1,5 @@
 
-package com.maxfill.model.docs.statuses;
+package com.maxfill.model.docs.docStatus;
 
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.docs.Doc;

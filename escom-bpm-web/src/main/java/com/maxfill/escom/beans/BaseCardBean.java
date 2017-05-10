@@ -8,7 +8,6 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
@@ -29,10 +28,7 @@ import javax.inject.Inject;
  * @param <T>
  */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
-    private static final long serialVersionUID = 6864719383155087328L;
-    
-    @Inject
-    private ApplicationBean appBean;
+    private static final long serialVersionUID = 6864719383155087328L;    
         
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
     private Integer rightPageIndex;
@@ -116,8 +112,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {
-                    getItemFacade().settingRightItem(item, item.getRightItem(), currentUser);
-                    getItemFacade().settingRightForChild(item, item.getRightForChild());
+                    sessionBean.settingRightItem(item, item.getRightItem());
+                    sessionBean.settingRightForChild(item, item.getRightForChild());
                     getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
                     getItemFacade().edit(item);
                     break;
@@ -308,7 +304,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     
     /* ПРАВА ДОСТУПА: */ 
     public boolean isHaveRightEdit() {
-        return sessionBean.checkMaskEdit(editedItem);                
+        return sessionBean.isHaveRightEdit(editedItem);                
     }    
     
     /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
@@ -317,8 +313,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void onInheritsChange(ValueChangeEvent event) {
         Boolean inherits = (Boolean) event.getNewValue();
         if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
-            Rights rights = getItemFacade().getRightItemFromOwner(getEditedItem().getOwner());
-            getItemFacade().settingRightItem(getEditedItem(), rights, currentUser);
+            Rights rights = sessionBean.getRightItemFromOwner(getEditedItem().getOwner());
+            sessionBean.settingRightItem(getEditedItem(), rights);
             rightFacade.prepareRightsForView(rights.getRights());
             EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
         }

@@ -22,11 +22,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-/**
- * Штатная единица
- *
- * @author Maxim
- */
+/* Штатная единица */
 @Entity
 @Table(name = "staffs")
 @DiscriminatorColumn(name = "REF_TYPE")
@@ -62,9 +58,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
     @JoinColumn(name = "Employee", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private User employee;
-
-    @OneToMany(mappedBy = "staff")
-    private List<User> usersList;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<StaffLog> itemLogs = new ArrayList<>();    
@@ -77,36 +70,28 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
     public Staff() {
     }
 
-    /**
-     * Формирует наименование Компания + Подразделение
-     *
-     * @return
-     */
+    /* Формирует наименование Компания + Подразделение   */
     public String getOrgUnit() {
         StringBuilder orgUnit = new StringBuilder();
-        if (owner != null && owner.getOwner() != null) {
-            orgUnit.append(owner.getOwner().getName());
-            orgUnit.append("->");
+        if (owner != null){
+            if (owner.getOwner() != null){    //TODO нужно сделать формирование полной цепочки
+                orgUnit.append(owner.getOwner().getName());
+                orgUnit.append("->");
+            }
             orgUnit.append(owner.getName());
-        }
-        //TODO нужно сделать формирование полной цепочки
+        } else 
+            if (company != null){
+                orgUnit.append(company.getName());
+            }        
         return orgUnit.toString();
     }
 
-    /**
-     * Формирует краткое наименование штатной единицы
-     *
-     * @return
-     */
+    /* Формирует краткое наименование штатной единицы  */
     public String getStaffFIO() {
         return employee.getShortFIO() + " " + post.getName();
     }
 
-    /**
-     * Возвращает email штатной единицы (из user)
-     *
-     * @return
-     */
+    /* Возвращает email штатной единицы (из user)  */
     public String getEmail() {
         if (employee != null) {
             return employee.getEmail();
@@ -146,13 +131,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
     }
     public void setEmployee(User employee) {
         this.employee = employee;
-    }
-
-    public List<User> getUsersList() {
-        return usersList;
-    }
-    public void setUsersList(List<User> usersList) {
-        this.usersList = usersList;
     }
 
     @Override

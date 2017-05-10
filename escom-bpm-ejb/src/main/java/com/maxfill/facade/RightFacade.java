@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.rights.Right;
@@ -7,7 +6,6 @@ import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
-
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -32,18 +30,18 @@ public class RightFacade extends BaseFacade<Right> {
         getEntityManager().remove(entity);
     }
     
-    //отбирает из базы дефолтные права объекта
+    /* Отбирает из базы дефолтные права объекта */
     private List<Right> findDefaultRight(Metadates objLink){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
-        Root<Right> c = cq.from(Right.class);        
-        Predicate crit1 = builder.equal(c.get("objLink"), objLink);
-        cq.select(c).where(builder.and(crit1));
+        Root<Right> root = cq.from(Right.class);        
+        Predicate crit1 = builder.equal(root.get("objLink"), objLink);
+        cq.select(root).where(builder.and(crit1));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
     }    
     
-    //отбирает из базы дефолтные права объекта для определённого состояния
+    /* Отбирает из базы дефолтные права объекта для определённого состояния */
     public List<Right> findDefaultRightState(Metadates objLink, State state ){
         getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -56,12 +54,13 @@ public class RightFacade extends BaseFacade<Right> {
         return q.getResultList(); 
     } 
     
+    /* Получение дефольных прав объекта */
     public Rights getObjectDefaultRights(Metadates objLink){
         List<Right> right = findDefaultRight(objLink);
         return new Rights(right);
     }
     
-    /* ПРАВА ДОСТУПА: подготовка прав для визуализации на форме */
+    /* Подготовка прав для визуализации на форме */
     public void prepareRightsForView(List<Right> sourceRights){
         String accessorName;
         for (Right rg: sourceRights){
@@ -81,7 +80,7 @@ public class RightFacade extends BaseFacade<Right> {
         }
     }
     
-    /* ПРАВА ДОСТУПА: возвращает название пользователя или группы для которого назначаются права */ 
+    /* Возвращает название пользователя или группы для которого назначаются права */ 
     private String getAccessName(Right rg) {
         String accessorName = "";
         if (rg.getObjType() == 0){
@@ -106,10 +105,10 @@ public class RightFacade extends BaseFacade<Right> {
     /* Получение группы пользователей по ID для прав доступа */
     public UserGroups findGroupUserById(Integer groupId){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<User> cq = builder.createQuery(User.class);
-        Root<User> c = cq.from(User.class);
-        Predicate crit1 = builder.equal(c.get("id"), groupId);        
-        cq.select(c).where(builder.and(crit1));        
+        CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
+        Root<UserGroups> root = cq.from(UserGroups.class);
+        Predicate crit1 = builder.equal(root.get("id"), groupId);        
+        cq.select(root).where(builder.and(crit1));        
         Query q = getEntityManager().createQuery(cq);       
         return (UserGroups)q.getSingleResult();
     }

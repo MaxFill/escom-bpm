@@ -4,10 +4,10 @@ import com.maxfill.escom.beans.BaseBean;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.filters.Filters;
+import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
-import com.maxfill.model.folders.Folders;
-import com.maxfill.model.folders.FoldersNavigation;
+import com.maxfill.model.folders.Folder;
+import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictEditMode;
@@ -15,6 +15,7 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.SysParams;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.api.UIColumn;
@@ -41,8 +42,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static com.maxfill.utils.EscomUtils.*;
+import javax.annotation.PostConstruct;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Контролер формы обозревателя
@@ -64,6 +65,8 @@ public class ExplorerBean implements Serializable {
     private static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     private static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
     
+    private SearcheModel model;
+        
     @Inject
     private SessionBean sessionBean;
     
@@ -117,6 +120,11 @@ public class ExplorerBean implements Serializable {
     private Integer viewMode;          //режим отображения формы
     private Integer selectMode;        //режим выбора для селектора        
     
+    @PostConstruct
+    public void init() {
+        model = new SearcheModel();
+    }
+        
     /**
      *  ФОРМА: событие при открытии формы 
      */
@@ -134,18 +142,14 @@ public class ExplorerBean implements Serializable {
 
     /* *** КАРТОЧКИ ОБЪЕКТОВ *** */
     
-    /**
-     * КАРТОЧКИ: открытие карточки объекта для просмотра
-     */
+    /* КАРТОЧКИ: открытие карточки объекта для просмотра */
     public void onViewContentItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.VIEW_MODE);
         editItem = sessionBean.prepViewItem(item);       
     }
     
-    /**
-     * КАРТОЧКИ: открытие карточки объекта для редактирование
-     */
+    /* КАРТОЧКИ: открытие карточки объекта для редактирование */
     public void onEditContentItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.EDIT_MODE);
@@ -171,11 +175,11 @@ public class ExplorerBean implements Serializable {
                 parent = null;
                 owner = selected;
             }
-        typeEdit = DictEditMode.INSERT_MODE;
+        typeEdit = DictEditMode.INSERT_MODE;        
         editItem = sessionBean.createItemAndOpenCard(parent, owner, typeTree, createParams);
     }
     
-    /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне  */
+    /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне */
     public void onCreateRootItem() {
         BaseDict owner = null;
         BaseDict parent = null;
@@ -198,10 +202,7 @@ public class ExplorerBean implements Serializable {
         editItem = sessionBean.createItemAndOpenCard(parent, owner, typeDetail, createParams);   
     }
     
-    /**
-     * КАРТОЧКИ: обработка после закрытия карточки
-     * @param event 
-     */
+    /* КАРТОЧКИ: обработка после закрытия карточки  */
     public void onUpdateAfterCloseForm(SelectEvent event){
         Tuple<Boolean, String> tuple = (Tuple) event.getObject();
         Boolean isNeedUdate = tuple.a;
@@ -218,6 +219,7 @@ public class ExplorerBean implements Serializable {
                 case DictEditMode.INSERT_MODE:{
                     if (isItemTreeType(editItem) || isItemRootType(editItem)){
                         addNewItemInTree(editItem, treeSelectedNode);
+                        onSelectInTree(treeSelectedNode);
                     }
                     break;
                 }
@@ -353,11 +355,7 @@ public class ExplorerBean implements Serializable {
         }
     }
     
-    /**
-     * КОРЗИНА: восстановление объекта из корзины - вызов с экранной формы
-     *
-     * @param item
-     */
+    /* КОРЗИНА: восстановление объекта из корзины - вызов с экранной формы  */
     public void onRestoreContentFromTrash(BaseDict item) {
         if (isItemDetailType(item)){
             tableBean.doRestoreItemFromTrash(item);
@@ -392,15 +390,11 @@ public class ExplorerBean implements Serializable {
         }
     }
     
-    /**
-     * КОРЗИНА: перемещение контента в корзину
-     * @param item
-     */
-    public void onMoveContentToTrash(BaseDict item){
+    /* КОРЗИНА: перемещение контента в корзину  */
+    public void onMoveContentToTrash(BaseDict item, Set<String> errors){
         if (item == null){
             return;
         }
-        Set<String> errors = new HashSet<>();
         if (isItemDetailType(item)){
             tableBean.moveToTrash(item, errors);            
         } else
@@ -409,24 +403,22 @@ public class ExplorerBean implements Serializable {
             } else
                 if (isItemRootType(item)){
                     rootBean.moveToTrash(item, errors);
-                }
-        if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);            
-        } else 
-            if (getDetailItems().contains(item)){
-                getDetailItems().remove(item);
-            }        
+                }              
     }
     
-    /**
-     * КОРЗИНА: перемещение записи из дерева в корзину
-     */
+    /* КОРЗИНА: перемещение записи из дерева в корзину  */
     public void onMoveTreeItemToTrash(){
         if (treeSelectedNode == null){
             return;
         }
-        onMoveContentToTrash(currentItem);
-        removeItemFromTree(treeSelectedNode);
+        Set<String> errors = new HashSet<>();
+        onMoveContentToTrash(currentItem, errors);
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);            
+        } else {
+            removeItemFromTree(treeSelectedNode);
+            reloadDetailsItems();
+        }
     }
     
     /**
@@ -442,7 +434,10 @@ public class ExplorerBean implements Serializable {
             } else
                 if (isItemTreeType(item)){
                     treeBean.deleteItem(item);
-                }
+                } else 
+                    if (isItemRootType(item)){
+                        rootBean.deleteItem(item);
+                    }            
         }));
         reloadDetailsItems();
     }
@@ -489,7 +484,7 @@ public class ExplorerBean implements Serializable {
             filterTree.setExpanded(true);
             
             //формируем корневой элемент для фильтров detail объекта
-            List<Filters> sourceTreeItems = filtersFacade.findDetailItems(null);                         
+            List<Filter> sourceTreeItems = filtersFacade.findDetailItems(null);                         
             final String tableJurnalName = tableBean.getMetadatesObj().getBundleJurnalName();
             sourceTreeItems.stream()
                     .forEach(treeItem -> {
@@ -541,7 +536,7 @@ public class ExplorerBean implements Serializable {
         String bundleName = EscomBeanUtils.getBandleLabel(nodeName);
         item.setName(bundleName);
 
-        List<Filters> childs = filtersFacade.findChilds((Filters)item);
+        List<Filter> childs = filtersFacade.findChilds((Filter)item);
         childs.stream()
                 .forEach(itemChild -> addFilterInTree(newNode, itemChild, nodeType, itemChild.getName())
         );        
@@ -566,7 +561,7 @@ public class ExplorerBean implements Serializable {
             return;
         }
         setCurrentTab(DictExplForm.TAB_FILTER);
-        Filters filter = (Filters) node.getData();
+        Filter filter = (Filter) node.getData();
         if (filter == null){
             return;
         }
@@ -586,11 +581,11 @@ public class ExplorerBean implements Serializable {
     }
 
     /* ФИЛЬТР: формирование заголовка журнала для разделов фильтров */
-    private void doMakeFilterJurnalHeader(TreeNode node, Filters filter){
+    private void doMakeFilterJurnalHeader(TreeNode node, Filter filter){
         TreeNode parentNode = node.getParent();
         String firstName = "";
         if (!parentNode.equals(filterTree)){
-            Filters parentFilter = (Filters) parentNode.getData();
+            Filter parentFilter = (Filter) parentNode.getData();
             if (parentFilter.getParent() == null){
                 firstName = parentFilter.getName();
             }
@@ -607,7 +602,7 @@ public class ExplorerBean implements Serializable {
         if (node == null || !currentTab.equals(DictExplForm.TAB_FILTER)){
             return false;
         }
-        Filters filter = (Filters) node.getData(); 
+        Filter filter = (Filter) node.getData(); 
         return filter.getId().equals(DictFilters.TRASH_ID);         
     }
 
@@ -628,7 +623,7 @@ public class ExplorerBean implements Serializable {
         if (node == null || !currentTab.equals(DictExplForm.TAB_FILTER)){
             return false;
         }        
-        Filters filter = (Filters) node.getData(); 
+        Filter filter = (Filter) node.getData(); 
         return filter.getId().equals(DictFilters.FAVORITE_ID);         
     } 
     
@@ -655,35 +650,23 @@ public class ExplorerBean implements Serializable {
     
     /* *** ОБОЗРЕВАТЕЛь ТАБЛИЦА *** */
     
-    /**
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка текущего объекта по двойному клику в таблице обозревателя
-     *
-     * @param event
-     */
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка текущего объекта по двойному клику в таблице обозревателя   */
     public void onRowDblClckOpen(SelectEvent event){
         BaseDict item = (BaseDict) event.getObject();
         sessionBean.prepEditItem(item);
     }
     
-    /**
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: обновление данных в таблице обозревателя
-     */
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: обновление данных в таблице обозревателя  */
     public void reloadDetailsItems() {        
         detailItems = null;
     }        
 
-    /**
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя
-     *
-     * @return
-     */
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя  */
     public List<BaseDict> getDetailItems(){
         if (detailItems == null) {
             switch (getSource()){
                 case DictDetailSource.FILTER_SOURCE:{
-                    if (filterSelectedNode != null){
-                        tableBean.makeFilteredContent((Filters) filterSelectedNode.getData());
-                    }
+                    doFilterTreeNodeSelect(filterSelectedNode);
                     break;
                 }
                 case DictDetailSource.TREE_SOURCE:{
@@ -699,21 +682,14 @@ public class ExplorerBean implements Serializable {
         return detailItems;
     }
     
-    /** 
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка списка таблицы обозревателя
-     * @param details
-     * @param source 
-     */
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка списка таблицы обозревателя  */
     public void setDetails(List<BaseDict> details, int source) {
         setSource(source);
         this.detailItems = details;
         this.checkedItems.clear();
     }        
     
-    /**
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)
-     * @param item
-     */ 
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
     public void onLoadGroupContent(BaseDict item) {
         onSetCurrentItem(item);
         if (isItemDetailType(item)){            
@@ -726,9 +702,7 @@ public class ExplorerBean implements Serializable {
                 }
     }
     
-    /** 
-     * ОБОЗРЕВАТЕЛь ТАБЛИЦА: переход на уровень вверх в таблице 
-     */ 
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: переход на уровень вверх в таблице */ 
     public void onGotoUpLevelContent() {
         if (treeSelectedNode == null){
             return;
@@ -744,9 +718,7 @@ public class ExplorerBean implements Serializable {
     
     /* *** ДЕРЕВО ОБЪЕКТОВ *** */
     
-    /**
-     * ДЕРЕВО: обновление дерева объектов
-     */
+    /* ДЕРЕВО: обновление дерева объектов  */
     public void onReloadTreeItems() {
         tree = null;
         treeSelectedNode = null;
@@ -786,18 +758,16 @@ public class ExplorerBean implements Serializable {
         onSelectInTree(node);
     }
     
-    /**
-     * ДЕРЕВО: выполнение действий при установке текущего элемента в дереве -
-     * вызов с экранной формы
-     *
-     * @param node
-     */
+    /* ДЕРЕВО: выполнение действий при установке текущего элемента в дереве */
     public void onSelectInTree(TreeNode node) {        
-        treeSelectedNode = node;
-        setCurrentTab(DictExplForm.TAB_TREE);
-        if (treeSelectedNode == null) {
+        if (node == null) {
             return;
         }
+        if (treeSelectedNode != null) {
+            treeSelectedNode.setSelected(false);
+        }
+        treeSelectedNode = node;
+        setCurrentTab(DictExplForm.TAB_TREE);
         treeSelectedNode.setSelected(true);
         currentItem = (BaseDict) treeSelectedNode.getData();
         List<BaseDict> details = null; 
@@ -859,8 +829,7 @@ public class ExplorerBean implements Serializable {
     public void addNewItemInTree(BaseDict item, TreeNode parentNode){        
         if (item == null){
             return;
-        }
-        treeSelectedNode.setSelected(false);
+        }        
         if (parentNode == null){
             parentNode = tree;
         }
@@ -869,14 +838,11 @@ public class ExplorerBean implements Serializable {
         if (isItemRootType(item)){
             type = typeRoot;
         }
-        treeSelectedNode = new DefaultTreeNode(type, item, parentNode);        
-        onSelectInTree(treeSelectedNode);        
+        TreeNode newNode = new DefaultTreeNode(type, item, parentNode);
+        item.getChildItems().stream().forEach(child -> addNewItemInTree((BaseDict)child, newNode));
     }    
          
-    /**
-     * ДЕРЕВО: удаление узла в дереве
-     * @param node 
-     */
+    /* ДЕРЕВО: удаление узла в дереве  */
     public void removeItemFromTree(TreeNode node){
         if (node == null){
             return;
@@ -968,7 +934,7 @@ public class ExplorerBean implements Serializable {
      * НАВИГАТОР: установка текущей папки по нажатию на кнопку навигатора
      * @param nv
      */ 
-    public void navigationSetSelected(FoldersNavigation nv) {
+    public void navigationSetSelected(FolderNavigation nv) {
         BaseDict group = (BaseDict) nv.getFolder();
         makeSelectedGroup(group);
     }
@@ -979,13 +945,13 @@ public class ExplorerBean implements Serializable {
      */ 
     public void makeNavigator(BaseDict item) {
         navigator = new LinkedList();        
-        navigator.addFirst(new FoldersNavigation(item));
+        navigator.addFirst(new FolderNavigation(item));
         while (item.getParent() != null) {
             item = (BaseDict) item.getParent();
-            navigator.addFirst(new FoldersNavigation(item));
+            navigator.addFirst(new FolderNavigation(item));
         }
         if (rootBean != null && !isItemRootType(item)){
-            navigator.addFirst(new FoldersNavigation(item.getOwner()));            
+            navigator.addFirst(new FolderNavigation(item.getOwner()));            
         }
     }
     
@@ -1016,57 +982,67 @@ public class ExplorerBean implements Serializable {
 
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
-        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem))
-                .collect(Collectors.toSet());
+        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem)).collect(Collectors.toSet());
         copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
     }
 
-
     /* ВСТАВКА: вставка объекта в дерево */
     public void onPasteItemToTree(){
-        doPasteItem(currentItem);
+        Set<String> errors = new HashSet<>();
+        List<BaseDict> rezults = doPasteItem(currentItem, errors);
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+        }
+        if (!rezults.isEmpty()){
+            rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
+                .forEach(item -> addNewItemInTree(item, treeSelectedNode));
+            reloadDetailsItems();
+        }
     }
 
     /* ВСТАВКА: вставка объекта в таблицу обозревателя */
     public void onPasteItemToTable(){
+        Set<String> errors = new HashSet<>();
         BaseDict parent = null;
         if (treeSelectedNode != null){
             parent = (BaseDict)treeSelectedNode.getData();
         }
-        doPasteItem(parent);
+        doPasteItem(parent, errors);
+        if (!errors.isEmpty()){            
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        reloadDetailsItems();
     }
     
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
     /* Реальный parent будет установлен в бине объекта */
-    private void doPasteItem(BaseDict parent) {
-        Set<String> errors = new HashSet<>();
-        copiedItems.stream().forEach(item-> sessionBean.onPasteItem(item, parent, errors));
-        if (!errors.isEmpty()){            
-            EscomBeanUtils.showErrorsMsg(errors);
-        }
+    private List<BaseDict> doPasteItem(BaseDict parent, Set<String> errors) {
+        List<BaseDict> rezults = new ArrayList<>();
+        copiedItems.stream().forEach(item -> {
+            BaseDict pasteItem = sessionBean.doPasteItem(item, parent, errors);
+            if (pasteItem != null){
+                rezults.add(pasteItem);
+            }
+        });
+        return rezults;
     }
     
     /* *** ПОИСК *** */
 
-    /**
-     * ПОИСК: Обработка нажатия на кнопку алфавитной панели
-     *
-     * @param event
-     */
+    /* ПОИСК: Обработка нажатия на кнопку алфавитной панели   */
     public void abcSearche(ActionEvent event) {
         String action = (String) event.getComponent().getAttributes().get("action");
-        searcheBean.getModel().setNameSearche(action);
+        getModel().setNameSearche(action);
         onSearcheItem();
     }
     
-    /**
-     * ПОИСК: Обработка действия по нажатию кнопки Поиск
-     */
+    /* ПОИСК: Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
-        if (searcheBean.getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
+        if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
             EscomBeanUtils.ErrorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
         } else {
-            searcheBean.doSearcheItems();
+            doSearcheItems();
             if (getDetailItems().isEmpty()) {
                 EscomBeanUtils.WarnMsgAdd("Info", "NO_SEARCHE_FIND");
                 return;
@@ -1090,7 +1066,88 @@ public class ExplorerBean implements Serializable {
         }
     }
     
-     /* *** DRAG & DROP *** */          
+    /* ПОИСК: */
+    public void dateCreateStartChange() {
+        Date dateCreateEnd = getModel().getDateCreateEnd();
+        if (dateCreateEnd == null) {
+            getModel().setDateCreateEnd(getModel().getDateCreateStart());
+        }
+    }
+
+    /* ПОИСК: */
+    public void dateChangeStartChange() {
+        Date dateChangeEnd = getModel().getDateChangeEnd();
+        if (dateChangeEnd == null) {
+            getModel().setDateChangeEnd(getModel().getDateChangeStart());
+        }
+    }
+    
+    /* ПОИСК: формирует список объектов с учётом критериев поиска  */
+    public void doSearcheItems() {
+        List<BaseDict> searcheGroups = new ArrayList<>();
+        Map<String, Object> paramEQ = new HashMap<>();
+        Map<String, Object> paramLIKE = new HashMap<>();
+        Map<String, Object> paramIN = new HashMap<>();
+        Map<String, Date[]> paramDATE = new HashMap<>();
+
+        //готовим группы в которых будет поиск
+        if (getModel().isSearcheInGroups()) {
+            TreeNode ownerNode = getTreeSelectedNode();
+            if (ownerNode != null) {
+                BaseDict owner = (BaseDict) ownerNode.getData();
+                searcheGroups.addAll(owner.getChildItems());
+                if (!searcheGroups.contains(owner)) {
+                    searcheGroups.add(owner);
+                }
+            }
+        }
+
+        //добавление в запрос точных критериев
+        if (getModel().isOnlyActualItem()) {
+            paramEQ.put("actual", true);
+        }
+        if (getModel().getAuthorSearche() != null) {
+            paramEQ.put("author", getModel().getAuthorSearche());
+        }
+                
+        //добавление в запрос не точных критериев
+        String name = getModel().getNameSearche().trim();
+        if (name.equals("*")) {
+            name = "%";
+        } else {
+            name = name + "%";
+        }
+        if (StringUtils.isNotEmpty(name) && !SysParams.ALL.equals(name.trim())) {
+            paramLIKE.put("name", name);
+        }
+
+        //добавление в запрос критериев на вхождение
+        List<Integer> states = getModel().getStateSearche();
+        if (states != null && !states.isEmpty()) {
+            paramIN.put("state", states);
+        }
+
+        //добавление в запрос даты создания
+        if (getModel().isDateCreateSearche()) {
+            Date[] dateArray = new Date[2];
+            dateArray[0] = getModel().getDateCreateStart();
+            dateArray[1] = getModel().getDateCreateEnd();
+            paramDATE.put("dateCreate", dateArray);
+        }
+
+        //добавление в запрос даты изменения
+        if (getModel().isDateChangeSearche()) {
+            Date[] dateArray = new Date[2];
+            dateArray[0] = getModel().getDateChangeStart();
+            dateArray[1] = getModel().getDateChangeEnd();
+            paramDATE.put("dateChange", dateArray);
+        }
+
+        searcheBean.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, new HashMap<>());
+        setCurrentViewModeDetail();        
+    }
+    
+    /* *** DRAG & DROP *** */          
     
     /**
      * Формирование списка объектов для перетаскивания
@@ -1169,7 +1226,7 @@ public class ExplorerBean implements Serializable {
                             break;
                         }
                         case DictExplForm.TAB_FILTER:{
-                            doDropToFilter(checkedItems, (Filters) dropItem);
+                            doDropToFilter(checkedItems, (Filter) dropItem);
                             break;
                         }
                     }
@@ -1181,7 +1238,7 @@ public class ExplorerBean implements Serializable {
     /**
      * Обработка drop помещения объекта в фильтр
      */
-    private void doDropToFilter(List<BaseDict> dragItems, Filters filter){        
+    private void doDropToFilter(List<BaseDict> dragItems, Filter filter){        
         Set<String> errors = new HashSet<>();
         switch (filter.getId()){
             case DictFilters.TRASH_ID:{
@@ -1254,9 +1311,7 @@ public class ExplorerBean implements Serializable {
         }
     }
         
-    /**
-     * Обработка события drop в таблицу обозревателя объектов
-     */
+    /* Обработка события drop в таблицу обозревателя объектов  */
     public void dropToTable(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 
@@ -1308,8 +1363,8 @@ public class ExplorerBean implements Serializable {
         String rkTbl = dropId.substring(LEH_NAVIG_NAME, lenDrop);
         String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
         
-        dropItem = (Folders) EscomBeanUtils.findUiNavigatorItem(getNavigator(), Integer.parseInt(rwKey));
-        dropNode = EscomBeanUtils.findTreeNode(tree, (Folders) dropItem);
+        dropItem = (Folder) EscomBeanUtils.findUiNavigatorItem(getNavigator(), Integer.parseInt(rwKey));
+        dropNode = EscomBeanUtils.findTreeNode(tree, (Folder) dropItem);
 
         if (dragId.substring(0, LEH_TABLE_NAME).equals(TABLE_NAME)) {
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
@@ -1360,9 +1415,7 @@ public class ExplorerBean implements Serializable {
         getDetailItems().removeAll(checkedItems);
     }
     
-    /**
-     * DRAG & DROP добавление объекта в группу
-     */
+    /* DRAG & DROP добавление объекта в группу */
     public void addItemToGroup(){
         if (!isItemTreeType(dropItem)){ //если бросили в treeItem               
             return;
@@ -1376,16 +1429,16 @@ public class ExplorerBean implements Serializable {
                 });
     }
     
-    /**
-     * DRAG & DROP: перемещение объекта в корзину
-     */
+    /* DRAG & DROP: перемещение объекта в корзину */
     public void dropItemToTrash(){
-        checkedItems.stream().forEach(dragItem ->  onMoveContentToTrash(dragItem));
+        Set<String> errors = new HashSet<>();
+        checkedItems.stream().forEach(dragItem -> onMoveContentToTrash(dragItem, errors));
+        if (!errors.isEmpty()){            
+            EscomBeanUtils.showErrorsMsg(errors);         
+        }
     }
     
-    /**
-     * DRAG & DROP: перемещение объекта в не актулаьные
-     */
+    /* DRAG & DROP: перемещение объекта в не актулаьные */
     public void dropItemToNotActual(){
         checkedItems.stream().forEach(dragItem -> {
             if (isItemDetailType(dragItem)){
@@ -1396,10 +1449,7 @@ public class ExplorerBean implements Serializable {
             
     /* *** СЕЛЕКТОР *** */
     
-    /**
-     * СЕЛЕКТОР: определяет режим множественного выбора в селекторе
-     * @return 
-     */
+    /* СЕЛЕКТОР: определяет режим множественного выбора в селекторе  */
     public boolean isMultySelectMode(){
         return Objects.equals(selectMode, DictExplForm.MULTY_SELECT_MODE);
     }
@@ -1740,4 +1790,8 @@ public class ExplorerBean implements Serializable {
         return createParams;
     }
 
+    public SearcheModel getModel() {
+        return model;
+    }
+    
 }

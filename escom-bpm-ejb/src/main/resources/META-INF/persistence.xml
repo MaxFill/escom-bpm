@@ -19,7 +19,6 @@
     <class>com.maxfill.model.docs.docsTypes.DocType</class>
     <class>com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups</class>
     <class>com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog</class>
-    <class>com.maxfill.model.docs.statuses.DocsStatus</class>
     <class>com.maxfill.model.statuses.StatusesDocLog</class>
     <class>com.maxfill.model.statuses.StatusesDoc</class>
     <class>com.maxfill.model.numPuttern.counter.Counter</class>
@@ -33,12 +32,8 @@
     <class>com.maxfill.model.posts.PostLog</class>
     <class>com.maxfill.model.users.groups.UserGroupsLog</class>
     <class>com.maxfill.model.users.groups.UserGroups</class>
-    <class>com.maxfill.model.folders.FoldersLog</class>
-    <class>com.maxfill.model.folders.Folders</class>
     <class>com.maxfill.model.partners.PartnersLog</class>
     <class>com.maxfill.model.partners.Partner</class>
-    <class>com.maxfill.model.filters.FiltersLog</class>
-    <class>com.maxfill.model.filters.Filters</class>
     <class>com.maxfill.model.favorites.FavoriteObj</class>
     <class>com.maxfill.model.partners.groups.PartnerGroups</class>
     <class>com.maxfill.model.partners.groups.PartnerGroupsLog</class>
@@ -50,6 +45,11 @@
     <class>com.maxfill.services.mail.Mailbox</class>
     <class>com.maxfill.model.metadates.MetadatesLog</class>
     <class>com.maxfill.model.metadates.Metadates</class>
+    <class>com.maxfill.model.folders.Folder</class>
+    <class>com.maxfill.model.folders.FolderLog</class>
+    <class>com.maxfill.model.docs.docStatus.DocsStatus</class>
+    <class>com.maxfill.model.filters.Filter</class>
+    <class>com.maxfill.model.filters.FilterLog</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

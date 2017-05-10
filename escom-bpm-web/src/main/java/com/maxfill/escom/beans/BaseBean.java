@@ -13,6 +13,8 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.facade.UserFacade;
+import com.maxfill.model.rights.Rights;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,6 +36,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     static final protected Logger LOGGER = Logger.getGlobal();
     
     @Inject
+    protected ApplicationBean appBean;
+    @Inject
     protected SessionBean sessionBean;
     @EJB
     protected Configuration conf;
@@ -47,6 +51,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     protected AttacheService attacheService;
     @EJB
     protected RightFacade rightFacade;
+    @EJB
+    protected UserFacade userFacade;
     
     private boolean isItemChange;               //признак изменения записи  
 
@@ -72,6 +78,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
      * ИНИЦИАЛИЗАЦИЯ: действия при создании бина
      */
     public abstract void onInitBean();
+    public abstract Class<T> getItemClass();
     
     /**
      * Установка пользовательских настроек форм и прочего
@@ -83,22 +90,14 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         //model.setRowsInPage(userSettings.getRowInPage());
     }
     
-    /**
-     * СОЗДАНИЕ: создание нового объекта
-     *
-     * @param owner
-     * @return
-     */
+    /* СОЗДАНИЕ: создание нового объекта   */
     public BaseDict createItem(BaseDict owner) {
         return getItemFacade().createItem(owner, currentUser);
     }
     
     /* *** ПРАВА ДОСТУПА *** */    
     
-    /**
-     * ПРАВА ДОСТУПА: проверка права доступа к объекту с актуализацией
-     * @param item
-     */
+    /* ПРАВА ДОСТУПА: проверка права доступа к объекту с актуализацией   */
     public void actualizeRightItem(BaseDict item){       
         if (item == null){
             throw new NullPointerException("Item null in actualize right metod!");
@@ -106,26 +105,21 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         sessionBean.actualizeRightItem(item);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: Проверяет право текущего пользователя на удаление объекта
-     *
-     * @param item
-     * @return
-     */
+    /* ПРАВА ДОСТУПА: Проверяет право текущего пользователя на удаление объекта  */
     public Boolean isHaveRightDelete(BaseDict item) {
         return sessionBean.checkMaskDelete(item);
     }
 
-    /**
-     * ПРАВА ДОСТУПА: проверяет право текущего пользователя на изменение прав доступа к объекту
-     *
-     * @param item
-     * @return
-     */
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на изменение прав доступа к объекту  */
     public boolean isHaveRightChangeRight(T item) {
         return sessionBean.checkMaskRightChangeRight(item);
     }          
     
+    /* ПРАВА ДОСТУПА: дефолтные права доступа к объекту */
+    public Rights getDefaultRights(){
+        return appBean.getDefaultRights(getItemClass().getSimpleName());
+    }
+        
     /**
      * СПИСКИ ОБЪЕКТОВ: предварительная обработка списка объектов
      *
@@ -203,7 +197,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         
     public List<User> getUsers() {
         if (users == null){
-            users = sessionBean.getUserFacade().findAll().stream()
+            users = userFacade.findAll().stream()
                 .filter(item -> sessionBean.preloadCheckRightView(item))
                 .collect(Collectors.toList());             
         }

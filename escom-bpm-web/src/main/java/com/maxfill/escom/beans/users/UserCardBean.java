@@ -81,5 +81,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     protected void onAfterCreateItem(User item) {        
     }
 
-
+    @Override
+    public Class<User> getItemClass() {
+        return User.class;
+    }
 }

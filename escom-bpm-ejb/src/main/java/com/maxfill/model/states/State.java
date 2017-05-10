@@ -51,10 +51,6 @@ public class State extends BaseDict<State, State, State, StateLog>{
     @Column(name = "ID")
     @XmlElement(name = "ID")
     private Integer id;
-
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "state")   
-    private List<Doc> docsList;
     
     @XmlTransient
     @OneToMany(mappedBy = "state")
@@ -85,13 +81,6 @@ public class State extends BaseDict<State, State, State, StateLog>{
     }
     public void setRightList(List<Right> rightList) {
         this.rightList = rightList;
-    }
-    
-    public List<Doc> getDocsList() {
-        return docsList;
-    }
-    public void setDocsList(List<Doc> docsList) {
-        this.docsList = docsList;
     }
     
     public List<Metadates> getMetadatesList() {

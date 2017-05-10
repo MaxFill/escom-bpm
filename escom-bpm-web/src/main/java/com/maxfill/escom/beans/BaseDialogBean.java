@@ -1,9 +1,9 @@
 
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.context.RequestContext;
 
-import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -64,6 +64,10 @@ public abstract class BaseDialogBean implements Serializable{
         this.sourceBean = sourceBean;
     }
 
+    public String getLabelFromBundle(String key){
+        return EscomBeanUtils.getBandleLabel(key);
+    }
+            
     public BaseBean getSourceBean() {
         return sourceBean;
     }

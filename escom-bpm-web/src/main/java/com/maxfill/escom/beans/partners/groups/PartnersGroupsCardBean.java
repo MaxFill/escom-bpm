@@ -30,5 +30,8 @@ public class PartnersGroupsCardBean extends BaseCardBean<PartnerGroups> {
     protected void onAfterCreateItem(PartnerGroups item) {        
     }
 
-
+    @Override
+    public Class<PartnerGroups> getItemClass() {
+        return PartnerGroups.class;
+    }
 }

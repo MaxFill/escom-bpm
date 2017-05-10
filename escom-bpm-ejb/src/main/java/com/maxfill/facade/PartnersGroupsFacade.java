@@ -3,21 +3,14 @@ package com.maxfill.facade;
 
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.groups.PartnerGroupsLog;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.model.users.User;
+import com.maxfill.model.BaseDict;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  *
@@ -34,13 +27,7 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     public String getFRM_NAME() {
         return DictObjectName.PARTNER_GROUP.toLowerCase();
     }
-    
-    @Override
-    public void pasteItem(PartnerGroups pasteItem, BaseDict target, Set<String> errors){        
-        pasteItem.setParent((PartnerGroups)target);
-        doPaste(pasteItem, errors);
-    }
-    
+        
     @Override
     public void create(PartnerGroups partnersGroups) {
         getEntityManager().persist(partnersGroups);
@@ -79,11 +66,6 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     }  
 
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-       
-    }
-
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_GROUPS_PARTNERS;
     }
@@ -93,4 +75,9 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
     
+        
+    @Override
+    public void preparePasteItem(PartnerGroups pasteItem, BaseDict target){        
+        pasteItem.setParent((PartnerGroups)target);
+    }
 }

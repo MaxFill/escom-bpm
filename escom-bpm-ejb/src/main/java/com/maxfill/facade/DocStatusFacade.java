@@ -1,7 +1,7 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.docs.statuses.DocsStatus;
+import com.maxfill.model.docs.docStatus.DocsStatus;
 import com.maxfill.facade.BaseFacade;
 import javax.ejb.Stateless;
 

@@ -31,5 +31,8 @@ public class PostCardBean extends BaseCardBean<Post>{
     protected void onAfterCreateItem(Post item) {        
     }
 
-
+    @Override
+    public Class<Post> getItemClass() {
+        return Post.class;
+    }
 }

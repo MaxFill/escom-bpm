@@ -2,19 +2,12 @@ package com.maxfill.facade;
 
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.posts.PostLog;
-import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.facade.UserFacade;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.model.users.User;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -44,15 +37,6 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog> {
     @Override
     public String getFRM_NAME() {
         return DictObjectName.POST.toLowerCase();
-    }
-
-    @Override
-    public void pasteItem(Post pasteItem, BaseDict target, Set<String> errors){        
-        doPaste(pasteItem, errors);
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {      
     }
 
     @Override

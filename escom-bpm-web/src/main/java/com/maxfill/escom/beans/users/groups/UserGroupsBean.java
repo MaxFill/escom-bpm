@@ -34,8 +34,8 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private UserGroupsFacade usGroupFacade;   
     
     public UserGroupsBean() { 
-    }       
-       
+    }              
+    
     @Override
     protected String getBeanName() {
         return BEAN_NAME;

@@ -1,12 +1,13 @@
 
 package com.maxfill.escom.beans.system.numPuttern;
 
+import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.model.numPuttern.NumeratorModel;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-
+import com.maxfill.utils.ItemUtils;
+import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -17,6 +18,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import javax.faces.model.SelectItem;
 
 /**
  * НУМЕРАТОР
@@ -31,9 +33,22 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
     @EJB
     private NumeratorPatternFacade numeratorFacade;    
     
+    private final List<SelectItem> numPatternTypes = new ArrayList<>();
+
     @Override
-    protected NumeratorModel createModel() {
-        return new NumeratorModel();
+    public void onInitBean() {
+        super.onInitBean(); 
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, ItemUtils.getBandleLabel("Auto")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, ItemUtils.getBandleLabel("ManualInput")));
+    }
+            
+    public String getLabel(String typeCode){
+        for (SelectItem item : numPatternTypes){
+            if (item.getValue().equals(typeCode)){
+                return item.getLabel();
+            }
+        }
+        return "";
     }
      
     @Override

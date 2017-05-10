@@ -43,7 +43,11 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     protected void onAfterCreateItem(NumeratorPattern item) {        
     }
 
-
+    @Override
+    public Class<NumeratorPattern> getItemClass() {
+        return NumeratorPattern.class;
+    }
+    
     public List<SelectItem> getNumPatternTypes() {
         return numPatternTypes;
     }

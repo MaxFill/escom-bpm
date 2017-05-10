@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Базовый класс справочников
@@ -42,6 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 @XmlAccessorType (XmlAccessType.FIELD)
 public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends BaseDict, L extends BaseLogTable> implements Serializable {
     private static final long serialVersionUID = 1844448252960314998L;
+    private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
     
     @Transient
     @XmlTransient
@@ -199,7 +201,13 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     public String getItemKey(){
         StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
-        sb.append("_").append(getId().toString());
+        sb.append("_");
+        if (getId() == null){
+            Integer num = NUMBER_ID.incrementAndGet();
+            sb.append(num.toString());
+        } else {
+            sb.append(getId().toString());
+        }
         return sb.toString();
     }
     
@@ -220,6 +228,9 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     public List<P> getChildItems() {
         return childItems;
+    }
+    public void setChildItems(List<P> childItems) {
+        this.childItems = childItems;
     }
 
     public List<L> getItemLogs() {

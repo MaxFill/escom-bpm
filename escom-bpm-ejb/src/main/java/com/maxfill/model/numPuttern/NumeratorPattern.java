@@ -14,8 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -28,8 +26,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "numeratorPattern")
-@NamedQueries({
-    @NamedQuery(name = "NumeratorPattern.findAll", query = "SELECT n FROM NumeratorPattern n")})
 @DiscriminatorColumn(name="REF_TYPE")
 public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPattern, NumeratorPattern, NumeratorPatternLog> {
     private static final long serialVersionUID = 7646428401886042406L;

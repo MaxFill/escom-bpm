@@ -78,7 +78,8 @@
                 <p:menuitem value="#{bundle.Copy}" icon="ui-icon-copy"
                             actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
                 <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
-                            actionListener="#{explorerBean.onPasteItemToTree()}"/>
+                            actionListener="#{explorerBean.onPasteItemToTree()}"
+                            update="#{_frmTree}:accord:tree #{_frmExpl}"/>
                 <p:separator/>
                 
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"

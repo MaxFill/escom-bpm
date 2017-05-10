@@ -3,17 +3,10 @@ package com.maxfill.facade;
 
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.users.User;
-import java.util.List;
+import com.maxfill.model.BaseDict;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  * Фасад для сущности "Группы видов документов"
@@ -30,17 +23,6 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
     public String getFRM_NAME() {
         return DocTypeGroups.class.getSimpleName().toLowerCase();
     }
-    
-    @Override
-    public void pasteItem(DocTypeGroups pasteItem, BaseDict target, Set<String> errors){
-        pasteItem.setParent((DocTypeGroups)target);              
-        doPaste(pasteItem, errors);
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
-    }
 
     @Override
     protected Integer getMetadatesObjId() {
@@ -52,5 +34,8 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+    @Override
+    public void preparePasteItem(DocTypeGroups pasteItem, BaseDict target){
+        pasteItem.setParent((DocTypeGroups)target);
+    }
 }

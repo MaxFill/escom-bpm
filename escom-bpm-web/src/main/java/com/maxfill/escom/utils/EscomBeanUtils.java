@@ -1,7 +1,7 @@
 package com.maxfill.escom.utils;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.folders.FoldersNavigation;
+import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
@@ -149,7 +149,7 @@ public class EscomBeanUtils {
         int pos = 0;
         for (Object n : navigator) {
             if (pos == keyRow) {
-                FoldersNavigation fn = (FoldersNavigation) n;
+                FolderNavigation fn = (FolderNavigation) n;
                 rez = fn.getFolder();
                 break;
             }

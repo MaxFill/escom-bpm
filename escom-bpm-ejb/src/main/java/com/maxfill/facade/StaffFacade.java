@@ -1,11 +1,9 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.staffs.StaffModel;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.staffs.StaffLog;
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
@@ -19,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -47,7 +44,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
 
     public StaffFacade() {
         super(Staff.class, StaffLog.class);
-    }    
+    }
     
     @Override
     public String getFRM_NAME() {
@@ -55,30 +52,28 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     }
     
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel baseDataModel){
-        StaffModel model = (StaffModel) baseDataModel;
-        String postName = model.getPostSearche().trim();
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
+        String postName = (String) addParams.get("postName");
         if (StringUtils.isNotBlank(postName)){
             Join<Staff, Post> postJoin = root.join(Staff_.post);
-            predicates.add(builder.like(postJoin.<String>get("name"), postName));            
+            predicates.add(builder.like(postJoin.<String>get("name"), postName));
         }
-        String secondName = model.getSecondNameSearche();
+        String secondName = (String) addParams.get("secondName");
         if (StringUtils.isNotBlank(secondName)){
             Join<Staff, User> userJoin = root.join(Staff_.employee);
-            predicates.add(builder.like(userJoin.<String>get(User_.secondName), secondName));            
+            predicates.add(builder.like(userJoin.<String>get(User_.secondName), secondName));
         }
     }
 
     @Override
-    protected Integer getMetadatesObjId() {
-        return DictMetadatesIds.OBJ_STAFFS;
+    public void preparePasteItem(Staff pasteItem, BaseDict target){
+        detectParentOwner(pasteItem, target);
     }
     
     @Override
-    public void pasteItem(Staff pasteItem, BaseDict target,  Set<String> errors){
-        detectParentOwner(pasteItem, target);
-        doPaste(pasteItem, errors);
-    }
+    protected Integer getMetadatesObjId() {
+        return DictMetadatesIds.OBJ_STAFFS;
+    }    
     
     @Override
     public boolean addItemToGroup(Staff staff, BaseDict group){ 
@@ -93,7 +88,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     }
         
     @Override
-    protected void detectParentOwner(Staff staff, BaseDict target){
+    public void detectParentOwner(Staff staff, BaseDict target){
         if (target instanceof Company){
             staff.setCompany((Company)target);
             staff.setOwner(null); //теперь нет связи с подразделением
@@ -172,7 +167,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
      * @param user 
      * @return  
      */
-    public List<Staff> findStaffByUser(User user){
+    public List<Staff> findStaffsByUser(User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);

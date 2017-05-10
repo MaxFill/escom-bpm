@@ -3,17 +3,20 @@ package com.maxfill.escom.beans;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictDetailSource;
+import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.utils.SysParams;
-import com.maxfill.model.BaseDataModel;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.beans.explorer.ExplorerBean;
-import com.maxfill.model.filters.Filters;
+import com.maxfill.model.filters.Filter;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import org.apache.commons.lang.StringUtils;
+import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.utils.ItemUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -32,10 +35,7 @@ import java.util.stream.Collectors;
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = -4409411219233607045L;       
     
-    private BaseDataModel model;
     private Integer defaultMaskAccess;          //дефолтная маска доступа текущего пользователя          
-
-    private TreeNode selectedNode;              //текущий элемент в дереве
 
     private final LayoutOptions layoutOptions = new LayoutOptions();
     
@@ -53,32 +53,17 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* *** ИНИЦИАЛИЗАЦИЯ *** */   
 
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
-
-    protected abstract String getBeanName();
-
     public abstract BaseExplBean getDetailBean();
     public abstract BaseExplBean getOwnerBean();      //установка бина владельца объекта 
 
-
-    /**
-     * ИНИЦИАЛИЗАЦИЯ: действия при создании бина
-     */
+    protected abstract String getBeanName();
+        
     @Override
-    public void onInitBean(){        
-        model = createModel();
+    public void onInitBean(){    
         EscomBeanUtils.initLayoutOptions(layoutOptions);
         initAddLayoutOptions(layoutOptions);
         northVisible = false;
-    }
-            
-    /**
-     * ИНИЦИАЛИЗАЦИЯ: создание модели данных бина
-     *
-     * @return
-     */
-    protected BaseDataModel createModel() {
-        return new BaseDataModel();
-    }
+    }            
 
     /* *** ПРАВА ДОСТУПА ***  */
     
@@ -89,22 +74,19 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      * каждой группе к одному и тому же контрагенту могут быть разные права!
      */
 
-    /**
-     * ПРАВА ДОСТУПА: можно ли создавать объект
-     * @return 
-     */
+    /* ПРАВА ДОСТУПА: можно ли создавать объект  */
     public boolean isHaveRightCreate() {
         boolean flag = true;
         if (explorerBean.getTreeSelectedNode() != null) {
             O ownerItem = (O) explorerBean.getTreeSelectedNode().getData();
             if (ownerItem != null) {
-                flag = getItemFacade().isHaveRightEdit(ownerItem); //можно ли редактировать owner?
+                flag = sessionBean.isHaveRightEdit(ownerItem); //можно ли редактировать owner?
             } else {
                 flag = false;
             }
         }
         if (flag) {
-            flag = getItemFacade().checkMaskAccess(getDefaultMaskAccess(), DictRights.RIGHT_CREATE); //можно ли создавать объект данного типа
+            flag = sessionBean.checkMaskAccess(getDefaultMaskAccess(), DictRights.RIGHT_CREATE); //можно ли создавать объект данного типа
         }
         return flag;
     }
@@ -112,38 +94,29 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* ПРАВА ДОСТУПА: возвращает дефолтную маску доступа к объекту для текущего пользователя  */
     public Integer getDefaultMaskAccess() {
         if (defaultMaskAccess == null) {
-            Rights rights = getItemFacade().getDefaultRights();
+            Rights rights = getDefaultRights();
             State state = getMetadatesObj().getStateForNewObj();
-            defaultMaskAccess = getItemFacade().getAccessMask(state, rights, currentUser);
+            defaultMaskAccess = sessionBean.getAccessMask(state, rights, currentUser);
         }
         return defaultMaskAccess;
-    }     
+    }          
     
-    /**
-     * КАРТОЧКА: выполнение специфичных действий после закрытия карточки
-     */ 
+    /* КАРТОЧКА: выполнение специфичных действий после закрытия карточки  */ 
     public void afterCloseItemCard(){
     }
-        
-    /* *** РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА *** */
-        
+          
+    /* *** РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА *** */     
 
-    /**
-     * РЕДАКТИРОВАНИЕ: перед добавлением объекта в группу
-     * @param dropItem (owner)
-     * @param dragItem
-     * @param errors
-     * @return 
-     */
+    /* РЕДАКТИРОВАНИЕ: перед добавлением объекта в группу  */
     public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getOwnerBean().actualizeRightItem(dropItem);
-        if (!getItemFacade().isHaveRightEdit(dropItem)) {
+        if (!sessionBean.isHaveRightEdit(dropItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
             errors.add(error);
             return false;
         }
         actualizeRightItem(dragItem);
-        if (!getItemFacade().isHaveRightEdit(dragItem)) {
+        if (!sessionBean.isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -151,24 +124,17 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
 
-    /**
-     * РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу
-     *
-     * @param dropItem (owner)
-     * @param dragItem
-     * @param errors
-     * @return
-     */
+    /* РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу  */
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
         actualizeRightItem(dropItem);
 
-        if (!getItemFacade().isHaveRightEdit(dropItem)){
+        if (!sessionBean.isHaveRightEdit(dropItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
         actualizeRightItem(dragItem);
-        if (!getItemFacade().isHaveRightEdit(dragItem)){
+        if (!sessionBean.isHaveRightEdit(dragItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -202,7 +168,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      */
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
         actualizeRightItem(dragItem);
-        if (!getItemFacade().isHaveRightEdit(dragItem)) {
+        if (!sessionBean.isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -281,7 +247,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         preDeleteItem(item);
         numeratorService.doRollBackRegistred(item, getItemFacade().getFRM_NAME());
         getItemFacade().remove(item);
-        postDeleteItem(item);
     }
 
     /**
@@ -309,13 +274,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      * @param item
      */
     protected void preDeleteItem(T item) {
-    }
-
-    /**
-     * УДАЛЕНИЕ: Переопределяется для выполнения специфичных действий после удаления объекта
-     */
-    protected void postDeleteItem(T item) {
-    }   
+    } 
 
     /* *** КОРЗИНА *** */
     
@@ -507,12 +466,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     /*  *** ФИЛЬТРЫ *** */
     
-    /**
-     * ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра
-     *
-     * @param filter
-     */
-    public void makeFilteredContent(Filters filter) {
+    /* ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра  */
+    public void makeFilteredContent(Filter filter) {
         List<BaseDict> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
@@ -534,10 +489,40 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             case DictFilters.NOTACTUAL_ID: {
                 result = getItemFacade().loadNotActualItems();
                 break;
-            }            
+            }
         }
         doSetDetails(result, DictDetailSource.FILTER_SOURCE);
-    }   
+    }
+    
+    /* ПОИСК: */
+    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
+        List<BaseDict> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
+        if (!searcheGroups.isEmpty()){
+            doSetDetails(sourceItems, DictDetailSource.SEARCHE_SOURCE);
+        } else {
+            List<BaseDict> searcheItems = new ArrayList<>();
+            for (BaseDict item : sourceItems) {
+                boolean include = false;
+
+                List<O> itemGroups = getGroups((T)item);
+                if (!searcheGroups.isEmpty() && itemGroups != null) {
+                    for (O group : searcheGroups) {
+                        if (itemGroups.contains(group)) {
+                            include = true;
+                            break;
+                        }
+                    }
+                } else {
+                    include = true;
+                }
+                if (include){
+                    searcheItems.add(item);
+                }
+            }
+            doSetDetails(searcheItems, DictDetailSource.SEARCHE_SOURCE);
+        }
+        explorerBean.makeJurnalHeader(EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
+    }
     
     /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
     
@@ -589,10 +574,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return southVisible;
     }
 
-    public BaseDataModel getModel() {
-        return model;
-    }
-
     public ExplorerBean getExplorerBean() {
         return explorerBean;
     }
@@ -604,13 +585,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return heightCardDlg;
     }
 
-    public TreeNode getSelectedNode() {
-        return selectedNode;
-    }
-    public void setSelectedNode(TreeNode selectedNode) {
-        this.selectedNode = selectedNode;
-    }
-
     public TreeNode[] getSelectedNodes() {
         return selectedNodes;
     }
@@ -618,16 +592,11 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         this.selectedNodes = selectedNodes;
     }
     
-    public abstract Class<T> getItemClass();
     public abstract Class<O> getOwnerClass();
         
     /* *** ИЗБРАННОЕ *** */
     
-    /**
-     * ИЗБРАННОЕ: отбор избранных записей для текущего пользователя
-     *
-     * @return
-     */
+    /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
     public List<BaseDict> findFavorites() {        
         List<Integer> favorIds = new ArrayList<>();
         List<FavoriteObj> favorites = currentUser.getFavoriteObjList();
@@ -637,130 +606,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return getItemFacade().findByIds(favorIds);
     }   
 
-    /**
-     * ИЗБРАННОЕ: удаление объекта из избранного
-     *
-     * @param item
-     */
+    /* ИЗБРАННОЕ: удаление объекта из избранного   */
     public void delFromFavorites(BaseDict item) {
         favoriteService.delFromFavorites(item, getMetadatesObj(), currentUser);
-    }
-
-    /* *** ПОИСК ***  */   
-
-    /**
-     * ПОИСК:
-     */
-    public void dateCreateStartChange() {
-        Date dateCreateEnd = getModel().getDateCreateEnd();
-        if (dateCreateEnd == null) {
-            getModel().setDateCreateEnd(getModel().getDateCreateStart());
-        }
-    }
-
-    /**
-     * ПОИСК:
-     */
-    public void dateChangeStartChange() {
-        Date dateChangeEnd = getModel().getDateChangeEnd();
-        if (dateChangeEnd == null) {
-            getModel().setDateChangeEnd(getModel().getDateChangeStart());
-        }
-    }
-
-    /**
-     * ПОИСК: формирует список объектов с учётом критериев поиска
-     *
-     */
-    public void doSearcheItems() {
-        List<BaseDict> searcheItems = new ArrayList<>();
-        List<O> searcheGroups = new ArrayList<>();
-        Map<String, Object> paramEQ = new HashMap<>();
-        Map<String, Object> paramLIKE = new HashMap<>();
-        Map<String, Object> paramIN = new HashMap<>();
-        Map<String, Date[]> paramDATE = new HashMap<>();
-
-        //готовим группы в которых будет поиск
-        if (getModel().isSearcheInGroups()) {
-            TreeNode ownerNode = explorerBean.getTreeSelectedNode();
-            if (ownerNode != null) {
-                O owner = (O) ownerNode.getData();
-                searcheGroups.addAll(owner.getChildItems());
-                if (!searcheGroups.contains(owner)) {
-                    searcheGroups.add(owner);
-                }
-            }
-        }
-
-        //добавление в запрос точных критериев
-        if (getModel().isOnlyActualItem()) {
-            paramEQ.put("actual", true);
-        }
-        if (getModel().getAuthorSearche() != null) {
-            paramEQ.put("author", getModel().getAuthorSearche());
-        }
-                
-        //добавление в запрос не точных критериев
-        String name = getModel().getNameSearche().trim();
-        if (name.equals("*")) {
-            name = "%";
-        } else {
-            name = name + "%";
-        }
-        if (StringUtils.isNotEmpty(name) && !SysParams.ALL.equals(name.trim())) {
-            paramLIKE.put("name", name);
-        }
-
-        //добавление в запрос критериев на вхождение
-        List<Integer> states = getModel().getStateSearche();
-        if (states != null && !states.isEmpty()) {
-            paramIN.put("state", states);
-        }
-
-        //добавление в запрос даты создания
-        if (getModel().isDateCreateSearche()) {
-            Date[] dateArray = new Date[2];
-            dateArray[0] = getModel().getDateCreateStart();
-            dateArray[1] = getModel().getDateCreateEnd();
-            paramDATE.put("dateCreate", dateArray);
-        }
-
-        //добавление в запрос даты изменения
-        if (getModel().isDateChangeSearche()) {
-            Date[] dateArray = new Date[2];
-            dateArray[0] = getModel().getDateChangeStart();
-            dateArray[1] = getModel().getDateChangeEnd();
-            paramDATE.put("dateChange", dateArray);
-        }
-
-        List<BaseDict> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, getModel());
-        
-        if (!getModel().isSearcheInGroups()){            
-            doSetDetails(sourceItems, DictDetailSource.SEARCHE_SOURCE);
-        } else {            
-            for (BaseDict item : sourceItems) {
-                boolean include = false;
-
-                List<O> itemGroups = getGroups((T)item);
-                if (!searcheGroups.isEmpty() && itemGroups != null) {
-                    for (O group : searcheGroups) {
-                        if (itemGroups.contains(group)) {
-                            include = true;
-                            break;
-                        }
-                    }                    
-                } else {
-                    include = true;
-                }
-
-                if (include){
-                    searcheItems.add(item);
-                }
-            }
-            doSetDetails(searcheItems, DictDetailSource.SEARCHE_SOURCE);
-        }
-        explorerBean.setCurrentViewModeDetail();
-        explorerBean.makeJurnalHeader(EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
-    }
+    } 
    
 }

@@ -1,10 +1,11 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.facade.FoldersFacade;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.DocFacade;
+import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
-public class FoldersCardBean extends BaseCardBean<Folders> {
+public class FoldersCardBean extends BaseCardBean<Folder> {
     private static final long serialVersionUID = 1052362714114861680L;
     private static final int TYPE_RIGHT_FOLDER = 0;
     private static final int TYPE_RIGHT_DOC = 1;
@@ -37,7 +38,7 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
     @EJB
     private FoldersFacade foldersFacade;
     @EJB
-    private DocFacade docFacade;
+    private DocTypeFacade docTypeFacade;
     
     private Rights defDocRight;
     private Integer typeEditedRight;
@@ -47,7 +48,7 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
     @Override
     public void onInitBean() { 
         super.onInitBean();    
-        defDocRight = docFacade.getDefaultRights();
+        defDocRight = getDefaultRights();
     }    
     
     /**
@@ -67,10 +68,10 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
     /**
      * ПРАВА ДОСТУПА: копирование прав документов от родительской папки
      */
-    private void copyParentDocRight(Folders folder) {
-        Folders parentFolder = (Folders) folder.getParent();
-        Rights parentRights = getItemFacade().getRightItemFromOwner(parentFolder);
-        getItemFacade().settingRightForChild(folder, parentRights);  //сохраняем права документов в папке
+    private void copyParentDocRight(Folder folder) {
+        Folder parentFolder = (Folder) folder.getParent();
+        Rights parentRights = sessionBean.getRightItemFromOwner(parentFolder);
+        sessionBean.settingRightForChild(folder, parentRights);  //сохраняем права документов в папке
     }
     
     /**
@@ -154,7 +155,7 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
      * @param state Состояние
      * @return Список прав
      */
-    public List<Right> getRightDocsForState(Folders folder, State state) {
+    public List<Right> getRightDocsForState(Folder folder, State state) {
         List<Right> rights = folder.getRightForChild().getRights()
                 .stream()
                 .filter(right -> state.equals(right.getState()))
@@ -163,13 +164,9 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
     }
     
     //TODO Права доступа из родителя получаются некорректно!!!
-    /**
-     * Получение кэшированных прав документов папки (используется при загрузке дерева) без подгрузки прав из базы
-     * @param folder
-     * @param parentRight
-     * @return 
-     */ 
-    public Rights getFolderCacheDocRight(Folders folder, Rights parentRight) {
+    
+    /* Получение кэшированных прав документов папки (используется при загрузке дерева) без подгрузки прав из базы */ 
+    public Rights getFolderCacheDocRight(Folder folder, Rights parentRight) {
         Rights docRight;
         if (folder == null || folder.isInherits() || folder.getAccessDocs().isEmpty()) { //если права наследуются или у папки нет прав для документов
             docRight = parentRight; //то берём права от родителя 
@@ -193,7 +190,7 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
 
     public List<DocType> getDocTypes() {
         if (docTypes == null){
-            docTypes = sessionBean.getDocTypeFacade().findAll().stream()
+            docTypes = docTypeFacade.findAll().stream()
                     .filter(item -> sessionBean.preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
@@ -206,19 +203,24 @@ public class FoldersCardBean extends BaseCardBean<Folders> {
     }
 
     @Override
-    protected void onBeforeSaveItem(Folders folder) {
+    protected void onBeforeSaveItem(Folder folder) {
         Rights rightDoc = folder.getRightForChild();
         folder.setAccessDocs(rightDoc.toString());
     }
 
     @Override
-    protected void onAfterCreateItem(Folders item) {        
+    protected void onAfterCreateItem(Folder item) {        
     }
 
     @Override
-    protected void doPrepareOpen(Folders folder){
+    protected void doPrepareOpen(Folder folder){
         Rights rightForDocs = getFolderCacheDocRight(folder, defDocRight);
         folder.setRightForChild(rightForDocs);            
         rightFacade.prepareRightsForView(rightForDocs.getRights());
+    }
+    
+    @Override
+    public Class<Folder> getItemClass() {
+        return Folder.class;
     }
 }

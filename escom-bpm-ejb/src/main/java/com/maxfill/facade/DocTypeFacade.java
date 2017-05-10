@@ -3,17 +3,12 @@ package com.maxfill.facade;
 
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocTypeLog;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.users.User;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,16 +30,6 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
     @Override
     public String getFRM_NAME() {
         return DocType.class.getSimpleName().toLowerCase();
-    }
-    
-    @Override
-    public void pasteItem(DocType pasteItem, BaseDict target, Set<String> errors){      
-        doPaste(pasteItem, errors);
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
     }
 
     @Override
@@ -91,8 +76,8 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
      */
     private int replaceDocTypeInFolders(DocType oldItem, DocType newItem){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
-        CriteriaUpdate<Folders> update = builder.createCriteriaUpdate(Folders.class);    
-        Root root = update.from(Folders.class);  
+        CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);    
+        Root root = update.from(Folder.class);  
         update.set("docTypeDefault", newItem);
         Predicate predicate = builder.equal(root.get("docTypeDefault"), oldItem);
         update.where(predicate);

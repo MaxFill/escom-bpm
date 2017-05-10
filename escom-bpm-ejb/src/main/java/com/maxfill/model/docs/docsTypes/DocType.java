@@ -54,11 +54,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
      */
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private DocTypeGroups owner;
-    
-    //TODO эта связь возможно требует LAZY связи!
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "docType")
-    private List<Doc> docsList = new ArrayList<>();
+    private DocTypeGroups owner;    
     
     /**
      * Связь с шаблоном нумератора
@@ -107,13 +103,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @Override
     public void setItemLogs(List<DocTypeLog> itemLogs) {
         this.itemLogs = itemLogs;
-    }
-
-    public List<Doc> getDocsList() {
-        return docsList;
-    }
-    public void setDocsList(List<Doc> docsList) {
-        this.docsList = docsList;
     }
 
     public NumeratorPattern getNumerator() {

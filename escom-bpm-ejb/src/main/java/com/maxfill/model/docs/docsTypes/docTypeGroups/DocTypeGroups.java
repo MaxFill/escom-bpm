@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "docTypeGroups")
 @DiscriminatorColumn(name="REF_TYPE")
 public class DocTypeGroups extends BaseDict<DocTypeGroups, DocTypeGroups, DocType, DocTypeGroupsLog> {
-    private static final long serialVersionUID = -2116686297842684933L;
+private static final long serialVersionUID = -2116686297842684933L;
 
 @TableGenerator(
         name="DocTypeGroupIdGen", 
@@ -45,7 +45,7 @@ public class DocTypeGroups extends BaseDict<DocTypeGroups, DocTypeGroups, DocTyp
     /**
      * Связь с подчинёнными объектами (Виды документов)
     */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
     private List<DocType> docTypes = new ArrayList<>();
        
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")

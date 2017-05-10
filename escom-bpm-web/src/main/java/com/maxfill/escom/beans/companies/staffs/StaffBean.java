@@ -1,15 +1,12 @@
 package com.maxfill.escom.beans.companies.staffs;
 
 import com.maxfill.facade.StaffFacade;
-import com.maxfill.model.staffs.StaffModel;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -21,6 +18,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +40,10 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     private DocFacade docFacade;
     
     private Staff currentStaff;
-
+    
+    private String postSearche = "";
+    private String secondNameSearche = "";
+        
     public StaffBean() {
     }
     
@@ -52,17 +53,19 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         //TODO добавить поиск штатной единицы для текущего пользователя
         currentStaff = itemsFacade.find(1);
     }
-
-    @Override
-    protected BaseDataModel createModel() {
-        return new StaffModel();
-    }
-      
+         
     @Override
     protected String getBeanName() {
         return BEAN_NAME; 
     }
-    
+
+    @Override
+    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<Department> searcheGroups, Map<String, Object> addParams){
+        addParams.put("postName", postSearche);
+        addParams.put("secondName", secondNameSearche);
+        super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+    }
+
     @Override
     public StaffFacade getItemFacade() {
         return itemsFacade;
@@ -91,15 +94,8 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     public void doGetCountUsesItem(Staff staff,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByManager(staff).size());
-        rezult.put("Users", sessionBean.getUserFacade().findUsersByStaff(staff).size());
-    }
-    
-    public Staff getCurrentStaff() {
-        return currentStaff;
-    }
-    public void setCurrentStaff(Staff currentStaff) {
-        this.currentStaff = currentStaff;
-    }    
+        rezult.put("Users", userFacade.findUsersByStaff(staff).size());
+    }  
 
     @Override
     public BaseExplBean getDetailBean() {
@@ -129,6 +125,28 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     public Class<Department> getOwnerClass() {
         return Department.class;
+    }
+
+    /* *** GETS & SETS *** */
+    public Staff getCurrentStaff() {
+        return currentStaff;
+    }
+    public void setCurrentStaff(Staff currentStaff) {
+        this.currentStaff = currentStaff;
+    } 
+    
+    public String getPostSearche() {
+        return postSearche;
+    }
+    public void setPostSearche(String postSearche) {
+        this.postSearche = postSearche;
+    }
+
+    public String getSecondNameSearche() {
+        return secondNameSearche;
+    }
+    public void setSecondNameSearche(String secondNameSearche) {
+        this.secondNameSearche = secondNameSearche;
     }
     
     @FacesConverter("staffConvertor")

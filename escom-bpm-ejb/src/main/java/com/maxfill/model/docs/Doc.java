@@ -4,9 +4,9 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.statuses.DocsStatus;
+import com.maxfill.model.docs.docStatus.DocsStatus;
 import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
@@ -42,7 +42,7 @@ import org.apache.commons.lang.StringUtils;
 @Entity
 @Table(name = "docs")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Doc extends BaseDict<Folders, Doc, Doc, DocLog> {            
+public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {            
     private static final long serialVersionUID = 5208895312598249913L;
 
     @TableGenerator(
@@ -61,7 +61,7 @@ public class Doc extends BaseDict<Folders, Doc, Doc, DocLog> {
 
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Folders owner;
+    private Folder owner;
         
     @JoinColumn(name = "DocType", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -116,11 +116,11 @@ public class Doc extends BaseDict<Folders, Doc, Doc, DocLog> {
     }
 
     @Override
-    public Folders getOwner() {
+    public Folder getOwner() {
         return owner;
     }
     @Override
-    public void setOwner(Folders owner) {
+    public void setOwner(Folder owner) {
         this.owner = owner;
     }
 

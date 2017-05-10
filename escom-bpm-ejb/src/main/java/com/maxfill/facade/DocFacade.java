@@ -1,23 +1,19 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.docs.DocModel;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.attaches.AttacheService;
-import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.users.User;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.attaches.Attaches;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -34,19 +30,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author mfilatov
  */
 @Stateless
-public class DocFacade extends BaseDictFacade<Doc, Folders, DocLog>{
+public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     @EJB
     private AttacheService attacheService;
             
     public DocFacade() {
         super(Doc.class, DocLog.class);
-    }
-          
-    @Override
-    public void pasteItem(Doc pasteItem, BaseDict target, Set<String> errors){        
-        pasteItem.setOwner((Folders)target);
-        doPaste(pasteItem, errors);
-    }
+    }          
     
     @Override
     public String getFRM_NAME() {
@@ -148,19 +138,29 @@ public class DocFacade extends BaseDictFacade<Doc, Folders, DocLog>{
      * Удаление документов из папки
      * @param folder
      */ 
-    public void deleteDocFromFolder(Folders folder){
+    public void deleteDocFromFolder(Folder folder){
         attacheService.deleteAttacheByFolder(folder);
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaDelete<Doc> delete = cb.createCriteriaDelete(Doc.class);
         Root e = delete.from(Doc.class);
         delete.where(cb.equal(e.get("owner"), folder));
         getEntityManager().createQuery(delete).executeUpdate();
+    }    
+    
+    /**
+     * Удаление документа
+     * @param doc 
+     */
+    @Override
+    public void remove(Doc doc){
+       attacheService.deleteAttaches(doc.getAttachesList());
+       super.remove(doc);
     }
     
     /* Установка специфичных атрибутов документа при его создании */
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params){
-        Folders folder = doc.getOwner();
+        Folder folder = doc.getOwner();
         if (folder != null){
             DocType docType = folder.getDocTypeDefault();
             doc.setDocType(docType);
@@ -182,20 +182,14 @@ public class DocFacade extends BaseDictFacade<Doc, Folders, DocLog>{
         }
     }
     
-    /**
-     * Удаление документа
-     * @param doc 
-     */
     @Override
-    public void remove(Doc doc){
-       attacheService.deleteAttaches(doc.getAttachesList());
-       super.remove(doc);
+    public void preparePasteItem(Doc pasteItem, BaseDict target){        
+        pasteItem.setOwner((Folder)target);
     }
     
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel baseDataModel) {
-        DocModel model = (DocModel) baseDataModel;
-        String numberSearche = model.getNumberSearche().trim();
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
+        String numberSearche = (String) addParams.get("numberSearche");
         if (StringUtils.isNotBlank(numberSearche)){
             //Join<Doc, Post> postJoin = root.join(Staff_.post);
             predicates.add(builder.like(root.<String>get("number"), numberSearche));            

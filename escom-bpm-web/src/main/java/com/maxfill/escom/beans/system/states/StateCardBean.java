@@ -29,5 +29,8 @@ public class StateCardBean extends BaseCardBean<State>{
     protected void onAfterCreateItem(State item) {        
     }
 
-     
+    @Override
+    public Class<State> getItemClass() {
+        return State.class;
+    }
 }

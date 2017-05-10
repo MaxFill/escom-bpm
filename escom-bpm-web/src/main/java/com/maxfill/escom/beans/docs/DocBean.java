@@ -1,16 +1,14 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.facade.DocFacade;
-import com.maxfill.model.docs.DocModel;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.folders.Folders;
 import com.maxfill.escom.utils.FileUtils;
-import com.maxfill.utils.ItemUtils;
+import com.maxfill.model.folders.Folder;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.TreeNode;
@@ -20,7 +18,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *  Бизнес-логика для работы с документами
@@ -29,16 +30,25 @@ import java.util.List;
 
 @Named(value = "docsBean")
 @ViewScoped
-public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
+public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     private static final long serialVersionUID = 923378036800543406L;    
     private static final String BEAN_NAME = "docsBean";      
     
     @EJB
     private DocFacade docsFacade;  
     
+    private String numberSearche;    
+    private Integer selectedDocId;       
+    
     public DocBean() {
     }                          
-     
+    
+    @Override
+    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<Folder> searcheGroups, Map<String, Object> addParams){
+        addParams.put("numberSearche", numberSearche);
+        super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+    }
+    
     public void onUploadFileAndCreateDoc(FileUploadEvent event) throws IOException{ 
         if (isHaveRightCreate()){
             onUploadFile(event);
@@ -67,7 +77,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
         List<BaseDict> targetItems = new ArrayList<>();
         for (BaseDict content : sourceItems){
             if (content.getClass().getSimpleName().equals("Folders")){
-                Folders folder = (Folders) content;
+                Folder folder = (Folder) content;
                 folder.getDocsList().stream().forEach(doc -> targetItems.add(doc));
             } else {
                 targetItems.add(content);
@@ -83,11 +93,11 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
      * @return 
      */
     @Override
-    public List<Folders> getGroups(Doc item) {
-        List<Folders> groups = new ArrayList<>();
+    public List<Folder> getGroups(Doc item) {
+        List<Folder> groups = new ArrayList<>();
         groups.add(item.getOwner());
         return groups;
-    }  
+    }          
     
     /* *** ВЛОЖЕНИЯ *** */    
     
@@ -111,7 +121,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
      * @param folder 
      */
     @Override
-    protected void clearOwner(Folders folder){
+    protected void clearOwner(Folder folder){
         getItemFacade().deleteDocFromFolder(folder); //удаляем документы в папке из базы
         super.clearOwner(folder);
     }
@@ -132,19 +142,19 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
      * Показать документ в папке
      */
     public void doShowDocInFolder(){         
-        if (getModel().getSelectedDocId() != null){
-            Doc doc = getItemFacade().find(getModel().getSelectedDocId());
+        if (getSelectedDocId() != null){
+            Doc doc = getItemFacade().find(getSelectedDocId());
             if (doc != null){
-                Folders owner = (Folders) doc.getOwner();
+                Folder owner = (Folder) doc.getOwner();
                 TreeNode node = null;
                 if (owner != null){
                     node = EscomBeanUtils.findTreeNode(explorerBean.getTree(), owner);
                 }
-                if (getOwnerBean().getSelectedNode() != null) {
-                    getOwnerBean().getSelectedNode().setSelected(false);
+                if (explorerBean.getTreeSelectedNode() != null) {
+                    explorerBean.getTreeSelectedNode().setSelected(false);
                 }
-                getOwnerBean().setSelectedNode(node);
-                getModel().setSelectedDocId(null);
+                explorerBean.setTreeSelectedNode(node);
+                setSelectedDocId(null);
                 RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
             }
         }
@@ -156,19 +166,12 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
     public DocFacade getItemFacade() {
         return docsFacade;
     }
-    @Override
-    protected DocModel createModel() {
-        return new DocModel();
-    }
-
+    
     @Override
     public BaseExplBean getDetailBean() {
         return null;
     }
-    @Override
-    public DocModel getModel(){
-        return (DocModel) super.getModel();
-    }
+
     @Override
     protected String getBeanName() {
         return BEAN_NAME;
@@ -180,8 +183,21 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folders>{
     }
 
     @Override
-    public Class<Folders> getOwnerClass() {
-        return Folders.class;
+    public Class<Folder> getOwnerClass() {
+        return Folder.class;
     }
   
+    public String getNumberSearche() {
+        return numberSearche;
+    }
+    public void setNumberSearche(String numberSearche) {
+        this.numberSearche = numberSearche;
+    }
+    
+    public Integer getSelectedDocId() {
+        return selectedDocId;
+    }
+    public void setSelectedDocId(Integer selectedDocId) {
+        this.selectedDocId = selectedDocId;
+    }
 }

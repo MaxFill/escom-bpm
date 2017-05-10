@@ -56,7 +56,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     @ManyToOne
     private Department parent;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
     private List<Staff> staffList = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")

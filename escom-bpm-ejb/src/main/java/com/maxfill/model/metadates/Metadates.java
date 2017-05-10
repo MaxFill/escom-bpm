@@ -1,7 +1,7 @@
 package com.maxfill.model.metadates;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.filters.Filters;
+import com.maxfill.model.filters.Filter;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;
@@ -81,7 +81,7 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
     
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "Metadates")
-    private List<Filters> filters = new ArrayList<>();
+    private List<Filter> filters = new ArrayList<>();
     
     @XmlTransient
     @JoinTable(name = "objectsStates", joinColumns = {
@@ -128,7 +128,7 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
 
     public String getObjectName() {
         return objectName;
-    }
+    }    
     public void setObjectName(String objectName) {
         this.objectName = objectName;
     }
@@ -175,10 +175,10 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
         this.stateForNewObj = stateForNewObj;
     }
 
-    public List<Filters> getFilters() {
+    public List<Filter> getFilters() {
         return filters;
     }
-    public void setFilters(List<Filters> filters) {
+    public void setFilters(List<Filter> filters) {
         this.filters = filters;
     }
 

@@ -2,7 +2,6 @@ package com.maxfill.facade;
 
 import com.maxfill.model.users.UserLog;
 import com.maxfill.model.users.User;
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
@@ -53,6 +52,19 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         super(User.class, UserLog.class);
     }
 
+    /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
+    @Override
+    public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target){
+        return !(target instanceof UserGroups);
+    }
+    
+    @Override
+    public void preparePasteItem(User pasteItem, BaseDict recipient){
+        if (!isNeedCopyOnPaste(pasteItem, recipient)){
+            addItemToGroup(pasteItem, recipient);        
+        }
+    }  
+    
     @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();
@@ -69,21 +81,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
             return true;
         }
         return false;
-    }
-    
-    @Override
-    public void pasteItem(User pasteItem, BaseDict target , Set<String> errors){
-        addItemToGroup(pasteItem, target);        
-    }
-    
-    @Override
-    public boolean isNeedCopyOnPaste(){
-        return false;
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {       
-    }       
+    }           
     
     /**
      * Ищет пользователя по login
@@ -101,11 +99,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return q.getResultList();
     }
     
-    /**
-     * Возвращает обновлённый список контрагентов для группы контрагентов
-     * @param group
-     * @return 
-     */
+    /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
     public List<User> findDetailItems(UserGroups group){
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
@@ -113,12 +107,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return detailItems;
     }
     
-    /**
-     * Ищет пользователя по login исключая ID указанного пользователя
-     * @param login
-     * @param userId
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
+    /* Ищет пользователя по login исключая ID указанного пользователя  */
     public List<User> findByLoginExcludeId(String login, Integer userId){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -167,11 +156,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         } 
     }
     
-    /**
-     * Обновление пользователя из службы интеграции с LDAP
-     * @param user
-     * @param ldapUser
-     */
+    /* Обновление пользователя из службы интеграции с LDAP  */
     public void updateUserFromLDAP(User user, LdapUsers ldapUser){
         if (StringUtils.isNotBlank(ldapUser.getMail())){
             user.setEmail(ldapUser.getMail());
@@ -183,11 +168,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany());
         Department department = departmentFacade.onGetDepartamentByName(company, ldapUser.getDepartament());
         
-        Staff staff = user.getStaff();
-        if (staff == null){
-            staff = staffFacade.createStaff(department, post, user);
-            user.setStaff(staff);
+        List<Staff> staffs = staffFacade.findStaffsByUser(user);        
+        if (!staffs.isEmpty()){
+            staffFacade.createStaff(department, post, user);
         } else {
+            Staff staff = staffs.get(0);
             staffFacade.updateStaff(staff, department, post, user);
         }
                 
@@ -195,15 +180,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         edit(user);  
     }
     
-    /**
-     * Создание пользователя из LDAP
-     * @param name Полное ФИО например: Иванов Иван Иванович
-     * @param login 
-     * @param phone 
-     * @param email 
-     * @param LDAPname 
-     * @return  
-     */
+    /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
         User user = createItem(mainGroup, getAdmin());
         onUpdateUserFIO(user, name);

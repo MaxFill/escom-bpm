@@ -4,7 +4,7 @@ package com.maxfill.services.attaches;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.folders.Folders;
+import com.maxfill.model.folders.Folder;
 import java.io.File;
 import java.util.List;
 import javax.ejb.EJB;
@@ -51,7 +51,7 @@ public class AttacheServiceImpl implements AttacheService{
      * @param folder 
      */
     @Override
-    public void deleteAttacheByFolder(Folders folder){
+    public void deleteAttacheByFolder(Folder folder){
         folder.getDocsList().stream().forEach(doc -> deleteAttaches(doc.getAttachesList()));
     }
 }

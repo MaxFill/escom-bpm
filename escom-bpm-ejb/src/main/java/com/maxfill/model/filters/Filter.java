@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "filters")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Filters extends BaseDict<Filters,Filters,Filters,FiltersLog> {
+public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog> {
     private static final long serialVersionUID = 6183682742885585999L;
     
     @TableGenerator(
@@ -52,17 +52,17 @@ public class Filters extends BaseDict<Filters,Filters,Filters,FiltersLog> {
     private Metadates metadates;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<FiltersLog> itemLogs = new ArrayList<>();
+    private List<FilterLog> itemLogs = new ArrayList<>();
     
-    public Filters() {
+    public Filter() {
     }
 
     @Override
-    public List<FiltersLog> getItemLogs() {
+    public List<FilterLog> getItemLogs() {
         return itemLogs;
     }
     @Override
-    public void setItemLogs(List<FiltersLog> itemLogs) {
+    public void setItemLogs(List<FilterLog> itemLogs) {
         this.itemLogs = itemLogs;
     }
     
@@ -90,7 +90,7 @@ public class Filters extends BaseDict<Filters,Filters,Filters,FiltersLog> {
     }
 
     @Override
-    public List<Filters> getDetailItems() {
+    public List<Filter> getDetailItems() {
         return null;
     }
     
@@ -104,10 +104,10 @@ public class Filters extends BaseDict<Filters,Filters,Filters,FiltersLog> {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Filters)) {
+        if (!(object instanceof Filter)) {
             return false;
         }
-        Filters other = (Filters) object;
+        Filter other = (Filter) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

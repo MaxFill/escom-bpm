@@ -10,10 +10,8 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -45,8 +43,8 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @EJB
     private DepartmentFacade departmentFacade;
     @EJB
-    private StaffFacade staffFacade;
-        
+    private StaffFacade staffFacade;    
+    
     @Override
     public CompanyFacade getItemFacade() {
         return itemsFacade;
@@ -57,13 +55,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         return null;
     }
 
-    /**
-     * ДЕРЕВО: добавление узла в дерево при его формировании
-     *
-     * @param parentNode Узел дерева, в который добавляется объект
-     * @param item
-     * @return
-     */
+    /* ДЕРЕВО: добавление узла в дерево при его формировании   */
     @Override
     protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
         TreeNode rezNode = null;
@@ -96,11 +88,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         return rezNode;
     } 
     
-    /**
-    * КОНТЕНТ: формирование контента компании
-     * @param company
-     * @return 
-    */     
+    /* КОНТЕНТ: формирование контента компании */     
     @Override
     public List<BaseDict> makeGroupContent(Company company) {
         Rights docRights = getChildRights();
@@ -147,7 +135,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         doc.setRightMask(rightService.getAccessMask(doc.getState(), rd, getCurrentUser())); //получаем маску доступа для текущего пользователя  
         */
         cnts.add(staff);
-    }    
+    }       
     
     @Override
     protected String getBeanName() {
@@ -162,7 +150,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @Override
     public void doGetCountUsesItem(Company company,  Map<String, Integer> rezult){
         rezult.put("Departaments", company.getDepartmentsList().size() - 1);
-    }    
+    }
     
     /**
      * Проверка возможности удаления company

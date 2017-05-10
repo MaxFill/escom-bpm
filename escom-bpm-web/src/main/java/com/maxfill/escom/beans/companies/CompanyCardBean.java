@@ -30,4 +30,8 @@ public class CompanyCardBean extends BaseCardBean<Company> {
     protected void onAfterCreateItem(Company item){
     }        
 
+    @Override
+    public Class<Company> getItemClass() {
+        return Company.class;
+    }
 }

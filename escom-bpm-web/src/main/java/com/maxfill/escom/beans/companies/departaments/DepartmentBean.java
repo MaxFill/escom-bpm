@@ -7,7 +7,9 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.escom.utils.EscomBeanUtils;
-
+import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import com.maxfill.facade.StaffFacade;
+import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ejb.EJB;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Подразделения
@@ -30,7 +34,12 @@ import java.util.Set;
 public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private static final long serialVersionUID = -690060212424991825L;
     private static final String BEAN_NAME = "departmentBean";
-        
+    
+    @EJB
+    private DepartmentFacade itemFacade;
+    @EJB
+    private StaffFacade staffFacade;
+    
     public DepartmentBean() {
     }
     
@@ -46,34 +55,24 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     
     @Override
     public DepartmentFacade getItemFacade() {
-        return sessionBean.getDepartmentFacade();
+        return itemFacade;
     }
 
-    /**
-    * КОНТЕНТ: формирование контента подразделения
-     * @param department
-     * @return 
-    */     
+    /* КОНТЕНТ: формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(Department department) {
         Rights docRights = getChildRights();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Department> departments = sessionBean.getDepartmentFacade().findChilds(department);
+        List<Department> departments = itemFacade.findChilds(department);
         departments.stream().forEach(fl -> addDepartmentInCnt(fl, cnt, docRights));        
         //загружаем в контент штатные единицы
-        List<BaseDict> staffs = sessionBean.getStaffFacade().findItemByOwner(department);
+        List<BaseDict> staffs = staffFacade.findItemByOwner(department);
         staffs.stream().forEach(staff -> addStaffInCnt(staff, cnt, docRights));
         return cnt;
     }
     
-    /**
-     * КОНТЕНТ: добавляет подразделение в контент
-     * @param department
-     * @param cnts
-     * @param defChildRight
-     * @return 
-     */ 
+    /* КОНТЕНТ: добавляет подразделение в контент  */ 
     private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts, Rights defChildRight) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
@@ -91,8 +90,8 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         doc.setRightMask(rightService.getAccessMask(doc.getState(), rd, getCurrentUser())); //получаем маску доступа для текущего пользователя  
         */
         cnts.add(staff);
-    }
-        
+    }      
+    
     @Override
     public List<Company> getGroups(Department item) {
         List<Company> groups = null;
@@ -102,23 +101,20 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         return groups;
     }
     
-    /**
-     * Формирует число ссылок на department в связанных объектах 
-     * @param department
-     * @param rezult 
-     */
+    /* Формирует число ссылок на department в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Department department,  Map<String, Integer> rezult){
-        rezult.put("Staffs", sessionBean.getStaffFacade().findItemByOwner(department).size());
+        rezult.put("Staffs", staffFacade.findItemByOwner(department).size());
     }    
     
-    /**
-     * Проверка возможности удаления Подразхделения
-     * @param department
-     */
+    /* Проверка возможности удаления Подразделения */
     @Override
     protected void checkAllowedDeleteItem(Department department, Set<String> errors){
-        super.checkAllowedDeleteItem(department, errors);        
+        if (CollectionUtils.isNotEmpty(department.getDetailItems()) ) {
+            Object[] messageParameters = new Object[]{department.getName()};
+            String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
+            errors.add(error);
+        }
     }      
 
     @Override

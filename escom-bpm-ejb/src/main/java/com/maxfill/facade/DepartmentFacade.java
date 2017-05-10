@@ -1,18 +1,15 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.BaseDataModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
-import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -35,8 +32,6 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
     @EJB
     private UserFacade userFacade;
-    @EJB
-    private StaffFacade staffFacade;
     
     public DepartmentFacade() {
         super(Department.class, DepartamentLog.class);
@@ -46,37 +41,19 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     public String getFRM_NAME() {
         return Department.class.getSimpleName().toLowerCase();
     }  
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
-    }
 
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DEPARTAMENTS;
-    }
-       
-    @Override
-    public void pasteItem(Department pasteItem, BaseDict target , Set<String> errors){
-        detectParentOwner(pasteItem, target);
-        doCopyPasteChilds(pasteItem, errors);
-        doCopyPasteDetails(pasteItem, errors);
-        doPaste(pasteItem, errors);
-    }
-
-    /* Копирования дочерних объектов - подразделений */
-    private void doCopyPasteChilds(Department department, Set<String> errors){
-        department.getChildItems().stream().forEach(item -> pasteItem(item, department, errors));
-    }
+    }           
     
-    /* Копирования подчинённых объектов - штатных единиц */
-    private void doCopyPasteDetails(Department department, Set<String> errors) {
-        department.getDetailItems().stream().forEach(staff -> staffFacade.pasteItem(staff, department, errors));
-    }
-    
+    /**
+     * Определяет owner и parent для объекта 
+     * @param item
+     * @param target куда помещается item
+     */
     @Override
-    protected void detectParentOwner(Department item, BaseDict target){
+    public void detectParentOwner(Department item, BaseDict target){
         if (target instanceof Company){
             item.setOwner((Company)target);
             item.setParent(null);
@@ -92,12 +69,22 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         edit(dragItem);
     }
     
-    /**
-     * Ищет подразделение с указанным названием в заданной компании и если не найдено, то создаёт новое.
-     * @param company
-     * @param departName
-     * @return 
-     */
+     /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(Department department){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(department.getDetailItems());
+        dependency.add(department.getChildItems());
+        return dependency;
+    } 
+    
+    /* Вставка скопированного объекта */
+    @Override
+    public void preparePasteItem(Department pasteItem, BaseDict target){
+        detectParentOwner(pasteItem, target);    
+    }    
+    
+    /* Ищет подразделение с указанным названием в заданной компании и если не найдено, то создаёт новое.  */
     public Department onGetDepartamentByName(Company company, String departName){
         if (StringUtils.isBlank(departName) || company == null){        
             return null;

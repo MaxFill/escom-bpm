@@ -42,9 +42,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog> {
     @Column(name = "Id")
     private Integer id;
 
-    @OneToMany(mappedBy = "Post")
-    private List<Staff> staffsList;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<PostLog> itemLogs = new ArrayList<>();
 
@@ -58,13 +55,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog> {
     @Override
     public void setItemLogs(List<PostLog> itemLogs) {
         this.itemLogs = itemLogs;
-    }
-
-    public List<Staff> getStaffsList() {
-        return staffsList;
-    }
-    public void setStaffsList(List<Staff> staffsList) {
-        this.staffsList = staffsList;
     }
 
     @Override

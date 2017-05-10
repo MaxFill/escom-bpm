@@ -1,44 +1,26 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.filters.Filters;
-import com.maxfill.model.filters.FiltersLog;
-import com.maxfill.model.users.User;
-import java.util.List;
+import com.maxfill.model.filters.Filter;
+import com.maxfill.model.filters.FilterLog;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  *
  * @author mfilatov
  */
 @Stateless
-public class FiltersFacade extends BaseDictFacade<Filters, Filters, FiltersLog> {
+public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog> {
 
     public FiltersFacade() {
-        super(Filters.class, FiltersLog.class);
+        super(Filter.class, FilterLog.class);
     }
     
     @Override
     public String getFRM_NAME() {
-        return Filters.class.getSimpleName().toLowerCase();
-    }
-    
-    @Override
-    public void pasteItem(Filters pasteItem, BaseDict target , Set<String> errors){            
-        doPaste(pasteItem, errors);
-    }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {
-        
+        return Filter.class.getSimpleName().toLowerCase();
     }
 
     @Override
@@ -47,7 +29,7 @@ public class FiltersFacade extends BaseDictFacade<Filters, Filters, FiltersLog> 
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Filters oldItem, Filters newItem) {
+    public Map<String, Integer> replaceItem(Filter oldItem, Filter newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

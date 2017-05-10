@@ -83,7 +83,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @ManyToMany
     private List<PartnerGroups> partnersGroupsList = new ArrayList<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
+    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "partner")
     private List<Doc> docsList = new ArrayList<>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")

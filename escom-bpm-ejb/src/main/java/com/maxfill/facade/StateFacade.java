@@ -3,19 +3,14 @@ package com.maxfill.facade;
 
 import com.maxfill.model.states.StateLog;
 import com.maxfill.model.states.State;
-import com.maxfill.model.BaseDataModel;
-import com.maxfill.model.BaseDict;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -34,11 +29,6 @@ public class StateFacade extends BaseDictFacade<State, State, StateLog> {
         return DictObjectName.STATE.toLowerCase();
     }
     
-    @Override
-    public void pasteItem(State pasteItem, BaseDict target, Set<String> errors){
-        doPaste(pasteItem, errors);
-    }
-    
     /* Возвращает базовый список состояний для документов */
     public List<State> findStateDocList(){
         getEntityManager().getEntityManagerFactory().getCache().evict(State.class);
@@ -51,10 +41,6 @@ public class StateFacade extends BaseDictFacade<State, State, StateLog> {
         //cq.orderBy(builder.asc(c.get("name")));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
-    }
-
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, BaseDataModel model) {        
     }
 
     @Override

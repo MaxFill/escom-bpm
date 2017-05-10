@@ -4,19 +4,20 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.CompanyFacade;
+import com.maxfill.facade.PostFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
-
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.ejb.EJB;
 
 /**
  * Штатные единицы
@@ -28,11 +29,16 @@ import java.util.stream.Collectors;
 public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     private static final long serialVersionUID = -977912654006193660L;
     
+    @EJB
+    private PostFacade postFacade;
+    @EJB
+    private StaffFacade itemFacade;
+    
     private List<Post> posts;
     
     @Override
     public StaffFacade getItemFacade() {
-        return sessionBean.getStaffFacade();
+        return itemFacade;
     }
          
     /**
@@ -54,10 +60,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         getEditedItem().setEmployee(user);
     }
     
-    /**
-     * Событие изменение на форме поля выбора должности
-     * @param event 
-     */
+    /* Событие изменение на форме поля выбора должности  */
     public void onPostSelected(SelectEvent event){
         List<Post> items = (List<Post>) event.getObject();
         if (items.isEmpty()) {return;}
@@ -75,9 +78,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         getEditedItem().setPost(post);
     }
         
-    /**
-     * Формирование наименования шт. единицы
-     */
+    /* Формирование наименования шт. единицы */
     public void makeName(){
         Staff staff = getEditedItem();
         Post post = staff.getPost();
@@ -93,10 +94,10 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         }
         getEditedItem().setName(staffName.toString());
     }
-
+    
     public List<Post> getPosts() {
         if (posts == null){
-            posts = sessionBean.getPostFacade().findAll().stream()
+            posts = postFacade.findAll().stream()
                 .filter(item -> sessionBean.preloadCheckRightView(item))
                 .collect(Collectors.toList());
         }
@@ -117,4 +118,8 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     protected void onAfterCreateItem(Staff item) {        
     }
 
+    @Override
+    public Class<Staff> getItemClass() {
+        return Staff.class;
+    }
 }

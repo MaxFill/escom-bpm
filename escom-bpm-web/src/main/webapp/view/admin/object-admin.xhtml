@@ -32,7 +32,7 @@
                         <p:dataGrid var="usesIn" value="#{admObjectBean.countUsesItem()}" columns="1" layout="grid">
                             <p:outputPanel>
                                 <h:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-2" styleClass="ui-grid-col-12">
-                                    <h:outputText value="#{admObjectBean.sourceBean.getLabelFromBundle(usesIn.getKey()) }"/>
+                                    <h:outputText value="#{admObjectBean.getLabelFromBundle(usesIn.getKey()) }"/>
                                     <p:outputLabel value="#{usesIn.getValue()}" style="color: red;"/>
                                 </h:panelGrid>
                             </p:outputPanel>

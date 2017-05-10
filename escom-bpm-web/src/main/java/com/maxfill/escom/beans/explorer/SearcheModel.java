@@ -1,4 +1,4 @@
-package com.maxfill.model;
+package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.model.users.User;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
  * @author mfilatov
  * @param <T>
  */
-public class BaseDataModel<T> implements Serializable {
+public class SearcheModel implements Serializable {
     private static final long serialVersionUID = 6832545210562543525L;       
             
     private String nameSearche;             //поиск в поле name

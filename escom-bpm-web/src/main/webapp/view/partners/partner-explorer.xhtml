@@ -13,8 +13,8 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreatePartner}" />
         
-    <ui:param name="_selectorHeader" value="#{partnersBean.getLabelFromBundle('PartnerSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{partnersBean.getLabelFromBundle('Partners')}"/>
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('PartnerSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('Partners')}"/>
     
     <!-- специфичные поля таблицы обозревателя Detail -->
     <ui:define name="specDetailColumns">
@@ -32,7 +32,7 @@
         <p:outputLabel value="#{bundle.Code}"/>        
         <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}"
                      styleClass="widthMin100"
-                     value="#{_detailBean.model.codeSearche}"
+                     value="#{partnersBean.codeSearche}"
                      onkeypress="keyPress();">
         </p:inputText>
     </ui:define>

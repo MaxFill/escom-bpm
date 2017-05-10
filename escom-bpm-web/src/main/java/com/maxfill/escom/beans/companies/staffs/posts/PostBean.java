@@ -4,7 +4,7 @@ import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
+import com.maxfill.facade.StaffFacade;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ejb.EJB;
 
 /**
  * Должности
@@ -28,6 +29,11 @@ public class PostBean extends BaseExplBean<Post, Post>{
     private static final long serialVersionUID = -257932838724865134L;
     private static final String BEAN_NAME = "postBean";
     
+    @EJB
+    private PostFacade itemFacade;
+    @EJB
+    private StaffFacade staffFacade;
+    
     public PostBean() {    
     }          
     
@@ -38,7 +44,7 @@ public class PostBean extends BaseExplBean<Post, Post>{
         
     @Override
     public PostFacade getItemFacade() {
-        return sessionBean.getPostFacade();
+        return itemFacade;
     }
     
     @Override
@@ -46,24 +52,17 @@ public class PostBean extends BaseExplBean<Post, Post>{
         return null;
     }
 
-    /**
-     * Формирует число ссылок на объект в связанных объектах 
-     * @param item
-     * @param rezult 
-     */
+    /* Формирует число ссылок на объект в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Post item,  Map<String, Integer> rezult){
-        rezult.put("Staffs", sessionBean.getStaffFacade().findStaffByPost(item).size());
+        rezult.put("Staffs", staffFacade.findStaffByPost(item).size());
     }
     
-    /**
-     * Проверка возможности удаления Должности
-     * @param item
-     */
+    /* Проверка возможности удаления Должности  */
     @Override
     protected void checkAllowedDeleteItem(Post item, Set<String> errors){
         super.checkAllowedDeleteItem(item, errors);
-        if (!sessionBean.getStaffFacade().findStaffByPost(item).isEmpty()){
+        if (!staffFacade.findStaffByPost(item).isEmpty()){
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PostUsedInStaffs"), messageParameters);
             errors.add(error);

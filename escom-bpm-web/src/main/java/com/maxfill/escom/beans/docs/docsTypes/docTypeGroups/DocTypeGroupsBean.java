@@ -5,9 +5,7 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocTypeFacade;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -34,7 +32,7 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     @EJB
     private DocTypeGroupsFacade itemsFacade;
     @EJB
-    private DocTypeFacade docTypeFacade;
+    private DocTypeFacade docTypeFacade;    
     
     @Override
     protected String getBeanName() {
