@@ -115,7 +115,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     }
 
     @Override
-    protected void onAfterCreateItem(Staff item) {        
+    protected void afterCreateItem(Staff item) {        
     }
 
     @Override

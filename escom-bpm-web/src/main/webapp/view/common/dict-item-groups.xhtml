@@ -3,73 +3,71 @@
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">    
-     
-    <p:tab title="#{bundle.Groups}">
-        <h:panelGroup id="panelGroups">
-            <h:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                <p:outputLabel value="#{bundle.MainGroup}" rendered="#{_showOwner}"/>
-                <p:inputText id="mainGroup" value="#{_bean.editedItem.owner.name}"
-                             disabled="#{_bean.isReadOnly()}"
-                             rendered="#{_showOwner}"
-                             readonly="true" styleClass="ui-grid-col-12"/>
 
-                <p:dataTable id="groupsTbl" value="#{_groups}" var="item"
-                             emptyMessage="#{bundle.EmptyTable}" rowKey="#{item.id}"
-                             paginator="true" paginatorPosition="bottom"
-                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                             selection="#{_bean.checkedGroups}"
-                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                             rowsPerPageTemplate="10,25,50" rows="10">   
+    <h:panelGroup id="panelGroups">
+        <h:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:outputLabel value="#{bundle.MainGroup}" rendered="#{_showOwner}"/>
+            <p:inputText id="mainGroup" value="#{_bean.editedItem.owner.name}"
+                         disabled="#{_bean.isReadOnly()}"
+                         rendered="#{_showOwner}"
+                         readonly="true" styleClass="ui-grid-col-12"/>
 
-                    <p:ajax event="rowSelectCheckbox" update="checkDelBtn" />
-                    <p:ajax event="rowSelect" update="checkDelBtn" />
-                    <p:ajax event="rowUnselectCheckbox" update="checkDelBtn"  />
-                    <p:ajax event="toggleSelect" update="checkDelBtn" />
+            <p:dataTable id="groupsTbl" value="#{_groups}" var="item"
+                         emptyMessage="#{bundle.EmptyTable}" rowKey="#{item.id}"
+                         paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         selection="#{_bean.checkedGroups}"
+                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                         rowsPerPageTemplate="10,25,50" rows="10">   
 
-                    <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                <p:ajax event="rowSelectCheckbox" update="checkDelBtn" />
+                <p:ajax event="rowSelect" update="checkDelBtn" />
+                <p:ajax event="rowUnselectCheckbox" update="checkDelBtn"  />
+                <p:ajax event="toggleSelect" update="checkDelBtn" />
 
-                    <p:column width="15" rendered="#{_showOwner}">
-                        <h:graphicImage value="/resources/icon/done.png" styleClass="img-required"
-                                        rendered="#{item == _bean.editedItem.owner}" />
-                    </p:column>
+                <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
-                    <p:column headerText="#{bundle.Groups}">
-                        <h:outputLabel value="#{item.path}" />                    
-                    </p:column> 
+                <p:column width="15" rendered="#{_showOwner}">
+                    <h:graphicImage value="/resources/icon/done.png" styleClass="img-required"
+                                    rendered="#{item == _bean.editedItem.owner}" />
+                </p:column>
 
-                    <p:column headerText="#{bundle.Commands}" style="text-align: center;" >                    
-                        <p:commandButton icon="ui-icon-circle-check" title="#{bundle.MakeMain}"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         actionListener="#{_bean.makeMainGroup(item)}"
-                                         rendered="#{_showOwner}"
-                                         update="itemCard:mainTabView:panelGroups">
-                        </p:commandButton>
-                        <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                         update="itemCard:mainTabView:panelGroups"
-                                         disabled="#{_bean.isReadOnly() or item.id == 0}"
-                                         actionListener="#{_bean.deleteFromGroup(item)}">              
-                        </p:commandButton>
-                    </p:column>
+                <p:column headerText="#{bundle.Name}">
+                    <h:outputLabel value="#{item.path}" />                    
+                </p:column> 
 
-                    <f:facet name="footer">
-                        <p:commandButton value="#{bundle.DeleteChecked}" id="checkDelBtn"
-                                         icon="ui-icon-trash" title="#{bundle.Delete}"
-                                         immediate="true"
-                                         disabled="#{_bean.isReadOnly() or _bean.checkedGroups.isEmpty()}"
-                                         update="itemCard:mainTabView:panelGroups"
-                                         actionListener="#{_bean.deleteFromCheckedGroups()}"/>
-                        <p:commandButton id="btnAddGroup" value="#{bundle.Add}" 
-                                         icon="ui-icon-circle-plus"
-                                         immediate="true"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         actionListener="#{_selectorBean.onManySelectItem()}">
-                            <p:ajax event="dialogReturn" listener="#{_bean.addGroupsFromSelector}" 
-                                    update="itemCard:mainTabView:panelGroups"/>
-                        </p:commandButton>
-                    </f:facet>
-                </p:dataTable>
-            </h:panelGrid>
-        </h:panelGroup>
-    </p:tab>
+                <p:column headerText="#{bundle.Commands}" style="text-align: center;" >                    
+                    <p:commandButton icon="ui-icon-circle-check" title="#{bundle.MakeMain}"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     actionListener="#{_bean.makeMainGroup(item)}"
+                                     rendered="#{_showOwner}"
+                                     update="#{_frm}:mainTabView:panelGroups">
+                    </p:commandButton>
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                     update="#{_frm}:mainTabView:panelGroups"
+                                     disabled="#{_bean.isReadOnly() or item.id == 0}"
+                                     actionListener="#{_bean.deleteFromGroup(item)}">              
+                    </p:commandButton>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton value="#{bundle.DeleteChecked}" id="checkDelBtn"
+                                     icon="ui-icon-trash" title="#{bundle.Delete}"
+                                     immediate="true"
+                                     disabled="#{_bean.isReadOnly() or _bean.checkedGroups.isEmpty()}"
+                                     update="#{_frm}:mainTabView:panelGroups"
+                                     actionListener="#{_bean.deleteFromCheckedGroups()}"/>
+                    <p:commandButton id="btnAddGroup" value="#{bundle.Add}" 
+                                     icon="ui-icon-circle-plus"
+                                     immediate="true"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     actionListener="#{_selectorBean.onManySelectItem()}">
+                        <p:ajax event="dialogReturn" listener="#{_bean.addGroupsFromSelector}" 
+                                update="#{_frm}:mainTabView:panelGroups"/>
+                    </p:commandButton>
+                </f:facet>
+            </p:dataTable>
+        </h:panelGrid>
+    </h:panelGroup>
 
 </ui:composition>

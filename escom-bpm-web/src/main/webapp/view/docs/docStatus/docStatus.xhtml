@@ -37,7 +37,7 @@
 
             <p:column headerText="#{bundle.Value}" width="100">
                 <p:selectBooleanCheckbox value="#{item.value}">
-                    <p:ajax update="docStatusTbl" oncomplete="#{_bean.FRM_NAME}Change = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
+                    <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
                 </p:selectBooleanCheckbox>
             </p:column>
 
@@ -54,7 +54,7 @@
                     </f:facet>
                     <f:facet name="input">
                         <p:calendar value="#{item.dateStatus}"                                     
-                                    required="true" 
+                                    required="#{param['isRequired'] == 'true'}" 
                                     showButtonPanel="true"
                                     disabled="#{ _bean.isReadOnly()}"
                                     pattern="dd.MM.yyyy" mask="99.99.9999"

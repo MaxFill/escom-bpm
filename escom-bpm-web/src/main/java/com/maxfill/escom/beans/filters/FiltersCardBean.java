@@ -30,7 +30,7 @@ public class FiltersCardBean extends BaseCardBean<Filter> {
     }
 
     @Override
-    protected void onAfterCreateItem(Filter item) {        
+    protected void afterCreateItem(Filter item) {        
     }
 
     @Override

@@ -54,7 +54,7 @@
                                      onchange="return itemChange = 1;">
                     </p:inputTextarea>
                     <p:commandButton value="#{bundle.ToForm}" title="#{bundle.MakeName}"
-                                     update="fullName itemCard:btnSave"
+                                     update="fullName #{_frm}:btnSave"
                                      actionListener="#{partnersCardBean.makeFullName()}"/>
 
                     <p:outputLabel value="#{bundle.EMail}" />
@@ -79,11 +79,13 @@
                 </ui:include>
             </p:panelGrid>
         </p:tab>
-        <ui:include src="/view/common/dict-item-groups.xhtml" >
-            <ui:param name="_groups"    value="#{_bean.editedItem.partnersGroupsList}" />    
-            <ui:param name="_selectorBean" value="#{partnersGroupsBean}" />
-            <ui:param name="_showOwner" value="#{true}" />
-        </ui:include>
+        <p:tab title="#{bundle.Groups}">
+            <ui:include src="/view/common/dict-item-groups.xhtml" >
+                <ui:param name="_groups"    value="#{_bean.editedItem.partnersGroupsList}" />    
+                <ui:param name="_selectorBean" value="#{partnersGroupsBean}" />
+                <ui:param name="_showOwner" value="#{true}" />
+            </ui:include>
+        </p:tab>
 
     </ui:define>
 

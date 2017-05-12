@@ -17,10 +17,10 @@
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('UsersSelector')}"/>
     <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('Users')}"/>
         
-    <ui:define name="explorerColumns">
-        <p:column headerText="#{bundle.FIO}" sortBy="#{item.shortFIO}">
-            #{item.shortFIO}
-        </p:column>        
+    <ui:define name="specDetailColumns" rendered="#{explorerBean.isNowShowDetail()}">
+        <p:column headerText="#{bundle.Login}" sortBy="#{item.login}">
+            #{item.login}
+        </p:column>
         <p:column headerText="#{bundle.EMail}" sortBy="#{item.email}">
             #{item.email}
         </p:column> 

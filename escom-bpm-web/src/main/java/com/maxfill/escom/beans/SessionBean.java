@@ -62,9 +62,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
 import javax.xml.bind.JAXB;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Бин формы рабочего стола пользователя, а так же сессионный бин приложения
@@ -347,13 +350,7 @@ public class SessionBean implements Serializable{
     }
         
     /* *** ПРАВА ДОСТУПА *** */
-    
-    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
-    private void makeRightForChilds(BaseDict item, BaseDict parent){
-        Rights parentRights = getRightItemFromOwner(parent);
-        settingRightForChild(item, parentRights);  //сохраняем права документов в папке
-    }
-       
+          
     /* ПРАВА ДОСТУПА: получение дефолтных прав объекта */
     public Rights getDefaultRights(BaseDict item){
         return appBean.getDefaultRights(item.getClass().getSimpleName());
@@ -371,7 +368,8 @@ public class SessionBean implements Serializable{
     
     /* ПРАВА ДОСТУПА: */
     public boolean checkMaskRightChangeRight(BaseDict item){
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
+        Boolean rezult = checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
+        return rezult;
     }
     
     /* ПРАВА ДОСТУПА: акутализация прав доступа объекта */
@@ -393,6 +391,12 @@ public class SessionBean implements Serializable{
         return rights;
     }
     
+    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
+    public void makeRightForChilds(BaseDict item, BaseDict parent){
+        Rights childRights = getRightForChild(parent);
+        settingRightForChild(item, childRights); 
+    }
+    
     /* ПРАВА ДОСТУПА: Установка и проверка прав при загрузке объекта */
     public Boolean preloadCheckRightView(BaseDict item) {
         Rights rights = getRightItem(item);
@@ -405,11 +409,12 @@ public class SessionBean implements Serializable{
         if (mask == null) {
             return false;
         }
-        return (mask & right) == right;
+        Integer m = mask & right;
+        return m.equals(right);
     }
     
     /* ПРАВА ДОСТУПА: Получение прав объекта  */
-    private Rights getRightItem(BaseDict item) {
+    public Rights getRightItem(BaseDict item) {
         Rights rights;
         if (item == null) {
             return null;
@@ -418,43 +423,34 @@ public class SessionBean implements Serializable{
             rights = getActualRightItem(item);
         } else 
             if (item.getOwner() != null) {
-                rights = getRightItemFromOwner(item.getOwner()); //получаем права от владельца
+                rights = getRightItem(item.getOwner()); //получаем права от владельца
             } else 
                 if (item.getParent() != null) {
-                    rights = getRightItemFromParent(item.getParent()); //получаем права от родителя
+                    rights = getRightItem(item.getParent()); //получаем права от родителя
                 } else {
                     rights = getDefaultRights(item);
                 }
         return rights;
-    }
+    }       
     
-    /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
-    public Rights getRightItemFromOwner(BaseDict ownerItem) {
-        if (ownerItem == null) {
-            return null;
-        }    
-        if (ownerItem.isInherits()) { //если владелец наследует права
-            if (ownerItem.getParent() == null){
-                return getDefaultRights(ownerItem);
-            }
-            return getRightItemFromOwner(ownerItem.getParent()); //то идём в следующего Родителя !                
-        } // если права не наследуются
-        return getActualRightItemFromOwner(ownerItem); //то получаем права        
-    }
-    
-    /* ПРАВА ДОСТУПА: получение (рекурсивное) прав объекта от его родителя */
-    public Rights getRightItemFromParent(BaseDict item) {
+    /* ПРАВА ДОСТУПА: Получение прав для дочерних объектов */
+    public Rights getRightForChild(BaseDict item){
+        Rights rights;
         if (item == null) {
-            return null; //дефолтные права справочника
-        }
-        if (item.getParent() != null) { //если есть родитель                
-            BaseDict nextParent = item.getParent();
-            if (nextParent.isInherits()) {
-                return getRightItemFromParent(nextParent); //раз права наследуется, то идём в следующего родителя
-            } 
-            return getRightItem(nextParent); //права не наследуется, получаем реальные права родителя этой папки            
-        } 
-        return getDefaultRights(item); //не нашли родителя, который не наследует прав, поэтому получаем дефолтные        
+            return null;
+        }                
+        if (!item.isInherits()) {
+            rights = getActualRightChildItem(item);
+        } else 
+            if (item.getOwner() != null) {
+                rights = getRightForChild(item.getOwner()); //получаем права от владельца
+            } else 
+                if (item.getParent() != null) {
+                    rights = getRightForChild(item.getParent()); //получаем права от родителя
+                } else {
+                    rights = getDefaultRights(item);
+                }
+        return rights;
     }
     
     /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
@@ -476,17 +472,29 @@ public class SessionBean implements Serializable{
     }   
     
     /* ПРАВА ДОСТУПА: получение актуальных прав объекта  */
-    private Rights getActualRightItem(BaseDict item) {
-        Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(item.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
-        return actualRight;
+    private Rights getActualRightItem(BaseDict item) {        
+        if (item.getRightItem() != null){
+            return item.getRightItem();
+        }
+        if (StringUtils.isNotBlank(item.getAccess())){
+            StringReader access = new StringReader(item.getAccess());         
+            Rights actualRight = (Rights) JAXB.unmarshal(access, Rights.class); //Демаршаллинг прав из строки! 
+            settingRightItem(item, actualRight);
+            return actualRight;
+        } else {
+            throw new NullPointerException("EscomERR: Object " + item.getName() + " dont have xml right!");
+        }            
     }
     
     /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
-    private Rights getActualRightItemFromOwner(BaseDict ownerItem) {
-        //ownerItem = (O) getOwnerBean().getItemFacade().find(ownerItem); //получаем свежую копию владельца из базы
+    private Rights getActualRightChildItem(BaseDict item) {
         //TODO Тут вероятно нужно через вызов абстрактного метода актуализировать данные по правам т.к. в XmlAccessChild ни хрена нет!
-        Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(ownerItem.getXmlAccessChild()), Rights.class);
-        return actualRight;
+        String childStrRight = item.getXmlAccessChild();
+        if (StringUtils.isNotBlank(childStrRight)){
+            Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(childStrRight), Rights.class);
+            return actualRight;
+        } 
+        return null;
     }
     
     /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
@@ -520,19 +528,19 @@ public class SessionBean implements Serializable{
     /* ПРАВА ДОСТУПА: формирование битовой маски доступа */
     private Integer makeAccessMask(Right right, Integer accessMask) {
         if (right.isRead()) {
-            accessMask = accessMask | 8;
+            accessMask = accessMask | DictRights.RIGHT_VIEW;
         }
         if (right.isUpdate()) {
-            accessMask = accessMask | 16;
+            accessMask = accessMask | DictRights.RIGHT_EDIT;
         }
         if (right.isCreate()) {
-            accessMask = accessMask | 32;
+            accessMask = accessMask | DictRights.RIGHT_CREATE;
         }
         if (right.isDelete()) {
-            accessMask = accessMask | 64;
+            accessMask = accessMask | DictRights.RIGHT_DELETE;
         }
         if (right.isChangeRight()) {
-            accessMask = accessMask | 128;
+            accessMask = accessMask | DictRights.RIGHT_CHANGE_RIGHT;
         }
         return accessMask;
     }
@@ -568,10 +576,8 @@ public class SessionBean implements Serializable{
     public BaseDict doPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
         BaseDictFacade facade = getItemFacade(sourceItem);
         if (facade.isNeedCopyOnPaste(sourceItem, recipient)){
-            BaseDict pasteItem = (BaseDict)facade.doCopy(sourceItem, currentUser);
-            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-            pasteItem.setName(name);
-            pasteItem.setDetailItems(null);
+            BaseDict pasteItem = (BaseDict)facade.doCopy(sourceItem, currentUser);            
+        //    pasteItem.setDetailItems(null);
             pasteItem.setChildItems(null);
             pasteItem.setId(null);                    //нужно сбросить скопированный id!
             pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
@@ -581,6 +587,7 @@ public class SessionBean implements Serializable{
                 EscomBeanUtils.showErrorsMsg(errors);
                 return null;
             }
+            changeNamePasteItem(sourceItem, pasteItem);
             facade.create(pasteItem);
             List<List<?>> dependency = facade.doGetDependency(sourceItem);
             if (dependency != null){
@@ -590,7 +597,7 @@ public class SessionBean implements Serializable{
             return pasteItem;
         } else {
             facade.preparePasteItem(sourceItem, recipient);
-            return null;
+            return sourceItem;
         }
     }
     
@@ -601,12 +608,21 @@ public class SessionBean implements Serializable{
         }        
     }
     
+    /* Изменение имени вставляемого объекта */
+    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
+        if (Objects.equals(sourceItem.getParent(), pasteItem.getParent()) 
+            && Objects.equals(sourceItem.getOwner(), pasteItem.getOwner()) ){            
+            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
+            pasteItem.setName(name);
+        }
+    }
+    
     /* Создание объекта с открытием карточки */
     public BaseDict createItemAndOpenCard(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacadeByClassName(itemClassName); 
         BaseDict newItem = facade.createItem(owner, currentUser);
-        prepCreate(newItem, newItem.getParent(), newItem.getOwner(), errors, params);                
+        prepCreate(newItem, parent, owner, errors, params);                
         doOpenItem(newItem, DictEditMode.INSERT_MODE, errors);        
         return newItem;
     }
@@ -620,9 +636,9 @@ public class SessionBean implements Serializable{
             isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
         }
         if (isAllowedEditOwner) {
+            newItem.setParent(parent);
             makeRightItem(newItem);
-            if (isHaveRightCreate(newItem)) {
-                newItem.setParent(parent);
+            if (isHaveRightCreate(newItem)) {                
                 if (parent != null){
                     makeRightForChilds(newItem, parent);
                 }    
@@ -655,7 +671,7 @@ public class SessionBean implements Serializable{
         return editItem;
     }
     
-    /* Подготовка к просмотру оюъекта на карточке */
+    /* Подготовка к просмотру объекта на карточке */
     public BaseDict prepViewItem(BaseDict item){
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacade(item);        
@@ -772,6 +788,16 @@ public class SessionBean implements Serializable{
 
         }
         return itemFacade;
+    }
+    
+    public void openLevel1() {
+        Map<String,Object> options = new HashMap<String, Object>();
+        options.put("modal", true);
+        RequestContext.getCurrentInstance().openDialog("test1", options, null);
+    }
+     
+    public void onReturnFromLevel1(SelectEvent event) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Data Returned", ""));
     }
     
     /* *** GET & SET *** */

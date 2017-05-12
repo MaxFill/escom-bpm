@@ -1,8 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/selector/templ-tree-selector.xhtml">
+                template="/view/templ/templ-explorer.xhtml">
 
-    <ui:param name="_detailBean" value="#{userGroupsBean}" />
+    <!-- используется в качестве селектора групп пользователей -->
+    
+    <ui:param name="_detailBean" value="#{userBean}" />
+    <ui:param name="_treeBean" value="#{userGroupsBean}" />
+    <ui:param name="_searcheBean" value="#{_treeBean}"/>
 
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('UserGroupSelector')}"/>
     <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('UsersGroups')}"/>

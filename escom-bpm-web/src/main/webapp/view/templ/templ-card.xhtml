@@ -7,8 +7,10 @@
                 xmlns:custom="http://java.sun.com/jsf/composite/components"
                 template="/view/templ/templ.xhtml">
 
-    <ui:insert name="scripts" />
-
+    <ui:param name="_frm" value="#{_bean.itemObjName}"/>
+    
+    <ui:insert name="scripts" />     
+    
     <ui:define name="preRendered">
         <f:metadata>
             <f:event type="preRenderView" listener="#{_bean.onOpenCard()}"/>
@@ -42,17 +44,17 @@
             </pe:layoutPane>
 
             <pe:layoutPane position="center" resizable="true" >
-                <h:form id="itemCard"  style="font-size: 90%;" >
+                <h:form id="#{_frm}" style="font-size: 90%;" >
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
                                      oncomplete="return itemChange = 0;">            
                     </p:remoteCommand>
-                    
+
                     <p:outputPanel id="pnItemDialog" rendered="#{_bean.editedItem != null}">
 
                         <p:hotkey bind="esc" id="hotskey"
                                   immediate="true"                             
-                                  onstart="document.getElementById('itemCard:btnCancel').click();"> 
+                                  onstart="document.getElementById('#{_frm}:btnCancel').click();"> 
                         </p:hotkey> 
 
                         <h:panelGrid columns="1" styleClass="ui-grid-col-12">
@@ -73,7 +75,7 @@
                                                 rendered="#{_bean.editedItem.id != null and !_bean.editedItem.deleted}"
                                                 icon="ui-icon-gear">
                                     <p:menuitem icon="ui-icon-document" value="#{bundle.CardItem}" title="#{bundle.CardItem}"
-                                                process="itemCard:pnItemDialog"
+                                                process="#{_frm}:pnItemDialog"
                                                 actionListener="#{_bean.onPreViewItemCard()}"/>
                                     <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"                                                
                                                 actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
@@ -84,7 +86,7 @@
                                 <p:commandButton id="btnSave" value="#{bundle.Save}" title="#{bundle.SaveAndClose}"
                                                  rendered="#{!_bean.isReadOnly()}"
                                                  icon="ui-icon-circle-check"                                      
-                                                 update="itemCard:pnItemDialog"
+                                                 update="#{_frm}:pnItemDialog"
                                                  action="#{_bean.prepSaveItemAndClose()}"
                                                  onclick="if (itemChange == 1) {onChangeItem();}">
                                     <f:param name="isRequired" value="true"/>

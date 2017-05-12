@@ -3,9 +3,9 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.DocNumerator;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.services.numerator.DocNumerator;
 import com.maxfill.services.numerator.NumeratorServiceAbst;
 import com.maxfill.utils.EscomUtils;
 import java.util.Date;
@@ -14,18 +14,11 @@ import java.util.Map;
 import javax.ejb.Stateless;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Нумератор для документов
- * @author mfilatov
- */
+/* Нумератор для документов */
 @Stateless
 public class DocNumeratorImpl extends NumeratorServiceAbst implements DocNumerator{    
     
-    /**
-     * Отмена регистрации документа
-     * @param item 
-     * @param counterName 
-     */
+    /* Отмена регистрации документа  */
     @Override
     public void doRollBackRegistred(BaseDict item, String counterName){        
         counterName = onGetCounterName(item);        
@@ -38,10 +31,7 @@ public class DocNumeratorImpl extends NumeratorServiceAbst implements DocNumerat
         return super.doRegistrNumber(item, counterName, numPattern, params, dateReg);
     }
     
-    /**
-     * Регистрация документа
-     * @param doc 
-     */
+    /*Регистрация документа  */
     @Override
     public void doRegistDoc(Doc doc){
         Date dateReg = doc.getDateDoc();
@@ -69,11 +59,7 @@ public class DocNumeratorImpl extends NumeratorServiceAbst implements DocNumerat
         }
     }
     
-    /**
-     * Возвращает имя счётчика нумератора для документа
-     * @param item
-     * @return 
-     */
+    /* Возвращает имя счётчика нумератора для документа  */
     private String onGetCounterName(BaseDict item){        
         Doc doc = (Doc) item;
         String counterName = doc.getDocType().getGuide();

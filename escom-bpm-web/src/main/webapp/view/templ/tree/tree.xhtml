@@ -5,12 +5,12 @@
 
     <ui:include src="/view/templ/tree/tree-confirm-dlg.xhtml"/>
 
-    <p:commandButton id="createTreeCardBtn" actionListener="#{explorerBean.onCreateTreeItem()}" style="display: none;"> 
+    <p:commandButton id="createTreeCardBtn" action="#{explorerBean.onCreateTreeItem()}" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="createRootTreeCardBtn" actionListener="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
+    <p:commandButton id="createRootTreeCardBtn" action="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>

@@ -44,7 +44,7 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
     }
 
     @Override
-    protected void onAfterCreateItem(DocType item) {        
+    protected void afterCreateItem(DocType item) {        
     }
 
     @Override

@@ -18,7 +18,7 @@
                                      onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                      onchange="return itemChange = 1;"
                                      disabled="#{_bean.isReadOnly()}"
-                                     required="true"
+                                     required="#{param['isRequired'] == 'true'}"
                                      requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                         <p:message for="postName" display="icon"/>
                     </h:panelGroup>

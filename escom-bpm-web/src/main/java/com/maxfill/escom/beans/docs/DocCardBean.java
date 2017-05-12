@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.DocNumerator;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
@@ -16,10 +15,15 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.facade.CompanyFacade;
 import com.maxfill.facade.DocStatusFacade;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.facade.StateFacade;
+import com.maxfill.model.companies.Company;
+import com.maxfill.model.states.State;
+import com.maxfill.services.numerator.DocNumerator;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -54,6 +58,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private List<DocType> docTypes;
     private List<Staff> staffs;
     private List<Partner> partners;
+    private List<Company> companies;
+    private List<State> states;
 
     @EJB
     private DocNumerator docNumeratorService;
@@ -67,8 +73,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private PartnersFacade partnersFacade;
     @EJB
     private StaffFacade staffFacade;
+    @EJB
+    private CompanyFacade companyFacade;
+    @EJB
+    private StateFacade stateFacade;
     
-    /*Специфические действия при отмене сохранения изменённого документа  */
+    /* Специфические действия при отмене сохранения изменённого документа  */
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -103,7 +113,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     @Override
-    protected void onAfterCreateItem(Doc doc) {
+    protected void afterCreateItem(Doc doc) {
         addDocStatusFromType(doc, doc.getDocType());
     }
      
@@ -211,11 +221,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
     
-    /**
-     * Удаление версии документа и её файла
-     *
-     * @param attache
-     */
+    /* Удаление версии документа и её файла */
     public void deleteAttache(Attaches attache) {
         try {
             attacheService.deleteAttache(attache);            
@@ -256,12 +262,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
     
-    /* *** СОБЫТИЯ ИЗМЕНЕНИЯ ПОЛЕЙ НА ФОРМЕ*** */
+    /* СОБЫТИЯ ИЗМЕНЕНИЯ ПОЛЕЙ НА ФОРМЕ */
     
-    /**
-     * Событие изменения контрагента на форме документа
-     * @param event 
-     */
+    /* Событие изменения контрагента на форме документа */
     public void onPartnerSelected(SelectEvent event){
         List<Partner> items = (List<Partner>) event.getObject();
         if (items.isEmpty()){return;}
@@ -277,10 +280,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         getEditedItem().setPartner(partner);
     } 
     
-    /**
-     * Выбор штатной единицы     
-     * @param event
-     */
+    /* Выбор штатной единицы */
     public void onManagerSelected(SelectEvent event){
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()){return;}
@@ -291,11 +291,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
             staffs.add(item);
         }
     }
+    public void onManagerSelected(ValueChangeEvent event){
+        Staff manager = (Staff) event.getNewValue();
+        getEditedItem().setManager(manager);
+    } 
     
-    /**
-     * Событие изменения типа документа на форме документа
-     * @param event 
-     */
+    /* Событие изменения типа документа на форме документа  */
     public void onDocTypeSelected(SelectEvent event){
         List<DocType> items = (List<DocType>) event.getObject();
         if (items.isEmpty()){return;}
@@ -432,6 +433,24 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
 
+    public List<State> getStates() {
+        if (states == null){
+            states = stateFacade.findAll().stream()
+                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+        }
+        return states;
+    }
+
+    public List<Company> getCompanies() {
+        if (companies == null){
+            companies = companyFacade.findAll().stream()
+                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+        }
+        return companies;
+    }
+           
     public List<DocType> getDocTypes() {
         if (docTypes == null){
             docTypes = docTypeFacade.findAll().stream()

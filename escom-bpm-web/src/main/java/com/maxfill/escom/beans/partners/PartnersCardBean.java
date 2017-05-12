@@ -7,9 +7,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.facade.PartnerTypesFacade;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -114,7 +112,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     }
 
     @Override
-    protected void onAfterCreateItem(Partner item) {        
+    protected void afterCreateItem(Partner item) {        
     }
 
     @Override

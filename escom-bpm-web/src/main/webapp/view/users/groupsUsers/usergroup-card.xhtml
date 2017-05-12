@@ -7,23 +7,26 @@
     <ui:param name="_bean" value="#{userGroupsCardBean}"/>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Explorer}"> 
-            
+        <p:tab id="cardTab" title="#{bundle.Explorer}">             
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12" >
-
                 <p:outputLabel value="#{bundle.Name}:" />                
                 <p:inputText id="name" value="#{_bean.editedItem.name}"
                             styleClass="ui-grid-col-12"
                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
                             onchange="return itemChange = 1;"
-                            required="true"
+                            required="#{param['isRequired'] == 'true'}"
                             disabled="#{_bean.isReadOnly()}"
                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                     <p:message for="name" display="icon"/>
-                </p:inputText>                
-
+                </p:inputText>                                
             </p:panelGrid>
-
+        </p:tab>
+        <p:tab title="#{bundle.Users}"> 
+                <ui:include src="/view/common/dict-item-groups.xhtml" >
+                    <ui:param name="_groups" value="#{userGroupsCardBean.editedItem.usersList}" />    
+                    <ui:param name="_selectorBean" value="#{userBean}" />
+                    <ui:param name="_showOwner" value="#{false}" />
+                </ui:include>
         </p:tab>    
     </ui:define>
 </ui:composition>

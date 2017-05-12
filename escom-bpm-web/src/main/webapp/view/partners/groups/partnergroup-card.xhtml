@@ -10,17 +10,34 @@
         <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding"
                          columnClasses="ui-grid-col-8 col-padding" >
+
+                <p:outputLabel value="#{bundle.Code}" />            
+                <p:inputText value="#{_bean.editedItem.code}" id="code"
+                             disabled="#{_bean.isReadOnly()}"
+                             maxlength="50"
+                             requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
+                             onchange="return itemChange = 1;"/>
+                <p:message for="code" display="tooltip"/>
+                    
                 <p:outputLabel value="#{bundle.Name}" />
                 <p:inputText value="#{_bean.editedItem.name}" id="name" styleClass="ui-grid-col-12"
                              title="#{bundle.GroupName}"
                              disabled="#{_bean.isReadOnly()}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
-                             required="true"
+                             required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                     <p:message for="name" display="icon"/>
-                </p:inputText>
+                </p:inputText>                
             </p:panelGrid>
+        </p:tab> 
+        
+        <p:tab title="#{bundle.Partners}"> 
+            <ui:include src="/view/common/dict-item-groups.xhtml" >
+                <ui:param name="_groups" value="#{partnersGroupsCardBean.editedItem.partnersList}" />    
+                <ui:param name="_selectorBean" value="#{partnersBean}" />
+                <ui:param name="_showOwner" value="#{false}" />
+            </ui:include>
         </p:tab>    
 
     </ui:define>

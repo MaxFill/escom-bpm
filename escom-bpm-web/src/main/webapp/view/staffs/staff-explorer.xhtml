@@ -22,7 +22,7 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateDepartament}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateStaff}" />    
        
-    <!-- специфичные поля таблицы обозревателя для "Штатной единицы"-->
+    <!-- специфичные колонки таблицы обозревателя для "Штатной единицы"-->
     <ui:define name="specDetailColumns">       
         <p:column headerText="#{bundle.Employee}" sortBy="#{item.employee.shortFIO}" 
                   rendered="#{explorerBean.isNowShowDetail()}">
@@ -30,14 +30,14 @@
         </p:column>
     </ui:define> 
     
-    <!-- специфичные поля таблицы обозревателя для "Подразделения"-->
+    <!-- специфичные колонки таблицы обозревателя для "Подразделения"-->
     <ui:define name="specTreeColumns"> 
         <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowTree()}">
             #{item.code}
         </p:column>
     </ui:define>
     
-    <!-- специфичные поля таблицы обозревателя для "Компания"-->
+    <!-- специфичные колонки таблицы обозревателя для "Компания"-->
     <ui:define name="specRootColumns"> 
         <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowRoot()}">
             #{item.code}

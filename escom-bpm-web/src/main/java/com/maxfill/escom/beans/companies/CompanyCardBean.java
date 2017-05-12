@@ -27,7 +27,7 @@ public class CompanyCardBean extends BaseCardBean<Company> {
     }
 
     @Override
-    protected void onAfterCreateItem(Company item){
+    protected void afterCreateItem(Company item){
     }        
 
     @Override

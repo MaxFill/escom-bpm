@@ -16,6 +16,7 @@ import javax.inject.Named;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.faces.event.ValueChangeEvent;
 
 /**
  * Бин для карточки подразделения
@@ -39,12 +40,10 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
         return itemsFacade;
     }
 
-    /**
-     * Формирование кода подразделения
-     */
+    /* Формирование кода подразделения  */
     public void makeCode(){
         Department department = getEditedItem();
-        Company company = department.getOwner();
+        Company company = findCompany(department);
         String counterName = itemsFacade.getFRM_NAME();
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
         String number = numeratorService.doRegistrNumber(department, counterName, numeratorPattern, null, new Date());
@@ -52,11 +51,23 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
         sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
         department.setCode(sb.toString());
     }    
-        
-    /**
-     * Выбор руководителя      
-     * @param event
-     */
+    
+    /* Возвращает компанию, в которой находится подразделение */
+    public Company findCompany(Department item){        
+        if (item.getParent() != null){
+            findCompany(item.getParent());
+        }
+        return item.getOwner();
+    }
+    
+    public String getCompanyName(){
+        if (getEditedItem() == null){
+            return "";
+        }
+        return findCompany(getEditedItem()).getName();
+    }
+    
+    /* Обработка события выбора руководителя на карточке  */
     public void onChiefSelected(SelectEvent event){
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()){return;}
@@ -67,10 +78,15 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
             staffs.add(item);
         }
     }
-
+    public void onChiefSelected(ValueChangeEvent event){        
+        Staff staff = (Staff) event.getNewValue();
+        getEditedItem().setChief(staff);
+        onItemChange();
+    }  
+    
     public List<Staff> getStaffs() {
         if (staffs == null){
-            staffs = staffFacade.findAll().stream()
+            staffs = staffFacade.findActualStaff().stream()
                     .filter(item -> sessionBean.preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
@@ -87,7 +103,7 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
     }
 
     @Override
-    protected void onAfterCreateItem(Department item) {        
+    protected void afterCreateItem(Department item) {        
         makeCode();
     }
         

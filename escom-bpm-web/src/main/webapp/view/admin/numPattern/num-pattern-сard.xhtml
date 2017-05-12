@@ -18,7 +18,7 @@
                                   onchange="return itemChange = 1;"
                                   disabled="#{!_bean.isHaveRightEdit()}">
                     <f:selectItems value="#{_bean.numPatternTypes}"/>
-                    <p:ajax event="change" update="itemCard:mainTabView:patternGrid" />
+                    <p:ajax event="change" update="#{_frm}:mainTabView:patternGrid" />
                 </p:selectOneRadio>
 
                 <p:outputLabel value="#{bundle.Name}" />
@@ -28,7 +28,7 @@
                                  onchange="return itemChange = 1;"
                                  disabled="#{!_bean.isHaveRightEdit()}"
                                  style="width: 100%;"
-                                 required="true"
+                                 required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                     <p:message for="name" display="icon"/>
                     <p:watermark for="name" value="#{bundle.InputNameNumerator}" />
@@ -46,7 +46,7 @@
                                      onchange="return itemChange = 1;"
                                      disabled="#{!_bean.isHaveRightEdit()}"
                                      style="width: 100%;"
-                                     required="true"
+                                     required="#{param['isRequired'] == 'true'}"
                                      requiredMessage="#{bundle.Field} [#{bundle.Pattern}] #{bundle.MustBeFilled}">
                             <p:keyFilter regEx="/[CODEMPGRTYNy//-]/i" />
                         </p:inputText>    
@@ -60,7 +60,8 @@
                                    onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                    onchange="return itemChange = 1;"
                                    disabled="#{!_bean.isHaveRightEdit()}"
-                                   required="true" min="0" max="10"
+                                   required="#{param['isRequired'] == 'true'}"
+                                   min="0" max="10"
                                    requiredMessage="#{bundle.Field} [#{bundle.LeadingZeros}] #{bundle.MustBeFilled}">
                         </p:spinner>
                     </h:panelGrid>                    

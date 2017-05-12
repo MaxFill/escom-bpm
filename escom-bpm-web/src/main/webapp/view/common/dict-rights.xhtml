@@ -56,13 +56,13 @@
                                     <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
                                                    disabled="#{_bean.editedItem.inherits}"
                                                    actionListener="#{_bean.onEditRight(right)}" >
-                                        <p:ajax event="dialogReturn" update="itemCard:mainTabView:groupRight"
+                                        <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:groupRight"
                                             listener="#{_bean.onCloseRightCard}"/>
                                     </p:commandButton>
                                     <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
                                                 disabled="#{_bean.editedItem.inherits}"
                                                 actionListener="#{_bean.onDeleteRight(right)}" 
-                                                update="itemCard:mainTabView:groupRight">
+                                                update="#{_frm}:mainTabView:groupRight">
                                     </p:commandButton>
                                 </p:panelGrid>
                             </p:column>
@@ -72,7 +72,7 @@
                                          icon="ui-icon-circle-plus" 
                                          rendered="#{!_bean.editedItem.inherits and !_bean.isReadOnly()}"
                                          actionListener="#{_bean.onAddRight(state)}">
-                            <p:ajax event="dialogReturn" update="itemCard:mainTabView:groupRight"
+                            <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:groupRight"
                                     listener="#{_bean.onCloseRightCard}"/>
                         </p:commandButton>
 

@@ -43,7 +43,7 @@
                                 <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
                                                  disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessDocs or !_bean.isHaveRightChangeRight()}"
                                                  actionListener="#{_bean.onEditDocRight(right)}" >
-                                    <p:ajax event="dialogReturn" update="itemCard:mainTabView:docRightsGrid"
+                                    <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:docRightsGrid"
                                                 listener="#{_bean.onCloseRightCard}"/>
                                 </p:commandButton>
                                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
@@ -61,7 +61,7 @@
                                          rendered="#{!_bean.editedItem.isInheritsAccessDocs}" 
                                          actionListener="#{_bean.onAddDocRight(state)}">
                              <p:ajax event="dialogReturn" 
-                                     update="itemCard:mainTabView:docRightsGrid"
+                                     update="#{_frm}:mainTabView:docRightsGrid"
                                      listener="#{_bean.onCloseRightCard}"/>
                         </p:commandButton>
                     </p:panelGrid>

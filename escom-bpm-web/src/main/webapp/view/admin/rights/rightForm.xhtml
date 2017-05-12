@@ -67,7 +67,7 @@
                                          valueChangeListener="#{rightCardBean.onGroupChange}" style="width: 100%;"
                                          converter="groupsUserConvertor" 
                                          disabled="#{rightCardBean.selRight.objType == 1}" >
-                            <f:selectItems value="#{userGroupsBean.allItems}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>                           
+                            <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>                           
                             <f:selectItem itemValue="#{rightCardBean.selUsGroup}" itemLabel="#{rightCardBean.selUsGroup.name}" />
                             <p:ajax event="change" update=":frmRightEdit:lbRightName" oncomplete="itemChange = 1;"/>
                         </p:selectOneMenu>  
@@ -96,7 +96,7 @@
                         <p:selectBooleanCheckbox value="#{rightCardBean.selRight.update}" id="chBoxUpdate"
                                                  itemLabel="#{bundle.Edit}" onchange="itemChange = 1;"/>
 
-                        <p:selectBooleanCheckbox value="#{rightCardBean.selRight.сhangeRight}" id="chBoxRight"
+                        <p:selectBooleanCheckbox value="#{rightCardBean.selRight.changeRight}" id="chBoxRight"
                                                  itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>
                     </h:panelGrid>
                 </p:panelGrid>

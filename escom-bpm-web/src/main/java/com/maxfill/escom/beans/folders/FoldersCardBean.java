@@ -51,34 +51,17 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
         defDocRight = getDefaultRights();
     }    
     
-    /**
-     * ПРАВА ДОСТУПА: обработка при изменении опции "Наследование прав для
-     * документов" в карточке папки
-     *
-     * @param event
-     */
+    /* ПРАВА ДОСТУПА: обработка при изменении опции "Наследование прав для
+     * документов" в карточке папки */
     public void onInheritsDocChange(ValueChangeEvent event) {
         if ((Boolean) event.getNewValue() == false) {    //если галочка снята, то нужно скопировать права документов от родителя           
-            copyParentDocRight(getEditedItem());        //копируем права документов от родителя
+            sessionBean.makeRightForChilds(getEditedItem(), getEditedItem().getParent());
             setIsItemChange(Boolean.TRUE);
             EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
         }
     }
-
-    /**
-     * ПРАВА ДОСТУПА: копирование прав документов от родительской папки
-     */
-    private void copyParentDocRight(Folder folder) {
-        Folder parentFolder = (Folder) folder.getParent();
-        Rights parentRights = sessionBean.getRightItemFromOwner(parentFolder);
-        sessionBean.settingRightForChild(folder, parentRights);  //сохраняем права документов в папке
-    }
     
-    /**
-     * ПРАВА ДОСТУПА: удаление права доступа к документам из списка прав папки
-     *
-     * @param right
-     */
+    /* ПРАВА ДОСТУПА: удаление права доступа к документам из списка прав папки  */
     public void onDeleteRightDoc(Right right) {
         getEditedItem().getRightForChild().getRights().remove(right);
         setIsItemChange(Boolean.TRUE);
@@ -209,7 +192,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
     }
 
     @Override
-    protected void onAfterCreateItem(Folder item) {        
+    protected void afterCreateItem(Folder item) {        
     }
 
     @Override

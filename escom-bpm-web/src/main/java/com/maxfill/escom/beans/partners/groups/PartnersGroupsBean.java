@@ -118,15 +118,24 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
         rezult.put("PartnersGroups", partnerGroups.getChildItems().size());
     }    
     
-    /**
-     * Проверка возможности удаления partnerGroups
-     * @param partnerGroups
-     */
+    /* Проверка возможности удаления partnerGroups */
     @Override
     protected void checkAllowedDeleteItem(PartnerGroups partnerGroups, Set<String> errors){
-        super.checkAllowedDeleteItem(partnerGroups, errors);       
+        // Группу контрагентов можно удалить без ограничений, т.к. контрагенты не удаляются, а только ссылки на них
     }
 
+    /* Обработка события перемещения подчинённых объектов при перемещение группы контрагента в корзину */
+    @Override
+    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {          
+        // При перемещение группы контрагента в корзину ничего с контрагентами делать не нужно 
+    }
+    
+    /* Обработка события удаление подчинённых объектов при удалении группы контрагента*/
+    @Override
+    protected void deleteDetails(PartnerGroups partnerGroups) {
+        // При удалении группы удалять контрагентов не нужно!
+    }
+    
     @Override
     public Class<PartnerGroups> getItemClass() {
         return PartnerGroups.class;

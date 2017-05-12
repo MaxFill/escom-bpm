@@ -28,7 +28,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
     }
 
     @Override
-    protected void onAfterCreateItem(StatusesDoc item) {        
+    protected void afterCreateItem(StatusesDoc item) {        
     }
 
     @Override

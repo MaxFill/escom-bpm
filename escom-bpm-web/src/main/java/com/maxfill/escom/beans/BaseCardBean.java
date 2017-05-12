@@ -19,14 +19,8 @@ import javax.faces.event.ValueChangeEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 
-/**
- * Базовый бин для карточек объектов
- *
- * @author mfilatov
- * @param <T>
- */
+/* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = 6864719383155087328L;    
         
@@ -36,25 +30,19 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
-
-    /**
-     * Действия перед сохранением объекта переопределяются
-     *
-     * @param item
-     */
+    
+    /* Действия перед сохранением объекта переопределяются  */
     protected void onBeforeSaveItem(T item) {
     }
 
-    protected abstract void onAfterCreateItem(T item);
+    protected abstract void afterCreateItem(T item);
 
     @Override
     public void onInitBean(){
         EscomBeanUtils.initCardLayout(cardLayoutOptions);
     }
     
-    /**
-     * При открытии карточки объекта
-     */
+    /* При открытии карточки объекта */
     public void onOpenCard(){
         if (getEditedItem() == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -65,8 +53,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             setEditedItem(item);            
 
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
-                addItemInGroup(item, item.getOwner()); //owner_а нужно добавить в группу
-                onAfterCreateItem(item);
+                addOwnerInGroups(item); //owner_а нужно добавить в группу
+                afterCreateItem(item);
+                checkItemHaveRightEdit(item);
             }
 
             List<Right> itemRights = item.getRightItem().getRights();
@@ -78,27 +67,17 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         }
     }
     
-    /**
-     * Специфические действия перед открытием карточки
-     * @param item 
-     */
+    /* Специфические действия перед открытием карточки */
     protected void doPrepareOpen(T item) {
     }
 
-    /**
-     * Добавление объекта в группу
-     * @param item
-     * @param group 
-     */
-    protected void addItemInGroup(T item, BaseDict group){ 
+    /* Добавление владельца объекта в группы объекта */
+    protected void addOwnerInGroups(T item){ 
         //переопределяется в бине с группами
     }
     
-    /**
-     * СОХРАНЕНИЕ: подготовка к сохранению объекта
-     * @return 
-     */
-    public String prepSaveItemAndClose() {        
+    /* Подготовка к сохранению объекта  */
+    public void prepSaveItemAndClose() {        
         Boolean isNeedUpdateExplore = false;
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
             isNeedUpdateExplore = true;
@@ -107,7 +86,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
                 EscomBeanUtils.showErrorsMsg(errors);
-                return ""; //отмена закрытия формы по ошибке
+                return; //отмена закрытия формы по ошибке
             }
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
@@ -125,22 +104,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
             onAfterSaveItem(item);
         }
-        return closeItemForm(isNeedUpdateExplore);
+        closeItemForm(isNeedUpdateExplore);
     }
     
-    /**
-     * Сохранение специфичных данных объекта
-     * @param item 
-     */
+    /* Сохранение специфичных данных объекта */
     protected void onAfterSaveItem(T item){      
     }
 
-    /**
-     * СОХРАНЕНИЕ: проверка корректности полей объекта перед сохранением
-     *
-     * @param item
-     * @param errors
-     */
+    /* Проверка корректности полей объекта перед сохранением  */
     protected void checkItemBeforeSave(T item, Set<String> errors) {
         T parent = (T) item.getParent();
         Integer itemId = item.getId();
@@ -156,11 +127,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         }
     }
 
-    /**
-     * Отмена изменений в объекте
-     *
-     * @return 
-     */
+    /* Отмена изменений в объекте  */
     public String onCancelItemSave() {
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
             RequestContext.getCurrentInstance().execute("PF('confirm').show();");
@@ -170,10 +137,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return "";
     }
 
-    /**
-     * Отмена изменений в объекте, завершающие действия
-     * @return 
-     */
+    /* Отмена изменений в объекте, завершающие действия  */
     protected String doFinalCancelSave() {
         if (Boolean.TRUE.equals(isItemRegisted)) {
             numeratorService.doRollBackRegistred(getEditedItem(), getItemFacade().getFRM_NAME());
@@ -187,23 +151,20 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return doFinalCancelSave();
     }
     
-    /**
-     * Закрытие формы карточки объекта
-     */
+    /* Закрытие формы карточки объекта */
     private String closeItemForm(Boolean isNeedUpdate) {
         clearLockItem();
         RequestContext.getCurrentInstance().closeDialog(new Tuple(isNeedUpdate, itemOpenKey));
         return "/view/index?faces-redirect=true";
     }
 
+    /* Закрытие служебных диалогов, открываемых с формы */
     public String onClose() {
-        RequestContext.getCurrentInstance().closeDialog(null);
+        RequestContext.getCurrentInstance().closeDialog(null);        
         return "/view/index?faces-redirect=true";
     }
 
-    /**
-     * Сброс блокировок объекта
-     */
+    /* Сброс блокировок объекта  */
     private void clearLockItem(){
         T item = getEditedItem();
         appBean.deleteOpenedItem(itemOpenKey);  //удаление из буфера открытых объектов
@@ -264,11 +225,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setIsItemChange(true);
     }
 
-    /**
-     * ПРАВА ДОСТУПА: при закрытии карточки редактирования права 
-     *
-     * @param event
-     */
+    /* ПРАВА ДОСТУПА: Обработка события закрытия карточки редактирования права объекта  */
     public void onCloseRightCard(SelectEvent event) {
         Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
         Boolean isChange = tuple.a;
@@ -278,18 +235,24 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (right != null){
                 getEditedItem().getRightItem().getRights().add(right);
             }
+            checkItemHaveRightEdit(getEditedItem());
         }                
     }
 
-    /**
-     * ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии
-     * Права объекта, после того как они актуализированы, хранятся в поле
-     * rightItem объекта
-     *
-     * @param item Объект
-     * @param state Состояние
-     * @return Список прав
-     */
+    /* ПРАВА ДОСТУПА: Выполняет проверку на наличие у объекта права на редактирование */
+    private void checkItemHaveRightEdit(T item){
+        Rights rights = item.getRightItem();
+        for (Right right : rights.getRights()){
+            if (right.isUpdate()){
+                EscomBeanUtils.SuccesMsgAdd("Successfully", "RightsSettingCorrect");
+                return;
+            }
+        }
+        EscomBeanUtils.WarnMsgAdd("ObjectDontHaveRightEdit", "CheckRights");
+    }
+    
+    /* ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии
+     * Права объекта, после того как они актуализированы, хранятся в поле rightItem объекта   */
     public List<Right> getRightItemForState(T item, State state) {
         List<Right> rights = item.getRightItem().getRights().stream()
                 .filter(right -> state.equals(right.getState()))                
@@ -307,13 +270,13 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return sessionBean.isHaveRightEdit(editedItem);                
     }    
     
-    /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
+    /* ПРОЧИЕ МЕТОДЫ */
 
     /* При изменении в карточке объекта опции "Наследование прав"  */
     public void onInheritsChange(ValueChangeEvent event) {
         Boolean inherits = (Boolean) event.getNewValue();
         if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
-            Rights rights = sessionBean.getRightItemFromOwner(getEditedItem().getOwner());
+            Rights rights = sessionBean.getRightItem(getEditedItem());
             sessionBean.settingRightItem(getEditedItem(), rights);
             rightFacade.prepareRightsForView(rights.getRights());
             EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
@@ -381,8 +344,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return getTypeEdit().equals(DictEditMode.VIEW_MODE);
     }    
 
-    /* *** GET & SET *** */
+    public String getItemObjName(){
+        return getItemFacade().getFRM_NAME();
+    }
     
+    /* GET & SET  */
+        
     public Integer getRightPageIndex() {
         return rightPageIndex;
     }

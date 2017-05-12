@@ -17,7 +17,7 @@
                                  styleClass="ui-grid-col-12"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  onchange="return itemChange = 1;"
-                                 required="true"
+                                 required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                     <p:message for="name" display="icon"/>
                 </h:panelGroup>

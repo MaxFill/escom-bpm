@@ -27,7 +27,7 @@ public class DocTypeGroupsCardBean extends BaseCardBean<DocTypeGroups>{
     }
 
     @Override
-    protected void onAfterCreateItem(DocTypeGroups item) {        
+    protected void afterCreateItem(DocTypeGroups item) {        
     }
 
     @Override

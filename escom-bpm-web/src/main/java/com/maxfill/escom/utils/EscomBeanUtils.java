@@ -209,7 +209,7 @@ public class EscomBeanUtils {
         return result;
     }
 
-    //поиск позиции в таблице контента
+    /* Выполняет поиск позиции в таблице контента */
     public static BaseDict findUITableContent(List<BaseDict> root, Integer keyRow) {
         BaseDict rez = null;
         int pos = 0;

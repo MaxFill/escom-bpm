@@ -45,7 +45,7 @@
                                      styleClass="ui-grid-col-12"
                                      required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{companyBean.allItems}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                        <f:selectItems value="#{docCardBean.companies}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" itemDisabled="true"/>
                         <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
@@ -60,10 +60,10 @@
                     <ui:param name="_itemPanel" value="docTypePanel"/>
                     <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
                     <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                    <ui:param name="_items" value="#{_bean.docTypes}"/>
+                    <ui:param name="_items" value="#{docCardBean.docTypes}"/>
                     <ui:param name="_actionClear" value="setDocType"/>
                     <ui:param name="_actionSelect" value="onDocTypeSelected"/>
-                    <ui:param name="_update" value="itemCard:mainTabView:regNumberPanel itemCard:mainTabView:docStatusTbl itemCard:mainTabView:explToolBar"/>
+                    <ui:param name="_update" value="#{_frm}:mainTabView:regNumberPanel #{_frm}:mainTabView:docStatusTbl #{_frm}:mainTabView:explToolBar"/>
                 </ui:include>
 
                 <p:outputLabel value="#{bundle.Name}:" />
@@ -128,7 +128,7 @@
                                  onchange="return itemChange = 1;"
                                  required="#{param['isRequired'] == 'true'}" 
                                  requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-                    <f:selectItems value="#{stateBean.allItems}" var="states" itemLabel="#{states.name}" itemValue="#{states}" />
+                    <f:selectItems value="#{docCardBean.states}" var="states" itemLabel="#{states.name}" itemValue="#{states}" />
                     <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" itemDisabled="true"/>
                 </p:selectOneMenu>
 
@@ -141,7 +141,7 @@
                     <ui:param name="_itemPanel" value="partnerPanel"/>
                     <ui:param name="_titleItem" value="#{bundle.Partner}"/>
                     <ui:param name="_selectorBean" value="#{partnersBean}"/>
-                    <ui:param name="_items" value="#{_bean.partners}"/>
+                    <ui:param name="_items" value="#{docCardBean.partners}"/>
                     <ui:param name="_actionClear" value="setPartner"/>
                     <ui:param name="_actionSelect" value="onPartnerSelected"/>
                     <ui:param name="_update" value=""/>
@@ -155,7 +155,7 @@
                     <ui:param name="_converter" value="staffConvertor" />
                     <ui:param name="_itemPanel" value="managerPanel"/>
                     <ui:param name="_titleItem" value="#{bundle.Manager}"/>
-                    <ui:param name="_items" value="#{_bean.staffs}"/>
+                    <ui:param name="_items" value="#{docCardBean.staffs}"/>
                     <ui:param name="_selectorBean" value="#{staffBean}"/>
                     <ui:param name="_actionClear" value="setManager"/>
                     <ui:param name="_actionSelect" value="onManagerSelected"/>

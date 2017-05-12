@@ -4,18 +4,12 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Rights;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Реализация методов для древовидных объектов (подразделения, группы и т.п.)
- * @author mfilatov
- * @param <T>
- * @param <O>
- */
+/* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T , O > {
     private static final long serialVersionUID = -2983279513793115056L;    
     
@@ -23,23 +17,15 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     private BaseExplBean ownerBean;
     private BaseExplBean detailBean;           
         
-    /* *** ДЕРЕВО *** */    
+    /* ДЕРЕВО */    
     
-    /**
-     * Формирование детального списка для группы
-     * @param group
-     * @return 
-     */
+    /* Формирование детального списка для группы  */
     public List<BaseDict> makeGroupContent(T group){   
         List<BaseDict> details = getDetailBean().getItemFacade().findDetailItems(group);
         return details;
     }
         
-    /**
-     * ДЕРЕВО: Формирует дерево
-     *
-     * @return
-     */
+    /* Формирование дерева */
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
         List<T> sourceTreeItems = (List<T>) getRootItems();
@@ -49,23 +35,13 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         return tree;
     }
     
-    /**
-     * СПИСКИ ОБЪЕКТОВ: формирует список объектов нулевого уровня (parent = 0)
-     *
-     * @return
-     */
+    /* Формирует список объектов нулевого уровня (parent = 0)  */
     protected List<BaseDict> getRootItems() {
         List<BaseDict> rootItems = prepareItems(getItemFacade().findDetailItems(null));
         return rootItems;
     }
     
-    /**
-     * ДЕРЕВО: добавление узла в дерево при его формировании
-     *
-     * @param parentNode Узел дерева, в который добавляется объект
-     * @param item
-     * @return
-     */
+    /* Добавление узла в дерево при его формировании  */
     protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
         TreeNode rezNode = null;
         if (sessionBean.preloadCheckRightView(item)) {
@@ -90,13 +66,9 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         getDetailBean().clearOwner(item);
     }
     
-    /* *** СЕЛЕКТОР *** */
+    /* СЕЛЕКТОР */
     
-    /**
-     * СЕЛЕКТОР: обработка действия выбора элемента в дереве
-     *
-     * @return 
-     */
+    /* СЕЛЕКТОР: обработка действия выбора элемента в дереве   */
     public String onSelectTreeItem() {        
         BaseDict selectItem = explorerBean.getCurrentItem();
         if (selectItem == null || !explorerBean.isCanSelectedItem(selectItem)){
@@ -107,18 +79,14 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         return doClose(groups);
     }
     
-    /**
-     * СЕЛЕКТОР: обработка действия множественного выбора для дерева
-     *
-     * @return 
-     */
+    /* СЕЛЕКТОР: обработка действия множественного выбора для дерева */
     public String onSelectTreeItems() {
         List<TreeNode> nodes = Arrays.asList(getSelectedNodes());        
         List<BaseDict> groups = nodes.stream().map(node -> (O) node.getData()).collect(Collectors.toList());
         return doClose(groups);
     }
     
-    /* *** GET & SET *** */
+    /* GETS & SETS */
     
     public Rights getChildRights() {
         return childRights;

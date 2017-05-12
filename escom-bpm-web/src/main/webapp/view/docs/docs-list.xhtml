@@ -18,7 +18,7 @@
                  sortBy="#{doc.regNumber}" rowKey="#{doc.id}">
 
         <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"                                         
-                oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();"/>
+                oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();"/>
 
         <p:column style="width:20px; font-size: 90%;" sortBy="#{doc.iconName}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
@@ -29,7 +29,7 @@
         <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
             <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
                            actionListener="#{docsBean.setSelectedItem(doc)}"
-                           oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();"/>
+                           oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();"/>
         </p:column>
         
         <p:column headerText="#{bundle.State}" sortBy="#{doc.state.name}">
@@ -49,7 +49,7 @@
         <p:column headerText="#{bundle.Commands}" > 
             <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
                             actionListener="#{_bean.setSelectedItem(doc)}"
-                            oncomplete="document.getElementById('itemCard:mainTabView:openDocBtn').click();">
+                            oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();">
                 <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
                             process="@this"
                             disabled="#{doc.attache == null}"

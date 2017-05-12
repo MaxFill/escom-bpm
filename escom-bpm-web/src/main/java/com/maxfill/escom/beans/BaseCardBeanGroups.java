@@ -6,12 +6,7 @@ import org.primefaces.event.SelectEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Реализация методов для объектов с группами (пользователи, контрагенты и т.п.)
- * @author mfilatov
- * @param <T>
- * @param <O>
- */
+/* Реализация методов для объектов с группами (пользователи, контрагенты и т.п.) */
 public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseCardBean<T> {
     private static final long serialVersionUID = -3667710671312550624L;
 
@@ -68,13 +63,10 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
         }
     }
     
-    /**
-     * Добавление групп в редактируемый объект из селектора с деревом
-     * @param event
-     */
+    /* Добавление групп в редактируемый объект из селектора с деревом  */
     public void addGroupsFromSelector(SelectEvent event){
         if (event.getObject() == null){
-            throw new NullPointerException("Selected object is null!");
+            throw new NullPointerException("EscomERR: Selected object in selector is null!");
         }
         List<O> items = (List<O>) event.getObject();
         if (items.isEmpty()){return;}
@@ -82,36 +74,31 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
         items.stream().forEach(group -> addItemInGroup(getEditedItem(), group));
     }
     
-    /**
-     * Добавление групы в объект
-     * @param item
-     * @param group 
-     */
+    /* Добавление владельца объекта в группы объекта */
     @Override
-    protected void addItemInGroup(T item, BaseDict group) {
+    protected void addOwnerInGroups(T item){ 
+        addItemInGroup(item, (O)item.getOwner());
+    }
+    
+    /* Добавление группы в объект */
+    protected void addItemInGroup(T item, O group) {
         if (group != null){
-            List<O> groups = getGroups(item);
-            O addGroup = (O) group;
-            if (!groups.contains(addGroup)){
-                groups.add(addGroup);
+            List<O> groups = getGroups(item);            
+            if (!groups.contains(group)){
+                groups.add(group);
             } 
-            if(!addGroups.contains(addGroup)){
-                addGroups.add(addGroup);
+            if(!addGroups.contains(group)){
+                addGroups.add(group);
             }
             if(item.getOwner() == null){
-                group = getOwnerAndAddGroups(item, addGroup);
+                group = getOwnerAndAddGroups(item, group);
                 item.setOwner(group);
             }
             setIsItemChange(Boolean.TRUE);
         }
     }
     
-    /**
-     * Возвращает группу верхнего уровня и добавляет промежуточные группы в список групп объекта
-     * @param item
-     * @param group
-     * @return 
-     */
+    /* Возвращает группу верхнего уровня и добавляет промежуточные группы в список групп объекта  */
     public O getOwnerAndAddGroups(T item, O group) {                      
         List<O> groups = getGroups(item);
         if (!groups.contains(group)){

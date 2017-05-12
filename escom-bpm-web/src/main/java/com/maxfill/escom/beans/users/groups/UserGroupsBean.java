@@ -4,9 +4,8 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-
+import java.text.MessageFormat;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -31,10 +30,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private static final String BEAN_NAME = "userGroupsBean";
 
     @EJB
-    private UserGroupsFacade usGroupFacade;   
-    
-    public UserGroupsBean() { 
-    }              
+    private UserGroupsFacade usGroupFacade;               
     
     @Override
     protected String getBeanName() {
@@ -51,26 +47,37 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
         return null;
     }
     
-    /**
-     * Формирует число ссылок на userGroups в связанных объектах 
-     * @param userGroups
-     * @param rezult 
-     */
+    /* Формирует число ссылок на userGroups в связанных объектах  */
     @Override
     public void doGetCountUsesItem(UserGroups userGroups,  Map<String, Integer> rezult){
         rezult.put("Users", userGroups.getDetailItems().size());
         rezult.put("UsersGroups", userGroups.getChildItems().size());
-    }    
+        rezult.put("Rights", rightFacade.findRightsByGroupId(userGroups.getId()).size());
+    }
     
-    /**
-     * Проверка возможности удаления userGroups
-     * @param userGroups
-     */
+    /* Проверка возможности удаления группы пользователей */
     @Override
     protected void checkAllowedDeleteItem(UserGroups userGroups, Set<String> errors){
-        super.checkAllowedDeleteItem(userGroups, errors);       
+        if (!rightFacade.findRightsByGroupId(userGroups.getId()).isEmpty()){
+            Object[] messageParameters = new Object[]{userGroups.getName()};
+            String message = EscomBeanUtils.getMessageLabel("UserGroupsUsedInRights");
+            String error = MessageFormat.format(message, messageParameters);
+            errors.add(error);
+        }       
     }
 
+    /* Обработка события перемещения подчинённых объектов при перемещение группы пользователей в корзину */
+    @Override
+    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {          
+        // При перемещение группы пользователей в корзину ничего с пользователями не делать!
+    }
+    
+    /* Обработка события удаление подчинённых объектов при удалении группы пользователей */
+    @Override
+    protected void deleteDetails(UserGroups userGroups) {
+        // При удалении группы пользователей удалять пользователей не нужно!
+    }    
+    
     @Override
     public Class<UserGroups> getItemClass() {
         return UserGroups.class;

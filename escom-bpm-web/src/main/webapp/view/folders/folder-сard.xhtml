@@ -18,7 +18,7 @@
                                      readonly="#{!_bean.isHaveRightEdit()}"
                                      onchange="return itemChange = 1;"
                                      disabled="#{_bean.isReadOnly()}"
-                                     required="true"
+                                     required="#{param['isRequired'] == 'true'}"
                                      requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                     </p:inputText>
                     <p:message for="name" display="icon"/>

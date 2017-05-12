@@ -27,9 +27,6 @@ import java.util.logging.Level;
 public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = 2031203859450836271L;
 
-    @EJB 
-    private UserFacade userFacade;
-
     /**
      * Формирование отображаемого имени пользователя
      */    
@@ -78,7 +75,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     }
 
     @Override
-    protected void onAfterCreateItem(User item) {        
+    protected void afterCreateItem(User item) {        
     }
 
     @Override

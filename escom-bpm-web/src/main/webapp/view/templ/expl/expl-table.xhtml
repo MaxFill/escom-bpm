@@ -17,7 +17,7 @@
 
         <p:ajax event="rowDblselect" 
                 listener="#{explorerBean.onRowDblClckOpen}"
-                oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
+                oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
@@ -162,4 +162,3 @@
 
     <ui:include src="/view/common/confirm-dlg.xhtml"/>
 </ui:composition>
-

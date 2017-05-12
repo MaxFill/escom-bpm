@@ -25,13 +25,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Базовый bean для справочников
- *
- * @author mfilatov
- * @param <T> класс объекта
- * @param <O> класс владельца
- */
+/* Базовый bean справочников  */
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = -4409411219233607045L;       
     
@@ -50,29 +44,33 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     private TreeNode[] selectedNodes;
     
-    /* *** ИНИЦИАЛИЗАЦИЯ *** */   
-
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
-    public abstract BaseExplBean getDetailBean();
-    public abstract BaseExplBean getOwnerBean();      //установка бина владельца объекта 
+    public abstract BaseExplBean getDetailBean();       //возвращает бин подчинённых объектов
+    public abstract BaseExplBean getOwnerBean();        //возвращает бин владельца объекта 
 
     protected abstract String getBeanName();
-        
+
     @Override
     public void onInitBean(){    
         EscomBeanUtils.initLayoutOptions(layoutOptions);
         initAddLayoutOptions(layoutOptions);
         northVisible = false;
     }            
-
+    
+    /* Установка списка детальных данных в таблице обозревателя  */
+    public void doSetDetails(List<BaseDict> sourceItems, int source) {        
+        List<BaseDict> details = sourceItems.stream()
+                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+        explorerBean.setDetails(details, source);
+    }
+    
     /* *** ПРАВА ДОСТУПА ***  */
     
-    /**
-     * ИНФО: Объекты, имеющие владельца (owner), при включенном наследовании,
+    /* Объекты, имеющие владельца (owner), при включенном наследовании,
      * получают права от владельца. Например, контрагент, получает права от
      * своей группы. Поскольку контрагент может быть в разных группах, то в
-     * каждой группе к одному и тому же контрагенту могут быть разные права!
-     */
+     * каждой группе к одному и тому же контрагенту могут быть разные права! */
 
     /* ПРАВА ДОСТУПА: можно ли создавать объект  */
     public boolean isHaveRightCreate() {
@@ -105,7 +103,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public void afterCloseItemCard(){
     }
           
-    /* *** РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА *** */     
+    /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
     /* РЕДАКТИРОВАНИЕ: перед добавлением объекта в группу  */
     public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
@@ -211,36 +209,24 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().edit(item);
     }            
     
-    /* *** УДАЛЕНИЕ ***  */
+    /* УДАЛЕНИЕ  */
     
-    /* Инфо: Удаление выполняется сначала только в корзину! На формах кнопки только помещения в корзину!
-       Потом можно удалить из корзины или очистить корзину целиком, но для этого уже нужно быть Администратором! 
-       При помещении объекта в корзину проверяются его зависимости и при их наличии выдаётся ошибка.
-       При удалении объекта из корзины проверок не выполняется */
+    /* Удаление выполняется сначала только в корзину! На формах кнопки только помещения в корзину!
+     * Потом можно удалить из корзины или очистить корзину целиком, но для этого уже нужно быть Администратором! 
+     * При помещении объекта в корзину проверяются его зависимости и при их наличии выдаётся ошибка.
+     * При удалении объекта из корзины проверок не выполняется */
         
-    /**
-     * Проверка возможности удаления объекта. Переопределяется в бинах
-     *
-     * @param item
-     * @param errors
-     */
+    /* УДАЛЕНИЕ: Проверка возможности удаления объекта. Переопределяется в бинах  */
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
         EscomBeanUtils.checkAllowedDeleteItem(item, errors);
     }
     
-    /**
-     * Удаление из владельца всех связанных detail объектов
-     * @param owner 
-     */
+    /* УДАЛЕНИЕ: Удаление из владельца всех связанных detail объектов */
     protected void clearOwner(O owner){
         owner.getDetailItems().clear();
     }
     
-    /**
-     * УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными
-     *
-     * @param item
-     */
+    /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
     public void deleteItem(T item) {
         deleteChilds(item);
         deleteDetails(item);
@@ -249,40 +235,27 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().remove(item);
     }
 
-    /**
-     * УДАЛЕНИЕ: удаление дочерних child объектов
-     */
+    /* УДАЛЕНИЕ: удаление дочерних child объектов */
     private void deleteChilds(T parent) {
         if (parent.getChildItems() != null){
             parent.getChildItems().stream().forEach(child -> deleteItem((T) child));
         }
     }
 
-    /**
-     * УДАЛЕНИЕ: удаление подчинённых (связанных) объектов
-     */
-    private void deleteDetails(T item) {
+    /* УДАЛЕНИЕ: удаление подчинённых (связанных) объектов */
+    protected void deleteDetails(T item) {
         if (item.getDetailItems() != null) {
             item.getDetailItems().stream().forEach(child -> getDetailBean().deleteItem((T) child));
         }
     }
 
-    /**
-     * УДАЛЕНИЕ: Переопределяется для выполнения специфичных действий перед
-     * удалением объекта
-     *
-     * @param item
-     */
+    /* УДАЛЕНИЕ: Выполнение специфичных действий перед удалением объекта  */
     protected void preDeleteItem(T item) {
     } 
 
-    /* *** КОРЗИНА *** */
+    /* КОРЗИНА */
     
-    /**
-     * КОРЗИНА: восстановление объекта из корзины
-     *
-     * @param item
-     */
+    /* КОРЗИНА: восстановление объекта из корзины */
     public void doRestoreItemFromTrash(T item) {
         restoreDetails(item);
         restoreChilds(item);
@@ -290,10 +263,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().edit(item);
     }
 
-    /**
-     * КОРЗИНА: восстановление подчинённых detail объектов из корзины
-     * @param ownerItem
-     */
+    /* КОРЗИНА: восстановление подчинённых detail объектов из корзины */
     private void restoreDetails(T ownerItem) {
         if (ownerItem.getDetailItems() != null){
             ownerItem.getDetailItems().stream()
@@ -302,27 +272,20 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         }
     }
 
-    /**
-     * КОРЗИНА: восстановление дочерних childs объектов из корзины
-     *  @param parentItem
-     */
+    /* КОРЗИНА: восстановление дочерних childs объектов из корзины */
     private void restoreChilds(T parentItem) {
         parentItem.getChildItems().stream().forEach(item -> doRestoreItemFromTrash((T) item));
     }
     
-    /**
-     * КОРЗНА: перемещение дочерних элементов в корзину
-     */
+    /* КОРЗНА: перемещение дочерних элементов в корзину */
     private void moveChildItemToTrash(BaseDict parent, Set<String> errors) {
         if (parent.getChildItems() != null){
             parent.getChildItems().stream().forEach(child -> moveToTrash((T) child, errors));
         }
     }
 
-    /**
-     * КОРЗИНА: перемещение в корзину подчинённых объектов Владельца (ownerItem)
-     */
-    private void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {        
+    /* КОРЗИНА: перемещение в корзину подчинённых объектов Владельца (ownerItem) */
+    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {        
         if (ownerItem.getDetailItems() != null){
             ownerItem.getDetailItems().stream()
                     .forEach(detail -> getDetailBean().moveToTrash((T) detail, errors)
@@ -330,12 +293,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         }
     }
 
-    /**
-     * КОРЗИНА: перемещение объекта в корзину
-     *
-     * @param item
-     * @param errors
-     */
+    /* КОРЗИНА: перемещение объекта в корзину */
     public void moveToTrash(BaseDict item, Set<String> errors) {
         actualizeRightItem(item);
         if (isHaveRightDelete(item)) {
@@ -355,30 +313,24 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             }
         } else {
             Object[] msgParams = new Object[]{item.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getBandleLabel("RightDeleteNo"), msgParams);
+            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), msgParams);
             errors.add(error);
         }
     } 
 
-    /* *** CЕЛЕКТОР ОБЪЕКТОВ *** */
+    /* CЕЛЕКТОР ОБЪЕКТОВ */
     
-    /**
-     * CЕЛЕКТОР: Открытие формы селектора для выбора единичного объекта
-     */
+    /* CЕЛЕКТОР: Открытие формы селектора для выбора единичного объекта */
     public void onOneSelectItem() {
         openItemSelector(DictExplForm.SING_SELECT_MODE);
     }
 
-    /**
-     * СЕЛЕКТОР: открытие формы для выбора нескольких объектов
-     */
+    /* СЕЛЕКТОР: открытие формы для выбора нескольких объектов */
     public void onManySelectItem() {
         openItemSelector(DictExplForm.MULTY_SELECT_MODE);
     }
 
-    /**
-     * СЕЛЕКТОР: открытие формы выбора
-     */
+    /* СЕЛЕКТОР: открытие формы выбора */
     private void openItemSelector(Integer selectMode) {
         Map<String, Object> options = new HashMap<>();
         //options.put("headerElement", "explorer_south");
@@ -387,6 +339,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         options.put("width", 1350);
         options.put("height", 700);
         options.put("maximizable", true);
+        options.put("minimizable", true);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
@@ -399,23 +352,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         RequestContext.getCurrentInstance().openDialog(frmName, options, paramMap);
     }
         
-    /**
-     * CЕЛЕКТОР: выбор объекта по двойному клику
-     *
-     * @param event
-     */
-    public void onRowDblClckSelector(SelectEvent event) {
+    /* CЕЛЕКТОР: выбор объекта по двойному клику  */
+    public String onRowDblClckSelector(SelectEvent event) {
         T item = (T) event.getObject();
-        onSelect(item);
+        return onSelect(item);
     }
     
-    /**
-     * СЕЛЕКТОР: обработка действия в селекторе по нажатию кнопки единичного
-     * выбора
-     *
-     * @param item
-     * @return 
-     */
+    /* СЕЛЕКТОР: обработка действия в селекторе по нажатию кнопки единичного выбора */
     public String onSelect(BaseDict item) {
         if (item == null){return "";}
         explorerBean.getCheckedItems().clear();
@@ -423,48 +366,41 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return doClose(explorerBean.getCheckedItems());
     }
     
-    /**
-     * СЕЛЕКТОР: закрытие селектора без выбора объектов
-     * @return 
-     */
+    /* СЕЛЕКТОР: закрытие селектора без выбора объектов  */
     public String onClose() {
-        explorerBean.getCheckedItems().clear();
+        explorerBean.getCheckedItems().clear();        
         return doClose(explorerBean.getCheckedItems());
     }
     
-    /**
-     * СЕЛЕКТОР: действие по нажатию кнопки множественного выбора для списка
-     * @return 
-     */
-    public String onMultySelect() {
+    /* СЕЛЕКТОР: действие по нажатию кнопки множественного выбора для списка  */
+    public String onMultySelect() {        
         return doClose(explorerBean.getCheckedItems());
     }        
     
-    /**
-     * СЕЛЕКТОР: закрытие формы селектора
-     * @param selected
-     * @return 
-     */
+    /* СЕЛЕКТОР: закрытие формы селектора  */
     protected String doClose(List<BaseDict> selected){
         RequestContext.getCurrentInstance().closeDialog(selected);
         return "/view/index?faces-redirect=true";
     }
     
-    /* *** СПИСКИ ОБЪЕКТОВ *** */
+    /* ИЗБРАННОЕ */
+    
+    /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
+    public List<BaseDict> findFavorites() {        
+        List<Integer> favorIds = new ArrayList<>();
+        List<FavoriteObj> favorites = currentUser.getFavoriteObjList();
+        favorites.stream()
+                .filter(item -> (item.getMetadateObj().getId().equals(getMetadatesObj().getId())))
+                .forEach(item -> favorIds.add(item.getObjId()));
+        return getItemFacade().findByIds(favorIds);
+    }   
 
-    /**
-     * СПИСКИ ОБЪЕКТОВ: Установка списка детальных данных (таблица обозревателя)
-     * @param sourceItems 
-     * @param source 
-     */
-    public void doSetDetails(List<BaseDict> sourceItems, int source) {        
-        List<BaseDict> details = sourceItems.stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        explorerBean.setDetails(details, source);
-    }
-
-    /*  *** ФИЛЬТРЫ *** */
+    /* ИЗБРАННОЕ: удаление объекта из избранного   */
+    public void delFromFavorites(BaseDict item) {
+        favoriteService.delFromFavorites(item, getMetadatesObj(), currentUser);
+    } 
+    
+    /*  ФИЛЬТРЫ */
     
     /* ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра  */
     public void makeFilteredContent(Filter filter) {
@@ -494,7 +430,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         doSetDetails(result, DictDetailSource.FILTER_SOURCE);
     }
     
-    /* ПОИСК: */
+    /* ПОИСК: Выполняет поиск объектов */
     public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
         List<BaseDict> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
         if (!searcheGroups.isEmpty()){
@@ -555,7 +491,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         rezult.put("CheckObjectNotSet", 0);
     }
 
-    /* *** ГЕТТЕРЫ и СЕТТЕРЫ ***  */
+    /* GETS & SETS */
 
     public LayoutOptions getLayoutOptions() {
         return layoutOptions;
@@ -592,23 +528,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         this.selectedNodes = selectedNodes;
     }
     
-    public abstract Class<O> getOwnerClass();
-        
-    /* *** ИЗБРАННОЕ *** */
-    
-    /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
-    public List<BaseDict> findFavorites() {        
-        List<Integer> favorIds = new ArrayList<>();
-        List<FavoriteObj> favorites = currentUser.getFavoriteObjList();
-        favorites.stream()
-                .filter(item -> (item.getMetadateObj().getId().equals(getMetadatesObj().getId())))
-                .forEach(item -> favorIds.add(item.getObjId()));
-        return getItemFacade().findByIds(favorIds);
-    }   
-
-    /* ИЗБРАННОЕ: удаление объекта из избранного   */
-    public void delFromFavorites(BaseDict item) {
-        favoriteService.delFromFavorites(item, getMetadatesObj(), currentUser);
-    } 
+    public abstract Class<O> getOwnerClass();        
    
 }

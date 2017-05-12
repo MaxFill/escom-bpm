@@ -40,7 +40,7 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     }
 
     @Override
-    protected void onAfterCreateItem(NumeratorPattern item) {        
+    protected void afterCreateItem(NumeratorPattern item) {        
     }
 
     @Override

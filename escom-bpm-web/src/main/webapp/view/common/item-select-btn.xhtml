@@ -1,11 +1,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     
     <h:panelGroup  styleClass="ui-grid-col-12">
-        <p:commandButton id="#{_itemPanel}_btn" actionListener="#{_selectorBean.onOneSelectItem()}" style="display: none;">
+        <p:commandButton id="#{_itemPanel}_btn" 
+                         process="#{_itemPanel}_btn"
+                         actionListener="#{_selectorBean.onOneSelectItem()}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{_bean[_actionSelect]}" 
                     update="#{_update} #{_itemPanel}"/>
         </p:commandButton>
@@ -27,11 +29,10 @@
 
             <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
                             styleClass="ui-grid-col-12"
-                            onclick="document.getElementById('itemCard:mainTabView:#{_itemPanel}_btn').click();">                
+                            onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">                
                 <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
-                            actionListener="#{_selectorBean.prepEditItem(_itemValue)}"
-                            disabled="#{_disabled or _itemValue == null}"
-                            process="@this"/>
+                            action="#{sessionBean.prepEditItem(_itemValue)}"
+                            disabled="#{_disabled or _itemValue == null}"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"
                             actionListener="#{_bean.editedItem[_actionClear](null)}"

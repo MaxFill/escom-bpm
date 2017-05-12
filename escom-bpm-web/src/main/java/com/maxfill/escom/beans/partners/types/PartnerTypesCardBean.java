@@ -28,7 +28,7 @@ public class PartnerTypesCardBean extends BaseCardBean<PartnerTypes>{
     }
 
     @Override
-    protected void onAfterCreateItem(PartnerTypes item) {        
+    protected void afterCreateItem(PartnerTypes item) {        
     }
 
     @Override

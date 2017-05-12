@@ -11,10 +11,8 @@ import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;
-
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
@@ -50,6 +48,7 @@ public class RightCardBean extends BaseDialogBean{
     private Integer editMode;
     private String keyRight;
     private List<User> users;
+    private List<UserGroups> userGroupses;
     
     /**
      * При открытии карточки объекта
@@ -206,6 +205,16 @@ public class RightCardBean extends BaseDialogBean{
         return users;
     }
 
+    public List<UserGroups> getUserGroupses() {
+        if (userGroupses == null){
+            userGroupses = userGroupsFacade.findAll().stream()
+                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+        }
+        return userGroupses;
+    }
+
+    
     public Right getSelRight() {
         return selRight;
     }

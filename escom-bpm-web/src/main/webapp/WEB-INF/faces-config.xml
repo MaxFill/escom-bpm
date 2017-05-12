@@ -199,13 +199,13 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>partnergroup-card</from-outcome>
+            <from-outcome>partnergroups-card</from-outcome>
             <to-view-id>/view/partners/groups/partnergroup-card.xhtml</to-view-id>
             <redirect />
         </navigation-case>
     
         <navigation-case>
-            <from-outcome>partnergroup-explorer</from-outcome>
+            <from-outcome>partnergroups-explorer</from-outcome>
             <to-view-id>/view/partners/groups/partnergroup-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
