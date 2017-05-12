@@ -29,7 +29,6 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.model.TreeNode;
 
 /**
  * 
@@ -78,11 +77,11 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     @Override
     public boolean addItemToGroup(Staff staff, BaseDict group){ 
         //поскольку шт.ед. может быть только в одном подразделении, то выполняем перемещение
-        moveItemToGroup(group, staff, null); 
+        moveItemToGroup(group, staff); 
         return true;
     }
 
-    public void moveItemToGroup(BaseDict group, Staff staff, TreeNode sourceNode){
+    public void moveItemToGroup(BaseDict group, Staff staff){
         detectParentOwner(staff, group);
         edit(staff);
     }
@@ -146,6 +145,21 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         }
     }
 
+    /* Возвращает список занятых (не вакантных) штатных единиц с сотрудниками и должностями */
+    public List<Staff> findActualStaff(){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
+        Root<Staff> c = cq.from(Staff.class);        
+        Predicate crit1 = builder.isNotNull(c.get("employee"));
+        Predicate crit2 = builder.isNotNull(c.get("post"));
+        Predicate crit3 = builder.equal(c.get("actual"), true);
+        Predicate crit4 = builder.equal(c.get("deleted"), false);
+        cq.select(c).where(builder.and(crit1, crit2, crit3, crit4));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList(); 
+    }
+    
     /**
      * Поиск штатных единиц по должности
      * @param post 

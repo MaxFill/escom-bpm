@@ -117,6 +117,14 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return group;
     }
 
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(UserGroups group){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(group.getChildItems());
+        return dependency;
+    }
+    
     @Override
     public Map<String, Integer> replaceItem(UserGroups oldItem, UserGroups newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

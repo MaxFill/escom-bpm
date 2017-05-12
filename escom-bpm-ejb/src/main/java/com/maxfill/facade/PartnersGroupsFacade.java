@@ -27,15 +27,23 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     public String getFRM_NAME() {
         return DictObjectName.PARTNER_GROUP.toLowerCase();
     }
-        
+         
     @Override
-    public void create(PartnerGroups partnersGroups) {
-        getEntityManager().persist(partnersGroups);
-        List<Partner> partnersListNew= partnersGroups.getPartnersList();
-        for (Partner partnersListNewItems : partnersListNew) {
-            partnersListNewItems.getPartnersGroupsList().add(partnersGroups);
-            partnersListNewItems = getEntityManager().merge(partnersListNewItems);
+    public void create(PartnerGroups group) {
+        getEntityManager().persist(group);
+        List<Partner> partners = group.getPartnersList();
+        for (Partner partner : partners) {
+            partner.getPartnersGroupsList().add(group);
+            getEntityManager().merge(partner);
         }
+    }    
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(PartnerGroups group){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(group.getChildItems());
+        return dependency;
     }
     
     @Override
@@ -73,8 +81,7 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     @Override
     public Map<String, Integer> replaceItem(PartnerGroups oldItem, PartnerGroups newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }    
-    
+    }        
         
     @Override
     public void preparePasteItem(PartnerGroups pasteItem, BaseDict target){        

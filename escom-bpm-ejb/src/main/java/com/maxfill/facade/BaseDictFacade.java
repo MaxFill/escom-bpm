@@ -79,11 +79,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         this.logClass = logClass;
     }  
     
-    /**
-     * Возвращает подчинённые объекты для владельца
-     * @param owner
-     * @return 
-     */
+    /* Возвращает подчинённые объекты для владельца  */
     public List<T> findDetailItems(O owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

@@ -80,6 +80,32 @@ public class RightFacade extends BaseFacade<Right> {
         }
     }
     
+    /* Получение прав по id группы пользователей */
+    public List<Rights> findRightsByGroupId(Integer groupId){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Right> cq = builder.createQuery(Right.class);
+        Root<Right> c = cq.from(Right.class);        
+        Predicate crit1 = builder.equal(c.get("objType"), 0);
+        Predicate crit2 = builder.equal(c.get("objId"), groupId);
+        cq.select(c).where(builder.and(crit1, crit2));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList(); 
+    }
+    
+    /* Получение прав по id пользователя */
+    public List<Rights> findRightsByUserId(Integer userId){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Right> cq = builder.createQuery(Right.class);
+        Root<Right> c = cq.from(Right.class);        
+        Predicate crit1 = builder.equal(c.get("objType"), 1);
+        Predicate crit2 = builder.equal(c.get("objId"), userId);
+        cq.select(c).where(builder.and(crit1, crit2));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList(); 
+    }
+    
     /* Возвращает название пользователя или группы для которого назначаются права */ 
     private String getAccessName(Right rg) {
         String accessorName = "";

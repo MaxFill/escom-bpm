@@ -44,9 +44,11 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         if (partner == null || targetGroup == null){
             return false;
         }
-        if (!partner.getPartnersGroupsList().contains((PartnerGroups)targetGroup)){
-            partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
-            edit(partner);
+        PartnerGroups group = (PartnerGroups)targetGroup;
+        if (!partner.getPartnersGroupsList().contains(group)){
+            partner.getPartnersGroupsList().add(group);
+            edit(partner);            
+            group.getPartnersList().add(partner);
             return true;
         }
         return false;
@@ -133,10 +135,16 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         item.setCode(number);
     }
     
-    /* Контрагента нужно копировать в случае если он вставляется не в группу. Если в группу, то это только добавление ссылки */
+    /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
     @Override
-    public boolean isNeedCopyOnPaste(Partner pasteItem, BaseDict recipient){
-        return !(recipient instanceof PartnerGroups);
+    public boolean isNeedCopyOnPaste(Partner sourceItem, BaseDict recipient){
+        if (!(recipient instanceof PartnerGroups)){
+            return true;
+        }
+        if (sourceItem.getPartnersGroupsList().contains((PartnerGroups)recipient)){
+            return true;
+        }
+        return false;
     }
     
     @Override

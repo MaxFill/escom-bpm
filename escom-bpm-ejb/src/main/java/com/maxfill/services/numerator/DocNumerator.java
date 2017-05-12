@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.maxfill.model.docs;
+package com.maxfill.services.numerator;
 
+import com.maxfill.model.docs.Doc;
 import com.maxfill.services.numerator.NumeratorService;
 
 /**

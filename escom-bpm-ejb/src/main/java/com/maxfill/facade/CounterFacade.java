@@ -1,7 +1,8 @@
 
-package com.maxfill.model.numPuttern.counter;
+package com.maxfill.facade;
 
 import com.maxfill.facade.BaseFacade;
+import com.maxfill.model.numPuttern.counter.Counter;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;

@@ -57,8 +57,7 @@ public final class ItemUtils {
         }
         name = name + item.getName();        
         return name;
-    }
-    
+    }    
 
     /**
      * Проверяет нахождение объекта в списке details владельца (owner) для каждой его группы и если находит, то удаляет объект

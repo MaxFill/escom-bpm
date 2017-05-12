@@ -2,7 +2,7 @@ package com.maxfill.services.numerator;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.numPuttern.counter.Counter;
-import com.maxfill.model.numPuttern.counter.CounterFacade;
+import com.maxfill.facade.CounterFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.utils.EscomUtils;
 import java.util.Date;

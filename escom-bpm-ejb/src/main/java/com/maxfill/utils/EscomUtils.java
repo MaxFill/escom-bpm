@@ -67,7 +67,7 @@ public final class EscomUtils {
     	return stringBuilder.toString();	
     }
     
-    //преобразование в дату-строку
+    /* Выполняет преобразование unixTime в дату-строку */
     public static String IntToDateString(long unixTime){
         String newFormatDate = "---"; 
         if (unixTime != 0L) {

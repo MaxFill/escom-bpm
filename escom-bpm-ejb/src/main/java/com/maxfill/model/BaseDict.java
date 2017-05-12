@@ -114,9 +114,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @JoinColumn(name = "owner")
     private List<D> detailItems;
         
-    /**
-     * Признак наследования прав. TRUE - наследуются, FALSE - не наследуются (индивидуальные права)
-     */
+    /* Признак наследования прав объекта. 
+     * TRUE - наследуются, FALSE - не наследуются (индивидуальные права)  */
     @XmlTransient
     @NotNull
     @Basic(optional = false)

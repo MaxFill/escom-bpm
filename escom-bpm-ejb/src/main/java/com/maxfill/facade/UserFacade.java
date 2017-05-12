@@ -180,6 +180,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         edit(user);  
     }
     
+    
     /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
         User user = createItem(mainGroup, getAdmin());
