@@ -36,7 +36,7 @@
 
     <ui:define name="page_body">
         <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
-            <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-8 col-padding" styleClass="without-spaces ui-grid-col-12">
+            <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Organization}:"/>
                 <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"

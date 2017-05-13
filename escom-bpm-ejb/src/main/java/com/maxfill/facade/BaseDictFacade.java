@@ -8,6 +8,7 @@ import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -365,4 +366,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
     
+    public  Tuple<Integer, Integer> getFormSize(){
+        return new Tuple(650, 380);
+    }
 }

@@ -36,6 +36,7 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
 import org.primefaces.context.RequestContext;
@@ -226,9 +227,7 @@ public class SessionBean implements Serializable{
         ectx.redirect(serverURL +ectx.getRequestContextPath() + page);   
     }
 
-    /**
-     * Сохранение настроек текущего пользователя в базу данных
-     */
+    /* Сохранение настроек текущего пользователя в базу данных */
     private void doSaveUserSettings(){
         currentUser = getRefreshCurrentUser();
         userSettings.setTheme(primefacesTheme);
@@ -242,10 +241,7 @@ public class SessionBean implements Serializable{
         return currentUser;
     }
     
-    /**
-     * Является ли текущий пользователь администратором
-     * @return 
-     */
+    /* Является ли текущий пользователь администратором  */
     public boolean isUserAdmin(){
         if (currentUser.getId() == 1){
             return true;
@@ -298,13 +294,7 @@ public class SessionBean implements Serializable{
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }
-    
-    /* Закрытие диалога сохранения изменений */
-    /*
-    public void onCloseDialog(Boolean isCancelSave){
-        RequestContext.getCurrentInstance().closeDialog(isCancelSave);        
-    }
-*/
+
     /* НАВИГАЦИЯ: переход на начальную страницу */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";
@@ -622,8 +612,9 @@ public class SessionBean implements Serializable{
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacadeByClassName(itemClassName); 
         BaseDict newItem = facade.createItem(owner, currentUser);
-        prepCreate(newItem, parent, owner, errors, params);                
-        doOpenItem(newItem, DictEditMode.INSERT_MODE, errors);        
+        prepCreate(newItem, parent, owner, errors, params); 
+        Tuple<Integer, Integer> formSize = facade.getFormSize();
+        openItemCard(newItem, DictEditMode.INSERT_MODE, errors, formSize);        
         return newItem;
     }
 
@@ -667,7 +658,8 @@ public class SessionBean implements Serializable{
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
         }
-        doOpenItem(editItem, DictEditMode.EDIT_MODE, errors);
+        Tuple<Integer, Integer> formSize = facade.getFormSize();
+        openItemCard(editItem, DictEditMode.EDIT_MODE, errors, formSize);
         return editItem;
     }
     
@@ -682,12 +674,13 @@ public class SessionBean implements Serializable{
             String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
             errors.add(error);
         }
-        doOpenItem(editItem, DictEditMode.VIEW_MODE, errors);
+        Tuple<Integer, Integer> formSize = facade.getFormSize();
+        openItemCard(editItem, DictEditMode.VIEW_MODE, errors, formSize);
         return editItem;
     }
     
     /* Открытие карточки объекта*/
-    public void doOpenItem(BaseDict item, Integer editMode, Set<String> errors){
+    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors, Tuple<Integer, Integer> formSize){
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return;
@@ -707,7 +700,7 @@ public class SessionBean implements Serializable{
 
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
         String cardName = item.getClass().getSimpleName().toLowerCase() + "-card";
-        EscomBeanUtils.openItemForm(cardName, itemOpenKey);
+        EscomBeanUtils.openItemForm(cardName, itemOpenKey, formSize);
     }              
     
     public BaseDict doCopy(BaseDict copyItem){

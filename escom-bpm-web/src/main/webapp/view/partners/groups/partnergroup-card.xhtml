@@ -9,7 +9,7 @@
 
         <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding"
-                         columnClasses="ui-grid-col-8 col-padding" >
+                         columnClasses="ui-grid-col-12 col-padding" >
 
                 <p:outputLabel value="#{bundle.Code}" />            
                 <p:inputText value="#{_bean.editedItem.code}" id="code"
@@ -17,7 +17,7 @@
                              maxlength="50"
                              requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
                              onchange="return itemChange = 1;"/>
-                <p:message for="code" display="tooltip"/>
+                <p:message for="code"/>
                     
                 <p:outputLabel value="#{bundle.Name}" />
                 <p:inputText value="#{_bean.editedItem.name}" id="name" styleClass="ui-grid-col-12"
@@ -27,8 +27,8 @@
                              onchange="return itemChange = 1;"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                    <p:message for="name" display="icon"/>
-                </p:inputText>                
+                </p:inputText>
+                <p:message for="name"/>
             </p:panelGrid>
         </p:tab> 
         

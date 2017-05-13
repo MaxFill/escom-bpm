@@ -9,20 +9,18 @@
     <ui:define name="page_body">
 
         <p:tab title="#{bundle.Explorer}">
-            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank ">
+            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank ">
 
                 <p:outputLabel value="#{bundle.Name}:" />
-                <h:panelGrid columns="2" style="width: 100%;">
-                    <p:inputText value="#{_bean.editedItem.name}" id="name" style="width: 100%;"
-                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                     readonly="#{!_bean.isHaveRightEdit()}"
-                                     onchange="return itemChange = 1;"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                    </p:inputText>
-                    <p:message for="name" display="icon"/>
-                </h:panelGrid>
+                <p:inputText value="#{_bean.editedItem.name}" id="name" style="width: 100%;"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 readonly="#{!_bean.isHaveRightEdit()}"
+                                 onchange="return itemChange = 1;"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                </p:inputText>
+                <p:message for="name" display="icon"/>
         
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.isModeration}" itemLabel="#{bundle.Moderation}:"
                                         disabled="#{_bean.isReadOnly()}">

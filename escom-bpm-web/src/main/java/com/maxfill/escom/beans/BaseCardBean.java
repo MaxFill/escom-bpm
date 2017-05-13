@@ -8,6 +8,7 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.utils.Tuple;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
@@ -39,7 +40,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     @Override
     public void onInitBean(){
-        EscomBeanUtils.initCardLayout(cardLayoutOptions);
     }
     
     /* При открытии карточки объекта */
@@ -55,7 +55,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
                 addOwnerInGroups(item); //owner_а нужно добавить в группу
                 afterCreateItem(item);
-                checkItemHaveRightEdit(item);
+                checkCorrectItemRight(item);
             }
 
             List<Right> itemRights = item.getRightItem().getRights();
@@ -86,7 +86,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
                 EscomBeanUtils.showErrorsMsg(errors);
-                return; //отмена закрытия формы по ошибке
+                return; 
             }
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
@@ -125,6 +125,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
         }
+        //Проверка на корректность прав доступа
+        checkItemHaveRightEdit(item, errors);                    
     }
 
     /* Отмена изменений в объекте  */
@@ -235,20 +237,30 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (right != null){
                 getEditedItem().getRightItem().getRights().add(right);
             }
-            checkItemHaveRightEdit(getEditedItem());
+            checkCorrectItemRight(getEditedItem());
         }                
     }
 
     /* ПРАВА ДОСТУПА: Выполняет проверку на наличие у объекта права на редактирование */
-    private void checkItemHaveRightEdit(T item){
+    private void checkItemHaveRightEdit(T item, Set<String> errors){
         Rights rights = item.getRightItem();
         for (Right right : rights.getRights()){
             if (right.isUpdate()){
                 EscomBeanUtils.SuccesMsgAdd("Successfully", "RightsSettingCorrect");
                 return;
             }
+        }        
+        StringBuilder sb = new StringBuilder();
+        sb.append(getMessageLabel("ObjectDontHaveRightEdit")).append(getMessageLabel("CheckRights"));
+        errors.add(sb.toString());
+    }
+    
+    private void checkCorrectItemRight(T item){
+        Set<String> errors = new LinkedHashSet<>();
+        checkItemHaveRightEdit(item, errors);
+        if (!errors.isEmpty()) {
+            EscomBeanUtils.showErrorsMsg(errors);
         }
-        EscomBeanUtils.WarnMsgAdd("ObjectDontHaveRightEdit", "CheckRights");
     }
     
     /* ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии

@@ -74,9 +74,6 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         System.out.println("Удалён бин =" + this.toString());
     }
     
-    /**
-     * ИНИЦИАЛИЗАЦИЯ: действия при создании бина
-     */
     public abstract void onInitBean();
     public abstract Class<T> getItemClass();
     

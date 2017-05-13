@@ -5,6 +5,7 @@ import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -13,6 +14,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -79,7 +81,7 @@ public class EscomBeanUtils {
         center.addOption("minHeight", 200);
         layoutOptions.setCenterOptions(center);
     }
-    
+    /*
     public static void initCardLayout(LayoutOptions layoutOptions){
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
@@ -105,7 +107,7 @@ public class EscomBeanUtils {
         center.addOption("minHeight", 100);
         layoutOptions.setCenterOptions(center);
     }
-    
+    */
     public static void initAddLayoutOptions(LayoutOptions layoutOptions){
         LayoutOptions east = layoutOptions.getEastOptions();
         LayoutOptions childOptions = new LayoutOptions();
@@ -183,6 +185,16 @@ public class EscomBeanUtils {
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
+    /* Формирование форматированной строки сообщения из ключей локали */
+    public static String makeMessage(Map<String, Object[]> keys){
+        StringBuilder sb = new StringBuilder(); 
+        for (Entry<String, Object[]> entry : keys.entrySet()){           
+            String msg = MessageFormat.format(getMessageLabel(entry.getKey()), entry.getValue());
+            sb.append(msg);
+        }
+        return sb.toString();
+    }
+    
     /**
      * Поиск позиции в дереве по значению объекта
      * @param root
@@ -330,29 +342,25 @@ public class EscomBeanUtils {
         return bundle.getString(key);
     }
     
-    /**
-     * Открытие карточки объекта
-     * @param itemOpenKey
-     * @param formName
-     */
-    public static void openItemForm(String formName, String itemOpenKey) {
+    /* Открытие карточки объекта  */
+    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Integer, Integer> size) {
         Map<String, Object> options = new HashMap<>();
         //options.put("headerElement", formName + ":btnClose");
         options.put("resizable", true);
         options.put("modal", true);
-        options.put("width", 900);
-        options.put("minWidth", 900);
-        options.put("height", 600);
-        options.put("minHeight", 400);
+        options.put("minWidth", 450);
+        options.put("minHeight", 300);
+        options.put("width", size.a);
+        options.put("height", size.b);
         options.put("maximizable", true);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");                        
-        Map<String, List<String>> paramMap = new HashMap<>();     
+        options.put("contentHeight", "100%");
+        Map<String, List<String>> paramMap = new HashMap<>();
         List<String> itemKeyList = new ArrayList<>();
         itemKeyList.add(itemOpenKey);
-        paramMap.put("itemOpenKey", itemKeyList);        
+        paramMap.put("itemOpenKey", itemKeyList);
         RequestContext.getCurrentInstance().openDialog(formName, options, paramMap);
     }
     

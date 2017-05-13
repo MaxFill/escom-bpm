@@ -8,7 +8,7 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Explorer}">             
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-8 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12" >
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12" >
                 <p:outputLabel value="#{bundle.Name}:" />                
                 <p:inputText id="name" value="#{_bean.editedItem.name}"
                             styleClass="ui-grid-col-12"
@@ -16,9 +16,9 @@
                             onchange="return itemChange = 1;"
                             required="#{param['isRequired'] == 'true'}"
                             disabled="#{_bean.isReadOnly()}"
-                            requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                    <p:message for="name" display="icon"/>
-                </p:inputText>                                
+                            requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">                   
+                </p:inputText>
+                <p:message for="name"/>
             </p:panelGrid>
         </p:tab>
         <p:tab title="#{bundle.Users}"> 

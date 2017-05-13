@@ -8,9 +8,9 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:param name="_frm" value="#{_bean.itemObjName}"/>
-    
+
     <ui:insert name="scripts" />     
-    
+
     <ui:define name="preRendered">
         <f:metadata>
             <f:event type="preRenderView" listener="#{_bean.onOpenCard()}"/>
@@ -20,9 +20,9 @@
     <ui:define name="title">
         #{_bean.makeCardHeader()}
     </ui:define>
-    
+
     <ui:define name="body">
-        
+
         <script type="text/javascript" >
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
@@ -31,80 +31,67 @@
                 }
             }
         </script>
-        
+
         <script type="text/javascript" >
             var itemChange = 0;
         </script>
 
-        <pe:layout fullPage="true" >
+        <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">
+            <p:remoteCommand name="onChangeItem" immediate="true" 
+                             actionListener="#{_bean.onItemChange()}"
+                             oncomplete="return itemChange = 0;">            
+            </p:remoteCommand>
 
-            <pe:layoutPane position="west" resizable="true" initClosed="true">
-                <p:outputPanel >
-                </p:outputPanel>
-            </pe:layoutPane>
+            <p:hotkey bind="esc" id="hotskey"
+                      immediate="true"                             
+                      onstart="document.getElementById('#{_frm}:btnCancel').click();"> 
+            </p:hotkey> 
 
-            <pe:layoutPane position="center" resizable="true" >
-                <h:form id="#{_frm}" style="font-size: 90%;" >
-                    <p:remoteCommand name="onChangeItem" immediate="true" 
-                                     actionListener="#{_bean.onItemChange()}"
-                                     oncomplete="return itemChange = 0;">            
-                    </p:remoteCommand>
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12">
+                <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                <p:tabView orientation="left" id="mainTabView" >
 
-                    <p:outputPanel id="pnItemDialog" rendered="#{_bean.editedItem != null}">
+                    <ui:insert name="page_body">Body<br /></ui:insert>
 
-                        <p:hotkey bind="esc" id="hotskey"
-                                  immediate="true"                             
-                                  onstart="document.getElementById('#{_frm}:btnCancel').click();"> 
-                        </p:hotkey> 
+                    <ui:include src="/view/common/dict-rights.xhtml"/>
+                    <ui:include src="/view/common/dict-info.xhtml"/>
+                    <ui:include src="/view/common/dict-log.xhtml"/> 
+                </p:tabView>   
 
-                        <h:panelGrid columns="1" styleClass="ui-grid-col-12">
-                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                            <p:tabView orientation="left" id="mainTabView" >
-
-                                <ui:insert name="page_body">Body<br /></ui:insert>
-
-                                <ui:include src="/view/common/dict-rights.xhtml"/>
-                                <ui:include src="/view/common/dict-info.xhtml"/>
-                                <ui:include src="/view/common/dict-log.xhtml"/> 
-                            </p:tabView>
-                        </h:panelGrid>      
-
-                        <p:toolbar >
-                            <f:facet name="left">
-                                <p:splitButton  id="btnPrint" value="#{bundle.Actions}" title="#{bundle.Actions}" 
-                                                rendered="#{_bean.editedItem.id != null and !_bean.editedItem.deleted}"
-                                                icon="ui-icon-gear">
-                                    <p:menuitem icon="ui-icon-document" value="#{bundle.CardItem}" title="#{bundle.CardItem}"
-                                                process="#{_frm}:pnItemDialog"
-                                                actionListener="#{_bean.onPreViewItemCard()}"/>
-                                    <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"                                                
-                                                actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
-                                    <ui:insert name="specMenuButtons" />
-                                </p:splitButton>
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:commandButton id="btnSave" value="#{bundle.Save}" title="#{bundle.SaveAndClose}"
-                                                 rendered="#{!_bean.isReadOnly()}"
-                                                 icon="ui-icon-circle-check"                                      
-                                                 update="#{_frm}:pnItemDialog"
-                                                 action="#{_bean.prepSaveItemAndClose()}"
-                                                 onclick="if (itemChange == 1) {onChangeItem();}">
-                                    <f:param name="isRequired" value="true"/>
-                                </p:commandButton>
-                                <p:commandButton id="btnCancel" value="#{bundle.Close}" title="#{bundle.CloseCard}"
-                                                 immediate="true"                                                 
-                                                 action="#{_bean.onCancelItemSave()}"
-                                                 icon="ui-icon-circle-close"
-                                                 onclick="if (itemChange == 1) onChangeItem();">
-                                    <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
-                                </p:commandButton>
-                            </f:facet>
-                        </p:toolbar>
-                    </p:outputPanel>
-                    <ui:include src="/view/common/confirm-dlg.xhtml" />
-                </h:form>
-            </pe:layoutPane>
-        </pe:layout>
+                <p:toolbar >
+                    <f:facet name="left">
+                        <p:splitButton  id="btnPrint" value="#{bundle.Actions}" title="#{bundle.Actions}" 
+                                        rendered="#{_bean.editedItem.id != null and !_bean.editedItem.deleted}"
+                                        icon="ui-icon-gear">
+                            <p:menuitem icon="ui-icon-document" value="#{bundle.CardItem}" title="#{bundle.CardItem}"
+                                        actionListener="#{_bean.onPreViewItemCard()}"/>
+                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"                                                
+                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
+                            <ui:insert name="specMenuButtons" />
+                        </p:splitButton>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton id="btnSave" value="#{bundle.Save}" title="#{bundle.SaveAndClose}"
+                                         rendered="#{!_bean.isReadOnly()}"
+                                         icon="ui-icon-circle-check"                                      
+                                         update="#{_frm}"
+                                         action="#{_bean.prepSaveItemAndClose()}"
+                                         onclick="if (itemChange == 1) {onChangeItem();}">
+                            <f:param name="isRequired" value="true"/>
+                        </p:commandButton>
+                        <p:commandButton id="btnCancel" value="#{bundle.Close}" title="#{bundle.CloseCard}"
+                                         immediate="true"                                                 
+                                         action="#{_bean.onCancelItemSave()}"
+                                         icon="ui-icon-circle-close"
+                                         onclick="if (itemChange == 1)
+                                                             onChangeItem();">
+                            <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>
+            </p:panelGrid>
+            <ui:include src="/view/common/confirm-dlg.xhtml" />
+        </h:form>
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
     </ui:define>
 </ui:composition>

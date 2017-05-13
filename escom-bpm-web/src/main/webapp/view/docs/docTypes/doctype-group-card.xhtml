@@ -12,19 +12,16 @@
         
         <p:tab title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank"
-                         columnClasses="ui-grid-col-8 col-padding" >
-
+                         columnClasses="ui-grid-col-12 col-padding" >
                 <p:outputLabel value="#{bundle.Name}" />
-                <h:panelGroup styleClass="ui-grid-col-12">
-                    <p:inputText id="name" value="#{_bean.editedItem.name}" 
-                                     styleClass="ui-grid-col-12"
-                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                     disabled="#{!_bean.isHaveRightEdit()}"
-                                     onchange="return itemChange = 1;"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                    <p:message for="name" display="icon"/>
-                </h:panelGroup>                
+                <p:inputText id="name" value="#{_bean.editedItem.name}" 
+                                 styleClass="ui-grid-col-12"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 disabled="#{!_bean.isHaveRightEdit()}"
+                                 onchange="return itemChange = 1;"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                <p:message for="name" display="icon"/>
             </p:panelGrid>
         </p:tab>                
 

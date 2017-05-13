@@ -10,18 +10,16 @@
                 
           <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"
-                         columnClasses="ui-grid-col-8 col-padding" >       
-                    <p:outputLabel value="#{bundle.Name}" />
-                    <h:panelGroup styleClass="ui-grid-col-12 col-padding">
-                        <p:inputText id="postName" value="#{_bean.editedItem.name}" 
-                                     styleClass="ui-grid-col-12 col-padding"
-                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                     onchange="return itemChange = 1;"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                        <p:message for="postName" display="icon"/>
-                    </h:panelGroup>
+                         columnClasses="ui-grid-col-12 col-padding">
+                <p:outputLabel value="#{bundle.Name}" />
+                    <p:inputText id="postName" value="#{_bean.editedItem.name}" 
+                                 styleClass="ui-grid-col-12 col-padding"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                    <p:message for="postName" display="icon"/>
             </p:panelGrid>
           </p:tab>                
 

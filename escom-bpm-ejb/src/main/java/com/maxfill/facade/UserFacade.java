@@ -13,6 +13,7 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.utils.SysParams;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -178,8 +179,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
                 
         onUpdateUserFIO(user, ldapUser.getName());
         edit(user);  
-    }
-    
+    }  
     
     /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
@@ -198,11 +198,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return find(SysParams.ADMIN_ID);
     }
     
-    /**
-     * Формирование значений для Фамилии Имени Отчества посредством разбивки строки на части
-     * @param user
-     * @param name 
-     */
+    /* Формирование значений для Фамилии Имени Отчества посредством разбивки строки на части  */
     private void onUpdateUserFIO(User user, String name){
         String firstName = "";
         String secondName = "";
@@ -224,6 +220,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         user.setLastName(lastName);
     }
 
+    @Override
+    public Tuple<Integer, Integer> getFormSize() {
+        return new Tuple(900, 450);
+    }
+    
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_USERS;
