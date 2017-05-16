@@ -30,6 +30,7 @@
                     <p:tab title="#{bundle.State}: #{state.name}" rendered="#{_bean.editedItem != null}" >                       
                         <p:dataTable id="tblRight" value="#{_bean.getRightItemForState(_bean.editedItem, state)}" var="right" 
                                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 colCenter" style="width: 100%;"
+                                     sortField="#{right.name}"
                                      emptyMessage="#{bundle.EmptyTable}">
 
                             <p:column headerText="#{bundle.RightOwner}" >

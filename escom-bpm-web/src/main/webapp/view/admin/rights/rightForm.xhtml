@@ -30,7 +30,7 @@
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
             <p:panel styleClass="ui-grid-col-12">
 
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank" >
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank" >
 
                     <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
                         <h:outputLabel value="#{bundle.ForState}:"/>
@@ -86,15 +86,15 @@
                     <h:panelGrid id="chBoxPanel" columns="5">
                         <p:selectBooleanCheckbox value="#{rightCardBean.selRight.read}" id="chBoxRead"
                                                  itemLabel="#{bundle.View}" onchange="itemChange = 1;"/>
+                        
+                        <p:selectBooleanCheckbox value="#{rightCardBean.selRight.update}" id="chBoxUpdate"
+                                                itemLabel="#{bundle.Edit}" onchange="itemChange = 1;"/>
 
                         <p:selectBooleanCheckbox value="#{rightCardBean.selRight.create}" id="chBoxCreate"
                                                  itemLabel="#{bundle.Create}" onchange="itemChange = 1;"/>
 
                         <p:selectBooleanCheckbox value="#{rightCardBean.selRight.delete}" id="chBoxDelete"
                                                  itemLabel="#{bundle.Delete}" onchange="itemChange = 1;"/>
-
-                        <p:selectBooleanCheckbox value="#{rightCardBean.selRight.update}" id="chBoxUpdate"
-                                                 itemLabel="#{bundle.Edit}" onchange="itemChange = 1;"/>
 
                         <p:selectBooleanCheckbox value="#{rightCardBean.selRight.changeRight}" id="chBoxRight"
                                                  itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>

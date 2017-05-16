@@ -24,16 +24,17 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- * @author mfilatov
- */
+/* Контрагенты */
 @Stateless
 public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, PartnersLog> {
 
     @EJB
     private PartnersGroupsFacade partnersGroupsFacade;    
     
+    public PartnersFacade() {
+        super(Partner.class, PartnersLog.class);
+    }
+        
     @Override
     public String getFRM_NAME() {
         return Partner.class.getSimpleName().toLowerCase();
@@ -53,11 +54,16 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         }
         return false;
     }    
-    
-    public PartnersFacade() {
-        super(Partner.class, PartnersLog.class);
-    }
 
+    @Override
+    protected void detectParentOwner(Partner partner, BaseDict owner){
+        partner.setOwner(null);
+        partner.setParent(null);
+        if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
+            partner.getPartnersGroupsList().add((PartnerGroups)owner);            
+        } 
+    }
+    
     /**
      * Ищет контрагентов по code исключая ID указанного контрагента
      * @param code

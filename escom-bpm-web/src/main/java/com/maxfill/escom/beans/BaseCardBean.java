@@ -53,7 +53,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             Tuple<Integer, BaseDict> tuple = appBean.getOpenedItemTuple(itemOpenKey);
             T item = (T) tuple.b;
             setTypeEdit(tuple.a);
-            setEditedItem(item);            
+            setEditedItem(item);
 
             //если создание!
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
@@ -117,7 +117,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         closeItemForm(isNeedUpdateExplore);
     }
     
-    /* Сохранение специфичных данных объекта */
+    /* Действия сразу после сохранения объекта перед закрытием его карточки */
     protected void onAfterSaveItem(T item){      
     }
 
@@ -260,6 +260,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* ПРАВА ДОСТУПА: Выполняет проверку на наличие у объекта права на редактирование */
     private void checkItemHaveRightEdit(T item, Set<String> errors){
+        if (item.isInherits()) return;
         Rights rights = item.getRightItem();
         for (Right right : rights.getRights()){
             if (right.isUpdate()){

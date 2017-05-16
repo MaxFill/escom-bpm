@@ -44,7 +44,7 @@
                 </p:commandButton>
                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
                                  update="#{_frm}:mainTabView:panelGroups"
-                                 disabled="#{_bean.isReadOnly() or item.id == 0}"
+                                 disabled="#{_bean.isReadOnly()}"
                                  actionListener="#{_bean.deleteFromGroup(item)}">              
                 </p:commandButton>
             </p:column>

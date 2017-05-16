@@ -11,7 +11,7 @@
 
         <pe:layout fullPage="true" widgetVar="wvFoldersExpl" options="#{metadatesBean.layoutOptions}">
             <pe:layoutPane id="luFrmObjTree" position="west"  resizable="true" > 
-                <h:form style="font-size: 90%;">
+                <h:form style="font-size: 80%;">
                     <p:dataTable value="#{metadatesBean.allItems}" rowKey="#{item.id}" selectionMode="single"
                                  selection="#{metadatesBean.selectedObject}" var="item">
                         <p:ajax event="rowSelect" update=":frmFldDefRight:mainTab:dataGrid" listener="#{metadatesBean.onSelectedItem}"  />                

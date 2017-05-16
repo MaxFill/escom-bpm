@@ -420,7 +420,7 @@ public class SessionBean implements Serializable{
                     rights = getDefaultRights(item);
                 }
         return rights;
-    }       
+    }
     
     /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
     public void settingRightItem(BaseDict item, Rights newRight) {
@@ -629,10 +629,10 @@ public class SessionBean implements Serializable{
         if (isAllowedEditOwner) {
             newItem.setParent(parent);
             makeRightItem(newItem);
-            if (isHaveRightCreate(newItem)) {                
+            if (isHaveRightCreate(newItem)) {
                 if (parent != null){
                     makeRightForChilds(newItem);
-                }    
+                }
                 facade.setSpecAtrForNewItem(newItem, params);
                 facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
             } else {
@@ -641,9 +641,10 @@ public class SessionBean implements Serializable{
                 errors.add(error);
             }
         } else {
-            String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
-            String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{objName});
-            errors.add(error);
+            if (owner != null){
+                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{owner.getName()});
+                errors.add(error);
+            }
         }
     }           
     

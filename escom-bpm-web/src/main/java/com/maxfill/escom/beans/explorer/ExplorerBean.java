@@ -1395,8 +1395,7 @@ public class ExplorerBean implements Serializable {
         return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemClass().getSimpleName());
     }
     
-    /* ПРОЧИЕ МЕТОДЫ */
-    
+    /* ПРОЧИЕ МЕТОДЫ */    
     
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: Открытие формы администрирования */  
     public void onOpenAdmCardForm() {

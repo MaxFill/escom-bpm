@@ -59,38 +59,26 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
         setIsItemChange(Boolean.TRUE);
     }    
     
-    /**
-     * ПРАВА ДОСТУПА: добавление права для документа
-     * @param state 
-     */
+    /* ПРАВА ДОСТУПА: добавление права для документа */
     public void onAddDocRight(State state){
         typeEditedRight = TYPE_RIGHT_DOC;
         super.onAddRight(state);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: добавление права для папки
-     * @param state 
-     */
+    /* ПРАВА ДОСТУПА: добавление права для папки */
     @Override
     public void onAddRight(State state){
         typeEditedRight = TYPE_RIGHT_FOLDER;
         super.onAddRight(state);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: редактирование права для документа
-     * @param right 
-     */
+    /* ПРАВА ДОСТУПА: редактирование права для документа */
     public void onEditDocRight(Right right){
         typeEditedRight = TYPE_RIGHT_DOC;
         super.onEditRight(right);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: редактирование права для папки
-     * @param right 
-     */
+    /* ПРАВА ДОСТУПА: редактирование права для папки */
     @Override
     public void onEditRight(Right right){
         typeEditedRight = TYPE_RIGHT_FOLDER;
@@ -120,7 +108,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
         }
     }        
     
-    /*ПРАВА ДОСТУПА: Возвращает для папки список прав к документам в заданном состоянии */
+    /* ПРАВА ДОСТУПА: Возвращает для папки список прав к документам в заданном состоянии */
     public List<Right> getRightDocsForState(Folder folder, State state) {
         List<Right> rights = folder.getRightForChild().getRights()
                 .stream()

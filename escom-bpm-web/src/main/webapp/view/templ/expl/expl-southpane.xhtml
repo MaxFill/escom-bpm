@@ -13,7 +13,7 @@
                                      id="btnCancel" ajax="false"
                                      styleClass="without-spaces"
                                      action="#{sessionBean.goToIndex() }"
-                                     rendered="#{explorerBean.explorerViewMode}"
+                                     rendered="#{!explorerBean.selectorViewMode}"
                                      onclick="return isClose = 1;"/>
                     <p:commandButton id="btnClose" icon="ui-icon-close" value="#{bundle.Close}" title="#{bundle.Close}"
                                      styleClass="without-spaces"

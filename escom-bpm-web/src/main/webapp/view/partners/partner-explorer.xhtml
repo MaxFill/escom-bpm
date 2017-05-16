@@ -18,7 +18,7 @@
     
     <!-- специфичные поля таблицы обозревателя Detail -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Code}" style="text-align: center;" sortBy="#{item.code}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowDetail()}">
             #{item.code}
         </p:column>
     </ui:define> 

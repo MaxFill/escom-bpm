@@ -32,7 +32,12 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
             
     /* Формирование логина для пользователя */
     public void makeLogin(){ 
-        String login = getEditedItem().getName().replace(" ", "").replace(".", "").replace(",", "").toLowerCase();
+        String name = getEditedItem().getName();
+        if (StringUtils.isBlank(name)){
+            name = getEditedItem().getShortFIO();
+            getEditedItem().setName(name);
+        }
+        String login = name.replace(" ", "").replace(".", "").replace(",", "").toLowerCase();
         login = EscomBeanUtils.rusToEngTranlit(login);        
         getEditedItem().setLogin(WordUtils.capitalize(login));
     }

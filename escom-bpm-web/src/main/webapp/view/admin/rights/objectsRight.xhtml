@@ -36,7 +36,7 @@
                             <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
                         </p:column> 
                         <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
-                            <p:selectBooleanCheckbox value="#{right.сhangeRight}" disabled="true"/>
+                            <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
                         </p:column>                         
                         <p:column headerText="#{bundle.Commands}" style="text-align: center;" >
                             <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
@@ -44,7 +44,8 @@
                                 <p:ajax event="dialogReturn" update="tblRightDoc"
                                             listener="#{metadatesBean.onCloseRightCard}"/>
                             </p:commandButton>
-                            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"  
+                            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                             update="tblRightDoc"
                                              actionListener="#{metadatesBean.onDeleteRight(right)}" />
                         </p:column>                        
                     </p:dataTable>
