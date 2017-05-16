@@ -6,7 +6,6 @@ import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.facade.PartnersFacade;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +21,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-/**
- * Группы контрагентов
- * @author mfilatov
- */
+/* Группы контрагентов */
 @Named
 @ViewScoped
 public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroups> {
@@ -37,25 +33,20 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @EJB
     private PartnersFacade partnersFacade;
     
-    /**
-    * КОНТЕНТ: формирование контента группы контрагента
-     * @param partnerGroup
-     * @return 
-    */     
+    /* КОНТЕНТ: формирование контента группы контрагента */     
     @Override
     public List<BaseDict> makeGroupContent(PartnerGroups partnerGroup) {
-        Rights docRights = getChildRights();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент группы контрагента
         List<PartnerGroups> groups = itemsFacade.findChilds(partnerGroup);
         groups.stream()
-                .forEach(fl -> addGroupInCnt(fl, cnt, docRights)
+                .forEach(group -> addGroupInCnt(group, cnt)
         );
         if (explorerBean.isExplorerViewMode()){
             //загружаем в контент контрагентов 
             List<Partner> partners = partnersFacade.findDetailItems(partnerGroup);
             partners.stream().
-                    forEach(staff -> addPartnerInCnt(staff, cnt, docRights)
+                    forEach(staff -> addPartnerInCnt(staff, cnt)
             );
         }
         return cnt;
@@ -68,7 +59,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
      * @param defChildRight
      * @return 
      */ 
-    private void addGroupInCnt(BaseDict group, List<BaseDict> cnts, Rights defChildRight) {
+    private void addGroupInCnt(BaseDict group, List<BaseDict> cnts) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
         cnts.add(group);
@@ -80,7 +71,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
      * @param cnts
      * @param defChildRight
      */ 
-    public void addPartnerInCnt(BaseDict partner, List<BaseDict> cnts, Rights defChildRight) {
+    public void addPartnerInCnt(BaseDict partner, List<BaseDict> cnts) {
         /*
         Rights rd = defDocRight;
         if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам

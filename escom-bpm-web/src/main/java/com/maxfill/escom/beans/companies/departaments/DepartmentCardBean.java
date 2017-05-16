@@ -54,17 +54,22 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
     
     /* Возвращает компанию, в которой находится подразделение */
     public Company findCompany(Department item){        
+        Company company = null;
         if (item.getParent() != null){
-            findCompany(item.getParent());
+            company = findCompany(item.getParent());
         }
-        return item.getOwner();
+        if (company == null){
+            company = item.getOwner();
+        }    
+        return company;
     }
     
     public String getCompanyName(){
         if (getEditedItem() == null){
             return "";
         }
-        return findCompany(getEditedItem()).getName();
+        Company company = findCompany(getEditedItem());
+        return company.getName();
     }
     
     /* Обработка события выбора руководителя на карточке  */

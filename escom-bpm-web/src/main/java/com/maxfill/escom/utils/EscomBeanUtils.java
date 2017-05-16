@@ -32,11 +32,14 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
-/**
- *
- * @author mfilatov
- */
+/* Утилиты, вызываемые из бинов */
 public class EscomBeanUtils {
+    
+    public static String rusToEngTranlit (String text){
+        String[] abcCyr = {"a","б","в","г","д","ё","ж","з","и","к","л","м","н","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
+        String[] abcLat = {"a","b","v","g","d","jo","zh","z","i","k","l","m","n","p","r","s","t","u","ch","f","h","ts","sh","sch","","e","ju","ja"};
+        return StringUtils.replaceEach(text, abcCyr, abcLat);
+    }
     
     /**
      * Инициализация областей обозревателя
@@ -50,7 +53,7 @@ public class EscomBeanUtils {
         LayoutOptions north = new LayoutOptions();
         north.addOption("resizable", false);
         north.addOption("closable", false);
-        north.addOption("size", 38);
+        north.addOption("size", 40);
         layoutOptions.setNorthOptions(north);
 
         LayoutOptions south = new LayoutOptions();
@@ -67,9 +70,9 @@ public class EscomBeanUtils {
         layoutOptions.setWestOptions(west);
 
         LayoutOptions east = new LayoutOptions();
-        east.addOption("size", 350);
+        east.addOption("size", 300);
         east.addOption("minSize", 150);
-        east.addOption("maxSize", 400);
+        east.addOption("maxSize", 450);
         layoutOptions.setEastOptions(east);
 
         LayoutOptions center = new LayoutOptions();
@@ -81,12 +84,18 @@ public class EscomBeanUtils {
         center.addOption("minHeight", 200);
         layoutOptions.setCenterOptions(center);
     }
-    /*
+    
     public static void initCardLayout(LayoutOptions layoutOptions){
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
         layoutOptions.setPanesOptions(panes);
 
+        LayoutOptions north = new LayoutOptions();
+        north.addOption("resizable", false);
+        north.addOption("closable", false);
+        north.addOption("size", 38);
+        layoutOptions.setNorthOptions(north);
+        
         LayoutOptions south = new LayoutOptions();
         south.addOption("resizable", false);
         south.addOption("closable", false);
@@ -106,9 +115,10 @@ public class EscomBeanUtils {
         center.addOption("minWidth", 200);
         center.addOption("minHeight", 100);
         layoutOptions.setCenterOptions(center);
-    }
-    */
+    }   
+    
     public static void initAddLayoutOptions(LayoutOptions layoutOptions){
+        /*
         LayoutOptions east = layoutOptions.getEastOptions();
         LayoutOptions childOptions = new LayoutOptions();
         east.setChildOptions(childOptions);
@@ -118,12 +128,12 @@ public class EscomBeanUtils {
         searcheABC.addOption("minSize", 85);
         searcheABC.addOption("maxSize", 85);
         childOptions.setWestOptions(searcheABC); 
-        
+        */
         LayoutOptions center = layoutOptions.getCenterOptions();
         LayoutOptions childCenterOptions = new LayoutOptions();
         center.setChildOptions(childCenterOptions);
-    }
-        
+    }    
+    
     /**
      * Получение bean
      * @param <T>
@@ -343,7 +353,7 @@ public class EscomBeanUtils {
     }
     
     /* Открытие карточки объекта  */
-    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Integer, Integer> size) {
+    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Double, Double> size) {
         Map<String, Object> options = new HashMap<>();
         //options.put("headerElement", formName + ":btnClose");
         options.put("resizable", true);
@@ -361,7 +371,7 @@ public class EscomBeanUtils {
         List<String> itemKeyList = new ArrayList<>();
         itemKeyList.add(itemOpenKey);
         paramMap.put("itemOpenKey", itemKeyList);
-        RequestContext.getCurrentInstance().openDialog(formName, options, paramMap);
+        RequestContext.getCurrentInstance().openDialog(formName + "-card", options, paramMap);
     }
     
     /**

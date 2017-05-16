@@ -22,11 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Папки
- *
- * @author Maxim
- */
+/* Папки документов */
 
 @Named(value = "foldersBean")
 @ViewScoped
@@ -37,19 +33,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     
     @EJB
     private FoldersFacade foldersFacade;
-    @EJB
-    private DocTypeFacade docTypeFacade;
     
     @Override
     protected String getBeanName() {
         return BEAN_NAME;
     }    
 
-    /**
-     * ДЕРЕВО: формирование дерева папок
-     *
-     * @return
-     */
+    /* ДЕРЕВО: формирование дерева папок  */
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
@@ -59,22 +49,20 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         if (rootFolder == null){
             throw new NullPointerException("RootFolder null in make tree metod!"); 
         }
-        Rights docRight = (Rights) JAXB.unmarshal(new StringReader(rootFolder.getAccessDocs()), Rights.class);
-        setChildRights(docRight);
+        Rights docRight = (Rights) JAXB.unmarshal(new StringReader(rootFolder.getXmlAccessChild()), Rights.class);
+        setDefaultRightsChilds(docRight);
         sessionBean.settingRightForChild(rootFolder, docRight); 
-        addNode(tree, rootFolder, docRight);
+        addNode(tree, rootFolder);
         return tree;
     }
 
     /* ДЕРЕВО: добавление узла в дерево при формировании дерева */
-    public TreeNode addNode(TreeNode parentNode, BaseDict folder, Rights parRightDoc) {
+    public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
         TreeNode resultNode = null;
 
         if (sessionBean.preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
-            Rights folderRight = folder.getRightItem();
             //актуализируем права документов папки
-            Rights rightDoc = makeRightChild((Folder)folder, parRightDoc); //получаем права документов для текущей папки
-            folder.setRightForChild(rightDoc); //сохраняем права документов в папку
+            sessionBean.makeRightForChilds((Folder)folder); //получаем права документов для текущей папки
             
             TreeNode newNode;
             synchronized(this){
@@ -84,7 +72,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
             getItemFacade().findChilds((Folder)folder)
                     .stream()
-                    .forEach(folderChild -> addNode(newNode, folderChild, rightDoc));
+                    .forEach(folderChild -> addNode(newNode, folderChild));
             
             resultNode = newNode;
         }
@@ -93,19 +81,15 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
 
     /* *** КОНТЕНТ *** */
     
-    /**
-    * КОНТЕНТ: формирование контента папки
-     * @param folder
-     * @return 
-    */ 
+    /* КОНТЕНТ: формирование контента папки   */ 
     @Override
     public List<BaseDict> makeGroupContent(Folder folder) {
-        Rights docRights = getChildRights();
+        Rights docRights = getDefaultRightsChilds();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
         List<Folder> folders = getItemFacade().findChilds((Folder)folder);        
         folders.stream()
-                .forEach(fl -> addFolderInCnt(fl, cnt, docRights)
+                .forEach(fl -> addFolderInCnt(fl, cnt)
         );        
         //загружаем в контент документы
         List<Doc> docs = getDetailBean().getItemFacade().findItemByOwner(folder);
@@ -115,25 +99,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         return cnt;
     }
     
-    /**
-     * КОНТЕНТ: добавляет папку в контент
-     * @param folder
-     * @param cnts
-     * @param defDocRight
-     * @return 
-     */ 
-    private void addFolderInCnt(BaseDict folder, List<BaseDict> cnts, Rights defDocRight) {
-        Rights rights = makeRightChild((Folder)folder, defDocRight);
-        sessionBean.settingRightForChild((Folder)folder, rights); //сохраняем права к документам
+    /* КОНТЕНТ: добавляет папку в контент  */ 
+    private void addFolderInCnt(BaseDict folder, List<BaseDict> cnts) {
+        sessionBean.makeRightForChilds((Folder)folder);
         cnts.add(folder);
     }
 
-    /**
-     * КОНТЕНТ: добавляет документ в контент
-     * @param doc
-     * @param cnts
-     * @param defDocRight
-     */ 
+    /* КОНТЕНТ: добавляет документ в контент  */ 
     public void addDocInCnt(BaseDict doc, List<BaseDict> cnts, Rights defDocRight) {
         Rights rd = defDocRight;
         if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам
@@ -144,41 +116,18 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         cnts.add(doc);
     }
     
-    /* *** ПРАВА ДОСТУПА *** */
+    /* ПРАВА ДОСТУПА */
     
-    /**
-     * Проверка доступа на удаление контента папки
-     * @param content
-     * @return 
-     */
+    /* Проверка доступа на удаление контента папки    */
     public boolean isHaveRightDeleteContent(BaseDict content){
         if (content instanceof Folder){            
             return isHaveRightDelete((Folder)content);
         } else {
             return getDetailBean().isHaveRightDelete(content);
         }
-    }
-
-    /* *** ПРАВА ДОСТУПА К ДОКУМЕНТАМ ***  */
-    
-    //TODO Права доступа из родителя получаются некорректно!!!
-    //получение кэшированных прав документов папки (используется при загрузке дерева) без подгрузки прав из базы
-    public Rights makeRightChild(Folder folder, Rights parentRight) {
-        Rights docRight;
-        if (folder == null || folder.isInherits() || folder.getAccessDocs().isEmpty()) { //если права наследуются или у папки нет прав для документов
-            docRight = parentRight; //то берём права от родителя 
-        } else { //если права не наследуются
-            docRight = (Rights) JAXB.unmarshal(new StringReader(folder.getAccessDocs()), Rights.class); //Демаршаллинг прав из строки!
-        }
-        return docRight;
     }    
-
-    /* *** Cоздание и редактирование папки *** */
        
-    /**
-     * Действия перед удалением папки
-     * @param folder 
-     */
+    /* Действия перед удалением папки  */
     @Override
     protected void preDeleteItem(Folder folder) {        
        clearDetail(folder);
@@ -199,21 +148,14 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         return foldersFacade;
     }
 
-    /**
-     * Формирует число ссылок на folder в связанных объектах 
-     * @param folder
-     * @param rezult 
-     */
+    /* Формирует число ссылок на folder в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){
         rezult.put("Documents", folder.getDocsList().size());
         rezult.put("Folders", folder.getFoldersList().size());
     }    
     
-    /**
-     * Проверка возможности удаления Папки
-     * @param folder
-     */
+    /* Проверка возможности удаления Папки */
     @Override
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
         super.checkAllowedDeleteItem(folder, errors);

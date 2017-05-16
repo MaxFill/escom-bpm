@@ -17,7 +17,7 @@
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
 
-            <p:commandButton icon="ui-icon-arrowreturnthick-1-n" title="#{bundle.Up}"
+            <p:commandButton icon="ui-icon-arrowthick-1-n" title="#{bundle.Up}"
                              actionListener="#{explorerBean.onGotoUpLevelContent()}"
                              disabled="#{explorerBean.treeSelectedNode == null or explorerBean.isSelectRootItem()}"
                              rendered="#{_treeBean != null}"
@@ -108,6 +108,12 @@
                             oncomplete="initDND()">
                 </p:menuitem>
             </p:splitButton>
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>                        
+            <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+                             ajax="false" icon="ui-icon-extlink"
+                             action="#{sessionBean.onSessionExit()}"/>
         </f:facet>
 
     </p:toolbar>  

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  Бизнес-логика для работы с документами
@@ -45,7 +45,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     
     @Override
     public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<Folder> searcheGroups, Map<String, Object> addParams){
-        addParams.put("numberSearche", numberSearche);
+        if (StringUtils.isNotBlank(numberSearche)){
+            paramLIKE.put("numberSearche", numberSearche);
+        }    
         super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
     }
     
@@ -58,11 +60,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         }
     }  
     
-    /**
-     * Загрузка файла документа
-     * @param event
-     * @throws java.io.IOException
-     */
+    /* Загрузка файла документа  */
     public void onUploadFile(FileUploadEvent event) throws IOException{        
         UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
         Attaches attache = FileUtils.doUploadAtache(uploadedFile, currentUser, conf.getUploadPath());

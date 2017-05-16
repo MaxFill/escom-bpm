@@ -35,10 +35,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 
-/**
- * Документы
- * @author Maxim
- */
+/* Класс сущности "Документы" */
 @Entity
 @Table(name = "docs")
 @DiscriminatorColumn(name = "REF_TYPE")
@@ -46,11 +43,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     private static final long serialVersionUID = 5208895312598249913L;
 
     @TableGenerator(
-            name = "docIdGen",
-            table = "SYS_ID_GEN",
-            pkColumnName = "GEN_KEY",
-            valueColumnName = "GEN_VALUE",
-            pkColumnValue = "DOC_ID", allocationSize = 1)
+        name = "docIdGen",
+        table = "SYS_ID_GEN",
+        pkColumnName = "GEN_KEY",
+        valueColumnName = "GEN_VALUE",
+        pkColumnValue = "DOC_ID", allocationSize = 1)
 
     @Id
     @Basic(optional = false)

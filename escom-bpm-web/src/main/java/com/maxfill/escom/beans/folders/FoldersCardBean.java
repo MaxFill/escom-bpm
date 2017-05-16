@@ -40,22 +40,14 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
     @EJB
     private DocTypeFacade docTypeFacade;
     
-    private Rights defDocRight;
     private Integer typeEditedRight;
 
-    private List<DocType> docTypes;
-
-    @Override
-    public void onInitBean() { 
-        super.onInitBean();    
-        defDocRight = getDefaultRights();
-    }    
+    private List<DocType> docTypes;    
     
-    /* ПРАВА ДОСТУПА: обработка при изменении опции "Наследование прав для
-     * документов" в карточке папки */
+    /* ПРАВА ДОСТУПА: обработка при изменении опции "Наследование прав для документов" в карточке папки */
     public void onInheritsDocChange(ValueChangeEvent event) {
         if ((Boolean) event.getNewValue() == false) {    //если галочка снята, то нужно скопировать права документов от родителя           
-            sessionBean.makeRightForChilds(getEditedItem(), getEditedItem().getParent());
+            sessionBean.makeRightForChilds(getEditedItem());
             setIsItemChange(Boolean.TRUE);
             EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
         }
@@ -105,9 +97,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
         super.onEditRight(right);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: событие закрытия карточки прав доступа 
-     */
+    /* ПРАВА ДОСТУПА: событие закрытия карточки прав доступа */
     @Override
     public void onCloseRightCard(SelectEvent event) {
         switch (typeEditedRight){
@@ -130,34 +120,14 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
         }
     }        
     
-    /**
-     * ПРАВА ДОСТУПА: Возвращает для папки список прав к документам в заданном
-     * состоянии
-     *
-     * @param folder Папка
-     * @param state Состояние
-     * @return Список прав
-     */
+    /*ПРАВА ДОСТУПА: Возвращает для папки список прав к документам в заданном состоянии */
     public List<Right> getRightDocsForState(Folder folder, State state) {
         List<Right> rights = folder.getRightForChild().getRights()
                 .stream()
                 .filter(right -> state.equals(right.getState()))
                 .collect(Collectors.toList());
         return rights;
-    }
-    
-    //TODO Права доступа из родителя получаются некорректно!!!
-    
-    /* Получение кэшированных прав документов папки (используется при загрузке дерева) без подгрузки прав из базы */ 
-    public Rights getFolderCacheDocRight(Folder folder, Rights parentRight) {
-        Rights docRight;
-        if (folder == null || folder.isInherits() || folder.getAccessDocs().isEmpty()) { //если права наследуются или у папки нет прав для документов
-            docRight = parentRight; //то берём права от родителя 
-        } else { //если права не наследуются
-            docRight = (Rights) JAXB.unmarshal(new StringReader(folder.getAccessDocs()), Rights.class); //Демаршаллинг прав из строки!
-        }
-        return docRight;
-    }
+    }    
     
     /* Обработка события изменения типа документа на форме карточки папки  */
     public void onDocTypeDefaultSelected(SelectEvent event){
@@ -187,19 +157,20 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
 
     @Override
     protected void onBeforeSaveItem(Folder folder) {
-        Rights rightDoc = folder.getRightForChild();
-        folder.setAccessDocs(rightDoc.toString());
+        Rights rightDocs = folder.getRightForChild();
+        folder.setXmlAccessChild(rightDocs.toString());
     }
 
     @Override
     protected void afterCreateItem(Folder item) {        
     }
-
+    
+    /* Подготовка прав доступа к визуализации */
     @Override
-    protected void doPrepareOpen(Folder folder){
-        Rights rightForDocs = getFolderCacheDocRight(folder, defDocRight);
-        folder.setRightForChild(rightForDocs);            
-        rightFacade.prepareRightsForView(rightForDocs.getRights());
+    protected void prepareRightsForView(Folder folder){
+        super.prepareRightsForView(folder);
+        sessionBean.makeRightForChilds(folder); 
+        rightFacade.prepareRightsForView(folder.getRightForChild().getRights());
     }
     
     @Override

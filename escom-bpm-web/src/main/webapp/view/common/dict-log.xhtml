@@ -5,25 +5,27 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <p:tab title="#{bundle.LogEventHistory}">
-        <p:dataTable id="logTbl" var="log" value="#{_bean.editedItem.itemLogs}" 
-                     emptyMessage="#{bundle.EmptyTable}"
-                     paginator="true" paginatorPosition="bottom"  
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100"  rows="10"
-                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                     sortBy="#{log.dateEvent}" sortOrder="descending">
-            <p:column headerText="#{bundle.Event}" sortBy="#{log.event}">
-                <p:outputLabel value="#{log.event}" />
-            </p:column>
-            <p:column headerText="#{bundle.Author}" sortBy="#{log.userId.shortFIO}" width="180">
-                <p:outputLabel value="#{log.userId.shortFIO}" />
-            </p:column>
-            <p:column headerText="#{bundle.DateEvent}" sortBy="#{log.dateEvent}" style="text-align: center;" width="100">
-                <p:outputLabel value="#{log.dateEvent}">
-                    <f:convertDateTime pattern="dd.MM.yy HH:mm" />
-                </p:outputLabel>
-            </p:column>
-        </p:dataTable>
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:dataTable id="logTbl" var="log" value="#{_bean.editedItem.itemLogs}" 
+                         emptyMessage="#{bundle.EmptyTable}"
+                         paginator="true" paginatorPosition="bottom"  
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100"  rows="10"
+                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                         sortBy="#{log.dateEvent}" sortOrder="descending">
+                <p:column headerText="#{bundle.Event}" sortBy="#{log.event}">
+                    <h:outputLabel value="#{log.event}" />
+                </p:column>
+                <p:column headerText="#{bundle.Author}" sortBy="#{log.userId.shortFIO}" width="180">
+                    <h:outputLabel value="#{log.userId.shortFIO}" />
+                </p:column>
+                <p:column headerText="#{bundle.DateEvent}" sortBy="#{log.dateEvent}" style="text-align: center;" width="100">
+                    <h:outputLabel value="#{log.dateEvent}">
+                        <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+                    </h:outputLabel>
+                </p:column>
+            </p:dataTable>
+        </p:panelGrid>
     </p:tab>
 
 </ui:composition>    

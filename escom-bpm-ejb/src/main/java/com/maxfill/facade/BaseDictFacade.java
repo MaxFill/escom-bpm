@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -239,6 +238,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return null;
     }
     
+    /* Добавление объекта в группу. Вызов из drag & drop */
     public boolean addItemToGroup(T item, BaseDict targetGroup){ 
         return false;
     }        
@@ -365,8 +365,5 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             return new ArrayList<>();
         }
     }
-    
-    public  Tuple<Integer, Integer> getFormSize(){
-        return new Tuple(650, 380);
-    }
+
 }

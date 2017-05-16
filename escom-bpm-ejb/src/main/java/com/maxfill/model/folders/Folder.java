@@ -4,6 +4,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -16,19 +17,13 @@ import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Папки архива
- * @author Maxim
- */
+/* Класс сущности "Папки документов"  */
 @Entity
 @Table(name = "folders")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -70,12 +65,12 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     private List<Doc> docsList = new ArrayList<>();
     
     @Size(max = 2147483647)
-    @Column(name = "AccessDocs")
-    private String accessDocs;    
+    @Column(name = "AccessChilds")
+    private String xmlAccessChild;    
     
     @NotNull
-    @Column(name = "IsInheritsAccessDocs")
-    private boolean isInheritsAccessDocs;
+    @Column(name = "IsInheritsAccessChilds")
+    private boolean isInheritsAccessChilds;
         
     @JoinColumn(name = "DocTypeDefault", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -112,15 +107,12 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
         return stateIcon;
     }       
     
-    /**
-     * Возвращает название для заголовка наследования прав к документам
-     * @return Строка
-     */
+    /* Возвращает название для заголовка наследования прав к документам  */
     public String getInheritsAccessDocName(){
-        if (isInheritsAccessDocs){
-            return "Права для документов этой папки наследуются от родительской папки";
+        if (isInheritsAccessChilds){
+            return ItemUtils.getMessageLabel("RightsInheritedForChilds");
         } else{
-            return "Для документов этой папки установлены специальные права";
+            return ItemUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
     }
     
@@ -148,16 +140,13 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     public void setModerator(User moderator) {        this.moderator = moderator;    }
     
     public List<Folder> getFoldersList() {        return foldersList;    }
-    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }
+    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }    
     
-    public String getAccessDocs() { return accessDocs; }
-    public void setAccessDocs(String accessDocs) { this.accessDocs = accessDocs; }
-    
-    public boolean getIsInheritsAccessDocs() {
-        return isInheritsAccessDocs;
+    public boolean getIsInheritsAccessChilds() {
+        return isInheritsAccessChilds;
     }
-    public void setIsInheritsAccessDocs(boolean isInheritsAccessDocs) {
-        this.isInheritsAccessDocs = isInheritsAccessDocs;
+    public void setIsInheritsAccessChilds(boolean isInheritsAccessDocs) {
+        this.isInheritsAccessChilds = isInheritsAccessDocs;
     }
 
     public DocType getDocTypeDefault() {
@@ -166,7 +155,16 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     public void setDocTypeDefault(DocType docTypeDefault) {
         this.docTypeDefault = docTypeDefault;
     }
-        
+    
+    @Override
+    public String getXmlAccessChild() {
+        return xmlAccessChild;
+    }
+    @Override
+    public void setXmlAccessChild(String xmlAccessChild) {
+        this.xmlAccessChild = xmlAccessChild;
+    }
+    
     @Override
     public Integer getId() {
         return id;

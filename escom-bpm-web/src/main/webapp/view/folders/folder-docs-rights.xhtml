@@ -5,7 +5,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <h:panelGrid columns="2">       
-        <p:selectBooleanCheckbox value="#{_bean.editedItem.isInheritsAccessDocs}" 
+        <p:selectBooleanCheckbox value="#{foldersCardBean.editedItem.isInheritsAccessChilds}" 
                                  disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
                                  valueChangeListener="#{foldersCardBean.onInheritsDocChange}">
             <p:ajax update="lbChBox docRightsGrid"/>
@@ -36,18 +36,18 @@
                             <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
                         </p:column> 
                         <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
-                            <p:selectBooleanCheckbox value="#{right.сhangeRight}" disabled="true"/>
+                            <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
                         </p:column>                         
                         <p:column headerText="#{bundle.Commands}" style="text-align: center;">
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                                <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessDocs or !_bean.isHaveRightChangeRight()}"
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12 without-spaces, ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
+                                <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" styleClass="without-spaces"
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
                                                  actionListener="#{_bean.onEditDocRight(right)}" >
                                     <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:docRightsGrid"
                                                 listener="#{_bean.onCloseRightCard}"/>
                                 </p:commandButton>
-                                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessDocs or !_bean.isHaveRightChangeRight()}"
+                                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
                                                  update="tblRight"
                                                  actionListener="#{_bean.onDeleteRightDoc(right)}">
                                 </p:commandButton>
@@ -58,7 +58,7 @@
                         <p:commandButton id="btnAddDocRight" value="#{bundle.Add}" 
                                          icon="ui-icon-circle-plus" style="float:right;"
                                          disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
-                                         rendered="#{!_bean.editedItem.isInheritsAccessDocs}" 
+                                         rendered="#{!_bean.editedItem.isInheritsAccessChilds}" 
                                          actionListener="#{_bean.onAddDocRight(state)}">
                              <p:ajax event="dialogReturn" 
                                      update="#{_frm}:mainTabView:docRightsGrid"

@@ -17,23 +17,26 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.apache.commons.lang.WordUtils;
 
-/**
- * Bean для Пользователей
- * @author Maxim
- */
+/* Карточка пользователя */
 @Named
 @ViewScoped
 public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = 2031203859450836271L;
 
-    /**
-     * Формирование отображаемого имени пользователя
-     */    
+    /* Формирование отображаемого имени пользователя */    
     public void makeName(){
         getEditedItem().setName(getEditedItem().getShortFIO());
     }
             
+    /* Формирование логина для пользователя */
+    public void makeLogin(){ 
+        String login = getEditedItem().getName().replace(" ", "").replace(".", "").replace(",", "").toLowerCase();
+        login = EscomBeanUtils.rusToEngTranlit(login);        
+        getEditedItem().setLogin(WordUtils.capitalize(login));
+    }
+    
     @Override
     public UserFacade getItemFacade() {
         return userFacade;

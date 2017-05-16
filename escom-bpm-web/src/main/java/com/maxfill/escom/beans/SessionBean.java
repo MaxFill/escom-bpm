@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.model.BaseDict;
@@ -62,6 +63,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -92,12 +94,14 @@ public class SessionBean implements Serializable{
     private Boolean canShowNotifBar = true;
     private String primefacesTheme;   
     private List<Theme> themes;
-    
+    private Locale locale;
     private UserSettings userSettings;
     
     @Inject
     private ApplicationBean appBean;
     
+    @EJB
+    protected Configuration configuration;
     @EJB
     private RightFacade rightFacade;
     @EJB
@@ -295,11 +299,12 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }
 
-    /* НАВИГАЦИЯ: переход на начальную страницу */
+    /* Переход на начальную страницу программы */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";
     } 
 
+    /* Инициализация спсика тем */
     private void temeInit(){
         themes = new ArrayList<>();
         themes.add(new Theme(0, "Afterdark", "afterdark"));
@@ -339,7 +344,7 @@ public class SessionBean implements Serializable{
         themes.add(new Theme(37, "Vader", "vader"));
     }
         
-    /* *** ПРАВА ДОСТУПА *** */
+    /* ПРАВА ДОСТУПА */
           
     /* ПРАВА ДОСТУПА: получение дефолтных прав объекта */
     public Rights getDefaultRights(BaseDict item){
@@ -379,13 +384,7 @@ public class SessionBean implements Serializable{
         Rights rights = getRightItem(item);
         settingRightItem(item, rights); 
         return rights;
-    }
-    
-    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
-    public void makeRightForChilds(BaseDict item, BaseDict parent){
-        Rights childRights = getRightForChild(parent);
-        settingRightForChild(item, childRights); 
-    }
+    }    
     
     /* ПРАВА ДОСТУПА: Установка и проверка прав при загрузке объекта */
     public Boolean preloadCheckRightView(BaseDict item) {
@@ -423,26 +422,6 @@ public class SessionBean implements Serializable{
         return rights;
     }       
     
-    /* ПРАВА ДОСТУПА: Получение прав для дочерних объектов */
-    public Rights getRightForChild(BaseDict item){
-        Rights rights;
-        if (item == null) {
-            return null;
-        }                
-        if (!item.isInherits()) {
-            rights = getActualRightChildItem(item);
-        } else 
-            if (item.getOwner() != null) {
-                rights = getRightForChild(item.getOwner()); //получаем права от владельца
-            } else 
-                if (item.getParent() != null) {
-                    rights = getRightForChild(item.getParent()); //получаем права от родителя
-                } else {
-                    rights = getDefaultRights(item);
-                }
-        return rights;
-    }
-    
     /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
     public void settingRightItem(BaseDict item, Rights newRight) {
         if (item != null) {
@@ -452,14 +431,36 @@ public class SessionBean implements Serializable{
             item.setAccess(newRight.toString()); //сохраняем права в виде XML
         }
     } 
-        
-    /* ПРАВА ДОСТУПА: Установка прав дочерних объектов их владельцу  */
-    public void settingRightForChild(BaseDict ownerItem, Rights newRight) {
-        if (ownerItem != null && newRight != null) {
-            ownerItem.setRightForChild(newRight);
-            ownerItem.setXmlAccessChild(newRight.toString());
-        }
+    
+    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
+    public void makeRightForChilds(BaseDict item){
+        Rights childRights = getRightForChild(item);
+        settingRightForChild(item, childRights); 
+    }
+    
+    /* ПРАВА ДОСТУПА: Получение прав для дочерних объектов */
+    public Rights getRightForChild(BaseDict item){        
+        if (item == null) { return null; }                
+        Rights rights = null;
+        if (!item.isInherits()) {
+            rights = getActualRightChildItem(item);
+        } else 
+            if (item.getOwner() != null) {
+                rights = getRightForChild(item.getOwner()); //получаем права от владельца
+            } else 
+                if (item.getParent() != null) {
+                    rights = getRightForChild(item.getParent()); //получаем права от родителя
+                } 
+        return rights;
     }   
+        
+    /* ПРАВА ДОСТУПА: Установка прав дочерних объектов */
+    public void settingRightForChild(BaseDict item, Rights newRight) {
+        if (item != null && newRight != null) {
+            item.setRightForChild(newRight);
+            item.setXmlAccessChild(newRight.toString());
+        }
+    }    
     
     /* ПРАВА ДОСТУПА: получение актуальных прав объекта  */
     private Rights getActualRightItem(BaseDict item) {        
@@ -478,7 +479,6 @@ public class SessionBean implements Serializable{
     
     /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
     private Rights getActualRightChildItem(BaseDict item) {
-        //TODO Тут вероятно нужно через вызов абстрактного метода актуализировать данные по правам т.к. в XmlAccessChild ни хрена нет!
         String childStrRight = item.getXmlAccessChild();
         if (StringUtils.isNotBlank(childStrRight)){
             Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(childStrRight), Rights.class);
@@ -572,7 +572,7 @@ public class SessionBean implements Serializable{
             pasteItem.setId(null);                    //нужно сбросить скопированный id!
             pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
             facade.preparePasteItem(pasteItem, recipient);
-            prepCreate(pasteItem, pasteItem.getParent(), pasteItem.getOwner(), errors, null);            
+            prepCreate(pasteItem, pasteItem.getParent(), errors, null);            
             if (!errors.isEmpty()){
                 EscomBeanUtils.showErrorsMsg(errors);
                 return null;
@@ -612,16 +612,16 @@ public class SessionBean implements Serializable{
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacadeByClassName(itemClassName); 
         BaseDict newItem = facade.createItem(owner, currentUser);
-        prepCreate(newItem, parent, owner, errors, params); 
-        Tuple<Integer, Integer> formSize = facade.getFormSize();
-        openItemCard(newItem, DictEditMode.INSERT_MODE, errors, formSize);        
+        prepCreate(newItem, parent, errors, params);         
+        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);        
         return newItem;
     }
 
     /* Действия перед созданием объекта */
-    private void prepCreate(BaseDict newItem, BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
+    private void prepCreate(BaseDict newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
         boolean isAllowedEditOwner = true;
         BaseDictFacade facade = getItemFacade(newItem);
+        BaseDict owner = newItem.getOwner();
         if (owner != null) {
             actualizeRightItem(owner);
             isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
@@ -631,10 +631,10 @@ public class SessionBean implements Serializable{
             makeRightItem(newItem);
             if (isHaveRightCreate(newItem)) {                
                 if (parent != null){
-                    makeRightForChilds(newItem, parent);
+                    makeRightForChilds(newItem);
                 }    
                 facade.setSpecAtrForNewItem(newItem, params);
-                facade.addLogEvent(newItem, DictLogEvents.CREATE_EVENT, currentUser);
+                facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
             } else {
                 String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
                 String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
@@ -657,9 +657,8 @@ public class SessionBean implements Serializable{
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
-        }
-        Tuple<Integer, Integer> formSize = facade.getFormSize();
-        openItemCard(editItem, DictEditMode.EDIT_MODE, errors, formSize);
+        }       
+        openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
         return editItem;
     }
     
@@ -674,13 +673,12 @@ public class SessionBean implements Serializable{
             String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
             errors.add(error);
         }
-        Tuple<Integer, Integer> formSize = facade.getFormSize();
-        openItemCard(editItem, DictEditMode.VIEW_MODE, errors, formSize);
+        openItemCard(editItem, DictEditMode.VIEW_MODE, errors);
         return editItem;
     }
     
     /* Открытие карточки объекта*/
-    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors, Tuple<Integer, Integer> formSize){
+    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return;
@@ -699,14 +697,14 @@ public class SessionBean implements Serializable{
         }
 
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
-        String cardName = item.getClass().getSimpleName().toLowerCase() + "-card";
-        EscomBeanUtils.openItemForm(cardName, itemOpenKey, formSize);
+        String cardName = item.getClass().getSimpleName().toLowerCase();
+        EscomBeanUtils.openItemForm(cardName, itemOpenKey, getFormSize(cardName));
     }              
     
     public BaseDict doCopy(BaseDict copyItem){
         return getItemFacade(copyItem).doCopy(copyItem, currentUser);
-    }        
-    
+    }
+
     public boolean addItemToGroup(BaseDict item, BaseDict targetGroup){ 
         return getItemFacade(item).addItemToGroup(item, targetGroup);
     }    
@@ -793,7 +791,39 @@ public class SessionBean implements Serializable{
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Data Returned", ""));
     }
     
-    /* *** GET & SET *** */
+    /* Возврашает размеры формы карточки */
+    private Tuple<Double, Double> getFormSize(String formName){
+        Map<String, Tuple<Double, Double>> formsSize = userSettings.getFormsSize();
+        Tuple<Double, Double> rezult;
+        if (formsSize.containsKey(formName)){
+            rezult = formsSize.get(formName);            
+        } else {
+            rezult = new Tuple(650, 420);
+            formsSize.put(formName, rezult);
+        }
+        return rezult;
+    }
+    public void saveFormSize(String formName, Double width, Double heaght){
+        Tuple<Double, Double> size = new Tuple(width, heaght);
+        userSettings.getFormsSize().put(formName, size);
+    }
+    
+    /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
+    public void changeLocale(String lang){
+        locale = new Locale(lang);
+        FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
+    }   
+    public Locale getLocale() {
+        if (locale == null){
+            locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        }
+        return locale;
+    }
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }   
+
+    /* GETS & SETS */
     
     public Staff getCurrentUserStaff(){        
         List<Staff> staffs = staffFacade.findStaffsByUser(currentUser);
@@ -847,5 +877,4 @@ public class SessionBean implements Serializable{
     public void setUserSettings(UserSettings userSettings) {
         this.userSettings = userSettings;
     }
-
 }

@@ -177,7 +177,7 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>docgrouptype-card</from-outcome>
+            <from-outcome>doctypegroups-card</from-outcome>
             <to-view-id>/view/docs/docTypes/doctype-group-card.xhtml</to-view-id>
         </navigation-case>
     

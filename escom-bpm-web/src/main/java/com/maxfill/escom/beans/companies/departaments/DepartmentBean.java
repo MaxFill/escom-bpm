@@ -25,10 +25,7 @@ import java.util.Set;
 import javax.ejb.EJB;
 import org.apache.commons.collections.CollectionUtils;
 
-/**
- * Подразделения
- * @author mfilatov
- */
+/* Подразделения */
 @Named
 @ViewScoped
 public class DepartmentBean extends BaseTreeBean<Department, Company>{
@@ -61,26 +58,25 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* КОНТЕНТ: формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(Department department) {
-        Rights docRights = getChildRights();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
         List<Department> departments = itemFacade.findChilds(department);
-        departments.stream().forEach(fl -> addDepartmentInCnt(fl, cnt, docRights));        
+        departments.stream().forEach(depart -> addDepartmentInCnt(depart, cnt));        
         //загружаем в контент штатные единицы
         List<BaseDict> staffs = staffFacade.findItemByOwner(department);
-        staffs.stream().forEach(staff -> addStaffInCnt(staff, cnt, docRights));
+        staffs.stream().forEach(staff -> addStaffInCnt(staff, cnt));
         return cnt;
     }
     
     /* КОНТЕНТ: добавляет подразделение в контент  */ 
-    private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts, Rights defChildRight) {
+    private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
         cnts.add(department);
     }
 
     /* КОНТЕНТ: добавляет штатную единицу в контент */ 
-    public void addStaffInCnt(BaseDict staff, List<BaseDict> cnts, Rights defChildRight) {
+    public void addStaffInCnt(BaseDict staff, List<BaseDict> cnts) {
         /*
         Rights rd = defDocRight;
         if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам

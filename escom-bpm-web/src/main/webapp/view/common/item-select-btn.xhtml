@@ -28,7 +28,7 @@
             </p:selectOneMenu>
 
             <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
-                            styleClass="ui-grid-col-12"
+                            styleClass="ui-grid-col-12" style="float: right;"
                             onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">                
                 <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
                             action="#{sessionBean.prepEditItem(_itemValue)}"

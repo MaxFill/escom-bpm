@@ -38,17 +38,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.extensions.component.layout.LayoutPane;
 
-/*
-Контролер формы обозревателя
-@author mfilatov
- */
+/* Контролер формы обозревателя */
 @Named
 @ViewScoped
 public class ExplorerBean implements Serializable {
@@ -119,8 +118,8 @@ public class ExplorerBean implements Serializable {
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
     private Integer source = DictDetailSource.TREE_SOURCE;
     private Integer viewMode;          //режим отображения формы
-    private Integer selectMode;        //режим выбора для селектора        
-    
+    private Integer selectMode;        //режим выбора для селектора            
+        
     @PostConstruct
     public void init() {
         model = new SearcheModel();
@@ -181,10 +180,6 @@ public class ExplorerBean implements Serializable {
         BaseDict owner = null;
         BaseDict parent = null;
         typeEdit = DictEditMode.INSERT_MODE;
-        if (treeSelectedNode != null){
-            treeSelectedNode.setSelected(false);
-        }
-        treeSelectedNode = tree;
         editItem = sessionBean.createItemAndOpenCard(parent, owner, typeRoot, createParams);
     }
     
@@ -215,23 +210,19 @@ public class ExplorerBean implements Serializable {
                 }
                 case DictEditMode.INSERT_MODE:{
                     if (isItemTreeType(editItem) || isItemRootType(editItem)){
-                        addNewItemInTree(editItem, treeSelectedNode);
-                        onSelectInTree(treeSelectedNode);
+                        TreeNode newNode;                    
+                        if (editItem.getParent() == null){
+                            newNode = addNewItemInTree(editItem, tree);
+                        } else {
+                            newNode = addNewItemInTree(editItem, treeSelectedNode);
+                        }
+                        onSelectInTree(newNode);
                     }
                     break;
                 }
             }
             EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
         }        
-        if (isItemDetailType(editItem)){
-            tableBean.afterCloseItemCard();
-        } else
-            if (isItemTreeType(editItem)){
-                treeBean.afterCloseItemCard();
-            } else
-                if (isItemRootType(editItem)){
-                    rootBean.afterCloseItemCard();
-                }
         createParams.clear();
         reloadDetailsItems(); 
     }
@@ -635,7 +626,7 @@ public class ExplorerBean implements Serializable {
     public void setDetails(List<BaseDict> details, int source) {
         setSource(source);
         this.detailItems = details;
-        this.checkedItems.clear();
+        //this.checkedItems.clear();
     }        
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
@@ -762,10 +753,8 @@ public class ExplorerBean implements Serializable {
     }
     
     /* ДЕРЕВО: добавление нового объекта в дерево  */
-    public void addNewItemInTree(BaseDict item, TreeNode parentNode){        
-        if (item == null){
-            return;
-        }        
+    public TreeNode addNewItemInTree(BaseDict item, TreeNode parentNode){        
+        if (item == null){return null;}        
         if (parentNode == null){
             parentNode = tree;
         }
@@ -776,6 +765,7 @@ public class ExplorerBean implements Serializable {
         }
         TreeNode newNode = new DefaultTreeNode(type, item, parentNode);
         item.getChildItems().stream().forEach(child -> addNewItemInTree((BaseDict)child, newNode));
+        return newNode;
     }    
          
     /* ДЕРЕВО: удаление узла в дереве  */
@@ -908,6 +898,10 @@ public class ExplorerBean implements Serializable {
     /* КОПИРОВАНИЕ: вызов копирования объекта из таблицы обозревателя */
     public void onCopyItem(BaseDict item) {
         if (item == null){return;}
+        if (item.getId() == 0){
+            EscomBeanUtils.ErrorFormatMessage("Error", "ObjectNotCopied", new Object[]{item.getName()});
+            return;
+        }
         List<BaseDict> sourceItems = new ArrayList<>();
         sourceItems.add(item);
         doCopyItems(sourceItems);
@@ -915,7 +909,7 @@ public class ExplorerBean implements Serializable {
 
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
-        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem)).collect(Collectors.toSet());
+        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem)).collect(Collectors.toSet()); //копируем и сохраняем в copiedItems
         copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
     }
 
@@ -951,6 +945,7 @@ public class ExplorerBean implements Serializable {
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
     Реальный parent будет установлен в бине объекта */
     private List<BaseDict> doPasteItem(BaseDict parent, Set<String> errors) {
+        if (copiedItems == null){return null;}
         List<BaseDict> rezults = new ArrayList<>();
         copiedItems.stream().forEach(item -> {
             BaseDict pasteItem = sessionBean.doPasteItem(item, parent, errors);
@@ -1140,17 +1135,20 @@ public class ExplorerBean implements Serializable {
                 checkedItems.clear();
                 makeDragList(dragItem);
                 if (!checkedItems.isEmpty()){
+                    Set<String> errors = new HashSet<>();
                     //проверяем, что тянем, так как может быть тянем root, а это пока не допустимо!
-                    if (isItemTreeType(dragItem)){
-                        Set<String> errors = new HashSet<>();
+                    if (isItemTreeType(dragItem)){                        
                         // если тянем treeItem и бросаем в treeItem
                         if (treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
                             onShowMovedDlg("MoveTreeDlg");
-                        }
-                        if (!errors.isEmpty()) {
-                            EscomBeanUtils.showErrorsMsg(errors);
-                        } 
+                        }                       
+                    } else {
+                        String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName()});
+                        errors.add(error);
                     }
+                    if (!errors.isEmpty()) {
+                        EscomBeanUtils.showErrorsMsg(errors);
+                    } 
                 }
                 return;
             }
@@ -1399,6 +1397,7 @@ public class ExplorerBean implements Serializable {
     
     /* ПРОЧИЕ МЕТОДЫ */
     
+    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: Открытие формы администрирования */  
     public void onOpenAdmCardForm() {
         onOpenAdmCardForm(currentItem);
@@ -1537,8 +1536,8 @@ public class ExplorerBean implements Serializable {
         currentType = typeMixed;
     }
     
-    /* GET & SET */
-
+    /* GETS & SETS */
+   
     public BaseDict getCurrentItem() {
         return currentItem;
     }
@@ -1688,11 +1687,11 @@ public class ExplorerBean implements Serializable {
     public Deque getNavigator() {
         return navigator;
     }
-
+    
     public Map<String, Object> getCreateParams() {
         return createParams;
     }
-
+    
     public SearcheModel getModel() {
         return model;
     }

@@ -59,6 +59,20 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return !(target instanceof UserGroups);
     }
     
+    /* Установка специфичных атрибутов при создании нового пользователя  */
+    @Override
+    public void setSpecAtrForNewItem(User user, Map<String, Object> params) {
+    }
+    
+    @Override
+    protected void detectParentOwner(User user, BaseDict owner){
+        user.setOwner(null);
+        user.setParent(null);
+        if (!user.getUsersGroupsList().contains((UserGroups)owner)){
+            user.getUsersGroupsList().add((UserGroups)owner);            
+        } 
+    }
+        
     @Override
     public void preparePasteItem(User pasteItem, BaseDict recipient){
         if (!isNeedCopyOnPaste(pasteItem, recipient)){
@@ -72,16 +86,14 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     }
     
     @Override
-    public boolean addItemToGroup(User user, BaseDict targetGroup){
-        if (user == null || targetGroup == null){
-            return false;
-        }
-        if (!user.getUsersGroupsList().contains((UserGroups)targetGroup)){
-            user.getUsersGroupsList().add((UserGroups)targetGroup);
+    public boolean addItemToGroup(User user, BaseDict group){
+        if (group == null){ return false;}
+        
+        if (!user.getUsersGroupsList().contains((UserGroups)group)){
+            user.getUsersGroupsList().add((UserGroups)group);
             edit(user);
-            return true;
         }
-        return false;
+        return true;
     }           
     
     /**
@@ -218,11 +230,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         user.setFirstName(firstName);
         user.setSecondName(secondName);
         user.setLastName(lastName);
-    }
-
-    @Override
-    public Tuple<Integer, Integer> getFormSize() {
-        return new Tuple(900, 450);
     }
     
     @Override

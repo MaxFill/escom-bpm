@@ -3,10 +3,7 @@ package com.maxfill.escom.beans;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictDetailSource;
-import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.beans.explorer.ExplorerBean;
 import com.maxfill.model.filters.Filter;
@@ -14,9 +11,6 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.utils.ItemUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -65,7 +59,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         explorerBean.setDetails(details, source);
     }
     
-    /* *** ПРАВА ДОСТУПА ***  */
+    /* ПРАВА ДОСТУПА  */
     
     /* Объекты, имеющие владельца (owner), при включенном наследовании,
      * получают права от владельца. Например, контрагент, получает права от
@@ -97,10 +91,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             defaultMaskAccess = sessionBean.getAccessMask(state, rights, currentUser);
         }
         return defaultMaskAccess;
-    }          
-    
-    /* КАРТОЧКА: выполнение специфичных действий после закрытия карточки  */ 
-    public void afterCloseItemCard(){
     }
           
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
@@ -140,13 +130,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
 
-    /**
-     * РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину 
-     *     
-     * @param dragItem
-     * @param errors
-     * @return 
-     */
+    /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {        
         actualizeRightItem(dragItem);
         if (!isHaveRightDelete(dragItem)) {
@@ -157,13 +141,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
     
-    /**
-     * РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в
-     * @param errors
-     * @return не актуальные
-     *     
-     * @param dragItem
-     */
+    /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в не актуальные  */
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
         actualizeRightItem(dragItem);
         if (!sessionBean.isHaveRightEdit(dragItem)) {
@@ -462,31 +440,19 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
     
-    /**
-     * Инициализация дополнительных областей формы обозревателя
-     *
-     * @param layoutOptions
-     */
+    /* Инициализация дополнительных областей формы обозревателя */
     protected void initAddLayoutOptions(LayoutOptions layoutOptions) {
         EscomBeanUtils.initAddLayoutOptions(layoutOptions);
     }
 
-    /**
-     * Возвращает ширину диалога карточки объекта
-     *
-     * @return
-     */
+    /* Возвращает ширину диалога карточки объекта  */
     public Integer getWidthCardDlg() {
         return widthCardDlg;
     } 
     
-    /* *** АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ *** */
+    /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ */
    
-    /**
-     * АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. Переопределяется
-     * @param item
-     * @param rezult
-     */
+    /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */
     public void doGetCountUsesItem(T item, Map<String, Integer> rezult) {
         rezult.put("CheckObjectNotSet", 0);
     }

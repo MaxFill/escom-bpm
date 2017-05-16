@@ -1,6 +1,7 @@
 
 package com.maxfill.escom.beans.system.login;
 
+import com.maxfill.Configuration;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
@@ -40,16 +41,12 @@ import javax.xml.bind.JAXB;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 
-/**
- * Бин формы входа
- * @author mfilatov
- */
+/* Bean формы входа  */
 @Named
 @ViewScoped
 public class LoginBean implements Serializable{    
     private static final long serialVersionUID = 4390983938416752289L;
     protected static final Logger LOG = Logger.getLogger(LoginBean.class.getName());
-    private static final String LDAP_SERVER = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("LdapServer");
     
     private String userName;
     private String password;
@@ -64,27 +61,21 @@ public class LoginBean implements Serializable{
     private SessionBean sessionBean;
     @EJB 
     private UserFacade userFacade;
-            
-    public LoginBean() {
-    }
-
+    @EJB 
+    private Configuration configuration;
+        
     @PostConstruct
     public void init(){
         languages = new ArrayList<>();        
         languages.add(new CountryFlags(0, "en", "English"));
         languages.add(new CountryFlags(1, "ru", "Русский"));
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale(); 
+        Locale locale = sessionBean.getLocale(); 
         String localeLang = locale.getLanguage();
         for (CountryFlags language : languages){            
             if (Objects.equals(language.getName(), localeLang)){
                 selectedLang = language;
                 break;
             }
-        }
-        if (selectedLang == null){
-            ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-            String lang = (String) ectx.getInitParameter("Locale");
-            changeLocale(lang);
         }
     }
     
@@ -130,9 +121,7 @@ public class LoginBean implements Serializable{
         return targetPage;
     }
     
-    /**
-     * Инициализация текущего пользователя
-     */
+    /* Инициализация текущего пользователя */
     private void initCurrentUser(User user){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
@@ -143,19 +132,18 @@ public class LoginBean implements Serializable{
         UserSettings userSettings = new UserSettings();
         if (StringUtils.isNotBlank(user.getUserSettings())){
             userSettings = (UserSettings) JAXB.unmarshal(new StringReader(user.getUserSettings()), UserSettings.class);
-        }    
+        }
+        userSettings.setLanguage(selectedLang.getName());
         sessionBean.setUserSettings(userSettings);
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
         appBean.addBusyLicence(user, httpSession);
         LOG.log(Level.INFO, "User is login = {0}", userName);
     }
     
-    /**
-     * Проверка подключения к LDAP серверу
-     */
+    /* Проверка подключения к LDAP серверу  */
     private void checkLdapUser(Set<String> bundleKeys, RequestContext context){
         try {      
-            LdapUtils.initLDAP(userName, password, LDAP_SERVER);
+            LdapUtils.initLDAP(userName, password, configuration.getLdapServer());
         } catch (AuthenticationException e){
             bundleKeys.add("BadUserOrPassword");
             makeCountErrLogin(context, bundleKeys);
@@ -166,21 +154,13 @@ public class LoginBean implements Serializable{
         }
     }
     
-    /**
-     * Проверка корректности пароля
-     * @param user
-     * @return
-     * @throws NoSuchAlgorithmException 
-     */
+    /* Проверка корректности пароля */
     private boolean isIncorrectPassword(User user) throws NoSuchAlgorithmException{
         password = EscomUtils.encryptPassword(password.trim());
         return !Objects.equals(password, user.getPassword());
     }
     
-    /**
-     * Вывод сообщения об ошибке
-     * @param bundleKey 
-     */
+    /* Вывод сообщения об ошибке  */
     private String showErrMsg(Set<String> bundleKeys, RequestContext context){          
         for (String bundleKey : bundleKeys){
             EscomBeanUtils.ErrorMsgAdd("Error", bundleKey, "");
@@ -189,11 +169,7 @@ public class LoginBean implements Serializable{
         return "";
     }
     
-    /**
-     * Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок
-     * @param context
-     * @param bundleKeys 
-     */
+    /* Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок  */
     private void makeCountErrLogin(RequestContext context, Set<String> bundleKeys){
         countErrLogin++;
         if (isLoginLock()){
@@ -202,17 +178,19 @@ public class LoginBean implements Serializable{
         } 
     }
     
-    /**
-     * Сброс счётчика количества неудачных попыток входа 
-     */
+    /* Сброс счётчика количества неудачных попыток входа  */
     public void resetLoginLock(){
         countErrLogin = 0;
     }
-            
+      
+    /* Установка локали */
+    public void changeLocale(){
+        sessionBean.changeLocale(selectedLang.getName());
+    }
+    
     public String getUserName() {
         return userName;
     }
-
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -243,25 +221,13 @@ public class LoginBean implements Serializable{
     public CountryFlags getSelectedLang() {
         return selectedLang;
     }
-
     public void setSelectedLang(CountryFlags selectedLang) {
         this.selectedLang = selectedLang;
-    }
-    
-    /**
-     * Установка локали
-     */
-    public void changeLocale(){
-        changeLocale(selectedLang.getName());
-    }
-    private void changeLocale(String lang){
-        FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(lang));
-    }
+    }    
 
     public String getTargetPage() {
         return targetPage;
     }
-
     public void setTargetPage(String targetPage) {
         this.targetPage = targetPage;
     }

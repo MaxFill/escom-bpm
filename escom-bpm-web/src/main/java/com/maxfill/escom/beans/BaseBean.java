@@ -143,7 +143,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         }
     }    
 
-    /* *** ВЛОЖЕНИЯ *** */
+    /* ВЛОЖЕНИЯ */
     
     /**
      * Просмотр вложения

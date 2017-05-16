@@ -48,7 +48,6 @@ public class Licence implements Serializable{
     public String getVersionNumber() {
         return versionNumber;
     }
-
     public void setVersionNumber(String versionNumber) {
         this.versionNumber = versionNumber;
     }
@@ -56,7 +55,6 @@ public class Licence implements Serializable{
     public String getReleaseNumber() {
         return releaseNumber;
     }
-
     public void setReleaseNumber(String releaseNumber) {
         this.releaseNumber = releaseNumber;
     }  
@@ -64,7 +62,6 @@ public class Licence implements Serializable{
     public String getLicenceNumber() {
         return licenceNumber;
     }
-
     public void setLicenceNumber(String licenceNumber) {
         this.licenceNumber = licenceNumber;
     }

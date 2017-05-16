@@ -10,7 +10,7 @@
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="createRootTreeCardBtn" action="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
+    <p:commandButton id="createRootCardBtn" action="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
@@ -59,6 +59,8 @@
                             rendered="#{explorerBean.selectorViewMode}"
                             action="#{_treeBean.onSelectTreeItem()}"/>
                 <p:separator rendered="#{explorerBean.selectorViewMode}"/>
+                <p:menuitem icon="ui-icon-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
+                            oncomplete="document.getElementById('#{_frmTree}:createRootCardBtn').click();"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
                             oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>
                 <p:separator />

@@ -14,7 +14,7 @@ public final class DictObjectName {
     public static final String DOC_TYPE = "DocType";
     public static final String DOC_TYPE_GROUPS = "DocTypeGroups";
     public static final String DOC_STATUS = "DocStatus";
-    public static final String FOLDER = "Folders";
+    public static final String FOLDER = "Folder";
     public static final String USER = "User";
     public static final String USER_GROUP = "UserGroups";
     public static final String STATE = "State";
@@ -27,6 +27,6 @@ public final class DictObjectName {
     public static final String METADATE = "Metadates";
     public static final String NUMERATOR_PATTERN = "NumeratorPattern";
     public static final String PARTNER_TYPES = "PartnerTypes";
-    public static final String FILTERS = "Filters";
+    public static final String FILTERS = "Filter";
     
 }

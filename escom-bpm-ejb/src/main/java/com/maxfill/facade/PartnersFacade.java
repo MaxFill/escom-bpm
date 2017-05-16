@@ -152,15 +152,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         if (!isNeedCopyOnPaste(pasteItem, recipient)){
             addItemToGroup(pasteItem, recipient);
         }
-    } 
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
-        String code = (String) addParams.get("codeSearche");
-        if (StringUtils.isNotBlank(code)){
-            predicates.add(builder.like(root.<String>get("code"), code));            
-        }
-    }
+    }     
     
     @Override
     protected Integer getMetadatesObjId() {

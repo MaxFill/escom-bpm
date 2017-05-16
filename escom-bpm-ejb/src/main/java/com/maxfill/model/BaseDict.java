@@ -167,10 +167,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @XmlTransient
     private Rights rightForChild; //права для дочерних объектов 
     
-    /**
-     * Права доступа к подчинённому объекту в виде строки в xml
-     * Применятеся в папках для хранения специфичных прав доступа к документам данной папки
-     */
+    /*  Права доступа к подчинённому объекту в виде строки в xml */
     @Transient
     @XmlTransient
     private String xmlAccessChild;

@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  Контрагенты
@@ -47,9 +48,11 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }    
 
     @Override
-    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<PartnerGroups> searcheGroups, Map<String, Object> addParams){
-       addParams.put("codeSearche", codeSearche); 
-       super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<PartnerGroups> searcheGroups, Map<String, Object> addParams){        
+        if (StringUtils.isNotBlank(codeSearche)){
+            paramLIKE.put("codeSearche", codeSearche); 
+        }
+        super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
     }
     
     @Override

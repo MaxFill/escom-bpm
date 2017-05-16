@@ -166,6 +166,9 @@
                 <p:outputPanel id="aboutPanel" style="width: 600px; height: 400px;">
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                            <p:outputLabel value="#{bundle.LicenceNumber}"/>
+                            <p:inputText value="#{applicationBean.licence.licenceNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+                            
                             <p:outputLabel value="#{bundle.Version}"/>
                             <p:inputText value="#{applicationBean.licence.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
@@ -181,18 +184,24 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:outputLabel value="#{bundle.LicenceTypeName}"/>
                             <p:inputText value="#{applicationBean.licence.licenceName}" readonly="true" styleClass="ui-grid-col-12"/>
+                            
                             <p:outputLabel value="#{bundle.LicenceTotal}"/>
                             <p:inputText value="#{applicationBean.licence.totalLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            
                             <p:outputLabel value="#{bundle.LicenceBusy}"/>
                             <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            
                             <p:outputLabel value="#{bundle.TermLicense}"/>
                             <p:inputText value="#{applicationBean.licence.termLicence}" readonly="true" styleClass="ui-grid-col-12"/>
                         </p:panelGrid>
                     </p:panelGrid>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/>                                                   
-                            <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
+                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/> 
+                            <h:panelGrid columns="2" styleClass="ui-grid-col-12">
+                                <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"/>
+                                <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
+                            </h:panelGrid>
                         </p:panelGrid>
                     </p:panelGrid>
                 </p:outputPanel>

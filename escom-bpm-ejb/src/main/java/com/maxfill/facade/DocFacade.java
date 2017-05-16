@@ -186,15 +186,6 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     public void preparePasteItem(Doc pasteItem, BaseDict target){        
         pasteItem.setOwner((Folder)target);
     }
-    
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
-        String numberSearche = (String) addParams.get("numberSearche");
-        if (StringUtils.isNotBlank(numberSearche)){
-            //Join<Doc, Post> postJoin = root.join(Staff_.post);
-            predicates.add(builder.like(root.<String>get("number"), numberSearche));            
-        }
-    }
 
     @Override
     protected Integer getMetadatesObjId() {

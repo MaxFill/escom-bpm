@@ -6,18 +6,24 @@
 package com.maxfill.utils;
 
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *
- * @author mfilatov
- * @param <A>
- * @param <B>
- */
+/* Tuple  */
+@XmlRootElement
+@XmlAccessorType (XmlAccessType.FIELD)
 public class Tuple <A, B> implements Serializable{
+    private static final long serialVersionUID = -684701906433187859L;
+    
+    @XmlElement(name = "ParamA")
+    public A a;
+    @XmlElement(name = "ParamB")
+    public B b;
 
-    public final A a;
-    public final B b;
-
+    public Tuple() {
+    }
     public Tuple(A a, B b) {
         this.a = a;
         this.b = b;

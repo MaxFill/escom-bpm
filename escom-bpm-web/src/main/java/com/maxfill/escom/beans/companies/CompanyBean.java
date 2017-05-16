@@ -91,41 +91,29 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* КОНТЕНТ: формирование контента компании */     
     @Override
     public List<BaseDict> makeGroupContent(Company company) {
-        Rights docRights = getChildRights();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
         List<Department> departments = departmentFacade.findDetailItems(company);        
         departments.stream()
-                .forEach(fl -> addDepartmentInCnt(fl, cnt, docRights)
+                .forEach(department -> addDepartmentInCnt(department, cnt)
         );        
         //загружаем в контент штатные единицы
         List<Staff> staffs = staffFacade.findStaffByCompany(company, null);
         staffs.stream().
-                forEach(staff -> addStaffInCnt(staff, cnt, docRights)
+                forEach(staff -> addStaffInCnt(staff, cnt)
         );
         return cnt;
     }
     
-    /**
-     * КОНТЕНТ: добавляет подразделение в контент
-     * @param department
-     * @param cnts
-     * @param defChildRight
-     * @return 
-     */ 
-    private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts, Rights defChildRight) {
+    /* КОНТЕНТ: добавляет подразделение в контент  */ 
+    private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
         cnts.add(department);
     }
 
-    /**
-     * КОНТЕНТ: добавляет штатную единицу в контент
-     * @param staff
-     * @param cnts
-     * @param defChildRight
-     */ 
-    public void addStaffInCnt(Staff staff, List<BaseDict> cnts, Rights defChildRight) {
+    /* КОНТЕНТ: добавляет штатную единицу в контент  */ 
+    public void addStaffInCnt(Staff staff, List<BaseDict> cnts) {
         /*
         Rights rd = defDocRight;
         if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам

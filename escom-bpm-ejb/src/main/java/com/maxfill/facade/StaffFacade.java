@@ -98,13 +98,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
             }
     }
     
-    /**
-     * Создание новой штатной единицы
-     * @param department
-     * @param post
-     * @param user
-     * @return 
-     */
+    /* Создание новой штатной единицы  */
     public Staff createStaff(Department department, Post post, User user){
         if (department == null || post == null || user == null){
             return null;
@@ -119,13 +113,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return staff; 
     }
     
-    /**
-     * Обновление штатной единицы
-     * @param staff
-     * @param department
-     * @param post
-     * @param user 
-     */
+    /* Обновление штатной единицы */
     public void updateStaff(Staff staff, Department department, Post post, User user){
         boolean isChange = false;
         if (department != null && !Objects.equals(department, staff.getOwner())){
@@ -160,11 +148,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return q.getResultList(); 
     }
     
-    /**
-     * Поиск штатных единиц по должности
-     * @param post 
-     * @return  
-     */
+    /* Поиск штатных единиц по должности */
     public List<Staff> findStaffByPost(Post post){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -176,11 +160,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return q.getResultList(); 
     }
     
-    /**
-     * Поиск штатных единиц по пользователю
-     * @param user 
-     * @return  
-     */
+    /* Поиск штатных единиц по пользователю */
     public List<Staff> findStaffsByUser(User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -192,12 +172,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return q.getResultList(); 
     }
     
-    /**
-     * Поиск штатных единиц, принадлежащих компании и входящих в указанное подразделение
-     * @param company
-     * @param department
-     * @return 
-     */
+    /* Поиск штатных единиц, принадлежащих компании и входящих в указанное подразделение */
     public List<Staff> findStaffByCompany(Company company, Department department){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -215,12 +190,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return q.getResultList();
     }
     
-    /**
-     * Процедура замены штатной единицы в связанных с ней объектах
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Процедура замены штатной единицы в связанных с ней объектах  */
     @Override
     public Map<String, Integer> replaceItem(Staff oldItem, Staff newItem) {
         Map<String, Integer> rezultMap = new HashMap<>();
@@ -229,12 +199,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return rezultMap;
     }
 
-    /**
-     * Замена штатной единицы в документах
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Замена штатной единицы в документах */
     private int replaceStaffInDocs(Staff oldItem, Staff newItem){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
@@ -246,12 +211,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         return query.executeUpdate();
     }
     
-    /**
-     * Замена штатной единицы в пользователях
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Замена штатной единицы в пользователях */
     private int replaceStaffInUsers(Staff oldItem, Staff newItem){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);    

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T , O > {
     private static final long serialVersionUID = -2983279513793115056L;    
     
-    private Rights childRights;
+    private Rights defaultRightsChilds;
     private BaseExplBean ownerBean;
     private BaseExplBean detailBean;           
         
@@ -88,11 +88,11 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     
     /* GETS & SETS */
     
-    public Rights getChildRights() {
-        return childRights;
+    public Rights getDefaultRightsChilds() {
+        return defaultRightsChilds;
     }
-    public void setChildRights(Rights childRights) {
-        this.childRights = childRights;
+    public void setDefaultRightsChilds(Rights childRights) {
+        this.defaultRightsChilds = childRights;
     }
     
     @Override

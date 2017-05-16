@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">    
     <context-param>
-        <param-name>LdapServer</param-name>
-        <param-value>ldap://192.168.0.100:389</param-value>
-    </context-param>
-    <context-param>
-        <param-name>DefSenderEmail</param-name>
-        <param-value>test@test.ru</param-value>
-    </context-param>
-    <context-param>
         <param-name>primefaces.THEME</param-name>
         <param-value>#{sessionBean.primefacesTheme} </param-value>
     </context-param>
@@ -21,20 +13,12 @@
         <param-value>Development</param-value>
     </context-param>
     <context-param>
-        <param-name>Locale</param-name>
-        <param-value>ru</param-value>
-    </context-param>
-    <context-param>
         <param-name>Version</param-name>
         <param-value>1.01</param-value>
     </context-param>
     <context-param>
         <param-name>Release</param-name>
         <param-value>1</param-value>
-    </context-param>
-    <context-param>
-        <param-name>LicenceNumber</param-name>
-        <param-value>322-444-555-44.01</param-value>
     </context-param>
     <context-param>
         <param-name>LastUpdate</param-name>
@@ -45,11 +29,11 @@
         <param-value>true</param-value>
     </context-param>
     <filter>
-        <filter-name>rrr</filter-name>
+        <filter-name>RedirectFilter</filter-name>
         <filter-class>com.maxfill.escom.system.RedirectFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>rrr</filter-name>
+        <filter-name>RedirectFilter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
     <listener>

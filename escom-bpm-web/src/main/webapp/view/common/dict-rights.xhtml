@@ -10,8 +10,7 @@
             padding-bottom: 2px !important;
             padding-top: 2px !important;
         }
-    </style>
-    
+    </style>    
     
     <p:tab title="#{bundle.Rights}" rendered="#{_bean.editedItem != null}">
      
@@ -52,14 +51,14 @@
                                 <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
                             </p:column>
                             <p:column headerText="#{bundle.Commands}" >
-                                <p:panelGrid columns="2" columnClasses="col-padding" styleClass="col-padding">
-                                    <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
+                                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding" styleClass="col-padding">
+                                    <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" styleClass="without-spaces"
                                                    disabled="#{_bean.editedItem.inherits}"
                                                    actionListener="#{_bean.onEditRight(right)}" >
                                         <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:groupRight"
                                             listener="#{_bean.onCloseRightCard}"/>
                                     </p:commandButton>
-                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
                                                 disabled="#{_bean.editedItem.inherits}"
                                                 actionListener="#{_bean.onDeleteRight(right)}" 
                                                 update="#{_frm}:mainTabView:groupRight">

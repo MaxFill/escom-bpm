@@ -20,6 +20,8 @@ import javax.faces.event.ValueChangeEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.primefaces.event.ResizeEvent;
+import org.primefaces.extensions.component.layout.LayoutPane;
 
 /* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
@@ -32,7 +34,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private T editedItem;                       //редактируемый объект 
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
     
-    /* Действия перед сохранением объекта переопределяются  */
+    /* Действия перед сохранением объекта  */
     protected void onBeforeSaveItem(T item) {
     }
 
@@ -40,6 +42,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     @Override
     public void onInitBean(){
+        EscomBeanUtils.initCardLayout(cardLayoutOptions);
     }
     
     /* При открытии карточки объекта */
@@ -52,19 +55,26 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             setTypeEdit(tuple.a);
             setEditedItem(item);            
 
+            //если создание!
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
                 addOwnerInGroups(item); //owner_а нужно добавить в группу
                 afterCreateItem(item);
                 checkCorrectItemRight(item);
             }
 
-            List<Right> itemRights = item.getRightItem().getRights();
-            rightFacade.prepareRightsForView(itemRights);
+            prepareRightsForView(item);
+
             if (getEditedItem().getItemLogs() != null) {
                 getEditedItem().getItemLogs().size();
             }
             doPrepareOpen(item);
         }
+    }
+    
+    /* Подготовка прав доступа к визуализации */
+    protected void prepareRightsForView(T item){
+        List<Right> itemRights = item.getRightItem().getRights();
+        rightFacade.prepareRightsForView(itemRights);
     }
     
     /* Специфические действия перед открытием карточки */
@@ -165,7 +175,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         RequestContext.getCurrentInstance().closeDialog(null);        
         return "/view/index?faces-redirect=true";
     }
-
+    
+    /* Получение и сохранение размеров формы */
+    public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
+        Double x = event.getWidth() + 14;
+        Double y = event.getHeight() + 14;
+        sessionBean.saveFormSize(getItemObjName(), x, y);
+    }
+     
     /* Сброс блокировок объекта  */
     private void clearLockItem(){
         T item = getEditedItem();
@@ -246,7 +263,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         Rights rights = item.getRightItem();
         for (Right right : rights.getRights()){
             if (right.isUpdate()){
-                EscomBeanUtils.SuccesMsgAdd("Successfully", "RightsSettingCorrect");
                 return;
             }
         }        
@@ -357,7 +373,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }    
 
     public String getItemObjName(){
-        return getItemFacade().getFRM_NAME();
+        return getItemFacade().getFRM_NAME().toLowerCase();
     }
     
     /* GET & SET  */

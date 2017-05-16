@@ -77,9 +77,9 @@
                     </f:facet>
 
                     <h:form id="#{_frmExpl}" style="font-size: 80%;">
-                        <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmExpl}" oncomplete="initDND()"/>                     
-                        <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmExpl}" oncomplete="initDND()"/>   
+                        <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
+                        <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                     
+                        <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>   
 
                         <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;"> 
                             <p:ajax event="dialogReturn" 

@@ -1,6 +1,7 @@
 
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.licence.Licence;
 import com.maxfill.model.users.User;
@@ -11,7 +12,6 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -27,10 +27,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author mfilatov
- */
 @Named
 @ApplicationScoped
 public class ApplicationBean implements Serializable{
@@ -43,6 +39,8 @@ public class ApplicationBean implements Serializable{
     private RightFacade rightFacade;
     @EJB
     private MetadatesFacade metadatesFacade;
+    @EJB
+    private Configuration configuration;
     
     //открытые сессии пользователей
     private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
@@ -57,13 +55,12 @@ public class ApplicationBean implements Serializable{
     @PostConstruct
     public void init() {
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-        licence = new Licence();
+        licence = configuration.getLicence();
         licence.setVersionNumber(ectx.getInitParameter("Version"));
         licence.setReleaseNumber(ectx.getInitParameter("Release"));
-        licence.setLicenceNumber(ectx.getInitParameter("LicenceNumber")); //TODO передалать получение!
         licence.setDateUpdate(DateUtils.strLongToDate(ectx.getInitParameter("LastUpdate")));
         licence.setTotalLicence(5); //TODO надо откуда то получать!
-        licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType")); 
+        licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType")); //TODO надо откуда то получать!
         loadDefaultRights();
     }
     
@@ -147,6 +144,8 @@ public class ApplicationBean implements Serializable{
         itemsLock.values().removeIf(value -> value.equals(user.getId()));        
     }        
     
+    /* ЛИЦЕНЗИРОВАНИЕ */
+    
     /**
      * Добавление занятой лицензии
      * @param user
@@ -208,6 +207,7 @@ public class ApplicationBean implements Serializable{
     }
                 
     /* GET & SET */
+    
     public Boolean getNeedUpadateSystem() {
         return needUpadateSystem;
     }

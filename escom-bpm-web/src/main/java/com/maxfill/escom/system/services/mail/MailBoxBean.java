@@ -4,6 +4,7 @@ package com.maxfill.escom.system.services.mail;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.mail.Mailbox;
 import com.google.gson.Gson;
+import com.maxfill.Configuration;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.facade.DocFacade;
@@ -43,7 +44,6 @@ public class MailBoxBean implements Serializable{
     private static final String ATTACHE_MODE = "asAttache";
     private static final String LINK_MODE = "asLink";
     private final LayoutOptions layoutOptions = new LayoutOptions(); 
-    private static final String DEFAULT_SENDER = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("DefSenderEmail");
         
     @Inject
     private SessionBean workPlaceBean;
@@ -51,6 +51,8 @@ public class MailBoxBean implements Serializable{
     private MailBoxFacade mailBoxFacade;
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private Configuration configuration;
     
     private Mailbox selected;
     private List<Attaches> attaches = new ArrayList<>();
@@ -61,7 +63,7 @@ public class MailBoxBean implements Serializable{
     public void init(){
         String senderEmail = workPlaceBean.getCurrentUser().getEmail();
         if (StringUtils.isBlank(senderEmail)){
-            senderEmail = DEFAULT_SENDER;
+            senderEmail = configuration.getDefaultSenderEmail();
         }
         selected = new Mailbox();
         selected.setActual(true);

@@ -91,8 +91,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
                 addGroups.add(group);
             }
             if(item.getOwner() == null){
-                group = getOwnerAndAddGroups(item, group);
-                item.setOwner(group);
+                getOwnerAndAddGroups(item, group);
             }
             setIsItemChange(Boolean.TRUE);
         }
