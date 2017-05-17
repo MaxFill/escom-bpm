@@ -4,13 +4,9 @@ package com.maxfill.facade;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.filters.FilterLog;
-import java.util.Map;
 import javax.ejb.Stateless;
 
-/**
- *
- * @author mfilatov
- */
+/* Фильтры */
 @Stateless
 public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog> {
 
@@ -29,7 +25,7 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog> {
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Filter oldItem, Filter newItem) {
+    public void replaceItem(Filter oldItem, Filter newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

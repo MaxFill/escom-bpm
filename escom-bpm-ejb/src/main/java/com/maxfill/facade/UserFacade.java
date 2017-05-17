@@ -31,10 +31,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 
-/**
- *
- * @author Maxim
- */
+/* Пользователи */
 @Stateless
 public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     protected static final Logger LOG = Logger.getLogger(UserFacade.class.getName());    
@@ -52,12 +49,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     public UserFacade() {
         super(User.class, UserLog.class);
     }
-
-    /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
-    @Override
-    public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target){
-        return !(target instanceof UserGroups);
-    }
     
     /* Установка специфичных атрибутов при создании нового пользователя  */
     @Override
@@ -65,42 +56,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     }
     
     @Override
-    protected void detectParentOwner(User user, BaseDict owner){
-        user.setOwner(null);
-        user.setParent(null);
-        if (!user.getUsersGroupsList().contains((UserGroups)owner)){
-            user.getUsersGroupsList().add((UserGroups)owner);            
-        } 
-    }
-        
-    @Override
-    public void preparePasteItem(User pasteItem, BaseDict recipient){
-        if (!isNeedCopyOnPaste(pasteItem, recipient)){
-            addItemToGroup(pasteItem, recipient);        
-        }
-    }  
-    
-    @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();
-    }
+    }        
     
-    @Override
-    public boolean addItemToGroup(User user, BaseDict group){
-        if (group == null){ return false;}
-        
-        if (!user.getUsersGroupsList().contains((UserGroups)group)){
-            user.getUsersGroupsList().add((UserGroups)group);
-            edit(user);
-        }
-        return true;
-    }           
-    
-    /**
-     * Ищет пользователя по login
-     * @param login
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
+    /* Ищет пользователя по login  */
     public List<User> findByLogin(String login){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -133,11 +93,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return q.getResultList();
     }
     
-    /**
-     * Ищет пользователей по Staff
-     * @param staff
-     * @return 
-     */
+    /* Ищет пользователей по Staff  */
     public List<User> findUsersByStaff(Staff staff){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -149,10 +105,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         return q.getResultList();
     }
     
-    /**
-     * Создание пользователя из службы интеграции с LDAP
-     * @param ldapUser
-     */
+    /* Создание пользователя из службы интеграции с LDAP  */
     public void createUserFromLDAP(LdapUsers ldapUser){
         Post post = postFacade.onGetPostByName(ldapUser.getPost());
         Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany());
@@ -195,7 +148,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     
     /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
-        User user = createItem(mainGroup, getAdmin());
+        User user = createItem(getAdmin());
         onUpdateUserFIO(user, name);
         user.setLogin(login);
         user.setPhone(phone);
@@ -238,7 +191,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     }
 
     @Override
-    public Map<String, Integer> replaceItem(User oldItem, User newItem) {
+    public void replaceItem(User oldItem, User newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

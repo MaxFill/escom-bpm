@@ -247,7 +247,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Doc doc = getEditedItem();        
         if (doc != null){
             actualizeRightItem(doc);
-            if (sessionBean.isHaveRightView(doc)) {
+            if (isHaveRightView(doc)) {
                 Attaches attache = attacheService.findAttacheByDoc(doc);                               
                 if (attache != null){
                     attacheDownLoad(attache);                    
@@ -436,7 +436,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public List<State> getStates() {
         if (states == null){
             states = stateFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return states;
@@ -445,7 +445,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public List<Company> getCompanies() {
         if (companies == null){
             companies = companyFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return companies;
@@ -454,7 +454,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public List<DocType> getDocTypes() {
         if (docTypes == null){
             docTypes = docTypeFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return docTypes;
@@ -463,7 +463,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public List<Staff> getStaffs() {
         if (staffs == null) {
             staffs = staffFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return staffs;
@@ -472,7 +472,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public List<Partner> getPartners() {
         if (partners == null){
             partners = partnersFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return partners;

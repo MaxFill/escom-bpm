@@ -20,8 +20,6 @@ import javax.faces.event.ValueChangeEvent;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.primefaces.event.ResizeEvent;
-import org.primefaces.extensions.component.layout.LayoutPane;
 
 /* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
@@ -101,8 +99,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {
-                    sessionBean.settingRightItem(item, item.getRightItem());
-                    sessionBean.settingRightForChild(item, item.getRightForChild());
+                    settingRightItem(item, item.getRightItem());
+                    settingRightForChild(item, item.getRightForChild());
                     getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
                     getItemFacade().edit(item);
                     break;
@@ -191,11 +189,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         appBean.deleteLockItem(itemKey);        //удаление из буфера заблокированных объектов
     }
 
-    /**
-     * Изменение страницы аккардиона с правами доступа на карточке объекта
-     *
-     * @param event
-     */
+    /* Изменение страницы аккардиона с правами доступа на карточке объекта */
     public void onRightTabChange(TabChangeEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
         Map<String, String> params = context.getExternalContext().getRequestParameterMap();
@@ -205,28 +199,18 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setRightPageIndex(tabId);
     }
 
-    /**
-     * ПЕЧАТЬ: Подготовка бланка объекта для печати. Вызов с печатной формы
-     */
+    /* ПЕЧАТЬ: Подготовка бланка объекта для печати. Вызов с печатной формы */
     public void onPreViewItemCard() {
         printService.doPrint(getEditedItem());
     }
 
-    /**
-     * ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту 
-     *
-     * @param state
-     */
+    /* ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         //getSessionBean().addSourceBean(this.toString(), this);
         EscomBeanUtils.openRightCard(DictEditMode.INSERT_MODE, state, "");
     }
     
-    /**
-     * ПРАВА ДОСТУПА: открытие карточки для редактирования права объекта 
-     *
-     * @param right
-     */
+    /* ПРАВА ДОСТУПА: открытие карточки для редактирования права объекта  */
     public void onEditRight(Right right) {
         Integer hashCode = right.hashCode();
         String keyRight = hashCode.toString();
@@ -234,11 +218,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         EscomBeanUtils.openRightCard(DictEditMode.EDIT_MODE, right.getState(), keyRight);
     }      
     
-    /**
-     * ПРАВА ДОСТУПА: удаление права из редактируемого объекта
-     *
-     * @param right
-     */
+    /* ПРАВА ДОСТУПА: удаление права из редактируемого объекта  */
     public void onDeleteRight(Right right) {
         getEditedItem().getRightItem().getRights().remove(right);
         setIsItemChange(true);
@@ -291,12 +271,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* ПРАВА ДОСТУПА: */
     public boolean isHaveRightChangeRight() {
-        return sessionBean.checkMaskRightChangeRight(editedItem);                
+        return isHaveRightChangeRight(editedItem);                
     }
     
     /* ПРАВА ДОСТУПА: */ 
     public boolean isHaveRightEdit() {
-        return sessionBean.isHaveRightEdit(editedItem);                
+        return isHaveRightEdit(editedItem);                
     }    
     
     /* ПРОЧИЕ МЕТОДЫ */
@@ -305,8 +285,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void onInheritsChange(ValueChangeEvent event) {
         Boolean inherits = (Boolean) event.getNewValue();
         if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
-            Rights rights = sessionBean.getRightItem(getEditedItem());
-            sessionBean.settingRightItem(getEditedItem(), rights);
+            Rights rights = getRightItem(getEditedItem());
+            settingRightItem(getEditedItem(), rights);
             rightFacade.prepareRightsForView(rights.getRights());
             EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
         }

@@ -49,7 +49,7 @@ public class StateFacade extends BaseDictFacade<State, State, StateLog> {
     }
 
     @Override
-    public Map<String, Integer> replaceItem(State oldItem, State newItem) {
+    public void replaceItem(State oldItem, State newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

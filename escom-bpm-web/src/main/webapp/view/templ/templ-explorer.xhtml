@@ -18,14 +18,9 @@
 
         #{_treeBean != null ? _treeBean.setDetailBean(_detailBean) : ''}
         #{_treeBean != null ? _treeBean.setOwnerBean(_rootBean) : ''}
-        #{_treeBean != null ? _treeBean.setExplorerBean(explorerBean) : ''}
-
         #{_treeBean != null ? _detailBean.setOwnerBean(_treeBean) : ''}
-        #{_detailBean.setExplorerBean(explorerBean)}
 
-
-        #{_rootBean != null ? _rootBean.setDetailBean(_treeBean) : ''} <!-- это установка бина верхнего уровня Company для Department -->
-        #{_rootBean != null ? _rootBean.setExplorerBean(explorerBean) : ''}
+        #{_rootBean != null ? _rootBean.setDetailBean(_treeBean) : ''} <!-- это установка бина верхнего уровня, например Company для Department -->
         
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
@@ -50,13 +45,7 @@
         <pe:layout fullPage="true" options="#{_detailBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <h:outputScript library="js" name="drag-drop.js" />
 
-            <pe:layoutPane position="north" resizable="true" rendered="#{_detailBean.northVisible}">
-                <h:form style="font-size: 90%;">
-                    <ui:insert name="north"/>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position="west" resizable="true" rendered="#{_detailBean.westVisible}">
+            <pe:layoutPane position="west" resizable="true">
                 <f:facet name="header">
                     <p:outputLabel value="#{bundle.Sections}" />
                 </f:facet>
@@ -105,7 +94,7 @@
                 </pe:layoutPane> 
             </pe:layoutPane>
 
-            <pe:layoutPane position="east" resizable="true" rendered="#{_detailBean.eastVisible}" >
+            <pe:layoutPane position="east" resizable="true" >
                 <f:facet name="header">  
                     <p:outputLabel value="#{bundle.Searche}" />
                 </f:facet> 

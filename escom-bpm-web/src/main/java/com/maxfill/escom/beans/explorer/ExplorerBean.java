@@ -14,9 +14,13 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.SysParams;
 import com.maxfill.utils.Tuple;
+import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
@@ -44,8 +48,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import org.apache.commons.lang.StringUtils;
-import org.primefaces.extensions.component.layout.LayoutPane;
+import org.primefaces.model.UploadedFile;
 
 /* Контролер формы обозревателя */
 @Named
@@ -63,7 +68,7 @@ public class ExplorerBean implements Serializable {
     private static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     private static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     private static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
-            
+          
     @Inject
     private SessionBean sessionBean;
     
@@ -119,12 +124,18 @@ public class ExplorerBean implements Serializable {
     private Integer source = DictDetailSource.TREE_SOURCE;
     private Integer viewMode;          //режим отображения формы
     private Integer selectMode;        //режим выбора для селектора            
+    private Integer selectedDocId;      //при открытии обозревателя документов в это поле заносится параметр id документа для открытия
         
     @PostConstruct
-    public void init() {
-        model = new SearcheModel();
+    public void init() {        
+        System.out.println("Создан explorerBean");
     }
-        
+     
+    @PreDestroy
+    private void destroy(){
+        System.out.println("Удалён explorerBean");
+    }
+    
     /* Cобытие при открытии формы обозревателя/селектора  */
     public void onOpen(){
         if (viewMode == null){
@@ -172,7 +183,7 @@ public class ExplorerBean implements Serializable {
                 owner = selected;
             }
         typeEdit = DictEditMode.INSERT_MODE;        
-        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeTree, createParams);
+        editItem = sessionBean.prepCreateItem(parent, owner, typeTree, createParams);
     }
     
     /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне */
@@ -180,7 +191,7 @@ public class ExplorerBean implements Serializable {
         BaseDict owner = null;
         BaseDict parent = null;
         typeEdit = DictEditMode.INSERT_MODE;
-        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeRoot, createParams);
+        editItem = sessionBean.prepCreateItem(parent, owner, typeRoot, createParams);
     }
     
     /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
@@ -191,7 +202,7 @@ public class ExplorerBean implements Serializable {
         if (treeSelectedNode != null){
             owner = (BaseDict) treeSelectedNode.getData();
         }
-        editItem = sessionBean.createItemAndOpenCard(parent, owner, typeDetail, createParams);   
+        editItem = sessionBean.prepCreateItem(parent, owner, typeDetail, createParams);   
     }
     
     /* КАРТОЧКИ: обработка после закрытия карточки  */
@@ -520,18 +531,20 @@ public class ExplorerBean implements Serializable {
             return;
         }
         doMakeFilterJurnalHeader(node, filter);                   
+        List<BaseDict> result = null;
         if (node.getType().equals(typeDetail)){
-            tableBean.makeFilteredContent(filter);
+            result = tableBean.makeFilteredContent(filter);                    
             setCurrentViewModeDetail();
         } else
             if (node.getType().equals(typeTree)){
-                treeBean.makeFilteredContent(filter);
+                result = treeBean.makeFilteredContent(filter);
                 setCurrentViewModeTree();
             } else
                 if (node.getType().equals(typeRoot)){
-                    rootBean.makeFilteredContent(filter);
+                    result = rootBean.makeFilteredContent(filter);
                     setCurrentViewModeRoot();
                 }
+        setDetails(result, DictDetailSource.FILTER_SOURCE);
     }
 
     /* ФИЛЬТР: формирование заголовка журнала для разделов фильтров */
@@ -626,7 +639,6 @@ public class ExplorerBean implements Serializable {
     public void setDetails(List<BaseDict> details, int source) {
         setSource(source);
         this.detailItems = details;
-        //this.checkedItems.clear();
     }        
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
@@ -710,10 +722,10 @@ public class ExplorerBean implements Serializable {
         currentItem = (BaseDict) treeSelectedNode.getData();
         List<BaseDict> details = null; 
         if (isItemTreeType(currentItem)){
-            details = treeBean.makeGroupContent(currentItem);
+            details = treeBean.makeGroupContent(currentItem, viewMode);
         } else
             if (isItemRootType(currentItem)){
-                details = rootBean.makeGroupContent(currentItem);
+                details = rootBean.makeGroupContent(currentItem, viewMode);
             }
         setDetails(details, DictDetailSource.TREE_SOURCE); 
                        
@@ -909,14 +921,14 @@ public class ExplorerBean implements Serializable {
 
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
-        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.doCopy(copyItem)).collect(Collectors.toSet()); //копируем и сохраняем в copiedItems
+        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.prepCopyItem(copyItem)).collect(Collectors.toSet()); //копируем и сохраняем в copiedItems
         copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
     }
 
     /* ВСТАВКА: вставка объекта в дерево */
     public void onPasteItemToTree(){
         Set<String> errors = new HashSet<>();
-        List<BaseDict> rezults = doPasteItem(currentItem, errors);
+        List<BaseDict> rezults = pasteItem(currentItem, errors);
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
         }
@@ -934,7 +946,7 @@ public class ExplorerBean implements Serializable {
         if (treeSelectedNode != null){
             parent = (BaseDict)treeSelectedNode.getData();
         }
-        doPasteItem(parent, errors);
+        pasteItem(parent, errors);
         if (!errors.isEmpty()){            
             EscomBeanUtils.showErrorsMsg(errors);
             return;
@@ -944,11 +956,11 @@ public class ExplorerBean implements Serializable {
     
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
     Реальный parent будет установлен в бине объекта */
-    private List<BaseDict> doPasteItem(BaseDict parent, Set<String> errors) {
+    private List<BaseDict> pasteItem(BaseDict parent, Set<String> errors) {
         if (copiedItems == null){return null;}
         List<BaseDict> rezults = new ArrayList<>();
         copiedItems.stream().forEach(item -> {
-            BaseDict pasteItem = sessionBean.doPasteItem(item, parent, errors);
+            BaseDict pasteItem = sessionBean.prepPasteItem(item, parent, errors);
             if (pasteItem != null){
                 rezults.add(pasteItem);
             }
@@ -958,14 +970,14 @@ public class ExplorerBean implements Serializable {
     
     /* ПОИСК */
 
-    /* ПОИСК: Обработка нажатия на кнопку алфавитной панели   */
-    public void abcSearche(ActionEvent event) {
+    /* Обработка нажатия на кнопку алфавитной панели   */
+    public void onAbcSearche(ActionEvent event) {
         String action = (String) event.getComponent().getAttributes().get("action");
         getModel().setNameSearche(action);
         onSearcheItem();
     }
     
-    /* ПОИСК: Обработка действия по нажатию кнопки Поиск */
+    /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
             EscomBeanUtils.ErrorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
@@ -994,7 +1006,6 @@ public class ExplorerBean implements Serializable {
         }
     }
     
-    /* ПОИСК: */
     public void dateCreateStartChange() {
         Date dateCreateEnd = getModel().getDateCreateEnd();
         if (dateCreateEnd == null) {
@@ -1002,7 +1013,6 @@ public class ExplorerBean implements Serializable {
         }
     }
 
-    /* ПОИСК: */
     public void dateChangeStartChange() {
         Date dateChangeEnd = getModel().getDateChangeEnd();
         if (dateChangeEnd == null) {
@@ -1010,7 +1020,7 @@ public class ExplorerBean implements Serializable {
         }
     }
     
-    /* ПОИСК: формирует список объектов с учётом критериев поиска  */
+    /* Выполняет поиск объектов с учётом критериев поиска  */
     public void doSearcheItems() {
         List<BaseDict> searcheGroups = new ArrayList<>();
         Map<String, Object> paramEQ = new HashMap<>();
@@ -1019,7 +1029,7 @@ public class ExplorerBean implements Serializable {
         Map<String, Date[]> paramDATE = new HashMap<>();
 
         //готовим группы в которых будет поиск
-        if (getModel().isSearcheInGroups()) {
+        if (model.isSearcheInGroups()) {
             TreeNode ownerNode = getTreeSelectedNode();
             if (ownerNode != null) {
                 BaseDict owner = (BaseDict) ownerNode.getData();
@@ -1031,15 +1041,15 @@ public class ExplorerBean implements Serializable {
         }
 
         //добавление в запрос точных критериев
-        if (getModel().isOnlyActualItem()) {
+        if (model.isOnlyActualItem()) {
             paramEQ.put("actual", true);
         }
-        if (getModel().getAuthorSearche() != null) {
-            paramEQ.put("author", getModel().getAuthorSearche());
+        if (model.getAuthorSearche() != null) {
+            paramEQ.put("author", model.getAuthorSearche());
         }
                 
         //добавление в запрос не точных критериев
-        String name = getModel().getNameSearche().trim();
+        String name = model.getNameSearche().trim();
         if (name.equals("*")) {
             name = "%";
         } else {
@@ -1050,32 +1060,37 @@ public class ExplorerBean implements Serializable {
         }
 
         //добавление в запрос критериев на вхождение
-        List<Integer> states = getModel().getStateSearche();
+        List<Integer> states = model.getStateSearche();
         if (states != null && !states.isEmpty()) {
             paramIN.put("state", states);
         }
 
         //добавление в запрос даты создания
-        if (getModel().isDateCreateSearche()) {
+        if (model.isDateCreateSearche()) {
             Date[] dateArray = new Date[2];
-            dateArray[0] = getModel().getDateCreateStart();
-            dateArray[1] = getModel().getDateCreateEnd();
+            dateArray[0] = model.getDateCreateStart();
+            dateArray[1] = model.getDateCreateEnd();
             paramDATE.put("dateCreate", dateArray);
         }
 
         //добавление в запрос даты изменения
-        if (getModel().isDateChangeSearche()) {
+        if (model.isDateChangeSearche()) {
             Date[] dateArray = new Date[2];
-            dateArray[0] = getModel().getDateChangeStart();
-            dateArray[1] = getModel().getDateChangeEnd();
+            dateArray[0] = model.getDateChangeStart();
+            dateArray[1] = model.getDateChangeEnd();
             paramDATE.put("dateChange", dateArray);
         }
-
-        searcheBean.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, new HashMap<>());
-        setCurrentViewModeDetail();        
+        
+        Map<String, Object> addParams = new HashMap<>();
+        model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        
+        List<BaseDict> result = searcheBean.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        setDetails(result, DictDetailSource.SEARCHE_SOURCE);
+        setCurrentViewModeDetail();
+        makeJurnalHeader(EscomBeanUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
     }
     
-    /* ПОИСК: Выполняет поиск в дереве */
+    /* Выполняет поиск в дереве объектов */
     public void onSearcheInTree(){
         if (StringUtils.isNotBlank(treeSearcheKey)){
             clearTree(tree);
@@ -1354,7 +1369,7 @@ public class ExplorerBean implements Serializable {
         checkedItems.stream()
                 .filter(dragItem -> !isItemRootType(dragItem))
                 .forEach(dragItem -> {
-                    if (sessionBean.addItemToGroup(dragItem, dropItem)){
+                    if (sessionBean.prepAddItemToGroup(dragItem, dropItem)){
                         EscomBeanUtils.SuccesFormatMessage("Successfully", "AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });
@@ -1394,10 +1409,106 @@ public class ExplorerBean implements Serializable {
     public boolean isCanSelectedItem(BaseDict item){
         return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemClass().getSimpleName());
     }
+        
+    /* CЕЛЕКТОР: выбор объекта по двойному клику  */
+    public String onRowDblClckSelector(SelectEvent event) {
+        BaseDict item = (BaseDict) event.getObject();
+        return onSelect(item);
+    }
     
-    /* ПРОЧИЕ МЕТОДЫ */    
+    /* СЕЛЕКТОР: обработка действия в селекторе по нажатию кнопки единичного выбора */
+    public String onSelect(BaseDict item) {
+        if (item == null){return "";}
+        getCheckedItems().clear();
+        getCheckedItems().add(item);        
+        return doClose(getCheckedItems());
+    }
     
-    /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: Открытие формы администрирования */  
+    /* СЕЛЕКТОР: закрытие формы селектора  */
+    private String doClose(List<BaseDict> selected){
+        RequestContext.getCurrentInstance().closeDialog(selected);
+        return "/view/index?faces-redirect=true";
+    }
+    
+    /* СЕЛЕКТОР: закрытие селектора без выбора объектов  */
+    public String onClose() {
+        getCheckedItems().clear();        
+        return doClose(getCheckedItems());
+    }
+    
+    /* СЕЛЕКТОР: действие по нажатию кнопки множественного выбора для списка  */
+    public String onMultySelect() {        
+        return doClose(getCheckedItems());
+    }        
+        
+    /* СЕЛЕКТОР: обработка действия в селекторе объектов при выборе элемента в дереве   */
+    public String onSelectTreeItem() {        
+        if (currentItem == null || !isCanSelectedItem(currentItem)){
+            return "";
+        }        
+        List<BaseDict> groups = new ArrayList<>();
+        groups.add(currentItem);
+        return doClose(groups);
+    }
+    
+    /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */
+    
+    public void onUploadFileAndCreateDoc(FileUploadEvent event) throws IOException{     
+        UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
+        User author = sessionBean.getCurrentUser();
+        String uploadPath = sessionBean.getConfiguration().getUploadPath();
+        Attaches attache = FileUtils.doUploadAtache(uploadedFile, author, uploadPath);
+        createParams.put("attache", attache);
+    }
+        
+    /* Показать документ в папке */
+    public void onShowDocInFolder(){         
+        if (selectedDocId != null){
+            BaseDict doc = sessionBean.getItemBeanByClassName("").findItem(selectedDocId);
+            if (doc != null){
+                Folder owner = (Folder) doc.getOwner();
+                TreeNode node = null;
+                if (owner != null){
+                    node = EscomBeanUtils.findTreeNode(getTree(), owner);
+                }
+                if (getTreeSelectedNode() != null) {
+                    getTreeSelectedNode().setSelected(false);
+                }
+                setTreeSelectedNode(node);
+                setSelectedDocId(null);
+                RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
+            }
+        }
+    }    
+    
+    /* Подготовка вложений документов для отправки на e-mail  */
+    public void prepareSendMailDocs(String mode){
+        List<BaseDict> checked = prepareCheckedItems();
+        if (!checked.isEmpty()){
+            EscomBeanUtils.openMailMsgForm(mode, checked);
+        } else {
+            EscomBeanUtils.WarnMsgAdd("Error", "NO_SELECT_DOCS");
+        }
+    } 
+    
+    /* Формирование списка документов из отмеченных папок и документов  */    
+    private List<BaseDict> prepareCheckedItems(){
+        List<BaseDict> sourceItems = getCheckedItems(); 
+        List<BaseDict> targetItems = new ArrayList<>();
+        for (BaseDict content : sourceItems){
+            if (content.getClass().getSimpleName().equals("Folders")){
+                Folder folder = (Folder) content;
+                folder.getDetailItems().stream().forEach(doc -> targetItems.add(doc));
+            } else {
+                targetItems.add(content);
+            }
+        }
+        return targetItems;
+    }
+    
+    /* ПРОЧИЕ МЕТОДЫ */
+    
+    /* Открытие формы администрирования объекта */  
     public void onOpenAdmCardForm() {
         onOpenAdmCardForm(currentItem);
     }    
@@ -1431,11 +1542,14 @@ public class ExplorerBean implements Serializable {
         options.put("contentHeight", "100%");
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> beanNameList = new ArrayList<>();
+        List<String> itemId = new ArrayList<>();
         beanNameList.add(beanName);
+        itemId.add(String.valueOf(currentItem.getId()));
         paramMap.put("beanName", beanNameList);
+        paramMap.put("itemId", itemId);
         RequestContext.getCurrentInstance().openDialog("object-admin", options, paramMap);       
-    }
-       
+    }       
+    
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
     public void onPageChange(PageEvent event) {
         setCurrentPage(((DataTable) event.getSource()).getFirst());
@@ -1445,7 +1559,7 @@ public class ExplorerBean implements Serializable {
         return EscomBeanUtils.getBandleLabel(key);
     }
             
-    /* СЛУЖЕБНЫЕ МЕТОДЫ: построение объекта для сортировки таблицы обозревателя  */
+    /* Построение объекта для сортировки таблицы обозревателя  */
     public List<SortMeta> getSortOrder() {
         if (sortOrder == null){
             sortOrder = new ArrayList<>();
@@ -1466,7 +1580,7 @@ public class ExplorerBean implements Serializable {
         return sortOrder;
     }    
     
-    /* СЛУЖЕБНЫЕ МЕТОДЫ: формирование заголовка журнала обозревателя   */ 
+    /* Формирование заголовка журнала обозревателя   */ 
     public String makeJurnalHeader(String firstName, String secondName){      
         StringBuilder sb = new StringBuilder(firstName);
         sb.append(": ");
@@ -1476,7 +1590,7 @@ public class ExplorerBean implements Serializable {
         return sb.toString();
     }
     
-    /* СЛУЖЕБНЫЕ МЕТОДЫ: отображает диалог перемещения объекта */
+    /* Отображает диалог перемещения объекта */
     public void onShowMovedDlg(String dlgName) {
         RequestContext.getCurrentInstance().execute("PF('" + dlgName + "').show();");
     }   
@@ -1511,8 +1625,9 @@ public class ExplorerBean implements Serializable {
     }
 
     /* Установка режима отображения в обозревателе в зависимости от того, какой(ие) тип(ы) объектов отображаются  */
-    public void setCurrentViewType(BaseDict item){
-         if (isItemDetailType(item)){
+    public void setCurrentViewModel(TreeNode node){
+        BaseDict item = (BaseDict) node.getData();
+        if (isItemDetailType(item)){
             setCurrentViewModeDetail();
         } else 
             if (isItemTreeType(item)){
@@ -1577,6 +1692,7 @@ public class ExplorerBean implements Serializable {
         return searcheBean;
     }
     public void setSearcheBean(BaseExplBean searcheBean) {
+        model = searcheBean.initSearcheModel();
         this.searcheBean = searcheBean;
     }
 
@@ -1695,4 +1811,10 @@ public class ExplorerBean implements Serializable {
         return model;
     }
     
+    public Integer getSelectedDocId() {
+        return selectedDocId;
+    }
+    public void setSelectedDocId(Integer selectedDocId) {
+        this.selectedDocId = selectedDocId;
+    }
 }

@@ -25,10 +25,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Документы
- * @author mfilatov
- */
+/* Документы  */
 @Stateless
 public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     @EJB
@@ -43,11 +40,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return Doc.class.getSimpleName().toLowerCase();
     }    
     
-    /**
-     * Возвращает документы с указанным Менеджером
-     * @param manager
-     * @return Список документов
-     */ 
+    /* Возвращает документы с указанным Менеджером  */ 
     public List<Doc> findDocsByManager(Staff manager){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -60,11 +53,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return q.getResultList(); 
     }
     
-    /**
-     * Возвращает документы с указанным Контрагентом
-     * @param partner
-     * @return 
-     */
+    /* Возвращает документы с указанным Контрагентом  */
     public List<Doc> findDocsByPartner(Partner partner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -77,11 +66,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return q.getResultList();   
     }
     
-    /**
-     * Возвращает документы с указанным Видом документа
-     * @param docType
-     * @return 
-     */
+    /* Возвращает документы с указанным Видом документа  */
     public List<Doc> findDocsByDocTyper(DocType docType){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -94,10 +79,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return q.getResultList();   
     }
     
-    /**
-     * Возвращает документы нулевого уровня
-     * @return Список документов
-     */ 
+    /* Возвращает документы нулевого уровня  */ 
     public List<Doc> findRootDocs(){        
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -112,12 +94,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return q.getResultList(); 
     }    
     
-    /**
-     * Ищет документы с указанным номером
-     * @param regNumber
-     * @param excludeDoc
-     * @return 
-     */
+    /* Ищет документы с указанным номером  */
     public boolean checkRegNumber(String regNumber, Doc excludeDoc){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -134,10 +111,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return query.getResultList().isEmpty();
     }
     
-    /**
-     * Удаление документов из папки
-     * @param folder
-     */ 
+    /* Удаление документов из папки  */ 
     public void deleteDocFromFolder(Folder folder){
         attacheService.deleteAttacheByFolder(folder);
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -147,10 +121,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         getEntityManager().createQuery(delete).executeUpdate();
     }    
     
-    /**
-     * Удаление документа
-     * @param doc 
-     */
+    /* Удаление документа  */
     @Override
     public void remove(Doc doc){
        attacheService.deleteAttaches(doc.getAttachesList());
@@ -180,12 +151,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
                 doc.getAttachesList().add(attache);
             }
         }
-    }
-    
-    @Override
-    public void preparePasteItem(Doc pasteItem, BaseDict target){        
-        pasteItem.setOwner((Folder)target);
-    }
+    }    
 
     @Override
     protected Integer getMetadatesObjId() {
@@ -193,7 +159,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Doc oldItem, Doc newItem) {
+    public void replaceItem(Doc oldItem, Doc newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

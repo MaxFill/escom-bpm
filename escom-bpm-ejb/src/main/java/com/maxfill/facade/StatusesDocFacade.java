@@ -5,17 +5,9 @@ import com.maxfill.model.statuses.StatusesDocLog;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import java.util.List;
-import java.util.Map;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
-/**
- * Фасад для справочника статусов документов
- * @author mfilatov
- */
+/* Cтатусы документов */
 @Stateless
 public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog> {
 
@@ -34,7 +26,7 @@ public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, 
     }
 
     @Override
-    public Map<String, Integer> replaceItem(StatusesDoc oldItem, StatusesDoc newItem) {
+    public void replaceItem(StatusesDoc oldItem, StatusesDoc newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

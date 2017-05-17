@@ -35,11 +35,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         super(UserGroups.class, UserGroupsLog.class);
     }
     
-    /**
-     * Получение списка пользователей в группах
-     * @param group
-     * @return 
-     */ 
+    /* Получение списка пользователей в группах */ 
     public List<User> findDetail(UserGroups group) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
@@ -96,11 +92,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return DictMetadatesIds.OBJ_GROUPS_USERS;
     }
  
-    /**
-     * Ищет группу с указанным названием и если не найдена то создаёт новую
-     * @param groupName
-     * @return 
-     */
+    /* Ищет группу с указанным названием и если не найдена то создаёт новую  */
     public UserGroups onGetGroupByName(String groupName){
         if (StringUtils.isBlank(groupName)){
             return null;
@@ -110,29 +102,15 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
                 return group;
             }
         }
-        UserGroups group = createItem(null, userFacade.getAdmin());        
+        UserGroups group = createItem(userFacade.getAdmin());        
         group.setName(groupName);                
         create(group);        
         LOG.log(Level.INFO, "Create userGroups = {0}", groupName);
         return group;
     }
 
-    /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
-    public List<List<?>> doGetDependency(UserGroups group){
-        List<List<?>> dependency = new ArrayList<>();
-        dependency.add(group.getChildItems());
-        return dependency;
-    }
-    
-    @Override
-    public Map<String, Integer> replaceItem(UserGroups oldItem, UserGroups newItem) {
+    public void replaceItem(UserGroups oldItem, UserGroups newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void preparePasteItem(UserGroups pasteItem, BaseDict target){
-        pasteItem.setParent((UserGroups)target);    
-    }
-    
+    }        
 }

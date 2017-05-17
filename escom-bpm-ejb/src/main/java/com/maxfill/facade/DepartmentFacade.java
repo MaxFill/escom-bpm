@@ -45,44 +45,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DEPARTAMENTS;
-    }           
-    
-    /**
-     * Определяет owner и parent для объекта 
-     * @param item
-     * @param target куда помещается item
-     */
-    @Override
-    public void detectParentOwner(Department item, BaseDict target){
-        if (target instanceof Company){
-            item.setOwner((Company)target);
-            item.setParent(null);
-        } else
-        if (target instanceof Department){
-            item.setOwner(null);
-            item.setParent((Department)target);
-        }
-    }
-    
-    public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
-        detectParentOwner(dragItem, dropItem);
-        edit(dragItem);
-    }
-    
-     /* Возвращает списки зависимых объектов, необходимых для копирования */
-    @Override
-    public List<List<?>> doGetDependency(Department department){
-        List<List<?>> dependency = new ArrayList<>();
-        dependency.add(department.getDetailItems());
-        dependency.add(department.getChildItems());
-        return dependency;
-    } 
-    
-    /* Вставка скопированного объекта */
-    @Override
-    public void preparePasteItem(Department pasteItem, BaseDict target){
-        detectParentOwner(pasteItem, target);    
-    }    
+    }     
     
     /* Ищет подразделение с указанным названием в заданной компании и если не найдено, то создаёт новое.  */
     public Department onGetDepartamentByName(Company company, String departName){
@@ -94,8 +57,9 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
                     return department;
                 }
             }
-            Department department = createItem(company, userFacade.getAdmin());
+            Department department = createItem(userFacade.getAdmin());
             department.setName(departName);
+            department.setOwner(company);
             create(department);
             company.getDepartmentsList().add(department);
             LOG.log(Level.INFO, "Create department = {0}", departName);
@@ -104,7 +68,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Department oldItem, Department newItem) {
+    public void replaceItem(Department oldItem, Department newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

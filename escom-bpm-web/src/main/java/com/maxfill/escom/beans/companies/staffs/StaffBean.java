@@ -4,9 +4,13 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.companies.Company;
+import com.maxfill.model.rights.Rights;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -14,7 +18,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,30 +25,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Штатные единицы
- *
- * @author mfilatov
- */
+/* Сервисный бин "Штатные единицы" */
+ 
 @Named
-@ViewScoped
+@SessionScoped
 public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
-    private static final long serialVersionUID = 2554984851643471496L;
-    private static final String BEAN_NAME = "staffBean";    
+    private static final long serialVersionUID = 2554984851643471496L; 
 
     @EJB
     private StaffFacade itemsFacade;
     @EJB
     private DocFacade docFacade;
     
-    private Staff currentStaff;
-    
-    private String postSearche = "";
-    private String secondNameSearche = "";
-        
-    public StaffBean() {
-    }
+    private Staff currentStaff;            
     
     @Override
     public void onInitBean() {
@@ -53,28 +47,64 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         //TODO добавить поиск штатной единицы для текущего пользователя
         currentStaff = itemsFacade.find(1);
     }
-         
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME; 
-    }
 
     @Override
-    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<Department> searcheGroups, Map<String, Object> addParams){
-        addParams.put("postName", postSearche);
-        addParams.put("secondName", secondNameSearche);
-        super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
-    }
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        } 
+ 
+        //если sataff относиться к подразделению
+        if (item.getOwner() != null) {
+            return getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+        }
+        
+        //если staff относиться напрямую к компании
+        Staff staff = (Staff)item;
+        Company company = staff.getCompany();
+        if (company != null) {
+            return getRightForChild(company); //получаем права из спец.прав компании 
+        } 
 
+        return getDefaultRights(item);
+    } 
+    
     @Override
     public StaffFacade getItemFacade() {
         return itemsFacade;
     }
     
-    /**
-     * Проверка возможности удаления штатной единицы.
-     * @param staff
-     */
+    @Override
+    public void preparePasteItem(Staff pasteItem, BaseDict target){
+        detectParentOwner(pasteItem, target);
+    }
+    
+    @Override
+    public boolean addItemToGroup(Staff staff, BaseDict group){ 
+        //поскольку шт.ед. может быть только в одном подразделении, то выполняем перемещение
+        moveItemToGroup(group, staff); 
+        return true;
+    }
+
+    public void moveItemToGroup(BaseDict group, Staff staff){
+        detectParentOwner(staff, group);
+        getItemFacade().edit(staff);
+    }
+        
+    @Override
+    public void detectParentOwner(Staff staff, BaseDict target){
+        if (target instanceof Company){
+            staff.setCompany((Company)target);
+            staff.setOwner(null); //теперь нет связи с подразделением
+        } else
+            if (target instanceof Department){
+                staff.setOwner((Department)target);
+                staff.setCompany(null);
+            }
+    }
+    
     @Override
     protected void checkAllowedDeleteItem(Staff staff, Set<String> errors){
         if (!docFacade.findDocsByManager(staff).isEmpty()){
@@ -86,11 +116,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         super.checkAllowedDeleteItem(staff, errors);
     }
     
-    /**
-     * Формирует число ссылок на объект в связанных объектах 
-     * @param staff
-     * @param rezult 
-     */
     @Override
     public void doGetCountUsesItem(Staff staff,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByManager(staff).size());
@@ -102,11 +127,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         return null;
     }
 
-    /**
-     * Формирование списка групп, в которые входит данная штатная единица
-     * @param item
-     * @return 
-     */
     @Override
     public List<Department> getGroups(Staff item) {
         List<Department> groups = new ArrayList<>();
@@ -127,27 +147,20 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         return Department.class;
     }
 
-    /* *** GETS & SETS *** */
+    @Override
+    public SearcheModel initSearcheModel() {
+        return new StaffsSearche();
+    }
+
+    
+    /* GETS & SETS */
+    
     public Staff getCurrentStaff() {
         return currentStaff;
     }
     public void setCurrentStaff(Staff currentStaff) {
         this.currentStaff = currentStaff;
-    } 
-    
-    public String getPostSearche() {
-        return postSearche;
-    }
-    public void setPostSearche(String postSearche) {
-        this.postSearche = postSearche;
-    }
-
-    public String getSecondNameSearche() {
-        return secondNameSearche;
-    }
-    public void setSecondNameSearche(String secondNameSearche) {
-        this.secondNameSearche = secondNameSearche;
-    }
+    }     
     
     @FacesConverter("staffConvertor")
     public static class staffConvertor implements Converter {

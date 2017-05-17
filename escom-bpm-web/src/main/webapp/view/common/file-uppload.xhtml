@@ -19,7 +19,7 @@
                       label="#{bundle.SelectFile}" 
                       cancelLabel="#{bundle.Cancel}"
                       uploadLabel="#{bundle.SaveFiles}"
-                      fileUploadListener="#{docsBean.onUploadFileAndCreateDoc}"                      
+                      fileUploadListener="#{explorerBean.onUploadFileAndCreateDoc}"                      
                       oncomplete="document.getElementById('#{_frmExpl}createItemBtn').click();">
         </p:fileUpload>
         <pe:tooltip for="file" value="#{bundle.DragAndDropFile}"/>

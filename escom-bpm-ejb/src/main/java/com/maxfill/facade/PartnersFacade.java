@@ -38,38 +38,8 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     @Override
     public String getFRM_NAME() {
         return Partner.class.getSimpleName().toLowerCase();
-    }      
+    }          
     
-    @Override
-    public boolean addItemToGroup(Partner partner, BaseDict targetGroup){
-        if (partner == null || targetGroup == null){
-            return false;
-        }
-        PartnerGroups group = (PartnerGroups)targetGroup;
-        if (!partner.getPartnersGroupsList().contains(group)){
-            partner.getPartnersGroupsList().add(group);
-            edit(partner);            
-            group.getPartnersList().add(partner);
-            return true;
-        }
-        return false;
-    }    
-
-    @Override
-    protected void detectParentOwner(Partner partner, BaseDict owner){
-        partner.setOwner(null);
-        partner.setParent(null);
-        if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
-            partner.getPartnersGroupsList().add((PartnerGroups)owner);            
-        } 
-    }
-    
-    /**
-     * Ищет контрагентов по code исключая ID указанного контрагента
-     * @param code
-     * @param partnerId
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
     public List<Partner> findByCodeExclId(String code, Integer partnerId){
         getEntityManager().getEntityManagerFactory().getCache().evict(Partner.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -82,13 +52,6 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         return q.getResultList();
     }
     
-    /**
-     * Ищет контрагентов по наименованию и типу исключая ID указанного контрагента
-     * @param name
-     * @param type
-     * @param partnerId
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
     public List<Partner> findByNameAndTypeExclId(String name, PartnerTypes type, Integer partnerId){
         getEntityManager().getEntityManagerFactory().getCache().evict(Partner.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -102,11 +65,6 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         return q.getResultList();
     }
     
-    /**
-     * Ищет контрагентов по типу 
-     * @param type
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
     public List<Partner> findByType(PartnerTypes type){
         getEntityManager().getEntityManagerFactory().getCache().evict(Partner.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -118,11 +76,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         return q.getResultList();
     }
     
-    /**
-     * Возвращает обновлённый список контрагентов для группы контрагентов
-     * @param group
-     * @return 
-     */
+    /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
     public List<Partner> findDetailItems(PartnerGroups group){
         PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
@@ -139,26 +93,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
         String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
         item.setCode(number);
-    }
-    
-    /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
-    @Override
-    public boolean isNeedCopyOnPaste(Partner sourceItem, BaseDict recipient){
-        if (!(recipient instanceof PartnerGroups)){
-            return true;
-        }
-        if (sourceItem.getPartnersGroupsList().contains((PartnerGroups)recipient)){
-            return true;
-        }
-        return false;
-    }
-    
-    @Override
-    public void preparePasteItem(Partner pasteItem, BaseDict recipient){        
-        if (!isNeedCopyOnPaste(pasteItem, recipient)){
-            addItemToGroup(pasteItem, recipient);
-        }
-    }     
+    }        
     
     @Override
     protected Integer getMetadatesObjId() {
@@ -166,10 +101,8 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Partner oldItem, Partner newItem) {
-        Map<String, Integer> rezultMap = new HashMap<>();
-        rezultMap.put("Documents", replacePartnerInDocs(oldItem, newItem));
-        return rezultMap;
+    public void replaceItem(Partner oldItem, Partner newItem) {
+        replacePartnerInDocs(oldItem, newItem);
     }
     
     /**

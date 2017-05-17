@@ -88,7 +88,7 @@
         <p:column style="text-align: center;" width="90" >
             <p:splitButton  value="#{bundle.Select}"
                             rendered="#{!item.deleted and item.actual and explorerBean.selectorViewMode}" 
-                            action="#{_detailBean.onSelect(item)}">
+                            action="#{explorerBean.onSelect(item)}">
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
                             actionListener="#{explorerBean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"

@@ -374,12 +374,7 @@ public class EscomBeanUtils {
         RequestContext.getCurrentInstance().openDialog(formName + "-card", options, paramMap);
     }
     
-    /**
-     * Открытие карточки записи права
-     * @param editMode
-     * @param state
-     * @param keyRight
-     */ 
+    /* Открытие карточки записи права  */ 
     public static void openRightCard(Integer editMode, State state, String keyRight){
         Integer stateId = state.getId();
         Map<String, Object> options = new HashMap<>();
@@ -405,11 +400,7 @@ public class EscomBeanUtils {
         RequestContext.getCurrentInstance().openDialog("rightForm", options, paramMap);
     }
     
-    /**
-     * Открытие формы нового почтового сообщения
-     * @param mode
-     * @param docs
-     */
+    /* Открытие формы нового почтового сообщения  */
     public static void openMailMsgForm(String mode, List<BaseDict> docs){      
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -433,13 +424,7 @@ public class EscomBeanUtils {
         RequestContext.getCurrentInstance().openDialog("/view/services/mail-message", options, paramMap);
     }
     
-     /**
-     * Формирует ссылку URL для объекта
-     * @param item
-     * @param page
-     * @param openMode
-     * @return 
-     */
+    /* Формирует ссылку URL для объекта  */
     public static String doGetItemURL(BaseDict item, String page, String openMode){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest) ectx.getRequest();

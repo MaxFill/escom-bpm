@@ -3,17 +3,14 @@ package com.maxfill.escom.beans.folders;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.utils.SysParams;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
@@ -21,25 +18,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.enterprise.context.SessionScoped;
 
-/* Папки документов */
+/* Сервисный бин "Папки документов" */
 
 @Named(value = "foldersBean")
-@ViewScoped
+@SessionScoped
 public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private static final long serialVersionUID = 2678662239530806110L;
-    private static final String BEAN_NAME = "foldersBean";
     private static final Integer ROOT_FOLDER_ID = 0;
     
     @EJB
     private FoldersFacade foldersFacade;
-    
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
+    @EJB
+    private DocFacade docFacade;     
 
-    /* ДЕРЕВО: формирование дерева папок  */
+    @Override
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        }
+        
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent()); //получаем права от родительской группы
+        }                     
+        
+        return getDefaultRights(item);
+    }
+    
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
@@ -51,18 +59,18 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         }
         Rights docRight = (Rights) JAXB.unmarshal(new StringReader(rootFolder.getXmlAccessChild()), Rights.class);
         setDefaultRightsChilds(docRight);
-        sessionBean.settingRightForChild(rootFolder, docRight); 
+        settingRightForChild(rootFolder, docRight); 
         addNode(tree, rootFolder);
         return tree;
     }
 
-    /* ДЕРЕВО: добавление узла в дерево при формировании дерева */
+    /* Добавление узла в дерево при формировании дерева */
     public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
         TreeNode resultNode = null;
 
-        if (sessionBean.preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
+        if (preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
             //актуализируем права документов папки
-            sessionBean.makeRightForChilds((Folder)folder); //получаем права документов для текущей папки
+            makeRightForChilds((Folder)folder); //получаем права документов для текущей папки
             
             TreeNode newNode;
             synchronized(this){
@@ -78,12 +86,10 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         }
         return resultNode;
     }
-
-    /* *** КОНТЕНТ *** */
     
-    /* КОНТЕНТ: формирование контента папки   */ 
+    /* Формирование содержимого контента папки   */ 
     @Override
-    public List<BaseDict> makeGroupContent(Folder folder) {
+    public List<BaseDict> makeGroupContent(Folder folder, Integer viewMode) {
         Rights docRights = getDefaultRightsChilds();
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
@@ -99,38 +105,28 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         return cnt;
     }
     
-    /* КОНТЕНТ: добавляет папку в контент  */ 
+    /* Добавляет папку в контент  */ 
     private void addFolderInCnt(BaseDict folder, List<BaseDict> cnts) {
-        sessionBean.makeRightForChilds((Folder)folder);
+        makeRightForChilds((Folder)folder);
         cnts.add(folder);
     }
 
-    /* КОНТЕНТ: добавляет документ в контент  */ 
+    /* Добавляет документ в контент  */ 
     public void addDocInCnt(BaseDict doc, List<BaseDict> cnts, Rights defDocRight) {
         Rights rd = defDocRight;
         if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам
             rd = (Rights) JAXB.unmarshal(new StringReader(doc.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
         }
         doc.setRightItem(rd);
-        doc.setRightMask(sessionBean.getAccessMask(doc.getState(), rd, currentUser)); //получаем маску доступа для текущего пользователя  
+        doc.setRightMask(getAccessMask(doc.getState(), rd, currentUser)); //получаем маску доступа для текущего пользователя  
         cnts.add(doc);
-    }
-    
-    /* ПРАВА ДОСТУПА */
-    
-    /* Проверка доступа на удаление контента папки    */
-    public boolean isHaveRightDeleteContent(BaseDict content){
-        if (content instanceof Folder){            
-            return isHaveRightDelete((Folder)content);
-        } else {
-            return getDetailBean().isHaveRightDelete(content);
-        }
-    }    
+    }          
        
     /* Действия перед удалением папки  */
     @Override
-    protected void preDeleteItem(Folder folder) {        
-       clearDetail(folder);
+    protected void preDeleteItem(Folder folder) {       
+        folder.getDetailItems().clear();
+        docFacade.deleteDocFromFolder(folder);        
     }
 
     @Override
@@ -141,11 +137,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         centerSouth.addOption("size", "10%");
         LayoutOptions childCenterOptions = layoutOptions.getCenterOptions().getChildOptions();
         childCenterOptions.setSouthOptions(centerSouth);
-    }
-
-    @Override
-    public FoldersFacade getItemFacade() {
-        return foldersFacade;
     }
 
     /* Формирует число ссылок на folder в связанных объектах  */
@@ -161,8 +152,18 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         super.checkAllowedDeleteItem(folder, errors);
     }  
     
-    /* *** GETS & SETS *** */    
+    @Override
+    public void preparePasteItem(Folder pasteItem, BaseDict target){        
+        pasteItem.setParent((Folder)target);
+    } 
+    
+    /* GETS & SETS */    
 
+    @Override
+    public FoldersFacade getItemFacade() {
+        return foldersFacade;
+    }
+    
     @Override
     public List<Folder> getGroups(Folder item) {
         return null;

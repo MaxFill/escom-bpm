@@ -4,13 +4,12 @@ import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
-import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.facade.FoldersFacade;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.rights.Rights;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -19,22 +18,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Виды документов
- * @author mfilatov
- */
+/* Сервисный бин "Виды документов" */
+
 @Named
-@ViewScoped
+@SessionScoped
 public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
-    private static final long serialVersionUID = -4625860665708197046L;
-    private static final String BEAN_NAME = "docTypeBean";    
+    private static final long serialVersionUID = -4625860665708197046L; 
             
     @EJB 
     private DocTypeFacade itemsFacade;    
@@ -43,13 +39,21 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     @EJB 
     private FoldersFacade foldersFacade;
         
-    public DocTypeBean() {
-    }
-    
+    /* Получение прав доступа для линейного, подчинённого справочника */
     @Override
-    protected String getBeanName() {
-        return BEAN_NAME; 
-    }
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        } 
+ 
+        if (item.getOwner() != null) {
+            return getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+        }
+
+        return getDefaultRights(item);
+    }   
     
     @Override
     public DocTypeFacade getItemFacade() {
@@ -70,10 +74,6 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         return groups;
     }
     
-    /**
-     * Проверка возможности удаления Вида документа
-     * @param docType
-     */
     @Override
     protected void checkAllowedDeleteItem(DocType docType, Set<String> errors){
         super.checkAllowedDeleteItem(docType, errors);
@@ -89,11 +89,6 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         }
     }
     
-    /**
-     * Формирует число ссылок на объект в связанных объектах 
-     * @param docType
-     * @param rezult 
-     */
     @Override
     public void doGetCountUsesItem(DocType docType,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByDocTyper(docType).size());

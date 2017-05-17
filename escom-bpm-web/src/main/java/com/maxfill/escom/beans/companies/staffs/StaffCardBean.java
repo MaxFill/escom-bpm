@@ -4,7 +4,6 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.CompanyFacade;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
@@ -98,7 +97,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     public List<Post> getPosts() {
         if (posts == null){
             posts = postFacade.findAll().stream()
-                .filter(item -> sessionBean.preloadCheckRightView(item))
+                .filter(item -> preloadCheckRightView(item))
                 .collect(Collectors.toList());
         }
         return posts;

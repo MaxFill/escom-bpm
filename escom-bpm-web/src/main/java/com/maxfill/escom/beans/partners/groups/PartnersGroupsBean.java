@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners.groups;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.facade.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -7,42 +8,59 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.rights.Rights;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-/* Группы контрагентов */
+/* Сервисный бин "Группы контрагентов" */
 @Named
-@ViewScoped
+@SessionScoped
 public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroups> {
     private static final long serialVersionUID = 6220113121230925868L;
-    private static final String BEAN_NAME = "partnersGroupsBean";
     
     @EJB
     private PartnersGroupsFacade itemsFacade;
     @EJB
     private PartnersFacade partnersFacade;
     
-    /* КОНТЕНТ: формирование контента группы контрагента */     
+    /* Получение прав доступа для иерархического справочника */
     @Override
-    public List<BaseDict> makeGroupContent(PartnerGroups partnerGroup) {
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        }
+        
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent()); //получаем права от родительской группы
+        }                     
+        
+        return getDefaultRights(item);
+    }
+    
+    /* Формирование контента группы контрагента */     
+    @Override
+    public List<BaseDict> makeGroupContent(PartnerGroups partnerGroup, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент группы контрагента
         List<PartnerGroups> groups = itemsFacade.findChilds(partnerGroup);
         groups.stream()
                 .forEach(group -> addGroupInCnt(group, cnt)
         );
-        if (explorerBean.isExplorerViewMode()){
+        if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
             //загружаем в контент контрагентов 
             List<Partner> partners = partnersFacade.findDetailItems(partnerGroup);
             partners.stream().
@@ -52,25 +70,14 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
         return cnt;
     }
     
-    /**
-     * КОНТЕНТ: добавляет группу в контент
-     * @param department
-     * @param cnts
-     * @param defChildRight
-     * @return 
-     */ 
+    /* Добавляет группу в контент   */ 
     private void addGroupInCnt(BaseDict group, List<BaseDict> cnts) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
         cnts.add(group);
     }
 
-    /**
-     * КОНТЕНТ: добавляет контрагента в контент
-     * @param partner
-     * @param cnts
-     * @param defChildRight
-     */ 
+    /* Добавляет контрагента в контент   */ 
     public void addPartnerInCnt(BaseDict partner, List<BaseDict> cnts) {
         /*
         Rights rd = defDocRight;
@@ -82,11 +89,6 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
         */
         cnts.add(partner);
     }
-    
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
 
     @Override
     public PartnersGroupsFacade getItemFacade() {
@@ -97,12 +99,21 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     public List<PartnerGroups> getGroups(PartnerGroups item) {
         return null;
     }
-          
-    /**
-     * Формирует число ссылок на partnerGroups в связанных объектах 
-     * @param partnerGroups
-     * @param rezult 
-     */
+                
+    @Override
+    public void preparePasteItem(PartnerGroups pasteItem, BaseDict target){        
+        pasteItem.setParent((PartnerGroups)target);
+    }
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(PartnerGroups group){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(group.getChildItems());
+        return dependency;
+    }
+    
+    /* Формирует число ссылок на partnerGroups в связанных объектах   */
     @Override
     public void doGetCountUsesItem(PartnerGroups partnerGroups,  Map<String, Integer> rezult){
         rezult.put("Partners", partnerGroups.getDetailItems().size());

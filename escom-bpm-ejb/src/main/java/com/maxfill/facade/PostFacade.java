@@ -58,24 +58,17 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog> {
                 return post;
             }
         }
-        Post post = createItem(null, userFacade.getAdmin());
+        Post post = createItem(userFacade.getAdmin());
         post.setName(postName);
         create(post);
         LOG.log(Level.INFO, "Create post = {0}", postName);
         return post;
     }
 
-    /**
-     * Замена должности в штатных единицах
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Замена должности в штатных единицах   */
     @Override
-    public Map<String, Integer> replaceItem(Post oldItem, Post newItem) {
-        Map<String, Integer> rezultMap = new HashMap<>();
-        rezultMap.put("Staffs", replacePostInStaffs(oldItem, newItem));
-        return rezultMap;
+    public void replaceItem(Post oldItem, Post newItem) {
+        replacePostInStaffs(oldItem, newItem);
     }
 
     /**

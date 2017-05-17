@@ -11,36 +11,24 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Должности
- * @author Maxim
- */
+/* Сервисный бин "Должности" */
 @Named
-@ViewScoped
+@SessionScoped
 public class PostBean extends BaseExplBean<Post, Post>{
     private static final long serialVersionUID = -257932838724865134L;
-    private static final String BEAN_NAME = "postBean";
     
     @EJB
     private PostFacade itemFacade;
     @EJB
-    private StaffFacade staffFacade;
-    
-    public PostBean() {    
-    }          
-    
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME; 
-    }
+    private StaffFacade staffFacade;    
         
     @Override
     public PostFacade getItemFacade() {
@@ -52,13 +40,11 @@ public class PostBean extends BaseExplBean<Post, Post>{
         return null;
     }
 
-    /* Формирует число ссылок на объект в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Post item,  Map<String, Integer> rezult){
         rezult.put("Staffs", staffFacade.findStaffByPost(item).size());
     }
     
-    /* Проверка возможности удаления Должности  */
     @Override
     protected void checkAllowedDeleteItem(Post item, Set<String> errors){
         super.checkAllowedDeleteItem(item, errors);

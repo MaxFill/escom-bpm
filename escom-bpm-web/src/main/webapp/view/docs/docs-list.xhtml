@@ -55,7 +55,7 @@
                             disabled="#{doc.attache == null}"
                             actionListener="#{docsBean.viewAttache(doc)}"/>
                 <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" title="#{bundle.ShowInFolder}"
-                            url="#{docsBean.onShowDocInFolder(doc)}" target="_blank"/>
+                            url="#{sessionBean.onShowDocInFolder(doc)}" target="_blank"/>
                 <p:separator />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
                             process="@this"

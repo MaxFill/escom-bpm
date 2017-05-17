@@ -14,25 +14,25 @@
     <ui:define name="searche">        
         <p:outputLabel value="#{bundle.Number}"/>
         <p:inputText title="#{bundle.HelpSearcheContext}"
-                     value="#{docsBean.numberSearche}"
+                     value="#{explorerBean.model.numberSearche}"
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
         </p:inputText>
     </ui:define>
 
     <ui:define name="preRenderAction">        
-        <f:viewParam name="docId" value="#{docsBean.selectedDocId}" />
-        <f:event type="preRenderView" listener="#{docsBean.doShowDocInFolder()}"/>        
+        <f:viewParam name="docId" value="#{explorerBean.currentItem}" />
+        <f:event type="preRenderView" listener="#{explorerBean.onShowDocInFolder()}"/>        
     </ui:define>
     
     <!-- специфичные пункты в меню тулбара обозревателя -->
     <ui:define name="addMenuActions">
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
                     disabled="#{explorerBean.checkedItems.isEmpty()}"
-                    actionListener="#{docsBean.prepareSendMailDocs('asAttache')}"/>
+                    actionListener="#{explorerBean.prepareSendMailDocs('asAttache')}"/>
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsLink}" title="#{bundle.SendToEmailAsLink}"
                     disabled="#{explorerBean.checkedItems.isEmpty()}"
-                    actionListener="#{docsBean.prepareSendMailDocs('asLink')}"/> 
+                    actionListener="#{explorerBean.prepareSendMailDocs('asLink')}"/> 
         <p:separator />
     </ui:define>    
     

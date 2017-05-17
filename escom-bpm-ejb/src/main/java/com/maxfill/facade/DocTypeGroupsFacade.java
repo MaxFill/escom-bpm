@@ -4,14 +4,9 @@ package com.maxfill.facade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.BaseDict;
-import java.util.Map;
 import javax.ejb.Stateless;
 
-/**
- * Фасад для сущности "Группы видов документов"
- * @author mfilatov
- */
+/* Фасад для "Группы видов документов" */
 @Stateless
 public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGroups, DocTypeGroupsLog> {
 
@@ -30,12 +25,7 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
     }
 
     @Override
-    public Map<String, Integer> replaceItem(DocTypeGroups oldItem, DocTypeGroups newItem) {
+    public void replaceItem(DocTypeGroups oldItem, DocTypeGroups newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void preparePasteItem(DocTypeGroups pasteItem, BaseDict target){
-        pasteItem.setParent((DocTypeGroups)target);
     }
 }

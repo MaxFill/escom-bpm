@@ -2,109 +2,222 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
-import com.maxfill.dictionary.DictDetailSource;
-import com.maxfill.dictionary.DictRights;
+import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictLogEvents;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
-import com.maxfill.escom.beans.explorer.ExplorerBean;
 import com.maxfill.model.filters.Filter;
-import com.maxfill.model.rights.Rights;
-import com.maxfill.model.states.State;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.users.User;
+import com.maxfill.utils.ItemUtils;
+import java.lang.reflect.InvocationTargetException;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.apache.commons.beanutils.BeanUtils;
 
 /* Базовый bean справочников  */
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
-    private static final long serialVersionUID = -4409411219233607045L;       
-    
-    private Integer defaultMaskAccess;          //дефолтная маска доступа текущего пользователя          
-
-    private final LayoutOptions layoutOptions = new LayoutOptions();
-    
-    protected Boolean northVisible = true;
-    protected Boolean southVisible = true;
-    protected Boolean westVisible = true;
-    protected Boolean eastVisible = true;
-    protected Integer widthCardDlg = 800;
-    protected Integer heightCardDlg = 600;
-
-    protected ExplorerBean explorerBean;  
-    
-    private TreeNode[] selectedNodes;
-    
+    private static final long serialVersionUID = -4409411219233607045L; 
+    private final LayoutOptions layoutOptions = new LayoutOptions(); 
+       
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
     public abstract BaseExplBean getDetailBean();       //возвращает бин подчинённых объектов
     public abstract BaseExplBean getOwnerBean();        //возвращает бин владельца объекта 
 
-    protected abstract String getBeanName();
-
     @Override
-    public void onInitBean(){    
+    public void onInitBean(){
         EscomBeanUtils.initLayoutOptions(layoutOptions);
         initAddLayoutOptions(layoutOptions);
-        northVisible = false;
-    }            
+    }        
     
-    /* Установка списка детальных данных в таблице обозревателя  */
-    public void doSetDetails(List<BaseDict> sourceItems, int source) {        
-        List<BaseDict> details = sourceItems.stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+    /* Формирование списка детальных данных в таблице обозревателя  */
+    public List<T> prepareSetDetails(List<T> sourceItems) {        
+        return sourceItems.stream()
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
-        explorerBean.setDetails(details, source);
-    }
+    }        
     
-    /* ПРАВА ДОСТУПА  */
-    
-    /* Объекты, имеющие владельца (owner), при включенном наследовании,
-     * получают права от владельца. Например, контрагент, получает права от
-     * своей группы. Поскольку контрагент может быть в разных группах, то в
-     * каждой группе к одному и тому же контрагенту могут быть разные права! */
-
-    /* ПРАВА ДОСТУПА: можно ли создавать объект  */
-    public boolean isHaveRightCreate() {
-        boolean flag = true;
-        if (explorerBean.getTreeSelectedNode() != null) {
-            O ownerItem = (O) explorerBean.getTreeSelectedNode().getData();
-            if (ownerItem != null) {
-                flag = sessionBean.isHaveRightEdit(ownerItem); //можно ли редактировать owner?
-            } else {
-                flag = false;
-            }
-        }
-        if (flag) {
-            flag = sessionBean.checkMaskAccess(getDefaultMaskAccess(), DictRights.RIGHT_CREATE); //можно ли создавать объект данного типа
-        }
-        return flag;
-    }
-    
-    /* ПРАВА ДОСТУПА: возвращает дефолтную маску доступа к объекту для текущего пользователя  */
-    public Integer getDefaultMaskAccess() {
-        if (defaultMaskAccess == null) {
-            Rights rights = getDefaultRights();
-            State state = getMetadatesObj().getStateForNewObj();
-            defaultMaskAccess = sessionBean.getAccessMask(state, rights, currentUser);
-        }
-        return defaultMaskAccess;
-    }
-          
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
-    /* РЕДАКТИРОВАНИЕ: перед добавлением объекта в группу  */
+    /* Подготовка к просмотру объекта на карточке */
+    public T prepViewItem(T item){
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getItemFacade();        
+        T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
+        makeRightItem(editItem);        
+        if (!isHaveRightView(editItem)){ 
+            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
+            String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
+            errors.add(error);
+        }
+        openItemCard(editItem, DictEditMode.VIEW_MODE, errors);
+        return editItem;
+    }
+    
+    /* Подготовка к редактированию объекта на карточке  */      
+    public T prepEditItem(T item){
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getItemFacade();
+        T editItem = findItem(item.getId());   //получаем копию объекта для редактирования 
+        makeRightItem(editItem);
+        if (!isHaveRightEdit(editItem)){            
+            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
+            String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
+            errors.add(error);
+        }       
+        openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
+        return editItem;
+    } 
+    
+    /* Создание объекта с открытием карточки */
+    public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> params){
+        Set<String> errors = new HashSet<>();
+        T newItem = createItem(owner, currentUser);
+        prepCreate(newItem, parent, errors, params);         
+        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);        
+        return newItem;
+    }
+
+    /* Действия перед созданием объекта */
+    private void prepCreate(T newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
+        boolean isAllowedEditOwner = true;
+        BaseDictFacade facade = getItemFacade();
+        BaseDict owner = newItem.getOwner();
+        if (owner != null) {
+            getOwnerBean().actualizeRightItem(owner);
+            isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
+        }
+        if (isAllowedEditOwner) {
+            newItem.setParent(parent);
+            makeRightItem(newItem);
+            if (isHaveRightCreate(newItem)) {
+                if (parent != null){
+                    makeRightForChilds(newItem);
+                }
+                facade.setSpecAtrForNewItem(newItem, params);
+                facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
+            } else {
+                String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
+                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+                errors.add(error);
+            }
+        } else {
+            if (owner != null){
+                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{owner.getName()});
+                errors.add(error);
+            }
+        }
+    }
+    
+    /* Вставка объекта */
+    public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
+        T pasteItem = doCopy(sourceItem, currentUser);
+        pasteItem.setChildItems(null);
+        pasteItem.setId(null);                    //нужно сбросить скопированный id!
+        pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
+        preparePasteItem(pasteItem, recipient);
+        prepCreate(pasteItem, pasteItem.getParent(), errors, null);            
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return null;
+        }
+        changeNamePasteItem(sourceItem, pasteItem);
+        getItemFacade().create(pasteItem);
+        return pasteItem;
+    }
+     
+    /* Специфичные действия перед вставкой скопированного объекта */
+    public void preparePasteItem(T item, BaseDict recipient){};  
+    
+    /* Определяется, нужно ли копировать объект при вставке */
+    public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
+        return true;
+    }
+    
+    /* Возвращает объект по его Id */
+    public T findItem(Integer id){
+        return (T)getItemFacade().find(id);
+    }
+    
+    public List<T> findAll(){        
+        return (List<T>) getItemFacade().findAll().stream()
+                    .filter(item -> preloadCheckRightView((T)item))
+                    .collect(Collectors.toList());             
+    }
+    
+    /* Копирование объекта */
+    public T doCopy(T sourceItem, User author){
+        T newItem = createItem(author);
+        try {
+            BeanUtils.copyProperties(newItem, sourceItem);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return newItem;
+    } 
+    
+    /* Добавление объекта в группу. Вызов из drag & drop */
+    public boolean addItemToGroup(T item, BaseDict targetGroup){ 
+        return false;
+    }   
+    
+    /* Изменение имени вставляемого объекта */
+    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
+        if (Objects.equals(sourceItem.getParent(), pasteItem.getParent()) 
+            && Objects.equals(sourceItem.getOwner(), pasteItem.getOwner()) ){            
+            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
+            pasteItem.setName(name);
+        }
+    } 
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта */
+    public List<List<?>> doGetDependency(T item){
+        return null;
+    }
+    
+    /* Открытие карточки объекта*/
+    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        
+        String itemKey = item.getItemKey();
+        
+        if (editMode.equals(DictEditMode.EDIT_MODE)){
+            Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
+            if (userLockId != null){
+                User user = rightFacade.findUserById(userLockId);
+                String objName = user.getName();
+                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
+                return;
+            }
+        }
+
+        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, currentUser);
+        String cardName = item.getClass().getSimpleName().toLowerCase();
+        EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
+    }     
+    
+    /* Обработка перед добавлением объекта в группу  */
     public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getOwnerBean().actualizeRightItem(dropItem);
-        if (!sessionBean.isHaveRightEdit(dropItem)) {
+        if (!isHaveRightEdit(dropItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
             errors.add(error);
             return false;
         }
         actualizeRightItem(dragItem);
-        if (!sessionBean.isHaveRightEdit(dragItem)) {
+        if (!isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -116,13 +229,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
         actualizeRightItem(dropItem);
 
-        if (!sessionBean.isHaveRightEdit(dropItem)){
+        if (!isHaveRightEdit(dropItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
         actualizeRightItem(dragItem);
-        if (!sessionBean.isHaveRightEdit(dragItem)){
+        if (!isHaveRightEdit(dragItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -144,7 +257,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в не актуальные  */
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
         actualizeRightItem(dragItem);
-        if (!sessionBean.isHaveRightEdit(dragItem)) {
+        if (!isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -152,24 +265,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;        
     }
     
-    /**
-     * РЕДАКТИРОВАНИЕ: Обработка события перемещения в дереве группы в группу
-     * Выполняется в бине дерева
-     * @param dropItem
-     * @param dragItem
-     */
+    /* РЕДАКТИРОВАНИЕ: Обработка события перемещения в дереве группы в группу  */
     public void moveGroupToGroup(BaseDict dropItem, T dragItem) {
         dragItem.setParent(dropItem);
         getItemFacade().edit(dragItem);
     }
 
-    /**
-     * РЕДАКТИРОВАНИЕ: Обработка перемещения объекта в группу Выполняется в бине
-     * таблицы
-     * @param dropItem
-     * @param dragItem
-     * @param sourceNode
-     */
+    /* РЕДАКТИРОВАНИЕ: Обработка перемещения объекта в группу */
     public void moveItemToGroup(BaseDict dropItem, T dragItem, TreeNode sourceNode) {
         O ownerDragItem = (O) dragItem.getOwner();    
         if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
@@ -198,12 +300,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
         EscomBeanUtils.checkAllowedDeleteItem(item, errors);
     }
-    
-    /* УДАЛЕНИЕ: Удаление из владельца всех связанных detail объектов */
-    protected void clearOwner(O owner){
-        owner.getDetailItems().clear();
-    }
-    
+        
     /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
     public void deleteItem(T item) {
         deleteChilds(item);
@@ -328,43 +425,12 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         paramMap.put("selectMode", paramList);
         String frmName = getItemFacade().getFRM_NAME() + "-explorer";
         RequestContext.getCurrentInstance().openDialog(frmName, options, paramMap);
-    }
-        
-    /* CЕЛЕКТОР: выбор объекта по двойному клику  */
-    public String onRowDblClckSelector(SelectEvent event) {
-        T item = (T) event.getObject();
-        return onSelect(item);
-    }
-    
-    /* СЕЛЕКТОР: обработка действия в селекторе по нажатию кнопки единичного выбора */
-    public String onSelect(BaseDict item) {
-        if (item == null){return "";}
-        explorerBean.getCheckedItems().clear();
-        explorerBean.getCheckedItems().add(item);        
-        return doClose(explorerBean.getCheckedItems());
-    }
-    
-    /* СЕЛЕКТОР: закрытие селектора без выбора объектов  */
-    public String onClose() {
-        explorerBean.getCheckedItems().clear();        
-        return doClose(explorerBean.getCheckedItems());
-    }
-    
-    /* СЕЛЕКТОР: действие по нажатию кнопки множественного выбора для списка  */
-    public String onMultySelect() {        
-        return doClose(explorerBean.getCheckedItems());
     }        
-    
-    /* СЕЛЕКТОР: закрытие формы селектора  */
-    protected String doClose(List<BaseDict> selected){
-        RequestContext.getCurrentInstance().closeDialog(selected);
-        return "/view/index?faces-redirect=true";
-    }
     
     /* ИЗБРАННОЕ */
     
     /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
-    public List<BaseDict> findFavorites() {        
+    public List<T> findFavorites() {        
         List<Integer> favorIds = new ArrayList<>();
         List<FavoriteObj> favorites = currentUser.getFavoriteObjList();
         favorites.stream()
@@ -381,8 +447,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /*  ФИЛЬТРЫ */
     
     /* ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра  */
-    public void makeFilteredContent(Filter filter) {
-        List<BaseDict> result = new ArrayList<>();
+    public List<T> makeFilteredContent(Filter filter) {
+        List<T> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
                 result = getItemFacade().loadFromTrash();
@@ -405,17 +471,22 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 break;
             }
         }
-        doSetDetails(result, DictDetailSource.FILTER_SOURCE);
+        return prepareSetDetails(result);
+    }
+    
+    /* ПОИСК: Выполняет инициализацию модели данных поиска */
+    public SearcheModel initSearcheModel(){
+        return new SearcheModel();
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
-        List<BaseDict> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
-        if (!searcheGroups.isEmpty()){
-            doSetDetails(sourceItems, DictDetailSource.SEARCHE_SOURCE);
+    public List<T> doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
+        List<T> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
+        if (!searcheGroups.isEmpty()){            
+            return prepareSetDetails(sourceItems);
         } else {
-            List<BaseDict> searcheItems = new ArrayList<>();
-            for (BaseDict item : sourceItems) {
+            List<T> searcheItems = new ArrayList<>();
+            for (T item : sourceItems) {
                 boolean include = false;
 
                 List<O> itemGroups = getGroups((T)item);
@@ -432,25 +503,21 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 if (include){
                     searcheItems.add(item);
                 }
-            }
-            doSetDetails(searcheItems, DictDetailSource.SEARCHE_SOURCE);
-        }
-        explorerBean.makeJurnalHeader(EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
+            }            
+            return prepareSetDetails(searcheItems);
+        }                
     }
     
-    /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
+    /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
+    public void replaceItem(BaseDict oldItem, BaseDict newItem){
+        getItemFacade().replaceItem(oldItem, newItem);
+    }
+        
     /* Инициализация дополнительных областей формы обозревателя */
     protected void initAddLayoutOptions(LayoutOptions layoutOptions) {
         EscomBeanUtils.initAddLayoutOptions(layoutOptions);
     }
-
-    /* Возвращает ширину диалога карточки объекта  */
-    public Integer getWidthCardDlg() {
-        return widthCardDlg;
-    } 
-    
-    /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ */
    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */
     public void doGetCountUsesItem(T item, Map<String, Integer> rezult) {
@@ -458,42 +525,10 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
 
     /* GETS & SETS */
-
+       
+    public abstract Class<O> getOwnerClass();        
+ 
     public LayoutOptions getLayoutOptions() {
         return layoutOptions;
     }
-
-    public Boolean getNorthVisible() {
-        return northVisible;
-    }
-    public Boolean getWestVisible() {
-        return westVisible;
-    }
-    public Boolean getEastVisible() {
-        return eastVisible;
-    }
-    public Boolean getSouthVisible() {
-        return southVisible;
-    }
-
-    public ExplorerBean getExplorerBean() {
-        return explorerBean;
-    }
-    public void setExplorerBean(ExplorerBean explorerBean) {
-        this.explorerBean = explorerBean;
-    }
-
-    public Integer getHeightCardDlg() {
-        return heightCardDlg;
-    }
-
-    public TreeNode[] getSelectedNodes() {
-        return selectedNodes;
-    }
-    public void setSelectedNodes(TreeNode[] selectedNodes) {
-        this.selectedNodes = selectedNodes;
-    }
-    
-    public abstract Class<O> getOwnerClass();        
-   
 }

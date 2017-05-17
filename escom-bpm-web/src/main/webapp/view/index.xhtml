@@ -107,7 +107,7 @@
                             <p:commandLink value="#{bundle.Settings}" 
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
                             <p:commandLink value="#{bundle.ChangePassword}"
-                                           actionListener="#{userBean.openChangePassword()}"/>
+                                           actionListener="#{sessionBean.openChangePassword()}"/>
                             
                             <p:outputLabel value="#{bundle.ChooseTheme} "/>
                             <p:themeSwitcher effect="fade" var="t">

@@ -15,20 +15,16 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 
-/**
- * НУМЕРАТОР
- * @author mfilatov
- */
-@ViewScoped
+/* Сервисный бин "НУМЕРАТОР" */
+@SessionScoped
 @Named
 public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, NumeratorPattern>{
     private static final long serialVersionUID = 7793437880614397796L;
-    private static final String BEAN_NAME = "numeratorPatternBean";
 
     @EJB
     private NumeratorPatternFacade numeratorFacade;    
@@ -49,12 +45,7 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
             }
         }
         return "";
-    }
-     
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
+    }     
         
     @Override
     public NumeratorPatternFacade getItemFacade() {

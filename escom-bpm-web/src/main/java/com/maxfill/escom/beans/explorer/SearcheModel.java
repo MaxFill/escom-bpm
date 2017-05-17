@@ -1,16 +1,14 @@
 package com.maxfill.escom.beans.explorer;
 
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Базовая модель данных для бинов
- * @author mfilatov
- * @param <T>
- */
+/* Базовая модель данных для поиска объектов */
 public class SearcheModel implements Serializable {
     private static final long serialVersionUID = 6832545210562543525L;       
             
@@ -89,6 +87,9 @@ public class SearcheModel implements Serializable {
         abcLocalSearche.add("ю");
         abcLocalSearche.add("я");
     }
+    
+    /* Добавление в параметры поискового запроса специфичных полей и условий */
+    protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){};
     
     public List<String> getAbcEnglSearche() {
         return abcEnglSearche;

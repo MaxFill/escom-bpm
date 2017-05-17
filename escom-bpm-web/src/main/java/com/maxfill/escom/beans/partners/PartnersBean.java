@@ -4,12 +4,11 @@ import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -18,48 +17,29 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringUtils;
+import javax.enterprise.context.SessionScoped;
 
-/**
- *  Контрагенты
- * @author mfilatov
- */
+/* Сервисный бин "Контрагенты" */
 @Named
-@ViewScoped
+@SessionScoped
 public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     private static final long serialVersionUID = -6099934518557372507L;
-    private static final String BEAN_NAME = "partnersBean";
     
     @EJB 
     private PartnersFacade itemsFacade;    
     @EJB 
-    private DocFacade docFacade;
-     
-    private String codeSearche;
-    
-    public PartnersBean() {
-    }    
+    private DocFacade docFacade;     
 
     @Override
-    public void doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<PartnerGroups> searcheGroups, Map<String, Object> addParams){        
-        if (StringUtils.isNotBlank(codeSearche)){
-            paramLIKE.put("codeSearche", codeSearche); 
-        }
-        super.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+    public SearcheModel initSearcheModel() {
+        return new PartnersSearche();
     }
     
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }
-
     @Override
     public PartnersFacade getItemFacade() {
         return itemsFacade;
@@ -69,27 +49,60 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     public BaseExplBean getDetailBean(){
         return null;
     }      
+        
+    /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
+    @Override
+    public boolean isNeedCopyOnPaste(Partner sourceItem, BaseDict recipient){
+        if (!(recipient instanceof PartnerGroups)){
+            return true;
+        }
+        if (sourceItem.getPartnersGroupsList().contains((PartnerGroups)recipient)){
+            return true;
+        }
+        return false;
+    }
     
-    /* Возвращает список групп контрагента  */
+    @Override
+    public void preparePasteItem(Partner pasteItem, BaseDict recipient){        
+        if (!isNeedCopyOnPaste(pasteItem, recipient)){
+            addItemToGroup(pasteItem, recipient);
+        }
+    } 
+    
+    @Override
+    public boolean addItemToGroup(Partner partner, BaseDict targetGroup){
+        if (partner == null || targetGroup == null){
+            return false;
+        }
+        PartnerGroups group = (PartnerGroups)targetGroup;
+        if (!partner.getPartnersGroupsList().contains(group)){
+            partner.getPartnersGroupsList().add(group);
+            getItemFacade().edit(partner);            
+            group.getPartnersList().add(partner);
+            return true;
+        }
+        return false;
+    }    
+
+    @Override
+    protected void detectParentOwner(Partner partner, BaseDict owner){
+        partner.setOwner(null);
+        partner.setParent(null);
+        if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
+            partner.getPartnersGroupsList().add((PartnerGroups)owner);            
+        } 
+    }
+    
     @Override
     public List<PartnerGroups> getGroups(Partner partner){
         return partner.getPartnersGroupsList();
     } 
     
-    /**
-     * Формирует число ссылок на объект в связанных объектах 
-     * @param partner
-     * @param rezult 
-     */
     @Override
     public void doGetCountUsesItem(Partner partner,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByPartner(partner).size());
     }    
     
-    /**
-     * Проверка возможности удаления Контрагента
-     * @param partner
-     */
     @Override
     protected void checkAllowedDeleteItem(Partner partner, Set<String> errors){
         super.checkAllowedDeleteItem(partner, errors);
@@ -100,12 +113,6 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         }
     }           
     
-    /**
-     * Перемещение контрагента из одной группы в другую
-     * 
-     * @param targetGroup (dropItem)
-     * @param partner (dragItem)
-     */
     @Override
     public void moveItemToGroup(BaseDict targetGroup, Partner partner, TreeNode sourceNode) {        
         if (sourceNode != null){
@@ -124,14 +131,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     @Override
     public Class<PartnerGroups> getOwnerClass() {
         return PartnerGroups.class;
-    }
-    
-    public String getCodeSearche() {
-        return codeSearche;
-    }
-    public void setCodeSearche(String codeSearche) {
-        this.codeSearche = codeSearche;
-    }
+    }    
     
     @FacesConverter("partnersConvertors")
     public static class partnersConvertors implements Converter {

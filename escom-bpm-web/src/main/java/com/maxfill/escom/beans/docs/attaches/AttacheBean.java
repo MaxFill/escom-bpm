@@ -9,11 +9,7 @@ import javax.inject.Named;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
-/**
- * Версии вложений, работа с прикреплёнными файлами
- *
- * @author mfilatov
- */
+/* Версии вложений, работа с прикреплёнными файлами  */
 @Named
 @ViewScoped
 public class AttacheBean extends BaseDialogBean{
@@ -41,10 +37,6 @@ public class AttacheBean extends BaseDialogBean{
         this.content = content;
     }
 
-    /**
-     * Закрытие окна просмотра файла документа
-     * @return 
-     */
     @Override
     protected String onCloseCard() {
         return super.onFinalCloseCard(null);

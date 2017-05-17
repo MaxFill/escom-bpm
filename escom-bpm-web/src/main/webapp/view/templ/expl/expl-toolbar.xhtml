@@ -52,7 +52,7 @@
                             title="#{bundle.SelectChecked}"
                             disabled="#{explorerBean.checkedItems.isEmpty()}"
                             rendered="#{explorerBean.multySelectMode}"
-                            action="#{_detailBean.onMultySelect()}">
+                            action="#{explorerBean.onMultySelect()}">
             </p:commandButton>
                 
             <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"

@@ -5,7 +5,9 @@ import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.rights.Rights;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -13,38 +15,58 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Группы пользователей
- * @author mfilatov
- */
+/* Сервисный бин "Группы пользователей" */
 @Named
-@ViewScoped
+@SessionScoped
 public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private static final long serialVersionUID = -7609222014155311960L;
-    private static final String BEAN_NAME = "userGroupsBean";
 
     @EJB
-    private UserGroupsFacade usGroupFacade;               
+    private UserGroupsFacade itemFacade;     
     
+    /* Получение прав доступа для иерархического справочника */
     @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        }
+        
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent()); //получаем права от родительской группы
+        }                     
+        
+        return getDefaultRights(item);
+    }
     
     @Override
     public UserGroupsFacade getItemFacade() {
-        return usGroupFacade;
+        return itemFacade;
     }
 
     @Override
     public List<UserGroups> getGroups(UserGroups item) {
         return null;
+    }
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(UserGroups group){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(group.getChildItems());
+        return dependency;
+    }
+    
+    @Override
+    public void preparePasteItem(UserGroups pasteItem, BaseDict target){
+        pasteItem.setParent((UserGroups)target);    
     }
     
     /* Формирует число ссылок на userGroups в связанных объектах  */

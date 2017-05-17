@@ -5,20 +5,17 @@ import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
-import com.maxfill.utils.EscomUtils;
 import org.primefaces.event.SelectEvent;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.faces.context.FacesContext;
 
-/**
- *
- * @author mfilatov
- */
+/*  Диалог администрирования объекта */
+ 
 @Named
 @ViewScoped
 public class AdmObjectBean extends BaseDialogBean{    
@@ -28,43 +25,29 @@ public class AdmObjectBean extends BaseDialogBean{
     private BaseDict sourceItem;
     private Map<String, Integer> rezultUpdate;
     
-    /**
-     * При открытии карточки объекта
-     */
     @Override
     public void onOpenCard(){
         if (sourceItem == null){
             super.onOpenCard(); 
-            sourceItem = getSourceBean().getExplorerBean().getCurrentItem();
+            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            Integer itemId = Integer.valueOf(params.get("itemId"));
+            sourceItem = getSourceBean().findItem(itemId);
         }
     }
     
-    /**
-     * Закрытие карточки
-     * @return 
-     */
     @Override
     public String onCloseCard(){
         return super.onFinalCloseCard(null);
     }
 
-    /**
-     * Вычисление числа ссылок на объект в связанных
-     * объектах
-
-     * @return
-     */
+    /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
         getSourceBean().doGetCountUsesItem(sourceItem, rezult);
         return rezult.entrySet();
     }
     
-    /**
-     * Выбор в селекторе элемента для замены 
-     *
-     * @param event
-     */
+    /* Выбор в селекторе элемента для замены   */
     public void onSelectChangeItem(SelectEvent event) {
         if (event.getObject() == null){ return;}
         List<BaseDict> selectedItems = (List<BaseDict>) event.getObject();
@@ -73,14 +56,10 @@ public class AdmObjectBean extends BaseDialogBean{
         }
     }
     
-    /**
-     * АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: Обработка события замены объекта в связанных
-     * объектах
-     * 
-     */
+    /* Обработка события замены объекта в связанных объектах  */
     public void onReplaceItem(){ 
         if (replaceItem != null) {
-            Map<String, Integer> rezult = getSourceBean().getItemFacade().replaceItem(sourceItem, replaceItem);            
+            getSourceBean().replaceItem(sourceItem, replaceItem);            
             EscomBeanUtils.SuccesMsgAdd("Successfully", "ReplaceCompleted");
         } else {
             EscomBeanUtils.ErrorMsgAdd("Error", "DoNotSpecifyValueReplacement", "");

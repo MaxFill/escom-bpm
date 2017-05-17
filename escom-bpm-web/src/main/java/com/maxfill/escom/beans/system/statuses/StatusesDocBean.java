@@ -4,10 +4,7 @@ package com.maxfill.escom.beans.system.statuses;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.model.BaseDict;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -15,27 +12,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Бин для справочника статусов документов
- * @author mfilatov
- */
-@ViewScoped
+/* Сервисный бин "Статусы документов" */
+@SessionScoped
 @Named
 public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
     private static final long serialVersionUID = 7864211951329104261L;
-    private static final String BEAN_NAME = "statusesDocBean";
     
     @EJB
-    private StatusesDocFacade itemFacade; 
-    
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
+    private StatusesDocFacade itemFacade;     
     
     @Override
     public StatusesDocFacade getItemFacade() {

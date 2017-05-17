@@ -5,10 +5,10 @@ import com.maxfill.facade.DepartmentFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.rights.Rights;
 import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -16,48 +16,87 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
 import org.apache.commons.collections.CollectionUtils;
 
-/* Подразделения */
+/* Сервисный бин "Подразделения" */
 @Named
-@ViewScoped
+@SessionScoped
 public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private static final long serialVersionUID = -690060212424991825L;
-    private static final String BEAN_NAME = "departmentBean";
     
     @EJB
     private DepartmentFacade itemFacade;
     @EJB
     private StaffFacade staffFacade;
     
-    public DepartmentBean() {
-    }
-    
     @Override
-    protected String getBeanName() {
-        return BEAN_NAME; 
-    }
-    
-    @Override
-    public void onInitBean(){            
-        super.onInitBean();
-    }     
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        } 
+        
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent()); //получаем права от родительского подразделения
+        } 
+        
+        if (item.getOwner() != null) {
+            return getRightItem(item.getOwner()); //получаем права от компании
+        }                        
+        
+        return getDefaultRights(item);
+    } 
     
     @Override
     public DepartmentFacade getItemFacade() {
         return itemFacade;
     }
 
-    /* КОНТЕНТ: формирование контента подразделения  */     
+    /* Определяет owner и parent для объекта  */
     @Override
-    public List<BaseDict> makeGroupContent(Department department) {
+    public void detectParentOwner(Department item, BaseDict target){
+        if (target instanceof Company){
+            item.setOwner((Company)target);
+            item.setParent(null);
+        } else
+        if (target instanceof Department){
+            item.setOwner(null);
+            item.setParent((Department)target);
+        }
+    }
+    
+    @Override
+    public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
+        detectParentOwner(dragItem, dropItem);
+        getItemFacade().edit(dragItem);
+    }
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(Department department){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(department.getDetailItems());
+        dependency.add(department.getChildItems());
+        return dependency;
+    } 
+    
+    /* Вставка скопированного объекта */
+    @Override
+    public void preparePasteItem(Department pasteItem, BaseDict target){
+        detectParentOwner(pasteItem, target);    
+    }   
+    
+    /* Формирование контента подразделения  */     
+    @Override
+    public List<BaseDict> makeGroupContent(Department department, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
         List<Department> departments = itemFacade.findChilds(department);
@@ -68,14 +107,14 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         return cnt;
     }
     
-    /* КОНТЕНТ: добавляет подразделение в контент  */ 
+    /* Добавляет подразделение в контент  */ 
     private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts) {
         //Rights rights = makeRightChild(folder, defDocRight);
         //settingRightForChild(folder, rights); //сохраняем права к документам
         cnts.add(department);
     }
 
-    /* КОНТЕНТ: добавляет штатную единицу в контент */ 
+    /* Добавляет штатную единицу в контент */ 
     public void addStaffInCnt(BaseDict staff, List<BaseDict> cnts) {
         /*
         Rights rd = defDocRight;

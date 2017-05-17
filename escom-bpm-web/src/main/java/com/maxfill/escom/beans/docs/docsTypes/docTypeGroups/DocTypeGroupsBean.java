@@ -6,6 +6,7 @@ import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.rights.Rights;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -13,31 +14,22 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Бин для Группы видов документов
- * @author mfilatov
- */
+/* Сервисный бин "Группы видов документов" */
 @Named
-@ViewScoped
+@SessionScoped
 public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups>{
-    private static final long serialVersionUID = -690060212424991825L;
-    private static final String BEAN_NAME = "docTypeGroupsBean";    
+    private static final long serialVersionUID = -690060212424991825L;  
     
     @EJB
     private DocTypeGroupsFacade itemsFacade;
     @EJB
-    private DocTypeFacade docTypeFacade;    
-    
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME; 
-    }
+    private DocTypeFacade docTypeFacade;        
     
     @Override
     public DocTypeGroupsFacade getItemFacade() {
@@ -45,24 +37,35 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     }
 
     @Override
+    public Rights getRightItem(BaseDict item) {
+        if (item == null) return null;
+        
+        if (!item.isInherits()) {
+            return getActualRightItem(item); //получаем свои права 
+        }
+        
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent()); //получаем права от родительской группы
+        }                     
+        
+        return getDefaultRights(item);
+    } 
+    
+    @Override
+    public void preparePasteItem(DocTypeGroups pasteItem, BaseDict target){
+        pasteItem.setParent((DocTypeGroups)target);
+    }
+    
+    @Override
     public List<DocTypeGroups> getGroups(DocTypeGroups item) {
         return null;
     }
     
-    /**
-     * Формирует число ссылок на docTypeGroups в связанных объектах 
-     * @param docTypeGroups
-     * @param rezult 
-     */
     @Override
     public void doGetCountUsesItem(DocTypeGroups docTypeGroups,  Map<String, Integer> rezult){
         rezult.put("DocTypes", docTypeFacade.findItemByOwner(docTypeGroups).size());
     }    
     
-    /**
-     * Проверка возможности удаления docTypeGroups
-     * @param docTypeGroups
-     */
     @Override
     protected void checkAllowedDeleteItem(DocTypeGroups docTypeGroups, Set<String> errors){
         super.checkAllowedDeleteItem(docTypeGroups, errors);       

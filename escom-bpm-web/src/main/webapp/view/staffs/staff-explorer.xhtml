@@ -29,6 +29,10 @@
                   rendered="#{explorerBean.isNowShowDetail()}">
             #{item.employee.shortFIO}
         </p:column>
+        <p:column headerText="#{bundle.Post}" sortBy="#{item.post.name}" 
+                  rendered="#{explorerBean.isNowShowDetail()}">
+            #{item.post.name}
+        </p:column>
     </ui:define> 
     
     <!-- специфичные колонки таблицы обозревателя для "Подразделения"-->
@@ -50,13 +54,13 @@
         <p:outputLabel value="#{bundle.Post}"/>        
         <p:inputText title="#{bundle.HelpSearcheContext}"
                      styleClass="ui-grid-col-12"
-                     value="#{staffBean.postSearche}"
+                     value="#{explorerBean.model.postSearche}"
                      onkeypress="keyPress();">
         </p:inputText>
         <p:outputLabel value="#{bundle.SecondName}"/>        
         <p:inputText title="#{bundle.HelpSearcheContext}"
                      styleClass="ui-grid-col-12"
-                     value="#{staffBean.secondNameSearche}"
+                     value="#{explorerBean.model.secondNameSearche}"
                      onkeypress="keyPress();">
         </p:inputText>
     </ui:define>

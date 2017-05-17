@@ -16,10 +16,7 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- *  Фасад для сущности "Виды документов"
- * @author mfilatov
- */
+/* Фасад для сущности "Виды документов" */
 @Stateless
 public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTypeLog> {
 
@@ -37,26 +34,14 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
         return DictMetadatesIds.OBJ_DOCS_TYPES;
     }
 
-    /**
-     * Замена вида документа в связанных объектах
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Замена вида документа в связанных объектах  */
     @Override
-    public Map<String, Integer> replaceItem(DocType oldItem, DocType newItem) {
-        Map<String, Integer> rezultMap = new HashMap<>();
-        rezultMap.put("Documents", replaceDocTypeInDocs(oldItem, newItem));
-        rezultMap.put("Folders", replaceDocTypeInFolders(oldItem, newItem));
-        return rezultMap;
+    public void replaceItem(DocType oldItem, DocType newItem) {
+        replaceDocTypeInDocs(oldItem, newItem);
+        replaceDocTypeInFolders(oldItem, newItem);
     }    
             
-    /**
-     * Замена вида документа в документах
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /* Замена вида документа в документах */
     private int replaceDocTypeInDocs(DocType oldItem, DocType newItem){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
@@ -68,12 +53,7 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
         return query.executeUpdate();
     }
     
-    /**
-     * Замена вида документа в папках (дефолтное значение для новых документов)
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
+    /** Замена вида документа в папках (дефолтное значение для новых документов)  */
     private int replaceDocTypeInFolders(DocType oldItem, DocType newItem){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);    

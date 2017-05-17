@@ -12,27 +12,18 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Бин для состояний документа
- * @author mfilatov
- */
-@ViewScoped
+/* Сервисный бин "Состояния документа" */
+@SessionScoped
 @Named
 public class StateBean extends BaseExplBean<State, State>{
     private static final long serialVersionUID = -3106225231045015183L;
-    private static final String BEAN_NAME = "stateBean";
-
+    
     @EJB
     private StateFacade docsStateFacade;
-
-    @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }    
     
     @Override
     public StateFacade getItemFacade() {

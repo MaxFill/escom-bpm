@@ -16,16 +16,18 @@
 
     <p:focus for="nameSearche"/>
 
+    <p:defaultCommand target="#{_frmExpl}_east:searcheBtn" />
+        
     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
         <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding">
             <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btABC"
-                             actionListener="#{explorerBean.abcSearche}"
+                             actionListener="#{explorerBean.onAbcSearche}"
                              update="#{_tblUpdate}"
                              oncomplete="initDND()">
                 <f:attribute name="action" value="#{'*'}" />
             </p:commandButton>
             <p:commandButton value="0-9" title="#{bundle.StartDigital}" style="width: 30px; font-size: 90%;"
-                             actionListener="#{explorerBean.abcSearche}"
+                             actionListener="#{explorerBean.onAbcSearche}"
                              update="#{_tblUpdate}"
                              oncomplete="initDND()">
                 <f:attribute name="action" value="#{'[0-9]'}" />
@@ -33,7 +35,7 @@
 
             <ui:repeat var="abcEngl" value="#{explorerBean.model.abcEnglSearche}">
                 <p:commandButton value="#{abcEngl}" styleClass="btABC"                       
-                                 actionListener="#{explorerBean.abcSearche}"
+                                 actionListener="#{explorerBean.onAbcSearche}"
                                  update="#{_tblUpdate}"
                                  oncomplete="initDND()">
                     <f:attribute name="action" value="#{abcEngl}" />
@@ -42,7 +44,7 @@
 
             <ui:repeat var="abcLocal" value="#{explorerBean.model.abcLocalSearche}">
                 <p:commandButton value="#{abcLocal}" styleClass="btABC"
-                                 actionListener="#{explorerBean.abcSearche}"
+                                 actionListener="#{explorerBean.onAbcSearche}"
                                  update="#{_tblUpdate}"
                                  oncomplete="initDND()">                                
                     <f:attribute name="action" value="#{abcLocal}" />

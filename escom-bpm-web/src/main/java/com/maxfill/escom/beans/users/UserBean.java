@@ -8,7 +8,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.EscomUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
@@ -18,71 +17,59 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
+import javax.enterprise.context.SessionScoped;
 
-/**
- * Bean для Пользователей
- * @author Maxim
- */
+/* Сервисный бин "Пользователи" */
 @Named
-@ViewScoped
+@SessionScoped
 public class UserBean extends BaseExplBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = -523024840800823503L;    
-    private static final String BEAN_NAME = "userBean";
-    
+
     @EJB 
-    private UserFacade userFacade;
-    @EJB 
-    private StaffFacade staffFacade;
+    private StaffFacade staffFacade;        
     
-    private String newPassword;
-    private String oldPassword;
-    private String repeatePassword;
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public String getRepeatePassword() {
-        return repeatePassword;
-    }
-
-    public void setRepeatePassword(String repeatePassword) {
-        this.repeatePassword = repeatePassword;
+    /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
+    @Override
+    public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target){
+        return !(target instanceof UserGroups);
     }
     
     @Override
-    protected String getBeanName() {
-        return BEAN_NAME;
-    }       
+    protected void detectParentOwner(User user, BaseDict owner){
+        user.setOwner(null);
+        user.setParent(null);
+        if (!user.getUsersGroupsList().contains((UserGroups)owner)){
+            user.getUsersGroupsList().add((UserGroups)owner);            
+        } 
+    }
+        
+    @Override
+    public void preparePasteItem(User pasteItem, BaseDict recipient){
+        if (!isNeedCopyOnPaste(pasteItem, recipient)){
+            addItemToGroup(pasteItem, recipient);        
+        }
+    }  
+    
+    @Override
+    public boolean addItemToGroup(User user, BaseDict group){
+        if (group == null){ return false;}
+        
+        if (!user.getUsersGroupsList().contains((UserGroups)group)){
+            user.getUsersGroupsList().add((UserGroups)group);
+            getItemFacade().edit(user);
+        }
+        return true;
+    }      
 
     @Override
     public UserFacade getItemFacade() {
         return userFacade;
     }
 
-    /**
-     * Перемещение пользователя из одной группы в другую
-     * 
-     * @param targetGroup (dropItem)
-     * @param user (dragItem)
-     */
+    /* Перемещение пользователя из одной группы в другую  */
     @Override
     public void moveItemToGroup(BaseDict targetGroup, User user, TreeNode sourceNode) {        
         if (sourceNode != null){
@@ -98,19 +85,13 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         return null;
     }
 
-    /**
-     * Возвращает список групп, в которые входит пользователь
-     * @param item
-     * @return 
-     */
+    /* Возвращает список групп, в которые входит пользователь  */
     @Override
     public List<UserGroups> getGroups(User item) {
         return item.getUsersGroupsList();
     }    
     
-    /**
-     * Открытие формы активных пользователей
-     */
+    /* Открытие формы активных пользователей */
     public void onActiveUsersFormShow(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -123,66 +104,15 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog("/view/admin/users/sessions", options, null); 
-    }
+    }                
     
-    /**
-     * Открытие формы изменения пароля
-     */
-    public void openChangePassword(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", false);
-        options.put("modal", true);
-        options.put("width", 600);
-        options.put("height", 200);
-        options.put("maximizable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/admin/users/change-password", options, null);  
-    }
-    
-    /**
-     * Изменение пароля пользователя
-     * @throws java.security.NoSuchAlgorithmException
-     */
-    public void changePassword() throws NoSuchAlgorithmException{
-        String newPwl = getNewPassword().trim();
-        String repPwl = getRepeatePassword().trim();
-        if (!Objects.equals(newPwl, repPwl)){
-            EscomBeanUtils.ErrorMsgAdd("Error", "PasswordsNotMatch", "");
-            return;
-        }
-        String oldPwlMD5 = EscomUtils.encryptPassword(getOldPassword().trim());
-        String curPwlMD5 = sessionBean.getCurrentUser().getPassword();         
-        if (!Objects.equals(curPwlMD5, oldPwlMD5)){
-            EscomBeanUtils.ErrorMsgAdd("Error", "PasswordIncorrect", "");
-            return;
-        }
-        User user = sessionBean.getCurrentUser();
-        user.setPassword(EscomUtils.encryptPassword(newPwl));
-        getItemFacade().edit(user);
-        RequestContext.getCurrentInstance().closeDialog(null);
-        setNewPassword(null);
-        setOldPassword(null);
-        setRepeatePassword(null);
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "PasswordIsChange");        
-    }    
-    
-    /**
-     * Формирует число ссылок на user в связанных объектах 
-     * @param user
-     * @param rezult 
-     */
+    /* Формирует число ссылок на user в связанных объектах */
     @Override
     public void doGetCountUsesItem(User user,  Map<String, Integer> rezult){
         rezult.put("Staffs", staffFacade.findStaffsByUser(user).size());
     }    
     
-    /**
-     * Проверка возможности удаления user
-     * @param user
-     */
+    /* Проверка возможности удаления user */
     @Override
     protected void checkAllowedDeleteItem(User user, Set<String> errors){
         super.checkAllowedDeleteItem(user, errors);

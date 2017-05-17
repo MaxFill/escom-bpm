@@ -4,12 +4,7 @@ package com.maxfill.facade;
 import com.maxfill.model.numPuttern.NumeratorPatternLog;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.DictMetadatesIds;
-import java.util.List;
-import java.util.Map;
 import javax.ejb.Stateless;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  * Шаблоны нумераторв
@@ -33,7 +28,7 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
     }
 
     @Override
-    public Map<String, Integer> replaceItem(NumeratorPattern oldItem, NumeratorPattern newItem) {
+    public void replaceItem(NumeratorPattern oldItem, NumeratorPattern newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

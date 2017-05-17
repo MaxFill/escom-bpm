@@ -57,7 +57,7 @@
             <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
                 <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
                             rendered="#{explorerBean.selectorViewMode}"
-                            action="#{_treeBean.onSelectTreeItem()}"/>
+                            action="#{explorerBean.onSelectTreeItem()}"/>
                 <p:separator rendered="#{explorerBean.selectorViewMode}"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
                             oncomplete="document.getElementById('#{_frmTree}:createRootCardBtn').click();"/>

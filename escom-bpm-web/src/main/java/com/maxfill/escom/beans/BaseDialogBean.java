@@ -3,16 +3,12 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.context.RequestContext;
-
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Map;
 
-/**
- *
- * @author mfilatov
- */
+/* Базовый бин для служебных диалогов  */
 public abstract class BaseDialogBean implements Serializable{    
     private static final long serialVersionUID = 3712139345846276454L;
     
@@ -42,14 +38,13 @@ public abstract class BaseDialogBean implements Serializable{
         RequestContext.getCurrentInstance().closeDialog(param);
         return "/view/index?faces-redirect=true";
     }
-    
-    /**
-     * Установка признака изменения объекта. 
-     */
+        
     public void onItemChange() {
         setItemChange(Boolean.TRUE);
     }
 
+    /* GETS & SETS */
+    
     public boolean isItemChange() {
         return itemChange;
     }

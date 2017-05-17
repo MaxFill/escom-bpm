@@ -92,7 +92,7 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
     public List<Staff> getStaffs() {
         if (staffs == null){
             staffs = staffFacade.findActualStaff().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return staffs;

@@ -11,7 +11,6 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -100,7 +99,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     public List<PartnerTypes> getPartnerTypes() {
         if (partnerTypes == null){
             partnerTypes = partnerTypesFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return partnerTypes;

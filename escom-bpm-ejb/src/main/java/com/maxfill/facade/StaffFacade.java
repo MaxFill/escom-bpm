@@ -65,46 +65,18 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     }
 
     @Override
-    public void preparePasteItem(Staff pasteItem, BaseDict target){
-        detectParentOwner(pasteItem, target);
-    }
-    
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_STAFFS;
-    }    
-    
-    @Override
-    public boolean addItemToGroup(Staff staff, BaseDict group){ 
-        //поскольку шт.ед. может быть только в одном подразделении, то выполняем перемещение
-        moveItemToGroup(group, staff); 
-        return true;
-    }
-
-    public void moveItemToGroup(BaseDict group, Staff staff){
-        detectParentOwner(staff, group);
-        edit(staff);
-    }
+    }   
         
-    @Override
-    public void detectParentOwner(Staff staff, BaseDict target){
-        if (target instanceof Company){
-            staff.setCompany((Company)target);
-            staff.setOwner(null); //теперь нет связи с подразделением
-        } else
-            if (target instanceof Department){
-                staff.setOwner((Department)target);
-                staff.setCompany(null);
-            }
-    }
-    
     /* Создание новой штатной единицы  */
     public Staff createStaff(Department department, Post post, User user){
         if (department == null || post == null || user == null){
             return null;
         }
         String name = post.getName() + " " + user.getName();
-        Staff staff = createItem(department, userFacade.getAdmin());
+        Staff staff = createItem(userFacade.getAdmin());
+        staff.setOwner(department);
         staff.setPost(post);
         staff.setEmployee(user);
         staff.setName(name);
@@ -192,11 +164,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     
     /* Процедура замены штатной единицы в связанных с ней объектах  */
     @Override
-    public Map<String, Integer> replaceItem(Staff oldItem, Staff newItem) {
+    public void replaceItem(Staff oldItem, Staff newItem) {
         Map<String, Integer> rezultMap = new HashMap<>();
         rezultMap.put("Documents", replaceStaffInDocs(oldItem, newItem));
-        rezultMap.put("Users", replaceStaffInUsers(oldItem, newItem));
-        return rezultMap;
+        rezultMap.put("Users", replaceStaffInUsers(oldItem, newItem));        
     }
 
     /* Замена штатной единицы в документах */

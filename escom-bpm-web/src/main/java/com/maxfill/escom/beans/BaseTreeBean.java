@@ -4,10 +4,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Rights;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T , O > {
@@ -16,11 +13,9 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     private Rights defaultRightsChilds;
     private BaseExplBean ownerBean;
     private BaseExplBean detailBean;           
-        
-    /* ДЕРЕВО */    
-    
+            
     /* Формирование детального списка для группы  */
-    public List<BaseDict> makeGroupContent(T group){   
+    public List<BaseDict> makeGroupContent(T group, Integer viewMode){   
         List<BaseDict> details = getDetailBean().getItemFacade().findDetailItems(group);
         return details;
     }
@@ -44,14 +39,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Добавление узла в дерево при его формировании  */
     protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
         TreeNode rezNode = null;
-        if (sessionBean.preloadCheckRightView(item)) {
-
-            TreeNode newNode;
-
-            synchronized (this) {
-                newNode = new DefaultTreeNode("tree", item, parentNode);
-                //newNode.setExpanded(true);
-            }
+        if (preloadCheckRightView(item)) {
+            TreeNode newNode = new DefaultTreeNode("tree", item, parentNode);
 
             List<T> childs = getItemFacade().findChilds(item);
             childs.stream()
@@ -60,32 +49,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
             rezNode = newNode;
         }
         return rezNode;
-    }       
-    
-    protected void clearDetail(T item){
-        getDetailBean().clearOwner(item);
-    }
-    
-    /* СЕЛЕКТОР */
-    
-    /* СЕЛЕКТОР: обработка действия выбора элемента в дереве   */
-    public String onSelectTreeItem() {        
-        BaseDict selectItem = explorerBean.getCurrentItem();
-        if (selectItem == null || !explorerBean.isCanSelectedItem(selectItem)){
-            return "";
-        }        
-        List<BaseDict> groups = new ArrayList<>();
-        groups.add(explorerBean.getCurrentItem());
-        return doClose(groups);
-    }
-    
-    /* СЕЛЕКТОР: обработка действия множественного выбора для дерева */
-    public String onSelectTreeItems() {
-        List<TreeNode> nodes = Arrays.asList(getSelectedNodes());        
-        List<BaseDict> groups = nodes.stream().map(node -> (O) node.getData()).collect(Collectors.toList());
-        return doClose(groups);
-    }
-    
+    }              
+        
     /* GETS & SETS */
     
     public Rights getDefaultRightsChilds() {

@@ -5,12 +5,9 @@ import com.maxfill.model.folders.FolderLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.utils.SysParams;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -19,10 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- * Папки
- * @author Maxim
- */
+/* Папки  */
 @Stateless
 public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
     @EJB
@@ -35,12 +29,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
     @Override
     public String getFRM_NAME() {
         return Folder.class.getSimpleName().toLowerCase();
-    }
-      
-    @Override
-    public void preparePasteItem(Folder pasteItem, BaseDict target){        
-        pasteItem.setParent((Folder)target);
-    } 
+    }      
     
     /* Установка специфичных атрибутов при создании новой папки  */
     @Override
@@ -60,11 +49,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
         return q.getResultList(); 
     }    
 
-    /**
-     * Поиск папок по виду документа, указанного в дефолтном поле
-     * @param docType
-     * @return 
-     */
+    /* Поиск папок по виду документа, указанного в дефолтном поле  */
     public List<Folder> findFoldersByDocTyper(DocType docType){
         getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -83,7 +68,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
     }
 
     @Override
-    public Map<String, Integer> replaceItem(Folder oldItem, Folder newItem) {
+    public void replaceItem(Folder oldItem, Folder newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

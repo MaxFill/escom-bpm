@@ -31,7 +31,7 @@
                             styleClass="ui-grid-col-12" style="float: right;"
                             onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">                
                 <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
-                            action="#{sessionBean.prepEditItem(_itemValue)}"
+                            action="#{_selectorBean.prepEditItem(_itemValue)}"
                             disabled="#{_disabled or _itemValue == null}"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"

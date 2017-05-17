@@ -1,42 +1,33 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
-import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.model.BaseDict;
-import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.facade.CompanyFacade;
-import com.maxfill.facade.DepartmentFacade;
-import com.maxfill.facade.StaffFacade;
-import com.maxfill.facade.PostFacade;
-import com.maxfill.facade.DocFacade;
-import com.maxfill.facade.DocStatusFacade;
-import com.maxfill.facade.DocTypeFacade;
-import com.maxfill.facade.DocTypeGroupsFacade;
-import com.maxfill.facade.FiltersFacade;
-import com.maxfill.facade.FoldersFacade;
-import com.maxfill.facade.PartnersFacade;
-import com.maxfill.facade.PartnersGroupsFacade;
-import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.rights.Right;
-import com.maxfill.facade.StateFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.users.settings.Theme;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.companies.CompanyBean;
+import com.maxfill.escom.beans.companies.departaments.DepartmentBean;
+import com.maxfill.escom.beans.companies.staffs.StaffBean;
+import com.maxfill.escom.beans.companies.staffs.posts.PostBean;
+import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
+import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
+import com.maxfill.escom.beans.folders.FoldersBean;
+import com.maxfill.escom.beans.partners.PartnersBean;
+import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
+import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
+import com.maxfill.escom.beans.system.states.StateBean;
+import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
+import com.maxfill.escom.beans.users.UserBean;
+import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
-import com.maxfill.facade.RightFacade;
+import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.states.State;
-import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -56,26 +47,16 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
-import javax.xml.bind.JAXB;
-import org.primefaces.event.SelectEvent;
 
-/**
- * Бин формы рабочего стола пользователя, а так же сессионный бин приложения
- * @author Maxim
- */
+/* Cессионный бин приложения */
 @SessionScoped
 @Named
 public class SessionBean implements Serializable{  
@@ -96,48 +77,46 @@ public class SessionBean implements Serializable{
     private List<Theme> themes;
     private Locale locale;
     private UserSettings userSettings;
-    
-    @Inject
-    private ApplicationBean appBean;
-    
+       
     @EJB
-    protected Configuration configuration;
-    @EJB
-    private RightFacade rightFacade;
+    protected Configuration configuration;    
     @EJB
     private UserFacade userFacade;
     @EJB
-    private CompanyFacade companyFacade;
-    @EJB
     private StaffFacade staffFacade;
-    @EJB
-    private DocTypeFacade docTypeFacade;
-    @EJB
-    private PartnersFacade partnersFacade;
-    @EJB
-    private DocFacade docsFacade;
-    @EJB
-    private DocStatusFacade docStatusFacade;
-    @EJB
-    private FoldersFacade foldersFacade;
-    @EJB
-    private PostFacade postFacade;
-    @EJB
-    private DepartmentFacade departmentFacade;
-    @EJB
-    private UserGroupsFacade usGroupFacade;
-    @EJB
-    private PartnersGroupsFacade partnersGroupsFacade;
-    @EJB
-    private PartnerTypesFacade partnerTypesFacade;
-    @EJB
-    private DocFacade docFacade;
-    @EJB
-    private DocTypeGroupsFacade docTypeGroupsFacade;
-    @EJB
-    private FiltersFacade filtersFacade;
-    @EJB
-    private StateFacade stateFacade;   
+    
+    @Inject
+    private ApplicationBean appBean;    
+    @Inject
+    private UserBean usersBean;
+    @Inject
+    private CompanyBean companyBean;
+    @Inject
+    private StaffBean staffBean;
+    @Inject
+    private DocTypeBean docTypeBean;
+    @Inject
+    private PartnersBean partnerBean;
+    @Inject
+    private DocBean docBean;
+    @Inject
+    private StatusesDocBean docStatusBean;
+    @Inject
+    private FoldersBean folderBean;
+    @Inject
+    private PostBean postBean;
+    @Inject
+    private DepartmentBean departmentBean;
+    @Inject
+    private UserGroupsBean userGroupBean;
+    @Inject
+    private PartnersGroupsBean partnerGroupBean;
+    @Inject
+    private PartnerTypesBean partnerTypeBean;
+    @Inject
+    private DocTypeGroupsBean docTypeGroupBean;
+    @Inject
+    private StateBean stateBean;     
     
     @PostConstruct
     public void init() {
@@ -165,7 +144,7 @@ public class SessionBean implements Serializable{
         temeInit();
     }    
     
-    /* *** БУФЕР ИСТОЧНИКОВ *** */
+    /* БУФЕР ИСТОЧНИКОВ */
     
     /* Добавление бина источника в буфер */
     public void addSourceBean(BaseBean bean){
@@ -198,7 +177,55 @@ public class SessionBean implements Serializable{
         sourceRightMap.remove(key);
     }
     
-    /* *** ----  *** */
+    /* ITEM HELPER */    
+            
+    public BaseDict prepEditItem(BaseDict item){
+        BaseExplBean bean = getItemBean(item);
+        return bean.prepEditItem(item);
+    }
+    
+    public BaseDict prepViewItem(BaseDict item){
+        BaseExplBean bean = getItemBean(item);
+        return bean.prepViewItem(item);
+    }
+    
+    public BaseDict prepCreateItem(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
+        BaseExplBean bean = getItemBeanByClassName(itemClassName);
+        return bean.createItemAndOpenCard(parent, owner, params);
+    }
+    
+    public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
+        BaseExplBean bean = getItemBean(sourceItem);        
+        if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
+            BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
+            
+            List<List<?>> dependency = bean.doGetDependency(sourceItem);
+            if (dependency != null){
+                copyPasteDependency(dependency, pasteItem, errors);
+                pasteItem = bean.findItem(pasteItem.getId());
+            }
+            return pasteItem;
+        } else {
+            bean.preparePasteItem(sourceItem, recipient);
+            return sourceItem;
+        }
+    }
+    
+    public BaseDict prepCopyItem(BaseDict copyItem){
+        return getItemBean(copyItem).doCopy(copyItem, currentUser);
+    }
+        
+    private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
+        for (List<?> depend : dependency){
+            depend.stream().forEach(detailItem -> prepPasteItem((BaseDict)detailItem, pasteItem, errors));
+        }        
+    }                       
+    
+    public boolean prepAddItemToGroup(BaseDict item, BaseDict targetGroup){ 
+        return getItemBean(item).addItemToGroup(item, targetGroup);
+    }                  
+    
+    /* ПРОЧИЕ МЕТОДЫ */
     
     /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
     public void showNotifBar(){
@@ -299,12 +326,27 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }
 
+    /* Открытие формы изменения пароля пользователя */
+    public void openChangePassword(){
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", false);
+        options.put("modal", true);
+        options.put("width", 600);
+        options.put("height", 200);
+        options.put("maximizable", false);
+        options.put("closable", true);
+        options.put("closeOnEscape", true);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        RequestContext.getCurrentInstance().openDialog("/view/admin/users/change-password", options, null);  
+    }
+    
     /* Переход на начальную страницу программы */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";
     } 
 
-    /* Инициализация спсика тем */
+    /* Инициализация спиcка тем */
     private void temeInit(){
         themes = new ArrayList<>();
         themes.add(new Theme(0, "Afterdark", "afterdark"));
@@ -342,458 +384,15 @@ public class SessionBean implements Serializable{
         themes.add(new Theme(35, "UI-Darkness", "ui-darkness"));
         themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
         themes.add(new Theme(37, "Vader", "vader"));
-    }
-        
-    /* ПРАВА ДОСТУПА */
-          
-    /* ПРАВА ДОСТУПА: получение дефолтных прав объекта */
-    public Rights getDefaultRights(BaseDict item){
-        return appBean.getDefaultRights(item.getClass().getSimpleName());
-    }
-            
-    /* ПРАВА ДОСТУПА: актуализация прав доступа к объекту */    
-    public boolean checkMaskEdit(BaseDict item){
-        return isHaveRightEdit(item);
-    }
-    
-    /* ПРАВА ДОСТУПА: */
-    public boolean checkMaskDelete(BaseDict item){
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
-    }
-    
-    /* ПРАВА ДОСТУПА: */
-    public boolean checkMaskRightChangeRight(BaseDict item){
-        Boolean rezult = checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
-        return rezult;
-    }
-    
-    /* ПРАВА ДОСТУПА: акутализация прав доступа объекта */
-    public void actualizeRightItem(BaseDict item){
-        BaseDict freshItem = (BaseDict)getItemFacade(item).find(item.getId()); //актуализируем объект, т.к. он может быть удалён!
-        if (freshItem == null){
-            item.setRightItem(null); //обнулим права у объекта так как он скорее всего удалён ...
-            item.setRightMask(null);
-            return;
-        }
-        Rights freshRights = getRightItem(freshItem);
-        settingRightItem(item, freshRights);
-    }
-    
-    /* ПРАВА ДОСТУПА: формирование прав для объекта  */
-    public Rights makeRightItem(BaseDict item) {
-        Rights rights = getRightItem(item);
-        settingRightItem(item, rights); 
-        return rights;
-    }    
-    
-    /* ПРАВА ДОСТУПА: Установка и проверка прав при загрузке объекта */
-    public Boolean preloadCheckRightView(BaseDict item) {
-        Rights rights = getRightItem(item);
-        settingRightItem(item, rights);
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
-    }
-    
-    /* ПРАВА ДОСТУПА: проверка маски доступа к объекту */
-    public boolean checkMaskAccess(Integer mask, Integer right) {
-        if (mask == null) {
-            return false;
-        }
-        Integer m = mask & right;
-        return m.equals(right);
-    }
-    
-    /* ПРАВА ДОСТУПА: Получение прав объекта  */
-    public Rights getRightItem(BaseDict item) {
-        Rights rights;
-        if (item == null) {
-            return null;
-        }                
-        if (!item.isInherits()) {
-            rights = getActualRightItem(item);
-        } else 
-            if (item.getOwner() != null) {
-                rights = getRightItem(item.getOwner()); //получаем права от владельца
-            } else 
-                if (item.getParent() != null) {
-                    rights = getRightItem(item.getParent()); //получаем права от родителя
-                } else {
-                    rights = getDefaultRights(item);
-                }
-        return rights;
-    }
-    
-    /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
-    public void settingRightItem(BaseDict item, Rights newRight) {
-        if (item != null) {
-            item.setRightItem(newRight);
-            Integer mask = getAccessMask(item.getState(), newRight, currentUser);
-            item.setRightMask(mask);
-            item.setAccess(newRight.toString()); //сохраняем права в виде XML
-        }
-    } 
-    
-    /* ПРАВА ДОСТУПА: формирование прав дочерних объектов */
-    public void makeRightForChilds(BaseDict item){
-        Rights childRights = getRightForChild(item);
-        settingRightForChild(item, childRights); 
-    }
-    
-    /* ПРАВА ДОСТУПА: Получение прав для дочерних объектов */
-    public Rights getRightForChild(BaseDict item){        
-        if (item == null) { return null; }                
-        Rights rights = null;
-        if (!item.isInherits()) {
-            rights = getActualRightChildItem(item);
-        } else 
-            if (item.getOwner() != null) {
-                rights = getRightForChild(item.getOwner()); //получаем права от владельца
-            } else 
-                if (item.getParent() != null) {
-                    rights = getRightForChild(item.getParent()); //получаем права от родителя
-                } 
-        return rights;
-    }   
-        
-    /* ПРАВА ДОСТУПА: Установка прав дочерних объектов */
-    public void settingRightForChild(BaseDict item, Rights newRight) {
-        if (item != null && newRight != null) {
-            item.setRightForChild(newRight);
-            item.setXmlAccessChild(newRight.toString());
-        }
-    }    
-    
-    /* ПРАВА ДОСТУПА: получение актуальных прав объекта  */
-    private Rights getActualRightItem(BaseDict item) {        
-        if (item.getRightItem() != null){
-            return item.getRightItem();
-        }
-        if (StringUtils.isNotBlank(item.getAccess())){
-            StringReader access = new StringReader(item.getAccess());         
-            Rights actualRight = (Rights) JAXB.unmarshal(access, Rights.class); //Демаршаллинг прав из строки! 
-            settingRightItem(item, actualRight);
-            return actualRight;
-        } else {
-            throw new NullPointerException("EscomERR: Object " + item.getName() + " dont have xml right!");
-        }            
-    }
-    
-    /* ПРАВА ДОСТУПА: получение актуальных прав объекта от его владельца  */
-    private Rights getActualRightChildItem(BaseDict item) {
-        String childStrRight = item.getXmlAccessChild();
-        if (StringUtils.isNotBlank(childStrRight)){
-            Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(childStrRight), Rights.class);
-            return actualRight;
-        } 
-        return null;
-    }
-    
-    /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
-    public Integer getAccessMask(State state, Rights sourcesRight, User user) {
-        Integer userId = user.getId();
-        Integer accessMask = 0;
-        for (Right right : sourcesRight.getRights()) {  //распарсиваем права 
-            if (right.getState().equals(state)) {
-                switch (right.getObjType()) {
-                    case 1: {    //права указаны для пользователя
-                        if (right.getObjId().equals(userId)) { //это текущий пользователь, добавляем ему права
-                            accessMask = accessMask | makeAccessMask(right, accessMask);
-                        }
-                        break;
-                    }
-                    case 0: {    //права указаны для группы
-                        if (checkUserInGroup(right.getObjId(), user)) {
-                            accessMask = accessMask | makeAccessMask(right, accessMask);
-                        }
-                        break;
-                    }
-                }
-                if (accessMask == 248) {
-                    break; //дальше проверять права не нужно, т.к. установлены максимальные права
-                }
-            }
-        }
-        return accessMask;
-    } 
-    
-    /* ПРАВА ДОСТУПА: формирование битовой маски доступа */
-    private Integer makeAccessMask(Right right, Integer accessMask) {
-        if (right.isRead()) {
-            accessMask = accessMask | DictRights.RIGHT_VIEW;
-        }
-        if (right.isUpdate()) {
-            accessMask = accessMask | DictRights.RIGHT_EDIT;
-        }
-        if (right.isCreate()) {
-            accessMask = accessMask | DictRights.RIGHT_CREATE;
-        }
-        if (right.isDelete()) {
-            accessMask = accessMask | DictRights.RIGHT_DELETE;
-        }
-        if (right.isChangeRight()) {
-            accessMask = accessMask | DictRights.RIGHT_CHANGE_RIGHT;
-        }
-        return accessMask;
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
-    private boolean checkUserInGroup(Integer groupId, User user) {
-        for (UserGroups group : user.getUsersGroupsList()) {
-            if (group.getId().equals(groupId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-            
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на просмотр объекта */
-    public boolean isHaveRightView(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);         
-    }     
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание объекта  */
-    public boolean isHaveRightCreate(BaseDict item) {        
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CREATE);
     }        
     
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на редактирование объекта  */
-    public Boolean isHaveRightEdit(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EDIT);                 
-    }
-    
-    /* *** --- ITEM HELPER --- *** */                    
-    
-    /* Вставка объекта. Возвращает вставленный объект и список ошибок */
-    public BaseDict doPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
-        BaseDictFacade facade = getItemFacade(sourceItem);
-        if (facade.isNeedCopyOnPaste(sourceItem, recipient)){
-            BaseDict pasteItem = (BaseDict)facade.doCopy(sourceItem, currentUser);            
-        //    pasteItem.setDetailItems(null);
-            pasteItem.setChildItems(null);
-            pasteItem.setId(null);                    //нужно сбросить скопированный id!
-            pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
-            facade.preparePasteItem(pasteItem, recipient);
-            prepCreate(pasteItem, pasteItem.getParent(), errors, null);            
-            if (!errors.isEmpty()){
-                EscomBeanUtils.showErrorsMsg(errors);
-                return null;
-            }
-            changeNamePasteItem(sourceItem, pasteItem);
-            facade.create(pasteItem);
-            List<List<?>> dependency = facade.doGetDependency(sourceItem);
-            if (dependency != null){
-                copyPasteDependency(dependency, pasteItem, errors);
-                pasteItem = (BaseDict)facade.find(pasteItem.getId());
-            }
-            return pasteItem;
-        } else {
-            facade.preparePasteItem(sourceItem, recipient);
-            return sourceItem;
-        }
-    }
-    
-    /* Копирование зависимых объектов */
-    private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
-        for (List<?> depend : dependency){
-            depend.stream().forEach(detailItem -> doPasteItem((BaseDict)detailItem, pasteItem, errors));
-        }        
-    }
-    
-    /* Изменение имени вставляемого объекта */
-    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
-        if (Objects.equals(sourceItem.getParent(), pasteItem.getParent()) 
-            && Objects.equals(sourceItem.getOwner(), pasteItem.getOwner()) ){            
-            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-            pasteItem.setName(name);
-        }
-    }
-    
-    /* Создание объекта с открытием карточки */
-    public BaseDict createItemAndOpenCard(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getItemFacadeByClassName(itemClassName); 
-        BaseDict newItem = facade.createItem(owner, currentUser);
-        prepCreate(newItem, parent, errors, params);         
-        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);        
-        return newItem;
-    }
-
-    /* Действия перед созданием объекта */
-    private void prepCreate(BaseDict newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
-        boolean isAllowedEditOwner = true;
-        BaseDictFacade facade = getItemFacade(newItem);
-        BaseDict owner = newItem.getOwner();
-        if (owner != null) {
-            actualizeRightItem(owner);
-            isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
-        }
-        if (isAllowedEditOwner) {
-            newItem.setParent(parent);
-            makeRightItem(newItem);
-            if (isHaveRightCreate(newItem)) {
-                if (parent != null){
-                    makeRightForChilds(newItem);
-                }
-                facade.setSpecAtrForNewItem(newItem, params);
-                facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
-            } else {
-                String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
-                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
-                errors.add(error);
-            }
-        } else {
-            if (owner != null){
-                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{owner.getName()});
-                errors.add(error);
-            }
-        }
-    }           
-    
-    /* Подготовка к редактированию объекта на карточке  */      
-    public BaseDict prepEditItem(BaseDict item){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getItemFacade(item);
-        BaseDict editItem = (BaseDict)facade.find(item.getId());   //получаем копию объекта для редактирования 
-        makeRightItem(editItem);
-        if (!isHaveRightEdit(editItem)){            
-            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
-            String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
-            errors.add(error);
-        }       
-        openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
-        return editItem;
-    }
-    
-    /* Подготовка к просмотру объекта на карточке */
-    public BaseDict prepViewItem(BaseDict item){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getItemFacade(item);        
-        BaseDict editItem = (BaseDict) facade.find(item.getId());   //получаем копию объекта для просмотра 
-        makeRightItem(editItem);        
-        if (!isHaveRightView(editItem)){ 
-            String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
-            String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
-            errors.add(error);
-        }
-        openItemCard(editItem, DictEditMode.VIEW_MODE, errors);
-        return editItem;
-    }
-    
-    /* Открытие карточки объекта*/
-    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){
-        if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
-            return;
-        }
-        
-        String itemKey = item.getItemKey();
-        
-        if (editMode.equals(DictEditMode.EDIT_MODE)){
-            Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
-            if (userLockId != null){
-                User user = rightFacade.findUserById(userLockId);
-                String objName = user.getName();
-                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
-                return;
-            }
-        }
-
-        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
-        String cardName = item.getClass().getSimpleName().toLowerCase();
-        EscomBeanUtils.openItemForm(cardName, itemOpenKey, getFormSize(cardName));
-    }              
-    
-    public BaseDict doCopy(BaseDict copyItem){
-        return getItemFacade(copyItem).doCopy(copyItem, currentUser);
-    }
-
-    public boolean addItemToGroup(BaseDict item, BaseDict targetGroup){ 
-        return getItemFacade(item).addItemToGroup(item, targetGroup);
-    }    
-    
-    private BaseDictFacade getItemFacade(BaseDict item){
-        return getItemFacadeByClassName(item.getClass().getSimpleName());
-    }
-    
-    public BaseDictFacade getItemFacadeByClassName(String className){
-        BaseDictFacade itemFacade = null;
-        switch(className){
-            case DictObjectName.STATE:{
-                itemFacade = stateFacade;
-                break;
-            }
-            case DictObjectName.STAFF:{
-                itemFacade = staffFacade;
-                break;
-            }
-            case DictObjectName.POST:{
-                itemFacade = postFacade;
-                break;
-            }
-            case DictObjectName.PARTNER_TYPES:{
-                itemFacade = partnerTypesFacade;
-                break;
-            }
-            case DictObjectName.PARTNER_GROUP:{
-                itemFacade = partnersGroupsFacade;
-                break;
-            }
-            case DictObjectName.PARTNER:{
-                itemFacade = partnersFacade;
-                break;
-            }
-            case DictObjectName.FOLDER:{
-                itemFacade = foldersFacade;
-                break;
-            }
-            case DictObjectName.FILTERS:{
-                itemFacade = filtersFacade;
-                break;
-            }
-            case DictObjectName.DOC_TYPE:{
-                itemFacade = docTypeFacade;
-                break;
-            }
-            case DictObjectName.DOC_TYPE_GROUPS:{
-                itemFacade = docTypeGroupsFacade;
-                break;
-            }
-            case DictObjectName.DOC:{
-                itemFacade = docFacade;
-                break;
-            }
-            case DictObjectName.USER_GROUP:{
-                itemFacade = usGroupFacade;
-                break;
-            }
-            case DictObjectName.USER:{
-                itemFacade = userFacade;
-                break;
-            }
-            case DictObjectName.DEPARTAMENT:{
-                itemFacade = departmentFacade;
-                break;
-            }
-            case DictObjectName.COMPANY:{
-                itemFacade = companyFacade;
-                break;
-            }
-
-        }
-        return itemFacade;
-    }
-    
-    public void openLevel1() {
-        Map<String,Object> options = new HashMap<String, Object>();
-        options.put("modal", true);
-        RequestContext.getCurrentInstance().openDialog("test1", options, null);
-    }
-     
-    public void onReturnFromLevel1(SelectEvent event) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Data Returned", ""));
-    }
+    /* Возвращает url по которому автоматически происходит переход на новую страницу  */
+    public String onShowDocInFolder(BaseDict doc){
+        return EscomBeanUtils.doGetItemURL(doc, "docs/doc-explorer", "0");
+    } 
     
     /* Возврашает размеры формы карточки */
-    private Tuple<Double, Double> getFormSize(String formName){
+    public Tuple<Double, Double> getFormSize(String formName){
         Map<String, Tuple<Double, Double>> formsSize = userSettings.getFormsSize();
         Tuple<Double, Double> rezult;
         if (formsSize.containsKey(formName)){
@@ -823,10 +422,85 @@ public class SessionBean implements Serializable{
     public void setLocale(Locale locale) {
         this.locale = locale;
     }   
-
+    
     /* GETS & SETS */
     
-    public Staff getCurrentUserStaff(){        
+    private BaseExplBean getItemBean(BaseDict item){
+        return getItemBeanByClassName(item.getClass().getSimpleName());
+    }   
+    public BaseExplBean getItemBeanByClassName(String className){
+        BaseExplBean bean = null;
+        switch(className){
+            case DictObjectName.STATE:{
+                bean = stateBean;
+                break;
+            }
+            case DictObjectName.STAFF:{
+                bean = staffBean;
+                break;
+            }
+            case DictObjectName.POST:{
+                bean = postBean;
+                break;
+            }
+            case DictObjectName.PARTNER_TYPES:{
+                bean = partnerTypeBean;
+                break;
+            }
+            case DictObjectName.PARTNER_GROUP:{
+                bean = partnerGroupBean;
+                break;
+            }
+            case DictObjectName.PARTNER:{
+                bean = partnerBean;
+                break;
+            }
+            case DictObjectName.FOLDER:{
+                bean = folderBean;
+                break;
+            }            
+            case DictObjectName.DOC_TYPE:{
+                bean = docTypeBean;
+                break;
+            }
+            case DictObjectName.DOC_TYPE_GROUPS:{
+                bean = docTypeGroupBean;
+                break;
+            }
+            case DictObjectName.DOC:{
+                bean = docBean;
+                break;
+            }
+            case DictObjectName.USER_GROUP:{
+                bean = userGroupBean;
+                break;
+            }
+            case DictObjectName.USER:{
+                bean = usersBean;
+                break;
+            }
+            case DictObjectName.DOC_STATUS:{
+                bean = docStatusBean;
+                break;
+            }
+            case DictObjectName.DEPARTAMENT:{
+                bean = departmentBean;
+                break;
+            }
+            case DictObjectName.COMPANY:{
+                bean = companyBean;
+                break;
+            }
+
+        }
+        return bean;
+    }   
+    
+    public Configuration getConfiguration(){        
+        return configuration;
+    }
+
+    public Staff getCurrentUserStaff() {
         List<Staff> staffs = staffFacade.findStaffsByUser(currentUser);
         if (staffs.isEmpty()){
             return null;

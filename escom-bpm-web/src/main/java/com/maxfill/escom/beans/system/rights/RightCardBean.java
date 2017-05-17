@@ -5,11 +5,11 @@ import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.model.states.State;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.model.users.User;
-import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.users.UserBean;
+import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;
@@ -23,21 +23,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import javax.inject.Inject;
 
-/**
- *
- * @author mfilatov
- */
+/* Карточка настройки прав доступа */
 @Named
 @ViewScoped
 public class RightCardBean extends BaseDialogBean{    
     private static final long serialVersionUID = -3720038615067813059L;
 
-    @EJB
-    private UserFacade userFacade;
-    @EJB
-    private UserGroupsFacade userGroupsFacade;
+    @Inject
+    private UserBean userBean;
+    @Inject
+    private UserGroupsBean userGroupBean;    
+
     @EJB
     private StateFacade stateFacade;
 
@@ -50,9 +48,7 @@ public class RightCardBean extends BaseDialogBean{
     private List<User> users;
     private List<UserGroups> userGroupses;
     
-    /**
-     * При открытии карточки объекта
-     */
+    /* При открытии карточки объекта */
     @Override
     public void onOpenCard(){
         if (getSelRight() == null){
@@ -82,11 +78,11 @@ public class RightCardBean extends BaseDialogBean{
             switch (selRight.getObjType()){
                 case DictRights.TYPE_GROUP: {  
                     selUser = null;
-                    selUsGroup = userGroupsFacade.find(selRight.getObjId());
+                    selUsGroup = userGroupBean.findItem(selRight.getObjId());
                     break;
                 }
                 case DictRights.TYPE_USER: {
-                    selUser = userFacade.find(selRight.getObjId());
+                    selUser = userBean.findItem(selRight.getObjId());
                     selUsGroup = null;
                     break;
                 }
@@ -94,11 +90,6 @@ public class RightCardBean extends BaseDialogBean{
         }
     }
     
-    /**
-     * ПРАВА ДОСТУПА: сохранение изменённого права доступа на карточке
-     * редактируемого объекта
-     * @return 
-     */
     public String onSaveChangeRight() {        
         if (isItemChange()) {
             switch(editMode){
@@ -117,11 +108,7 @@ public class RightCardBean extends BaseDialogBean{
         }        
         return onCloseCard();
     }    
-    
-    /**
-     * Отмена изменений
-     * @return 
-     */
+
     public String onCancelSave(){
         setItemChange(Boolean.FALSE);
         return onCloseCard();
@@ -134,10 +121,7 @@ public class RightCardBean extends BaseDialogBean{
         return super.onFinalCloseCard(tuple);
     }
     
-    /**
-     * Событие изменения опции ВСЕ ПРАВА
-     * @param event 
-     */
+    /* Событие изменения опции ВСЕ ПРАВА  */
     public void onChangeAllRight(ValueChangeEvent event){
         Boolean newValue = (Boolean) event.getNewValue();
         getSelRight().setCreate(newValue);
@@ -148,20 +132,14 @@ public class RightCardBean extends BaseDialogBean{
         getSelRight().setExecute(newValue);
     }
     
-    /**
-     * Событие изменения пользователя в карточке права
-     * @param event
-     */ 
+    /* Событие изменения пользователя в карточке права */ 
     public void onUserChange(ValueChangeEvent event){
         User user = (User) event.getNewValue();
         selRight.setName(user.getShortFIO());
         selRight.setObjId(user.getId());
     }
     
-    /**
-     * Событие изменение группы на карточке права
-     * @param event
-     */ 
+    /* Событие изменение группы на карточке права */ 
     public void onGroupChange(ValueChangeEvent event){     
         UserGroups usGroup = (UserGroups) event.getNewValue();
         if (usGroup != null){
@@ -170,10 +148,7 @@ public class RightCardBean extends BaseDialogBean{
         }
     }  
     
-    /**
-     * Событие изменения типа права в карточке права
-     * @param event
-     */ 
+    /* Событие изменения типа права в карточке права  */ 
     public void onTypeChangeRight(ValueChangeEvent event){
         selRight.setObjType((Integer) event.getNewValue());
         String name = EscomBeanUtils.getBandleLabel("EmptySelData");
@@ -194,26 +169,21 @@ public class RightCardBean extends BaseDialogBean{
         selRight.setName(name);
     } 
     
-    /* *** GET & SET *** */
+    /* GET & SET */
 
     public List<User> getUsers() {
         if (users == null){
-            users = userFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
-                    .collect(Collectors.toList());
+            users = userBean.getUsers();
         }
         return users;
     }
 
     public List<UserGroups> getUserGroupses() {
         if (userGroupses == null){
-            userGroupses = userGroupsFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
-                    .collect(Collectors.toList());
+            userGroupses = userGroupBean.findAll();
         }
         return userGroupses;
     }
-
     
     public Right getSelRight() {
         return selRight;

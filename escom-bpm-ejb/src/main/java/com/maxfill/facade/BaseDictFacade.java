@@ -47,32 +47,28 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @EJB
     protected RightFacade rightFacade;    
     @EJB
-    protected Configuration configuration;    
+    protected Configuration configuration;          
     
-    /**
-     * Выполняет замену объекта
-     * @param oldItem
-     * @param newItem
-     * @return 
-     */
-    public abstract Map<String, Integer> replaceItem(T oldItem, T newItem);        
-    
-    /* Специфичные действия перед вставкой скопированного объекта */
-    public void preparePasteItem(T item, BaseDict recipient){};  
-        
-    /* Определяется, нужно ли копировать объект при вставке */
-    public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
-        return true;
+    /* СОЗДАНИЕ: cоздание объекта */
+    public T createItem(User author) {
+        try {
+            State state = getMetadatesObj().getStateForNewObj();
+            T item = itemClass.newInstance();
+            item.setAuthor(author);
+            item.setActual(true);
+            item.setDeleted(false);
+            item.setInherits(true);            
+            item.setState(state);
+            return item;
+        } catch (IllegalAccessException | InstantiationException ex) {
+            Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     /* Установка специфичных атрибутов при создании объекта  */ 
     public void setSpecAtrForNewItem(T item, Map<String, Object> params) {}
-    
-    /* Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта */
-    public List<List<?>> doGetDependency(T item){
-        return null;
-    }
-            
+                
     public BaseDictFacade(Class<T> itemClass, Class<L> logClass) {
         super(itemClass);
         this.itemClass = itemClass;
@@ -173,40 +169,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.orderBy(builder.asc(c.get("name")));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
-    }
-    
-    /* КОПИРОВАНИЕ: копирование объекта */
-    public T doCopy(T sourceItem, User author){
-        T newItem = createItem(null, author);
-        try {
-            BeanUtils.copyProperties(newItem, sourceItem);
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        return newItem;
-    }         
-    
-    /* СОЗДАНИЕ: cоздание объекта */
-    public T createItem(BaseDict owner, User author) {
-        try {
-            State state = getMetadatesObj().getStateForNewObj();
-            T item = itemClass.newInstance();
-            item.setAuthor(author);
-            item.setActual(true);
-            item.setDeleted(false);
-            item.setInherits(true);            
-            item.setState(state);
-            detectParentOwner(item, owner);
-            return item;
-        } catch (IllegalAccessException | InstantiationException ex) {
-            Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    protected void detectParentOwner(T item, BaseDict owner){
-        item.setOwner(owner);
-    }                    
+    }                       
                           
     /* *** ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ *** */
 
@@ -236,12 +199,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-    
-    /* Добавление объекта в группу. Вызов из drag & drop */
-    public boolean addItemToGroup(T item, BaseDict targetGroup){ 
-        return false;
-    }        
+    }         
     
     @Override
     public void remove(T entity){
@@ -366,4 +324,5 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
 
+    public abstract void replaceItem(T oldItem, T newItem);
 }

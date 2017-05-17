@@ -47,7 +47,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
     /* ПРАВА ДОСТУПА: обработка при изменении опции "Наследование прав для документов" в карточке папки */
     public void onInheritsDocChange(ValueChangeEvent event) {
         if ((Boolean) event.getNewValue() == false) {    //если галочка снята, то нужно скопировать права документов от родителя           
-            sessionBean.makeRightForChilds(getEditedItem());
+            makeRightForChilds(getEditedItem());
             setIsItemChange(Boolean.TRUE);
             EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
         }
@@ -132,7 +132,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
     public List<DocType> getDocTypes() {
         if (docTypes == null){
             docTypes = docTypeFacade.findAll().stream()
-                    .filter(item -> sessionBean.preloadCheckRightView(item))
+                    .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
         }
         return docTypes;
@@ -157,7 +157,7 @@ public class FoldersCardBean extends BaseCardBean<Folder> {
     @Override
     protected void prepareRightsForView(Folder folder){
         super.prepareRightsForView(folder);
-        sessionBean.makeRightForChilds(folder); 
+        makeRightForChilds(folder); 
         rightFacade.prepareRightsForView(folder.getRightForChild().getRights());
     }
     
