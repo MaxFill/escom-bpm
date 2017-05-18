@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans.users.groups;
 
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.rights.Rights;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Группы пользователей" */
 @Named
@@ -27,6 +30,9 @@ import javax.enterprise.context.SessionScoped;
 public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private static final long serialVersionUID = -7609222014155311960L;
 
+    @Inject
+    private UserBean userBean;
+    
     @EJB
     private UserGroupsFacade itemFacade;     
     
@@ -90,7 +96,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
 
     /* Обработка события перемещения подчинённых объектов при перемещение группы пользователей в корзину */
     @Override
-    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {          
+    protected void moveDetailItemsToTrash(UserGroups item, Set<String> errors) {          
         // При перемещение группы пользователей в корзину ничего с пользователями не делать!
     }
     
@@ -108,6 +114,16 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     @Override
     public Class<UserGroups> getOwnerClass() {
         return null;
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
+    }
+
+    @Override
+    public BaseExplBean getDetailBean() {
+        return userBean;
     }
     
     @FacesConverter("groupsUserConvertor")

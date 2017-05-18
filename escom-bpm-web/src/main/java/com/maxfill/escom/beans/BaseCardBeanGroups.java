@@ -16,18 +16,13 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта 
     
-    /**
-     * Установка владельца объекта в виде основной группы
-     * @param group 
-     */
+    /* Установка владельца объекта в виде основной группы  */
     public void makeMainGroup(O group) {
         getEditedItem().setOwner(group);
         setIsItemChange(Boolean.TRUE);
     }
     
-    /**
-    * Удаление отмеченных групп из редактируемого объекта. Вызов с карточки объекта
-    */
+    /* Удаление отмеченных групп из редактируемого объекта. Вызов с карточки объекта */
     public void deleteFromCheckedGroups(){        
         checkedGroups.stream()
                 .filter(group -> group.getId() != 0)
@@ -36,10 +31,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
         setIsItemChange(Boolean.TRUE);
     }    
     
-    /**
-     * Удаление группы из редактируемого объекта
-     * @param group 
-     */
+    /* Удаление группы из редактируемого объекта */
     public void deleteFromGroup(O group){
         T item = getEditedItem();
         if (item == null){
@@ -49,11 +41,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
         setIsItemChange(Boolean.TRUE);
     }
     
-    /**
-     * Удаление группы из объекта
-     * @param group 
-     * @param item 
-     */
+    /* Удаление группы из объекта */
     private void deleteFromGroup(O group, T item){
         deleteGroups.add(group);        
         getGroups(item).remove(group);

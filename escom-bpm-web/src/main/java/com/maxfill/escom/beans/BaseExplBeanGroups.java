@@ -7,26 +7,8 @@ import java.util.List;
 public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T, O> {
     private static final long serialVersionUID = -2983279513793115056L;    
 
-    private BaseTreeBean ownerBean;
-
-    /**
-     * Возвращает список объектов из группы
-     *
-     * @param owner
-     * @return
-     */
+    /* Возвращает список объектов из группы  */
     protected List<T> getItemsFromGroup(O owner) {
         return owner.getDetailItems();
-    }       
-    
-    /* *** GET & SET *** */
-    
-    @Override
-    public BaseTreeBean getOwnerBean() {
-        return ownerBean;
-    }
-
-    public void setOwnerBean(BaseTreeBean ownerBean) {
-        this.ownerBean = ownerBean;
     }
 }

@@ -330,22 +330,14 @@ public class EscomBeanUtils {
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
-    /**
-     * Возвращает значение из msg по ключу
-     * @param key
-     * @return
-     */
+    /* Возвращает значение из msg по ключу  */
     public static String getMessageLabel(String key) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
         return bundle.getString(key);
     }
 
-    /**
-     * Возвращает значение из bundel по ключу
-     * @param key
-     * @return
-     */
+    /* Возвращает значение из bundel по ключу */
     public static String getBandleLabel(String key) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "bundle");
@@ -454,29 +446,11 @@ public class EscomBeanUtils {
         return docURL;
     }
     
-    /**
-     * Формирует ключ открываемого объекта
-     * @param itemKey
-     * @param openMode
-     * @param user
-     * @return 
-     */
+    /* Формирует ключ открываемого объекта */
     public static String makeOpenItemKey(String itemKey, Integer openMode, User user){
         StringBuilder sb = new StringBuilder();
         sb.append(itemKey).append("_").append(openMode).append("_").append(user.getId());
         return sb.toString();
     }   
 
-    /**
-     * Проверка возможности удаления объекта. Проверяется наличие подчинённых и дочерних объектов.
-     * @param item
-     * @param errors
-     */
-    public static void checkAllowedDeleteItem(BaseDict item, Set<String> errors) {
-        if (CollectionUtils.isNotEmpty(item.getDetailItems()) || CollectionUtils.isNotEmpty(item.getChildItems())) {
-            Object[] messageParameters = new Object[]{item.getName()};
-            String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
-            errors.add(error);
-        }
-    }
 }

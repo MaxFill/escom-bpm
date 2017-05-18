@@ -5,14 +5,20 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
+import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Документы" */
 
@@ -20,6 +26,9 @@ import javax.enterprise.context.SessionScoped;
 @SessionScoped
 public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     private static final long serialVersionUID = 923378036800543406L;         
+    
+    @Inject
+    private FoldersBean ownerBean;
     
     @EJB
     private DocFacade docsFacade;    
@@ -36,7 +45,32 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         if (!item.isInherits()) {
             return getActualRightItem(item);
         } 
-        return getRightForChild(item.getOwner());  
+        return ownerBean.getRightForChild(item.getOwner());  
+    }
+    
+     /* Установка специфичных атрибутов документа при его создании */
+    @Override
+    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params){
+        Folder folder = doc.getOwner();
+        if (folder != null){
+            DocType docType = folder.getDocTypeDefault();
+            doc.setDocType(docType);
+        }
+        doc.setDateDoc(new Date());
+        if (doc.getOwner().getId() == null){ //сброс owner если документ создаётся в корне архиа!
+            doc.setOwner(null);
+        }
+        if (params != null && !params.isEmpty()){
+            Attaches attache = (Attaches)params.get("attache");
+            if (attache != null){
+                Short version = doc.getNextVersionNumber();            
+                attache.setNumber(version);
+                attache.setDoc(doc);
+                String fileName = attache.getName();
+                doc.setName(fileName);
+                doc.getAttachesList().add(attache);
+            }
+        }
     }
     
     @Override
@@ -54,6 +88,11 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     @Override
     public DocFacade getItemFacade() {
         return docsFacade;
+    }
+    
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return ownerBean;
     }
     
     @Override

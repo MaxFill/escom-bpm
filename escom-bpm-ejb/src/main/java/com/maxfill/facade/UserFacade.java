@@ -49,12 +49,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     public UserFacade() {
         super(User.class, UserLog.class);
     }
-    
-    /* Установка специфичных атрибутов при создании нового пользователя  */
-    @Override
-    public void setSpecAtrForNewItem(User user, Map<String, Object> params) {
-    }
-    
+        
     @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();

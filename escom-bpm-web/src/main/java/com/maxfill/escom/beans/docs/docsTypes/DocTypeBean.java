@@ -4,6 +4,7 @@ import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.facade.FoldersFacade;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Виды документов" */
 
@@ -31,6 +33,9 @@ import javax.enterprise.context.SessionScoped;
 @SessionScoped
 public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     private static final long serialVersionUID = -4625860665708197046L; 
+    
+    @Inject
+    private DocTypeGroupsBean ownerBean;
             
     @EJB 
     private DocTypeFacade itemsFacade;    
@@ -49,7 +54,7 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         } 
  
         if (item.getOwner() != null) {
-            return getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+            return ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
         }
 
         return getDefaultRights(item);
@@ -102,6 +107,11 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     @Override
     public Class<DocTypeGroups> getOwnerClass() {
         return DocTypeGroups.class;
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return ownerBean;
     }
     
     @FacesConverter("docsTypesConvertor")

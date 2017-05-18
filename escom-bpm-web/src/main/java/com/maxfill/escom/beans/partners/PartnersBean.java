@@ -9,6 +9,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -19,6 +20,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +51,16 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     public BaseExplBean getDetailBean(){
         return null;
     }      
-        
+    
+    /* Установка специфичных атрибутов контрагента при его создании */
+    @Override
+    public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
+        String counterName = getItemFacade().getFRM_NAME();
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
+        item.setCode(number);
+    }  
+    
     /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
     @Override
     public boolean isNeedCopyOnPaste(Partner sourceItem, BaseDict recipient){
@@ -132,6 +143,11 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     public Class<PartnerGroups> getOwnerClass() {
         return PartnerGroups.class;
     }    
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
+    }
     
     @FacesConverter("partnersConvertors")
     public static class partnersConvertors implements Converter {

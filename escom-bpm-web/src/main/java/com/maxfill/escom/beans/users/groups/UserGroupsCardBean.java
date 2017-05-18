@@ -3,22 +3,19 @@ package com.maxfill.escom.beans.users.groups;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.User;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * Группы пользователей
- * @author mfilatov
- */
+/* Карточка Группы пользователей */
 @Named
 @ViewScoped
 public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     private static final long serialVersionUID = -8016244075607449606L;  
-    
+                
     @EJB
     private UserGroupsFacade usGroupFacade;   
            
@@ -26,7 +23,7 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     public UserGroupsFacade getItemFacade() {
         return usGroupFacade;
     }
-
+    
     @Override
     protected void afterCreateItem(UserGroups item) {        
     }

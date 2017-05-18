@@ -1,4 +1,4 @@
-package com.maxfill.escom.beans.companies.staffs;
+package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
@@ -18,11 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 
-/**
- * Штатные единицы
- *
- * @author mfilatov
- */
+/* Карточка Штатные единицы */
 @Named
 @ViewScoped
 public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
@@ -40,19 +36,13 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         return itemFacade;
     }
          
-    /**
-     * Событие изменение на форме поля выбора сотрудника
-     * @param event 
-     */
+    /* Обработка события на выбор сотрудника   */
     public void onEmployeeSelected(SelectEvent event){
         List<User> items = (List<User>) event.getObject();
         if (items.isEmpty()) {return;}
         User item = items.get(0);
         onItemChange();
         getEditedItem().setEmployee(item);
-        if (!getUsers().contains(item)){
-            getUsers().add(item);
-        }
     }
     public void onEmployeeSelected(ValueChangeEvent event){
         User user = (User) event.getNewValue();

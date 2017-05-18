@@ -2,25 +2,25 @@ package com.maxfill.escom.beans.companies;
 
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.CompanyFacade;
-import com.maxfill.escom.beans.BaseCardBean;
-
+import com.maxfill.escom.beans.BaseCardTree;
+import com.maxfill.escom.beans.BaseTreeBean;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * Компании юр лица
- *
- * @author Maxim
- */
+/* Карточка Компании юр лица  */
 @Named
 @ViewScoped
-public class CompanyCardBean extends BaseCardBean<Company> {
+public class CompanyCardBean extends BaseCardTree<Company> {
     private static final long serialVersionUID = -4023333706435214537L;    
+    
+    @Inject
+    private CompanyBean companyBean;
             
     @EJB
     private CompanyFacade itemsFacade;
-    
+            
     @Override
     public CompanyFacade getItemFacade() {
         return itemsFacade;
@@ -33,5 +33,10 @@ public class CompanyCardBean extends BaseCardBean<Company> {
     @Override
     public Class<Company> getItemClass() {
         return Company.class;
+    }
+
+    @Override
+    protected BaseTreeBean getTreeBean() {
+        return companyBean;
     }
 }

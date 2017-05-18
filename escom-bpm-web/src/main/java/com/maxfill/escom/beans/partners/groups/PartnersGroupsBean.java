@@ -1,9 +1,11 @@
 package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictExplForm;
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.facade.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.facade.PartnersFacade;
@@ -22,6 +24,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 /* Сервисный бин "Группы контрагентов" */
@@ -29,6 +32,9 @@ import javax.inject.Named;
 @SessionScoped
 public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroups> {
     private static final long serialVersionUID = 6220113121230925868L;
+    
+    @Inject
+    private PartnersBean partnerBean;
     
     @EJB
     private PartnersGroupsFacade itemsFacade;
@@ -53,41 +59,17 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(PartnerGroups partnerGroup, Integer viewMode) {
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент группы контрагента
-        List<PartnerGroups> groups = itemsFacade.findChilds(partnerGroup);
-        groups.stream()
-                .forEach(group -> addGroupInCnt(group, cnt)
-        );
+        List<PartnerGroups> groups = itemsFacade.findChilds((PartnerGroups)partnerGroup);
+        groups.stream().forEach(group -> addChildItemInContent(group, cnt));
         if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
             //загружаем в контент контрагентов 
-            List<Partner> partners = partnersFacade.findDetailItems(partnerGroup);
-            partners.stream().
-                    forEach(staff -> addPartnerInCnt(staff, cnt)
-            );
+            List<Partner> partners = partnersFacade.findDetailItems((PartnerGroups)partnerGroup);
+            partners.stream().forEach(partner -> addDetailItemInContent(partner, cnt));
         }
         return cnt;
-    }
-    
-    /* Добавляет группу в контент   */ 
-    private void addGroupInCnt(BaseDict group, List<BaseDict> cnts) {
-        //Rights rights = makeRightChild(folder, defDocRight);
-        //settingRightForChild(folder, rights); //сохраняем права к документам
-        cnts.add(group);
-    }
-
-    /* Добавляет контрагента в контент   */ 
-    public void addPartnerInCnt(BaseDict partner, List<BaseDict> cnts) {
-        /*
-        Rights rd = defDocRight;
-        if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам
-            rd = (Rights) JAXB.unmarshal(new StringReader(doc.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
-        }
-        doc.setRightItem(rd);
-        doc.setRightMask(rightService.getAccessMask(doc.getState(), rd, getCurrentUser())); //получаем маску доступа для текущего пользователя  
-        */
-        cnts.add(partner);
     }
 
     @Override
@@ -128,7 +110,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
 
     /* Обработка события перемещения подчинённых объектов при перемещение группы контрагента в корзину */
     @Override
-    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {          
+    protected void moveDetailItemsToTrash(PartnerGroups item, Set<String> errors) {          
         // При перемещение группы контрагента в корзину ничего с контрагентами делать не нужно 
     }
     
@@ -146,6 +128,16 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @Override
     public Class<PartnerGroups> getOwnerClass() {
         return null;
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
+    }
+
+    @Override
+    public BaseExplBean getDetailBean() {
+        return partnerBean;
     }
     
     @FacesConverter("groupsPartnerConvertor")

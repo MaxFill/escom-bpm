@@ -21,7 +21,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /* Класс сущности "Папки документов"  */
 @Entity
@@ -43,13 +42,13 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     @Column(name = "Id")
     @GeneratedValue(strategy=TABLE, generator="idGen")
     private Integer id;
-        
+            
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "parent")
-    private List<Folder> foldersList;    
+    private List<Folder> foldersList;
     
     @JoinColumn(name = "Moderator", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private User moderator;        
+    private User moderator;
     
     @Basic(optional = false)
     @NotNull
@@ -63,25 +62,26 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
     private List<Doc> docsList = new ArrayList<>();
-    
-    @Size(max = 2147483647)
-    @Column(name = "AccessChilds")
-    private String xmlAccessChild;    
-    
-    @NotNull
-    @Column(name = "IsInheritsAccessChilds")
-    private boolean isInheritsAccessChilds;
-        
+
     @JoinColumn(name = "DocTypeDefault", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private DocType docTypeDefault;    
+    private DocType docTypeDefault;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<FolderLog> itemLogs = new ArrayList<>();
-        
+
     public Folder(){
     }
 
+    @Override
+    public List<Doc> getDetailItems() {
+        return docsList;
+    }
+    @Override
+    public void setDetailItems(List<Doc> detailItems) {
+        this.docsList = detailItems;
+    }
+    
     @Override
     public List<FolderLog> getItemLogs() {
         return itemLogs;
@@ -98,7 +98,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
         return getNumber().toString();
     }
     
-    //@return вычисление значка папки (модерируемая-немодерируемая)
+    /* вычисление значка папки (модерируемая-немодерируемая) */
     public String getStateIcon(){
         String stateIcon = "ui-icon-folder-open";
         if(isModeration == true){
@@ -108,9 +108,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     }       
     
     /* Возвращает название для заголовка наследования прав к документам  */
-    public String getInheritsAccessDocName(){
-        if (isInheritsAccessChilds){
-            return ItemUtils.getMessageLabel("RightsInheritedForChilds");
+    @Override
+    public String getInheritsAccessChildName(){
+        if (isInheritsAccessChilds()){
+            return ItemUtils.getMessageLabel("RightsInheritedForChildDocs");
         } else{
             return ItemUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
@@ -140,40 +141,23 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     public void setModerator(User moderator) {        this.moderator = moderator;    }
     
     public List<Folder> getFoldersList() {        return foldersList;    }
-    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }    
-    
-    public boolean getIsInheritsAccessChilds() {
-        return isInheritsAccessChilds;
-    }
-    public void setIsInheritsAccessChilds(boolean isInheritsAccessDocs) {
-        this.isInheritsAccessChilds = isInheritsAccessDocs;
-    }
+    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }        
 
     public DocType getDocTypeDefault() {
         return docTypeDefault;
     }
     public void setDocTypeDefault(DocType docTypeDefault) {
         this.docTypeDefault = docTypeDefault;
-    }
-    
-    @Override
-    public String getXmlAccessChild() {
-        return xmlAccessChild;
-    }
-    @Override
-    public void setXmlAccessChild(String xmlAccessChild) {
-        this.xmlAccessChild = xmlAccessChild;
-    }
+    }        
     
     @Override
     public Integer getId() {
         return id;
     }
-
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
+    }    
     
     @Override
     public int hashCode() {

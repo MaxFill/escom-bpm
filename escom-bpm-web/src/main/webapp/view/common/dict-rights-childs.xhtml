@@ -4,20 +4,17 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:panelGrid columns="2">       
-        <p:selectBooleanCheckbox value="#{foldersCardBean.editedItem.isInheritsAccessChilds}" 
-                                 disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
-                                 valueChangeListener="#{foldersCardBean.onInheritsDocChange}">
-            <p:ajax update="lbChBox docRightsGrid"/>
-        </p:selectBooleanCheckbox>
-        <p:outputLabel id="lbChBox" value="#{_bean.editedItem.inheritsAccessDocName}"/>
-    </h:panelGrid>
-
-    <h:panelGroup id="docRightsGrid" style="font-size: 80%;">
-        <ui:repeat var="state" value="#{docsBean.metadatesObj.statesList}">             
+    <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsAccessChilds}" id="inheritsAccessChilds"
+                             disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
+                             itemLabel="#{_bean.editedItem.inheritsAccessChildName}"
+                             valueChangeListener="#{_bean.onInheritsChildsRightChange}">
+        <p:ajax update="docRightsGrid inheritsAccessChilds"/>
+    </p:selectBooleanCheckbox>
+    <h:panelGroup id="docRightsGrid" style="font-size: 80%;">        
+        <ui:repeat var="state" value="#{_bean.metadatesObj.statesList}">             
             <p:accordionPanel activeIndex="null">
                 <p:tab title="#{bundle.State}: #{state.name}" rendered="#{_bean.editedItem != null}" > 
-                    <p:dataTable id="tblRight" value="#{_bean.getRightDocsForState(_bean.editedItem, state)}" var="right" 
+                    <p:dataTable id="tblRight" value="#{_bean.getRightChildsForState(_bean.editedItem, state)}" var="right" 
                                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                                  emptyMessage="#{bundle.EmptyTable}">
                         <p:column headerText="#{bundle.RightOwner}">
@@ -41,15 +38,15 @@
                         <p:column headerText="#{bundle.Commands}" style="text-align: center;">
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12 without-spaces, ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                                 <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" styleClass="without-spaces"
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
-                                                 actionListener="#{_bean.onEditDocRight(right)}" >
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
+                                                 actionListener="#{_bean.onEditRightChild(right)}" >
                                     <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:docRightsGrid"
                                                 listener="#{_bean.onCloseRightCard}"/>
                                 </p:commandButton>
                                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.isInheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
                                                  update="tblRight"
-                                                 actionListener="#{_bean.onDeleteRightDoc(right)}">
+                                                 actionListener="#{_bean.onDeleteRightChild(right)}">
                                 </p:commandButton>
                             </p:panelGrid>
                         </p:column>
@@ -58,8 +55,8 @@
                         <p:commandButton id="btnAddDocRight" value="#{bundle.Add}" 
                                          icon="ui-icon-circle-plus" style="float:right;"
                                          disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
-                                         rendered="#{!_bean.editedItem.isInheritsAccessChilds}" 
-                                         actionListener="#{_bean.onAddDocRight(state)}">
+                                         rendered="#{!_bean.editedItem.inheritsAccessChilds}" 
+                                         actionListener="#{_bean.onAddRightChild(state)}">
                              <p:ajax event="dialogReturn" 
                                      update="#{_frm}:mainTabView:docRightsGrid"
                                      listener="#{_bean.onCloseRightCard}"/>

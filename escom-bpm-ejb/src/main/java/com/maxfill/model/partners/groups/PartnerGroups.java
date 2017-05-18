@@ -19,11 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-
-/**
- * Группа контрагента
- * @author mfilatov
- */
+/* Группы контрагентов */
 @Entity
 @Table(name = "partnersGroups")
 @DiscriminatorColumn(name="REF_TYPE")

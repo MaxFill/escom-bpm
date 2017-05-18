@@ -1,35 +1,37 @@
-package com.maxfill.escom.beans.companies.departaments;
+package com.maxfill.escom.beans.departaments;
 
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
-import com.maxfill.escom.beans.BaseCardBeanGroups;
+import com.maxfill.escom.beans.BaseCardTree;
+import com.maxfill.escom.beans.BaseTreeBean;
+import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.utils.SysParams;
 import org.primefaces.event.SelectEvent;
-
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
 
-/**
- * Бин для карточки подразделения
- * @author mfilatov
- */
+/* Карточка подразделения  */
 @Named
 @ViewScoped
-public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
+public class DepartmentCardBean extends BaseCardTree<Department>{
     private static final long serialVersionUID = 3589793075526575359L;
                 
+    @Inject
+    private DepartmentBean departmentBean;
+
     @EJB
     private DepartmentFacade itemsFacade;     
-
     @EJB
     private StaffFacade staffFacade;
 
@@ -39,7 +41,7 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
     public DepartmentFacade getItemFacade() {
         return itemsFacade;
     }
-
+       
     /* Формирование кода подразделения  */
     public void makeCode(){
         Department department = getEditedItem();
@@ -98,15 +100,12 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
         return staffs;
     }
 
+    /* Проверка на наличие у объекта корректных прав доступа */
     @Override
-    public List<Company> getGroups(Department item) {
-        List<Company> groups = null;
-        if (item.getOwner() != null){
-            groups = item.getOwner().getChildItems();
-        }
-        return groups;        
+    protected void checkRightsChilds(Department item, Set<String> errors){ 
+        //Подразделение может наследовать права доступа для дочерних объектов от компании
     }
-
+    
     @Override
     protected void afterCreateItem(Department item) {        
         makeCode();
@@ -115,5 +114,10 @@ public class DepartmentCardBean extends BaseCardBeanGroups<Department, Company>{
     @Override
     public Class<Department> getItemClass() {
         return Department.class;
+    }
+
+    @Override
+    protected BaseTreeBean getTreeBean() {
+        return departmentBean;
     }
 }

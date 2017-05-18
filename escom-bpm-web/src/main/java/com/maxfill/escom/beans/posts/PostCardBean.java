@@ -1,4 +1,4 @@
-package com.maxfill.escom.beans.companies.staffs.posts;
+package com.maxfill.escom.beans.posts;
 
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;

@@ -130,10 +130,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         return path.toString();
     }
         
-    /**
-     * Возвращает текущую версию вложения
-     * @return 
-     */
+    /* Возвращает текущую версию вложения  */
     public Attaches getAttache() {
         Attaches rezult = null;
         for (Attaches attache : attachesList){
@@ -145,11 +142,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         return rezult;
     }
     
-    /**
-     * Вычисление значка папки модерируемая-немодерируемая
-     *
-     * @return
-     */
+    /* Вычисление значка папки модерируемая-немодерируемая  */
     public String getStateIcon() {
         String stateIcon = "doc16";
         //ToDo нужно сделать обработку значка статуса документа
@@ -303,11 +296,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     }
     public void setDocsStatusList(List<DocsStatus> docsStatusList) {
         this.docsStatusList = docsStatusList;
-    }
-
-    @Override
-    public List<Doc> getDetailItems() {
-        return null;
     }
     
     @Override

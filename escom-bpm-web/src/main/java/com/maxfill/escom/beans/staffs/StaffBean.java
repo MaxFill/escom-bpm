@@ -1,9 +1,11 @@
-package com.maxfill.escom.beans.companies.staffs;
+package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.companies.CompanyBean;
+import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DocFacade;
@@ -21,11 +23,11 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Штатные единицы" */
  
@@ -34,6 +36,11 @@ import javax.enterprise.context.SessionScoped;
 public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     private static final long serialVersionUID = 2554984851643471496L; 
 
+    @Inject
+    private DepartmentBean ownerBean;
+    @Inject
+    private CompanyBean companyBean;
+    
     @EJB
     private StaffFacade itemsFacade;
     @EJB
@@ -58,18 +65,23 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
  
         //если sataff относиться к подразделению
         if (item.getOwner() != null) {
-            return getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+            return ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
         }
         
         //если staff относиться напрямую к компании
         Staff staff = (Staff)item;
         Company company = staff.getCompany();
         if (company != null) {
-            return getRightForChild(company); //получаем права из спец.прав компании 
+            return companyBean.getRightForChild(company); //получаем права из спец.прав компании 
         } 
 
         return getDefaultRights(item);
     } 
+    
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return ownerBean;
+    }
     
     @Override
     public StaffFacade getItemFacade() {

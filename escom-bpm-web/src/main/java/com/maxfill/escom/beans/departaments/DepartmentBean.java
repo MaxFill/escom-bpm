@@ -1,8 +1,11 @@
-package com.maxfill.escom.beans.companies.departaments;
+package com.maxfill.escom.beans.departaments;
 
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.companies.CompanyBean;
+import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -23,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 
 /* Сервисный бин "Подразделения" */
@@ -30,6 +34,11 @@ import org.apache.commons.collections.CollectionUtils;
 @SessionScoped
 public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private static final long serialVersionUID = -690060212424991825L;
+    
+    @Inject
+    private CompanyBean ownerBean;
+    @Inject
+    private StaffBean staffBean;
     
     @EJB
     private DepartmentFacade itemFacade;
@@ -96,36 +105,16 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     
     /* Формирование контента подразделения  */     
     @Override
-    public List<BaseDict> makeGroupContent(Department department, Integer viewMode) {
+    public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Department> departments = itemFacade.findChilds(department);
-        departments.stream().forEach(depart -> addDepartmentInCnt(depart, cnt));        
+        List<Department> departments = itemFacade.findChilds((Department)department);
+        departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));        
         //загружаем в контент штатные единицы
-        List<BaseDict> staffs = staffFacade.findItemByOwner(department);
-        staffs.stream().forEach(staff -> addStaffInCnt(staff, cnt));
+        List<BaseDict> staffs = staffFacade.findItemByOwner((Department)department);
+        staffs.stream().forEach(staff -> addDetailItemInContent(staff, cnt));
         return cnt;
-    }
-    
-    /* Добавляет подразделение в контент  */ 
-    private void addDepartmentInCnt(BaseDict department, List<BaseDict> cnts) {
-        //Rights rights = makeRightChild(folder, defDocRight);
-        //settingRightForChild(folder, rights); //сохраняем права к документам
-        cnts.add(department);
-    }
-
-    /* Добавляет штатную единицу в контент */ 
-    public void addStaffInCnt(BaseDict staff, List<BaseDict> cnts) {
-        /*
-        Rights rd = defDocRight;
-        if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам
-            rd = (Rights) JAXB.unmarshal(new StringReader(doc.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
-        }
-        doc.setRightItem(rd);
-        doc.setRightMask(rightService.getAccessMask(doc.getState(), rd, getCurrentUser())); //получаем маску доступа для текущего пользователя  
-        */
-        cnts.add(staff);
-    }      
+    }    
     
     @Override
     public List<Company> getGroups(Department item) {
@@ -153,6 +142,11 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }      
 
     @Override
+    public BaseExplBean getOwnerBean() {
+        return ownerBean;
+    }
+    
+    @Override
     public Class<Department> getItemClass() {
         return Department.class;
     }
@@ -160,6 +154,11 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public Class<Company> getOwnerClass() {
         return Company.class;
+    }
+
+    @Override
+    public BaseExplBean getDetailBean() {
+        return staffBean;
     }
     
     @FacesConverter("departmentConvertor")

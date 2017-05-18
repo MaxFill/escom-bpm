@@ -20,10 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author Maxim
- */
+/* Фильтры журнала объектов  */
 @Entity
 @Table(name = "filters")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -87,11 +84,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog> {
     }
     public void setMetadates(Metadates metadates) {
         this.metadates = metadates;
-    }
-
-    @Override
-    public List<Filter> getDetailItems() {
-        return null;
     }
     
     @Override

@@ -131,12 +131,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
     }
     public void setEmployee(User employee) {
         this.employee = employee;
-    }
-
-    @Override
-    public List<Staff> getDetailItems() {
-        return null; 
-    }    
+    }  
     
     @Override
     public Department getOwner() {

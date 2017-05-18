@@ -64,10 +64,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-    
-    /* Установка специфичных атрибутов при создании объекта  */ 
-    public void setSpecAtrForNewItem(T item, Map<String, Object> params) {}
+    }    
                 
     public BaseDictFacade(Class<T> itemClass, Class<L> logClass) {
         super(itemClass);

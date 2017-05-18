@@ -2,25 +2,25 @@ package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
 import com.maxfill.facade.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
-import com.maxfill.escom.beans.BaseCardBean;
-import com.maxfill.dictionary.DictObjectName;
-
+import com.maxfill.escom.beans.BaseCardTree;
+import com.maxfill.escom.beans.BaseTreeBean;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * Бин для карточки Группы видов документов
- * @author mfilatov
- */
+/* Карточка Группы видов документов */
 @Named
 @ViewScoped
-public class DocTypeGroupsCardBean extends BaseCardBean<DocTypeGroups>{
+public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     private static final long serialVersionUID = -8530560023530152318L;    
     
+    @Inject
+    private DocTypeGroupsBean docTypeGroupsBean;
+    
     @EJB
-    private DocTypeGroupsFacade itemsFacade;
-        
+    private DocTypeGroupsFacade itemsFacade;     
+    
     @Override
     public DocTypeGroupsFacade getItemFacade() {
         return itemsFacade;
@@ -33,6 +33,11 @@ public class DocTypeGroupsCardBean extends BaseCardBean<DocTypeGroups>{
     @Override
     public Class<DocTypeGroups> getItemClass() {
         return DocTypeGroups.class;
+    }
+
+    @Override
+    protected BaseTreeBean getTreeBean() {
+        return docTypeGroupsBean;
     }
     
 }

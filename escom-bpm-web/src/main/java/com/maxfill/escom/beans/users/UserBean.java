@@ -130,7 +130,12 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     @Override
     public Class<UserGroups> getOwnerClass() {
-       return UserGroups.class; 
+       return null; 
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
     }
     
     @FacesConverter("usersConvertor")

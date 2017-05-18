@@ -18,10 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-/**
- * Группы видов документов
- * @author mfilatov
- */
+/* Группы видов документов */
 @Entity
 @Table(name = "docTypeGroups")
 @DiscriminatorColumn(name="REF_TYPE")

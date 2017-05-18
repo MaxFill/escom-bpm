@@ -78,7 +78,7 @@
             <p:outputLabel value="#{bundle.Author}"/>
             <p:selectOneMenu value="#{explorerBean.model.authorSearche}" filter="true" converter="usersConvertor" 
                              styleClass="ui-grid-col-12">
-                <f:selectItems value="#{_searcheBean.users}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
                 <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
             </p:selectOneMenu>        
 
@@ -151,12 +151,19 @@
 
             <p:separator />
 
-            <p:commandButton id="searcheBtn" title="#{bundle.MakeSearche}"
-                             icon="ui-icon-search" value="#{bundle.Find}"
-                             action="#{explorerBean.onSearcheItem}"
-                             update="#{_tblUpdate}"
-                             oncomplete="initDND()">
-            </p:commandButton>
+            <h:panelGroup styleClass="ui-grid-col-12">
+                <p:commandButton id="searcheBtn" title="#{bundle.MakeSearche}"
+                                 icon="ui-icon-search" value="#{bundle.Find}"
+                                 action="#{explorerBean.onSearcheItem}"
+                                 update="#{_tblUpdate}"
+                                 oncomplete="initDND()">
+                </p:commandButton>
+                <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"
+                                 title="#{bundle.ResetSearcheCriteria}">
+                    <p:ajax update="#{_frmExpl}_east" resetValues="true" />
+                </p:commandButton>
+            </h:panelGroup>
+
         </p:panelGrid>
     </p:panelGrid>
 

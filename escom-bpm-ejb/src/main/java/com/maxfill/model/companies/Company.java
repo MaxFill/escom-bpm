@@ -1,6 +1,5 @@
 package com.maxfill.model.companies;
 
-import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import java.util.ArrayList;
@@ -19,10 +18,7 @@ import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Компания, организация
- * @author Maxim
- */
+/* Компания, организация */
 @Entity
 @Table(name = "companies")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -43,9 +39,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog> 
     @Column(name = "Id")
     private Integer id;    
     
-    /**
-     * Используется в шаблоне регистрационного номера
-     */
+    /* Используется в шаблоне регистрационного номера  */
     @Basic(optional = false)
     @Size(max=10)
     @Column(name = "Code")
@@ -86,6 +80,15 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog> 
     }
     public void setCode(String code) {
         this.code = code;
+    }
+    
+    @Override
+    public List<Department> getDetailItems() {
+        return departmentsList;
+    }
+    @Override
+    public void setDetailItems(List<Department> detailItems) {
+        this.departmentsList = detailItems;
     }
     
     @Override

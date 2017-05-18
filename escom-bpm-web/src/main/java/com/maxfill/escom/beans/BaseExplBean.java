@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /* Базовый bean справочников  */
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
@@ -37,14 +38,14 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public void onInitBean(){
         EscomBeanUtils.initLayoutOptions(layoutOptions);
         initAddLayoutOptions(layoutOptions);
-    }        
-    
+    }
+
     /* Формирование списка детальных данных в таблице обозревателя  */
-    public List<T> prepareSetDetails(List<T> sourceItems) {        
+    public List<T> prepareSetDetails(List<T> sourceItems) {
         return sourceItems.stream()
                     .filter(item -> preloadCheckRightView(item))
                     .collect(Collectors.toList());
-    }        
+    }
     
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
@@ -100,10 +101,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             newItem.setParent(parent);
             makeRightItem(newItem);
             if (isHaveRightCreate(newItem)) {
-                if (parent != null){
-                    makeRightForChilds(newItem);
-                }
-                facade.setSpecAtrForNewItem(newItem, params);
+                setSpecAtrForNewItem(newItem, params);
                 facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
             } else {
                 String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
@@ -117,6 +115,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             }
         }
     }
+    
+    /* Установка специфичных атрибутов при создании объекта  */ 
+    public void setSpecAtrForNewItem(T item, Map<String, Object> params) {}
     
     /* Вставка объекта */
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
@@ -148,6 +149,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return (T)getItemFacade().find(id);
     }
     
+    /* Возвращает список актуальных объектов, доступных для просмотра текущему пользователю */
     public List<T> findAll(){        
         return (List<T>) getItemFacade().findAll().stream()
                     .filter(item -> preloadCheckRightView((T)item))
@@ -298,9 +300,14 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         
     /* УДАЛЕНИЕ: Проверка возможности удаления объекта. Переопределяется в бинах  */
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
-        EscomBeanUtils.checkAllowedDeleteItem(item, errors);
+        if (CollectionUtils.isNotEmpty(item.getChildItems())) {
+            Object[] messageParameters = new Object[]{item.getName()};
+            String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
+            errors.add(error);
+        }
     }
-        
+    
+    
     /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
     public void deleteItem(T item) {
         deleteChilds(item);
@@ -317,11 +324,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         }
     }
 
-    /* УДАЛЕНИЕ: удаление подчинённых (связанных) объектов */
+    /* Удаление подчинённых (связанных) объектов */
     protected void deleteDetails(T item) {
-        if (item.getDetailItems() != null) {
-            item.getDetailItems().stream().forEach(child -> getDetailBean().deleteItem((T) child));
-        }
     }
 
     /* УДАЛЕНИЕ: Выполнение специфичных действий перед удалением объекта  */
@@ -338,13 +342,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().edit(item);
     }
 
-    /* КОРЗИНА: восстановление подчинённых detail объектов из корзины */
-    private void restoreDetails(T ownerItem) {
-        if (ownerItem.getDetailItems() != null){
-            ownerItem.getDetailItems().stream()
-                    .forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item)
-            );
-        }
+    /* Восстановление подчинённых detail объектов из корзины */
+    protected void restoreDetails(T ownerItem) {      
     }
 
     /* КОРЗИНА: восстановление дочерних childs объектов из корзины */
@@ -360,16 +359,11 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
 
     /* КОРЗИНА: перемещение в корзину подчинённых объектов Владельца (ownerItem) */
-    protected void moveDetailItemsToTrash(BaseDict ownerItem, Set<String> errors) {        
-        if (ownerItem.getDetailItems() != null){
-            ownerItem.getDetailItems().stream()
-                    .forEach(detail -> getDetailBean().moveToTrash((T) detail, errors)
-            );
-        }
+    protected void moveDetailItemsToTrash(T item, Set<String> errors) {        
     }
 
     /* КОРЗИНА: перемещение объекта в корзину */
-    public void moveToTrash(BaseDict item, Set<String> errors) {
+    public void moveToTrash(T item, Set<String> errors) {
         actualizeRightItem(item);
         if (isHaveRightDelete(item)) {
             checkAllowedDeleteItem((T)item, errors);

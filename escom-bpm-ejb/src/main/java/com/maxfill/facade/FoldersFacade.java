@@ -30,14 +30,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
     public String getFRM_NAME() {
         return Folder.class.getSimpleName().toLowerCase();
     }      
-    
-    /* Установка специфичных атрибутов при создании новой папки  */
-    @Override
-    public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
-        folder.setModerator(folder.getAuthor());
-        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));                                        
-    }
-    
+       
     /* Возвращает все папки */
     public List<Folder> findAllFolders(){ 
         getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);

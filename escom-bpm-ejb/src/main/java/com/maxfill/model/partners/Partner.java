@@ -30,10 +30,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Контрагент
- * @author mfilatov
- */
+/* Контрагенты */
 @Entity
 @Table(name = "partners")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -194,11 +191,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     }
     public void setType(PartnerTypes type) {
         this.type = type;
-    }    
-
-    @Override
-    public List<Partner> getDetailItems() {
-        return null;
     }
     
     @Override

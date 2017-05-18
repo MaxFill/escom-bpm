@@ -21,10 +21,7 @@ import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Подразделения
- * @author Maxim
- */
+/* Подразделения */
 @Entity
 @Table(name = "departments")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -62,9 +59,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DepartamentLog> itemLogs = new ArrayList<>();
     
-    /**
-     * Руководитель подразделения
-     */
+    /* Руководитель подразделения */
     @JoinColumn(name = "Chief", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Staff chief;
@@ -140,6 +135,16 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     public void setStaffList(List<Staff> staffList) {
         this.staffList = staffList;
     }    
+    
+    @Override
+    public List<Staff> getDetailItems() {
+        return staffList;
+    }
+
+    @Override
+    public void setDetailItems(List<Staff> detailItems) {
+        this.staffList = detailItems;
+    }
     
     @Override
     public int hashCode() {

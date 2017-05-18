@@ -37,7 +37,7 @@
                         <ui:param name="_itemPanel" value="docTypePanel"/>
                         <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
                         <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                        <ui:param name="_items" value="#{foldersCardBean.docTypes}"/>
+                        <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
                         <ui:param name="_actionClear" value="setDocTypeDefault"/>
                         <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
                         <ui:param name="_update" value=""/>
@@ -46,7 +46,7 @@
         </p:tab>
 
         <p:tab title="#{bundle.RightsDoc}">
-            <ui:include src="/view/folders/folder-docs-rights.xhtml"/>
+            <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>   
 
     </ui:define>

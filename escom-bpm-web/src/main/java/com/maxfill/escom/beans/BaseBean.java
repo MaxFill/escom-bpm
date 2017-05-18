@@ -61,11 +61,11 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     private boolean isItemChange;               //признак изменения записи  
 
     protected User currentUser;
-    private List<User> users;
+    private Integer defaultMaskAccess;          //дефолтная маска доступа текущего пользователя 
     private Metadates metadatesObj;             //объект метаданных
+    
     public abstract BaseDictFacade getItemFacade(); //установка фасада объекта    
     
-    private Integer defaultMaskAccess;          //дефолтная маска доступа текущего пользователя 
         
     @PostConstruct
     public void init() {
@@ -273,50 +273,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* ПРАВА ДОСТУПА: дефолтные права доступа к объекту */
     public Rights getDefaultRights(){
         return appBean.getDefaultRights(getItemClass().getSimpleName());
-    }
-    
-    /* ПРАВА К ДОЧЕРНИМ ОБЪЕКТАМ */
-    
-    /* Формирование прав дочерних объектов */
-    public void makeRightForChilds(BaseDict item){
-        Rights childRights = getRightForChild(item);
-        settingRightForChild(item, childRights); 
-    }
-    
-    /* Получение прав для дочерних объектов */
-    public Rights getRightForChild(BaseDict item){
-        Rights rights = null;
-        if (item == null) return rights;
-        
-        if (!item.isInherits()) {
-            rights = getActualRightChildItem(item);
-        } else 
-            if (item.getOwner() != null) {
-                rights = getRightForChild(item.getOwner()); //получаем права от владельца
-            } else 
-                if (item.getParent() != null) {
-                    rights = getRightForChild(item.getParent()); //получаем права от родителя
-                }
-        return rights;
-    } 
-            
-    /* Получение актуальных прав дочерних объектов от объекта */
-    private Rights getActualRightChildItem(BaseDict item) {
-        String childStrRight = item.getXmlAccessChild();
-        if (StringUtils.isNotBlank(childStrRight)){
-            Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(childStrRight), Rights.class);
-            return actualRight;
-        } 
-        return null;
-    } 
-    
-    /* Установка прав дочерних объектов */
-    public void settingRightForChild(BaseDict item, Rights newRight) {
-        if (item != null && newRight != null) {
-            item.setRightForChild(newRight);
-            item.setXmlAccessChild(newRight.toString());
-        }
-    }              
+    }                 
     
     /* *** *** *** */
     
@@ -373,16 +330,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     }    
     
     /* *** GET & SET *** */
-        
-    public List<User> getUsers() {
-        if (users == null){
-            users = userFacade.findAll().stream()
-                .filter(item -> preloadCheckRightView(item))
-                .collect(Collectors.toList());             
-        }
-        return users;
-    }
-        
+                
     public Boolean getIsItemChange() {
         return isItemChange;
     }

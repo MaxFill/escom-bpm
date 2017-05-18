@@ -17,10 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.Size;
 
-/**
- * Класс сущности для Типов контрагентов
- * @author Maxim
- */
+/* Класс сущности для Типов контрагентов */
 @Entity
 @Table(name = "partnerTypes")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -64,11 +61,6 @@ public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTy
     }
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    @Override
-    public List<PartnerTypes> getDetailItems() {
-        return null;
     }
     
     @Override

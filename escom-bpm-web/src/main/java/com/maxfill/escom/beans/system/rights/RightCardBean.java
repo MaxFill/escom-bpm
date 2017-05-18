@@ -173,7 +173,7 @@ public class RightCardBean extends BaseDialogBean{
 
     public List<User> getUsers() {
         if (users == null){
-            users = userBean.getUsers();
+            users = userBean.findAll();
         }
         return users;
     }

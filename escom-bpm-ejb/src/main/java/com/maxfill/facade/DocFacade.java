@@ -126,32 +126,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     public void remove(Doc doc){
        attacheService.deleteAttaches(doc.getAttachesList());
        super.remove(doc);
-    }
-    
-    /* Установка специфичных атрибутов документа при его создании */
-    @Override
-    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params){
-        Folder folder = doc.getOwner();
-        if (folder != null){
-            DocType docType = folder.getDocTypeDefault();
-            doc.setDocType(docType);
-        }
-        doc.setDateDoc(new Date());
-        if (doc.getOwner().getId() == null){ //сброс owner если документ создаётся в корне архиа!
-            doc.setOwner(null);
-        }
-        if (params != null && !params.isEmpty()){
-            Attaches attache = (Attaches)params.get("attache");
-            if (attache != null){
-                Short version = doc.getNextVersionNumber();            
-                attache.setNumber(version);
-                attache.setDoc(doc);
-                String fileName = attache.getName();
-                doc.setName(fileName);
-                doc.getAttachesList().add(attache);
-            }
-        }
-    }    
+    }           
 
     @Override
     protected Integer getMetadatesObjId() {

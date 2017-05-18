@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.facade.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -19,12 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Группы видов документов" */
 @Named
 @SessionScoped
 public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups>{
     private static final long serialVersionUID = -690060212424991825L;  
+    
+    @Inject
+    private DocTypeBean docTypeBean;
     
     @EJB
     private DocTypeGroupsFacade itemsFacade;
@@ -79,6 +85,16 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     @Override
     public Class<DocTypeGroups> getOwnerClass() {
         return null;
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
+    }
+
+    @Override
+    public BaseExplBean getDetailBean() {
+        return docTypeBean;
     }
     
     @FacesConverter("docTypeGroupConvertor")

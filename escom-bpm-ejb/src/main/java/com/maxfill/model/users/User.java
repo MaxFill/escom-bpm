@@ -2,11 +2,6 @@ package com.maxfill.model.users;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.folders.Folder;
-import com.maxfill.model.partners.Partner;
-import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.users.groups.UserGroups;
 import java.util.ArrayList;
@@ -22,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -30,10 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Пользователь
- * @author Maxim
- */
+/* Пользователи */
 @Entity
 @Table(name = "users")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -136,11 +127,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
         }
         
         return String.format("%s %s.%s.", f,s,l); 
-    }
- 
-    @Override
-    public List<User> getDetailItems() {
-        return null;
     }
     
     @Override

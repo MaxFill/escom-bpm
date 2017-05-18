@@ -19,10 +19,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-/**
- * Группа пользователя
- * @author Maxim
- */
+/* Группы пользователей  */
 @Entity
 @Table(name = "usersGroups")
 @DiscriminatorColumn(name="REF_TYPE")

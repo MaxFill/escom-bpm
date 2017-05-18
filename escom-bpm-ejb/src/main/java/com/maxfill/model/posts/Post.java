@@ -1,7 +1,6 @@
 package com.maxfill.model.posts;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.staffs.Staff;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -17,11 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 
-/**
- * Должность
- *
- * @author Maxim
- */
+/* Должность */
 @Entity
 @Table(name = "posts")
 @DiscriminatorColumn(name = "REF_TYPE")
@@ -69,12 +64,7 @@ public class Post extends BaseDict<Post, Post, Post, PostLog> {
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-    
-    @Override
-    public List<Post> getDetailItems() {
-        return null;
-    }
+    }    
     
     @Override
     public int hashCode() {

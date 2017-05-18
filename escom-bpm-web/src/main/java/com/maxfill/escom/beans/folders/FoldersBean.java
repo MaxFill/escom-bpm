@@ -1,12 +1,16 @@
 package com.maxfill.escom.beans.folders;
 
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
+import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.utils.SysParams;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Папки документов" */
 
@@ -28,10 +33,15 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private static final long serialVersionUID = 2678662239530806110L;
     private static final Integer ROOT_FOLDER_ID = 0;
     
+    @Inject
+    private DocBean docBean;
+    
     @EJB
     private FoldersFacade foldersFacade;
     @EJB
-    private DocFacade docFacade;     
+    private DocFacade docFacade;
+    @EJB
+    private DocTypeFacade docTypeFacade;
 
     @Override
     public Rights getRightItem(BaseDict item) {
@@ -48,6 +58,14 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         return getDefaultRights(item);
     }
     
+    /* Установка специфичных атрибутов при создании новой папки  */
+    @Override
+    public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
+        folder.setModerator(folder.getAuthor());
+        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
+        super.setSpecAtrForNewItem(folder, params);
+    }
+    
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
@@ -57,9 +75,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         if (rootFolder == null){
             throw new NullPointerException("RootFolder null in make tree metod!"); 
         }
-        Rights docRight = (Rights) JAXB.unmarshal(new StringReader(rootFolder.getXmlAccessChild()), Rights.class);
-        setDefaultRightsChilds(docRight);
-        settingRightForChild(rootFolder, docRight); 
+        //makeRightForChilds(rootFolder); //получаем права документов для текущей папки
         addNode(tree, rootFolder);
         return tree;
     }
@@ -70,12 +86,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
 
         if (preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
             //актуализируем права документов папки
-            makeRightForChilds((Folder)folder); //получаем права документов для текущей папки
             
-            TreeNode newNode;
-            synchronized(this){
-                newNode = new DefaultTreeNode("tree", folder, parentNode);
-            }
+            TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
 
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
             getItemFacade().findChilds((Folder)folder)
@@ -89,38 +101,16 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     
     /* Формирование содержимого контента папки   */ 
     @Override
-    public List<BaseDict> makeGroupContent(Folder folder, Integer viewMode) {
-        Rights docRights = getDefaultRightsChilds();
+    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
         List<Folder> folders = getItemFacade().findChilds((Folder)folder);        
-        folders.stream()
-                .forEach(fl -> addFolderInCnt(fl, cnt)
-        );        
+        folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
         //загружаем в контент документы
         List<Doc> docs = getDetailBean().getItemFacade().findItemByOwner(folder);
-        docs.stream().
-                forEach(doc -> addDocInCnt(doc, cnt, docRights)
-        );
+        docs.stream().forEach(doc -> addDetailItemInContent(doc, cnt));
         return cnt;
     }
-    
-    /* Добавляет папку в контент  */ 
-    private void addFolderInCnt(BaseDict folder, List<BaseDict> cnts) {
-        makeRightForChilds((Folder)folder);
-        cnts.add(folder);
-    }
-
-    /* Добавляет документ в контент  */ 
-    public void addDocInCnt(BaseDict doc, List<BaseDict> cnts, Rights defDocRight) {
-        Rights rd = defDocRight;
-        if (doc.isInherits() && doc.getAccess() != null) { //установлены специальные права и есть в базе данные по правам
-            rd = (Rights) JAXB.unmarshal(new StringReader(doc.getAccess()), Rights.class); //Демаршаллинг прав из строки! 
-        }
-        doc.setRightItem(rd);
-        doc.setRightMask(getAccessMask(doc.getState(), rd, currentUser)); //получаем маску доступа для текущего пользователя  
-        cnts.add(doc);
-    }          
        
     /* Действия перед удалением папки  */
     @Override
@@ -177,5 +167,15 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public Class<Folder> getOwnerClass() {
         return null;
+    }
+
+    @Override
+    public BaseExplBean getOwnerBean() {
+        return null;
+    }
+
+    @Override
+    public BaseExplBean getDetailBean() {
+        return docBean;
     }
 }

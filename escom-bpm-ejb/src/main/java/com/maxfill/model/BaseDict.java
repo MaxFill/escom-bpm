@@ -29,15 +29,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
-/**
- * Базовый класс справочников
- * @author mfilatov
+/* Базовый класс справочников
  * @param <O> Класс владельца
  * @param <P> Класс родителя
  * @param <D> Класс подчинённых объектов
- * @param <L> Класс таблицы лога
- */
+ * @param <L> Класс таблицы лога */
 @MappedSuperclass
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
@@ -48,7 +47,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Transient
     @XmlTransient
     private Integer id;
-                
+
     @XmlTransient
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -63,6 +62,10 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @JoinColumn(name = "Author", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private User author;
+            
+    @Size(max = 100)
+    @Column(name = "Name")
+    private String name;        
         
     @XmlTransient
     @Basic(optional = false)
@@ -70,10 +73,6 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date dateCreate;
-    
-    @Size(max = 100)
-    @Column(name = "Name")
-    private String name;        
         
     @XmlTransient
     @Basic(optional = false)
@@ -85,30 +84,24 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @XmlTransient
     @Basic(optional = false)    
     @Column(name = "Access")
-    private String access;
+    private String access;      
         
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private State state;
       
-    /**
-     * Журнал истории объекта
-     */
+    /* Журнал истории объекта  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<L> itemLogs = new ArrayList<>();
       
-    /**
-     * Дочерние child объекты, полученные по ссылке на parent
-     */
+    /* Дочерние child объекты, полученные по ссылке на parent */
     @XmlTransient
     @OneToMany
     @JoinColumn(name = "parent")
-    private List<P> childItems;
-    
-    /**
-     * Подчинённые detail объекты, полученные или через ссылку на owner или через связь многие-ко-многим
-     */
+    private List<P> childItems;    
+        
+    /* Подчинённые detail объекты, полученные или через ссылку на owner или через связь многие-ко-многим  */
     @XmlTransient
     @OneToMany
     @JoinColumn(name = "owner")
@@ -120,20 +113,16 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @NotNull
     @Basic(optional = false)
     @Column(name = "IsInherits")
-    private boolean inherits = true;
-    
-    /**
-     * Признак того, что запись помечена на удаление
-     */
+    private boolean inherits = true;    
+        
+    /* Признак того, что запись помечена на удаление */
     @XmlTransient
     @NotNull
     @Basic(optional = false)
     @Column(name = "IsDeleted")
     private boolean deleted;
         
-    /**
-     * Признак того, что запись актуальная
-     */
+    /* Признак того, что запись актуальная */
     @XmlTransient
     @NotNull
     @Basic(optional = false)
@@ -158,36 +147,66 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     @Transient
     @XmlTransient
-    private Rights rightItem; //права доступа в виде объекта
-    
-    /**
-     * Права доступа к подчинённому объекту 
-     */
-    @Transient
-    @XmlTransient
-    private Rights rightForChild; //права для дочерних объектов 
-    
-    /*  Права доступа к подчинённому объекту в виде строки в xml */
-    @Transient
-    @XmlTransient
-    private String xmlAccessChild;
-    
-    /**
-     * Название для установленного признака наследования
-     * @return 
-     */
+    private Rights rightItem; //права доступа в виде объекта    
+        
+    /* Название для установленного признака наследования  */
     @Transient
     @XmlTransient
     private String inheritsRightName;
 
-    /**
-     * Возврашает путь в дереве к объекту
-     * @return 
-     */
+    /* Возврашает путь в дереве к объекту */
     @Transient
     @XmlTransient
     private String path;
-        
+      
+    /* Признак наследования дефолтных прав для дочерних объектов */
+    @XmlTransient
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "IsInheritsAccessChilds")
+    private boolean inheritsAccessChilds;
+    
+    /* Дефолтные Права доступа для подчинённых объектов в виде строки в xml */
+    @XmlTransient
+    @Size(max = 2147483647)
+    @Column(name = "AccessChilds")
+    private String xmlAccessChild; 
+    
+    /* Права доступа к подчинённому объекту  */
+    @Transient
+    @XmlTransient
+    private Rights rightForChild; //права для дочерних объектов 
+    
+    /* Возвращает название для заголовка наследования дефолтных прав  дочерних объектов */
+    public String getInheritsAccessChildName(){
+        if (inheritsAccessChilds){
+            return ItemUtils.getMessageLabel("RightsInheritedForChilds");
+        } else {
+            return ItemUtils.getMessageLabel("RightsNotInheritedForChilds");
+        }
+    }   
+    
+    public List<D> getDetailItems() {
+        return detailItems;
+    }
+    public void setDetailItems(List<D> detailItems) {
+        this.detailItems = detailItems;
+    }
+    
+    public Rights getRightForChild() {
+        return rightForChild;
+    }
+    public void setRightForChild(Rights rightForChild) {
+        this.rightForChild = rightForChild;
+    }   
+    
+    public String getXmlAccessChild() {
+        return xmlAccessChild;
+    }
+    public void setXmlAccessChild(String xmlAccessChild) {
+        this.xmlAccessChild = xmlAccessChild;
+    }
+    
     public BaseDict(){
     }
        
@@ -213,14 +232,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setPath(String path) {
         this.path = path;
-    }
-    
-    public List<D> getDetailItems() {
-        return detailItems;
-    }
-    public void setDetailItems(List<D> detailItems) {
-        this.detailItems = detailItems;
-    }
+    }    
     
     public List<P> getChildItems() {
         return childItems;
@@ -239,10 +251,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         this.itemLogs = itemsLogs;
     }    
     
-    /**
-     * Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками для отображения в таблицах
-     * @return 
-     */
+    /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
     public String getNameEndElipse(){
         return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);
     }
@@ -261,7 +270,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         }
         return inheritsRightName;
     }
-
+    
     public boolean isInherits() {
         return inherits;
     }
@@ -269,6 +278,13 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         this.inherits = inherits;
     }
 
+    public boolean isInheritsAccessChilds() {
+        return inheritsAccessChilds;
+    }
+    public void setInheritsAccessChilds(boolean inheritsAccessDocs) {
+        this.inheritsAccessChilds = inheritsAccessDocs;
+    }
+    
     public Rights getRightItem() {
         return rightItem;
     }
@@ -309,7 +325,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setAccess(String access) {
         this.access = access;
-    }
+    }    
     
     public State getState() {
         return state;
@@ -330,14 +346,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setActual(boolean actual) {
         this.actual = actual;
-    }
-    
-    public Rights getRightForChild() {
-        return rightForChild;
-    }
-    public void setRightForChild(Rights rightForChild) {
-        this.rightForChild = rightForChild;
-    }
+    }    
     
     public O getOwner() {
         return owner;
@@ -377,27 +386,16 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setIconName(String iconName) {
         this.iconName = iconName;
-    }
+    }    
     
-    public String getXmlAccessChild() {
-        return xmlAccessChild;
-    }
-    public void setXmlAccessChild(String xmlAccessChild) {
-        this.xmlAccessChild = xmlAccessChild;
-    }
-    
-    /** 
-     * Установка даты создания 
-     */  
+    /* Установка даты создания */  
     @PrePersist  
     public void setCreationDate() {  
         this.dateCreate = new Date(); 
         this.dateChange = new Date();
     }  
   
-    /** 
-     * Установка даты изменения
-     */  
+    /* Установка даты изменения */  
     @PreUpdate  
     public void setChangeDate() {  
         this.dateChange = new Date();  

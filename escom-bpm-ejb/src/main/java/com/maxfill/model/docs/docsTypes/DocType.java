@@ -1,7 +1,6 @@
 package com.maxfill.model.docs.docsTypes;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.numPuttern.NumeratorPattern;
@@ -25,10 +24,7 @@ import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Вид документа
- * @author Maxim
- */
+/* Вид документа */
 @Entity
 @Table(name = "docsTypes")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -132,12 +128,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     public void setStatusDocList(List<StatusesDoc> statusDocList) {
         this.statusDocList = statusDocList;
     }
-    
-    @Override
-    public List<DocType> getDetailItems() {
-        return null;
-    }
-    
+
     @Override
     public DocTypeGroups getOwner() {
         return owner;

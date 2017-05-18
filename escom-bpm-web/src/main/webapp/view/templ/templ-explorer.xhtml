@@ -10,17 +10,11 @@
         <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
         #{explorerBean.setSelectorHeader(_selectorHeader)}
         #{explorerBean.setExplorerHeader(_explorerHeader)}
-        
+        #{explorerBean.setSearcheBean(_searcheBean)}
+                
         #{_rootBean  != null ? explorerBean.setRootBean(_rootBean) : ''}
         #{_detailBean != null ? explorerBean.setTableBean(_detailBean)  : ''}
         #{_treeBean   != null ? explorerBean.setTreeBean(_treeBean) : ''}
-        #{explorerBean.setSearcheBean(_searcheBean)}
-
-        #{_treeBean != null ? _treeBean.setDetailBean(_detailBean) : ''}
-        #{_treeBean != null ? _treeBean.setOwnerBean(_rootBean) : ''}
-        #{_treeBean != null ? _detailBean.setOwnerBean(_treeBean) : ''}
-
-        #{_rootBean != null ? _rootBean.setDetailBean(_treeBean) : ''} <!-- это установка бина верхнего уровня, например Company для Department -->
         
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>

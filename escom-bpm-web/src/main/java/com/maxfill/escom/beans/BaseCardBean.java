@@ -32,10 +32,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private T editedItem;                       //редактируемый объект 
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
     
-    /* Действия перед сохранением объекта  */
-    protected void onBeforeSaveItem(T item) {
-    }
-
     protected abstract void afterCreateItem(T item);
 
     @Override
@@ -57,7 +53,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
                 addOwnerInGroups(item); //owner_а нужно добавить в группу
                 afterCreateItem(item);
-                checkCorrectItemRight(item);
+                Set<String> errors = new LinkedHashSet<>();
+                checkCorrectItemRight(item, errors);
+                if (!errors.isEmpty()) {
+                   EscomBeanUtils.showErrorsMsg(errors);
+                }
             }
 
             prepareRightsForView(item);
@@ -100,7 +100,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {
                     settingRightItem(item, item.getRightItem());
-                    settingRightForChild(item, item.getRightForChild());
                     getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
                     getItemFacade().edit(item);
                     break;
@@ -115,12 +114,17 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         closeItemForm(isNeedUpdateExplore);
     }
     
+    /* Действия перед сохранением объекта  */
+    protected void onBeforeSaveItem(T item) {}
+            
     /* Действия сразу после сохранения объекта перед закрытием его карточки */
     protected void onAfterSaveItem(T item){      
     }
 
     /* Проверка корректности полей объекта перед сохранением  */
     protected void checkItemBeforeSave(T item, Set<String> errors) {
+        checkCorrectItemRight(item, errors);
+        
         T parent = (T) item.getParent();
         Integer itemId = item.getId();
         String itemName = item.getName();
@@ -132,9 +136,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             Object[] messageParameters = new Object[]{itemName, findItem.getId()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
-        }
-        //Проверка на корректность прав доступа
-        checkItemHaveRightEdit(item, errors);                    
+        }                           
     }
 
     /* Отмена изменений в объекте  */
@@ -234,7 +236,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (right != null){
                 getEditedItem().getRightItem().getRights().add(right);
             }
-            checkCorrectItemRight(getEditedItem());
+            Set<String> errors = new LinkedHashSet<>();
+            checkCorrectItemRight(getEditedItem(), errors);
+            if (!errors.isEmpty()) {
+                EscomBeanUtils.showErrorsMsg(errors);
+            }
         }                
     }
 
@@ -250,14 +256,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         StringBuilder sb = new StringBuilder();
         sb.append(getMessageLabel("ObjectDontHaveRightEdit")).append(getMessageLabel("CheckRights"));
         errors.add(sb.toString());
+    }    
+    
+    private void checkCorrectItemRight(T item, Set<String> errors){
+        checkItemHaveRightEdit(item, errors);
+        checkRightsChilds(item, errors);
     }
     
-    private void checkCorrectItemRight(T item){
-        Set<String> errors = new LinkedHashSet<>();
-        checkItemHaveRightEdit(item, errors);
-        if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);
-        }
+    protected void checkRightsChilds(T item, Set<String> errors){        
     }
     
     /* ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии
@@ -277,7 +283,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* ПРАВА ДОСТУПА: */ 
     public boolean isHaveRightEdit() {
         return isHaveRightEdit(editedItem);                
-    }    
+    }        
     
     /* ПРОЧИЕ МЕТОДЫ */
 
@@ -285,9 +291,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void onInheritsChange(ValueChangeEvent event) {
         Boolean inherits = (Boolean) event.getNewValue();
         if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
-            Rights rights = getRightItem(getEditedItem());
-            settingRightItem(getEditedItem(), rights);
-            rightFacade.prepareRightsForView(rights.getRights());
+            makeRightItem(editedItem);
+            rightFacade.prepareRightsForView(editedItem.getRightItem().getRights());
+            setIsItemChange(Boolean.TRUE);
             EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
         }
     }
@@ -333,12 +339,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return sb.toString();
     }
     
-    /**
-     * Формирует текст сообщения о том, что редактируемый объект актуален или не
-     * актуален
-     *
-     * @return
-     */
+    /* Формирует текст сообщения о том, что редактируемый объект актуален или не актуален  */
     public String getActualInfo() {
         String msg;
         if (getEditedItem().isActual()) {

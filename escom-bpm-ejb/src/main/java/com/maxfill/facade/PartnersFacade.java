@@ -84,16 +84,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
                 .filter(partner -> !partner.isDeleted() && partner.isActual())
                 .collect(Collectors.toList());        
         return detailItems;
-    }
-    
-    /* Установка специфичных атрибутов контрагента при его создании */
-    @Override
-    public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
-        String counterName = getFRM_NAME();
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
-        item.setCode(number);
-    }        
+    }         
     
     @Override
     protected Integer getMetadatesObjId() {
