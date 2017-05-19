@@ -24,7 +24,7 @@
                     <ui:param name="_itemPanel" value="postPanel"/>
                     <ui:param name="_titleItem" value="#{bundle.Post}"/>
                     <ui:param name="_selectorBean" value="#{postBean}"/>
-                    <ui:param name="_items" value="#{_bean.posts}"/>
+                    <ui:param name="_items" value="#{postBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setPost"/>
                     <ui:param name="_actionSelect" value="onPostSelected"/>
                     <ui:param name="_update" value=""/>

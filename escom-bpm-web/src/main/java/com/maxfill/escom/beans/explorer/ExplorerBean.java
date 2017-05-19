@@ -183,7 +183,7 @@ public class ExplorerBean implements Serializable {
                 owner = selected;
             }
         typeEdit = DictEditMode.INSERT_MODE;        
-        editItem = sessionBean.prepCreateItem(parent, owner, typeTree, createParams);
+        editItem = treeBean.createItemAndOpenCard(parent, owner, createParams);
     }
     
     /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне */
@@ -191,7 +191,7 @@ public class ExplorerBean implements Serializable {
         BaseDict owner = null;
         BaseDict parent = null;
         typeEdit = DictEditMode.INSERT_MODE;
-        editItem = sessionBean.prepCreateItem(parent, owner, typeRoot, createParams);
+        editItem = rootBean.createItemAndOpenCard(parent, owner, createParams);
     }
     
     /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
@@ -201,8 +201,8 @@ public class ExplorerBean implements Serializable {
         BaseDict owner = null;
         if (treeSelectedNode != null){
             owner = (BaseDict) treeSelectedNode.getData();
-        }
-        editItem = sessionBean.prepCreateItem(parent, owner, typeDetail, createParams);   
+        }        
+        editItem = tableBean.createItemAndOpenCard(parent, owner, createParams);
     }
     
     /* КАРТОЧКИ: обработка после закрытия карточки  */
@@ -1453,7 +1453,7 @@ public class ExplorerBean implements Serializable {
     
     /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */
     
-    public void onUploadFileAndCreateDoc(FileUploadEvent event) throws IOException{     
+    public void onUploadFile(FileUploadEvent event) throws IOException{     
         UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
         User author = sessionBean.getCurrentUser();
         String uploadPath = sessionBean.getConfiguration().getUploadPath();

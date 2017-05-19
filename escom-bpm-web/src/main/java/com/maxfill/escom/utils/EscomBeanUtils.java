@@ -41,10 +41,7 @@ public class EscomBeanUtils {
         return StringUtils.replaceEach(text, abcCyr, abcLat);
     }
     
-    /**
-     * Инициализация областей обозревателя
-     * @param layoutOptions
-     */
+    /* Инициализация областей обозревателя */
     public static void initLayoutOptions(LayoutOptions layoutOptions){
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
@@ -134,13 +131,7 @@ public class EscomBeanUtils {
         center.setChildOptions(childCenterOptions);
     }    
     
-    /**
-     * Получение bean
-     * @param <T>
-     * @param beanName
-     * @param context
-     * @return 
-     */
+    /* Получение bean по его имени */
     @SuppressWarnings("unchecked")
     public static <T> T findBean(String beanName, FacesContext context) {
         return (T) context.getApplication().evaluateExpressionGet(context, "#{" + beanName + "}", Object.class);
@@ -205,12 +196,7 @@ public class EscomBeanUtils {
         return sb.toString();
     }
     
-    /**
-     * Поиск позиции в дереве по значению объекта
-     * @param root
-     * @param item
-     * @return
-     */
+    /* Поиск позиции в дереве по значению объекта */
     public static TreeNode findTreeNode(TreeNode root, Object item) {
         TreeNode result = null;
         if (item == null) {
@@ -253,10 +239,6 @@ public class EscomBeanUtils {
         ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, msg1, msg2));
     }
 
-    /**
-     * Показ списка ошибок
-     * @param errors
-     */
     public static void showErrorsMsg(Set<String> errors) {
         errors.stream().limit(10).forEach((String error) -> ErrorMsgAdd("Error", "", error));
     }

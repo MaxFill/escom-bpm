@@ -1,7 +1,8 @@
 
-package com.maxfill.model.docs.docStatus;
+package com.maxfill.model.docs.docStatuses;
 
 import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
@@ -21,13 +22,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-/**
- * Значения статусов для каждого документа. Подчинённая таблица к документам
- * @author mfilatov
- */
+/* Список статусов со своими значениями в документе. Подчинённая таблица к документам */
 @Entity
 @Table(name = "docsStatus")
-public class DocsStatus implements Serializable {
+public class DocStatuses implements Serializable {
     private static final long serialVersionUID = -6573535287409441895L;
     
     @TableGenerator(
@@ -65,10 +63,10 @@ public class DocsStatus implements Serializable {
     @ManyToOne(optional = false)
     private User author;
 
-    public DocsStatus() { 
+    public DocStatuses() { 
     }
 
-    public DocsStatus(Doc doc, StatusesDoc status) {
+    public DocStatuses(Doc doc, StatusesDoc status) {
         this.doc = doc;
         this.status = status;
     }
@@ -125,10 +123,10 @@ public class DocsStatus implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DocsStatus)) {
+        if (!(object instanceof DocStatuses)) {
             return false;
         }
-        DocsStatus other = (DocsStatus) object;
+        DocStatuses other = (DocStatuses) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }

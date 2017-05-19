@@ -19,7 +19,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     /* Установка владельца объекта в виде основной группы  */
     public void makeMainGroup(O group) {
         getEditedItem().setOwner(group);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }
     
     /* Удаление отмеченных групп из редактируемого объекта. Вызов с карточки объекта */
@@ -28,7 +28,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
                 .filter(group -> group.getId() != 0)
                 .forEach(group -> deleteFromGroup(group, getEditedItem())
         );
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }    
     
     /* Удаление группы из редактируемого объекта */
@@ -38,7 +38,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
             throw new NullPointerException("Edited item is null!");
         }
         deleteFromGroup(group, item);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }
     
     /* Удаление группы из объекта */
@@ -81,7 +81,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
             if(item.getOwner() == null){
                 getOwnerAndAddGroups(item, group);
             }
-            setIsItemChange(Boolean.TRUE);
+            onItemChange();
         }
     }
     

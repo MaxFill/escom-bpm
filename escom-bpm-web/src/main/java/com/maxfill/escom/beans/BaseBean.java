@@ -329,7 +329,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         return isItemChange;
     }    
     
-    /* *** GET & SET *** */
+    /* GET & SET */
                 
     public Boolean getIsItemChange() {
         return isItemChange;

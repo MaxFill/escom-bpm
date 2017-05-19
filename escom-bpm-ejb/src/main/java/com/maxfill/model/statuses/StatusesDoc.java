@@ -21,10 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Справочник статусов для документов
- * @author mfilatov
- */
+/* Справочник статусов для документов */
 @Entity
 @Table(name = "statusesDoc")
 @XmlRootElement

@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.docStatus.DocsStatus;
+import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.numPuttern.NumeratorPattern;
@@ -15,14 +15,8 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.FileUtils;
-import com.maxfill.facade.CompanyFacade;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
-import com.maxfill.facade.DocTypeFacade;
-import com.maxfill.facade.PartnersFacade;
-import com.maxfill.facade.StaffFacade;
-import com.maxfill.facade.StateFacade;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.states.State;
 import com.maxfill.services.numerator.DocNumerator;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -40,45 +34,28 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-/**
- *  Бизнес-логика для работы с документами
- * @author mfilatov
- */
+/* Карточка документа */
 
 @Named
 @ViewScoped
 public class DocCardBean extends BaseCardBean<Doc>{
     private static final long serialVersionUID = -8151932533993171177L;
 
-    private final List<DocsStatus> forDelDocStatus = new ArrayList<>();
-    private final List<DocsStatus> forAddDocStatus = new ArrayList<>();
+    private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
+    private final List<Attaches> forDelAttaches = new ArrayList<>();
     
-    private String docURL;
+    private String docURL;  
     private Integer documentId; //используется при открытии файла на просмотр через прямую гиперсылку  
-    private List<DocType> docTypes;
-    private List<Staff> staffs;
-    private List<Partner> partners;
-    private List<Company> companies;
-    private List<State> states;
 
     @EJB
     private DocNumerator docNumeratorService;
     @EJB
     private DocFacade itemFacade;
     @EJB
-    private DocTypeFacade docTypeFacade;
-    @EJB
     private DocStatusFacade docStatusFacade;
     @EJB
-    private PartnersFacade partnersFacade;
-    @EJB
-    private StaffFacade staffFacade;
-    @EJB
-    private CompanyFacade companyFacade;
-    @EJB
-    private StateFacade stateFacade;
+    private AttacheFacade attacheFacade;
     
-    /* Специфические действия при отмене сохранения изменённого документа  */
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -87,7 +64,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         return super.doFinalCancelSave();
     }
     
-    /* Специфические действия при открытии карточки документа  */
     @Override
     protected void doPrepareOpen(Doc doc) {
         if (getTypeEdit().equals(DictEditMode.INSERT_MODE) && getEditedItem().getAttachesList().size() >0){
@@ -95,7 +71,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
      
-    /* Проверка корректности полей документа  */
     @Override
     protected void checkItemBeforeSave(Doc doc, Set<String> errors){        
         checkRegNumber(doc, errors);
@@ -106,11 +81,35 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public DocFacade getItemFacade() {
         return itemFacade;
     }         
-    
+        
     @Override
     public void onAfterSaveItem(Doc doc){        
         onSaveChangeDocStatus();
+        onSaveChangeAttaches();
     }
+        
+    private void onSaveChangeAttaches(){
+        if (!forDelAttaches.isEmpty()){
+            forDelAttaches.stream()
+                    .forEach(attache -> {
+                        attacheService.deleteAttache(attache);
+                        if (attache.getId() != null){
+                            attacheFacade.remove(attache);
+                        }
+                    });
+        }
+    }
+    
+    private void onSaveChangeDocStatus() {
+        if (!forDelDocStatus.isEmpty()){
+            forDelDocStatus.stream()
+                    .filter(docsStatus -> docsStatus.getId() != null)
+                    .forEach(docsStatus -> {
+                        docStatusFacade.remove(docsStatus);
+                        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
+                    });
+        }        
+    } 
     
     @Override
     protected void afterCreateItem(Doc doc) {
@@ -122,19 +121,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
         return EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
     }
     
-    /**
-     * Запрос на формирование ссылки URL на открытие карточки документа 
-     * @param doc
-     * @return 
-     */
+    /* Запрос на формирование ссылки URL на открытие карточки документа */
     public String onGetDocOpenURL(Doc doc){
         return EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer", "0");
     }
         
-    /**
-     * Сброс регистрационного номера
-     * @param doc
-     */
+    /* Сброс регистрационного номера */
     public void onClearRegNumber(Doc doc){
         if (doc.getDocType() != null){
             NumeratorPattern numerator = doc.getDocType().getNumerator();
@@ -143,70 +135,59 @@ public class DocCardBean extends BaseCardBean<Doc>{
             }
         }
         doc.setRegNumber(null);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
         EscomBeanUtils.WarnMsgAdd("DocRegCanceled", "DocIsEnableEditing");
     }
 
-    /**
-     * Формирование регистрационного номера документа. Вызов с экранной формы
-     * @param doc
-     */
+    /* Формирование регистрационного номера документа. Вызов с экранной формы */
     public void onGenerateRegNumber(Doc doc){
         docNumeratorService.doRegistDoc(doc);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }       
     
-    /**
-     * Подготовка к отправке текущего документа на e-mail
-     * @param mode
-     */
+    /* Подготовка к отправке текущего документа на e-mail  */
     public void prepareSendMailDoc(String mode){
         List<BaseDict> docs = new ArrayList<>();
         docs.add(getEditedItem());
         EscomBeanUtils.openMailMsgForm(mode, docs);
     }
     
-    /* *** ВЛОЖЕНИЯ *** */
+    /* ВЛОЖЕНИЯ */
     
     /* Добавление версии к документу   */
     public Attaches addAttache(FileUploadEvent event) throws IOException{
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
         Doc doc = getEditedItem();
         UploadedFile file = FileUtils.handleUploadFile(event);
         Attaches attache = uploadAtache(file);
-        Short version = doc.getNextVersionNumber();            
+        Integer version = doc.getNextVersionNumber();            
         attache.setNumber(version);
         attache.setDoc(doc);
         getEditedItem().getAttachesList().add(attache);
         return attache;
     }
-    
-    /**
-     * Удаление текущей версии документа
-     */
+        
+    /* Удаление текущей версии документа  */
     public void removeCurrentVersion(){
         Attaches version =  null;
         Doc doc = getEditedItem();
   
-        for (short number = doc.getAttache().getNumber(); number >= 1; --number){
+        for (Integer number = doc.getAttache().getNumber(); number >= 1; --number){
             for(Attaches attache : doc.getAttachesList()){
-                if (number == attache.getNumber()){
+                if (Objects.equals(number, attache.getNumber())){
                     version = attache;
                     break;
                 }
             }
         }
         makeCurrentVersion(doc, version);                
-        setIsItemChange(Boolean.TRUE); 
+        onItemChange(); 
     }
     
-    /**
-     * Установка текущей версии в редактируемом документе
-     * @param attache 
-     */
+    /* Установка текущей версии в редактируемом документе  */
     public void makeCurrentVersion(Attaches attache){
         makeCurrentVersion(getEditedItem(), attache);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }
     
     /* Установка текущей версии в документе  */
@@ -224,22 +205,20 @@ public class DocCardBean extends BaseCardBean<Doc>{
     /* Удаление версии документа и её файла */
     public void deleteAttache(Attaches attache) {
         try {
-            attacheService.deleteAttache(attache);            
             Doc doc = getEditedItem();
+            forDelAttaches.add(attache);
             doc.getAttachesList().remove(attache);
             if (attache.equals(doc.getAttache())){
                 removeCurrentVersion();
-            }            
-            setIsItemChange(Boolean.TRUE);
+            }
+            onItemChange();
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, null, exception);
             EscomBeanUtils.ErrorMessage(exception.getMessage());
         }
-    }            
+    }
     
-    /**
-     * Скачивание текущей версии документа
-     */
+    /* Скачивание текущей версии документа */
     public void downloadCurrentVersion(){
         if (getEditedItem() == null && documentId != null){
             setEditedItem(getItemFacade().find(documentId));
@@ -260,9 +239,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         } else {
             EscomBeanUtils.WarnMsgAdd("Error", "DocumentNotFound");
         }
-    }
-    
-    /* СОБЫТИЯ ИЗМЕНЕНИЯ ПОЛЕЙ НА ФОРМЕ */
+    }        
     
     /* Событие изменения контрагента на форме документа */
     public void onPartnerSelected(SelectEvent event){
@@ -271,9 +248,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Partner item = items.get(0);
         onItemChange();
         getEditedItem().setPartner(item);
-        if (!partners.contains(item)){
-            partners.add(item);
-        }
     } 
     public void onPartnerSelected(ValueChangeEvent event){
         Partner partner = (Partner) event.getNewValue();
@@ -287,9 +261,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Staff item = items.get(0);
         onItemChange();
         getEditedItem().setManager(item);
-        if (!staffs.contains(item)){
-            staffs.add(item);
-        }
     }
     public void onManagerSelected(ValueChangeEvent event){
         Staff manager = (Staff) event.getNewValue();
@@ -304,9 +275,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         getEditedItem().setDocType(item);
         onItemChange();
         addDocStatusFromType(getEditedItem(),item);
-        if (!docTypes.contains(item)){
-            docTypes.add(item);
-        }
     }
     public void onDocTypeSelected(ValueChangeEvent event){        
         DocType docType = (DocType) event.getNewValue();
@@ -314,6 +282,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
         addDocStatusFromType(getEditedItem(), docType);
     }      
   
+    /* СТАТУСЫ ДОКУМЕНТА */
+    
     /* СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа   */
     private int addDocStatusFromType(Doc doc, DocType docType){
         int loadCounter = 0;
@@ -324,96 +294,53 @@ public class DocCardBean extends BaseCardBean<Doc>{
         return loadCounter;
     } 
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: добавление статусов в документ
-     */
-    private int addStatusesInDoc(Doc doc, List<StatusesDoc> statuses){
-        List<DocsStatus> docsStatuses = doc.getDocsStatusList();
+    /* СТАТУСЫ ДОКУМЕНТА: добавление статусов в документ */
+    private int addStatusesInDoc(Doc doc, List<StatusesDoc> statusesForAdd){
+        List<DocStatuses> docsStatuses = doc.getDocsStatusList();
         List<StatusesDoc> statusesFromDoc = docsStatuses.stream().map(docsStatus -> docsStatus.getStatus()).collect(Collectors.toList());
             
-        statuses.removeAll(statusesFromDoc);            
-        statuses.stream()
-                .map(statusDoc -> new DocsStatus(doc, statusDoc))
-                .map(newStatus -> {
-                    docsStatuses.add(newStatus);
-                    return newStatus;})
-                .forEach(newStatus -> getForAddDocStatus().add(newStatus));
+        statusesForAdd.removeAll(statusesFromDoc);      // удалить уже имеющиеся статусы
+        statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
+                .forEach(docsStatus -> docsStatuses.add(docsStatus));        
         onItemChange();
-        return statuses.size();
-    }
+        return statusesForAdd.size();
+    }       
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: Сохранение изменений в статусах документа
-     */
-    private void onSaveChangeDocStatus() {
-        List<DocsStatus> forDelStatus = getForDelDocStatus();
-        List<DocsStatus> forAddStatus = getForAddDocStatus();
-        if (!forDelStatus.isEmpty()){
-            forDelStatus.stream()
-                    .filter(docsStatus -> docsStatus.getId() != null)
-                    .forEach(docsStatus -> {
-                        docStatusFacade.remove(docsStatus);
-                        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
-                    });
-        }        
-        if (!forAddStatus.isEmpty()){            
-            forAddStatus.stream().forEach(docsStatus -> {
-                docsStatus.setId(null);
-                docStatusFacade.create(docsStatus);
-            });
-        }
-    }
-    
-    /* *** СТАТУСЫ ДОКУМЕНТА *** */
-    
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: Изменение значения статуса документа в таблице статусов на карточке документа
-     * @param docsStatus
-     */   
-    public void onChangeDocStatus(DocsStatus docsStatus){
+    /* Изменение значения статуса документа в таблице статусов на карточке документа */   
+    public void onChangeDocStatus(DocStatuses docsStatus){
         docsStatus.setAuthor(currentUser);
         getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), docsStatus.toString(), currentUser);
         onItemChange();
     }
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: Удаление статуса документа из редактируемого документа
-     * @param docsStatus
-     */
-    public void onDeleteStatus(DocsStatus docsStatus){
-        List<DocsStatus> docsStatuses = getEditedItem().getDocsStatusList();
-        for (DocsStatus ds : docsStatuses){
+    /* Удаление статуса документа из редактируемого документа  */
+    public void onDeleteStatus(DocStatuses docsStatus){
+        List<DocStatuses> docsStatuses = getEditedItem().getDocsStatusList();
+        for (DocStatuses ds : docsStatuses){
             if (Objects.equals(ds, docsStatus)){
                 docsStatuses.remove(ds);
-                getForDelDocStatus().add(docsStatus);
+                forDelDocStatus.add(docsStatus);
                 onItemChange();
                 break;
             }
         }
     }
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: Удаление всех статусов документа из редактируемого документа
-     */
+    /* Удаление всех статусов документа из редактируемого документа */
     public void onDeleteAllStatus(){
-        getForDelDocStatus().addAll(getEditedItem().getDocsStatusList());
+        forDelDocStatus.addAll(getEditedItem().getDocsStatusList());
         getEditedItem().getDocsStatusList().clear();
         onItemChange();
     }
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: Загрузка статусов в редактируемый документ из шаблона документа - вызов с формы
-     */
+    /* Загрузка статусов в редактируемый документ из шаблона документа - вызов с формы  */
     public void onLoadDocStatusFromDocType(){
         int loadCounter = addDocStatusFromType(getEditedItem(), getEditedItem().getDocType());
         Object[] params = new Object[]{loadCounter};
         EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
     }                 
     
-    /**
-     * СТАТУСЫ ДОКУМЕНТА: добавление в документ статусов из селектора
-     * @param event
-     */
+    /* Добавление в документ статусов из селектора */
     public void onAddStatusesFromSelector(SelectEvent event){
         if (event.getObject() != null){
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
@@ -433,58 +360,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
 
-    public List<State> getStates() {
-        if (states == null){
-            states = stateFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return states;
-    }
-
-    public List<Company> getCompanies() {
-        if (companies == null){
-            companies = companyFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return companies;
-    }
-           
-    public List<DocType> getDocTypes() {
-        if (docTypes == null){
-            docTypes = docTypeFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return docTypes;
-    }
-
-    public List<Staff> getStaffs() {
-        if (staffs == null) {
-            staffs = staffFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return staffs;
-    }
-
-    public List<Partner> getPartners() {
-        if (partners == null){
-            partners = partnersFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return partners;
-    }
-
-    public List<DocsStatus> getForDelDocStatus() {
-        return forDelDocStatus;
-    }
-    public List<DocsStatus> getForAddDocStatus() {
-        return forAddDocStatus;
-    }
-    
     public String getDocURL() {
         return docURL;
     }

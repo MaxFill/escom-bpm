@@ -1,7 +1,6 @@
 package com.maxfill.model.attaches;
 
 import com.maxfill.model.docs.Doc;
-import com.maxfill.utils.SysParams;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;
@@ -24,10 +23,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Вложения
- * @author mfilatov
- */
+/* Вложения */
 @Entity
 @Table(name = "attaches")
 public class Attaches implements Serializable {
@@ -48,30 +44,24 @@ public class Attaches implements Serializable {
     private Integer id;
     
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Number")
-    private short number;
+    private Integer number;
             
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 128)
+    @Size(min = 1, max = 256)
     @Column(name = "Name")
     private String name;
     
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Size")
-    private int size;
+    private Integer size;
     
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "DateCreate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreate;
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 256)
     @Column(name = "Type")
     private String type;
     
@@ -91,7 +81,6 @@ public class Attaches implements Serializable {
     private Doc doc;
     
     @Basic(optional = false)
-    @NotNull
     @Column(name = "IsCurrent")
     private Boolean current = true;
             
@@ -106,10 +95,7 @@ public class Attaches implements Serializable {
         guid = EscomUtils.generateGUID();
     }
 
-    /**
-     * Возвращает полное имя файла на сервере
-     * @return 
-     */
+    /* Возвращает полное имя файла на сервере  */
     public String getFullName(){
         StringBuilder sb = new StringBuilder();
         return sb.append(getGuid()).append(".").append(getExtension()).toString();
@@ -122,10 +108,10 @@ public class Attaches implements Serializable {
         this.id = id;
     }
 
-    public short getNumber() {
+    public Integer getNumber() {
         return number;
     }
-    public void setNumber(short number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 

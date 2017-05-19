@@ -40,7 +40,7 @@
                                  required="false"
                                  requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
                     <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
-                    <f:selectItems value="#{numeratorPatternBean.allItems}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
+                    <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
 
                     <p:column style="font-size: 80%;">
                         #{numeratorPatternBean.model.getLabel(pattern.typeCode)}
@@ -57,7 +57,7 @@
                                   var="st" showCheckbox="true"
                                   onchange="return itemChange = 1;"
                                   style="width: 100%;">
-                    <f:selectItems value="#{statusesDocBean.getAllItems()}" var="status" itemLabel="#{status.name}" itemValue="#{status}" />
+                    <f:selectItems value="#{statusesDocBean.findAll()}" var="status" itemLabel="#{status.name}" itemValue="#{status}" />
                     <p:column>
                         <h:outputText value="#{st.localName}" />
                     </p:column>

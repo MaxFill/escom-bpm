@@ -10,10 +10,7 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-/**
- * Бин для справочника статусов документов
- * @author mfilatov
- */
+/* Карточка статуса документа */
 @ViewScoped
 @Named
 public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{

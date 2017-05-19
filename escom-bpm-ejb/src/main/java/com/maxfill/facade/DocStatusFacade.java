@@ -1,7 +1,7 @@
 
 package com.maxfill.facade;
 
-import com.maxfill.model.docs.docStatus.DocsStatus;
+import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.facade.BaseFacade;
 import javax.ejb.Stateless;
 
@@ -10,16 +10,16 @@ import javax.ejb.Stateless;
  * @author mfilatov
  */
 @Stateless
-public class DocStatusFacade extends BaseFacade<DocsStatus>{
+public class DocStatusFacade extends BaseFacade<DocStatuses>{
     
     @Override
-    public void remove(DocsStatus entity){
-        entity = getEntityManager().getReference(DocsStatus.class, entity.getId());
+    public void remove(DocStatuses entity){
+        entity = getEntityManager().getReference(DocStatuses.class, entity.getId());
         getEntityManager().remove(entity);
     }
     
     public DocStatusFacade() {
-        super(DocsStatus.class);
+        super(DocStatuses.class);
     }
  
 }

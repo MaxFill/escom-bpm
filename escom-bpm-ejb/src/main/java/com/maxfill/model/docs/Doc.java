@@ -1,10 +1,10 @@
 package com.maxfill.model.docs;
 
+import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.docStatus.DocsStatus;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
@@ -80,12 +80,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs")
     private DocDou docsDou;
 
-    /**
-     * Список статусов документа
-     */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
-    private List<DocsStatus> docsStatusList = new ArrayList<>();
-
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
@@ -99,13 +93,16 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         @JoinColumn(name = "UserId", referencedColumnName = "Id")})
     @ManyToMany
     private List<User> userList;
-        
-    /**
-     * Версии файлов
-     */
-    @OneToMany(cascade = CascadeType.ALL)
+
+    /* Список статусов документа  */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
+    private List<DocStatuses> docsStatusList = new ArrayList<>();
+    
+    /* Версии файлов  */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
     private List<Attaches> attachesList = new ArrayList<>();
-         
+    
+    /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DocLog> itemLogs = new ArrayList<>();
     
@@ -149,13 +146,9 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         return stateIcon;
     }
 
-    /**
-     * Возвращает следующий номер версии документа
-     *
-     * @return
-     */
-    public Short getNextVersionNumber() {
-        short max = 0;
+    /* Возвращает следующий номер версии документа  */
+    public Integer getNextVersionNumber() {
+        Integer max = 0;
         if (attachesList.size() > 0) {
             for (int i = 0; i < attachesList.size(); i++) {
                 if (attachesList.get(i).getNumber() > max) {
@@ -167,23 +160,15 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         return max;
     }
 
-    /**
-     * Возвращает номер текущей версии документа
-     *
-     * @return
-     */
-    public Short getCurrentVersionNumber() {
+    /* Возвращает номер текущей версии документа */
+    public Integer getCurrentVersionNumber() {
         if (getAttache() == null) {
             return null;
-        } else {
-            return getAttache().getNumber();
-        }
+        } 
+        return getAttache().getNumber();        
     }
 
-    /**
-     * Возвращает полное регистрационное имя документа
-     * @return 
-     */
+    /* Возвращает полное регистрационное имя документа */
     public String getFullRegistrName(){
         if (StringUtils.isNotBlank(regNumber)){
             StringBuilder builder = new StringBuilder();
@@ -198,10 +183,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         }
     }
     
-    /**
-     * Возвращает полное имя документа
-     * @return 
-     */
+    /* Возвращает полное имя документа */
     public String getFullName(){        
         StringBuilder builder = new StringBuilder();
         if (docType != null && StringUtils.isNotBlank(docType.getName())){
@@ -291,10 +273,10 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         this.userList = userList;
     }
 
-    public List<DocsStatus> getDocsStatusList() {
+    public List<DocStatuses> getDocsStatusList() {
         return docsStatusList;
     }
-    public void setDocsStatusList(List<DocsStatus> docsStatusList) {
+    public void setDocsStatusList(List<DocStatuses> docsStatusList) {
         this.docsStatusList = docsStatusList;
     }
     

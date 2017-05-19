@@ -13,10 +13,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- * Вложения
- * @author mfilatov
- */
+/* Вложения */
 @Stateless
 public class AttacheFacade extends BaseFacade<Attaches>{
     
@@ -30,11 +27,7 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         super(Attaches.class);
     }
  
-    /**
-     * Отбирает текущую версию вложения для документа
-     * @param doc
-     * @return 
-     */
+    /* Находит текущую версию вложения для документа */
     public Attaches findCurrentAttacheByDoc(Doc doc){
         getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

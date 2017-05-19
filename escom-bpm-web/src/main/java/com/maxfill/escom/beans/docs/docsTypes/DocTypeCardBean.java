@@ -31,16 +31,13 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
         return itemsFacade;
     }   
 
-    /**
-     * Действия перед сохранением объекта
-     * @param item
-     */
     @Override
     protected void onBeforeSaveItem(DocType item){ 
         if (StringUtils.isBlank(item.getGuide())){
             String guid = EscomUtils.generateGUID();
             item.setGuide(guid);
-        }  
+        }
+        super.onBeforeSaveItem(item);
     }
 
     @Override

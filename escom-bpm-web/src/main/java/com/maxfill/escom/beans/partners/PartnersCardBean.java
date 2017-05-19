@@ -19,10 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- *  Контрагенты
- * @author mfilatov
- */
+/* Контрагенты */
 @Named
 @ViewScoped
 public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>{
@@ -30,22 +27,13 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     
     @EJB 
     private PartnersFacade itemsFacade;
-    @EJB
-    private PartnerTypesFacade partnerTypesFacade;
-
-    private List<PartnerTypes> partnerTypes;
 
     @Override
     public PartnersFacade getItemFacade() {
         return itemsFacade;
     }         
     
-    /**
-     * Проверка корректности Контрагента перед сохранением карточки
-     *
-     * @param partner
-     * @param errors
-     */
+    /* Проверка корректности Контрагента перед сохранением карточки */
     @Override
     protected void checkItemBeforeSave(Partner partner, Set<String> errors) {       
         String code = partner.getCode();
@@ -65,9 +53,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         }
     }
     
-    /**
-     * Формирование полного наименования контрагента
-     */
+    /* Формирование полного наименования контрагента */
     public void makeFullName(){
         Partner partner = getEditedItem();
         StringBuilder partnerName = new StringBuilder();
@@ -81,10 +67,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         onItemChange();
     }
     
-    /**
-     * Обновление после закрытия формы документа, открытой из карточки контрагента
-     * @param event 
-     */
+    /* Обновление после закрытия формы документа, открытой из карточки контрагента */
     public void onUpdateAfterCloseDocForm(SelectEvent event){
         Tuple<Boolean, Doc> tuple = (Tuple) event.getObject();
         Boolean isNeedUdate = tuple.a;
@@ -94,15 +77,6 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
             Doc item = tuple.b;
             EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{item.getName()});
         }
-    }
-
-    public List<PartnerTypes> getPartnerTypes() {
-        if (partnerTypes == null){
-            partnerTypes = partnerTypesFacade.findAll().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return partnerTypes;
     }
 
     @Override

@@ -32,10 +32,6 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
 
     @EJB
     private DepartmentFacade itemsFacade;     
-    @EJB
-    private StaffFacade staffFacade;
-
-    private List<Staff> staffs;
 
     @Override
     public DepartmentFacade getItemFacade() {
@@ -81,9 +77,6 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
         Staff item = items.get(0);
         onItemChange();
         getEditedItem().setChief(item );
-        if (!staffs.contains(item)){
-            staffs.add(item);
-        }
     }
     public void onChiefSelected(ValueChangeEvent event){        
         Staff staff = (Staff) event.getNewValue();
@@ -91,14 +84,6 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
         onItemChange();
     }  
     
-    public List<Staff> getStaffs() {
-        if (staffs == null){
-            staffs = staffFacade.findActualStaff().stream()
-                    .filter(item -> preloadCheckRightView(item))
-                    .collect(Collectors.toList());
-        }
-        return staffs;
-    }
 
     /* Проверка на наличие у объекта корректных прав доступа */
     @Override

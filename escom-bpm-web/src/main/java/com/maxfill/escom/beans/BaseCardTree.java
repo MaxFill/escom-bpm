@@ -47,7 +47,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             }
             getTreeBean().makeRightForChilds(getEditedItem());
             rightFacade.prepareRightsForView(getEditedItem().getRightForChild().getRights());
-            setIsItemChange(Boolean.TRUE);
+            onItemChange();
             EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
         }
     }
@@ -63,7 +63,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     /* Удаление права доступа к дочерним объеткам из списка  */
     public void onDeleteRightChild(Right right) {
         getEditedItem().getRightForChild().getRights().remove(right);
-        setIsItemChange(Boolean.TRUE);
+        onItemChange();
     }
     
     /* Редактирование права к дочерним объектам */
@@ -126,5 +126,6 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     @Override
     protected void onBeforeSaveItem(T item) {
         getTreeBean().settingRightForChild(item, item.getRightForChild());
+        super.onBeforeSaveItem(item);
     }    
 }

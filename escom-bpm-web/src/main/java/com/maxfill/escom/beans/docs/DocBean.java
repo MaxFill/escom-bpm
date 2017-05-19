@@ -63,7 +63,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         if (params != null && !params.isEmpty()){
             Attaches attache = (Attaches)params.get("attache");
             if (attache != null){
-                Short version = doc.getNextVersionNumber();            
+                Integer version = doc.getNextVersionNumber();            
                 attache.setNumber(version);
                 attache.setDoc(doc);
                 String fileName = attache.getName();
@@ -71,7 +71,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
                 doc.getAttachesList().add(attache);
             }
         }
-    }
+    }    
     
     @Override
     public SearcheModel initSearcheModel() {

@@ -38,7 +38,7 @@ public class AttacheBean extends BaseDialogBean{
     }
 
     @Override
-    protected String onCloseCard() {
+    public String onCloseCard() {
         return super.onFinalCloseCard(null);
     }
 

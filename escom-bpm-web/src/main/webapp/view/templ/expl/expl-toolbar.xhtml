@@ -108,10 +108,13 @@
                             oncomplete="initDND()">
                 </p:menuitem>
             </p:splitButton>
+            
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
-            </span>                        
-            <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+            </span>
+                
+            <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}" 
+                             rendered="#{explorerBean.explorerViewMode}"
                              ajax="false" icon="ui-icon-extlink"
                              action="#{sessionBean.onSessionExit()}"/>
         </f:facet>

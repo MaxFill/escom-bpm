@@ -100,7 +100,7 @@ public class SessionBean implements Serializable{
     @Inject
     private DocBean docBean;
     @Inject
-    private StatusesDocBean docStatusBean;
+    private StatusesDocBean statusesDocBean;
     @Inject
     private FoldersBean folderBean;
     @Inject
@@ -187,12 +187,7 @@ public class SessionBean implements Serializable{
     public BaseDict prepViewItem(BaseDict item){
         BaseExplBean bean = getItemBean(item);
         return bean.prepViewItem(item);
-    }
-    
-    public BaseDict prepCreateItem(BaseDict parent, BaseDict owner, String itemClassName, Map<String, Object> params){
-        BaseExplBean bean = getItemBeanByClassName(itemClassName);
-        return bean.createItemAndOpenCard(parent, owner, params);
-    }
+    }    
     
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
         BaseExplBean bean = getItemBean(sourceItem);        
@@ -479,8 +474,8 @@ public class SessionBean implements Serializable{
                 bean = usersBean;
                 break;
             }
-            case DictObjectName.DOC_STATUS:{
-                bean = docStatusBean;
+            case DictObjectName.STATUS_DOCS:{
+                bean = statusesDocBean;
                 break;
             }
             case DictObjectName.DEPARTAMENT:{

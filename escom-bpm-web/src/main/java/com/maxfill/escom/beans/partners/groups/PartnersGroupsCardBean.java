@@ -50,6 +50,6 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
         if(!addGroups.contains(partner)){
             addGroups.add(partner);
         }
-        setIsItemChange(Boolean.TRUE);        
+        onItemChange();        
     }
 }

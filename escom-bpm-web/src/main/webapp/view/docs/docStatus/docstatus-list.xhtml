@@ -35,7 +35,7 @@
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      editMode="cell" widgetVar="docsStatus">
 
-            <p:column headerText="#{bundle.Value}" width="100">
+            <p:column headerText="#{bundle.Value}" width="60">
                 <p:selectBooleanCheckbox value="#{item.value}">
                     <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
                 </p:selectBooleanCheckbox>
@@ -70,14 +70,10 @@
                 #{item.author.shortFIO}
             </p:column>
 
-            <p:column style="text-align: center;" >
-                <p:menuButton  value="#{bundle.Menu}">
-                    <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"  
-                                disabled="#{ _bean.isReadOnly()}"
-                                update="docStatusTbl" action="#{_bean.onDeleteStatus(item)}">
-                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                    </p:menuitem>
-                </p:menuButton>
+            <p:column style="text-align: center;" width="50">
+                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"  
+                            disabled="#{ _bean.isReadOnly()}"
+                            update="docStatusTbl" action="#{_bean.onDeleteStatus(item)}"/>
             </p:column>
 
         </p:dataTable>

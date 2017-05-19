@@ -47,12 +47,6 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         return userFacade;
     }
          
-    /**
-     * Проверка корректности пользователя перед сохранением карточки
-     *
-     * @param user
-     * @param errors
-     */
     @Override
     protected void checkItemBeforeSave(User user, Set<String> errors) {       
         String login = user.getLogin();
@@ -75,6 +69,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         } catch (NoSuchAlgorithmException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+        super.onBeforeSaveItem(user);
     }
 
     @Override

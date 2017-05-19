@@ -1,6 +1,7 @@
 
 package com.maxfill.services.attaches;
 
+import com.maxfill.Configuration;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -9,36 +10,33 @@ import java.io.File;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.apache.commons.io.FilenameUtils;
 
-/**
- *
- * @author mfilatov
- */
+/* Сервис работы с файлами вложений */
 @Stateless
 public class AttacheServiceImpl implements AttacheService{
     @EJB
     private AttacheFacade attacheFacade;    
+    @EJB
+    private Configuration configuration;
     
     @Override
     public Attaches findAttacheByDoc(Doc doc){
         return attacheFacade.findCurrentAttacheByDoc(doc);         
     }
     
-    /**
-     * Удаление файла вложения
-     * @param attache
-     */
     @Override
     public void deleteAttache(Attaches attache){
-        String fileName = attache.getFullName();
+        StringBuilder sb = new StringBuilder(configuration.getUploadPath());
+        sb.append(attache.getFullName());
+        String fileName = sb.toString();
         File file = new File(fileName);
         file.delete();
+        String pdfFileName = FilenameUtils.removeExtension(fileName)+".pdf";
+        File pdfFile = new File(pdfFileName);
+        pdfFile.delete();
     }
-    
-    /**
-     * Удаление файлов вложений 
-     * @param attaches 
-     */
+        
     @Override
     public void deleteAttaches(List<Attaches> attaches){
         if (attaches != null){
@@ -46,10 +44,6 @@ public class AttacheServiceImpl implements AttacheService{
         }
     }
     
-    /**
-     * Удаление файлов вложений из всех документов папки
-     * @param folder 
-     */
     @Override
     public void deleteAttacheByFolder(Folder folder){
         folder.getDocsList().stream().forEach(doc -> deleteAttaches(doc.getAttachesList()));

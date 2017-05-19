@@ -20,6 +20,8 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
@@ -46,6 +48,8 @@ public final class FileUtils {
         options.put("maximizable", true);
         options.put("closable", true);
         options.put("closeOnEscape", true);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> pathList = new ArrayList<>();
         List<String> contentTypeList = new ArrayList<>();
@@ -143,19 +147,20 @@ public final class FileUtils {
 
             StringBuilder sb = new StringBuilder();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
-            File outputFilePath = new File(basePath);
+            File outputFile = new File(basePath);
 
             InputStream inputStream = null;
             FileOutputStream outputStream = null;
             try {
                 inputStream = uploadFile.getInputstream();
-                outputStream = new FileOutputStream(outputFilePath);
+                outputStream = new FileOutputStream(outputFile);
 
                 int read;
                 final byte[] bytes = new byte[1024];
                 while ((read = inputStream.read(bytes)) != -1) {
                     outputStream.write(bytes, 0, read);
                 }
+                makeCopyToPDF(basePath);
             } catch (IOException e) {
                 Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
             } finally {
@@ -170,4 +175,17 @@ public final class FileUtils {
         return attache;
     }
 
+    public static void makeCopyToPDF(String file){
+        try {            
+            CommandLine commandLine = CommandLine.parse("unoconv.cmd");
+            commandLine.addArgument("-f");
+            commandLine.addArgument("pdf");
+            commandLine.addArgument(file);
+            DefaultExecutor executor = new DefaultExecutor();
+            executor.setExitValue(0);
+            executor.execute(commandLine);
+        } catch (IOException ex) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

@@ -98,8 +98,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
-                case DictEditMode.EDIT_MODE: {
-                    settingRightItem(item, item.getRightItem());
+                case DictEditMode.EDIT_MODE: {                    
                     getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
                     getItemFacade().edit(item);
                     break;
@@ -115,7 +114,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
     
     /* Действия перед сохранением объекта  */
-    protected void onBeforeSaveItem(T item) {}
+    protected void onBeforeSaveItem(T item) {
+        settingRightItem(item, item.getRightItem());
+    }
             
     /* Действия сразу после сохранения объекта перед закрытием его карточки */
     protected void onAfterSaveItem(T item){      
@@ -223,7 +224,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* ПРАВА ДОСТУПА: удаление права из редактируемого объекта  */
     public void onDeleteRight(Right right) {
         getEditedItem().getRightItem().getRights().remove(right);
-        setIsItemChange(true);
+        onItemChange();
     }
 
     /* ПРАВА ДОСТУПА: Обработка события закрытия карточки редактирования права объекта  */
@@ -231,7 +232,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
         Boolean isChange = tuple.a;
         if (isChange) {
-            setIsItemChange(true);
+            onItemChange();
             Right right = tuple.b;
             if (right != null){
                 getEditedItem().getRightItem().getRights().add(right);
@@ -293,7 +294,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
             makeRightItem(editedItem);
             rightFacade.prepareRightsForView(editedItem.getRightItem().getRights());
-            setIsItemChange(Boolean.TRUE);
+            onItemChange();
             EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
         }
     }

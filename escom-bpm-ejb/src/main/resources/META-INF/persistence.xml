@@ -47,9 +47,9 @@
     <class>com.maxfill.model.metadates.Metadates</class>
     <class>com.maxfill.model.folders.Folder</class>
     <class>com.maxfill.model.folders.FolderLog</class>
-    <class>com.maxfill.model.docs.docStatus.DocsStatus</class>
     <class>com.maxfill.model.filters.Filter</class>
     <class>com.maxfill.model.filters.FilterLog</class>
+    <class>com.maxfill.model.docs.docStatuses.DocStatuses</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

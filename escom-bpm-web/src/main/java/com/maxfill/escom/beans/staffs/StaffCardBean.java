@@ -4,7 +4,6 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.PostFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
@@ -15,7 +14,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 
 /* Карточка Штатные единицы */
@@ -25,11 +23,8 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     private static final long serialVersionUID = -977912654006193660L;
     
     @EJB
-    private PostFacade postFacade;
-    @EJB
     private StaffFacade itemFacade;
     
-    private List<Post> posts;
     
     @Override
     public StaffFacade getItemFacade() {
@@ -57,9 +52,6 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         if (item != null) {
             getEditedItem().setPost(item);
             onItemChange();
-            if (!posts.contains(item)) {
-                posts.add(item);
-            }
         }
     }
     public void onPostSelected(ValueChangeEvent event){
@@ -82,16 +74,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
             staffName.append(EscomBeanUtils.getBandleLabel("Vacant"));
         }
         getEditedItem().setName(staffName.toString());
-    }
-    
-    public List<Post> getPosts() {
-        if (posts == null){
-            posts = postFacade.findAll().stream()
-                .filter(item -> preloadCheckRightView(item))
-                .collect(Collectors.toList());
-        }
-        return posts;
-    }    
+    } 
 
     @Override
     public List<Department> getGroups(Staff item) {

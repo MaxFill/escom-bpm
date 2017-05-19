@@ -17,7 +17,7 @@ public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, 
 
     @Override
     public String getFRM_NAME() {
-        return DictObjectName.DOC_STATUS.toLowerCase();
+        return DictObjectName.STATUS_DOCS.toLowerCase();
     }
 
     @Override
