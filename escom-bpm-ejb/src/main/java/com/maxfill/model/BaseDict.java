@@ -177,6 +177,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @XmlTransient
     private Rights rightForChild; //права для дочерних объектов 
     
+    public BaseDict(){}
+        
     /* Возвращает название для заголовка наследования дефолтных прав  дочерних объектов */
     public String getInheritsAccessChildName(){
         if (inheritsAccessChilds){
@@ -206,10 +208,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setXmlAccessChild(String xmlAccessChild) {
         this.xmlAccessChild = xmlAccessChild;
     }
-    
-    public BaseDict(){
-    }
-       
+           
     public String getIconTree(){
         return "ui-icon-home";
     }

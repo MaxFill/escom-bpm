@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
@@ -26,11 +27,14 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.model.UploadedFile;
 
@@ -300,7 +304,11 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* Просмотр вложения  */
     public void onViewAttache(Attaches attache) {
         String path = conf.getUploadPath() + attache.getFullName();
-        FileUtils.viewAttache(path, attache.getType());
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> pathList = new ArrayList<>();
+        pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
+        paramMap.put("path", pathList);
+        sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
     }
     
     /* Скачивание вложения  */
@@ -317,7 +325,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         return FileUtils.MAX_FILE_SIZE;
     }
     
-    /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
+    /* СЛУЖЕБНЫЕ МЕТОДЫ */    
     
     /* Установка признака изменения объекта  */
     public void onItemChange() {

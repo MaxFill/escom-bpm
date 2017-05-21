@@ -27,13 +27,17 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
 /* Утилиты, вызываемые из бинов */
-public class EscomBeanUtils {
+public final class EscomBeanUtils {
+
+    private EscomBeanUtils() {
+    }
     
     public static String rusToEngTranlit (String text){
         String[] abcCyr = {"a","б","в","г","д","ё","ж","з","и","к","л","м","н","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
@@ -346,32 +350,23 @@ public class EscomBeanUtils {
         itemKeyList.add(itemOpenKey);
         paramMap.put("itemOpenKey", itemKeyList);
         RequestContext.getCurrentInstance().openDialog(formName + "-card", options, paramMap);
-    }
+    }    
     
-    /* Открытие карточки записи права  */ 
-    public static void openRightCard(Integer editMode, State state, String keyRight){
-        Integer stateId = state.getId();
+    /* Открытие карточки диалога */
+    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramMap, Tuple<Double, Double> size) {
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
-        options.put("width", 500);
-        options.put("height", 320);
-        options.put("maximizable", false);
+        options.put("width", size.a);
+        options.put("height", size.b);
+        options.put("minWidth", 600);
+        options.put("minHeight", 400);
+        options.put("maximizable", true);
         options.put("closable", true);
         options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> keyRightList = new ArrayList<>();
-        List<String> editModeList = new ArrayList<>();
-        List<String> stateIdList = new ArrayList<>();
-        editModeList.add(editMode.toString());        
-        stateIdList.add(stateId.toString());
-        keyRightList.add(keyRight);
-        paramMap.put("editMode", editModeList);
-        paramMap.put("stateId", stateIdList);
-        paramMap.put("keyRight", keyRightList);
-        RequestContext.getCurrentInstance().openDialog("rightForm", options, paramMap);
+        RequestContext.getCurrentInstance().openDialog(dlgName, options, paramMap);
     }
     
     /* Открытие формы нового почтового сообщения  */

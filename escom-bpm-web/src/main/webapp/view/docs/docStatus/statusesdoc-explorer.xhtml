@@ -10,13 +10,7 @@
     <ui:param name="_searcheBean" value="#{statusesDocBean}"/>
     
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocStatusesSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocStatuses')}"/>
-    
-    <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Name}" sortBy="#{item.localName}">
-            #{item.localName}
-        </p:column>
-    </ui:define>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocStatuses')}"/>    
     
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreatePost}" />

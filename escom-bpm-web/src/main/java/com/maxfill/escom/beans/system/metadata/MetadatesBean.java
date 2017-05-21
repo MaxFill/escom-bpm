@@ -26,10 +26,7 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Бин для метаданных
- * @author mfilatov
- */
+/* Бин для метаданных */
 @ViewScoped
 @Named
 public class MetadatesBean implements Serializable{
@@ -54,37 +51,25 @@ public class MetadatesBean implements Serializable{
         initLayoutOptions();
     }  
     
-    /* *** ПРАВА ДОСТУПА *** */
+    /* ПРАВА ДОСТУПА */
 
-    /**
-     * ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту 
-     *
-     * @param state
-     */
+    /* Открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         editMode = DictEditMode.INSERT_MODE;
-        EscomBeanUtils.openRightCard(DictEditMode.INSERT_MODE, state, "");
+        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "");
     }
     
-    /**
-     * ПРАВА ДОСТУПА: открытие карточки для редактирования права объекта 
-     *
-     * @param right
-     */
+    /* Открытие карточки для редактирования права объекта  */
     public void onEditRight(Right right) {
         selRight = right;
         Integer hashCode = selRight.hashCode();
         String keyRight = hashCode.toString();
         editMode = DictEditMode.EDIT_MODE;
         sessionBean.addSourceRight(keyRight, selRight);
-        EscomBeanUtils.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight);
+        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight);
     }
     
-    /**
-     * ПРАВА ДОСТУПА: при закрытии карточки редактирования права 
-     *
-     * @param event
-     */
+    /* Обработка события закрытия карточки редактирования права  */
     public void onCloseRightCard(SelectEvent event) {
         Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
         Boolean isChange = tuple.a;
@@ -105,7 +90,7 @@ public class MetadatesBean implements Serializable{
         }                
     }
     
-    /* ПРАВА ДОСТУПА: возвращает список прав текущего объекта в заданном состоянии  */     
+    /* Возвращает список прав текущего объекта в заданном состоянии  */     
     public List<Right> getRightsInState(State state) {
         if (selectedObject != null){
             List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);
@@ -115,15 +100,12 @@ public class MetadatesBean implements Serializable{
         return null;
     }    
     
-    /**
-     * ПРАВА ДОСТУПА: удаление записи права из базы данных через
-     * @param right
-     */ 
+    /* Удаление записи права из базы данных через */ 
     public void onDeleteRight(Right right){        
         rightFacade.remove(right);  
     }            
     
-    /* *** СЛУЖЕБНЫЕ МЕТОДЫ *** */
+    /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
     /**
      * Инициализация областей формы обозревателя объектов

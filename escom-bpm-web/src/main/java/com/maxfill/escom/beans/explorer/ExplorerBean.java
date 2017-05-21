@@ -149,7 +149,7 @@ public class ExplorerBean implements Serializable {
         }    
     }
 
-    /* *** КАРТОЧКИ ОБЪЕКТОВ *** */
+    /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
     public void onViewContentItem(){
@@ -1517,38 +1517,8 @@ public class ExplorerBean implements Serializable {
             return;
         }
         onSetCurrentItem(item);
-        if (isItemDetailType(item)){
-            doOpenAdmCardForm(tableBean);
-        } else
-            if (isItemTreeType(item)){
-                doOpenAdmCardForm(treeBean);                
-            } else
-                if (isItemRootType(item)){
-                    doOpenAdmCardForm(rootBean);
-                }
-    }    
-    private void doOpenAdmCardForm(BaseBean bean){ 
-        sessionBean.addSourceBean(bean);
-        String beanName = bean.toString();
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 600);
-        options.put("height", 350);
-        options.put("maximizable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> beanNameList = new ArrayList<>();
-        List<String> itemId = new ArrayList<>();
-        beanNameList.add(beanName);
-        itemId.add(String.valueOf(currentItem.getId()));
-        paramMap.put("beanName", beanNameList);
-        paramMap.put("itemId", itemId);
-        RequestContext.getCurrentInstance().openDialog("object-admin", options, paramMap);       
-    }       
+        sessionBean.openAdmCardForm(item);               
+    }           
     
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
     public void onPageChange(PageEvent event) {
@@ -1619,7 +1589,7 @@ public class ExplorerBean implements Serializable {
     
     /* Установка текущего элемента в таблице обозревателя */
     public void onSetCurrentItem(BaseDict item){
-        currentItem = item;        
+        currentItem = item;
         getCheckedItems().clear();
         getCheckedItems().add(item);  
     }

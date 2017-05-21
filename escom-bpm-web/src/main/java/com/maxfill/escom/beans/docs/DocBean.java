@@ -48,7 +48,16 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         return ownerBean.getRightForChild(item.getOwner());  
     }
     
-     /* Установка специфичных атрибутов документа при его создании */
+    /* Подготовка к просмотру документа */
+    @Override
+    public Doc prepViewItem(Doc doc){
+        if (doc.getAttache() != null){
+            onViewAttache(doc.getAttache());
+        }
+        return doc;
+    }
+    
+    /* Установка специфичных атрибутов документа при его создании */
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params){
         Folder folder = doc.getOwner();

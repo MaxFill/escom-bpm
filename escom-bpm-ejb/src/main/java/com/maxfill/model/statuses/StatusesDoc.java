@@ -46,11 +46,9 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<StatusesDocLog> itemLogs = new ArrayList<>();
-        
-    public StatusesDoc() {
-    }
-    
-    public String getLocalName(){
+            
+    @Override
+    public String getNameEndElipse(){
         return ItemUtils.getBandleLabel(getName());
     }
     

@@ -83,7 +83,7 @@
                                            action="numPatternsExpl"/>
                             <p:commandLink value="#{bundle.Statuses}"
                                            ajax="false"
-                                           action="docstatus-explorer"/>
+                                           action="statusesdoc-explorer"/>
                             <p:commandLink value="TEST" 
                                            action="#{sessionBean.test()}"/>
                         </p:panelGrid>
@@ -94,7 +94,7 @@
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
                             <p:commandLink value="#{bundle.MailService}" title="#{bundle.MailService}"
-                                           actionListener="#{sessionBean.openMailService()}"/>
+                                           actionListener="#{sessionBean.openMailServiceForm()}"/>
                             <p:commandLink value="#{bundle.LdapService}" title="#{bundle.LdapService}"
                                            actionListener="#{sessionBean.openLdapService()}"/>
                         </p:panelGrid>

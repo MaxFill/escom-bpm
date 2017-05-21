@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.users.User;
@@ -28,6 +29,7 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -276,6 +278,41 @@ public class SessionBean implements Serializable{
         return groupAdmin != null;
     }
     
+    public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
+        EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
+    }
+    
+    /* Открытие карточки администрирования объекта */
+    public void openAdmCardForm(BaseDict item){ 
+        BaseExplBean bean = getItemBean(item);
+        addSourceBean(bean);
+        String beanName = bean.toString();        
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> beanNameList = new ArrayList<>();
+        List<String> itemIds = new ArrayList<>();
+        beanNameList.add(beanName);
+        itemIds.add(String.valueOf(item.getId()));
+        paramMap.put("beanName", beanNameList);
+        paramMap.put("itemId", itemIds);
+        openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramMap);      
+    }
+        
+    /* Открытие карточки записи права  */ 
+    public void openRightCard(Integer editMode, State state, String keyRight){
+        Integer stateId = state.getId();
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> keyRightList = new ArrayList<>();
+        List<String> editModeList = new ArrayList<>();
+        List<String> stateIdList = new ArrayList<>();
+        editModeList.add(editMode.toString());        
+        stateIdList.add(stateId.toString());
+        keyRightList.add(keyRight);
+        paramMap.put("editMode", editModeList);
+        paramMap.put("stateId", stateIdList);
+        paramMap.put("keyRight", keyRightList);
+        openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
+    }
+    
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
         Map<String, Object> options = new HashMap<>();
@@ -293,17 +330,7 @@ public class SessionBean implements Serializable{
     
     /* Открытие формы почтовой службы */
     public void openMailService(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 1300);
-        options.put("height", 600);
-        options.put("maximizable", true);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/services/mail-service.xhtml", options, null);  
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_SERVICE, null); 
     }
     
     /* Открытие формы службы интеграции с LDAP */

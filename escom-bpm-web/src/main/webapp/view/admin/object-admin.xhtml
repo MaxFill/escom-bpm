@@ -1,70 +1,75 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
                  template="/view/templ/templ.xhtml">
-   
+
     <ui:define name="preRendered">
         <f:metadata>
             <f:event type="preRenderView" listener="#{admObjectBean.onOpenCard()}"/>
         </f:metadata>
     </ui:define>
-    
+
     <ui:define name="title">
         #{bundle.Administation}
     </ui:define>
-    
+
     <ui:define name="body">
-        
-        <h:form id="admForm" style="font-size: 90%;"> 
-            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-            <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
-                <p:tab title="#{bundle.Replace}">
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                        <h:panelGroup styleClass="ui-grid-col-12">
-                            <p:outputLabel value="#{bundle.Object}:" />
-                            <p:spacer width="3"/>
-                            <h:outputText value="#{admObjectBean.sourceItem.name}"/>
-                        </h:panelGroup>
+        <pe:layout fullPage="true" options="#{admObjectBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{admObjectBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="admForm" style="font-size: 90%;"> 
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
+                        <p:tab title="#{bundle.Replace}">
+                            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                                <h:panelGroup styleClass="ui-grid-col-12">
+                                    <p:outputLabel value="#{bundle.Object}:" />
+                                    <p:spacer width="3"/>
+                                    <h:outputText value="#{admObjectBean.sourceItem.name}"/>
+                                </h:panelGroup>
 
-                        <p:outputLabel value="#{bundle.UsesIn}:"/>
-                        <p:dataGrid var="usesIn" value="#{admObjectBean.countUsesItem()}" columns="1" layout="grid">
-                            <p:outputPanel>
-                                <h:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-2" styleClass="ui-grid-col-12">
-                                    <h:outputText value="#{admObjectBean.getLabelFromBundle(usesIn.getKey()) }"/>
-                                    <p:outputLabel value="#{usesIn.getValue()}" style="color: red;"/>
-                                </h:panelGrid>
-                            </p:outputPanel>
-                        </p:dataGrid>
-                                               
-                        <p:outputLabel value="#{bundle.ReplaceItemInObjects}"/> 
-                        <p:inputText value="#{admObjectBean.replaceItem.name}" title="#{bundle.ValueReplace}" 
-                                     id="itemInputPanel"
-                                     styleClass="ui-grid-col-12"
-                                     readonly="true"/>
-                        <h:panelGroup>
-                            <p:commandButton value="#{bundle.Select}" 
-                                             process="@this" 
-                                             actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
-                                <p:ajax event="dialogReturn" update="admForm:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
-                            </p:commandButton>
+                                <p:outputLabel value="#{bundle.UsesIn}:"/>
+                                <p:dataGrid var="usesIn" value="#{admObjectBean.countUsesItem()}" columns="1" layout="grid">
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-2" styleClass="ui-grid-col-12">
+                                            <h:outputText value="#{admObjectBean.getLabelFromBundle(usesIn.getKey()) }"/>
+                                            <p:outputLabel value="#{usesIn.getValue()}" style="color: red;"/>
+                                        </h:panelGrid>
+                                    </p:outputPanel>
+                                </p:dataGrid>
 
-                            <p:commandButton value="#{bundle.Execute}" update="admForm"                                        
-                                             disabled="#{admObjectBean.replaceItem == null}"
-                                             action="#{admObjectBean.onReplaceItem()}"/>
-                        </h:panelGroup>
-                    </p:panelGrid>
-                </p:tab>
-            </p:tabView>
-            <p:toolbar styleClass="ui-grid-col-12">
-                <f:facet name="right">
-                    <p:commandButton value="#{bundle.Close}" style="float:right;"
-                                     title="#{bundle.Close}"
-                                     action="#{admObjectBean.onCloseCard()}"> 
-                    </p:commandButton> 
-                </f:facet>
-            </p:toolbar>
-        </h:form>
+                                <p:outputLabel value="#{bundle.ReplaceItemInObjects}"/> 
+                                <p:inputText value="#{admObjectBean.replaceItem.name}" title="#{bundle.ValueReplace}" 
+                                             id="itemInputPanel"
+                                             styleClass="ui-grid-col-12"
+                                             readonly="true"/>
+                                <h:panelGroup>
+                                    <p:commandButton value="#{bundle.Select}" 
+                                                     process="@this" 
+                                                     actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
+                                        <p:ajax event="dialogReturn" update="admForm:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
+                                    </p:commandButton>
+
+                                    <p:commandButton value="#{bundle.Execute}" update="admForm"                                        
+                                                     disabled="#{admObjectBean.replaceItem == null}"
+                                                     action="#{admObjectBean.onReplaceItem()}"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:tabView>
+                    <p:toolbar styleClass="ui-grid-col-12">
+                        <f:facet name="right">
+                            <p:commandButton value="#{bundle.Close}" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             action="#{admObjectBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:toolbar>
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
     </ui:define>
 </ui:composition>

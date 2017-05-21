@@ -1,6 +1,7 @@
 
 package com.maxfill.escom.beans.users.settings;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.UserFacade;
@@ -62,6 +63,11 @@ public class UserSettingsBean extends BaseDialogBean{
     @Override
     protected String onCloseCard() {
        return super.onFinalCloseCard(null);
+    }
+    
+    @Override
+    protected String getFormName(){
+        return DictDlgFrmName.FRM_USER_SETTINGS;
     }
     
     /* GETS & SETS */

@@ -1,6 +1,7 @@
 
 package com.maxfill.escom.beans.system.admObj;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -78,6 +79,11 @@ public class AdmObjectBean extends BaseDialogBean{
     public BaseExplBean getSourceBean() {
         return (BaseExplBean) super.getSourceBean(); 
     }    
+
+    @Override
+    protected String getFormName() {
+        return DictDlgFrmName.FRM_OBJECT_ADMIN;
+    }
     
     public Map<String, Integer> getRezultUpdate() {
         return rezultUpdate;
@@ -85,4 +91,5 @@ public class AdmObjectBean extends BaseDialogBean{
     public void setRezultUpdate(Map<String, Integer> rezultUpdate) {
         this.rezultUpdate = rezultUpdate;
     }
+
 }

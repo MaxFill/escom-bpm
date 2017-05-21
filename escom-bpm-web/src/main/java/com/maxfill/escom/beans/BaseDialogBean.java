@@ -7,6 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Базовый бин для служебных диалогов  */
 public abstract class BaseDialogBean implements Serializable{    
@@ -18,7 +20,14 @@ public abstract class BaseDialogBean implements Serializable{
     private BaseBean sourceBean;
     private boolean itemChange;       //признак изменения записи 
     private String beanName;
+    
+    protected final LayoutOptions layoutOptions = new LayoutOptions();
 
+    @PostConstruct
+    protected void init(){
+        initLayotOptions();
+    }
+    
     public SessionBean getSessionBean() {
         return sessionBean;
     }
@@ -43,8 +52,47 @@ public abstract class BaseDialogBean implements Serializable{
         setItemChange(Boolean.TRUE);
     }
 
-    /* GETS & SETS */
+    /* Получение и сохранение размеров формы */
+    public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
+        Double x = event.getWidth() + 14;
+        Double y = event.getHeight() + 14;
+        sessionBean.saveFormSize(getFormName(), x, y);
+    }
     
+    protected abstract String getFormName();
+    
+    protected void initLayotOptions(){        
+        LayoutOptions panes = new LayoutOptions();
+        panes.addOption("slidable", false);
+        layoutOptions.setPanesOptions(panes);
+        
+        LayoutOptions south = new LayoutOptions();
+        south.addOption("resizable", false);
+        south.addOption("closable", false);
+        south.addOption("size", 45);
+        layoutOptions.setSouthOptions(south);
+
+        LayoutOptions west = new LayoutOptions();
+        west.addOption("size", 170);
+        west.addOption("minSize", 150);
+        west.addOption("maxSize", 250);
+        west.addOption("resizable", true);
+        layoutOptions.setWestOptions(west);
+
+        LayoutOptions center = new LayoutOptions();
+        center.addOption("resizable", true);
+        center.addOption("closable", false);
+        center.addOption("minWidth", 200);
+        center.addOption("minHeight", 100);
+        layoutOptions.setCenterOptions(center);
+    }
+    
+    /* GETS & SETS */
+
+    public LayoutOptions getLayoutOptions() {
+        return layoutOptions;
+    }
+        
     public boolean isItemChange() {
         return itemChange;
     }

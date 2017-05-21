@@ -3,6 +3,7 @@ package com.maxfill.escom.utils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
@@ -22,50 +24,19 @@ import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.io.FilenameUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
-/**
- * Утилиты для работы с файлами
- * @author mfilatov
- */
+/* Утилиты для работы с файлами */
 public final class FileUtils {
     public static final int MAX_FILE_SIZE = 1000000;
     
     private FileUtils() {
-    }
+    }   
 
-    /* Просмотр файла вложения */
-    public static void viewAttache(String path, String contentType) {
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 900);
-        options.put("minWidth", 900);
-        options.put("height", 600);
-        options.put("minHeight", 400);
-        options.put("maximizable", true);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> pathList = new ArrayList<>();
-        List<String> contentTypeList = new ArrayList<>();
-        pathList.add(path);
-        contentTypeList.add(contentType);
-        paramMap.put("path", pathList);
-        paramMap.put("contentType", contentTypeList);
-        RequestContext.getCurrentInstance().openDialog("doc-viewer", options, paramMap);
-    }
-
-    /**
-     * Обработка действия загрузки файла
-     *
-     * @param event
-     * @return
-     */
+    /* Обработка действия загрузки файла  */
     public static UploadedFile handleUploadFile(FileUploadEvent event) {
         UploadedFile file = event.getFile();
         if (file == null) {
@@ -160,7 +131,9 @@ public final class FileUtils {
                 while ((read = inputStream.read(bytes)) != -1) {
                     outputStream.write(bytes, 0, read);
                 }
-                makeCopyToPDF(basePath);
+                if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
+                    makeCopyToPDF(basePath);
+                }
             } catch (IOException e) {
                 Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
             } finally {

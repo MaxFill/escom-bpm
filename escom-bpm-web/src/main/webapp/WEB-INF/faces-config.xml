@@ -34,8 +34,8 @@
         <from-view-id>*</from-view-id>        
         
         <navigation-case>
-            <from-outcome>rightForm</from-outcome>
-            <to-view-id>/view/admin/rights/rightForm.xhtml</to-view-id>
+            <from-outcome>rightCard</from-outcome>
+            <to-view-id>/view/admin/rights/rightCard.xhtml</to-view-id>
             <redirect />
         </navigation-case>        
        
@@ -52,13 +52,13 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>docstatus-explorer</from-outcome>
-            <to-view-id>/view/docs/docStatus/docstatus-explorer.xhtml</to-view-id>
+            <from-outcome>statusesdoc-explorer</from-outcome>
+            <to-view-id>/view/docs/docStatus/statusesdoc-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>
-            <from-outcome>docstatus-сard</from-outcome>
-            <to-view-id>/view/docs/docStatus/docstatus-сard.xhtml</to-view-id>
+            <from-outcome>statusesdoc-card</from-outcome>
+            <to-view-id>/view/docs/docStatus/statusesdoc-сard.xhtml</to-view-id>
         </navigation-case>
             
         <navigation-case>
@@ -156,7 +156,12 @@
         <navigation-case>
             <from-outcome>user-card</from-outcome>
             <to-view-id>/view/users/user-сard.xhtml</to-view-id>
-        </navigation-case>        
+        </navigation-case>  
+        
+        <navigation-case>
+            <from-outcome>user-settings</from-outcome>
+            <to-view-id>/view/admin/user/user-settings.xhtml</to-view-id>
+        </navigation-case>       
         
         <navigation-case>
             <from-outcome>usergroups-card</from-outcome>

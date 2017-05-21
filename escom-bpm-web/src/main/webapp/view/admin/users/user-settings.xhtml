@@ -10,19 +10,20 @@
         #{bundle.Settings}
     </ui:define>
 
-    <ui:define name="body">
-        <h:form id="settingsFRM">
-            <pe:layout fullPage="true">
-                <pe:layoutPane position="center" resizable="false">
+    <ui:define name="body">        
+        <pe:layout fullPage="true" options="#{userSettingsBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{userSettingsBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="settingsFRM">
                     <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">                        
 
                         <p:commandButton icon="ui-icon-disk" value="#{bundle.Save}" 
                                          style="float: right;"
                                          actionListener="#{userSettingsBean.saveSettings()}"/>
                     </p:panelGrid>
-                </pe:layoutPane>
-            </pe:layout>
-        </h:form>
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
     </ui:define>
 </ui:composition>
 

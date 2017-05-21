@@ -282,10 +282,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         }
     }
 
-    /**
-     * РЕДАКТИРОВАНИЕ: обработка перемещения объекта в не актульные
-     * @param item 
-     */
+    /* Обработка перемещения объекта в не актульные  */
     public void moveItemToNotActual(T item){
         item.setActual(false);
         getItemFacade().edit(item);

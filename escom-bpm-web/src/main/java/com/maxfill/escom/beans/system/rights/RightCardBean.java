@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.system.rights;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.model.rights.Right;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.model.states.State;
@@ -46,7 +47,7 @@ public class RightCardBean extends BaseDialogBean{
     private Integer editMode;
     private String keyRight;
     private List<User> users;
-    private List<UserGroups> userGroupses;
+    private List<UserGroups> userGroupses;        
     
     /* При открытии карточки объекта */
     @Override
@@ -169,6 +170,11 @@ public class RightCardBean extends BaseDialogBean{
         selRight.setName(name);
     } 
     
+    @Override
+    protected String getFormName() {
+        return DictDlgFrmName.FRM_RIGHT_CARD;
+    }
+    
     /* GET & SET */
 
     public List<User> getUsers() {
@@ -205,4 +211,5 @@ public class RightCardBean extends BaseDialogBean{
     public void setSelUsGroup(UserGroups selUsGroup) {
         this.selUsGroup = selUsGroup;
     }
+
 }

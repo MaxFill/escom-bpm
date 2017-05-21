@@ -50,7 +50,7 @@
                            oncomplete="initDND()"/>
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
                            rendered="#{explorerBean.isItemDetailType(item) or explorerBean.isItemRootType(item)}"
-                           actionListener="#{explorerBean.onSetCurrentItem(item)}"                                                                                      
+                           actionListener="#{explorerBean.onSetCurrentItem(item)}"
                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();">
             </p:commandLink>
         </p:column>
