@@ -49,6 +49,10 @@ public class RightCardBean extends BaseDialogBean{
     private List<User> users;
     private List<UserGroups> userGroupses;        
     
+    @Override
+    protected void initBean(){    
+    }
+    
     /* При открытии карточки объекта */
     @Override
     public void onOpenCard(){

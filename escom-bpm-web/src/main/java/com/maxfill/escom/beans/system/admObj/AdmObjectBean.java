@@ -27,6 +27,10 @@ public class AdmObjectBean extends BaseDialogBean{
     private Map<String, Integer> rezultUpdate;
     
     @Override
+    protected void initBean(){        
+    }
+    
+    @Override
     public void onOpenCard(){
         if (sourceItem == null){
             super.onOpenCard(); 

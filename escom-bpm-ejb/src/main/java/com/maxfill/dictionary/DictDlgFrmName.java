@@ -11,5 +11,6 @@ public final class DictDlgFrmName {
     public static final String FRM_OBJECT_ADMIN = "object-admin";
     public static final String FRM_RIGHT_CARD = "rightCard";
     public static final String FRM_MAIL_SERVICE = "mail-service";
+    public static final String FRM_CHECK_RELEASE = "check-release";
     
 }

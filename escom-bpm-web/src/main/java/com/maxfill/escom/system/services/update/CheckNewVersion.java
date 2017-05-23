@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.system.services.update;
 
 import com.maxfill.escom.beans.ApplicationBean;
@@ -15,10 +14,6 @@ import javax.ejb.Stateless;
 import javax.ejb.Timer;
 import javax.inject.Inject;
 
-/**
- * Таймер проверки актуальности лицензии
- * @author mfilatov
- */
 @Stateless
 public class CheckNewVersion {
     protected static final Logger LOG = Logger.getLogger(CheckNewVersion.class.getName());
@@ -35,14 +30,11 @@ public class CheckNewVersion {
         LOG.log(Level.INFO, "CheckNewVersion service completed!");
     }
         
-    /**
-     * Установка признака наличия новой версии
-     * @return 
-     */
+    /* Установка признака наличия новой версии */
     private Boolean newVersionAvailable(){    
         String versionNumber = appBean.getLicence().getVersionNumber();
         String releaseNumber = appBean.getLicence().getReleaseNumber();
-        Date dateLastUpdate = appBean.getLicence().getDateUpdate();
+        Date dateLastUpdate = appBean.getLicence().getReleaseDate();
         String actualVersion = "";
         String actualRelease = "";
         HashMap<String, Object> versionInfo = onGetCurrentVersionMap();
@@ -62,10 +54,7 @@ public class CheckNewVersion {
         return false;
     }
     
-    /**
-     * Получение данных от web socket 
-     * @return 
-     */
+    /* Получение данных от web socket */
     private HashMap<String, Object> onGetCurrentVersionMap(){
         LOG.log(Level.INFO, "get connected to web socket...");
         try {
@@ -98,11 +87,7 @@ public class CheckNewVersion {
         return versionInfo;
     }
     
-    /**
-     * Проверяет просроченность даты обновления версии
-     * @param dateLastUpdate
-     * @return 
-     */
+    /* Проверяет просроченность даты обновления версии  */
     private Boolean badDateUpdate(Date dateLastUpdate, Integer mounthCount){
         Date checkDate = DateUtils.addMounth(dateLastUpdate, mounthCount);
         Date currentDate = new Date();

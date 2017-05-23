@@ -31,6 +31,10 @@ public class UserSettingsBean extends BaseDialogBean{
     private String oldPassword;
     private String repeatePassword;
 
+    @Override
+    protected void initBean(){        
+    }
+    
     /* Сохранение настроек пользователя  */
     public void saveSettings(){
         RequestContext.getCurrentInstance().closeDialog(null);

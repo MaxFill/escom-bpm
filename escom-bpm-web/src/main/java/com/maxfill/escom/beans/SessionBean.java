@@ -30,6 +30,7 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
+import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -431,6 +432,7 @@ public class SessionBean implements Serializable{
     }
     
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
+    
     public void changeLocale(String lang){
         locale = new Locale(lang);
         FacesContext.getCurrentInstance().getViewRoot().setLocale(locale);
@@ -444,6 +446,11 @@ public class SessionBean implements Serializable{
     public void setLocale(Locale locale) {
         this.locale = locale;
     }   
+    
+    /* Проверка наличия обновления программы */
+    public void onCheckReleaseApp(){       
+        openDialogFrm(DictDlgFrmName.FRM_CHECK_RELEASE, null);
+    }
     
     /* GETS & SETS */
     

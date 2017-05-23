@@ -19,6 +19,10 @@ public class AttacheBean extends BaseDialogBean{
     private StreamedContent content; 
 
     @Override
+    protected void initBean(){        
+    }
+    
+    @Override
     public void onOpenCard(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String path = params.get("path");

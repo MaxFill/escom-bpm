@@ -1,41 +1,45 @@
-
 package com.maxfill.model.licence;
 
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- *
- * @author mfilatov
- */
 public class Licence implements Serializable{
-
     private static final long serialVersionUID = 1156677344730726415L;
-    private String versionNumber;
-    private String releaseNumber;
-    private Integer totalLicence;   //всего лицензий
+    
+    private String versionNumber;       //версия используемого релиза
+    private String releaseNumber;       //номер используемого релиза
+    private String releasePage;         //страница на сайте тех. поддержки используемого релиза
+    private Date releaseDate;           //дата используемого релиза    
+    
+    private String actualVersionNumber; //версия актуального релиза
+    private String actualReleaseNumber; //номер актуального релиза
+    private String actualReleasePage;   //страница на сайте тех. поддержки актуального релиза
+    private Date actualReleaseDate;     //дата актуального релиза
+    
+    private Integer totalLicence;       //всего лицензий
     private String licenceName;
     private String licenceNumber;
-    private Date termLicence;     //срок действия лицензии
-    private Date dateUpdate;
+    private Date termLicence;           //срок действия лицензии
     
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
     public Integer getTotalLicence() {
         return totalLicence;
     }
-
+    public void setTotalLicence(Integer totalLicence) {
+        this.totalLicence = totalLicence;
+    }
+    
     public String getLicenceName() {
         return licenceName;
     }
-
+    public void setLicenceName(String licenceName) {
+        this.licenceName = licenceName;
+    }
+    
     public Date getTermLicence() {
         return termLicence;
     }
     
-    /**
-    * Проверка что лицензия не просочена
-    * @return 
-    */
     public Boolean isExpired(){
         return false;
         //return termLicence.after(new Date()); //TODO нужно сделать проверку на срок действия лицензии!
@@ -66,19 +70,46 @@ public class Licence implements Serializable{
         this.licenceNumber = licenceNumber;
     }
 
-    public void setTotalLicence(Integer totalLicence) {
-        this.totalLicence = totalLicence;
+    public Date getReleaseDate() {
+        return releaseDate;
+    }
+    public void setReleaseDate(Date releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
-    public void setLicenceName(String licenceName) {
-        this.licenceName = licenceName;
+    public String getReleasePage() {
+        return releasePage;
+    }
+    public void setReleasePage(String releasePage) {
+        this.releasePage = releasePage;
+    }
+
+    public String getActualVersionNumber() {
+        return actualVersionNumber;
+    }
+    public void setActualVersionNumber(String actualVersionNumber) {
+        this.actualVersionNumber = actualVersionNumber;
+    }
+
+    public String getActualReleaseNumber() {
+        return actualReleaseNumber;
+    }
+    public void setActualReleaseNumber(String actualReleaseNumber) {
+        this.actualReleaseNumber = actualReleaseNumber;
+    }
+
+    public Date getActualReleaseDate() {
+        return actualReleaseDate;
+    }
+    public void setActualReleaseDate(Date actualReleaseDate) {
+        this.actualReleaseDate = actualReleaseDate;
+    }
+
+    public String getActualReleasePage() {
+        return actualReleasePage;
+    }
+    public void setActualReleasePage(String actualReleasePage) {
+        this.actualReleasePage = actualReleasePage;
     }
     
-    public Date getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(Date dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
 }

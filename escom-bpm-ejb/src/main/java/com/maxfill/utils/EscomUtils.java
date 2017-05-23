@@ -1,5 +1,7 @@
 package com.maxfill.utils;
 
+import com.maxfill.services.update.ReleaseInfo;
+import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -11,28 +13,26 @@ import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * Утилиты
- * @author Filatov Maxim
- */
-
 public final class EscomUtils {
      
-    /**
-     * Преобразует List в строку с разделителем запятая
-     * @param ids
-     * @return 
-     */
+    /* Получение номера актуального релиза */
+    public static String getReleaseInfo(String licenceNumber){
+        String result= "";
+        try { 
+            ReleaseInfo_Service service = new ReleaseInfo_Service();
+            ReleaseInfo port = service.getReleaseInfoPort();
+            result = port.getReleaseInfo(licenceNumber);
+        } catch (Exception ex) {
+        }
+        return result;
+    }
+
+    /* Преобразует List в строку с разделителем запятая */
     public static String listToString(List<String> ids){
         return StringUtils.join(ids, ",");
     }
     
-    /**
-     * Разбивает строку на части
-     * @param subject
-     * @param delimiters
-     * @return 
-     */
+    /* Разбивает строку на части */
     public static ArrayList<String> SplitString(String subject, String delimiters) {
         StringTokenizer strTkn = new StringTokenizer(subject, delimiters);
         ArrayList<String> arrLis = new ArrayList<String>(subject.length());
@@ -43,12 +43,7 @@ public final class EscomUtils {
         return arrLis;
     }    
     
-    /**
-     * Преобразование строки в MD5
-     * @param password
-     * @return 
-     * @throws java.security.NoSuchAlgorithmException
-     */
+    /* Преобразование строки в MD5 */
     public static String encryptPassword(String password) throws NoSuchAlgorithmException {
     	MessageDigest messageDigest = MessageDigest.getInstance("MD5");
     	byte[] bs;
@@ -78,9 +73,7 @@ public final class EscomUtils {
         return newFormatDate;  
     }       
     
-    /**
-     * Проверка корректности ИНН
-     */
+    /* Проверка корректности ИНН */
     private static final Pattern INN_PATTER = Pattern.compile("\\d{10}|\\d{12}");
     private static final int[] CHECK_ARR = new int[] {3,7,2,4,10,3,5,9,4,6,8};
     public static boolean isValidINN(String inn) {
@@ -104,11 +97,7 @@ public final class EscomUtils {
         return (sum % 11) % 10 == inn.charAt(length - offset) - '0';
     }
     
-    /**
-     * Возвращает два последних символа года YY 
-     * @param date
-     * @return 
-     */
+    /* Возвращает два последних символа года YY  */
     public static String getYearYY(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -117,11 +106,7 @@ public final class EscomUtils {
         return yy;
     }
     
-    /**
-     * Возвращает год как строку 
-     * @param date
-     * @return 
-     */
+    /* Возвращает год как строку  */
     public static String getYearStr(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -129,20 +114,14 @@ public final class EscomUtils {
         return year;
     }
     
-    /**
-     * Формирует уникальный номер GUID
-     * @return 
-     */
+    /* Формирует уникальный номер GUID */
     public static String generateGUID() {
         UUID uuid = UUID.randomUUID();
         String randomUUID = uuid.toString();
         return randomUUID;
     }
     
-    /**
-     * Копирует строку в буфер
-     * @param sourceString 
-     */
+    /* Копирует строку в буфер */
     public static void copyToClipboard(String sourceString){
         StringSelection selection = new StringSelection(sourceString);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

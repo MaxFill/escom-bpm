@@ -1,4 +1,3 @@
-
 package com.maxfill.utils;
 
 import com.google.common.base.Preconditions;
@@ -10,11 +9,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- * @author nmirzoev
- */
 public final class DateUtils {
     public final static Integer MINUTE_TYPE = 0;
     public final static Integer HOUR_TYPE = 1;
@@ -22,14 +21,21 @@ public final class DateUtils {
     public final static Integer WEEKLY_REPEAT = 1;
     public final static Integer MONTHLY_REPEAT = 2;
     
-    private DateUtils() {
-    }
+    private DateUtils() { }
 
-    /**
-     * Обнуление времени в дате
-     * @param date дата
-     * @return дата с временем (00:00:00:00)
-     */
+    /* Преобразование строки yyyy-MM-dd в дату */
+    public static Date convertStrToDate(String dateStr, Locale locale){        
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", locale);
+        Date date = null;
+        try {
+            date = format.parse(dateStr);
+        } catch (ParseException ex) {
+            Logger.getLogger(DateUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return date;
+    }
+    
+    /* Обнуление времени в дате */
     public static Date clearDate(Date date) {
         Preconditions.checkNotNull(date);
         Calendar calendar = Calendar.getInstance();
@@ -41,19 +47,12 @@ public final class DateUtils {
         return calendar.getTime();
     }
 
-    /**
-     * Создание локальной даты
-     * @return 
-     */
+    /* Создание локальной даты  */
     public static LocalDate createLocalDate(){
         return toLocalDate(new Date());
     }
     
-    /**
-     * Преобразование даты в строку
-     * @param sourceDate
-     * @return String
-     */ 
+    /* Преобразование даты в строку */ 
     public static String dateToString(Date sourceDate){
         String strFormatDate = "---";         
         if (sourceDate != null) {
@@ -63,32 +62,19 @@ public final class DateUtils {
         return strFormatDate;  
     } 
     
-    /**
-     * Преобразование даты в локальную дату
-     * @param date
-     * @return 
-     */
+    /* Преобразование даты в локальную дату */
     public static LocalDate toLocalDate(Date date) {
         Preconditions.checkNotNull(date);
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
     
-    /**
-     * Преобразование строки в формате unix-time в дату
-     * @param longStr
-     * @return Date
-     */
+    /* Преобразование строки в формате unix-time в дату  */
     public static Date strLongToDate(String longStr){        
         Long unixTime = Long.valueOf(longStr);        
         return new Date(unixTime);
     }
     
-    /**
-     * Преобразование даты в unix формат
-     * @param dateDate
-     * @return 
-     * @throws java.text.ParseException
-     */ 
+    /* Преобразование даты в unix формат */ 
     public static long dateToLongConvert(Date dateDate) throws ParseException {
         long unixtime;
         DateFormat dfm = new SimpleDateFormat("yyyyMMddHHmm"); 
@@ -99,12 +85,7 @@ public final class DateUtils {
         return unixtime;
     }
     
-    /**
-     * Добавление к дате указанного числа дней
-     * @param date
-     * @param days
-     * @return 
-     */
+    /* Добавление к дате указанного числа дней */
     public static Date addDays(Date date, int days) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -112,12 +93,7 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    /**
-     * Добавление к дате указанного числа часов
-     * @param date
-     * @param hour
-     * @return 
-     */
+    /* Добавление к дате указанного числа часов */
     public static Date addHour(Date date, int hour) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);

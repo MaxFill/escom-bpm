@@ -46,7 +46,8 @@
                         <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"/>
                         <p:separator />
                         <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench"/>
-                        <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"/>
+                        <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"
+                                    actionListener="#{sessionBean.onCheckReleaseApp()}"/>
                         <p:menuitem value="#{bundle.EscomWWW}" url="http://www.escom-bpm.com" icon="ui-icon-home"/>
                         <p:separator />
                         <p:menuitem value="#{bundle.About}" icon="ui-icon-note" 
@@ -178,9 +179,9 @@
                             <p:outputLabel value="#{bundle.Release}"/>
                             <p:inputText value="#{applicationBean.licence.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
-                            <p:outputLabel value="#{bundle.DateLastUpdate}"/>
-                            <p:inputText value="#{applicationBean.licence.dateUpdate}" readonly="true" styleClass="ui-grid-col-12">
-                                <f:convertDateTime pattern="dd.MM.yyyy" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                            <p:outputLabel value="#{bundle.DateRelease}"/>
+                            <p:inputText value="#{applicationBean.licence.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
+                                <f:convertDateTime pattern="dd.MM.yyyy" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                             </p:inputText>
                         </p:panelGrid>
 

@@ -26,18 +26,21 @@ public abstract class BaseDialogBean implements Serializable{
     @PostConstruct
     protected void init(){
         initLayotOptions();
+        initBean();
     }
+    
+    protected abstract void initBean();
     
     public SessionBean getSessionBean() {
         return sessionBean;
     }
     
     protected void onOpenCard(){
-         if (getSourceBean() == null){
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-            beanName = params.get("beanName");
-            sourceBean = getSessionBean().getSourceBean(getBeanName());
-         }
+        if (getSourceBean() == null){
+           Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+           beanName = params.get("beanName");
+           sourceBean = getSessionBean().getSourceBean(getBeanName());
+        }
     }
     
     protected abstract String onCloseCard();
