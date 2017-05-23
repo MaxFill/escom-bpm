@@ -22,30 +22,24 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
-/**
- *
- * @author Maxim
- */
 @Stateless
 public class PrintServiceImpl implements PrintService{
     @EJB
     protected Configuration conf;
 
-    public static final String PRINT_FORM_TEMPLATE = "print/"; 
-    private static final String FILE_PATTERN = PRINT_FORM_TEMPLATE + "card-item.jrxml";
-
     public PrintServiceImpl() {
     }
             
     @Override
-    public void doPrint(BaseDict item){    
+    public void doPrint(BaseDict item, String reportName){    
         ArrayList<BaseDict> dataReport = new ArrayList<>();
         dataReport.add(item);
         JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(dataReport);
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("DATE", new Date());
+        parameters.put("BARCODE", "ABC123456");
         ClassLoader classLoader = getClass().getClassLoader();
-        String fileName = classLoader.getResource(FILE_PATTERN).getFile();
+        String fileName = classLoader.getResource(reportName).getFile();
         File reportPattern = new File(fileName);
         JasperDesign jasperDesign;
         try {

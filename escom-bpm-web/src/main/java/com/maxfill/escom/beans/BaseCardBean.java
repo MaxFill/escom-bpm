@@ -6,6 +6,7 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
+import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 /* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = 6864719383155087328L;    
-        
+    
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
     private Integer rightPageIndex;
     private String itemOpenKey;      
@@ -202,11 +203,16 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setRightPageIndex(tabId);
     }
 
-    /* ПЕЧАТЬ: Подготовка бланка объекта для печати. Вызов с печатной формы */
+    /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
-        printService.doPrint(getEditedItem());
+        printService.doPrint(getEditedItem(), DictPrintTempl.REPORT_ITEMCARD);
     }
 
+    /* ПЕЧАТЬ: Подготовка бланка этикетки штрихкода для печати */
+    public void onPreViewBarcode() {
+        printService.doPrint(getEditedItem(), DictPrintTempl.REPORT_BARCODE);
+    }
+    
     /* ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         //getSessionBean().addSourceBean(this.toString(), this);

@@ -1,10 +1,5 @@
-
 package com.maxfill.services.update;
 
-/**
- *
- * @author mfilatov
- */
 import java.net.URI;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;

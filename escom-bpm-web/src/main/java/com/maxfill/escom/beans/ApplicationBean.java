@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -165,6 +166,15 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Обновление данных об актуальном релизе */
+    public void updateActualReleaseData(Map<String,String> releaseInfoMap){
+        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        String version = (String) releaseInfoMap.get("version");
+        String number = (String) releaseInfoMap.get("number");
+        String page = (String) releaseInfoMap.get("page");
+        String dateStr = (String) releaseInfoMap.get("date");
+        Date date = DateUtils.convertStrToDate(dateStr, locale);
+        updateActualReleaseData(version, number, page, date);
+    }
     public synchronized void updateActualReleaseData(String releaseVersion, String releaseNumber, String releasePage, Date releaseDate){
         licence.setActualReleaseDate(releaseDate);
         licence.setActualReleaseNumber(releaseNumber);
