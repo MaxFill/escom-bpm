@@ -49,6 +49,8 @@ public class CheckReleaseBean extends BaseDialogBean{
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) > 0){
             EscomBeanUtils.WarnMsgAdd("NewVersionAvailable", "NeedUpdateProgram");
+            appBean.setNeedUpadateSystem(Boolean.TRUE);
+            sessionBean.setCanShowNotifBar(Boolean.TRUE);
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) == 0){
             EscomBeanUtils.SuccesMsgAdd("Successfully", "UsedActualVersion");
@@ -87,14 +89,6 @@ public class CheckReleaseBean extends BaseDialogBean{
     @Override
     protected String getFormName() {
         return DictDlgFrmName.FRM_CHECK_RELEASE;
-    }
-
-    public ApplicationBean getAppBean() {
-        return appBean;
-    }
-
-    public void setAppBean(ApplicationBean appBean) {
-        this.appBean = appBean;
     }
 
     public String getStrDateRelease() {

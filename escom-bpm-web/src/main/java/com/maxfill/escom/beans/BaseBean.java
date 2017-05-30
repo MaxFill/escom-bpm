@@ -311,6 +311,20 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
     }
     
+    public void onViewReport(String reportName){
+        String pdfFile = new StringBuilder()
+                    .append(conf.getTempFolder())
+                    .append(reportName)
+                    .append("_")
+                    .append(currentUser.getLogin())
+                    .append(".pdf").toString();
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> pathList = new ArrayList<>();
+        pathList.add(pdfFile);
+        paramMap.put("path", pathList);
+        sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+    }
+    
     /* Скачивание вложения  */
     public void attacheDownLoad(Attaches attache){
         String path = conf.getUploadPath() + attache.getFullName(); 
@@ -330,7 +344,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* Установка признака изменения объекта  */
     public void onItemChange() {
         isItemChange = true;
-    }
+    }    
     
     /* Признак изменения объекта  */
     public boolean isItemChange() {

@@ -1,5 +1,7 @@
 package com.maxfill.escom.beans;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.model.BaseDict;
@@ -57,7 +59,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -146,7 +150,7 @@ public class SessionBean implements Serializable{
 
         temeInit();
     }    
-    
+        
     /* БУФЕР ИСТОЧНИКОВ */
     
     /* Добавление бина источника в буфер */
@@ -557,6 +561,9 @@ public class SessionBean implements Serializable{
     public Boolean getCanShowNotifBar() {
         return canShowNotifBar;
     }
+    public void setCanShowNotifBar(Boolean canShowNotifBar) {
+        this.canShowNotifBar = canShowNotifBar;
+    }
 
     public String getPrimefacesTheme() {
         if (StringUtils.isBlank(primefacesTheme)){
@@ -574,6 +581,35 @@ public class SessionBean implements Serializable{
     public List<Theme> getThemes() {
         return themes;
     } 
+
+    public LayoutOptions getExplLayoutOptions(String formName) {
+        LayoutOptions layoutOptions = new LayoutOptions();
+        Map<String, String> explFormMap = userSettings.getExplFormParam();
+        if (explFormMap.containsKey(formName)){
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                String jsonStr = explFormMap.get(formName);                                    
+                layoutOptions = mapper.readValue(jsonStr, LayoutOptions.class);
+            } catch (IOException ex) {
+                Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            EscomBeanUtils.initLayoutOptions(layoutOptions);
+            EscomBeanUtils.initAddLayoutOptions(layoutOptions);
+        }
+        return layoutOptions;
+    }
+
+    public void saveLayoutOptions(LayoutOptions layoutOptions, String frmName) {
+        if (layoutOptions.getCenterOptions() == null) return;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String paneOptions = mapper.writeValueAsString(layoutOptions);
+            userSettings.getExplFormParam().put(frmName, paneOptions);
+        } catch (JsonProcessingException ex) {
+            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     public UserSettings getUserSettings() {
         return userSettings;

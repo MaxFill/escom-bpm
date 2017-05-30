@@ -2,7 +2,7 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="com.maxfill.escombpm2PU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-    <jta-data-source>java:/EscomJavaJNDI</jta-data-source>
+    <jta-data-source>java:/EscomJNDI</jta-data-source>
     <class>com.maxfill.model.docs.DocStatus</class>
     <class>com.maxfill.model.users.User</class>
     <class>com.maxfill.model.users.UserLog</class>

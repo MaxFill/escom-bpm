@@ -56,15 +56,14 @@
                     </h:outputLabel>
                 </p:column> 
 
-                <p:column >
+                <p:column >                    
                     <p:splitButton  title="#{bundle.View}" value="#{bundle.View}"
                                     process="versionsTBL" 
                                     actionListener="#{_bean.onViewAttache(attache)}">
                         <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
-                                    process="versionsTBL" ajax="false"
-                                    disabled="#{_bean.isReadOnly()}"
-                                    onclick="return isClose = 1;"
-                                    actionListener="#{_bean.attacheDownLoad(attache)}"/>
+                                    ajax="false"
+                                    disabled="#{_bean.isReadOnly()}"                           
+                                    action="#{_bean.attacheDownLoad(attache)}"/>
                         <p:menuitem icon="ui-icon-check" value="#{bundle.MakeCurrent}" title="#{bundle.MakeCurrent}"
                                     process="versionsTBL"
                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.attache.equals(attache)}"

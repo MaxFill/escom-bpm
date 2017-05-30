@@ -72,6 +72,7 @@
                     <p:inputText id="dateRelease" value="#{checkReleaseBean.strDateRelease}" style="display: none;"/>                    
                     <p:inputText id="versionRelease" value="#{checkReleaseBean.versionRelease}" style="display: none;"/>
                     <p:inputText id="actualRelease" value="#{checkReleaseBean.releaseNumber}" style="display: none;"/>
+                    <p:inputText id="pageRelease" value="#{checkReleaseBean.pageRelease}" style="display: none;"/>
 
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                         
@@ -99,7 +100,7 @@
 
                             <p:outputLabel value="#{bundle.Page}:" />
                             <h:panelGroup>
-                                <p:inputText id="pageRelease" value="#{checkReleaseBean.pageRelease}" readonly="true"/>
+                                <p:inputText value="#{checkReleaseBean.pageRelease}" readonly="true"/>
                                 <p:spacer/>
                                 <p:commandLink value="#{bundle.GoToSupport}"
                                                actionListener="#{checkReleaseBean.onGotoSupportPage}" target="_blank"/>

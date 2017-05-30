@@ -30,13 +30,6 @@ public class FavoriteObjFacade extends BaseFacade<FavoriteObj>{
         getEntityManager().remove(entity);
     }
     
-    /**
-     * Поиск в избранном
-     * @param itemId
-     * @param metadatesObj
-     * @param user
-     * @return 
-     */
     public List<FavoriteObj> findFavoriteObj(Integer itemId, Metadates metadatesObj, User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(FavoriteObj.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

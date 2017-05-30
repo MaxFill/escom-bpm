@@ -18,7 +18,7 @@
                 <p:inputText id="docTypeName" value="#{_bean.editedItem.name}" 
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                             disabled="#{!_bean.isHaveRightEdit()}"
+                             disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                              onchange="return itemChange = 1;"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
@@ -27,23 +27,23 @@
                 <p:inputText id="docTypeCode" value="#{_bean.editedItem.code}" 
                              title="#{bundle.StringArbitrary}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                             disabled="#{!_bean.isHaveRightEdit()}"
+                             disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                              onchange="return itemChange = 1;">
                     <f:validateLength for="docTypeCode" maximum="10"/>
                 </p:inputText>
 
                 <p:outputLabel value="#{bundle.Numerator}" />
                 <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
-                                 disabled="#{!_bean.isHaveRightEdit()}"
+                                 disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                                  onchange="return itemChange = 1;"
-                                 style="width: 100%;" var="pattern" 
+                                 var="pattern" styleClass="ui-grid-col-12"
                                  required="false"
                                  requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
                     <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
                     <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
 
                     <p:column style="font-size: 80%;">
-                        #{numeratorPatternBean.model.getLabel(pattern.typeCode)}
+                        #{numeratorPatternBean.getLabel(pattern.typeCode)}
                     </p:column>
 
                     <p:column style="font-size: 80%;">
@@ -54,12 +54,13 @@
 
                 <p:outputLabel value="#{bundle.Statuses}" />
                 <p:selectManyMenu id="statesMenu" value="#{_bean.editedItem.statusDocList}" converter="statusesDocConvertor"
+                                  disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                                   var="st" showCheckbox="true"
                                   onchange="return itemChange = 1;"
                                   style="width: 100%;">
                     <f:selectItems value="#{statusesDocBean.findAll()}" var="status" itemLabel="#{status.name}" itemValue="#{status}" />
                     <p:column>
-                        <h:outputText value="#{st.localName}" />
+                        <h:outputText value="#{st.nameEndElipse}" />
                     </p:column>
                 </p:selectManyMenu>
                 <pe:tooltip for="statesMenu" value="#{bundle.StatusesForTypeDoc}"/>

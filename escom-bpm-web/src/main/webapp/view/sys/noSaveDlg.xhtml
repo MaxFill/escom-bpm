@@ -5,15 +5,13 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <p:dialog header="#{bundle.DataNoSave}" widgetVar="confirm" width="400" height="200" modal="true"
+    <p:dialog header="#{bundle.DataNoSave}" widgetVar="confirm" width="400" height="195" modal="true" resizable="false"
               maximizable="false" closeOnEscape="true">
         <h:form>
             <p:panel styleClass="ui-grid-col-12">
                 <p:panelGrid columns="1" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                     <br/>
-                    <br/>
                     #{bundle.PressSaveOrCancel}
-                    <p:spacer/>
                     <p:spacer/>
                 </p:panelGrid>
             </p:panel>

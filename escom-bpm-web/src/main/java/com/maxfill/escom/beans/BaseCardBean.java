@@ -10,6 +10,7 @@ import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
@@ -86,7 +87,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
     
     /* Подготовка к сохранению объекта  */
-    public void prepSaveItemAndClose() {        
+    public String prepSaveItemAndClose() { 
+        if (!doSaveItem()){
+            return "";
+        }
+        return closeItemForm(Boolean.TRUE);
+    }
+    
+    public boolean doSaveItem(){
         Boolean isNeedUpdateExplore = false;
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
             isNeedUpdateExplore = true;
@@ -95,7 +103,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
                 EscomBeanUtils.showErrorsMsg(errors);
-                return; 
+                return Boolean.FALSE; 
             }
             onBeforeSaveItem(item);
             switch (getTypeEdit()){
@@ -110,8 +118,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 }
             }
             onAfterSaveItem(item);
+            setIsItemChange(Boolean.FALSE);
         }
-        closeItemForm(isNeedUpdateExplore);
+        return isNeedUpdateExplore;
     }
     
     /* Действия перед сохранением объекта  */
@@ -166,7 +175,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
     
     /* Закрытие формы карточки объекта */
-    private String closeItemForm(Boolean isNeedUpdate) {
+    protected String closeItemForm(Boolean isNeedUpdate) {
+        attacheService.deleteTmpFiles(currentUser.getLogin());
         clearLockItem();
         RequestContext.getCurrentInstance().closeDialog(new Tuple(isNeedUpdate, itemOpenKey));
         return "/view/index?faces-redirect=true";
@@ -205,14 +215,40 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
-        printService.doPrint(getEditedItem(), DictPrintTempl.REPORT_ITEMCARD);
+        Map<String, Object> params = prepareReportParams();
+        ArrayList<BaseDict> dataReport = new ArrayList<>();
+        dataReport.add(editedItem);
+        doPreViewItemCard(dataReport, params, DictPrintTempl.REPORT_ITEM_CARD);        
     }
 
-    /* ПЕЧАТЬ: Подготовка бланка этикетки штрихкода для печати */
-    public void onPreViewBarcode() {
-        printService.doPrint(getEditedItem(), DictPrintTempl.REPORT_BARCODE);
+    protected void doPreViewItemCard(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+        printService.doPrint(dataReport, parameters, reportName);
+        onViewReport(reportName);
     }
     
+    /* ПЕЧАТЬ: Подготовка бланка этикетки штрихкода для печати */
+    public void onPreViewBarcode() {
+        Map<String, Object> params = prepareReportParams();
+        ArrayList<BaseDict> dataReport = new ArrayList<>();
+        dataReport.add(editedItem);
+        doPreViewBarcode(dataReport, params, DictPrintTempl.REPORT_BARCODE);        
+    }
+    
+    protected void doPreViewBarcode(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+        printService.doPrint(dataReport, parameters, reportName);
+        onViewReport(reportName);
+    }
+    
+    /* ПЕЧАТЬ: Подготовка параметров отчёта */
+    private Map<String, Object> prepareReportParams(){
+        Map<String, Object> parameters = new HashMap<>();        
+        parameters.put("BARCODE", getBarCode(editedItem));
+        parameters.put("USER_LOGIN", currentUser.getLogin());
+        String key = getMetadatesObj().getBundleName();
+        parameters.put("REPORT_TITLE", EscomBeanUtils.getBandleLabel(key));
+        return parameters;
+    }
+            
     /* ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         //getSessionBean().addSourceBean(this.toString(), this);
@@ -363,6 +399,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     public String getItemObjName(){
         return getItemFacade().getFRM_NAME().toLowerCase();
+    }
+    
+    public String getBarCode(T item){
+        Integer serverId = conf.getServerId();
+        String barcode = EscomUtils.getBarCode(editedItem, getMetadatesObj(), serverId); 
+        return barcode;
     }
     
     /* GET & SET  */

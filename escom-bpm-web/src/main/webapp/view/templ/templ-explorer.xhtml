@@ -11,15 +11,15 @@
         #{explorerBean.setSelectorHeader(_selectorHeader)}
         #{explorerBean.setExplorerHeader(_explorerHeader)}
         #{explorerBean.setSearcheBean(_searcheBean)}
-                
+
         #{_rootBean  != null ? explorerBean.setRootBean(_rootBean) : ''}
         #{_detailBean != null ? explorerBean.setTableBean(_detailBean)  : ''}
         #{_treeBean   != null ? explorerBean.setTreeBean(_treeBean) : ''}
-        
+
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
     </ui:define>
-    
+
     <ui:define name="title">
         #{explorerBean.jurnalHeader}
     </ui:define>
@@ -30,78 +30,80 @@
             <ui:insert name="preRenderAction" />
         </f:metadata>
     </ui:define>
-    
+
     <ui:define name="body">
         <p:growl id="messages" showDetail="true" autoUpdate="true" life="6000"/>       
 
         <p:focus for="#{_frmTree}" context="nameSearche"/>
+           
+        <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
+                <h:outputScript library="js" name="drag-drop.js" />
 
-        <pe:layout fullPage="true" options="#{_detailBean.layoutOptions}" widgetVar="fpLayoutWidget">
-            <h:outputScript library="js" name="drag-drop.js" />
-
-            <pe:layoutPane position="west" resizable="true">
-                <f:facet name="header">
-                    <p:outputLabel value="#{bundle.Sections}" />
-                </f:facet>
-                <h:form id="#{_frmTree}" style="font-size: 90%;"> 
-                    <style>
-                        .ui-accordion .ui-accordion-content {
-                            padding: 0px !important;
-                        }
-                    </style>
-                    <ui:include src="/view/templ/tree/tree.xhtml" />
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position="center" resizable="true">
-                <pe:layoutPane position="center">
-                    <f:facet name="header">  
-                        <p:outputLabel id="centerHeaderLabel" value="#{explorerBean.jurnalHeader}" />
+                <pe:layoutPane position="west" resizable="true">
+                    <f:facet name="header">
+                        <p:outputLabel value="#{bundle.Sections}" />
                     </f:facet>
-
-                    <h:form id="#{_frmExpl}" style="font-size: 80%;">
-                        <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                     
-                        <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>   
-
-                        <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;"> 
-                            <p:ajax event="dialogReturn" 
-                                    update="#{_frmTree} #{_frmExpl}"
-                                    listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
-                        </p:commandButton>
-
-                        <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onViewContentItem()}" style="display: none;">
-                            <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl}"
-                                    oncomplete="initDND()"/>
-                        </p:commandButton>
-
-                        <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/>                    
-                        <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
-                        <ui:include src="/view/templ/expl/expl-table.xhtml"/>                        
-
+                    <h:form id="#{_frmTree}" style="font-size: 90%;"> 
+                        <style>
+                            .ui-accordion .ui-accordion-content {
+                                padding: 0px !important;
+                            }
+                        </style>
+                        <ui:include src="/view/templ/tree/tree.xhtml" />
                     </h:form>
                 </pe:layoutPane>
 
-                <pe:layoutPane position ="south" rendered="#{_showUploadPanel == true}" >
-                    <ui:include src="/view/common/file-uppload.xhtml" />
-                </pe:layoutPane> 
-            </pe:layoutPane>
+                <pe:layoutPane position="center" resizable="true">
+                    <pe:layoutPane position="center">
+                        <f:facet name="header">
+                            <p:outputLabel id="centerHeaderLabel" value="#{explorerBean.jurnalHeader}" />
+                        </f:facet>
 
-            <pe:layoutPane position="east" resizable="true" >
-                <f:facet name="header">  
-                    <p:outputLabel value="#{bundle.Searche}" />
-                </f:facet> 
-                <h:form style="font-size: 80%;" id="#{_frmExpl}_east"> 
-                    <ui:include src="/view/templ/templ-searche.xhtml">
-                        <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
-                    </ui:include>
-                </h:form>
-            </pe:layoutPane>
+                        <h:form id="#{_frmExpl}" style="font-size: 80%;">                                                        
+                            <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
+                            <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
+                            <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
 
-            <ui:include src="/view/templ/expl/expl-southpane.xhtml"/>
+                            <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;">
+                                <p:ajax event="dialogReturn" 
+                                        update="#{_frmExpl} #{_frmTree}"
+                                        oncomplete="initDND()"/>
+                            </p:commandButton>
+                            <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onViewContentItem()}" style="display: none;">
+                                <p:ajax event="dialogReturn" 
+                                        update="#{_frmExpl}"
+                                        oncomplete="initDND()"/>
+                            </p:commandButton>
+                            <p:commandButton id="eeeBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;">
+                                <p:ajax event="dialogReturn" 
+                                        update="#{_frmExpl} #{_frmTree}" listener="#{explorerBean.onUpdateAfterCloseForm}"
+                                        oncomplete="initDND()"/>
+                            </p:commandButton>
+                            
+                            <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/>  
+                            <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
+                            <ui:include src="/view/templ/expl/expl-table.xhtml"/>                        
 
-        </pe:layout>
+                        </h:form>
+                    </pe:layoutPane>
 
+                    <pe:layoutPane position ="south" rendered="#{_showUploadPanel == true}" >
+                        <ui:include src="/view/common/file-uppload.xhtml" />
+                    </pe:layoutPane> 
+                </pe:layoutPane>
+
+                <pe:layoutPane position="east" resizable="true" >
+                    <f:facet name="header">  
+                        <p:outputLabel value="#{bundle.Searche}" />
+                    </f:facet> 
+                    <h:form style="font-size: 80%;" id="#{_frmExpl}_east"> 
+                        <ui:include src="/view/templ/templ-searche.xhtml">
+                            <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
+                        </ui:include>
+                    </h:form>
+                </pe:layoutPane>
+
+                <ui:include src="/view/templ/expl/expl-southpane.xhtml"/>
+            </pe:layout> 
     </ui:define>
 </ui:composition>

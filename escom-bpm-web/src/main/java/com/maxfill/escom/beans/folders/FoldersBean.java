@@ -119,16 +119,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         docFacade.deleteDocFromFolder(folder);        
     }
 
-    @Override
-    protected void initAddLayoutOptions(LayoutOptions layoutOptions){
-        super.initAddLayoutOptions(layoutOptions);
-        
-        LayoutOptions centerSouth = new LayoutOptions();
-        centerSouth.addOption("size", "10%");
-        LayoutOptions childCenterOptions = layoutOptions.getCenterOptions().getChildOptions();
-        childCenterOptions.setSouthOptions(centerSouth);
-    }
-
     /* Формирует число ссылок на folder в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){

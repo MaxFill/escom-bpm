@@ -1,10 +1,5 @@
-
 package com.maxfill.dictionary;
 
-/**
- * Имена объектов
- * @author Maxim
- */
 public final class DictObjectName {
 
     private DictObjectName() {

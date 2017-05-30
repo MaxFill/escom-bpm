@@ -17,11 +17,10 @@
                 <p:inputText id="name" value="#{_bean.editedItem.name}" 
                                  styleClass="ui-grid-col-12"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 disabled="#{!_bean.isHaveRightEdit()}"
+                                 disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                                  onchange="return itemChange = 1;"
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:message for="name" display="icon"/>
             </p:panelGrid>
         </p:tab>                
         <p:tab title="#{bundle.RightsChilds}">

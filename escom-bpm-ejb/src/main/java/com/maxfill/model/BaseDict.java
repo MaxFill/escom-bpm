@@ -176,7 +176,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Transient
     @XmlTransient
     private Rights rightForChild; //права для дочерних объектов 
-    
+        
     public BaseDict(){}
         
     /* Возвращает название для заголовка наследования дефолтных прав  дочерних объектов */
@@ -385,7 +385,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setIconName(String iconName) {
         this.iconName = iconName;
-    }    
+    }     
     
     /* Установка даты создания */  
     @PrePersist  

@@ -1,4 +1,3 @@
-
 package com.maxfill.utils;
 
 import com.maxfill.model.BaseDict;

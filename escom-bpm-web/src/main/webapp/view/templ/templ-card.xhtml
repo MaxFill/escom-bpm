@@ -61,22 +61,35 @@
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
                         <p:toolbar >
                             <f:facet name="left">
-                                <p:splitButton  id="btnPrint" value="#{bundle.Actions}" title="#{bundle.Actions}" 
+                                <p:splitButton  value="#{bundle.Actions}" title="#{bundle.Actions}" 
                                                 rendered="#{_bean.editedItem.id != null and !_bean.editedItem.deleted}"
                                                 icon="ui-icon-gear">
-                                    <p:menuitem icon="ui-icon-document" value="#{bundle.CardItem}" title="#{bundle.CardItem}"
+                                    <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
                                                 actionListener="#{_bean.onPreViewItemCard()}"/>
-                                    <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"                                                
+                                    <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}" 
+                                                actionListener="#{_bean.onPreViewBarcode()}"/>
+                                    <p:separator/>
+                                    <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
                                                 actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
                                     <ui:insert name="specMenuButtons" />
                                 </p:splitButton>
                             </f:facet>
                             <f:facet name="right">
-                                <p:commandButton id="btnSave" value="#{bundle.Save}" title="#{bundle.SaveAndClose}"
+                                <p:commandButton id="btnSaveClose" value="#{bundle.SaveClose}" title="#{bundle.SaveAndClose}"
                                                  rendered="#{!_bean.isReadOnly()}"
                                                  icon="ui-icon-circle-check"                                      
                                                  update="#{_frm}"
                                                  action="#{_bean.prepSaveItemAndClose()}"
+                                                 onclick="if (itemChange == 1) {
+                                                             onChangeItem();
+                                                         }">
+                                    <f:param name="isRequired" value="true"/>
+                                </p:commandButton>
+                                <p:commandButton id="btnSave" value="#{bundle.Save}" title="#{bundle.SaveChange}"
+                                                 rendered="#{!_bean.isReadOnly()}"
+                                                 icon="ui-icon-disk"
+                                                 update="#{_frm}"
+                                                 actionListener="#{_bean.doSaveItem()}"
                                                  onclick="if (itemChange == 1) {
                                                              onChangeItem();
                                                          }">

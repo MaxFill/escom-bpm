@@ -15,6 +15,7 @@ public interface AttacheService {
     void deleteAttache(Attaches attache);
     void deleteAttaches(List<Attaches> attaches);
     void deleteAttacheByFolder(Folder folder);
+    void deleteTmpFiles(String login);
     Attaches findAttacheByDoc(Doc doc);
     
 

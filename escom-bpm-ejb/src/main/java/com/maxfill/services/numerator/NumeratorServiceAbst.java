@@ -11,21 +11,12 @@ import java.util.Map;
 import javax.ejb.EJB;
 import org.apache.commons.lang.StringUtils;
 
-/**
- *
- * @author Maxim
- */
 public abstract class NumeratorServiceAbst {
 
     @EJB
     private CounterFacade counterFacade;
     
-    /**
-     * Откат регистрационного номера
-     *
-     * @param item
-     * @param counterName
-     */    
+    /* Откат регистрационного номера */    
     public void doRollBackRegistred(BaseDict item, String counterName) {
         Integer templNumber = item.getNumber();
         if (templNumber != null) {
@@ -40,12 +31,8 @@ public abstract class NumeratorServiceAbst {
         }        
     }
     
-    /**
-     * Получение счётчика объекта. Возвращается всегда актуальный
-     * (fresh) счётчик, для учёта изменений сделанных в других сессиях
-     * @param counterName
-     * @return 
-     */
+    /* Получение счётчика объекта. Возвращается всегда актуальный
+     * (fresh) счётчик, для учёта изменений сделанных в других сессиях */
     protected Counter doGetCounter(String counterName) {
         List<Counter> counters = getCounterFacade().findCounterByName(counterName);
         if (counters.isEmpty()) {
@@ -63,16 +50,7 @@ public abstract class NumeratorServiceAbst {
         return counterFacade;
     }
    
-    /**
-     * Формирование регистрационного номера объекта по заданной маске
-     *
-     * @param item
-     * @param counterName
-     * @param numPattern
-     * @param params
-     * @param dateReg
-     * @return Строковое значение
-     */
+    /* Формирование регистрационного номера объекта по заданной маске  */
     public String doRegistrNumber(BaseDict item, String counterName, NumeratorPattern numPattern, Map<String, Object> params, Date dateReg) {
         Counter counter = doGetCounter(counterName);
         Integer number = doGetNextRegNumber(counter);
@@ -92,12 +70,7 @@ public abstract class NumeratorServiceAbst {
         return regNumber;
     }
     
-    /**
-     * Формирование номера по порядку
-     *
-     * @param numerator
-     * @return
-     */
+    /* Формирование номера по порядку  */
     private Integer doGetNextRegNumber(Counter numerator) {
         Integer number = numerator.getNumber();
         number++;

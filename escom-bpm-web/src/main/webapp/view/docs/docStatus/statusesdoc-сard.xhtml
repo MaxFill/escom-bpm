@@ -12,14 +12,19 @@
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"
                          columnClasses="ui-grid-col-12 col-padding">
                 <p:outputLabel value="#{bundle.Name}" />
-                <p:inputText id="name" value="#{_bean.editedItem.name}" 
+                <p:inputText id="name" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12 col-padding"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:message for="name" display="icon"/>
+                <h:panelGroup rendered="#{_bean.editedItem.id != null}">
+                    <p:separator />
+                    <p:commandButton value="#{bundle.AddStatusInTypeDocs}" actionListener="#{_bean.onAddStatusInTypeDocs()}">
+                        <p:ajax event="dialogReturn" listener="#{_bean.doAddStatusInTypeDocs}"/>
+                    </p:commandButton>
+                </h:panelGroup>
             </p:panelGrid>
           </p:tab>                
 

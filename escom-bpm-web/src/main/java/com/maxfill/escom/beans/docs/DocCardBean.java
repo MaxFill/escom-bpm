@@ -62,7 +62,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                 .filter(attache -> attache.getId() == null).collect(Collectors.toList());
         attacheService.deleteAttaches(notSaveAttaches); //удаление файлов вложений не сохранённых версий
         return super.doFinalCancelSave();
-    }
+    }    
     
     @Override
     protected void doPrepareOpen(Doc doc) {

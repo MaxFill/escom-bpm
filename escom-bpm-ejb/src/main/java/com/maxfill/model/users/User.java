@@ -51,33 +51,21 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     @Column(name = "Password")
     private String password;
 
-    /**
-     * Имя
-     */
+    /* Имя */
     @Column(name = "FirstName")
     private String firstName = "";
 
-    /**
-     * Фамилия
-     */
+    /* Фамилия */
     @Column(name = "SecondName")
     private String secondName = "";
 
-    /**
-     * Отчество
-     */
+    /* Отчество */
     @Column(name = "LastName")
     private String lastName = "";
     
-    /**
-     * Телефон
-     */
     @Column(name = "Phone")
     private String phone;
     
-    /**
-     * E-mail
-     */
     @Column(name = "Email")
     @Size(max = 50)
     private String email;

@@ -1,9 +1,11 @@
 package com.maxfill.escom.beans.staffs;
 
+import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
@@ -14,6 +16,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 
 /* Карточка Штатные единицы */
@@ -23,18 +26,22 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     private static final long serialVersionUID = -977912654006193660L;
     
     @EJB
-    private StaffFacade itemFacade;
-    
+    private StaffFacade itemFacade;   
     
     @Override
     public StaffFacade getItemFacade() {
         return itemFacade;
     }
-         
+
+    @Override
+    protected void doPreViewItemCard(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+        super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_STAFF_CARD);
+    }
+        
     /* Обработка события на выбор сотрудника   */
     public void onEmployeeSelected(SelectEvent event){
         List<User> items = (List<User>) event.getObject();
-        if (items.isEmpty()) {return;}
+        if (items.isEmpty()) return;
         User item = items.get(0);
         onItemChange();
         getEditedItem().setEmployee(item);

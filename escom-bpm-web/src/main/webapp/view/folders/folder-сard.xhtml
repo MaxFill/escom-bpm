@@ -20,7 +20,6 @@
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
-                <p:message for="name" display="icon"/>
         
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.isModeration}" itemLabel="#{bundle.Moderation}:"
                                         disabled="#{_bean.isReadOnly()}">

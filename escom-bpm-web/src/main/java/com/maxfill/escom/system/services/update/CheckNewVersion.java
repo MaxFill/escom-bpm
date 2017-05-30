@@ -22,7 +22,7 @@ public class CheckNewVersion {
     @Inject
     private ApplicationBean appBean;
     
-    @Schedule(dayOfWeek = "Mon-Fri", month = "*", hour = "15", dayOfMonth = "*", year = "*", minute = "20", second = "0", persistent = true)               
+    @Schedule(dayOfWeek = "Mon-Fri", month = "*", hour = "21", dayOfMonth = "*", year = "*", minute = "08", second = "0", persistent = true)               
     protected void init(Timer timer){        
         LOGGER.log(Level.INFO, "CheckNewVersion service started!");
         if (checkNewVersionAvailable(appBean.getLicence())) {
@@ -31,7 +31,7 @@ public class CheckNewVersion {
         LOGGER.log(Level.INFO, "CheckNewVersion service completed!");
         //timer.cancel();
     }
-        
+
     /* Установка признака наличия новой версии */
     private Boolean checkNewVersionAvailable(Licence licence){       
         String actualReleasesJSON = EscomUtils.getReleaseInfo(licence.getLicenceNumber()); 

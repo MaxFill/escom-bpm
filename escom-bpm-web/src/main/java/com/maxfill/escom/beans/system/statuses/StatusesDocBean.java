@@ -24,7 +24,7 @@ public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
     
     @EJB
     private StatusesDocFacade itemFacade;     
-    
+            
     @Override
     public StatusesDocFacade getItemFacade() {
         return itemFacade;
@@ -53,8 +53,8 @@ public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
     @Override
     public Class<StatusesDoc> getOwnerClass() {
         return null;
-    }
-
+    }    
+    
     @FacesConverter("statusesDocConvertor")
     public static class statusesDocConvertor implements Converter {
     

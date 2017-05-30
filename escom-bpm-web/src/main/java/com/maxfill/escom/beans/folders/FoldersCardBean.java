@@ -11,6 +11,7 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
 /* Карточка Папки */
@@ -34,7 +35,11 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
         onItemChange();
         getEditedItem().setDocTypeDefault(item);
     }
-
+    public void onDocTypeDefaultSelected(ValueChangeEvent event){
+        DocType docType = (DocType) event.getNewValue();
+        getEditedItem().setDocTypeDefault(docType);
+    }
+    
     @Override
     public FoldersFacade getItemFacade() {
         return foldersFacade;

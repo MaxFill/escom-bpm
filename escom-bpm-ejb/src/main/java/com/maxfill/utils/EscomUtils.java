@@ -1,5 +1,7 @@
 package com.maxfill.utils;
 
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.update.ReleaseInfo;
 import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;
@@ -119,6 +121,16 @@ public final class EscomUtils {
         UUID uuid = UUID.randomUUID();
         String randomUUID = uuid.toString();
         return randomUUID;
+    }
+    
+    /* формирование штрихкода */
+    public static String getBarCode(BaseDict item, Metadates obj, Integer serverId){
+        final int totalLenght = 12;        
+        String first = serverId.toString() + obj.getId().toString();
+        String id = item.getId().toString();
+        Integer lenDigit = first.length() + id.length();
+        Integer countZero = totalLenght - lenDigit;
+        return first + StringUtils.leftPad(id, countZero, "0");
     }
     
     /* Копирует строку в буфер */

@@ -17,7 +17,7 @@
 
         <p:ajax event="rowDblselect" 
                 listener="#{explorerBean.onRowDblClckOpen}"
-                oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
+                oncomplete="document.getElementById('#{_frmExpl}:vedCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
@@ -88,19 +88,18 @@
         <p:column style="text-align: center;" width="90" >
             <p:splitButton  value="#{bundle.Select}"
                             rendered="#{!item.deleted and item.actual and explorerBean.selectorViewMode}" 
-                            action="#{explorerBean.onSelect(item)}">
-                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"
-                            rendered="#{!item.deleted}"/>
+                            action="#{explorerBean.onSelect(item)}">                
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
                             actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
+                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
+                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
-            </p:splitButton>
+            </p:splitButton>           
             
             <p:splitButton value="#{bundle.Edit}" title="#{bundle.Edit}"
                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                           oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"
+                           oncomplete="document.getElementById('#{_frmExpl}:eeeBtn').click();"
                            rendered="#{!item.deleted and explorerBean.explorerViewMode}">
                 <p:menuitem icon="ui-icon-search" value="#{bundle.View}" title="#{bundle.View}"
                             actionListener="#{explorerBean.onSetCurrentItem(item)}"

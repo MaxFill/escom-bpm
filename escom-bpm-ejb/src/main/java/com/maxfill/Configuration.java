@@ -4,8 +4,6 @@ import com.maxfill.model.licence.Licence;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +21,11 @@ public class Configuration {
     private String encoding;
     private String defaultSenderEmail;
     private String ldapServer;
+    private String tempFolder;
+    private String jasperReports;
     private Licence licence;
-            
+    private Integer serverId;
+    
     @PostConstruct
     private void init() {
         String propertyFile = System.getProperty("escom.properties");
@@ -43,6 +44,9 @@ public class Configuration {
         ldapServer = (String) properties.get("LDAP_SERVER");
         licence = new Licence();
         licence.setLicenceNumber((String) properties.get("LICENCE_NUMBER"));
+        serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
+        tempFolder = (String) properties.get("TEMP_FOLDER");
+        jasperReports = (String) properties.get("JASPER_REPORTS");
     }
     
     public String getUploadPath() {
@@ -60,4 +64,14 @@ public class Configuration {
     public Licence getLicence() {
         return licence;
     }
+    public Integer getServerId() {
+        return serverId;
+    }
+    public String getTempFolder() {
+        return tempFolder;
+    }  
+    public String getJasperReports() {
+        return jasperReports;
+    }
+    
 }

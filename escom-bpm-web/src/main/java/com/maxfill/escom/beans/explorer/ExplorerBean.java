@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.explorer;
 
-import com.maxfill.escom.beans.BaseBean;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.BaseDict;
@@ -50,6 +49,9 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.extensions.component.layout.LayoutPane;
+import org.primefaces.extensions.event.OpenEvent;
+import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
 
 /* Контролер формы обозревателя */
@@ -112,6 +114,8 @@ public class ExplorerBean implements Serializable {
     private String treeSearcheKey; 
     
     /* *** ПОЛЯ ОБОЗРЕВАТЕЛЯ *** */
+    private LayoutOptions layoutOptions; 
+    private Boolean layoutState = true;
     private String jurnalHeader;
     private String selectorHeader;
     private String explorerHeader;
@@ -128,12 +132,13 @@ public class ExplorerBean implements Serializable {
         
     @PostConstruct
     public void init() {        
-        System.out.println("Создан explorerBean");
-    }
-     
+        System.out.println("Создан explorerBean="+ this.toString());
+    }     
+    
     @PreDestroy
     private void destroy(){
-        System.out.println("Удалён explorerBean");
+        //sessionBean.saveLayoutOptions(layoutOptions, getFrmName());
+        System.out.println("Удалён explorerBean="+ this.toString());
     }
     
     /* Cобытие при открытии формы обозревателя/селектора  */
@@ -162,9 +167,11 @@ public class ExplorerBean implements Serializable {
     public void onEditContentItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.EDIT_MODE);
+        /*
         if (!isItemDetailType(item)){
             makeSelectedGroup(item);
         }
+        */
         editItem = sessionBean.prepEditItem(item);
     }
 
@@ -211,12 +218,12 @@ public class ExplorerBean implements Serializable {
         Boolean isNeedUdate = tuple.a;
         if (isNeedUdate) {
             switch (typeEdit){
-                case DictEditMode.EDIT_MODE: {
+                case DictEditMode.EDIT_MODE: {                    
                     try {                    
                         BeanUtils.copyProperties(currentItem, editItem);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
-                    }
+                    }                    
                     break;
                 }
                 case DictEditMode.INSERT_MODE:{
@@ -236,6 +243,7 @@ public class ExplorerBean implements Serializable {
         }        
         createParams.clear();
         reloadDetailsItems(); 
+        onSetCurrentItem(editItem);
     }
     
     public boolean isItemDetailType(BaseDict item){
@@ -1618,7 +1626,7 @@ public class ExplorerBean implements Serializable {
     }
     public void setCurrentViewModeMixed(){
         currentType = typeMixed;
-    }
+    }             
     
     /* GETS & SETS */
    
@@ -1780,7 +1788,28 @@ public class ExplorerBean implements Serializable {
     public SearcheModel getModel() {
         return model;
     }
+
+    public LayoutOptions getLayoutOptions() {
+        if (layoutOptions == null){
+            layoutOptions = sessionBean.getExplLayoutOptions(getFrmName());
+        }
+        return layoutOptions;
+    }
+
+    private String getFrmName(){         
+        if (isSelectorViewMode()){
+            return typeDetail + "-selector";
+        }
+        return typeDetail + "-explorer";
+    }
     
+    public Boolean getLayoutState() {
+        return layoutState;
+    }
+    public void setLayoutState(Boolean layoutState) {
+        this.layoutState = layoutState;
+    }
+
     public Integer getSelectedDocId() {
         return selectedDocId;
     }

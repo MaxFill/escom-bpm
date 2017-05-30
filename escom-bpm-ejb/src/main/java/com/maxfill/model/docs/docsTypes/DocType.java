@@ -45,31 +45,19 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @Column(name = "Id")
     private Integer id;
        
-    /**
-     * Связь с владельцом "Группы документов"
-     */
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private DocTypeGroups owner;    
     
-    /**
-     * Связь с шаблоном нумератора
-     */
     @JoinColumn(name = "Numerator", referencedColumnName = "Id")
     @ManyToOne
     private NumeratorPattern numerator;
      
-    /**
-     * Используется в шаблоне регистрационного номера
-     */
     @Basic(optional = false)
     @Size(max=10)
     @Column(name = "Code")
     private String code;
     
-    /**
-     * Гуид - используется при формировании имени счётчика
-     */
     @Basic(optional = false)
     @Size(max=50)
     @Column(name = "Guide")
@@ -78,9 +66,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DocTypeLog> itemLogs = new ArrayList<>();
     
-    /**
-     * Список статусов для данного вида документа
-     */
     @JoinTable(name = "docsTypesStatuses", joinColumns = {
         @JoinColumn(name = "DocType", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "DocStatus", referencedColumnName = "ID")})

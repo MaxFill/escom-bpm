@@ -11,7 +11,7 @@ import java.util.Map;
 /* Базовая модель данных для поиска объектов */
 public class SearcheModel implements Serializable {
     private static final long serialVersionUID = 6832545210562543525L;       
-            
+        
     private String nameSearche;             //поиск в поле name
     private User authorSearche;             //поиск в поле автор
     private List<Integer> stateSearche;     //поиск по состояниям

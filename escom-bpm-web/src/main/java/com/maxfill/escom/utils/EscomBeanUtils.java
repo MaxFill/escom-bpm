@@ -40,17 +40,13 @@ public final class EscomBeanUtils {
     }
     
     public static String rusToEngTranlit (String text){
-        String[] abcCyr = {"a","б","в","г","д","ё","ж","з","и","к","л","м","н","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
-        String[] abcLat = {"a","b","v","g","d","jo","zh","z","i","k","l","m","n","p","r","s","t","u","ch","f","h","ts","sh","sch","","e","ju","ja"};
+        String[] abcCyr = {"a","б","в","г","д","е","ё","ж","з","и","й","к","л","м","н","п","о","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
+        String[] abcLat = {"a","b","v","g","d","e","jo","zh","z","i","j","k","l","m","n","o","p","r","s","t","u","ch","f","h","ts","sh","sch","","e","ju","ja"};
         return StringUtils.replaceEach(text, abcCyr, abcLat);
     }
     
     /* Инициализация областей обозревателя */
     public static void initLayoutOptions(LayoutOptions layoutOptions){
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        layoutOptions.setPanesOptions(panes);
-
         LayoutOptions north = new LayoutOptions();
         north.addOption("resizable", false);
         north.addOption("closable", false);
@@ -68,12 +64,15 @@ public final class EscomBeanUtils {
         west.addOption("minSize", 150);
         west.addOption("maxSize", 500);
         west.addOption("resizable", true);
+        west.addOption("initClosed", false);
         layoutOptions.setWestOptions(west);
 
         LayoutOptions east = new LayoutOptions();
         east.addOption("size", 300);
         east.addOption("minSize", 150);
         east.addOption("maxSize", 450);
+        east.addOption("resizable", true);
+        east.addOption("initClosed", false);
         layoutOptions.setEastOptions(east);
 
         LayoutOptions center = new LayoutOptions();
@@ -83,7 +82,7 @@ public final class EscomBeanUtils {
         center.addOption("size", 950);
         center.addOption("minWidth", 400);
         center.addOption("minHeight", 200);
-        layoutOptions.setCenterOptions(center);
+        layoutOptions.setCenterOptions(center);        
     }
     
     public static void initCardLayout(LayoutOptions layoutOptions){
@@ -133,6 +132,11 @@ public final class EscomBeanUtils {
         LayoutOptions center = layoutOptions.getCenterOptions();
         LayoutOptions childCenterOptions = new LayoutOptions();
         center.setChildOptions(childCenterOptions);
+        
+        LayoutOptions centerSouth = new LayoutOptions();
+        centerSouth.addOption("size", "15%");
+        childCenterOptions = layoutOptions.getCenterOptions().getChildOptions();
+        childCenterOptions.setSouthOptions(centerSouth);
     }    
     
     /* Получение bean по его имени */

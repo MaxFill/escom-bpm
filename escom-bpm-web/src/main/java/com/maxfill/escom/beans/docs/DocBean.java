@@ -92,8 +92,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         List<Folder> groups = new ArrayList<>();
         groups.add(item.getOwner());
         return groups;
-    }                                     
-
+    }
+    
     @Override
     public DocFacade getItemFacade() {
         return docsFacade;

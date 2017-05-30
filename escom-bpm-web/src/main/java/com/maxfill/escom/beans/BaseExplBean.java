@@ -16,7 +16,6 @@ import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import java.lang.reflect.InvocationTargetException;
 import org.primefaces.context.RequestContext;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 import java.text.MessageFormat;
 import java.util.*;
@@ -28,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 /* Базовый bean справочников  */
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = -4409411219233607045L; 
-    private final LayoutOptions layoutOptions = new LayoutOptions(); 
        
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
     public abstract BaseExplBean getDetailBean();       //возвращает бин подчинённых объектов
@@ -36,8 +34,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     @Override
     public void onInitBean(){
-        EscomBeanUtils.initLayoutOptions(layoutOptions);
-        initAddLayoutOptions(layoutOptions);
     }
 
     /* Формирование списка детальных данных в таблице обозревателя  */
@@ -405,7 +401,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         options.put("width", 1350);
         options.put("height", 700);
         options.put("maximizable", true);
-        options.put("minimizable", true);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
@@ -505,21 +500,12 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().replaceItem(oldItem, newItem);
     }
         
-    /* Инициализация дополнительных областей формы обозревателя */
-    protected void initAddLayoutOptions(LayoutOptions layoutOptions) {
-        EscomBeanUtils.initAddLayoutOptions(layoutOptions);
-    }
    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */
     public void doGetCountUsesItem(T item, Map<String, Integer> rezult) {
         rezult.put("CheckObjectNotSet", 0);
     }
-
-    /* GETS & SETS */
        
     public abstract Class<O> getOwnerClass();        
  
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }
 }
