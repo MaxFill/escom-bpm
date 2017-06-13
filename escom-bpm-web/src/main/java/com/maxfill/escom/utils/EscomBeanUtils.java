@@ -6,6 +6,11 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -21,6 +26,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
@@ -316,8 +323,7 @@ public final class EscomBeanUtils {
         String titleError = bundle.getString(key1);
         String template = bundle.getString(key2);
         String msgError = MessageFormat.format(template, messageParameters);
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, titleError, msgError);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, titleError, msgError));
     }
 
     /* Возвращает значение из msg по ключу  */
@@ -335,7 +341,7 @@ public final class EscomBeanUtils {
     }
     
     /* Открытие карточки объекта  */
-    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Double, Double> size) {
+    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Integer, Integer> size) {
         Map<String, Object> options = new HashMap<>();
         //options.put("headerElement", formName + ":btnClose");
         options.put("resizable", true);
@@ -357,7 +363,7 @@ public final class EscomBeanUtils {
     }    
     
     /* Открытие карточки диалога */
-    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramMap, Tuple<Double, Double> size) {
+    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramMap, Tuple<Integer, Integer> size) {
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
@@ -434,4 +440,29 @@ public final class EscomBeanUtils {
         return sb.toString();
     }   
 
+    /* Сжимает строку */
+    public static byte[] compress(String data) throws IOException {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+            GZIPOutputStream gzip = new GZIPOutputStream(bos);
+            gzip.write(data.getBytes());
+            gzip.close();
+            byte[] compressed = bos.toByteArray();
+            bos.close();
+            return compressed;
+    }
+	
+    public static String decompress(byte[] compressed) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(compressed);
+        GZIPInputStream gis = new GZIPInputStream(bis);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while((line = br.readLine()) != null) {
+                sb.append(line);
+        }
+        br.close();
+        gis.close();
+        bis.close();
+        return sb.toString();
+    }
 }

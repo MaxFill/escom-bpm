@@ -49,8 +49,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.commons.lang.StringUtils;
-import org.primefaces.extensions.component.layout.LayoutPane;
-import org.primefaces.extensions.event.OpenEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
 
@@ -132,13 +130,13 @@ public class ExplorerBean implements Serializable {
         
     @PostConstruct
     public void init() {        
-        System.out.println("Создан explorerBean="+ this.toString());
+       // System.out.println("Создан explorerBean="+ this.toString());
     }     
     
     @PreDestroy
     private void destroy(){
         //sessionBean.saveLayoutOptions(layoutOptions, getFrmName());
-        System.out.println("Удалён explorerBean="+ this.toString());
+        //System.out.println("Удалён explorerBean="+ this.toString());
     }
     
     /* Cобытие при открытии формы обозревателя/селектора  */
@@ -1463,9 +1461,8 @@ public class ExplorerBean implements Serializable {
     
     public void onUploadFile(FileUploadEvent event) throws IOException{     
         UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
-        User author = sessionBean.getCurrentUser();
-        String uploadPath = sessionBean.getConfiguration().getUploadPath();
-        Attaches attache = FileUtils.doUploadAtache(uploadedFile, author, uploadPath);
+        User author = sessionBean.getCurrentUser();        
+        Attaches attache = FileUtils.doUploadAtache(uploadedFile, author, sessionBean.getConfiguration());
         createParams.put("attache", attache);
     }
         

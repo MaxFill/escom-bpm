@@ -12,7 +12,6 @@ public final class DictMetadatesIds {
     public static final Integer OBJ_GROUPS_PARTNERS = 5;
     public static final Integer OBJ_GROUPS_USERS = 6;
     public static final Integer OBJ_DOCS_TYPES = 7;
-    public static final Integer OBJ_STATES = 8;
     public static final Integer OBJ_STAFFS = 9;
     public static final Integer OBJ_COMPANY = 10;
     public static final Integer OBJ_DEPARTAMENTS = 11;

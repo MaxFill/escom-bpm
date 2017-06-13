@@ -8,10 +8,10 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
+import java.lang.reflect.InvocationTargetException;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -21,7 +21,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.apache.commons.beanutils.BeanUtils;
 
 /* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
@@ -32,6 +34,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private String itemOpenKey;      
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
+    private User owner;
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
     
     protected abstract void afterCreateItem(T item);
@@ -50,7 +53,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             T item = (T) tuple.b;
             setTypeEdit(tuple.a);
             setEditedItem(item);
-
+            owner = item.getAuthor();
+            
             //если создание!
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
                 addOwnerInGroups(item); //owner_а нужно добавить в группу
@@ -95,9 +99,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
     
     public boolean doSaveItem(){
-        Boolean isNeedUpdateExplore = false;
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
-            isNeedUpdateExplore = true;
             T item = getEditedItem();
             Set<String> errors = new LinkedHashSet<>();
             checkItemBeforeSave(item, errors);
@@ -106,9 +108,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 return Boolean.FALSE; 
             }
             onBeforeSaveItem(item);
+            owner = item.getAuthor();
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {                    
-                    getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
+                    getItemFacade().addLogEvent(item, EscomBeanUtils.getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
                     getItemFacade().edit(item);
                     break;
                 }
@@ -120,14 +123,20 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             onAfterSaveItem(item);
             setIsItemChange(Boolean.FALSE);
         }
-        return isNeedUpdateExplore;
+        return Boolean.TRUE;
     }
     
     /* Действия перед сохранением объекта  */
     protected void onBeforeSaveItem(T item) {
-        settingRightItem(item, item.getRightItem());
+        Rights newRight = makeRightItem(item);
+        if (newRight == null) return;
+        if (item.isInherits()) { //если галочка установлена, значит права наследуются                         
+            saveAccess(editedItem, "");                        
+        } else {
+            saveAccess(editedItem, newRight.toString()); //сохраняем права в XML
+        }
     }
-            
+
     /* Действия сразу после сохранения объекта перед закрытием его карточки */
     protected void onAfterSaveItem(T item){      
     }
@@ -190,8 +199,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     
     /* Получение и сохранение размеров формы */
     public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
-        Double x = event.getWidth() + 14;
-        Double y = event.getHeight() + 14;
+        Double width = event.getWidth();
+        Double height = event.getHeight();
+        Integer x = width.intValue() + 14;
+        Integer y = height.intValue() + 14;
         sessionBean.saveFormSize(getItemObjName(), x, y);
     }
      
@@ -213,6 +224,24 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setRightPageIndex(tabId);
     }
 
+    public void onChangeOwner(SelectEvent event){
+        List<User> items = (List<User>) event.getObject();
+        if (items.isEmpty()) return;
+        User item = items.get(0);
+        onItemChange();
+        getEditedItem().setAuthor(item);
+    }
+    public void onChangeOwner(ValueChangeEvent event){
+        User user = (User) event.getNewValue();
+        getEditedItem().setAuthor(user);
+    }
+    
+    public boolean lockChangeOwner(){
+        if (isReadOnly()) return true;
+        if (sessionBean.isUserAdmin()) return false;
+        return !currentUser.equals(owner);
+    }
+    
     /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
         Map<String, Object> params = prepareReportParams();
@@ -297,16 +326,31 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
         }        
         StringBuilder sb = new StringBuilder();
-        sb.append(getMessageLabel("ObjectDontHaveRightEdit")).append(getMessageLabel("CheckRights"));
+        sb.append(EscomBeanUtils.getMessageLabel("ObjectDontHaveRightEdit")).append(EscomBeanUtils.getMessageLabel("CheckRights"));
         errors.add(sb.toString());
     }    
     
-    private void checkCorrectItemRight(T item, Set<String> errors){
-        checkItemHaveRightEdit(item, errors);
-        checkRightsChilds(item, errors);
+    /* ПРАВА ДОСТУПА: Выполняет проверку на наличие у объекта права на просмотр */
+    private void checkItemHaveRightView(T item, Set<String> errors){
+        if (item.isInherits()) return;
+        Rights rights = item.getRightItem();
+        for (Right right : rights.getRights()){
+            if (right.isRead()){
+                return;
+            }
+        }        
+        StringBuilder sb = new StringBuilder();
+        sb.append(EscomBeanUtils.getMessageLabel("ObjectDontHaveRightView")).append(EscomBeanUtils.getMessageLabel("CheckRights"));
+        errors.add(sb.toString());
     }
     
-    protected void checkRightsChilds(T item, Set<String> errors){        
+    private void checkCorrectItemRight(T item, Set<String> errors){
+        checkItemHaveRightEdit(item, errors);
+        checkItemHaveRightView(item, errors);
+        checkRightsChilds(item, item.isInheritsAccessChilds(), errors);
+    }
+    
+    protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){        
     }
     
     /* ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии
@@ -332,12 +376,23 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* При изменении в карточке объекта опции "Наследование прав"  */
     public void onInheritsChange(ValueChangeEvent event) {
-        Boolean inherits = (Boolean) event.getNewValue();
-        if (inherits) { //если галочка установлена, то нужно скопировать права от владельца              
-            makeRightItem(editedItem);
-            rightFacade.prepareRightsForView(editedItem.getRightItem().getRights());
-            onItemChange();
-            EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
+        onItemChange();
+        if (Boolean.FALSE.equals((Boolean) event.getNewValue())) { //если галочка снята, значит права не наследуются и нужно скопировать права             
+            try {                    
+                Rights newRight = new Rights();
+                Rights rightDefs = getRightItem(editedItem);
+                for(Right rightDef : rightDefs.getRights()){
+                    Right right = new Right();
+                    BeanUtils.copyProperties(right, rightDef); 
+                    newRight.getRights().add(right);
+                }
+                editedItem.setInherits(Boolean.FALSE);
+                editedItem.setRightItem(newRight);
+                rightFacade.prepareRightsForView(newRight.getRights());                
+                EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -406,9 +461,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         String barcode = EscomUtils.getBarCode(editedItem, getMetadatesObj(), serverId); 
         return barcode;
     }
-    
-    /* GET & SET  */
-        
+
+    /* GETS & SETS  */
+    public User getOwner() {
+        return owner;  //пользователь, владелец объекта
+    }
+
     public Integer getRightPageIndex() {
         return rightPageIndex;
     }

@@ -162,9 +162,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
 
     /* Возвращает номер текущей версии документа */
     public Integer getCurrentVersionNumber() {
-        if (getAttache() == null) {
-            return null;
-        } 
+        if (getAttache() == null) return null; 
         return getAttache().getNumber();        
     }
 
@@ -196,6 +194,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         return builder.toString();
     }
     
+    public String getTypeName(){        
+        if (docType == null) return ItemUtils.getBandleLabel("NotSpecified");
+        return docType.getNameEndElipse();
+    }
+     
     public Partner getPartner() {
         return partner;
     }
@@ -222,7 +225,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     }
     public void setDocType(DocType docType) {
         this.docType = docType;
-    }
+    } 
 
     public DocDou getDocsDou() {
         return docsDou;

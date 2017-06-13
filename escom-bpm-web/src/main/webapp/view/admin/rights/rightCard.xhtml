@@ -67,16 +67,15 @@
                                 </p:selectOneMenu>
 
                                 <p:outputLabel value="#{bundle.ForGroup}"/>
-                                <p:radioButton id="optGroup" for="rbRightType" itemIndex="0" />                        
-                                <p:selectOneMenu id="selGroup" value="#{rightCardBean.selUsGroup}"  filter="true" filterMatchMode="startsWith" 
+                                <p:radioButton id="optGroup" for="rbRightType" itemIndex="0" />
+                                <p:selectOneMenu id="selGroup" value="#{rightCardBean.selUsGroup}"  filter="true" filterMatchMode="startsWith"
                                                  valueChangeListener="#{rightCardBean.onGroupChange}" style="width: 100%;"
-                                                 converter="groupsUserConvertor" 
+                                                 converter="groupsUserConvertor"
                                                  disabled="#{rightCardBean.selRight.objType == 1}" >
-                                    <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>                           
-                                    <f:selectItem itemValue="#{rightCardBean.selUsGroup}" itemLabel="#{rightCardBean.selUsGroup.name}" />
+                                    <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
                                     <p:ajax event="change" update=":frmRightEdit:lbRightName" oncomplete="itemChange = 1;"/>
-                                </p:selectOneMenu>  
-                            </p:panelGrid>   
+                                </p:selectOneMenu>
+                            </p:panelGrid>
 
                             <p:separator />
 

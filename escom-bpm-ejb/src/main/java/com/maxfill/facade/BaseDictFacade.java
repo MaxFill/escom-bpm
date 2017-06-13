@@ -8,8 +8,6 @@ import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.Tuple;
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +25,6 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
-import org.apache.commons.beanutils.BeanUtils;
 
 /**
  * Абстрактный фасад для справочников
@@ -98,11 +95,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return q.getResultList();
     }
     
-    /**
-     * Отбор объектов, созданных пользователем
-     * @param user
-     * @return 
-     */
+    /* Отбор объектов, созданных пользователем  */
     public List<T> findItemsCreatedByUser(User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -168,7 +161,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return q.getResultList();
     }                       
                           
-    /* *** ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ *** */
+    /* ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ */
 
     /* Добавление события в журнал событий */
     public void addLogEvent(T item, String msgKey, User user) {
@@ -256,11 +249,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     protected abstract Integer getMetadatesObjId();
     public abstract String getFRM_NAME();
     
-    /**
-     * Отбор объектов, изменённых пользователем
-     * @param user 
-     * @return  
-     */
     public List<T> findLastChangedItemsByUser(User user){    
         Date lastDate = DateUtils.addMounth(new Date(), -1);
 
@@ -290,11 +278,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return results;
     }    
 
-    /**
-     * Получение списка объектов по их Id
-     * @param ids
-     * @return 
-     */
     public List<T> findByIds(List<Integer> ids){
         if (!ids.isEmpty()){
             getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);

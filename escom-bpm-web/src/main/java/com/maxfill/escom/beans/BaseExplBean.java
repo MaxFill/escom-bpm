@@ -183,7 +183,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Открытие карточки объекта*/
-    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){
+    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return;
@@ -204,7 +204,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, currentUser);
         String cardName = item.getClass().getSimpleName().toLowerCase();
         EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
-    }     
+    }         
     
     /* Обработка перед добавлением объекта в группу  */
     public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
@@ -223,6 +223,17 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
 
+    private void checkLockItem(T item, Set<String> errors){
+        String itemKey = item.getItemKey();
+        Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
+        if (userLockId != null){
+            User user = rightFacade.findUserById(userLockId);
+            Object[] messageParameters = new Object[]{item.getName(), user.getName()};
+            String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
+            errors.add(error);            
+        }
+    }
+        
     /* РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу  */
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
         actualizeRightItem(dropItem);
@@ -292,14 +303,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      * При удалении объекта из корзины проверок не выполняется */
         
     /* УДАЛЕНИЕ: Проверка возможности удаления объекта. Переопределяется в бинах  */
-    protected void checkAllowedDeleteItem(T item, Set<String> errors) {
+    protected void checkAllowedDeleteItem(T item, Set<String> errors) {        
         if (CollectionUtils.isNotEmpty(item.getChildItems())) {
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
             errors.add(error);
         }
-    }
-    
+    }    
     
     /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
     public void deleteItem(T item) {
@@ -356,10 +366,11 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
 
     /* КОРЗИНА: перемещение объекта в корзину */
-    public void moveToTrash(T item, Set<String> errors) {
+    public void moveToTrash(T item, Set<String> errors) {        
         actualizeRightItem(item);
         if (isHaveRightDelete(item)) {
-            checkAllowedDeleteItem((T)item, errors);
+            checkAllowedDeleteItem(item, errors);
+            checkLockItem(item, errors);
             if (errors.isEmpty()) {
                 Set<String> errDetail = new HashSet<>();
                 moveDetailItemsToTrash(item, errDetail);
@@ -468,7 +479,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* ПОИСК: Выполняет поиск объектов */
     public List<T> doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
         List<T> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
-        if (!searcheGroups.isEmpty()){            
+        if (searcheGroups.isEmpty()){            
             return prepareSetDetails(sourceItems);
         } else {
             List<T> searcheItems = new ArrayList<>();

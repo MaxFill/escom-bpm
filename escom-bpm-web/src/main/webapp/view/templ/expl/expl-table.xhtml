@@ -51,7 +51,7 @@
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
                            rendered="#{explorerBean.isItemDetailType(item) or explorerBean.isItemRootType(item)}"
                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                           oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();">
+                           oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();">
             </p:commandLink>
         </p:column>
 
@@ -75,13 +75,13 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.AuthorChanges}" priority="4"
-                  rendered="#{_showAuthor != false}"
+        <p:column headerText="#{bundle.Owner}" priority="4"
+                  rendered="#{_showAuthor == true}"
                   sortBy="#{item.author.shortFIO}">
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" style="width:15px;" priority="5">
+        <p:column headerText="Id" style="width:15px;" priority="5" rendered="#{_showId == true}">
             #{item.id}
         </p:column>
 
@@ -103,7 +103,7 @@
                            rendered="#{!item.deleted and explorerBean.explorerViewMode}">
                 <p:menuitem icon="ui-icon-search" value="#{bundle.View}" title="#{bundle.View}"
                             actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
+                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"

@@ -45,7 +45,13 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         if (!item.isInherits()) {
             return getActualRightItem(item);
         } 
-        return ownerBean.getRightForChild(item.getOwner());  
+        if (item.getOwner() != null) {
+            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав 
+            if (childRight != null){
+                return childRight;
+            }
+        }
+        return getDefaultRights(item);  
     }
     
     /* Подготовка к просмотру документа */

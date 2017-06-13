@@ -16,6 +16,7 @@ import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -75,12 +76,12 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     
     @Column(name = "LDAPname")
     private String LDAPname;
-         
-    @Column(name = "Settings")
-    private String userSettings; 
+    
+    @Lob
+    @Column(name = "Settings", length = 1024)
+    private byte[] userSettings; 
      
-    @Column(name = "EmailSign")
-    @Size(max = 2048)
+    @Column(name = "EmailSign", length = 2048)
     private String emailSign;
     
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
@@ -187,12 +188,12 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
         this.usersGroupsList = usersGroupsList;
     }   
 
-    public String getUserSettings() {
+    public byte[] getUserSettings() {
         return userSettings;
     }
-    public void setUserSettings(String userSettings) {
+    public void setUserSettings(byte[] userSettings) {
         this.userSettings = userSettings;
-    }    
+    }  
 
     public String getPhone() {
         return phone;

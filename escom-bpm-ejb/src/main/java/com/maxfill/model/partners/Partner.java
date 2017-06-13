@@ -66,10 +66,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Column(name = "FullName")
     @Size(max = 512)
     private String fullName;     
-    
-    /**
-     * E-mail
-     */
+
     @Column(name = "Email")
     @Size(max = 256)
     private String email;    
@@ -105,10 +102,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         this.itemLogs = itemLogs;
     }
     
-    /**
-     * Формирует наименование Контрагента ограниченной длинны, заканчивающуюся точками для отображения в таблицах
-     * @return 
-     */
     @Override
     public String getNameEndElipse(){
         StringBuilder builder = new StringBuilder();        
@@ -119,10 +112,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         return builder.toString();
     }
     
-    /**
-     * Формирует титульное название организации
-     * @return 
-     */
     public String getTitleName(){
         StringBuilder builder = new StringBuilder();        
         if (type != null){

@@ -28,7 +28,6 @@
     
     <ui:define name="toolbarExt">
         <p:commandButton value="#{bundle.ActiveUsers}" 
-                         title="#{bundle.ActiveUsers}" 
                          icon="ui-icon-extlink"                         
                          actionListener="#{userBean.onActiveUsersFormShow()}">
             <p:ajax event="dialogReturn" update="#{_frmExpl}"/>

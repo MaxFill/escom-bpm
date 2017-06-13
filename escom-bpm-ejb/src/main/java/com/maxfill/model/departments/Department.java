@@ -58,12 +58,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DepartamentLog> itemLogs = new ArrayList<>();
-    
-    /* Руководитель подразделения */
-    @JoinColumn(name = "Chief", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Staff chief;
-    
+        
     @Basic(optional = false)
     @Size(max=50)
     @Column(name = "Code")
@@ -120,13 +115,6 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     }
     public void setDepartmentList(List<Department> departmentList) {
         this.departmentList = departmentList;
-    }
-
-    public Staff getChief() {
-        return chief;
-    }
-    public void setChief(Staff chief) {
-        this.chief = chief;
     }
 
     public List<Staff> getStaffList() {

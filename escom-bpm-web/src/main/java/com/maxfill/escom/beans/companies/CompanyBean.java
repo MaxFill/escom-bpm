@@ -124,7 +124,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     
     /* Проверка возможности удаления company */
     @Override
-    protected void checkAllowedDeleteItem(Company company, Set<String> errors){
+    protected void checkAllowedDeleteItem(Company company, Set<String> errors){       
         if (departmentFacade.findDepartmentByCompany(company).size() >1){ //одно подразделение служебное и его не надо учитывать!
             Object[] messageParameters = new Object[]{company.getName()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("CompanyUsedInDepartaments"), messageParameters);

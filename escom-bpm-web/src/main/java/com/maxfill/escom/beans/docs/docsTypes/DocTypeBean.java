@@ -54,7 +54,10 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         } 
  
         if (item.getOwner() != null) {
-            return ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав 
+            if (childRight != null){
+                return childRight;
+            }
         }
 
         return getDefaultRights(item);

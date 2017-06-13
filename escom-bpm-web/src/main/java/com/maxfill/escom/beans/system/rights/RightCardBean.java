@@ -63,7 +63,7 @@ public class RightCardBean extends BaseDialogBean{
             switch (editMode){
                 case DictEditMode.INSERT_MODE:{
                     Integer stateId = Integer.valueOf(params.get("stateId"));
-                    State state = stateFacade.find(stateId);
+                    State state = (State) stateFacade.find(stateId);
                     selRight = new Right(0, 0, null, "<Не указано!>", state);
                     break;
                 }

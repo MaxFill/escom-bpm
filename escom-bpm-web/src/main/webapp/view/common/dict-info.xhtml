@@ -5,18 +5,15 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <p:tab title="#{bundle.Info}">        
-        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-8 col-padding" styleClass="ui-grid-col-12 col-padding" >           
-            <h:panelGroup id="cbActualInfoPanel">
-                <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding" >           
+            <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
                                          title="#{_bean.getActualInfo()}"
                                          itemLabel="#{bundle.Actual}"
                                          disabled="#{_bean.isReadOnly()}">
                     <p:ajax process="@this" 
-                            update="cbActualInfoPanel" 
+                            update="cbActual" 
                             oncomplete="itemChange = 1;"/>
-                </p:selectBooleanCheckbox> 
-            </h:panelGroup>      
-            <p:spacer/>
+            </p:selectBooleanCheckbox>
             
             <p:outputLabel value="#{bundle.State}"/>
             <p:inputText  value="#{_bean.editedItem.state.name}" readonly="true"
@@ -26,28 +23,33 @@
 
             <p:outputLabel value="#{bundle.DateCreate}" />                            
             <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
-                         styleClass="ui-grid-col-12"
                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
                 <f:convertDateTime parent="dd.mm.yy"/>
             </p:inputText>
 
             <p:outputLabel value="#{bundle.DateChange}" />
             <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
-                         styleClass="ui-grid-col-12"
                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
                 <f:convertDateTime parent="dd.mm.yy"/>
             </p:inputText>
 
-            <p:outputLabel value="#{bundle.AuthorChanges}" />
-            <p:inputText value="#{_bean.editedItem.author.shortFIO}" readonly="true"
-                         styleClass="ui-grid-col-12"
-                         onkeypress="checkEsc(#{_bean.cancelBtnName});">
-                <f:convertDateTime parent="dd.mm.yy"/>
-            </p:inputText>
-
+            <p:outputLabel value="#{bundle.Owner}" />
+            <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.author}"/>
+                    <ui:param name="_required" value="#{true}" />
+                    <ui:param name="_disabled" value="#{_bean.lockChangeOwner()}"/>
+                    <ui:param name="_converter" value="usersConvertor" />
+                    <ui:param name="_itemPanel" value="ownerPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.ChangeOwner}"/>
+                    <ui:param name="_selectorBean" value="#{userBean}"/>
+                    <ui:param name="_items" value="#{userBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setAuthor"/>
+                    <ui:param name="_actionSelect" value="onChangeOwner"/>
+                    <ui:param name="_update" value=""/>
+            </ui:include>            
+            
             <p:outputLabel value="Id:" />
             <p:inputText value="#{_bean.editedItem.id}" readonly="true"
-                         styleClass="ui-grid-col-12"
                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
             </p:inputText>
 

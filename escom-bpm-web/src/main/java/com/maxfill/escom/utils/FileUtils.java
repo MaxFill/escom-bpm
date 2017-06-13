@@ -1,9 +1,9 @@
 package com.maxfill.escom.utils;
 
+import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.Tuple;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,11 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,8 +20,7 @@ import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.io.FilenameUtils;
-import org.primefaces.context.RequestContext;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -101,7 +96,8 @@ public final class FileUtils {
     }
 
     /* Загрузка файла на сервер  */
-    public static Attaches doUploadAtache(UploadedFile uploadFile, User user, String uploadPath) throws IOException {
+    public static Attaches doUploadAtache(UploadedFile uploadFile, User user, Configuration conf) throws IOException {
+        String uploadPath = conf.getUploadPath();
         Attaches attache = new Attaches();
         if (uploadFile != null) {
             int length = uploadFile.getContents().length;
@@ -132,7 +128,7 @@ public final class FileUtils {
                     outputStream.write(bytes, 0, read);
                 }
                 if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
-                    makeCopyToPDF(basePath);
+                    makeCopyToPDF(basePath, conf.getConvertorPDF());
                 }
             } catch (IOException e) {
                 Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
@@ -148,12 +144,14 @@ public final class FileUtils {
         return attache;
     }
 
-    public static void makeCopyToPDF(String file){
+    public static void makeCopyToPDF(String file, String convertor){
+        if (StringUtils.isBlank(convertor)) return;
         try {            
-            CommandLine commandLine = CommandLine.parse("unoconv.cmd");
+            CommandLine commandLine = CommandLine.parse(convertor);
             commandLine.addArgument("-f");
             commandLine.addArgument("pdf");
             commandLine.addArgument(file);
+            //System.out.println("Command line = " + commandLine.toString());
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
             executor.execute(commandLine);

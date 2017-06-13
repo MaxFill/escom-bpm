@@ -21,16 +21,10 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Класс сущности служб
- * @author mfilatov
- */
+/*  Системные службы */
 @Entity
 @Table(name = "services")
 public class Services implements Serializable {
-    @Lob
-    @Column(name = "TimeHandle")
-    private byte[] timeHandle;
     private static final long serialVersionUID = -4878024303594842658L;
     
     @TableGenerator(
@@ -59,15 +53,16 @@ public class Services implements Serializable {
     @Column(name = "Sheduler")
     private String sheduler;
        
-    /**
-     * Признак того, что сервис
-     */
     @Column(name = "Started")
     private Boolean started = false;
     
     @Column(name = "DateNextStart")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateNextStart;
+      
+    @Lob
+    @Column(name = "TimeHandle")
+    private byte[] timeHandle;
         
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId", orphanRemoval=true)
     private List<ServicesEvents> servicesEventsList;

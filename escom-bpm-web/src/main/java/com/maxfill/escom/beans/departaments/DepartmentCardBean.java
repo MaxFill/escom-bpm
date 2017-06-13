@@ -4,21 +4,14 @@ import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.companies.Company;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.utils.SysParams;
-import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
 /* Карточка подразделения  */
@@ -68,26 +61,11 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
         }
         Company company = findCompany(getEditedItem());
         return company.getName();
-    }
+    }    
     
-    /* Обработка события выбора руководителя на карточке  */
-    public void onChiefSelected(SelectEvent event){
-        List<Staff> items = (List<Staff>) event.getObject();
-        if (items.isEmpty()){return;}
-        Staff item = items.get(0);
-        onItemChange();
-        getEditedItem().setChief(item );
-    }
-    public void onChiefSelected(ValueChangeEvent event){        
-        Staff staff = (Staff) event.getNewValue();
-        getEditedItem().setChief(staff);
-        onItemChange();
-    }  
-    
-
     /* Проверка на наличие у объекта корректных прав доступа */
     @Override
-    protected void checkRightsChilds(Department item, Set<String> errors){ 
+    protected void checkRightsChilds(Department item, Boolean isInheritsAccessChilds, Set<String> errors){ 
         //Подразделение может наследовать права доступа для дочерних объектов от компании
     }
     

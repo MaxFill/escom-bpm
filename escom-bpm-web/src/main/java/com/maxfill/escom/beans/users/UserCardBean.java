@@ -49,6 +49,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
          
     @Override
     protected void checkItemBeforeSave(User user, Set<String> errors) {       
+        super.checkItemBeforeSave(user, errors);
         String login = user.getLogin();
         Integer userId = user.getId();
         List<User> existUsers = getItemFacade().findByLoginExcludeId(login, userId);

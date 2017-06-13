@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import static com.maxfill.escom.beans.BaseBean.LOGGER;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
@@ -8,11 +9,14 @@ import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
+import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.event.SelectEvent;
 
 /* Базовый бин карточек древовидных объектов */
@@ -36,26 +40,36 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
 
     /* Обработка события изменения наследования дочерних прав объекта */
     public void onInheritsChildsRightChange(ValueChangeEvent event) {
+        onItemChange();
+        Set<String> errors = new LinkedHashSet<>();
         Boolean inherit = (Boolean) event.getNewValue();
-        if (inherit) {
-            Set<String> errors = new LinkedHashSet<>();
-            getEditedItem().setInheritsAccessChilds(inherit);
-            checkRightsChilds(getEditedItem(), errors);
-            if (!errors.isEmpty()){
-                EscomBeanUtils.showErrorsMsg(errors);
-                return;
-            }
-            getTreeBean().makeRightForChilds(getEditedItem());
-            rightFacade.prepareRightsForView(getEditedItem().getRightForChild().getRights());
-            onItemChange();
-            EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
+        checkRightsChilds(getEditedItem(), inherit, errors);
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
+            try {
+                Rights childRights = new Rights();
+                Rights childDef = getTreeBean().getRightForChild(getEditedItem());
+                for(Right rightDef : childDef.getRights()){
+                    Right right = new Right();
+                    BeanUtils.copyProperties(right, rightDef); 
+                    childRights.getRights().add(right);
+                }
+                getEditedItem().setRightForChild(childRights);
+                rightFacade.prepareRightsForView(childRights.getRights());                
+                EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }                         
         }
     }
     
     /* Проверка на наличие у объекта корректных прав доступа для дочерних объектов */
     @Override
-    protected void checkRightsChilds(T item, Set<String> errors){ 
-        if (item.isInheritsAccessChilds() && item.getParent() == null){
+    protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){ 
+        if (isInheritsAccessChilds && item.getParent() == null){
             errors.add(getMessageLabel("RightsChildInheritIncorrect"));
         }
     }
@@ -125,7 +139,12 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     
     @Override
     protected void onBeforeSaveItem(T item) {
-        getTreeBean().settingRightForChild(item, item.getRightForChild());
+        Rights newChildsRight = item.getRightForChild();
+        if (item.isInheritsAccessChilds()) { //если галочка установлена, значит права наследуются                         
+            saveAccessChild(getEditedItem(), "");                        
+        } else {
+            saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
+        }
         super.onBeforeSaveItem(item);
     }    
 }

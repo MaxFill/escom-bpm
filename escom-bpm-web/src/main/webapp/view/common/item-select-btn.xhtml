@@ -11,6 +11,10 @@
             <p:ajax event="dialogReturn" listener="#{_bean[_actionSelect]}" 
                     update="#{_update} #{_itemPanel}"/>
         </p:commandButton>
+        <p:commandButton id="#{_itemPanel}_btnOpenCard" actionListener="#{_selectorBean.prepEditItem(_itemValue)}"
+                         style="display: none;">
+            <p:ajax event="dialogReturn" update="#{_itemPanel}"/>
+        </p:commandButton>
         
         <h:panelGrid id="#{_itemPanel}" columns="2" columnClasses="ui-grid-col-10 col-padding, ui-grid-col-2 col-padding pull-right"
                      styleClass="ui-grid-col-12 col-padding" style="border-collapse: collapse; border:0px;">
@@ -21,7 +25,7 @@
                              required="#{param['isRequired'] == _required}" 
                              requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
                              filter="true" filterMatchMode="startsWith">
-                <p:ajax update="#{_itemPanel}" partialSubmit="true" oncomplete="itemChange = 1;"/>
+                <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
                 <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.name}"/>
                 <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                 <f:converter converterId="#{_converter}" />
@@ -31,7 +35,7 @@
                             styleClass="ui-grid-col-12" style="float: right;"
                             onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">                
                 <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
-                            action="#{_selectorBean.prepEditItem(_itemValue)}"
+                            onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btnOpenCard').click();"
                             disabled="#{_disabled or _itemValue == null}"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"

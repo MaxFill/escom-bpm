@@ -121,7 +121,7 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>numeratorPattern-card</from-outcome>
+            <from-outcome>numeratorpattern-card</from-outcome>
             <to-view-id>/view/admin/numPattern/num-pattern-сard.xhtml</to-view-id>
         </navigation-case>
          
@@ -166,7 +166,7 @@
         
         <navigation-case>
             <from-outcome>user-settings</from-outcome>
-            <to-view-id>/view/admin/user/user-settings.xhtml</to-view-id>
+            <to-view-id>/view/admin/users/user-settings.xhtml</to-view-id>
         </navigation-case>       
         
         <navigation-case>
@@ -208,7 +208,7 @@
         </navigation-case>    
    
         <navigation-case>
-            <from-outcome>partnertype-card</from-outcome>
+            <from-outcome>partnertypes-card</from-outcome>
             <to-view-id>/view/partners/types/partnertype-сard.xhtml</to-view-id>
             <redirect />
         </navigation-case>

@@ -150,6 +150,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
         this.docTypeDefault = docTypeDefault;
     }        
     
+    public String getTypeName(){
+        return ItemUtils.getBandleLabel("FolderType");
+    }
+    
     @Override
     public Integer getId() {
         return id;

@@ -9,6 +9,10 @@
         <param-value>liquibase/changesets.xml</param-value>
     </context-param>
     <context-param>
+        <param-name>changelogSchemaName</param-name>
+        <param-value>escomdb</param-value>
+    </context-param>    
+    <context-param>
         <param-name>liquibase.datasource</param-name>
         <param-value>java:/EscomJNDI</param-value>
     </context-param>

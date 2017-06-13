@@ -3,10 +3,9 @@
   <persistence-unit name="com.maxfill.escombpm2PU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <jta-data-source>java:/EscomJNDI</jta-data-source>
-    <class>com.maxfill.model.docs.DocStatus</class>
     <class>com.maxfill.model.users.User</class>
     <class>com.maxfill.model.users.UserLog</class>
-    <class>com.maxfill.model.states.StateLog</class>
+    <class>com.maxfill.model.docs.DocStatus</class>
     <class>com.maxfill.model.states.State</class>
     <class>com.maxfill.model.attaches.Attaches</class>
     <class>com.maxfill.model.rights.Right</class>
@@ -30,8 +29,6 @@
     <class>com.maxfill.model.departments.Department</class>
     <class>com.maxfill.model.posts.Post</class>
     <class>com.maxfill.model.posts.PostLog</class>
-    <class>com.maxfill.model.users.groups.UserGroupsLog</class>
-    <class>com.maxfill.model.users.groups.UserGroups</class>
     <class>com.maxfill.model.partners.PartnersLog</class>
     <class>com.maxfill.model.partners.Partner</class>
     <class>com.maxfill.model.favorites.FavoriteObj</class>
@@ -43,14 +40,16 @@
     <class>com.maxfill.services.common.history.ServicesEvents</class>
     <class>com.maxfill.services.Services</class>
     <class>com.maxfill.services.mail.Mailbox</class>
-    <class>com.maxfill.model.metadates.MetadatesLog</class>
     <class>com.maxfill.model.metadates.Metadates</class>
     <class>com.maxfill.model.folders.Folder</class>
     <class>com.maxfill.model.folders.FolderLog</class>
     <class>com.maxfill.model.filters.Filter</class>
     <class>com.maxfill.model.filters.FilterLog</class>
     <class>com.maxfill.model.docs.docStatuses.DocStatuses</class>
+    <class>com.maxfill.model.users.groups.UserGroupsLog</class>
+    <class>com.maxfill.model.users.groups.UserGroups</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
       <property name="show_sql" value="true"/>

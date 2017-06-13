@@ -57,8 +57,10 @@ public abstract class BaseDialogBean implements Serializable{
 
     /* Получение и сохранение размеров формы */
     public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
-        Double x = event.getWidth() + 14;
-        Double y = event.getHeight() + 14;
+        Double width = event.getWidth();
+        Double height = event.getHeight();
+        Integer x = width.intValue() + 14;
+        Integer y = height.intValue() + 14;
         sessionBean.saveFormSize(getFormName(), x, y);
     }
     

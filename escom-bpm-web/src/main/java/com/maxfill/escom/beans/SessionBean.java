@@ -23,7 +23,7 @@ import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
-import com.maxfill.escom.beans.system.states.StateBean;
+import com.maxfill.escom.beans.system.numPuttern.NumeratorPatternBean;
 import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
@@ -32,7 +32,6 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
-import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -54,6 +53,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -123,7 +123,7 @@ public class SessionBean implements Serializable{
     @Inject
     private DocTypeGroupsBean docTypeGroupBean;
     @Inject
-    private StateBean stateBean;     
+    private NumeratorPatternBean numeratorPatternBean;
     
     @PostConstruct
     public void init() {
@@ -257,15 +257,23 @@ public class SessionBean implements Serializable{
                                "");
         String serverURL = reconstructedURL.toString();
         ectx.invalidateSession();
-        ectx.redirect(serverURL +ectx.getRequestContextPath() + page);   
+        StringBuilder sb = new StringBuilder();
+        sb.append(serverURL).append(ectx.getRequestContextPath()).append(page);
+        ectx.redirect(sb.toString());   
     }
 
     /* Сохранение настроек текущего пользователя в базу данных */
     private void doSaveUserSettings(){
-        currentUser = getRefreshCurrentUser();
-        userSettings.setTheme(primefacesTheme);
-        currentUser.setUserSettings(userSettings.toString());
-        userFacade.edit(currentUser);
+        if (userSettings == null) return;
+        try {
+            currentUser = getRefreshCurrentUser();
+            userSettings.setTheme(primefacesTheme);
+            byte[] compressXML = EscomBeanUtils.compress(userSettings.toString());
+            currentUser.setUserSettings(compressXML);
+            userFacade.edit(currentUser);
+        } catch (IOException ex) {
+            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /* Возвращает обновлённую версию текущего пользователя  */
@@ -320,17 +328,7 @@ public class SessionBean implements Serializable{
     
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", false);
-        options.put("modal", true);
-        options.put("width", 600);
-        options.put("height", 400);
-        options.put("maximizable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/admin/users/settings", options, null); 
+        openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
     }
     
     /* Открытие формы почтовой службы */
@@ -351,22 +349,7 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
-    }
-
-    /* Открытие формы изменения пароля пользователя */
-    public void openChangePassword(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", false);
-        options.put("modal", true);
-        options.put("width", 600);
-        options.put("height", 200);
-        options.put("maximizable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/admin/users/change-password", options, null);  
-    }
+    }    
     
     /* Переход на начальную страницу программы */
     public String goToIndex(){
@@ -419,9 +402,9 @@ public class SessionBean implements Serializable{
     } 
     
     /* Возврашает размеры формы карточки */
-    public Tuple<Double, Double> getFormSize(String formName){
-        Map<String, Tuple<Double, Double>> formsSize = userSettings.getFormsSize();
-        Tuple<Double, Double> rezult;
+    public Tuple<Integer, Integer> getFormSize(String formName){
+        Map<String, Tuple<Integer, Integer>> formsSize = userSettings.getFormsSize();
+        Tuple<Integer, Integer> rezult;
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
         } else {
@@ -430,8 +413,8 @@ public class SessionBean implements Serializable{
         }
         return rezult;
     }
-    public void saveFormSize(String formName, Double width, Double heaght){
-        Tuple<Double, Double> size = new Tuple(width, heaght);
+    public void saveFormSize(String formName, Integer width, Integer heaght){
+        Tuple<Integer, Integer> size = new Tuple(width, heaght);
         userSettings.getFormsSize().put(formName, size);
     }
     
@@ -464,10 +447,6 @@ public class SessionBean implements Serializable{
     public BaseExplBean getItemBeanByClassName(String className){
         BaseExplBean bean = null;
         switch(className){
-            case DictObjectName.STATE:{
-                bean = stateBean;
-                break;
-            }
             case DictObjectName.STAFF:{
                 bean = staffBean;
                 break;
@@ -524,7 +503,10 @@ public class SessionBean implements Serializable{
                 bean = companyBean;
                 break;
             }
-
+            case DictObjectName.NUMERATOR_PATTERN:{
+                bean = numeratorPatternBean;
+                break;
+            }
         }
         return bean;
     }   

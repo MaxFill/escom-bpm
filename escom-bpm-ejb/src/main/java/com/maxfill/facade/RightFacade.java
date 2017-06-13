@@ -14,10 +14,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-/**
- *
- * @author mfilatov
- */
 @Stateless
 public class RightFacade extends BaseFacade<Right> {           
     public RightFacade() {

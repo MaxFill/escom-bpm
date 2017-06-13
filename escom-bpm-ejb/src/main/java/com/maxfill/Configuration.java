@@ -23,6 +23,7 @@ public class Configuration {
     private String ldapServer;
     private String tempFolder;
     private String jasperReports;
+    private String convertorPDF;
     private Licence licence;
     private Integer serverId;
     
@@ -47,6 +48,7 @@ public class Configuration {
         serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
         tempFolder = (String) properties.get("TEMP_FOLDER");
         jasperReports = (String) properties.get("JASPER_REPORTS");
+        convertorPDF = (String) properties.get("CONVERTOR_PDF");
     }
     
     public String getUploadPath() {
@@ -72,6 +74,9 @@ public class Configuration {
     }  
     public String getJasperReports() {
         return jasperReports;
+    }
+    public String getConvertorPDF() {
+        return convertorPDF;
     }
     
 }

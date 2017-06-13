@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Rights;
+import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import org.primefaces.model.TreeNode;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXB;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,9 +24,10 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     private static final long serialVersionUID = -2983279513793115056L;                
         
     /* Формирование прав дочерних объектов */
-    public void makeRightForChilds(T item){
+    public Rights makeRightForChilds(T item){
         Rights childRights = getRightForChild(item);
-        settingRightForChild(item, childRights); 
+        item.setRightForChild(childRights);
+        return childRights;
     }
     
     /* Получение прав для дочерних объектов */
@@ -41,26 +46,24 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
             return getRightForChild(item.getOwner()); //получаем права от владельца
         }
 
-        return null;
-    } 
-            
+        return getDefaultRights();
+    }
+
     /* Получение актуальных прав дочерних объектов от объекта */
     private Rights getActualRightChildItem(T item) {
-        String childStrRight = item.getXmlAccessChild();
-        if (StringUtils.isNotBlank(childStrRight)){
-            Rights actualRight = (Rights) JAXB.unmarshal(new StringReader(childStrRight), Rights.class);
-            return actualRight;
+        Rights actualRight = null;
+        byte[] compressXML = item.getAccessChild();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String accessXML = EscomBeanUtils.decompress(compressXML);            
+                StringReader access = new StringReader(accessXML);         
+                actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
+            } catch (IOException ex) {
+                Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } 
-        return null;
-    } 
-    
-    /* Установка прав дочерних объектов */
-    public void settingRightForChild(T item, Rights newRight) {
-        if (item != null && newRight != null) {
-            item.setRightForChild(newRight);
-            item.setXmlAccessChild(newRight.toString());
-        }
-    } 
+        return actualRight;
+    }
     
     /* Установка специфичных атрибутов при создании объекта  */ 
     @Override

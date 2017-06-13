@@ -45,10 +45,12 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         User item = items.get(0);
         onItemChange();
         getEditedItem().setEmployee(item);
+        makeName();
     }
     public void onEmployeeSelected(ValueChangeEvent event){
         User user = (User) event.getNewValue();
         getEditedItem().setEmployee(user);
+        makeName();
     }
     
     /* Событие изменение на форме поля выбора должности  */
@@ -60,10 +62,12 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
             getEditedItem().setPost(item);
             onItemChange();
         }
+        makeName();
     }
     public void onPostSelected(ValueChangeEvent event){
         Post post = (Post) event.getNewValue();
         getEditedItem().setPost(post);
+        makeName();
     }
         
     /* Формирование наименования шт. единицы */

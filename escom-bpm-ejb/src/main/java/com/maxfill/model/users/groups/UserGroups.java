@@ -108,5 +108,5 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     public String toString() {
         return "com.maxfill.escombpm2.model.users.groups.UsersGroups[ id=" + id + " ]";
     }
-    
-}
+
+    }

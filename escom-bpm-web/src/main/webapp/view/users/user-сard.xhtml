@@ -8,7 +8,7 @@
     <ui:param name="_bean" value="#{userCardBean}"/>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Explorer}">  
+        <p:tab id="cardTab" title="#{bundle.User}">  
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
                          columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding" >
                 <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
@@ -19,8 +19,10 @@
                                  styleClass="ui-grid-col-12"
                                  disabled="#{_bean.isReadOnly()}"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 onchange="return itemChange = 1;"/>
-
+                                 onchange="return itemChange = 1;">
+                        <p:ajax event="change" listener="#{_bean.makeName()}" update="visbleName" />
+                    </p:inputText>
+                    
                     <p:outputLabel value="#{bundle.FirstName}" />
                     <p:inputText id="firstName" value="#{_bean.editedItem.firstName}"
                                  styleClass="ui-grid-col-12"
@@ -28,14 +30,18 @@
                                  onchange="return itemChange = 1;"
                                  disabled="#{_bean.isReadOnly()}"
                                  required="#{param['isRequired'] == 'true'}"
-                                 requiredMessage="#{bundle.Field} [#{bundle.FirstName}] #{bundle.MustBeFilled}"/>
+                                 requiredMessage="#{bundle.Field} [#{bundle.FirstName}] #{bundle.MustBeFilled}">
+                        <p:ajax event="change" listener="#{_bean.makeName()}" update="visbleName" />
+                    </p:inputText>
 
                     <p:outputLabel value="#{bundle.LastName}" />
                     <p:inputText id="lastName" value="#{_bean.editedItem.lastName}"
                                  disabled="#{_bean.isReadOnly()}"
                                  styleClass="ui-grid-col-12"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 onchange="return itemChange = 1;"/>
+                                 onchange="return itemChange = 1;">
+                        <p:ajax event="change" listener="#{_bean.makeName()}" update="visbleName" />
+                    </p:inputText>
 
                     <p:outputLabel value="#{bundle.EMail}" />
                     <p:inputText id="email" value="#{_bean.editedItem.email}" 

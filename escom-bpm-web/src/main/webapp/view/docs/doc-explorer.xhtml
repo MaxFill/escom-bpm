@@ -43,7 +43,7 @@
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocSelector')}"/>
     <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsExplorer')}"/>
     
-    <ui:param name="_showAuthor"      value="#{true}"/>
+    <ui:param name="_showAuthor"      value="#{false}"/>
     <ui:param name="_showDateCreate"  value="#{false}"/>
     <ui:param name="_showDateChange"  value="#{true}"/>    
     <ui:param name="_showUploadPanel" value="#{true}"/>
@@ -56,7 +56,8 @@
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
-            <h:outputText value="#{item.regNumber}"/>
+            <h:outputText value="#{item.typeName}"/>
+            <h:outputText value="#{item.regNumber}"/>            
         </p:column>
     </ui:define> 
     

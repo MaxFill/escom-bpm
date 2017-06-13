@@ -2,9 +2,7 @@ package com.maxfill.facade;
 
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,16 +12,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
-/**
- * Абстрактный фасад
- * @author Maxim
- * @param <T>   //класс объекта
- */
+/* Абстрактный фасад  */
 public abstract class BaseFacade<T> {
     private final Class<T> entityClass;
     protected static final Logger LOGGER = Logger.getLogger(BaseFacade.class.getName());
@@ -110,13 +100,6 @@ public abstract class BaseFacade<T> {
         return ((Long) q.getSingleResult()).intValue();
     }
     
-    /**
-     * Ищет объекты с наименованием itemName за исключением itemId на уровне равным parentId
-     * @param itemId - исключаемый из поиска объект
-     * @param parent - уровень, на котором выполняется поиск
-     * @param itemName - искомое имя
-     * @return true если есть нет таких объектов и false если есть такие объекты
-     */
     public Tuple findByNameExcludeId(Integer itemId, T parent, String itemName){
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -144,11 +127,6 @@ public abstract class BaseFacade<T> {
         }
     }
     
-    /**
-     * Возвращает дочерние объекты для указанного родителя
-     * @param parent
-     * @return 
-     */ 
     public List<T> findChilds(T parent){
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

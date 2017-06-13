@@ -11,6 +11,27 @@
     </ui:define>
 
     <ui:define name="body">
+        <script type="text/javascript">
+            var isClose = 0;
+
+            window.onbeforeunload = function (evt) {
+
+                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
+                if (typeof evt == "undefined") {
+                    evt = window.event;
+                }
+
+                if (isClose == 0) {
+                    if (evt) {
+                        evt.returnValue = message;
+
+                    }
+                    ;
+                    return message;
+                }
+            };
+
+        </script>
         <f:event listener="#{sessionBean.showNotifBar()}" type="preRenderView" />
 
         <h:form id="mainFRM" style="font-size: 90%">           
@@ -57,7 +78,8 @@
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>                        
                     <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
-                                     ajax="false" icon="ui-icon-extlink"
+                                     icon="ui-icon-extlink"
+                                     onstart="return isClose = 1;"
                                      action="#{sessionBean.onSessionExit()}"/>
                 </f:facet>
             </p:toolbar>
@@ -69,23 +91,18 @@
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
-                            <p:commandLink value="#{bundle.SettigsObject}"
-                                           ajax="false"
+                            <p:commandLink value="#{bundle.SettigsObject}" 
+                                           onstart="return isClose = 1;"
                                            action="objectsExpl"/>
-                            <p:commandLink value="#{bundle.ExplorerStates}"
-                                           ajax="false"
-                                           action="state-explorer"/>
                             <p:commandLink value="#{bundle.Users}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="user-explorer"/>
                             <p:commandLink value="#{bundle.Numerators}" title="#{bundle.NumeratorsPatterns}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="numPatternsExpl"/>
                             <p:commandLink value="#{bundle.Statuses}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="statusesdoc-explorer"/>
-                            <p:commandLink value="TEST" 
-                                           action="#{sessionBean.test()}"/>
                         </p:panelGrid>
                     </p:panel>
 
@@ -93,7 +110,7 @@
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
-                            <p:commandLink value="#{bundle.MailService}" title="#{bundle.MailService}"
+                            <p:commandLink value="#{bundle.MailService}" title="#{bundle.MailService}"                                           
                                            actionListener="#{sessionBean.openMailServiceForm()}"/>
                             <p:commandLink value="#{bundle.LdapService}" title="#{bundle.LdapService}"
                                            actionListener="#{sessionBean.openLdapService()}"/>
@@ -104,14 +121,10 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
-                            
-                            <p:separator />
-                            
+                                                        
                             <p:commandLink value="#{bundle.Settings}" 
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
-                            <p:commandLink value="#{bundle.ChangePassword}"
-                                           actionListener="#{sessionBean.openChangePassword()}"/>
-                            
+                            <p:separator />
                             <p:outputLabel value="#{bundle.ChooseTheme} "/>
                             <p:themeSwitcher effect="fade" var="t">
                                 <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
@@ -127,10 +140,10 @@
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.DocsExplorer}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="doc-explorer"/>
                             <p:commandLink value="#{bundle.DocsTypes}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="doctype-explorer"/>
                         </p:panelGrid>
                     </p:panel>
@@ -138,10 +151,10 @@
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:commandLink value="#{bundle.Posts}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="post-explorer"/> 
                             <p:commandLink value="#{bundle.OrgStructureExplorer}" 
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="staff-explorer"/>
                         </p:panelGrid>
                     </p:panel>
@@ -149,10 +162,10 @@
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.Partners}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="partner-explorer"/>
                             <p:commandLink value="#{bundle.PartnerTypes}"
-                                           ajax="false"
+                                           onstart="return isClose = 1;"
                                            action="partnertype-explorer"/>
                         </p:panelGrid>
                     </p:panel>

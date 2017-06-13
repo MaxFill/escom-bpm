@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
@@ -73,14 +74,14 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         
     @PostConstruct
     public void init() {
-        System.out.println("Создан бин =" + this.toString());
+        //System.out.println("Создан бин =" + this.toString());
         setCurrentUser(sessionBean.getCurrentUser());
         onInitBean();
     }
     
     @PreDestroy
     private void destroy(){
-        System.out.println("Удалён бин =" + this.toString());
+        //System.out.println("Удалён бин =" + this.toString());
     }
     
     public abstract void onInitBean();
@@ -115,9 +116,13 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     public void settingRightItem(BaseDict item, Rights newRight) {
         if (item != null) {
             item.setRightItem(newRight);
-            Integer mask = getAccessMask(item.getState(), newRight, currentUser);
-            item.setRightMask(mask);
-            item.setAccess(newRight.toString()); //сохраняем права в виде XML
+            Integer mask;
+            if (currentUser.equals(item.getAuthor())){
+                mask = 248; //полные права владельцу объекта
+            } else {
+                mask = getAccessMask(item.getState(), newRight, currentUser);
+            }             
+            item.setRightMask(mask);            
         }
     } 
     
@@ -223,6 +228,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
     private boolean checkUserInGroup(Integer groupId, User user) {
+        if (groupId == 0) return true; //группа ВСЕ
         for (UserGroups group : user.getUsersGroupsList()) {
             if (group.getId().equals(groupId)) {
                 return true;
@@ -264,20 +270,45 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         if (item.getRightItem() != null){
             return item.getRightItem();
         }
-        if (StringUtils.isNotBlank(item.getAccess())){
-            StringReader access = new StringReader(item.getAccess());         
-            Rights actualRight = (Rights) JAXB.unmarshal(access, Rights.class); //Демаршаллинг прав из строки! 
-            settingRightItem(item, actualRight);
-            return actualRight;
+        Rights actualRight = null;
+        byte[] compressXML = item.getAccess();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String accessXML = EscomBeanUtils.decompress(compressXML);            
+                StringReader access = new StringReader(accessXML);         
+                actualRight = (Rights) JAXB.unmarshal(access, Rights.class);  
+                settingRightItem(item, actualRight);
+            } catch (IOException ex) {
+                Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             throw new NullPointerException("EscomERR: Object " + item.getName() + " dont have xml right!");
-        }            
+        } 
+        return actualRight;
     }
     
     /* ПРАВА ДОСТУПА: дефолтные права доступа к объекту */
     public Rights getDefaultRights(){
         return appBean.getDefaultRights(getItemClass().getSimpleName());
     }                 
+    
+    public void saveAccess(T item, String xml){        
+        try {
+            byte[] compressXML = EscomBeanUtils.compress(xml);
+            item.setAccess(compressXML);
+        } catch (IOException ex) {
+            Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void saveAccessChild(T item, String xml){        
+        try {
+            byte[] compressXML = EscomBeanUtils.compress(xml);
+            item.setAccessChild(compressXML);
+        } catch (IOException ex) {
+            Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     /* *** *** *** */
     
@@ -332,7 +363,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     }
     
     public Attaches uploadAtache(UploadedFile file)throws IOException{
-        return FileUtils.doUploadAtache(file, currentUser, conf.getUploadPath());
+        return FileUtils.doUploadAtache(file, currentUser, conf);
     }
     
     public Integer getMaxFileSize(){

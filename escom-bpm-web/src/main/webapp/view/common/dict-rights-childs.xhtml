@@ -38,13 +38,13 @@
                         <p:column headerText="#{bundle.Commands}" style="text-align: center;">
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12 without-spaces, ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                                 <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" styleClass="without-spaces"
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds}"
                                                  actionListener="#{_bean.onEditRightChild(right)}" >
                                     <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:docRightsGrid"
                                                 listener="#{_bean.onCloseRightCard}"/>
                                 </p:commandButton>
                                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
-                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds or !_bean.isHaveRightChangeRight()}"
+                                                 disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds}"
                                                  update="tblRight"
                                                  actionListener="#{_bean.onDeleteRightChild(right)}">
                                 </p:commandButton>

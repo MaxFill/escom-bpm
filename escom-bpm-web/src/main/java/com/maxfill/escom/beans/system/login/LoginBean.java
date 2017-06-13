@@ -11,6 +11,7 @@ import com.maxfill.utils.SysParams;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
@@ -130,8 +131,14 @@ public class LoginBean implements Serializable{
         user.getUsersGroupsList().size();
         sessionBean.setCurrentUser(user);        
         UserSettings userSettings = new UserSettings();
-        if (StringUtils.isNotBlank(user.getUserSettings())){
-            userSettings = (UserSettings) JAXB.unmarshal(new StringReader(user.getUserSettings()), UserSettings.class);
+        byte[] compressXML = user.getUserSettings();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String settingsXML = EscomBeanUtils.decompress(compressXML);
+                userSettings = (UserSettings) JAXB.unmarshal(new StringReader(settingsXML), UserSettings.class);
+            } catch (IOException ex) {
+                Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         userSettings.setLanguage(selectedLang.getName());
         sessionBean.setUserSettings(userSettings);
@@ -199,10 +206,6 @@ public class LoginBean implements Serializable{
         return password;
     }
 
-    /**
-     * Возвращает признак блокировки формы логина после трёх неудачных попыток входа
-     * @return 
-     */
     public boolean isLoginLock(){
         if (countErrLogin > 2){
             return true;

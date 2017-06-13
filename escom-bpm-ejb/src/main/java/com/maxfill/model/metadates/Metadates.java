@@ -1,17 +1,17 @@
 package com.maxfill.model.metadates;
 
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;
 import com.maxfill.model.favorites.FavoriteObj;
+import com.maxfill.utils.ItemUtils;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,16 +28,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Метаданные
- * @author mfilatov
- */
 @Entity
 @Table(name = "metadates")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-@DiscriminatorColumn(name="REF_TYPE")
-public class Metadates extends BaseDict<Metadates, Metadates, Metadates, MetadatesLog>{
+public class Metadates implements Serializable{
     private static final long serialVersionUID = -3191404107074233285L;
 
     @Id
@@ -68,7 +63,7 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
     @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "BundleJurnalName")
-    private String bundleJurnalName;        
+    private String bundleJurnalName;    
         
     @Basic(optional = false)
     @NotNull
@@ -101,31 +96,18 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
     private NumeratorPattern numPattern;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadateObj")
-    private List<FavoriteObj> favoriteObjList;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<MetadatesLog> itemLogs = new ArrayList<>();
+    private List<FavoriteObj> favoriteObjList;    
         
     public Metadates() {
-    }
-
-    public Metadates(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public List<MetadatesLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<MetadatesLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
 
     public String getIconObject() {
         return iconObject;
     }
 
+    public String getName(){
+        return ItemUtils.getBandleLabel(bundleName);
+    }
     public String getObjectName() {
         return objectName;
     }    
@@ -196,12 +178,9 @@ public class Metadates extends BaseDict<Metadates, Metadates, Metadates, Metadat
         this.favoriteObjList = favoriteObjList;
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
-
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }

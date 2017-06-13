@@ -9,16 +9,17 @@
         <h:form style="font-size: 85%;" id="explorer_south">
             <h:panelGrid columns="3" columnClasses="ui-grid-col-2 without-spaces, ui-grid-col-8, ui-grid-col-2" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
-                    <p:commandButton value="#{bundle.GotoIndex}" title="#{bundle.GotoIndex}"
+                    <p:commandButton value="#{bundle.GotoIndex}"
                                      id="btnCancel" ajax="false"
                                      styleClass="without-spaces"
                                      action="#{sessionBean.goToIndex() }"
                                      rendered="#{!explorerBean.selectorViewMode}"
                                      onclick="return isClose = 1;"/>
-                    <p:commandButton id="btnClose" icon="ui-icon-close" value="#{bundle.Close}" title="#{bundle.Close}"
+                    <p:commandButton id="btnClose" icon="ui-icon-close" value="#{bundle.Close}"
                                      styleClass="without-spaces"
                                      rendered="#{explorerBean.selectorViewMode}"
-                                     action="#{explorerBean.onClose()}">
+                                     action="#{explorerBean.onClose()}"
+                                     onclick="return isClose = 1;">
                     </p:commandButton>
                 </h:panelGroup>
 

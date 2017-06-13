@@ -24,7 +24,7 @@ public class UserSettings implements Serializable{
     private String language;
 
     @XmlElement(name = "FormSize")
-    private ConcurrentHashMap<String, Tuple<Double, Double>> formsSize = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Tuple<Integer, Integer>> formsSize = new ConcurrentHashMap<>();
     
     @XmlElement(name = "ExplFormSize")
     private ConcurrentHashMap<String, String> explFormParam = new ConcurrentHashMap<>();
@@ -43,10 +43,10 @@ public class UserSettings implements Serializable{
         this.language = language;
     }    
 
-    public ConcurrentHashMap<String, Tuple<Double, Double>> getFormsSize() {
+    public ConcurrentHashMap<String, Tuple<Integer, Integer>> getFormsSize() {
         return formsSize;
     }
-    public void setFormsSize(ConcurrentHashMap<String, Tuple<Double, Double>> formsSize) {
+    public void setFormsSize(ConcurrentHashMap<String, Tuple<Integer, Integer>> formsSize) {
         this.formsSize = formsSize;
     }
 
@@ -61,7 +61,7 @@ public class UserSettings implements Serializable{
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();
-        JAXB.marshal(this, sw);
+        JAXB.marshal(this, sw);        
         return sw.toString();
     }
     

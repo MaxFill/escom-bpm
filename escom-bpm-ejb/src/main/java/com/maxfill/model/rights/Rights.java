@@ -7,6 +7,7 @@ package com.maxfill.model.rights;
 
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,7 +25,7 @@ public class Rights implements Serializable{
     private static final long serialVersionUID = -5302893955331116353L;
     
     @XmlElement(name = "Rights")
-    private List<Right> rights;
+    private List<Right> rights = new ArrayList<>();
     
     public Rights() {
     }

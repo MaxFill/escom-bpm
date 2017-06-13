@@ -124,7 +124,6 @@
                 <p:selectOneMenu value="#{_bean.editedItem.state}" id="state" converter="stateConvertor"                                
                                  disabled="#{_bean.isReadOnly()}"
                                  title="#{bundle.CurrentDocState}"
-                                 styleClass="ui-grid-col-12"
                                  onchange="return itemChange = 1;"
                                  required="#{param['isRequired'] == 'true'}" 
                                  requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">

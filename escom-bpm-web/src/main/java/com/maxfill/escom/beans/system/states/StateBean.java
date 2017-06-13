@@ -4,6 +4,7 @@ import com.maxfill.facade.StateFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import java.io.Serializable;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -19,40 +20,18 @@ import javax.enterprise.context.SessionScoped;
 /* Сервисный бин "Состояния документа" */
 @SessionScoped
 @Named
-public class StateBean extends BaseExplBean<State, State>{
+public class StateBean implements Serializable{
     private static final long serialVersionUID = -3106225231045015183L;
     
     @EJB
-    private StateFacade docsStateFacade;
+    private StateFacade stateFacade;
     
-    @Override
-    public StateFacade getItemFacade() {
-        return docsStateFacade;
-    }
-    
-    @Override
-    public BaseExplBean getOwnerBean() {
-        return null;
-    }
-
-    @Override
-    public BaseExplBean getDetailBean() {
-         return null;
-    }
-
-    @Override
-    public List<State> getGroups(State item) {
-        return null;
+    public List<State> findAll(){
+        return stateFacade.findAll();
     }
     
-    @Override
-    public Class<State> getItemClass() {
-        return State.class;
-    }
-
-    @Override
-    public Class<State> getOwnerClass() {
-        return null;
+    public StateFacade getItemFacade(){
+        return stateFacade;
     }
 
     @FacesConverter("stateConvertor")

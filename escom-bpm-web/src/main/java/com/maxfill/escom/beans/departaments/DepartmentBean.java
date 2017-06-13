@@ -58,8 +58,11 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         } 
         
         if (item.getOwner() != null) {
-            return getRightItem(item.getOwner()); //получаем права от компании
-        }                        
+            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав 
+            if (childRight != null){
+                return childRight;
+            }
+        }
         
         return getDefaultRights(item);
     } 

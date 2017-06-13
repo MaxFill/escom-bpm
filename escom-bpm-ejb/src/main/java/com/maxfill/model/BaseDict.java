@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 
 /* Базовый класс справочников
  * @param <O> Класс владельца
@@ -55,7 +56,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     @XmlTransient
     @JoinColumn(name = "Parent", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private P parent;
     
     @XmlTransient
@@ -63,7 +64,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @ManyToOne(optional = false)
     private User author;
             
-    @Size(max = 100)
+    @Size(max = 255)
     @Column(name = "Name")
     private String name;        
         
@@ -81,11 +82,25 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @NotNull
     private Date dateChange;
     
+    /* собственные права объекта */
     @XmlTransient
-    @Basic(optional = false)    
-    @Column(name = "Access")
-    private String access;      
+    @Lob
+    @Column(name = "Access", length = 1024)
+    private byte[] access;
         
+    /* дефолтные права доступа для подчинённых объектов в виде строки в xml */
+    @XmlTransient
+    @Lob
+    @Column(name = "AccessChilds", length = 1024)
+    private byte[] accessChild; 
+    
+    /* Признак наследования дефолтных прав для дочерних объектов */
+    @XmlTransient
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "IsInheritsAccessChilds")
+    private boolean inheritsAccessChilds;   
+    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -157,20 +172,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     /* Возврашает путь в дереве к объекту */
     @Transient
     @XmlTransient
-    private String path;
-      
-    /* Признак наследования дефолтных прав для дочерних объектов */
-    @XmlTransient
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "IsInheritsAccessChilds")
-    private boolean inheritsAccessChilds;
-    
-    /* Дефолтные Права доступа для подчинённых объектов в виде строки в xml */
-    @XmlTransient
-    @Size(max = 2147483647)
-    @Column(name = "AccessChilds")
-    private String xmlAccessChild; 
+    private String path;          
     
     /* Права доступа к подчинённому объекту  */
     @Transient
@@ -200,14 +202,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setRightForChild(Rights rightForChild) {
         this.rightForChild = rightForChild;
-    }   
-    
-    public String getXmlAccessChild() {
-        return xmlAccessChild;
-    }
-    public void setXmlAccessChild(String xmlAccessChild) {
-        this.xmlAccessChild = xmlAccessChild;
-    }
+    }       
            
     public String getIconTree(){
         return "ui-icon-home";
@@ -318,13 +313,20 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setAuthor(User author) {
         this.author = author;
     }
-    
-    public String getAccess() {
+
+    public byte[] getAccess() {
         return access;
     }
-    public void setAccess(String access) {
+    public void setAccess(byte[] access) {
         this.access = access;
-    }    
+    }
+
+    public byte[] getAccessChild() {
+        return accessChild;
+    }
+    public void setAccessChild(byte[] accessChild) {
+        this.accessChild = accessChild;
+    }      
     
     public State getState() {
         return state;

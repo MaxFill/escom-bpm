@@ -1,29 +1,20 @@
 package com.maxfill.model.states;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Right;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *  Состояния 
@@ -33,8 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "states")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-@DiscriminatorColumn(name="REF_TYPE")
-public class State extends BaseDict<State, State, State, StateLog>{    
+public class State implements Serializable{    
     private static final long serialVersionUID = 311429207470166273L;       
 
     @TableGenerator(
@@ -50,53 +40,41 @@ public class State extends BaseDict<State, State, State, StateLog>{
     @GeneratedValue(strategy=TABLE, generator="stateIdGen")
     @Column(name = "ID")
     @XmlElement(name = "ID")
-    private Integer id;
-    
-    @XmlTransient
-    @OneToMany(mappedBy = "state")
-    private List<Right> rightList; 
+    private Integer id;        
 
-    @XmlTransient
-    @ManyToMany(mappedBy = "statesList")
-    private List<Metadates> metadatesList;
-      
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<StateLog> itemLogs = new ArrayList<>();
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "Name")
+    private String name;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "IsActual")
+    private boolean isActual;
     
     public State() {
-    }
+    }    
 
-    @Override
-    public List<StateLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<StateLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-
-    public List<Right> getRightList() {
-        return rightList;
-    }
-    public void setRightList(List<Right> rightList) {
-        this.rightList = rightList;
-    }
-    
-    public List<Metadates> getMetadatesList() {
-        return metadatesList;
-    }
-    public void setMetadatesList(List<Metadates> metadatesList) {
-        this.metadatesList = metadatesList;
-    }
-    
-    @Override
     public Integer getId() {
         return id;
     }
-    @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean getIsActual() {
+        return isActual;
+    }
+    public void setIsActual(boolean isActual) {
+        this.isActual = isActual;
     }
     
     @Override
@@ -123,5 +101,6 @@ public class State extends BaseDict<State, State, State, StateLog>{
     public String toString() {
         return "com.maxfill.escombpm2.model.docs.DocsState[ id=" + id + " ]";
     }
+
     
 }
