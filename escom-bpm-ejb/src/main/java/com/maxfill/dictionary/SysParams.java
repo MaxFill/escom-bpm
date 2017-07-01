@@ -1,5 +1,5 @@
 
-package com.maxfill.utils;
+package com.maxfill.dictionary;
 
 /**
  * Системные параметры
@@ -23,9 +23,10 @@ public final class SysParams {
         
     public static final String MAIN_PAGE    = "/view/index.xhtml";
     public static final String LOGIN_PAGE   = "login.xhtml";
-    public static final String LOGOUT_PAGE  = "logout.xhtml";
-    public static final String EXPIRE_PAGE  = "view/errors/expire.xhtml";
-    public static final String ERROR_PAGE   = "view/errors/505.xhtml";
+    public static final String LOGOUT_PAGE  = "/faces/logout.xhtml";
+    public static final String LOGIN_ERROR  = "/faces/view/errors/login-error.xhtml";
+    public static final String EXPIRE_PAGE  = "/faces/view/errors/expire.xhtml";
+    public static final String ERROR_PAGE   = "/faces/view/errors/505.xhtml";
     public static final String PRIME_URL    = "javax.faces.resource";
     public static final String RESOURCE_URL = "/faces/resources/";    
     

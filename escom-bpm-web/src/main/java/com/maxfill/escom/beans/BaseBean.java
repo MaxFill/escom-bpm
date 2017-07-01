@@ -36,8 +36,8 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.primefaces.model.UploadedFile;
+
 
 /* Базовый бин */
 public abstract class BaseBean <T extends BaseDict> implements Serializable{
@@ -340,7 +340,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
         paramMap.put("path", pathList);
         sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
-    }
+    }    
     
     public void onViewReport(String reportName){
         String pdfFile = new StringBuilder()
@@ -358,6 +358,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     /* Скачивание вложения  */
     public void attacheDownLoad(Attaches attache){
+        if (attache == null) return;
         String path = conf.getUploadPath() + attache.getFullName(); 
         FileUtils.attacheDownLoad(path, attache.getName());
     }

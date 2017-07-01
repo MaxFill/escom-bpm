@@ -1,4 +1,3 @@
-
 package com.maxfill.services.mail;
 
 import com.google.gson.Gson;
@@ -19,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-/**
- * Таймер службы MAIL
- * @author Maxim
- */
 @Stateless
 public class MailTimer extends BaseTimer<MailSettings>{
     
@@ -36,7 +31,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
         LOG.log(Level.INFO, "Executing MAIL task!");
         StringBuilder detailInfo = new StringBuilder("");        
         Date startDate = new Date();
-        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate));
+        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, ""));
 
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setServiceId(service);
@@ -73,7 +68,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
             detailInfoAddRow(detailInfo, e.getMessage());
         } finally{
             Date finishDate = new Date();
-            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate));
+            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, ""));
             selectedEvent.setDetails(detailInfo.toString());
             selectedEvent.setDateFinish(finishDate);
             servicesEventsFacade.create(selectedEvent);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
+    
+    <changeSet id="attache-lock-01072017" author="filatov" context="initdata" runOnChange="true">  
+        <addColumn tableName="attaches">
+            <column name="LockAuthor" type="INT" remarks="lock author">
+                <constraints nullable="true"/>
+            </column>
+            <column name="LockDate" type="DATETIME" remarks="date set lock ">
+                <constraints nullable="true"/>
+            </column>
+            <column name="PlanUnLockDate" type="DATETIME" remarks="date plan unlock">
+                <constraints nullable="true"/>
+            </column>
+            <column name="TimeHandle" type="LONGBLOB" remarks="timer remain and auto unlock">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="attache-lock-01072017_add_index" author="filatov" context="initdata" runOnChange="true">
+        <createIndex tableName="attaches" indexName="FK_attaches_LockAuthor">
+            <column name="LockAuthor" />
+        </createIndex>
+    </changeSet>
+    
+</databaseChangeLog> 

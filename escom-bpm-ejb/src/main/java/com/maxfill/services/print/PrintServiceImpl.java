@@ -23,7 +23,7 @@ public class PrintServiceImpl implements PrintService{
     }
             
     @Override
-    public void doPrint(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){    
+    public void doPrint(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){    
         JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(dataReport);
         //ClassLoader classLoader = getClass().getClassLoader();
         //String fileName = classLoader.getResource(reportName).getFile();

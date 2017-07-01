@@ -1,15 +1,17 @@
-
 package com.maxfill.escom.beans.users.settings;
 
 import com.maxfill.utils.Tuple;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /* Класс персональных настроек для пользователя  */
 @XmlRootElement
@@ -28,7 +30,10 @@ public class UserSettings implements Serializable{
     
     @XmlElement(name = "ExplFormSize")
     private ConcurrentHashMap<String, String> explFormParam = new ConcurrentHashMap<>();
-            
+        
+    @XmlElement(name = "ReportsSettings")
+    private ConcurrentHashMap<String, UserReportsSettings> reportSetting = new ConcurrentHashMap<>();
+    
     public String getTheme() {
         return theme;
     }
@@ -56,7 +61,14 @@ public class UserSettings implements Serializable{
     public void setExplFormParam(ConcurrentHashMap<String, String> explFormParam) {
         this.explFormParam = explFormParam;
     }
-            
+
+    public ConcurrentHashMap<String, UserReportsSettings> getReportSetting() {
+        return reportSetting;
+    }
+    public void setReportSetting(ConcurrentHashMap<String, UserReportsSettings> reportSetting) {
+        this.reportSetting = reportSetting;
+    }       
+    
     //трансформирует данные класса в xml строку
     @Override
     public String toString() {

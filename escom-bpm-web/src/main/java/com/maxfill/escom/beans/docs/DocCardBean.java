@@ -27,12 +27,19 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 /* Карточка документа */
 
@@ -47,6 +54,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private String docURL;  
     private Integer documentId; //используется при открытии файла на просмотр через прямую гиперсылку  
 
+    @Inject
+    private DocBean docsBean;
+            
     @EJB
     private DocNumerator docNumeratorService;
     @EJB
@@ -124,8 +134,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     /* Запрос на формирование ссылки URL на открытие карточки документа */
     public String onGetDocOpenURL(Doc doc){
         return EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer", "0");
-    }
-        
+    }   
+            
     /* Сброс регистрационного номера */
     public void onClearRegNumber(Doc doc){
         if (doc.getDocType() != null){
@@ -240,6 +250,10 @@ public class DocCardBean extends BaseCardBean<Doc>{
             EscomBeanUtils.WarnMsgAdd("Error", "DocumentNotFound");
         }
     }        
+    
+    public void onOpenFormLockAttache(Attaches attache){
+        docsBean.onOpenFormLockAttache(attache);
+    }
     
     /* Событие изменения контрагента на форме документа */
     public void onPartnerSelected(SelectEvent event){

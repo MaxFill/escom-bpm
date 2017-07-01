@@ -1,0 +1,55 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ.xhtml">
+        
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{docLockBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">
+        #{bundle.SettingLock}
+    </ui:define>
+
+    <ui:define name="body">
+        <pe:layout fullPage="true" options="#{docLockBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{docLockBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="lockForm" style="font-size: 90%;"> 
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
+                        <p:graphicImage name="/images/info.jpg"/>
+                        <h:outputText value="#{msg.SettingLockDocInfo}" />
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                        <h:outputText value="#{msg.SetLockDocAndOpenFile}" />
+                        <p:outputLabel value="#{bundle.DateAutoUnlock}" />
+                        <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
+                                styleClass="ui-grid-col-12"
+                                required="true" 
+                                showButtonPanel="true" showHour="true" showMinute="true"
+                                pattern="dd.MM.yyyy HH:mm" mask="99.99.9999"
+                                navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                               
+                                requiredMessage="#{bundle.Field} [#{bundle.DatePlanUnlock}] #{bundle.MustBeFilled}">
+                        </p:calendar> 
+                    </p:panelGrid>                    
+                    <p:toolbar styleClass="ui-grid-col-12">
+                        <f:facet name="right">
+                            <p:commandButton value="#{bundle.Save}" title="#{bundle.SaveAndClose}" 
+                                             action="#{docLockBean.makeLock()}"/>
+                            <p:commandButton value="#{bundle.Close}" style="float:right;"                                             
+                                             action="#{docLockBean.onCloseCard()}"/> 
+                        </f:facet>
+                    </p:toolbar>
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
+    </ui:define>
+
+</ui:composition>
+

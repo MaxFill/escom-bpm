@@ -5,7 +5,7 @@ import com.maxfill.model.folders.FolderLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;

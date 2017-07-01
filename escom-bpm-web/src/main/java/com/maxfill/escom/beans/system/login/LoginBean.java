@@ -2,12 +2,12 @@
 package com.maxfill.escom.beans.system.login;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
-import com.maxfill.utils.SysParams;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.EscomUtils;
@@ -82,39 +82,45 @@ public class LoginBean implements Serializable{
     
     public String login() throws NoSuchAlgorithmException{
         RequestContext context = RequestContext.getCurrentInstance();
-        Set<String> errorsKey = new HashSet<>(); 
+        Set<FacesMessage> errors = new HashSet<>(); 
+        
         if (appBean.getLicence().isExpired()){     
-            errorsKey.add("ErrorExpireLicence");
-            return showErrMsg(errorsKey, context);
+            errors.add(EscomBeanUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{appBean.getLicence().getStrTermLicence()}));
         }
+        
         if (appBean.isNoAvailableLicence()){
-            errorsKey.add("ErrorCountLogin");
-            return showErrMsg(errorsKey, context);
+            errors.add(EscomBeanUtils.prepErrorMsg("ErrorCountLogin"));
         }
+        
+        User user = null;
         List<User> users = userFacade.findByLogin(userName);
         if (users.isEmpty()){
-            errorsKey.add("ERR_USER_NOT_REGISTRED");
-            makeCountErrLogin(context, errorsKey);
-            return showErrMsg(errorsKey, context);
-        }
-        User user = users.get(0);
-        if (StringUtils.isNotBlank(user.getLDAPname())){
-            checkLdapUser(errorsKey, context);
-            if (!errorsKey.isEmpty()){
-                return showErrMsg(errorsKey, context);
-            }
+            errors.add(EscomBeanUtils.prepErrorMsg("ERR_USER_NOT_REGISTRED"));
+            makeCountErrLogin(context, errors);
         } else {
-            if (isIncorrectPassword(user)){
-                makeCountErrLogin(context, errorsKey);
-                errorsKey.add("BadUserOrPassword");
-                return showErrMsg(errorsKey, context);
+            user = users.get(0);        
+            if (StringUtils.isNotBlank(user.getLDAPname())){
+                checkLdapUser(errors, context);                                        
+            } else {
+                if (isIncorrectPassword(user)){
+                    makeCountErrLogin(context, errors);
+                    errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
+                }
             }
+        }    
+        
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showFacesMessages(errors);
+            return "";
         }
+        
+        /*
         if (appBean.isAlreadyLogin(user)){
             errorsKey.add("UserPreviouslyLogged");
             makeCountErrLogin(context, errorsKey);
             return showErrMsg(errorsKey, context);            
         }
+        */
         initCurrentUser(user);
         if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
             targetPage = SysParams.MAIN_PAGE;
@@ -124,7 +130,7 @@ public class LoginBean implements Serializable{
     
     /* Инициализация текущего пользователя */
     private void initCurrentUser(User user){
-        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();      
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute("UserLogin", userName);
@@ -148,14 +154,14 @@ public class LoginBean implements Serializable{
     }
     
     /* Проверка подключения к LDAP серверу  */
-    private void checkLdapUser(Set<String> bundleKeys, RequestContext context){
+    private void checkLdapUser(Set<FacesMessage> errors, RequestContext context){
         try {      
             LdapUtils.initLDAP(userName, password, configuration.getLdapServer());
         } catch (AuthenticationException e){
-            bundleKeys.add("BadUserOrPassword");
-            makeCountErrLogin(context, bundleKeys);
+            errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
+            makeCountErrLogin(context, errors);
         } catch (Exception ex){
-            bundleKeys.add("ConnectLDAPFailed");
+            errors.add(EscomBeanUtils.prepErrorMsg("ConnectLDAPFailed"));
             EscomBeanUtils.ErrorMessage(ex.getLocalizedMessage());
             LOG.log(Level.SEVERE, null, ex);
         }
@@ -167,21 +173,12 @@ public class LoginBean implements Serializable{
         return !Objects.equals(password, user.getPassword());
     }
     
-    /* Вывод сообщения об ошибке  */
-    private String showErrMsg(Set<String> bundleKeys, RequestContext context){          
-        for (String bundleKey : bundleKeys){
-            EscomBeanUtils.ErrorMsgAdd("Error", bundleKey, "");
-        }    
-        context.update("loginFRM:messages");        
-        return "";
-    }
-    
     /* Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок  */
-    private void makeCountErrLogin(RequestContext context, Set<String> bundleKeys){
+    private void makeCountErrLogin(RequestContext context, Set<FacesMessage> errors){
         countErrLogin++;
         if (isLoginLock()){
             context.execute("PF('poll').start();");
-            bundleKeys.add("ErrorCountLogin");
+            errors.add(EscomBeanUtils.prepErrorMsg("ErrorCountLogin"));
         } 
     }
     

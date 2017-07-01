@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <context-param>
-        <param-name>primefaces.THEME</param-name>
-        <param-value>#{sessionBean.primefacesTheme} </param-value>
-    </context-param>
-    <context-param>
         <param-name>sessionExpiredRedirect</param-name>
         <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>#{sessionBean.primefacesTheme} </param-value>
     </context-param>
     <context-param>
         <param-name>javax.faces.PROJECT_STAGE</param-name>
@@ -49,10 +49,10 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>45</session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>/faces/view/index.xhtml</welcome-file>
+        <welcome-file>/faces/login.xhtml</welcome-file>
     </welcome-file-list>
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
@@ -80,6 +80,20 @@
     </error-page>
     <security-role>
         <description/>
-        <role-name>ESCOM_GROUP</role-name>
+        <role-name>users</role-name>
+    </security-role>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>AllPages</web-resource-name>
+            <description/>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <security-role>
+        <description/>
+        <role-name>admin</role-name>
     </security-role>
 </web-app>

@@ -137,12 +137,12 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* Проверка возможности удаления Подразделения */
     @Override
     protected void checkAllowedDeleteItem(Department department, Set<String> errors){
-        if (CollectionUtils.isNotEmpty(department.getDetailItems()) ) {
+        if (CollectionUtils.isNotEmpty(staffFacade.findStaffByDepartment(department)) ) {
             Object[] messageParameters = new Object[]{department.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
             errors.add(error);
         }
-    }      
+    }
 
     @Override
     public BaseExplBean getOwnerBean() {

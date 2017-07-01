@@ -31,10 +31,10 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="body">     
+    <ui:define name="body">         
         <script type="text/javascript">
-            var isClose = 0;
-
+            var isClose = 0;            
+            
             window.onbeforeunload = function (evt) {
 
                 var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
@@ -57,8 +57,10 @@
         <p:focus for="#{_frmTree}" context="nameSearche"/>
 
         <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
-            <h:outputScript library="js" name="drag-drop.js" />
-
+            <h:outputScript library="js" name="drag-drop.js" />                    
+            
+            <ui:include src="/view/common/error-dlg.xhtml"/>
+            
             <pe:layoutPane position="west" resizable="true">
                 <f:facet name="header">
                     <p:outputLabel value="#{bundle.Sections}" />
@@ -70,6 +72,7 @@
                         }
                     </style>
                     <ui:include src="/view/templ/tree/tree.xhtml" />
+                    
                 </h:form>
             </pe:layoutPane>
 
@@ -89,23 +92,26 @@
                                     update="#{_frmExpl} #{_frmTree}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
+                        
                         <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onViewContentItem()}" 
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
-                        <p:commandButton id="eeeBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;">
+                        
+                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}" 
+                                         update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl} #{_frmTree}" listener="#{explorerBean.onUpdateAfterCloseForm}"
+                                    update="#{_frmExpl}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
-
+                        
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
                         <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
                         <ui:include src="/view/templ/expl/expl-table.xhtml"/>                        
-
+                        
                     </h:form>
                 </pe:layoutPane>
 

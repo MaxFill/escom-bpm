@@ -1,7 +1,6 @@
-
 package com.maxfill.escom.system;
 
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -18,13 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author Filatov Maxim
- */
-
 public class RedirectFilter implements Filter {    
     private FilterConfig filterConfig = null;
+    
+    private static final String AJAX_REDIRECT_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        + "<partial-response><redirect url=\"%s\"></redirect></partial-response>";
     
     public RedirectFilter() {
     }    
@@ -37,97 +34,75 @@ public class RedirectFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) req;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) res;
-        HttpSession session = httpServletRequest.getSession(false);
+        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletResponse response = (HttpServletResponse) res;
+        HttpSession session = request.getSession(false);
         String userId = (session != null) ? (String) session.getAttribute("UserLogin") : null;
-        String ctxPath = httpServletRequest.getContextPath();        
+        String ctxPath = request.getContextPath();        
 
-        String serverURL = new URL(httpServletRequest.getScheme(),
-                               httpServletRequest.getServerName(),
-                               httpServletRequest.getServerPort(), "").toString();
+        String serverURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "").toString();
+        String reqURL = request.getRequestURI();
 
-        String reqURL = httpServletRequest.getRequestURI();
-        /**
-         * Вызов для ресурсов
-         */
         if (reqURL.contains(SysParams.PRIME_URL) || reqURL.contains(SysParams.RESOURCE_URL)){
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(request, response);
             return; 
-        }
-        isSessionInvalid(httpServletRequest);
-        /**
-         * Проверка на то, что сессия истекла
-         */
-        /*
-        if (!StringUtils.contains(reqURL, SysParams.EXPIRE_PAGE)) {
-            if (isSessionInvalid(httpServletRequest)) {
-                String timeoutUrl = serverURL + ctxPath + "/faces/" + SysParams.EXPIRE_PAGE;
-                httpServletResponse.sendRedirect(timeoutUrl);
-                return;
-            }
-        } else {
-            chain.doFilter(httpServletRequest, httpServletResponse);
-            return;   
-        }
-        */
+        }        
         
-        /**
-         * Вызов для страницы входа
-         */
-        if (reqURL.contains(SysParams.LOGIN_PAGE)){
-            chain.doFilter(httpServletRequest, httpServletResponse);
+        if (reqURL.contains(SysParams.LOGIN_PAGE)){ 
+            chain.doFilter(request, response);
             return;
         }
         
         if (reqURL.equals(ctxPath+"/")){          
             StringBuilder indexURL = new StringBuilder();
             indexURL.append(serverURL).append(ctxPath).append("/faces").append(SysParams.MAIN_PAGE);
-            httpServletResponse.sendRedirect(indexURL.toString());
+            response.sendRedirect(indexURL.toString());
             return;   
         }
         
         if (reqURL.contains(SysParams.LOGOUT_PAGE)){
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(request, response);
             return;   
         }        
          
         if (reqURL.contains(SysParams.ERROR_PAGE)){
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(request, response);
             return;
         } 
         
-        if (userId == null){            
+        if (userId == null){ 
+            if ("partial/ajax".equals(request.getHeader("Faces-Request"))){
+                response.setContentType("text/xml");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().printf(AJAX_REDIRECT_XML, reqURL);
+                chain.doFilter(request, response);
+                return;
+            } else {
                 String targetUrl = reqURL.replaceAll(ctxPath, "").replaceAll("/faces", "").replaceAll("/", "%2F");
                 StringBuilder loginURL = new StringBuilder();
                 loginURL.append(serverURL).append(ctxPath).append("/faces/");
                 loginURL.append(SysParams.LOGIN_PAGE).append("?from=").append(targetUrl);
-                Map<String,String[]> params = httpServletRequest.getParameterMap();
+                Map<String,String[]> params = request.getParameterMap();
                 if (params.containsKey("docId")){
                     String[] param = params.get("docId");
                     loginURL.append("?docId=").append(param[0]);
                 }                
-                httpServletResponse.sendRedirect(loginURL.toString());
+                response.sendRedirect(loginURL.toString());
                 return;
+            }
         }
         
         try {
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(request, response);
         } 
         catch (ServletException e) {
             if (e.getRootCause() instanceof ViewExpiredException) {
                 String errorURL = serverURL + ctxPath + "/faces/" + SysParams.LOGIN_PAGE;
-                httpServletResponse.sendRedirect(errorURL);
+                response.sendRedirect(errorURL);
             } else {
                 throw e;
             }
         }
-    }
-
-    private boolean isSessionInvalid(HttpServletRequest httpServletRequest) {
-        boolean sessionInValid = httpServletRequest.getRequestedSessionId() != null
-            && !httpServletRequest.isRequestedSessionIdValid();
-        return sessionInValid;
     }
      
     public static String getStackTrace(Throwable t) {

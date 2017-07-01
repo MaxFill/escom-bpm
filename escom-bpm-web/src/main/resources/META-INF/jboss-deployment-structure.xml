@@ -3,7 +3,6 @@
  
     <deployment>
         <dependencies>
-            <module name="com.maxfill.escombpm2.model" export="true" meta-inf="import" />
         </dependencies>
     </deployment>
      

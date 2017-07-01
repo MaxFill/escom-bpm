@@ -1,4 +1,3 @@
-
 package com.maxfill.services.ldap;
 
 import com.maxfill.model.users.User;
@@ -20,10 +19,6 @@ import javax.naming.ldap.LdapContext;
 import javax.xml.bind.JAXB;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * Таймер службы LDAP
- * @author Maxim
- */
 @Stateless
 public class LdapTimer extends BaseTimer<LdapSettings>{    
     @EJB 
@@ -34,7 +29,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         LOG.log(Level.INFO, "Executing LDAP task!");
         StringBuilder detailInfo = new StringBuilder("");        
         Date startDate = new Date();
-        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate));
+        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, ""));
 
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setServiceId(service);
@@ -51,7 +46,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
             Date finishDate = new Date();
-            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate));
+            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, ""));
             selectedEvent.setDetails(detailInfo.toString());
             selectedEvent.setDateFinish(finishDate);
             servicesEventsFacade.create(selectedEvent);

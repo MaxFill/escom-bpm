@@ -1,5 +1,6 @@
 package com.maxfill.model.licence;
 
+import com.maxfill.utils.DateUtils;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -39,10 +40,15 @@ public class Licence implements Serializable{
     public Date getTermLicence() {
         return termLicence;
     }
+    public String getStrTermLicence() {
+        Date clearDate = DateUtils.clearDate(termLicence);
+        return DateUtils.dateToString(clearDate, "dd.MM.YY");
+    }
     
     public Boolean isExpired(){
-        return false;
-        //return termLicence.after(new Date()); //TODO нужно сделать проверку на срок действия лицензии!
+        Date currentClearDate = DateUtils.clearDate(new Date());
+        Date licenceClearDate = DateUtils.clearDate(termLicence);
+        return !licenceClearDate.after(currentClearDate);         
     }
     
     public void setTermLicence(Date termLicence) {

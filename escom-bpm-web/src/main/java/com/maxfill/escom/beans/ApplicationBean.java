@@ -7,7 +7,7 @@ import com.maxfill.model.licence.Licence;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.facade.RightFacade;
@@ -63,6 +63,7 @@ public class ApplicationBean implements Serializable{
         licence.setReleaseDate(releaseDate);
         licence.setTotalLicence(5);
         licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType")); //TODO надо откуда то получать!
+        licence.setTermLicence(DateUtils.addDays(new Date(), 10));
         loadDefaultRights();
     }
     

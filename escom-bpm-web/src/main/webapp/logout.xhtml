@@ -22,19 +22,19 @@
     </h:head>
 
     <h:body>        
-        
-        <p:panel styleClass="panelLogin">             
-            <p:panelGrid id="panelLogin" columns="3" layout="grid" columnClasses="col20, colAuto, colAuto,">
-                <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                <h:panelGroup>
-                    <h3>
-                        <h:outputLabel value="#{msg.YouExitFromProgramm}"/> 
-                    </h3>
-                </h:panelGroup>    
-
-            </p:panelGrid>
-        </p:panel>
-
+        <h:form id="login" target="_blank">
+            <p:panel styleClass="panelLogin">             
+                <p:panelGrid id="panelLogin" columns="3" layout="grid" columnClasses="col20, colAuto, colAuto,">
+                    <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                    <h:panelGroup>
+                        <h3>
+                            <h:outputLabel value="#{msg.YouExitFromProgramm}"/> 
+                        </h3>
+                    </h:panelGroup>    
+                    
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
     </h:body>
 
 </html>

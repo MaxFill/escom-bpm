@@ -245,12 +245,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
         Map<String, Object> params = prepareReportParams();
-        ArrayList<BaseDict> dataReport = new ArrayList<>();
+        ArrayList<Object> dataReport = new ArrayList<>();
         dataReport.add(editedItem);
         doPreViewItemCard(dataReport, params, DictPrintTempl.REPORT_ITEM_CARD);        
     }
 
-    protected void doPreViewItemCard(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
         printService.doPrint(dataReport, parameters, reportName);
         onViewReport(reportName);
     }
@@ -258,12 +258,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* ПЕЧАТЬ: Подготовка бланка этикетки штрихкода для печати */
     public void onPreViewBarcode() {
         Map<String, Object> params = prepareReportParams();
-        ArrayList<BaseDict> dataReport = new ArrayList<>();
+        ArrayList<Object> dataReport = new ArrayList<>();
         dataReport.add(editedItem);
         doPreViewBarcode(dataReport, params, DictPrintTempl.REPORT_BARCODE);        
     }
     
-    protected void doPreViewBarcode(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+    protected void doPreViewBarcode(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
         printService.doPrint(dataReport, parameters, reportName);
         onViewReport(reportName);
     }

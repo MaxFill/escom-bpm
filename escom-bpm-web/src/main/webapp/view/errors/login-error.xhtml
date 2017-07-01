@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -23,7 +24,7 @@
 
     <h:body>
         <h:form id="login" onsubmit="action='j_security_check';" prependId="false">
-
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
             <p:panel styleClass="panelLogin">             
                 <p:panelGrid id="panelLogin" columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12">
                     <p:graphicImage name="/images/escom_logo.jpg"  /> 
@@ -36,19 +37,8 @@
                         </h4>
                         <h4>
                             <h:outputLabel value="#{msg.ERR_LOGIN_CREDENTIALS}" style="color: red;"/>                   
-                        </h4>
-                    </h:panelGroup>    
-
-                    <p:outputLabel value="#{bundle.User}:"/>
-                    <p:inputText id="j_username" style="width: 100%;"/>
-
-                    <p:outputLabel value="#{bundle.password}:"/>
-                    <p:password id="j_password" />
-
-                    <p:commandButton id="btnLogin" value="#{bundle.enter}" 
-                                     icon="done"
-                                     style="width: 125px;"
-                                     ajax="false"/>
+                        </h4>                        
+                    </h:panelGroup>                    
                 
                 </p:panelGrid>
             </p:panel>

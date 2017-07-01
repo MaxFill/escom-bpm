@@ -10,7 +10,7 @@ import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;

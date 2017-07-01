@@ -112,7 +112,9 @@
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
-                
+            
+            <ui:insert name="addToolButtons" />
+            
             <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}" 
                              rendered="#{explorerBean.explorerViewMode}"
                              ajax="false" icon="ui-icon-extlink"

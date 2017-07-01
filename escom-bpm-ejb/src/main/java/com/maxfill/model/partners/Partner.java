@@ -5,7 +5,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;

@@ -5,18 +5,20 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ.xhtml">
-
+    
     <ui:define name="title">
         #{applicationBean.APP_NAME}
     </ui:define>
-
+    
     <ui:define name="body">
+        <h:outputScript library="js" name="ITHitWebDAVClient.js" />          
+        
         <script type="text/javascript">
             var isClose = 0;
 
             window.onbeforeunload = function (evt) {
 
-                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
+                var message = #{bundle.Confirm}+"Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
                 if (typeof evt == "undefined") {
                     evt = window.event;
                 }
@@ -31,7 +33,28 @@
                 }
             };
 
+        </script>        
+        
+        <script type="text/javascript">
+            function OpenFolder(sFolderUrl) {
+                ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
+            }
+             
+            function EditDoc(sDocumentUrl, sFolderUrl) {
+                var oNs = ITHit.WebDAV.Client.DocManager;
+                    oNs.DavProtocolEditDocument(sDocumentUrl, sFolderUrl, ProtocolInstallCallback);
+            }
+            
+            function ProtocolInstallCallback(message) {
+                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" + 
+                    ITHit.WebDAV.Client.DocManager.GetInstallFileName();
+
+                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")){
+                    window.open(installerFilePath);
+                }
+            }
         </script>
+        
         <f:event listener="#{sessionBean.showNotifBar()}" type="preRenderView" />
 
         <h:form id="mainFRM" style="font-size: 90%">           
@@ -44,6 +67,8 @@
                 }
             </style>
 
+            <ui:include src="/view/common/error-dlg.xhtml"/>
+                        
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="bar">               
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
                                  icon="ui-icon-circle-close"
@@ -59,16 +84,20 @@
             </p:notificationBar>
 
             <p:toolbar style="">
-                <f:facet name="left">
+                <f:facet name="left">    
+                    <p:commandButton value="ACCESS" actionListener="#{sessionBean.test()}" />
+                    <p:commandButton value="test" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/artifacts/other/');" />
+                    <p:commandButton value="test2" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/sample/default/');" />
+                    <p:commandButton value="test3" onclick="EditDoc('https://fil-pc:8443/modeshape-webdav/sample/default/newdoc.docx', 'https://localhost:8443/modeshape-webdav/sample/default/');" />
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
                         <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"/>
                         <p:separator />
-                        <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench"/>
+                        <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench" url="http://support.escom-bpm.com" target="blank"/>
                         <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"
                                     actionListener="#{sessionBean.onCheckReleaseApp()}"/>
-                        <p:menuitem value="#{bundle.EscomWWW}" url="http://www.escom-bpm.com" icon="ui-icon-home"/>
+                        <p:menuitem value="#{bundle.EscomWWW}" url="http://www.escom-bpm.com" icon="ui-icon-home" target="blank"/>
                         <p:separator />
                         <p:menuitem value="#{bundle.About}" icon="ui-icon-note" 
                                     process="@this" update="logFRM:aboutPanel"
@@ -80,6 +109,7 @@
                     <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
                                      icon="ui-icon-extlink"
                                      onstart="return isClose = 1;"
+                                     ajax="false"
                                      action="#{sessionBean.onSessionExit()}"/>
                 </f:facet>
             </p:toolbar>
@@ -125,7 +155,7 @@
                             <p:commandLink value="#{bundle.Settings}" 
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
                             <p:separator />
-                            <p:outputLabel value="#{bundle.ChooseTheme} "/>
+                            <p:outputLabel value="#{bundle.ChooseTheme}"/>
                             <p:themeSwitcher effect="fade" var="t">
                                 <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
                                 <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item.displayName}" itemValue="#{item}"/>
@@ -134,6 +164,7 @@
                                 </p:column>
                                 <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
                             </p:themeSwitcher>
+                            
                         </p:panelGrid>
                     </p:panel>
 

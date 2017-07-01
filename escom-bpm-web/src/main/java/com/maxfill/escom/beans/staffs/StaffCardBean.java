@@ -34,7 +34,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     }
 
     @Override
-    protected void doPreViewItemCard(ArrayList<BaseDict> dataReport, Map<String, Object> parameters, String reportName){
+    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
         super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_STAFF_CARD);
     }
         

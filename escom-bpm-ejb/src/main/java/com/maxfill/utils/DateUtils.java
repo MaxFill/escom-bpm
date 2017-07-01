@@ -9,10 +9,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 public final class DateUtils {
     public final static Integer MINUTE_TYPE = 0;
@@ -53,10 +55,12 @@ public final class DateUtils {
     }
     
     /* Преобразование даты в строку */ 
-    public static String dateToString(Date sourceDate){
-        String strFormatDate = "---";         
+    public static String dateToString(Date sourceDate, String strFormatDate){
+        if (StringUtils.isBlank(strFormatDate)){
+            strFormatDate = "dd.MM.YY HH:mm";
+        }
         if (sourceDate != null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.YY HH:mm");            
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(strFormatDate);            
             strFormatDate = simpleDateFormat.format(sourceDate);
         }
         return strFormatDate;  
@@ -101,12 +105,7 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    /**
-     * Добавление к дате указанного числа минут
-     * @param date
-     * @param minute
-     * @return 
-     */
+    /* Добавление к дате указанного числа минут */
     public static Date addMinute(Date date, int minute) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -114,12 +113,7 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    /**
-     * Добавление к дате указанного числа месяцев
-     * @param date
-     * @param mounth
-     * @return 
-     */
+    /* Добавление к дате указанного числа месяцев  */
     public static Date addMounth(Date date, int mounth) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -127,15 +121,15 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    /**
-     * Возвращает разницу между двумя датами
-     * @param dateStart
-     * @param dateEnd
-     * @return 
-     */
+    /* Возвращает разницу между двумя датами */
     public static Date differenceDate(Date dateStart, Date dateEnd) {
         long diff = Math.abs(dateStart.getTime() - dateEnd.getTime());
         return new Date(diff);
     }
     
+    public static GregorianCalendar dateToGregorianCalendar(Date date){
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date); 
+        return calendar;
+    }
 }

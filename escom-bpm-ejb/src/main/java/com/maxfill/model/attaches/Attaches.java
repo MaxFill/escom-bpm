@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -75,6 +76,22 @@ public class Attaches implements Serializable {
     @JoinColumn(name = "Author", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private User author;  
+        
+    @JoinColumn(name = "LockAuthor", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private User lockAuthor;
+    
+    @Column(name = "LockDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lockDate;
+    
+    @Column(name = "PlanUnLockDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date planUnlockDate;
+    
+    @Lob
+    @Column(name = "TimeHandle")
+    private byte[] timeHandle;
         
     @JoinColumn(name = "Doc", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -183,6 +200,34 @@ public class Attaches implements Serializable {
     }
     public void setGuid(String guid) {
         this.guid = guid;
+    }
+
+    public User getLockAuthor() {
+        return lockAuthor;
+    }
+    public void setLockAuthor(User lockAuthor) {
+        this.lockAuthor = lockAuthor;
+    }
+
+    public Date getLockDate() {
+        return lockDate;
+    }
+    public void setLockDate(Date lockDate) {
+        this.lockDate = lockDate;
+    }
+
+    public Date getPlanUnlockDate() {
+        return planUnlockDate;
+    }
+    public void setPlanUnlockDate(Date planUnlockDate) {
+        this.planUnlockDate = planUnlockDate;
+    }
+
+    public byte[] getTimeHandle() {
+        return timeHandle;
+    }
+    public void setTimeHandle(byte[] timeHandle) {
+        this.timeHandle = timeHandle;
     }
     
     @Override

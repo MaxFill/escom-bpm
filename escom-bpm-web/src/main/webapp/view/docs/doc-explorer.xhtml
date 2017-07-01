@@ -24,7 +24,7 @@
         <f:viewParam name="docId" value="#{explorerBean.currentItem}" />
         <f:event type="preRenderView" listener="#{explorerBean.onShowDocInFolder()}"/>        
     </ui:define>
-    
+
     <!-- специфичные пункты в меню тулбара обозревателя -->
     <ui:define name="addMenuActions">
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
@@ -35,38 +35,86 @@
                     actionListener="#{explorerBean.prepareSendMailDocs('asLink')}"/> 
         <p:separator />
     </ui:define>    
-    
+
     <ui:param name="_detailBean" value="#{docsBean}" />
     <ui:param name="_treeBean" value="#{foldersBean}" /> 
     <ui:param name="_searcheBean" value="#{_detailBean}"/>
-    
+
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocSelector')}"/>
     <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsExplorer')}"/>
-    
+
     <ui:param name="_showAuthor"      value="#{false}"/>
     <ui:param name="_showDateCreate"  value="#{false}"/>
     <ui:param name="_showDateChange"  value="#{true}"/>    
     <ui:param name="_showUploadPanel" value="#{true}"/>
     <ui:param name="_showCompany"     value="#{true}"/>
-    
+
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDoc}" />
     <ui:param name="_updates" value="fileUploadFRM" />
-    
+
+    <ui:define name="rowTogglerColumns" >
+        <p:rowToggler rendered="#{explorerBean.isItemCanHaveAttache(item)}" />
+    </ui:define>
+
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
-            <h:outputText value="#{item.typeName}"/>
+
+        <p:column headerText="#{bundle.Type}" sortBy="#{item.typeName}" >
+            <h:outputText value="#{item.typeName}"/>           
+        </p:column>
+
+        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
+
+        <p:rowExpansion rendered="#{explorerBean.isItemCanHaveAttache(item) == true}">
+            <p:outputPanel rendered="#{explorerBean.isItemCanHaveAttache(item) == true}" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12 without-spaces">
+                    <p:fileUpload id="file"
+                                  allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
+                                  sizeLimit="#{docsBean.maxFileSize}"
+                                  invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                  invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                  fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                  label="#{bundle.ADD_VERSION}"                       
+                                  process="@this" auto="true"
+                                  mode="advanced" dragDropSupport="true"
+                                  cancelLabel="#{bundle.Cancel}"
+                                  uploadLabel="#{bundle.SaveFiles}"
+                                  fileUploadListener="#{docsBean.addAttache}">
+                        <f:attribute name="item" value="#{item}" />
+                    </p:fileUpload>                    
+                </p:panelGrid>
+            </p:outputPanel>
+        </p:rowExpansion>
+
     </ui:define> 
-    
+
     <ui:define name="addItemMenu">
-         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}"                    
-                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                     disabled="#{item.attache == null}"
-                     actionListener="#{docsBean.onViewAttache(item)}"/>
+        <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditDoc}" 
+                    actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                    disabled="#{item.attache == null}"
+                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                    oncomplete="document.getElementById('#{_frmExpl}:editDocument').click();"/>
+        <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}"                    
+                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                    disabled="#{item.attache == null}"
+                    actionListener="#{docsBean.onViewAttache(item.getAttache())}"/>
+        <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
+                    ajax="false"
+                    rendered="#{explorerBean.isItemHaveAttache(item)}"
+                    action="#{docsBean.attacheDownLoad(item.getAttache())}"/>
     </ui:define>
-    
-    
+
+    <ui:define name="addToolButtons">
+        <p:menuButton value="#{bundle.Reports}" >
+            <p:menuitem value="#{bundle.DocReportCountTypes}" 
+                        icon="ui-icon-note"
+                        actionListener="#{docsBean.openDocCountTypesReport()}"/>
+        </p:menuButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define>
 </ui:composition>

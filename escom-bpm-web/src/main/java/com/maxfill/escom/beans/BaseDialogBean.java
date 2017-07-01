@@ -1,13 +1,15 @@
-
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.users.User;
 import org.primefaces.context.RequestContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Базовый бин для служебных диалогов  */
@@ -16,7 +18,10 @@ public abstract class BaseDialogBean implements Serializable{
     
     @Inject
     protected SessionBean sessionBean;
-
+    
+    @EJB
+    protected Configuration conf;
+            
     private BaseBean sourceBean;
     private boolean itemChange;       //признак изменения записи 
     private String beanName;
@@ -91,6 +96,10 @@ public abstract class BaseDialogBean implements Serializable{
         center.addOption("minHeight", 100);
         layoutOptions.setCenterOptions(center);
     }
+    
+    protected User getCurrentUser(){
+        return sessionBean.getCurrentUser();
+    }    
     
     /* GETS & SETS */
 

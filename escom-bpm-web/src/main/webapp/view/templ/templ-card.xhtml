@@ -38,6 +38,9 @@
 
         <pe:layout fullPage="true" options="#{_bean.cardLayoutOptions}">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/> 
+            
+            <ui:include src="/view/common/error-dlg.xhtml"/>
+                        
             <pe:layoutPane position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                   
                     <p:remoteCommand name="onChangeItem" immediate="true" 

@@ -1,0 +1,33 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+    
+    <p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
+                            update="expireDialog"                            
+                            onexception="isClose = 1; PF('expireDialog').show();" />
+    <p:ajaxExceptionHandler type="java.lang.NullPointerException"
+                            update="exceptionDialog"
+                            onexception="isClose = 1; PF('exceptionDialog').show();" />
+
+    <p:dialog id="expireDialog" header="#{msg.SessionExpired}" resizable="false" modal="true" widgetVar="expireDialog" height="240px" width="550px">       
+        <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
+            <p:graphicImage name="/images/session_expired.jpg"/> 
+            <p:outputLabel value="#{msg.SessionTimeout}" style="color: red;"/>
+            <br/>
+            <p:button icon="ui-icon-home" value="#{bundle.GotoLogin}" outcome="/login" style="float: right;" />
+        </p:panelGrid>
+    </p:dialog>
+    
+    <p:dialog id="exceptionDialog" header="#{bundle.Error}" modal="true" widgetVar="exceptionDialog" height="500px">
+        <p:panelGrid layout="grid" columns="1" styleClass="ui-grid-col-12">
+            <p:outputLabel value="#{bundle.Message}" />: Exception '#{pfExceptionHandler.type}' occurred! #{pfExceptionHandler.message}
+            <p:accordionPanel activeIndex="0">
+                <p:tab title="#{bundle.Detail}" >
+                    <h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false" />
+                </p:tab>
+            </p:accordionPanel>
+        </p:panelGrid>
+    </p:dialog>
+    
+</ui:composition>

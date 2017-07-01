@@ -12,12 +12,15 @@ import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
+import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.FileUtils;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -71,6 +74,8 @@ public class ExplorerBean implements Serializable {
           
     @Inject
     private SessionBean sessionBean;
+    @Inject
+    private DocBean docBean;
     
     @EJB
     private FiltersFacade filtersFacade;
@@ -200,7 +205,7 @@ public class ExplorerBean implements Serializable {
     }
     
     /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
-     public void onCreateDetailItem(){
+    public void onCreateDetailItem(){
         typeEdit = DictEditMode.INSERT_MODE;
         BaseDict parent = null;
         BaseDict owner = null;
@@ -367,6 +372,8 @@ public class ExplorerBean implements Serializable {
                     } else
                         if (isItemTreeType(item)){
                             treeBean.moveToTrash(item, errors);
+                            TreeNode node = EscomBeanUtils.findTreeNode(tree, item); 
+                            node.getParent().getChildren().remove(node); 
                         } else
                             if (isItemRootType(item)){
                                 rootBean.moveToTrash(item, errors);
@@ -386,14 +393,15 @@ public class ExplorerBean implements Serializable {
         onMoveCheckedContentToTrash();
     }
     public void onMoveContentToTrash(BaseDict item, Set<String> errors){
-        if (item == null){
-            return;
-        }
+        if (item == null) return;
+        
         if (isItemDetailType(item)){
             tableBean.moveToTrash(item, errors);            
         } else
             if (isItemTreeType(item)){
                 treeBean.moveToTrash(item, errors); 
+                TreeNode node = EscomBeanUtils.findTreeNode(tree, item); 
+                node.getParent().getChildren().remove(node); 
             } else
                 if (isItemRootType(item)){
                     rootBean.moveToTrash(item, errors);
@@ -410,7 +418,7 @@ public class ExplorerBean implements Serializable {
         if (!errors.isEmpty()) {
             EscomBeanUtils.showErrorsMsg(errors);            
         } else {
-            removeItemFromTree(treeSelectedNode);
+            removeNodeFromTree(treeSelectedNode);
             reloadDetailsItems();
         }
     }
@@ -787,7 +795,7 @@ public class ExplorerBean implements Serializable {
     }    
          
     /* ДЕРЕВО: удаление узла в дереве  */
-    public void removeItemFromTree(TreeNode node){
+    public void removeNodeFromTree(TreeNode node){
         if (node == null){
             return;
         }
@@ -1459,6 +1467,19 @@ public class ExplorerBean implements Serializable {
     
     /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */
     
+    public boolean isItemHaveAttache(BaseDict item){
+        if (!item.getClass().getSimpleName().equals(DictObjectName.DOC)){
+            return false;
+        }
+        Doc doc = (Doc) item;
+        return doc.getAttache() != null;
+    }   
+    
+    public boolean isItemCanHaveAttache(BaseDict item){
+        if (item == null) return false;        
+        return item.getClass().getSimpleName().equals(DictObjectName.DOC);
+    }
+    
     public void onUploadFile(FileUploadEvent event) throws IOException{     
         UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
         User author = sessionBean.getCurrentUser();        
@@ -1509,6 +1530,10 @@ public class ExplorerBean implements Serializable {
             }
         }
         return targetItems;
+    }
+    
+    public void onEditDocument(){
+        docBean.onOpenFormLockMainAttache((Doc) currentItem);
     }
     
     /* ПРОЧИЕ МЕТОДЫ */

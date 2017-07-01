@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.system;
 
 import com.maxfill.escom.beans.ApplicationBean;
@@ -10,26 +9,21 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-/**
- *
- * @author Filatov Maxim
- */
-
 public class SessionListener implements HttpSessionListener {
     protected static final Logger LOG = Logger.getLogger(SessionListener.class.getName());
     @Inject
     private ApplicationBean appBean;
-          
+     
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        //LOG.log(Level.INFO, "Session is created!");
+        LOG.log(Level.INFO, "Session is created!");
         event.getSession().setAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS_SIZE, 50);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se){
         HttpSession httpSession = se.getSession();
-        //LOG.log(Level.INFO, "Session is closed.");
+        LOG.log(Level.INFO, "Session is closed.");
         if (httpSession != null){
             String login = (String) httpSession.getAttribute("UserLogin");
             if (login != null && appBean != null){

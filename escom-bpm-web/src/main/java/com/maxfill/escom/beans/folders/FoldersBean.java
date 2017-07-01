@@ -10,7 +10,7 @@ import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;

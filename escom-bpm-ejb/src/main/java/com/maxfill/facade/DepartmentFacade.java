@@ -1,14 +1,11 @@
-
 package com.maxfill.facade;
 
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +19,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 
-/**
- *
- * @author Maxim
- */
 @Stateless
 public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog> {
     protected static final Logger LOG = Logger.getLogger(DepartmentFacade.class.getName());
@@ -72,11 +65,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /**
-     * Отбор всех подразделений, относящихся к указанной компании
-     * @param company
-     * @return 
-     */
+    /* Отбор всех подразделений, относящихся к указанной компании */
     public List<Department> findDepartmentByCompany(Company company){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -95,12 +84,28 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         TypedQuery<Department> q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-            
-    /**
-     * Возвращает подразделения, относящиеся к компании и находящиеся на верхнем уровне
-     * @param owner
-     * @return 
-     */
+    
+    /* Отбор дочерних подразделений */
+    public List<Department> findChildDepartments(Department department){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Department> cq = builder.createQuery(Department.class);
+        Root<Department> c = cq.from(Department.class);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.equal(c.get("deleted"), false));
+        criteries.add(builder.equal(c.get("parent"), department));
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(c).where(builder.and(predicates));               
+        cq.orderBy(builder.asc(c.get("name")));
+        TypedQuery<Department> q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
+    /* Возвращает подразделения, относящиеся к компании и находящиеся на верхнем уровне  */
     @Override
     public List<Department> findDetailItems(Company owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);

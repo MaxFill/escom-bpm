@@ -1,0 +1,90 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ.xhtml">
+
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{docReportBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">
+        #{bundle.Report}
+    </ui:define>
+
+    <ui:define name="body">
+        <pe:layout fullPage="true" options="#{docReportBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{docReportBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="reportForm" style="font-size: 90%;"> 
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
+                        <p:panelGrid columns="3" layout="grid" styleClass="ui-grid-col-12 without-spaces"
+                                     columnClasses="ui-grid-col-3 without-spaces, ui-grid-col-6 without-spaces, ui-grid-col-3 without-spaces" >
+                            <h:panelGroup>
+                                <p:outputLabel value="#{bundle.PeriodSelected}"/>
+                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces">
+                                    #{bundle.With}
+                                    <p:calendar value="#{docReportBean.dateStart}" id="dateStart" 
+                                                showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                                pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                                required="#{param['isRequired'] == 'true'}"
+                                                requiredMessage="#{bundle.Field} [#{bundle.DateBegin}: #{bundle.With}] #{bundle.MustBeFilled}">
+                                        <p:ajax event="dateSelect" listener="#{docReportBean.dateStartChange()}"/>
+                                    </p:calendar>
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces">
+                                    #{bundle.At}
+                                    <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" 
+                                                showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                                                pattern="dd.MM.yyyy" mask="99.99.9999" 
+                                                required="#{param['isRequired'] == 'true'}"
+                                                requiredMessage="#{bundle.Field} [#{bundle.DateEnd}: #{bundle.At}] #{bundle.MustBeFilled}">
+                                        <p:ajax event="dateSelect" listener="#{docReportBean.dateEndChange()}"/>
+                                    </p:calendar>
+                                </p:panelGrid>
+                            </h:panelGroup>
+
+                            <p:tree value="#{docReportBean.tree}" var="group" 
+                                    selectionMode="checkbox"
+                                    styleClass="ui-grid-col-12 without-spaces"
+                                    selection="#{docReportBean.selectedNodes}">
+                                <p:treeNode type="tree" icon="ui-icon-note">
+                                    <h:outputText value="#{group.name}"/>
+                                </p:treeNode>
+                            </p:tree>
+                            
+                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                                <p:commandButton value="#{bundle.ToForm}" styleClass="ui-grid-col-12 without-spaces"
+                                                 actionListener="#{docReportBean.makeReport()}"
+                                                 update="reportForm">
+                                    <f:param name="isRequired" value="true"/>
+                                </p:commandButton>
+                                <p:commandButton value="#{bundle.Print}" styleClass="ui-grid-col-12 without-spaces"
+                                                 rendered="#{docReportBean.pieModel != null}"
+                                                 actionListener="#{docReportBean.onPreViewReport()}">
+                                </p:commandButton>
+                                <p:commandButton value="#{bundle.Close}" styleClass="ui-grid-col-12 without-spaces" 
+                                                 immediate="true"
+                                                 action="#{docReportBean.onCloseCard()}"> 
+                                </p:commandButton> 
+                            </p:panelGrid>
+                            
+                        </p:panelGrid>    
+
+                        <p:chart type="pie" model="#{docReportBean.pieModel}" 
+                                 rendered="#{docReportBean.pieModel != null}"                                 
+                                 responsive="true" styleClass="ui-grid-col-12"/>
+                        
+                    </p:panelGrid>
+
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
+    </ui:define>
+</ui:composition>

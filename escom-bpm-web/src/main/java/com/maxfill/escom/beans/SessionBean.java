@@ -23,6 +23,8 @@ import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
+import com.maxfill.escom.beans.system.login.CountryFlags;
+import com.maxfill.escom.beans.system.login.LoginBean;
 import com.maxfill.escom.beans.system.numPuttern.NumeratorPatternBean;
 import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
 import com.maxfill.escom.beans.users.UserBean;
@@ -32,6 +34,8 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
+import com.maxfill.services.webDav.WebDavService;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -51,16 +55,27 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
+import javax.xml.bind.JAXB;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Cессионный бин приложения */
@@ -69,7 +84,6 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
 public class SessionBean implements Serializable{  
     private static final long serialVersionUID = -5356932297321623340L;
     protected static final Logger LOG = Logger.getLogger(SessionBean.class.getName());
-    private static final String PAGE_LOGOUT = "/faces/logout.xhtml";
     
     //служебное поле для передачи ссылки на вызвавший бин
     private final HashMap<String, BaseBean> sourceBeansMap = new HashMap<>(); 
@@ -83,8 +97,10 @@ public class SessionBean implements Serializable{
     private String primefacesTheme;   
     private List<Theme> themes;
     private Locale locale;
-    private UserSettings userSettings;
-       
+    private UserSettings userSettings = new UserSettings();
+    
+    @EJB
+    private WebDavService webDavEngineService;
     @EJB
     protected Configuration configuration;    
     @EJB
@@ -126,7 +142,7 @@ public class SessionBean implements Serializable{
     private NumeratorPatternBean numeratorPatternBean;
     
     @PostConstruct
-    public void init() {
+    public void init() {                  
         dashboardModel = new DefaultDashboardModel();
         DashboardColumn column1 = new DefaultDashboardColumn();
         DashboardColumn column2 = new DefaultDashboardColumn();
@@ -148,9 +164,9 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(column3); 
         dashboardModel.addColumn(column4);
 
-        temeInit();
+        temeInit();                
     }    
-        
+         
     /* БУФЕР ИСТОЧНИКОВ */
     
     /* Добавление бина источника в буфер */
@@ -240,26 +256,32 @@ public class SessionBean implements Serializable{
     }          
     
     /* Метод завершения сессии вызывается со страницы рабочего места пользователя */
-    public void onSessionExit() throws IOException{
-        doSessionExit(PAGE_LOGOUT);
+    public void onSessionExit() {
+        doSessionExit(SysParams.LOGOUT_PAGE);
     }
     
     /* Завершение сессии пользователя  */           
-    private void doSessionExit(String page) throws IOException{
-        doSaveUserSettings();
-        appBean.clearUserLock(currentUser);
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ExternalContext ectx = ctx.getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
-        URL reconstructedURL = new URL(request.getScheme(),
-                               request.getServerName(),
-                               request.getServerPort(),
-                               "");
-        String serverURL = reconstructedURL.toString();
-        ectx.invalidateSession();
+    private void doSessionExit(String page) {
         StringBuilder sb = new StringBuilder();
-        sb.append(serverURL).append(ectx.getRequestContextPath()).append(page);
-        ectx.redirect(sb.toString());   
+        try {
+            doSaveUserSettings();
+            appBean.clearUserLock(currentUser);
+            ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+            ectx.getFlash().setKeepMessages(true); 
+            HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+            URL reconstructedURL = new URL(request.getScheme(),
+                    request.getServerName(),
+                    request.getServerPort(),
+                    "");
+            String serverURL = reconstructedURL.toString();            
+            sb.append(serverURL).append(ectx.getRequestContextPath()).append(page);            
+            ectx.invalidateSession();            
+            ectx.redirect(sb.toString());            
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+        }         
     }
 
     /* Сохранение настроек текущего пользователя в базу данных */
@@ -268,7 +290,8 @@ public class SessionBean implements Serializable{
         try {
             currentUser = getRefreshCurrentUser();
             userSettings.setTheme(primefacesTheme);
-            byte[] compressXML = EscomBeanUtils.compress(userSettings.toString());
+            String settings = userSettings.toString();
+            byte[] compressXML = EscomBeanUtils.compress(settings);
             currentUser.setUserSettings(compressXML);
             userFacade.edit(currentUser);
         } catch (IOException ex) {
@@ -599,4 +622,9 @@ public class SessionBean implements Serializable{
     public void setUserSettings(UserSettings userSettings) {
         this.userSettings = userSettings;
     }
+         
+    public void test(){
+        webDavEngineService.addAccess();
+    }
+    
 }

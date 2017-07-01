@@ -1,10 +1,8 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.staffs.StaffLog;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
@@ -30,10 +28,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * 
- * @author mfilatov
- */
 @Stateless
 public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
     protected static final Logger LOG = Logger.getLogger(StaffFacade.class.getName());
@@ -157,6 +151,20 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
         } else {
             crit2 = builder.equal(c.get("owner"), department);
         }
+        Predicate crit3 = builder.equal(c.get("deleted"), false);
+        cq.select(c).where(builder.and(crit1, crit2, crit3));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
+    /* Поиск штатных единиц входящих в указанное подразделение */
+    public List<Staff> findStaffByDepartment(Department department){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
+        Root<Staff> c = cq.from(Staff.class);        
+        Predicate crit1 = builder.equal(c.get("owner"), department);        
+        Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();

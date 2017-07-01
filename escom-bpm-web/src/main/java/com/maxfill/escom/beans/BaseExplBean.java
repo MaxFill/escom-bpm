@@ -509,8 +509,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     public void replaceItem(BaseDict oldItem, BaseDict newItem){
         getItemFacade().replaceItem(oldItem, newItem);
-    }
-        
+    }        
    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */
     public void doGetCountUsesItem(T item, Map<String, Integer> rezult) {

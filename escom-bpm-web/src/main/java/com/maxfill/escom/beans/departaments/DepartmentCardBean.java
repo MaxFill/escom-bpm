@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.utils.SysParams;
+import com.maxfill.dictionary.SysParams;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;

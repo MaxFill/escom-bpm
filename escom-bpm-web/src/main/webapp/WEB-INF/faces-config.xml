@@ -8,7 +8,11 @@
         <action-listener>org.primefaces.application.DialogActionListener</action-listener>
         <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
         <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
-                
+
+        <el-resolver>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
+        </el-resolver>                
+        
         <resource-bundle>
             <var>bundle</var>
             <base-name>locale.Bundle</base-name>            
@@ -30,8 +34,24 @@
         </locale-config>
     </application>
     
+    <factory>
+        <exception-handler-factory>
+           org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
+        </exception-handler-factory>
+    </factory>
+
     <navigation-rule>
         <from-view-id>*</from-view-id>        
+        
+        <navigation-case>
+            <from-outcome>doclock</from-outcome>
+            <to-view-id>/view/docs/locks/doclock.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>doc-count-types</from-outcome>
+            <to-view-id>/view/docs/reports/count-types.xhtml</to-view-id>            
+        </navigation-case>
         
         <navigation-case>
             <from-outcome>check-release</from-outcome>
