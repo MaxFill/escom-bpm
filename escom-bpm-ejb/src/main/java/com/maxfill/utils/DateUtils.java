@@ -4,8 +4,9 @@ import com.google.common.base.Preconditions;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,6 +23,10 @@ public final class DateUtils {
     public final static Integer DAILY_REPEAT = 0;
     public final static Integer WEEKLY_REPEAT = 1;
     public final static Integer MONTHLY_REPEAT = 2;
+    
+    static final int MINUTES_PER_HOUR = 60;
+    static final int SECONDS_PER_MINUTE = 60;
+    static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
     
     private DateUtils() { }
 
@@ -72,6 +77,13 @@ public final class DateUtils {
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
     
+    public static LocalDateTime toLocalDateTime(Date date){  
+        Preconditions.checkNotNull(date);
+        LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        return ldt;
+        //Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());         
+    }
+
     /* Преобразование строки в формате unix-time в дату  */
     public static Date strLongToDate(String longStr){        
         Long unixTime = Long.valueOf(longStr);        
@@ -121,10 +133,18 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    /* Возвращает разницу между двумя датами */
-    public static Date differenceDate(Date dateStart, Date dateEnd) {
-        long diff = Math.abs(dateStart.getTime() - dateEnd.getTime());
-        return new Date(diff);
+    /* Возвращает разницу во времени между двумя датами */
+    public static String differenceDate(Date dateStart, Date dateEnd) {        
+        LocalDateTime ldStart = toLocalDateTime(dateStart);
+        LocalDateTime ldEnd = toLocalDateTime(dateEnd);
+        Duration duration = Duration.between(ldStart, ldEnd);
+        long seconds = duration.getSeconds();
+        long hours = seconds / SECONDS_PER_HOUR;
+        long minutes = ((seconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+        long secs = (seconds % SECONDS_PER_MINUTE);
+        StringBuilder diff = new StringBuilder();
+        diff.append(hours).append(":").append(minutes).append(":").append(secs);
+        return diff.toString();
     }
     
     public static GregorianCalendar dateToGregorianCalendar(Date date){

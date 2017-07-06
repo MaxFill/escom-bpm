@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.services.mail.Mailbox;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -9,10 +10,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- * EJB bean для почтового ящика
- * @author Maxim
- */
 @Stateless
 public class MailBoxFacade extends BaseFacade<Mailbox> {
 
@@ -36,5 +33,17 @@ public class MailBoxFacade extends BaseFacade<Mailbox> {
     public void remove(Mailbox message) {
         message = getEntityManager().getReference(Mailbox.class, message.getId());
         getEntityManager().remove(message);
+    }
+    
+    public void createMailBox(String subject, String adresses, String sender, String content){
+        Mailbox mailbox = new Mailbox();
+        mailbox.setSubject(subject);
+        mailbox.setAddresses(adresses);
+        mailbox.setSender(sender);
+        mailbox.setMsgContent(content);
+        mailbox.setActual(true);
+        mailbox.setCopies("");
+        mailbox.setDateCreate(new Date());
+        create(mailbox);
     }
 }

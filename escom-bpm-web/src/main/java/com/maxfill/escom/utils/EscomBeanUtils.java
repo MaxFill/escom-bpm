@@ -2,15 +2,9 @@ package com.maxfill.escom.utils;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.FolderNavigation;
-import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -25,16 +19,11 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -399,31 +388,7 @@ public final class EscomBeanUtils {
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog(dlgName, options, paramMap);
-    }
-    
-    /* Открытие формы нового почтового сообщения  */
-    public static void openMailMsgForm(String mode, List<BaseDict> docs){      
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 700);
-        options.put("height", 500);
-        options.put("maximizable", true);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        List<String> openModeList = new ArrayList<>();
-        openModeList.add(mode); 
-        List<Integer> idList = docs.stream().map(BaseDict::getId).collect(Collectors.toList());
-        String docIds = org.apache.commons.lang3.StringUtils.join(idList, ",");
-        List<String> docsList = new ArrayList<>();
-        docsList.add(docIds); 
-        Map<String, List<String>> paramMap = new HashMap<>();
-        paramMap.put("modeSendAttache", openModeList);
-        paramMap.put("docIds", docsList);
-        RequestContext.getCurrentInstance().openDialog("/view/services/mail-message", options, paramMap);
-    }
+    }    
     
     /* Формирует ссылку URL для объекта  */
     public static String doGetItemURL(BaseDict item, String page, String openMode){
@@ -461,30 +426,5 @@ public final class EscomBeanUtils {
         sb.append(itemKey).append("_").append(openMode).append("_").append(user.getId());
         return sb.toString();
     }   
-
-    /* Сжимает строку */
-    public static byte[] compress(String data) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-            GZIPOutputStream gzip = new GZIPOutputStream(bos);
-            gzip.write(data.getBytes());
-            gzip.close();
-            byte[] compressed = bos.toByteArray();
-            bos.close();
-            return compressed;
-    }
-	
-    public static String decompress(byte[] compressed) throws IOException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(compressed);
-        GZIPInputStream gis = new GZIPInputStream(bis);
-        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while((line = br.readLine()) != null) {
-                sb.append(line);
-        }
-        br.close();
-        gis.close();
-        bis.close();
-        return sb.toString();
-    }
+    
 }

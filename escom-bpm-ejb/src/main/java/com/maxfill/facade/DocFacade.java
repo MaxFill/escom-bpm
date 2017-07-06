@@ -9,8 +9,11 @@ import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
+import com.maxfill.model.users.User;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -22,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -40,6 +44,22 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         return Doc.class.getSimpleName().toLowerCase();
     }    
     
+    /* Возвращает документы, заблокированные пользователем */
+    @Override
+    public List<Doc> loadLockDocuments(User editor){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
+        Root<Attaches> root = cq.from(Attaches.class);
+        Join docJoin = root.join(Attaches_.doc);
+        Predicate crit1 = builder.equal(root.get(Attaches_.lockAuthor), editor);
+        cq.select(docJoin);
+        cq.where(builder.and(crit1));
+        Query q = getEntityManager().createQuery(cq);        
+        List r = q.getResultList();
+        return (List<Doc>)r;
+    }
+    
     /* Возвращает документы с указанным Менеджером  */ 
     public List<Doc> findDocsByManager(Staff manager){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
@@ -49,7 +69,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         Predicate crit1 = builder.equal(c.get("manager"), manager);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        TypedQuery<Doc> q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
     }
     

@@ -23,8 +23,6 @@ import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
-import com.maxfill.escom.beans.system.login.CountryFlags;
-import com.maxfill.escom.beans.system.login.LoginBean;
 import com.maxfill.escom.beans.system.numPuttern.NumeratorPatternBean;
 import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
 import com.maxfill.escom.beans.users.UserBean;
@@ -36,6 +34,8 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.services.webDav.WebDavService;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -55,27 +55,17 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXB;
+import java.util.stream.Collectors;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Cессионный бин приложения */
@@ -100,14 +90,14 @@ public class SessionBean implements Serializable{
     private UserSettings userSettings = new UserSettings();
     
     @EJB
-    private WebDavService webDavEngineService;
-    @EJB
     protected Configuration configuration;    
     @EJB
     private UserFacade userFacade;
     @EJB
     private StaffFacade staffFacade;
-    
+    @EJB 
+    private UserMessagesFacade messagesFacade;
+        
     @Inject
     private ApplicationBean appBean;    
     @Inject
@@ -166,7 +156,7 @@ public class SessionBean implements Serializable{
 
         temeInit();                
     }    
-         
+        
     /* БУФЕР ИСТОЧНИКОВ */
     
     /* Добавление бина источника в буфер */
@@ -246,13 +236,14 @@ public class SessionBean implements Serializable{
     /* ПРОЧИЕ МЕТОДЫ */
     
     /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
-    public void showNotifBar(){
+    public void showNotification(){
         Boolean needUpadateSystem = appBean.getNeedUpadateSystem();
         if (canShowNotifBar && needUpadateSystem){
             RequestContext context = RequestContext.getCurrentInstance();
             context.execute("PF('bar').show();");
         }
         canShowNotifBar = false;
+        checkUnReadMessages();
     }          
     
     /* Метод завершения сессии вызывается со страницы рабочего места пользователя */
@@ -291,7 +282,7 @@ public class SessionBean implements Serializable{
             currentUser = getRefreshCurrentUser();
             userSettings.setTheme(primefacesTheme);
             String settings = userSettings.toString();
-            byte[] compressXML = EscomBeanUtils.compress(settings);
+            byte[] compressXML = EscomUtils.compress(settings);
             currentUser.setUserSettings(compressXML);
             userFacade.edit(currentUser);
         } catch (IOException ex) {
@@ -312,6 +303,18 @@ public class SessionBean implements Serializable{
         }
         UserGroups groupAdmin =  currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
         return groupAdmin != null;
+    }
+    
+    public void checkUnReadMessages(){
+        Integer countUnreadMessage = getCountUnreadMessage();
+        if (countUnreadMessage > 0){
+            EscomBeanUtils.SuccesFormatMessage("Info", "YouHaveUnreadMessage", new Object[]{countUnreadMessage});            
+        }
+    }
+    
+    /* Колво непрочитанных сообщений у текущего пользователя */
+    private Integer getCountUnreadMessage(){
+        return messagesFacade.getCountUnReadMessage(currentUser);        
     }
     
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
@@ -349,17 +352,39 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
     }
     
+    /* Открытие формы нового почтового сообщения  */
+    public void openMailMsgForm(String mode, List<BaseDict> docs){      
+        List<String> openModeList = new ArrayList<>();
+        openModeList.add(mode); 
+        List<Integer> idList = docs.stream().map(BaseDict::getId).collect(Collectors.toList());
+        String docIds = org.apache.commons.lang3.StringUtils.join(idList, ",");
+        List<String> docsList = new ArrayList<>();
+        docsList.add(docIds); 
+        Map<String, List<String>> paramMap = new HashMap<>();
+        paramMap.put("modeSendAttache", openModeList);
+        paramMap.put("docIds", docsList);
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_MESSAGE, paramMap);
+    }
+    
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
         openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
     }
     
-    /* Открытие формы почтовой службы */
     public void openMailService(){
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_SERVICE, null); 
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", 1300);
+        options.put("height", 600);
+        options.put("maximizable", true);
+        options.put("closable", true);
+        options.put("closeOnEscape", true);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_SERVICE, options, null);  
     }
     
-    /* Открытие формы службы интеграции с LDAP */
     public void openLdapService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -373,6 +398,10 @@ public class SessionBean implements Serializable{
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }    
+
+    public void openUserMessagesForm(){        
+        openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, new HashMap<>());
+    }
     
     /* Переход на начальную страницу программы */
     public String goToIndex(){
@@ -623,8 +652,17 @@ public class SessionBean implements Serializable{
         this.userSettings = userSettings;
     }
          
-    public void test(){
-        webDavEngineService.addAccess();
+    public String getMessagesInfo(){
+        Integer countMsg = getCountUnreadMessage();
+        
+        StringBuilder info = new StringBuilder();
+        info.append(EscomBeanUtils.getBandleLabel("Messages")).append(" (");
+        if (countMsg > 0){
+            info.append(EscomBeanUtils.getBandleLabel("CountNewMessages")).append(" ").append(countMsg);
+        } else {
+            info.append(EscomBeanUtils.getBandleLabel("NoNewMessages"));
+        }
+        info.append(")");
+        return info.toString();
     }
-    
 }

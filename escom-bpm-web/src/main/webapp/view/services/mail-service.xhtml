@@ -5,8 +5,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <ui:param name="_bean" value="#{mailBean}"/>
-
     <ui:define name="title">
         #{bundle.MailService}
     </ui:define>
@@ -35,7 +33,7 @@
                          required="true"
                          requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
                          value="#{mailBean.settings.user}"/>
-            <p:message for="login" display="tooltip"/>
+            <p:message for="login"/>
 
             <p:outputLabel value="#{bundle.password}"/>
             <p:inputText id="password" style="width: 100%;"
@@ -43,7 +41,7 @@
                          required="true"
                          requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                          value="#{mailBean.settings.password}"/> 
-            <p:message for="password" display="tooltip"/>
+            <p:message for="password"/>
 
             <p:outputLabel value="#{bundle.AdressSender}"/>
             <p:inputText id="adressSender" style="width: 100%;"
@@ -65,62 +63,12 @@
                             actionListener="#{mailBean.onCheckConnect()}"
                             update="eastFRM"/>
                 <p:commandButton icon="ui-icon-extlink" value="#{bundle.MessagesBox}"
-                            title="#{bundle.PreviewMessagesBox}"
-                            oncomplete="PF('mailBoxDlg').show();"
-                            actionListener="#{_bean.refreshMessages()}"
-                            update="mailBoxFRM" />
+                            title="#{bundle.PreviewMessagesBox}"                            
+                            actionListener="#{mailBean.onOpenMailBox()}"/>
             </h:panelGrid>
            
         </p:panelGrid>
 
-    </ui:define>
-
-    <ui:define name="dialogsAdd">
-        <p:dialog widgetVar="mailBoxDlg" header="#{bundle.MessagesForSent}" modal="true" closeOnEscape="true" resizable="true" maximizable="true">
-            <h:form id="mailBoxFRM">
-                <p:outputPanel id="mailBoxPanel" style="width: 900px; height: 500px;" rendered="#{mailBean.messages != null}">                             
-                    <p:toolbar style="margin-bottom: 5px;">
-                        <p:toolbarGroup >
-                            <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                                             update="mailBoxFRM:tblDetail" 
-                                             actionListener="#{_bean.refreshMessages()}"/>                        
-                        </p:toolbarGroup>
-                    </p:toolbar>
-                    <p:dataTable id="tblDetail"
-                                 value="#{mailBean.messages}" var="item" 
-                                 emptyMessage="#{bundle.EmptyTable}"
-                                 paginator="true" paginatorPosition="bottom"  
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.name}"
-                                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                                 rowKey="#{item.id}" selectionMode="single">
-
-                        <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
-                            #{item.sender}
-                        </p:column> 
-                        <p:column headerText="#{bundle.Subject}" sortBy="#{item.subject}">
-                            #{item.subject}
-                        </p:column>                        
-                        <p:column headerText="#{bundle.Addresses}" sortBy="#{item.addresses}">
-                            #{item.addresses}
-                        </p:column> 
-                        <p:column headerText="#{bundle.Author}" sortBy="#{item.author.shortFIO}">
-                            #{item.author.shortFIO}
-                        </p:column> 
-                        <p:column headerText="#{bundle.DateChange}" sortBy="#{cnt.dateChange}"> 
-                            <p:outputLabel value="#{item.dateCreate}">
-                                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
-                            </p:outputLabel>
-                        </p:column>
-                        <p:column headerText="#{bundle.Commands}" style="text-align: center;" > 
-                            <p:commandButton value="#{bundle.Delete}" icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                            update="tblDetail"
-                                            actionListener="#{mailBean.deleteMessage(item)}"/>
-                        </p:column> 
-                    </p:dataTable>
-                </p:outputPanel>
-            </h:form>
-        </p:dialog>
     </ui:define>
 
 </ui:composition>

@@ -91,6 +91,13 @@
 
     </ui:define> 
 
+    <ui:define name="specCommandLinks">
+        <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
+                       rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                       actionListener="#{explorerBean.onViewDocument(item)}">
+        </p:commandLink>
+    </ui:define>    
+    
     <ui:define name="addItemMenu">
         <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditDoc}" 
                     actionListener="#{explorerBean.onSetCurrentItem(item)}"

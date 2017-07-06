@@ -14,10 +14,11 @@ import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
 import com.maxfill.services.numerator.DocNumerator;
+import com.maxfill.services.webDav.WebDavService;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -27,19 +28,13 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 /* Карточка документа */
 
@@ -53,7 +48,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     private String docURL;  
     private Integer documentId; //используется при открытии файла на просмотр через прямую гиперсылку  
-
+    private Attaches selectedAttache;
+    
     @Inject
     private DocBean docsBean;
             
@@ -65,7 +61,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private DocStatusFacade docStatusFacade;
     @EJB
     private AttacheFacade attacheFacade;
-    
+    @EJB
+    private WebDavService webDavService;
+        
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -126,14 +124,19 @@ public class DocCardBean extends BaseCardBean<Doc>{
         addDocStatusFromType(doc, doc.getDocType());
     }
      
+    /* Возвращает true если у документа есть заблокированные вложения */
+    public boolean getDocIsHaveLock(){
+        return docsBean.docIsHaveLock(getEditedItem());
+    }
+    
     /* Запрос на формирование ссылки URL для просмотра документа  */
-    public String onGetDocViewURL(Doc doc){
-        return EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
+    public void onGetDocViewURL(Doc doc){
+        docURL = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
     }
     
     /* Запрос на формирование ссылки URL на открытие карточки документа */
-    public String onGetDocOpenURL(Doc doc){
-        return EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer", "0");
+    public void onGetDocOpenURL(Doc doc){
+        docURL = EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer", "0");
     }   
             
     /* Сброс регистрационного номера */
@@ -159,16 +162,23 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void prepareSendMailDoc(String mode){
         List<BaseDict> docs = new ArrayList<>();
         docs.add(getEditedItem());
-        EscomBeanUtils.openMailMsgForm(mode, docs);
+        sessionBean.openMailMsgForm(mode, docs);
     }
     
+    public void test(Attaches attache){
+        webDavService.downloadFile(attache);
+    }
     /* ВЛОЖЕНИЯ */
+    
+    public void onSetSelectedAttache(Attaches attache){
+       selectedAttache = attache;
+    }
     
     /* Добавление версии к документу   */
     public Attaches addAttache(FileUploadEvent event) throws IOException{
         onItemChange();
         Doc doc = getEditedItem();
-        UploadedFile file = FileUtils.handleUploadFile(event);
+        UploadedFile file = EscomFileUtils.handleUploadFile(event);
         Attaches attache = uploadAtache(file);
         Integer version = doc.getNextVersionNumber();            
         attache.setNumber(version);
@@ -250,6 +260,11 @@ public class DocCardBean extends BaseCardBean<Doc>{
             EscomBeanUtils.WarnMsgAdd("Error", "DocumentNotFound");
         }
     }        
+    
+    public void onLockSelectedAttache(){
+        if (selectedAttache == null) return;
+        docsBean.onOpenFormLockAttache(selectedAttache);
+    }
     
     public void onOpenFormLockAttache(Attaches attache){
         docsBean.onOpenFormLockAttache(attache);
@@ -374,6 +389,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
 
+    /* GETS & SETS */
+    
     public String getDocURL() {
         return docURL;
     }

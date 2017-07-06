@@ -1,6 +1,7 @@
 package com.maxfill.utils;
 
 import com.maxfill.model.BaseDict;
+import java.text.MessageFormat;
 import java.util.*;
 
 public final class ItemUtils {  
@@ -16,6 +17,10 @@ public final class ItemUtils {
     public static String getMessageLabel(String key){
         ResourceBundle bundle = ResourceBundle.getBundle("locale.messages");
         return bundle.getString(key);
+    }
+    
+    public static String getFormatMessage(String msgKey, Object[] messageParameters ){
+        return MessageFormat.format(getMessageLabel(msgKey), messageParameters);    
     }
     
     /* Поиск объекта в списке объектов по его позиции (поиска в таблице обозревателя)  */ 

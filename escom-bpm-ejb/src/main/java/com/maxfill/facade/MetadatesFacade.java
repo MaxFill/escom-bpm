@@ -7,8 +7,6 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 @Stateless
 public class MetadatesFacade extends BaseFacade<Metadates> {
@@ -25,4 +23,5 @@ public class MetadatesFacade extends BaseFacade<Metadates> {
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
+    
 }

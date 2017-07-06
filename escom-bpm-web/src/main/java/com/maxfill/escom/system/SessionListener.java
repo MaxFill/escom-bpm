@@ -16,19 +16,19 @@ public class SessionListener implements HttpSessionListener {
      
     @Override
     public void sessionCreated(HttpSessionEvent event) {
-        LOG.log(Level.INFO, "Session is created!");
+        //LOG.log(Level.INFO, "Session is created!");
         event.getSession().setAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS_SIZE, 50);
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se){
         HttpSession httpSession = se.getSession();
-        LOG.log(Level.INFO, "Session is closed.");
+        //LOG.log(Level.INFO, "Session is closed.");
         if (httpSession != null){
             String login = (String) httpSession.getAttribute("UserLogin");
             if (login != null && appBean != null){
                 appBean.clearBasyLicence(login);
-                LOG.log(Level.INFO, "Session closed for user {0}", login);
+                //LOG.log(Level.INFO, "Session closed for user {0}", login);
             }
         }
     }   

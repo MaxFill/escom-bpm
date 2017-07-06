@@ -17,4 +17,5 @@ public final class DictFilters {
     public static final int USER_CREATED_ID = 10;
     public static final int LAST_CHANGE_ID = 11;
     public static final int NOTACTUAL_ID = 12;
+    public static final int ON_MY_EDIT = 14;
 }

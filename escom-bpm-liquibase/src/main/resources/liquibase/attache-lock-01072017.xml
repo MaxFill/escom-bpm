@@ -19,6 +19,9 @@
             <column name="TimeHandle" type="LONGBLOB" remarks="timer remain and auto unlock">
                 <constraints nullable="true"/>
             </column>
+            <column name="CountRemainingCycles" type="INT" remarks="the number of remaining cycles">
+                <constraints nullable="true"/>
+            </column>
         </addColumn>
     </changeSet>
 

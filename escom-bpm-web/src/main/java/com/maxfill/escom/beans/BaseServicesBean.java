@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
@@ -10,12 +9,11 @@ import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.sheduler.Sheduler;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.NoSuchObjectLocalException;
@@ -28,10 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.inject.Inject;
 
 /**
  * Базовый бин для служб
- * @author mfilatov
  * @param <P> класс параметров службы
  */
 public abstract class BaseServicesBean<P> implements Serializable{    
@@ -43,6 +41,8 @@ public abstract class BaseServicesBean<P> implements Serializable{
     private ServicesFacade servicesFacade;    
     @EJB
     protected Configuration conf;
+    @Inject
+    protected SessionBean sessionBean;
     
     protected Services service;
     
@@ -64,14 +64,21 @@ public abstract class BaseServicesBean<P> implements Serializable{
     
     protected abstract P createSettings();    
     public abstract BaseTimer getTimerFacade();
+    public abstract Integer getSERVICE_ID();    
     
     /**
      * Создаёт объект Sheduler для службы
      * @return 
      */
     private Sheduler createSheduler(){
-        if (StringUtils.isNotBlank(service.getSheduler())){
-            scheduler = (Sheduler) JAXB.unmarshal(new StringReader(service.getSheduler()), Sheduler.class); 
+        byte[] compressXML = service.getSheduler();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String settingsXML = EscomUtils.decompress(compressXML);
+                scheduler = (Sheduler) JAXB.unmarshal(new StringReader(settingsXML), Sheduler.class);
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, null, ex);
+            }
         } else {
             scheduler = new Sheduler();
         }
@@ -137,16 +144,20 @@ public abstract class BaseServicesBean<P> implements Serializable{
      */
     public void onSaveSettings(){
         doSaveSettings();
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "DataIsSaved");
+        EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{service.getName()});        
     }
     
     /**
      * Сохранение параметров службы
      */
-    private void doSaveSettings(){
-        service.setSettings(settings.toString());
-        service.setSheduler(scheduler.toString());
-        servicesFacade.edit(service);    
+    private void doSaveSettings(){       
+        try {
+            service.setSettings(EscomUtils.compress(settings.toString()));
+            service.setSheduler(EscomUtils.compress(scheduler.toString()));    
+            servicesFacade.edit(service);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
     }
             
     /**
@@ -206,7 +217,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
         LayoutOptions center = new LayoutOptions();
         center.addOption("resizable", true);
         center.addOption("closable", false);
-//        center.addOption("size", 200);
+        center.addOption("size", 300);
         center.addOption("minWidth", 300);
         center.addOption("minHeight", 300);
         layoutOptions.setCenterOptions(center);       
@@ -260,8 +271,6 @@ public abstract class BaseServicesBean<P> implements Serializable{
     public Sheduler getScheduler() {
         return scheduler;
     }
-
-    public abstract Integer getSERVICE_ID();
 
     public ServicesEvents getSelectedEvent() {
         return selectedEvent;

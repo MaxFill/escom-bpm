@@ -3,16 +3,11 @@ package com.maxfill.facade;
 
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.PartnersLog;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.numPuttern.NumeratorPattern;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -22,7 +17,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang3.StringUtils;
 
 /* Контрагенты */
 @Stateless

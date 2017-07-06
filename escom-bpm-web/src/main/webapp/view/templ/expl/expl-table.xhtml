@@ -48,10 +48,11 @@
                            update="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}" 
                            oncomplete="initDND()"/>
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
-                           rendered="#{explorerBean.isItemDetailType(item) or explorerBean.isItemRootType(item)}"
+                           rendered="#{!explorerBean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();">
             </p:commandLink>
+            <ui:insert name="specCommandLinks"/>
         </p:column>
        
         <ui:insert name="specTreeColumns"/>

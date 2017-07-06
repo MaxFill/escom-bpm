@@ -23,6 +23,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.io.FilenameUtils;
 
 /* Вложения */
 @Entity
@@ -89,6 +90,9 @@ public class Attaches implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date planUnlockDate;
     
+    @Column(name = "CountRemainingCycles")
+    private Integer countRemainingCycles;
+    
     @Lob
     @Column(name = "TimeHandle")
     private byte[] timeHandle;
@@ -116,6 +120,16 @@ public class Attaches implements Serializable {
     public String getFullName(){
         StringBuilder sb = new StringBuilder();
         return sb.append(getGuid()).append(".").append(getExtension()).toString();
+    }
+    
+    /* Возвращает полное имя pdf файла на сервере  */
+    public String getFullNamePDF(){
+        StringBuilder sb = new StringBuilder();
+        return sb.append(getGuid()).append(".pdf").toString();
+    }
+    
+    public String getNamePDF(){
+        return FilenameUtils.removeExtension(name)+".pdf";
     }
     
     public Integer getId() {
@@ -229,6 +243,13 @@ public class Attaches implements Serializable {
     public void setTimeHandle(byte[] timeHandle) {
         this.timeHandle = timeHandle;
     }
+
+    public Integer getCountRemainingCycles() {
+        return countRemainingCycles;
+    }
+    public void setCountRemainingCycles(Integer countRemainingCycles) {
+        this.countRemainingCycles = countRemainingCycles;
+    }    
     
     @Override
     public int hashCode() {

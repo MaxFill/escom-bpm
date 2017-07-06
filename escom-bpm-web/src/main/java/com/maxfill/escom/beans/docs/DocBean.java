@@ -8,7 +8,8 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.escom.utils.EscomFileUtils;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -31,7 +32,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import org.apache.commons.io.FilenameUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -45,6 +45,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     
     @EJB
     private DocFacade docsFacade;    
+    @EJB
+    private AttacheFacade attacheFacade;
     
     @Override
     public void preparePasteItem(Doc pasteItem, BaseDict target){        
@@ -132,10 +134,16 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         sessionBean.openDialogFrm(DictDlgFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
     }
     
+    public boolean docIsHaveLock(Doc doc){
+        return attacheFacade.countLockAttachesByDoc(doc) > 0;
+    }
+    
+    /* ВЛОЖЕНИЯ */
+    
     public void addAttache(FileUploadEvent event) throws IOException{     
-        UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
+        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         User author = sessionBean.getCurrentUser();        
-        Attaches attache = FileUtils.doUploadAtache(uploadedFile, author, sessionBean.getConfiguration());
+        Attaches attache = EscomFileUtils.uploadAtache(uploadedFile, author, sessionBean.getConfiguration());
         Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         Integer version = doc.getNextVersionNumber();            
         attache.setNumber(version);
@@ -165,6 +173,15 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         paramList.add(attache.getId().toString());
         paramMap.put("attache", paramList);
         sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_LOCK, paramMap);    
+    }
+    
+    public void onViewMainAttache(Doc doc){
+        Attaches attache = doc.getAttache();
+        if (attache != null){
+            onViewAttache(attache);
+        } else {
+            EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+        }
     }
     
     @FacesConverter("docsConvertor")

@@ -45,13 +45,13 @@ public class Services implements Serializable {
     @Column(name = "Name")
     private String name;
     
-    @Size(max = 2147483647)
-    @Column(name = "Settings")
-    private String settings;
+    @Lob
+    @Column(name = "Settings", length = 1024)
+    private byte[] settings;
 
-    @Size(max = 2147483647)
-    @Column(name = "Sheduler")
-    private String sheduler;
+    @Lob
+    @Column(name = "Sheduler", length = 1024)
+    private byte[] sheduler;
        
     @Column(name = "Started")
     private Boolean started = false;
@@ -70,14 +70,9 @@ public class Services implements Serializable {
     public Services() {
     }
 
-    public Services(Integer id) {
-        this.id = id;
-    }
-
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -85,31 +80,13 @@ public class Services implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getSettings() {
-        return settings;
-    }
-
-    public void setSettings(String settings) {
-        this.settings = settings;
-    }
-
-    public String getSheduler() {
-        return sheduler;
-    }
-
-    public void setSheduler(String sheduler) {
-        this.sheduler = sheduler;
-    }
+    }    
     
     public List<ServicesEvents> getServicesEventsList() {
         return servicesEventsList;
     }
-
     public void setServicesEventsList(List<ServicesEvents> servicesEventsList) {
         this.servicesEventsList = servicesEventsList;
     }
@@ -117,9 +94,22 @@ public class Services implements Serializable {
     public Boolean getStarted() {
         return started;
     }
-
     public void setStarted(Boolean started) {
         this.started = started;
+    }
+
+    public byte[] getSettings() {
+        return settings;
+    }
+    public void setSettings(byte[] settings) {
+        this.settings = settings;
+    }
+
+    public byte[] getSheduler() {
+        return sheduler;
+    }
+    public void setSheduler(byte[] sheduler) {
+        this.sheduler = sheduler;
     }
         
     @Override

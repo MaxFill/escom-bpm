@@ -29,6 +29,10 @@ body{
     margin: 2px;
 }
 
+.formLayoute{
+    font-size: 90% !important;
+}
+
 .without-spaces {
     margin: 0 !important;
     padding: 0 !important;
@@ -138,6 +142,10 @@ body{
     font-weight: bold;
 }
 
+.right-aligment {
+    text-align: right !important;
+}
+
 .panelLogin{
     margin: auto;
     margin-top: 60px; 
@@ -172,7 +180,7 @@ body{
     border: none! important;
 } 
 
-.ui-menu{width: auto !important;}    
+.ui-menu{width: auto !important;}
 .ui-menuitem-text{
     float: none !important;
     white-space: nowrap !important;
@@ -182,7 +190,10 @@ body{
     word-break: normal !important;  
     text-wrap: normal !important;
 }
-        
+.submenu .ui-menuitem-link > .ui-icon-triangle-1-s{
+  display: none !important;
+}
+
 .value{
     text-align: left;  
     font-size: small;

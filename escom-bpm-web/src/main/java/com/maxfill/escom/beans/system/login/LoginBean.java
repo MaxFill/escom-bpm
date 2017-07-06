@@ -10,6 +10,7 @@ import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.Serializable;
@@ -64,7 +65,7 @@ public class LoginBean implements Serializable{
     private UserFacade userFacade;
     @EJB 
     private Configuration configuration;
-        
+    
     @PostConstruct
     public void init(){
         languages = new ArrayList<>();        
@@ -140,7 +141,7 @@ public class LoginBean implements Serializable{
         byte[] compressXML = user.getUserSettings();
         if (compressXML != null && compressXML.length >0){
             try {
-                String settingsXML = EscomBeanUtils.decompress(compressXML);
+                String settingsXML = EscomUtils.decompress(compressXML);
                 userSettings = (UserSettings) JAXB.unmarshal(new StringReader(settingsXML), UserSettings.class);
             } catch (IOException ex) {
                 Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -149,7 +150,7 @@ public class LoginBean implements Serializable{
         userSettings.setLanguage(selectedLang.getName());
         sessionBean.setUserSettings(userSettings);
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
-        appBean.addBusyLicence(user, httpSession);
+        appBean.addBusyLicence(user, httpSession);        
         LOG.log(Level.INFO, "User is login = {0}", userName);
     }
     

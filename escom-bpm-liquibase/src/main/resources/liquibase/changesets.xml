@@ -6,5 +6,8 @@
                 http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
  
     <include file="initCreateData.xml" relativeToChangelogFile="true"/>
+    <include file="add-lockfilter-05072017.xml" relativeToChangelogFile="true"/>
+    <include file="add-services-05072017.xml" relativeToChangelogFile="true"/>
     <include file="attache-lock-01072017.xml" relativeToChangelogFile="true"/>
+    <include file="user-change-04072017.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

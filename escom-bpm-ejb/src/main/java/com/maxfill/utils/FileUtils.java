@@ -1,9 +1,7 @@
-package com.maxfill.escom.utils;
+package com.maxfill.utils;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.users.User;
-import com.maxfill.utils.ItemUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
 
 /* Утилиты для работы с файлами */
 public final class FileUtils {
@@ -30,26 +25,6 @@ public final class FileUtils {
     
     private FileUtils() {
     }   
-
-    /* Обработка действия загрузки файла  */
-    public static UploadedFile handleUploadFile(FileUploadEvent event) {
-        UploadedFile file = event.getFile();
-        if (file == null) {
-            return null;
-        }
-        try {
-            int length = file.getContents().length;
-            if (length > MAX_FILE_SIZE) {
-                String message = ItemUtils.getBandleLabel("INVALID_FILE_SIZE");
-                throw new Exception(message);
-            }
-            return file;
-
-        } catch (Exception exception) {
-            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, exception);
-            return null;
-        }
-    }
 
     /* Открытие (скачивание) файла вложения для просмотра  */
     public static void attacheDownLoad(String filePathName, String fileName) {       
@@ -93,57 +68,38 @@ public final class FileUtils {
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }    
 
-    /* Загрузка файла на сервер  */
-    public static Attaches doUploadAtache(UploadedFile uploadFile, User user, Configuration conf) throws IOException {
-        String uploadPath = conf.getUploadPath();
-        Attaches attache = new Attaches();
-        if (uploadFile != null) {
-            int length = uploadFile.getContents().length;
-
-            String fileName = uploadFile.getFileName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-
-            attache.setName(fileName);
-            attache.setExtension(fileExt);
-            attache.setType(uploadFile.getContentType());
-            attache.setSize(length);
-            attache.setAuthor(user);
-            attache.setDateCreate(new Date());
-
+    public static void doUpload(Attaches attache, InputStream inputStream, Configuration conf) throws IOException {
+        FileOutputStream outputStream = null;
+        try {
+            String uploadPath = conf.getUploadPath();
             StringBuilder sb = new StringBuilder();
+            String fileName = attache.getName();
+            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
             File outputFile = new File(basePath);
-
-            InputStream inputStream = null;
-            FileOutputStream outputStream = null;
-            try {
-                inputStream = uploadFile.getInputstream();
-                outputStream = new FileOutputStream(outputFile);
-
-                int read;
-                final byte[] bytes = new byte[1024];
-                while ((read = inputStream.read(bytes)) != -1) {
-                    outputStream.write(bytes, 0, read);
-                }
-                if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
-                    makeCopyToPDF(basePath, conf.getConvertorPDF());
-                }
-            } catch (IOException e) {
-                Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
-            } finally {
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+            outputStream = new FileOutputStream(outputFile);
+            int read;
+            final byte[] bytes = new byte[1024];
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+            if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
+                makeCopyToPDF(basePath, conf.getConvertorPDF());
+            }
+        } catch (IOException e) {
+            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            if (outputStream != null) {
+                outputStream.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
             }
         }
-        return attache;
     }
-
+    
     public static void makeCopyToPDF(String file, String convertor){
         if (StringUtils.isBlank(convertor)) return;
         try {            

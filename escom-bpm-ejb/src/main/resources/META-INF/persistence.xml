@@ -48,8 +48,8 @@
     <class>com.maxfill.model.docs.docStatuses.DocStatuses</class>
     <class>com.maxfill.model.users.groups.UserGroupsLog</class>
     <class>com.maxfill.model.users.groups.UserGroups</class>
+    <class>com.maxfill.model.messages.UserMessages</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
-    
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
       <property name="show_sql" value="true"/>

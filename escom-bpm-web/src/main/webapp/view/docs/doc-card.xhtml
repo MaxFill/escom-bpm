@@ -8,33 +8,48 @@
 
     <ui:param name="_bean" value="#{docCardBean}"/>
     <ui:param name="_item" value="#{_bean.editedItem}"/>
-
-    <ui:define name="specMenuButtons"> 
-        <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Download}" title="#{bundle.DownloadCurrentVersion}"
-                    disabled="#{_bean.editedItem.attache == null}"
-                    actionListener="#{_bean.downloadCurrentVersion()}"/>
+  
+    <ui:define name="specActionMenu">
         <p:separator/> 
-        <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}" title="#{bundle.Scaning}"        
-                    actionListener="#{_bean.onShowScan()}"/>
-        <p:separator/>        
-        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURL}" title="#{bundle.URLforViewDoc}"
+        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
                     rendered="#{_item.id != null}"
                     update="dlgDocUrl:urlPanel"
                     actionListener="#{_bean.onGetDocViewURL(_item)}"
                     oncomplete="PF('urlDlg').show();"/> 
-        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURL}" title="#{bundle.URLforOpenCardDoc}"
+        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforOpenCard}" title="#{bundle.URLforOpenCardDoc}"
                     rendered="#{_item.id != null}"
                     actionListener="#{_bean.onGetDocOpenURL(_item)}"
                     update="dlgDocUrl:urlPanel"
-                    oncomplete="PF('urlDlg').show();"/> 
-        <p:separator/>
-        <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsLink}"
-                    actionListener="#{_bean.prepareSendMailDoc('asLink')}"/>
-        <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}"
-                    actionListener="#{_bean.prepareSendMailDoc('asAttache')}"/>
+                    oncomplete="PF('urlDlg').show();"/>                
+    </ui:define>
+    
+    <ui:define name="specSubMenu"> 
+        <p:submenu label="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
+            <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}" title="#{bundle.DownloadCurrentVersion}"
+                        disabled="#{_bean.editedItem.attache == null}"
+                        actionListener="#{_bean.downloadCurrentVersion()}"/>
+            <p:separator/> 
+            <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}" title="#{bundle.Scaning}"        
+                        actionListener="#{_bean.onShowScan()}"/> 
+            <p:separator/> 
+            <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkPDF}"
+                        actionListener="#{_bean.prepareSendMailDoc('asLinkPDF')}"/>
+            <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkCard}"
+                        actionListener="#{_bean.prepareSendMailDoc('asLinkCard')}"/>
+            <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsPDF}"
+                        actionListener="#{_bean.prepareSendMailDoc('asAttachePDF')}"/>
+            <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsAttache}"
+                        actionListener="#{_bean.prepareSendMailDoc('asAttache')}"/>
+        </p:submenu>
     </ui:define>
 
-    <ui:define name="page_body">
+    <ui:define name="card_scripts">
+        <p:commandButton id="setLockBtn" actionListener="#{_bean.onLockSelectedAttache()}" style="display: none;">
+            <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:versionsTBL"/>
+        </p:commandButton>
+    </ui:define>
+    
+    <ui:define name="page_body">        
         <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Organization}:"/>
@@ -71,7 +86,7 @@
                                  title="#{bundle.BriefDescriptionDocument}"
                                  autoResize="false" 
                                  styleClass="ui-grid-col-12"
-                                 rows="3"
+                                 rows="1"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  disabled="#{_bean.isReadOnly()}"
                                  onchange="return itemChange = 1;"
@@ -171,10 +186,10 @@
 
     <ui:define name="dialogs">
         <h:form id="dlgDocUrl">
-            <p:dialog header="#{bundle.URL}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="urlDlg">
-                <p:outputPanel id="urlPanel" style="width: 400px; height: 200px;">
-                    <h:panelGroup rendered="#{_item != null}">
-                        <p:inputText value="#{_bean.docURL}" style="width: 100%;" 
+            <p:dialog header="#{bundle.URL}" width="450" height="200" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="urlDlg" >
+                <p:outputPanel id="urlPanel" styleClass="ui-grid-col-12">
+                    <h:panelGroup rendered="#{_item != null}" styleClass="ui-grid-col-12">
+                        <p:inputText value="#{_bean.docURL}" styleClass="ui-grid-col-12" 
                                      readonly="true"/>
                     </h:panelGroup>
                 </p:outputPanel>

@@ -2,32 +2,61 @@ package com.maxfill.escom.beans.docs.locks;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.beans.docs.DocCardBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.services.webDav.WebDavRemainder;
 import com.maxfill.utils.DateUtils;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
 public class DocLockBean extends BaseDialogBean{
     private static final long serialVersionUID = 81770245606034024L;
 
-    private Date lockDate = DateUtils.addDays(new Date(), 1);
+    @EJB
+    private AttacheFacade attacheFacade;
+    @EJB
+    private WebDavRemainder remainder;
+            
+    private Date lockDate;
+    private String minLockDate;
+    private String maxLockDate;
+    private Attaches attache;
     
     @Override
     protected void initBean() {
+        Date maxDate = DateUtils.addDays(new Date(), 10); 
+        maxLockDate = DateUtils.dateToString(maxDate, "");
+        Date minDate = DateUtils.addMinute(new Date(), 10);
+        minLockDate = DateUtils.dateToString(minDate, "");        
     }
 
     @Override
     public void onOpenCard(){
+        if (attache != null) return;
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        Integer attacheId = Integer.valueOf(params.get("attache"));        
+        attache = attacheFacade.find(attacheId);
+        if (attache.getPlanUnlockDate() == null){
+            lockDate = DateUtils.addDays(new Date(), 3);
+        } else {
+            lockDate = attache.getPlanUnlockDate();
+        }
     }
     
     @Override
@@ -40,36 +69,95 @@ public class DocLockBean extends BaseDialogBean{
         return DictDlgFrmName.FRM_DOC_LOCK;
     }
     
-    public void makeLock(){
-        // создать (или скорректировать если уже есть) таймер напоминания и авто/разблокировки        
-        // записать в attache информацию о блокировке (автор, дата начала, плпновый срок разблокировки) и таймере
-        // скопировать файл в хранилище в папку        
-        // открыть файл на редактирование
-        onCloseCard();
+    public String makeLock(){
+        remainder.createTimer(attache, sessionBean.getCurrentUser(), lockDate);              
+        openFile();
+        return onCloseCard();
     }
     
-    public String onGetExternalLink(Attaches attache){
-        String path = conf.getUploadPath() + attache.getFullName();
-        String link = "";
-        try {
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            ExternalContext extContext = facesContext.getExternalContext();
-            
-            link = new URL(extContext.getRequestScheme(),
-                    extContext.getRequestServerName(),
-                    extContext.getRequestServerPort(), "").toString();            
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(DocCardBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return link; 
+    public String makeUnLock(){
+        remainder.cancelTimer(attache);
+        return onCloseCard();
     }
+     
+    public void changeDatePlanLock(){
+        remainder.changeTimer(attache, sessionBean.getCurrentUser(), lockDate);                       
+        EscomBeanUtils.SuccesMsgAdd("Successfully", "TimerRestarted");
+    }
+    
+    public void onChangeDateLock(SelectEvent event){
+        Date newDate = (Date) event.getObject();
+        if (isAttacheLock() && isUserIsEditor() && !Objects.equals(newDate, attache.getPlanUnlockDate())){
+            RequestContext requestContext = RequestContext.getCurrentInstance();
+            requestContext.update("lockForm");
+        }
+    }
+    
+    private void openFile(){        
+        String folder = getFolderLink();                                    
+        StringBuilder command = new StringBuilder("EditDoc('");
+        command.append(folder).append(attache.getName()).append("','").append(folder).append("');");
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.execute(command.toString());
+        //"EditDoc('https://fil-pc:8443/modeshape-webdav/sample/default/newdoc.docx', 'https://localhost:8443/modeshape-webdav/sample/default/');"   
+    }
+    
+    private String getFileLink(){
+        String fileLink = getFolderLink() + attache.getName();
+        return fileLink;
+    }
+    
+    public void showFileLink(){
+        StringBuilder command = new StringBuilder("CopyToClipboard('");
+        command.append(getFileLink()).append("')");
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.execute(command.toString());
+    }
+    
+    private String getFolderLink(){
+        StringBuilder folder = new StringBuilder();        
+            //ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+            //HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+            //String serverURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "").toString();
+            String serverURL = conf.getServerURL();
+            String repoName = conf.getRepositoryName();
+            folder.append(serverURL)
+                .append(repoName)
+                .append(attache.getGuid())
+                .append("/");
+        return folder.toString();
+    }               
+        
+    public boolean isAttacheLock(){
+        return attache.getLockAuthor() != null;
+    }    
 
+    public boolean isUserIsEditor(){
+        return Objects.equals(attache.getLockAuthor(), sessionBean.getCurrentUser());
+    }
+    
+    public boolean isCanShowRestartTimerBtn(){        
+        return isAttacheLock() && isUserIsEditor() && lockDate.after(attache.getPlanUnlockDate());
+    }
+    
+    /* GETS & SETS */
+    
     public Date getLockDate() {
         return lockDate;
     }
     public void setLockDate(Date lockDate) {
         this.lockDate = lockDate;
     }
- 
+
+    public String getMinLockDate() {
+        return minLockDate;
+    }
+    public void setMinLockDate(String minLockDate) {
+        this.minLockDate = minLockDate;
+    }
+    
+    public String getMaxLockDate() {
+        return maxLockDate;
+    }    
     
 }

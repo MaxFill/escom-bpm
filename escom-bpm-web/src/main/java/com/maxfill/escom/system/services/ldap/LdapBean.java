@@ -9,6 +9,7 @@ import com.maxfill.escom.beans.BaseServicesBean;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,6 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import javax.xml.bind.JAXB;
-import org.apache.commons.lang3.StringUtils;
 
 @Named
 @ViewScoped
@@ -61,10 +61,17 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
 
     @Override
     protected LdapSettings createSettings() {     
-        LdapSettings settings;
-        if (StringUtils.isNotBlank(service.getSettings())){
-            settings = (LdapSettings) JAXB.unmarshal(new StringReader(service.getSettings()), LdapSettings.class); 
-        } else {
+        LdapSettings settings = null;
+        byte[] compressXML = service.getSettings();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String settingsXML = EscomUtils.decompress(compressXML);
+                settings = (LdapSettings) JAXB.unmarshal(new StringReader(settingsXML), LdapSettings.class); 
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, null, ex);
+            }    
+        } 
+        if (settings == null) {
             settings = new LdapSettings();
         }
         return settings;

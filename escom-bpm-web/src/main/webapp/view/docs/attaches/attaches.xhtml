@@ -2,110 +2,110 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
-                 xmlns:h="http://xmlns.jcp.org/jsf/html">
-    
-    <script>
-        function copyToClipboard(text) {
-            window.prompt("Copy to clipboard: Ctrl+C, Enter", text);
-        }
-    </script>
-    
-    <p:tab title="#{bundle.Versions}" >
-        <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12" columnClasses="ui-grid-col-12" style="font-size: 90%;">
-            <p:fileUpload id="file" 
-                          disabled="#{_bean.isReadOnly()}"
-                          allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
-                          sizeLimit="#{_bean.maxFileSize}"
-                          invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                          invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                          fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                          process="@this" style="width: 100%;"
-                          mode="advanced" auto="true"
-                          update="versionsTBL"
-                          dragDropSupport="true"
-                          label="#{bundle.UPLOAD_VERSION}" 
-                          cancelLabel="#{bundle.Cancel}"
-                          uploadLabel="#{bundle.SaveFiles}"
-                          fileUploadListener="#{docCardBean.addAttache}">                
-            </p:fileUpload>
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">    
 
-            <p:dataTable id="versionsTBL" value="#{_bean.editedItem.attachesList}" 
-                         emptyMessage="#{bundle.EmptyTable}"
-                         paginator="true" paginatorPosition="bottom"  
-                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="10,25,50" sortBy="#{attache.number}" sortOrder="descending"
-                         rowKey="#{attache.tempId}" selectionMode="single"
-                         var="attache" >   
+    <p:tab title="#{bundle.Versions}" >                 
+        <p:fileUpload id="file" 
+                      disabled="#{_bean.isReadOnly()}"
+                      allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
+                      sizeLimit="#{_bean.maxFileSize}"
+                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                      process="@this" style="width: 100%;"
+                      mode="advanced" auto="true"
+                      update="versionsTBL"
+                      dragDropSupport="true"
+                      label="#{bundle.UPLOAD_VERSION}" 
+                      cancelLabel="#{bundle.Cancel}"
+                      uploadLabel="#{bundle.SaveFiles}"
+                      fileUploadListener="#{docCardBean.addAttache}">                
+        </p:fileUpload>
 
-                <p:column width="10">
-                    <h:graphicImage value="/resources/icon/done.png" title="#{bundle.IsCurrentVersion}"
-                                    rendered="#{attache.current}"
-                                    styleClass="img-required"/>
-                </p:column>
+        <p:dataTable id="versionsTBL" value="#{_bean.editedItem.attachesList}" 
+                     emptyMessage="#{bundle.EmptyTable}"
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                     paginator="true" paginatorPosition="bottom"                       
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,25,50" sortBy="#{attache.number}" sortOrder="descending"
+                     rowKey="#{attache.tempId}" selectionMode="single"
+                     var="attache" >   
 
-                <p:column headerText="#{bundle.Number}" sortBy="#{attache.number}" >
-                    <h:outputLabel value="#{attache.number}" />
-                </p:column>
+            <p:column width="20" rendered="#{docCardBean.docIsHaveLock}">                
+                <p:rowToggler rendered="#{attache.lockDate != null}"/>                
+            </p:column>
+            
+            <p:column width="20">
+                <h:graphicImage value="/resources/icon/done.png" title="#{bundle.IsCurrentVersion}"
+                                rendered="#{attache.current}"
+                                styleClass="without-spaces"/>                
+            </p:column>
 
-                <p:column headerText="#{bundle.Name}" sortBy="#{attache.name}" >
-                    <h:outputLabel value="#{attache.name}" />
-                </p:column>
+            <p:column headerText="#{bundle.Number}" sortBy="#{attache.number}" >
+                <h:graphicImage value="/resources/icon/doc_lock.png" title="#{bundle.Locked}"
+                                rendered="#{attache.lockDate != null}"/>
+                <h:outputLabel value="#{attache.number}" />
+            </p:column>
 
-                <p:column headerText="#{bundle.Author}" sortBy="#{attache.author.shortFIO}" >
-                    <h:outputLabel value="#{attache.author.shortFIO}" />
-                </p:column>   
+            <p:column headerText="#{bundle.Name}" sortBy="#{attache.name}" >
+                <h:outputLabel value="#{attache.name}" />
+            </p:column>
 
-                <p:column headerText="#{bundle.DateCreate}" sortBy="#{attache.dateCreate}">
-                    <h:outputLabel value="#{attache.dateCreate}" >
-                        <f:convertDateTime pattern="dd.MM.yy: HH.mm"/>
-                    </h:outputLabel>
-                </p:column>                                 
+            <p:column headerText="#{bundle.Author}" sortBy="#{attache.author.shortFIO}" >
+                <h:outputLabel value="#{attache.author.shortFIO}" />
+            </p:column>   
 
-                <p:column headerText="#{bundle.DateLock}" sortBy="#{attache.lockDate}">
-                    <h:outputLabel value="#{attache.lockDate}" >
-                        <f:convertDateTime pattern="dd.MM.yy: HH.mm"/>
-                    </h:outputLabel>
-                </p:column> 
-                
-                <p:column headerText="#{bundle.Editor}" sortBy="#{attache.author.shortFIO}" >
-                    <h:outputLabel value="#{attache.lockAuthor.shortFIO}" />
-                </p:column> 
-                
-                <p:column headerText="#{bundle.LockedTo}" sortBy="#{attache.lockDate}">
-                    <h:outputLabel value="#{attache.lockDate}" >
-                        <f:convertDateTime pattern="dd.MM.yy: HH.mm"/>
-                    </h:outputLabel>
-                </p:column> 
-                
-                <p:column >                    
-                    <p:splitButton  title="#{bundle.View}" value="#{bundle.View}"
-                                    process="versionsTBL" 
-                                    actionListener="#{_bean.onViewAttache(attache)}">
-                        <p:menuitem icon=" ui-icon-pencil" value="#{bundle.Edit}"
-                                    actionListener="#{_bean.onOpenFormLockAttache(attache)}"/>
-                        <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
-                                    ajax="false"
-                                    disabled="#{_bean.isReadOnly()}"                           
-                                    action="#{_bean.attacheDownLoad(attache)}"/>
-                        <p:menuitem icon="ui-icon-check" value="#{bundle.MakeCurrent}" title="#{bundle.MakeCurrent}"
-                                    process="versionsTBL"
-                                    disabled="#{_bean.isReadOnly() or _bean.editedItem.attache.equals(attache)}"
-                                    update="versionsTBL"
-                                    actionListener="#{_bean.makeCurrentVersion(attache)}">
-                            <p:confirm header="#{bundle.ChangeVersion}" message="#{bundle.ChangeCurrentVersion}" icon="fa-question-circle" />
-                        </p:menuitem> 
-                        <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}" title="#{bundle.Delete}"
-                                    process="versionsTBL"
-                                    disabled="#{_bean.isReadOnly()}"
-                                    update="versionsTBL"
-                                    actionListener="#{_bean.deleteAttache(attache)}">
-                            <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="fa-exclamation-circle" />
-                        </p:menuitem>
-                    </p:splitButton>
-                </p:column>
-            </p:dataTable>            
-        </p:panelGrid>
+            <p:column headerText="#{bundle.DateCreate}" sortBy="#{attache.dateCreate}" >
+                <h:outputLabel value="#{attache.dateCreate}" >
+                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                </h:outputLabel>
+            </p:column>
+            
+            <p:rowExpansion>
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12" >
+                    <h:outputLabel value="#{bundle.Editor}"/>
+                    <p:outputLabel value="#{attache.lockAuthor.shortFIO}" />
+                    
+                    <h:outputLabel value="#{bundle.DateLock}" />
+                    <p:outputLabel value="#{attache.lockDate}" >
+                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                    </p:outputLabel>
+                    
+                    <h:outputLabel value="#{bundle.LockedTo}"/>
+                    <p:outputLabel value="#{attache.lockDate}" >
+                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                    </p:outputLabel> 
+                </p:panelGrid>
+            </p:rowExpansion>
+            
+            <p:column width="45">                    
+                <p:splitButton  icon="ui-icon-search" value="#{bundle.View}" title="#{bundle.Commands}" 
+                                actionListener="#{_bean.onViewAttache(attache)}">
+                    <p:menuitem value="test" actionListener="#{docCardBean.test(attache)}"/>
+                    <p:menuitem icon=" ui-icon-pencil" value="#{bundle.EditFile}"
+                                actionListener="#{_bean.onSetSelectedAttache(attache)}"
+                                oncomplete="document.getElementById('#{_frm}:setLockBtn').click();"/>
+                    <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
+                                ajax="false"
+                                disabled="#{_bean.isReadOnly()}"                           
+                                action="#{_bean.attacheDownLoad(attache)}"/>
+                    <p:menuitem icon="ui-icon-check" value="#{bundle.MakeCurrent}" title="#{bundle.MakeCurrent}"
+                                process="versionsTBL"
+                                disabled="#{_bean.isReadOnly() or _bean.editedItem.attache.equals(attache)}"
+                                update="versionsTBL"
+                                actionListener="#{_bean.makeCurrentVersion(attache)}">
+                        <p:confirm header="#{bundle.ChangeVersion}" message="#{bundle.ChangeCurrentVersion}" icon="fa-question-circle" />
+                    </p:menuitem> 
+                    <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}" title="#{bundle.Delete}"
+                                process="versionsTBL"
+                                disabled="#{_bean.isReadOnly()}"
+                                update="versionsTBL"
+                                actionListener="#{_bean.deleteAttache(attache)}">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="fa-exclamation-circle" />
+                    </p:menuitem>
+                </p:splitButton>
+            </p:column>
+        </p:dataTable>            
     </p:tab>
 </ui:composition>
 

@@ -2,8 +2,11 @@ package com.maxfill.escom.beans.docs.attaches;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.facade.AttacheFacade;
+import com.maxfill.model.attaches.Attaches;
 import java.io.FileInputStream;
 import java.util.Map;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -16,8 +19,8 @@ import org.primefaces.model.StreamedContent;
 public class AttacheBean extends BaseDialogBean{
     private static final long serialVersionUID = -5107683464380454618L;
     
-    private StreamedContent content; 
-
+    private StreamedContent content;     
+    
     @Override
     protected void initBean(){        
     }
@@ -32,7 +35,7 @@ public class AttacheBean extends BaseDialogBean{
         } catch (Exception e) {
         }
     }
-
+    
     public StreamedContent getContent() {
         return content;
     }

@@ -84,6 +84,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     @Column(name = "EmailSign", length = 2048)
     private String emailSign;
     
+    @Column(name = "DuplicateMessagesEmail")
+    private boolean duplicateMessagesEmail = true;
+            
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
     private List<FavoriteObj> favoriteObjList;        
     
@@ -229,7 +232,14 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     public void setFavoriteObjList(List<FavoriteObj> favoriteObjList) {
         this.favoriteObjList = favoriteObjList;
     }  
-    
+
+    public boolean isDuplicateMessagesEmail() {
+        return duplicateMessagesEmail;
+    }
+    public void setDuplicateMessagesEmail(boolean duplicateMessagesEmail) {
+        this.duplicateMessagesEmail = duplicateMessagesEmail;
+    }
+        
     @Override
     public Integer getId() {
         return id;

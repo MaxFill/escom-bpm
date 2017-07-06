@@ -1,11 +1,23 @@
 package com.maxfill.services.webDav;
 
+import com.maxfill.Configuration;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.utils.FileUtils;
 import com.sun.security.auth.UserPrincipal;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jcr.Binary;
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -14,34 +26,98 @@ import javax.jcr.security.AccessControlList;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 @Stateless
-public class WebDavEngineServiceImpl implements WebDavService{
+public class WebDavEngineServiceImpl implements WebDavService{    
     
+    @EJB
+    private Configuration conf;
+    
+    /* Загрузка файла в хранилище */
     @Override
+    public void uploadFile(Attaches attache){
+        Session session = getSession();
+        if (attache == null || session == null) return; 
+        try {
+            String path = conf.getUploadPath() + attache.getFullName();
+            File file = new File(path);
+            
+            Node rootFolder = session.getRootNode();
+            Node folder = rootFolder.addNode(attache.getGuid());   
+      
+            InputStream stream = new BufferedInputStream(new FileInputStream(file));
+            Node fileNode = folder.addNode(attache.getName(), "nt:file");                    
+            
+            Node contentNode = fileNode.addNode("jcr:content", "nt:resource");
+            Binary binary = session.getValueFactory().createBinary(stream);
+            contentNode.setProperty("jcr:data", binary);
+
+            // TODO установить права !
+            session.save();
+        } catch (RepositoryException | FileNotFoundException ex) {
+            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /* Извлечение файла из хранилища */
+    @Override
+    public void downloadFile(Attaches attache){ 
+        try {
+            Session session = getSession();
+            
+            Node rootFolder = session.getRootNode();
+            Node folder = rootFolder.getNode(attache.getGuid());            
+            Node fileNode = folder.getNode(attache.getName());            
+            Node contentNode = fileNode.getNode("jcr:content");                       
+            
+            /*
+            // Get the MIME type if it's there ...
+            String mimeType = null;
+            if ( contentNode.hasProperty("jcr:mimeType") ) {
+                mimeType = contentNode.getProperty("jcr:mimeType").getString();
+            }
+            */
+            //String id = contentNode.getIdentifier();
+                        
+            Binary content = contentNode.getProperty("jcr:data").getBinary();
+            InputStream stream = content.getStream();
+            FileUtils.doUpload(attache, stream, conf);
+            
+            contentNode.remove();
+            fileNode.remove();
+            folder.remove();
+            
+            session.save();
+        } catch (RepositoryException | IOException ex) {
+            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private Session getSession(){
+        Session session = null;
+        try {            
+            Repository repository = conf.getRepository();
+            Credentials credentals = new SimpleCredentials("admin", "admin".toCharArray());        
+            session = repository.login(credentals, "other");            
+        } catch (RepositoryException ex) {
+            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return session;
+    }
+    
     public void addAccess(){
         try {
-            InitialContext initCtx = new InitialContext();
-            Repository repository = (Repository)initCtx.lookup("jcr/sample");
-            Credentials credentals = new SimpleCredentials("admin", "admin".toCharArray());
-            Session session = repository.login(credentals);
+            Session session = getSession();           
             
             String path = "/test5";
             String[] privileges = new String[]{Privilege.JCR_ALL};
             Principal principal1 = new UserPrincipal("admin");
+            Principal principal2 = new UserPrincipal("tester");
             
-            final Principal principal2 = new Principal() {
-            @Override
-                public String getName() {
-                    return "tester";
-                }
-            };
+            //final Principal principal2 = () -> "tester";
             
             AccessControlManager acm = session.getAccessControlManager();
             
-            // Convert the privilege strings to Privilege instances ...
             Privilege[] permissions = new Privilege[privileges.length];
             for (int i = 0; i < privileges.length; i++) {
                 permissions[i] = acm.privilegeFromName(privileges[i]);
@@ -60,7 +136,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
                         
             acm.setPolicy(path, acl);
             session.save();
-        } catch (NamingException | RepositoryException ex) {
+        } catch (RepositoryException ex) {
             Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

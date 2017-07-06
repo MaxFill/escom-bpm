@@ -1,0 +1,224 @@
+package com.maxfill.escom.system.services.mail;
+
+import com.maxfill.facade.MailBoxFacade;
+import com.maxfill.services.mail.Mailbox;
+import com.google.gson.Gson;
+import com.maxfill.Configuration;
+import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.docs.Doc;
+import com.maxfill.facade.DocFacade;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.partners.Partner;
+import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.utils.EscomUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+@Named
+@ViewScoped
+public class MailMessageBean extends BaseDialogBean{    
+    private static final long serialVersionUID = 9011875090040784420L;
+    private static final Logger LOGGER = Logger.getLogger(MailMessageBean.class.getName());
+    private static final String ADRESS_SEPARATOR = ",";
+    
+    private static final String MODE_SEND_ATTACHE = "asAttache";
+    private static final String MODE_SEND_ATTACHE_PDF = "asAttachePDF";
+    private static final String MODE_SEND_LINK_PDF = "asLinkPDF";
+    private static final String MODE_SEND_LINK_CARD = "asLinkCard";
+        
+    @EJB
+    private MailBoxFacade mailBoxFacade;
+    @EJB
+    private DocFacade docFacade;
+    @EJB
+    private Configuration configuration;
+    
+    private Mailbox selected;
+    private Map<String, String> attaches = null;
+    private String modeSentAttache = null;
+    
+    @Override
+    protected void initBean() {    
+    }
+    
+    public void onOpenForm(){
+        if (modeSentAttache != null) return;
+        Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        modeSentAttache = params.get("modeSendAttache");        
+        List<String> strDocIds = EscomUtils.SplitString(params.get("docIds"), ",");
+                
+        List<Integer> docIds = strDocIds.stream()
+                .map(NumberUtils::toInt)
+                .collect(Collectors.toList());
+        
+        List<Doc> sendDocs = new ArrayList<>();
+        sendDocs.addAll(docFacade.findByIds(docIds));
+        prepareMessage(sendDocs);
+    }
+    
+    private void prepareMessage(List<Doc> sendDocs){
+        String senderEmail = sessionBean.getCurrentUser().getEmail();
+        if (StringUtils.isBlank(senderEmail)){
+            senderEmail = configuration.getDefaultSenderEmail();
+        }
+        selected = new Mailbox();
+        selected.setActual(true);
+        selected.setSender(senderEmail);
+        selected.setAuthor(sessionBean.getCurrentUser());
+        selected.setDateCreate(new Date());
+        selected.setSubject(makeSubject(sendDocs));
+       
+        StringBuilder adresses  = new StringBuilder();
+        StringBuilder copies    = new StringBuilder();
+        StringBuilder links     = new StringBuilder();
+        List<String> addBufer = new ArrayList<>();
+        for (Doc doc : sendDocs){
+            Partner partner = doc.getPartner();
+            if (partner != null && StringUtils.isNotBlank(partner.getEmail())){
+                String adress = partner.getEmail();
+                if (!addBufer.contains(adress)){
+                    addBufer.add(adress);
+                    adresses.append(adress);
+                    adresses.append(ADRESS_SEPARATOR);
+                }
+            }
+            Staff manager = doc.getManager();
+            if (manager != null && StringUtils.isNotBlank(manager.getEmail())){  
+                String adress = manager.getEmail();      
+                if (!addBufer.contains(adress)){
+                    addBufer.add(adress);
+                    copies.append(adress);
+                    copies.append(ADRESS_SEPARATOR);
+                }
+            }
+            
+            switch(modeSentAttache){
+                case MODE_SEND_ATTACHE : {
+                    prepareAttaches(doc.getAttache());
+                    break;
+                }
+                case MODE_SEND_LINK_PDF : {
+                    links = prepareDocLinks(doc);                    
+                    break;
+                }
+                case MODE_SEND_LINK_CARD : {
+                    //links = prepareDocLinks(doc);                    
+                    break;
+                }
+                case MODE_SEND_ATTACHE_PDF : {
+                    prepareAttachesAsPDF(doc.getAttache());
+                    break;
+                }
+            }
+        }
+        links.append("<br/>");
+        String emailSign = sessionBean.getRefreshCurrentUser().getEmailSign();
+        if (StringUtils.isNotBlank(emailSign)){
+            links.append(emailSign);
+        }
+        selected.setMsgContent(links.toString());
+        selected.setAddresses(adresses.toString());
+        selected.setCopies(copies.toString());
+    }
+    
+    private void prepareAttaches(Attaches attache){
+        if (attaches == null){
+            attaches= new HashMap<>();
+        }
+        attaches.put(attache.getName(), attache.getFullName());
+    }
+    
+    private void prepareAttachesAsPDF(Attaches attache){
+        if (attaches == null){
+            attaches= new HashMap<>();
+        }
+        attaches.put(attache.getNamePDF(), attache.getFullNamePDF());
+    }
+        
+    private String makeSubject(List<Doc> sendDocs){
+        StringBuilder sb = new StringBuilder();
+        if (sendDocs.size() == 1){
+            String fileName = sendDocs.get(0).getName();
+            sb.append(fileName);
+        } else {
+            sb.append(EscomBeanUtils.getBandleLabel("Newsletter"));
+        }        
+        return sb.toString();
+    }
+    
+    private StringBuilder prepareDocLinks(Doc doc){        
+        StringBuilder links = new StringBuilder();
+        String url = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
+        links.append(EscomBeanUtils.getBandleLabel("Document")).append(": ");
+        links.append("<a href=").append(url).append(">").append(doc.getFullName()).append("</a>");
+        links.append("<br />");
+        return links;
+    }
+    
+    public String sendMail(){        
+        if (checkAdresses()){
+            Gson gson = new Gson();            
+            String attacheJson = gson.toJson(attaches);
+            selected.setAttaches(attacheJson);
+            mailBoxFacade.create(selected);
+            return onCloseCard();
+        } else {
+            EscomBeanUtils.ErrorMsgAdd("Error", "IncorrectMailAdress", "");
+            return "";
+        }
+    }
+        
+    private boolean checkAdresses(){
+        List<String> adresses = EscomUtils.SplitString(selected.getAddresses(), ADRESS_SEPARATOR);
+        for (String adress : adresses){
+            try {
+                InternetAddress internetAddress = new InternetAddress(adress);
+            } catch (AddressException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public void removeAttache(String fileName){
+        attaches.remove(fileName);
+    }
+    
+    public Mailbox getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Mailbox selected) {
+        this.selected = selected;
+    }
+        
+    public Set<String> getAttaches() {
+        if (attaches == null) return null;
+        return attaches.keySet();
+    }
+
+
+    @Override
+    public String onCloseCard() {
+        return super.onFinalCloseCard(null);
+    }
+
+    @Override
+    protected String getFormName() {
+        return DictDlgFrmName.FRM_MAIL_MESSAGE;
+    }
+    
+}

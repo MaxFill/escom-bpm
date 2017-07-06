@@ -9,89 +9,94 @@
     <ui:define name="title">
         #{bundle.MailMessage}
     </ui:define> 
-    
+
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{mailBoxBean.onOpenCard()}"/>
+            <f:event type="preRenderView" listener="#{mailMessageBean.onOpenForm()}"/>
         </f:metadata>
     </ui:define>
-    
+
     <ui:define name="body">
-
-        <h:form id="messageFRM">
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                <p:toolbar style="margin-bottom: 5px;">
-                    <f:facet name="right">
-                        <p:commandButton value="#{bundle.Cancel}" icon="ui-icon-close"
-                                         style="float: right;" immediate="true"
-                                         actionListener="#{mailBoxBean.cancel()}"/>
-                        <p:commandButton value="#{bundle.Send}"
-                                         icon="ui-icon-mail-closed"
-                                         update="messageFRM:msgPanel"
-                                         type="submit" style="float: right;"
-                                         action="#{mailBoxBean.sendMail()}"/>
-                    </f:facet>
-                </p:toolbar>
-
-                <h:panelGroup id="msgPanel">
-                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.Subject}"/>
-                        <h:panelGroup>
-                            <p:inputText value="#{mailBoxBean.selected.subject}" id="subject" title="#{bundle.Subject}"
-                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Subject}] #{bundle.MustBeFilled}"
-                                         maxlength="1024"
-                                         style="width: 100%;"/>
-                            <p:message for="subject" />
-                        </h:panelGroup>
-
-                        <p:outputLabel value="#{bundle.Sender}"/>
-                        <h:panelGroup>
-                            <p:inputText value="#{mailBoxBean.selected.sender}" id="sender" title="#{bundle.Sender}"
-                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Sender}] #{bundle.MustBeFilled}"
-                                         maxlength="1024"
-                                         style="width: 100%;">
-                                <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
-                            </p:inputText>
-                            <p:message for="sender"/>
-                        </h:panelGroup>
-
-                        <p:outputLabel value="#{bundle.Addresses}"/>
-                        <h:panelGroup>
-                            <p:inputText value="#{mailBoxBean.selected.addresses}" id="addresses" title="#{msg.SeparatedMultipleAddresses}"
-                                         required="true" requiredMessage="#{bundle.Field} [#{bundle.Addresses}] #{bundle.MustBeFilled}"
-                                         maxlength="1024"
-                                         style="width: 100%;">
-                                <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
-                            </p:inputText>
-                            <p:message for="addresses"/>
-                        </h:panelGroup>
-
-                        <p:outputLabel value="#{bundle.Copies}"/>
-                        <p:inputText value="#{mailBoxBean.selected.сopies}" id="сopies" title="#{msg.SeparatedMultipleAddresses}"                                     
-                                     maxlength="1024"
-                                     style="width: 100%;">
-                            <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
-                        </p:inputText>
-
-                        <p:outputLabel value="#{bundle.Attachment}"/>
-                        <p:panel id="attaches" style="width: 100%; font-size: 80%;">
-                            <ui:repeat var="attache" value="#{mailBoxBean.attaches}">
-                                <p:commandButton icon="ui-icon-close" value="#{attache.name}" title="#{bundle.Delete}"
-                                                 actionListener="#{mailBoxBean.removeAttache(attache)}"
-                                                 update="messageFRM:attaches"/>
-                            </ui:repeat>
-                        </p:panel>
-
-                        <p:outputLabel value="#{bundle.Content}"/>
-                    </p:panelGrid>
-
+        <pe:layout fullPage="true" options="#{mailMessageBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{mailMessageBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="messageFRM" styleClass="formLayoute">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                        <p:editor value="#{mailBoxBean.selected.msgContent}" style="width: 100%; height: 100%;"  />                        
+
+                        <h:panelGroup id="msgPanel">
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
+                                <p:outputLabel value="#{bundle.Subject}"/>
+                                <h:panelGroup>
+                                    <p:inputText value="#{mailMessageBean.selected.subject}" id="subject" title="#{bundle.Subject}"
+                                                 required="true" requiredMessage="#{bundle.Field} [#{bundle.Subject}] #{bundle.MustBeFilled}"
+                                                 maxlength="1024"
+                                                 style="width: 100%;"/>
+                                    <p:message for="subject" display="tooltip" />
+                                </h:panelGroup>
+
+                                <p:outputLabel value="#{bundle.Sender}"/>
+                                <h:panelGroup>
+                                    <p:inputText value="#{mailMessageBean.selected.sender}" id="sender" title="#{bundle.Sender}"
+                                                 required="true" requiredMessage="#{bundle.Field} [#{bundle.Sender}] #{bundle.MustBeFilled}"
+                                                 maxlength="1024"
+                                                 style="width: 100%;">
+                                        <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
+                                    </p:inputText>
+                                    <p:message for="sender" display="tooltip"/>
+                                </h:panelGroup>
+
+                                <p:outputLabel value="#{bundle.Addresses}"/>
+                                <h:panelGroup>
+                                    <p:inputText value="#{mailMessageBean.selected.addresses}" id="addresses" title="#{msg.SeparatedMultipleAddresses}"
+                                                 required="true" requiredMessage="#{bundle.Field} [#{bundle.Addresses}] #{bundle.MustBeFilled}"
+                                                 maxlength="1024"
+                                                 style="width: 100%;">
+                                        <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
+                                    </p:inputText>
+                                    <p:message for="addresses" display="tooltip"/>
+                                </h:panelGroup>
+
+                                <p:outputLabel value="#{bundle.Copies}"/>
+                                <p:inputText value="#{mailMessageBean.selected.copies}" id="сopies" title="#{msg.SeparatedMultipleAddresses}"                                     
+                                             maxlength="1024"
+                                             style="width: 100%;">
+                                    <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
+                                </p:inputText>
+
+                                <p:outputLabel value="#{bundle.Attachment}"/>
+                                <p:panel id="attaches" style="width: 100%; font-size: 80%;">
+                                    <ui:repeat var="attache" value="#{mailMessageBean.attaches}">
+                                        <p:commandButton icon="ui-icon-close" value="#{attache}" title="#{bundle.Delete}"
+                                                         actionListener="#{mailMessageBean.removeAttache(attache)}"
+                                                         update="messageFRM:attaches"/>
+                                    </ui:repeat>
+                                </p:panel>
+
+                                <p:outputLabel value="#{bundle.Content}"/>
+                            </p:panelGrid>
+
+                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                                <p:editor value="#{mailMessageBean.selected.msgContent}" styleClass="ui-grid-col-12"/>
+                            </p:panelGrid>
+                        </h:panelGroup>
+
+                        <p:toolbar style="margin-bottom: 5px;">
+                            <f:facet name="right">
+                                <p:commandButton value="#{bundle.Cancel}" icon="ui-icon-close"
+                                                 style="float: right;" immediate="true"
+                                                 action="#{mailMessageBean.onCloseCard()}"/>
+                                <p:commandButton value="#{bundle.Send}"
+                                                 icon="ui-icon-mail-closed"
+                                                 update="messageFRM:msgPanel"
+                                                 type="submit" style="float: right;"
+                                                 action="#{mailMessageBean.sendMail()}"/>
+                            </f:facet>
+                        </p:toolbar>
                     </p:panelGrid>
-                </h:panelGroup>
-
-            </p:panelGrid>
-        </h:form>
-
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
     </ui:define>
 </ui:composition>

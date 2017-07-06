@@ -135,7 +135,7 @@ public class DocStatuses implements Serializable {
 
     @Override
     public String toString() {        
-        return ItemUtils.getBandleLabel(status.getName()) + "=" + this.getValue();
+        return getStatus().getName() + " = " + this.getValue();
     }
     
 }

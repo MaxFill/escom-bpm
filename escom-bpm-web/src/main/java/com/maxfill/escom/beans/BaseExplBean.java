@@ -31,7 +31,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
     public abstract BaseExplBean getDetailBean();       //возвращает бин подчинённых объектов
     public abstract BaseExplBean getOwnerBean();        //возвращает бин владельца объекта 
-
+    
     @Override
     public void onInitBean(){
     }
@@ -465,6 +465,10 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             }
             case DictFilters.NOTACTUAL_ID: {
                 result = getItemFacade().loadNotActualItems();
+                break;
+            }
+            case DictFilters.ON_MY_EDIT: {
+                result = getItemFacade().loadLockDocuments(currentUser);
                 break;
             }
         }

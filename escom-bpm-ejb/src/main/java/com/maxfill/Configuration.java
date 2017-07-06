@@ -8,18 +8,28 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
+import javax.jcr.Repository;
 
 /* Конфигурационные настройки программы */
 @Singleton
 @LocalBean
 public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
-
+    private static final String REPO_NAME = "artifacts";
+    private static final String REPO_FULL_NAME = "modeshape-webdav/" + REPO_NAME + "/other/";
+    
+    @Resource(mappedName="java:/jcr/"+REPO_NAME)
+    private javax.jcr.Repository repository;
+    
+    private String serverURL;
     private String uploadPath;
     private String encoding;
     private String defaultSenderEmail;
+    private String defaultEmailServer;
+    private String defaultEmailServerPort;
     private String ldapServer;
     private String tempFolder;
     private String jasperReports;
@@ -39,9 +49,12 @@ public class Configuration {
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
+        serverURL = (String) properties.get("SERVER_URL");
         uploadPath = (String) properties.get("UPLOAD_PATCH");
         encoding = (String) properties.get("ENCODING");
         defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
+        defaultEmailServer = (String) properties.get("DEFAULT_EMAIL_SERVER");
+        defaultEmailServerPort = (String) properties.get("DEFAULT_EMAIL_SERVER_PORT");
         ldapServer = (String) properties.get("LDAP_SERVER");
         licence = new Licence();
         licence.setLicenceNumber((String) properties.get("LICENCE_NUMBER"));
@@ -77,6 +90,22 @@ public class Configuration {
     }
     public String getConvertorPDF() {
         return convertorPDF;
+    }
+    public String getServerURL() {
+        return serverURL;
+    }
+    public String getDefaultEmailServer() {
+        return defaultEmailServer;
+    }
+    public String getDefaultEmailServerPort() {
+        return defaultEmailServerPort;
+    }
+    public String getRepositoryName(){
+        return REPO_FULL_NAME;
+    }
+    
+    public Repository getRepository() {
+        return repository;
     }
     
 }

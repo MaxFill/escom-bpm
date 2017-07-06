@@ -8,12 +8,19 @@ import org.apache.commons.lang.StringUtils;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 public final class EscomUtils {
      
@@ -138,5 +145,30 @@ public final class EscomUtils {
         StringSelection selection = new StringSelection(sourceString);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
+    }
+    
+    public static byte[] compress(String data) throws IOException {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+            GZIPOutputStream gzip = new GZIPOutputStream(bos);
+            gzip.write(data.getBytes());
+            gzip.close();
+            byte[] compressed = bos.toByteArray();
+            bos.close();
+            return compressed;
+    }
+	
+    public static String decompress(byte[] compressed) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(compressed);
+        GZIPInputStream gis = new GZIPInputStream(bis);
+        BufferedReader br = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while((line = br.readLine()) != null) {
+                sb.append(line);
+        }
+        br.close();
+        gis.close();
+        bis.close();
+        return sb.toString();
     }
 }

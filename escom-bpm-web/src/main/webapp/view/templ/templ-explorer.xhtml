@@ -100,12 +100,12 @@
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}" 
+                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}"                                         
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}"
                                     oncomplete="initDND()"/>
-                        </p:commandButton>
+                        </p:commandButton>                                                 
                         
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>

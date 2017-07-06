@@ -1,4 +1,3 @@
-
 package com.maxfill.model.numPuttern.counter;
 
 import java.io.Serializable;
@@ -13,14 +12,9 @@ import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- * Счётчик нумератора
- * @author mfilatov
- */
 @Entity
 @Table(name = "numerator")
 public class Counter implements Serializable {
-
     private static final long serialVersionUID = -8832941995816832839L;
 
     @TableGenerator(

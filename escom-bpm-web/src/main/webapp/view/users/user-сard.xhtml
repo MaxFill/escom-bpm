@@ -101,13 +101,19 @@
                                 feedback="true"
                                 disabled="#{_bean.isReadOnly()}"
                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                onchange="return itemChange = 1;"/>
+                                />
                 </p:panelGrid>
             </p:panelGrid>
         </p:tab>    
 
         <p:tab title="#{bundle.Other}">
-            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >
+            <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateMessagesEmail}" 
+                                        disabled="#{_bean.isReadOnly()}"
+                                        itemLabel="#{bundle.DuplicateMessagesEmail}">
+                <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
+            
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >                               
                 <p:outputLabel value="#{bundle.EmailSign}" />
                 <h:panelGrid columns="1" styleClass="ui-grid-col-12">
                     <p:editor value="#{_bean.editedItem.emailSign}" 

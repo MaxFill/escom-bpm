@@ -13,7 +13,9 @@ public final class DictDlgFrmName {
     public static final String FRM_MAIL_SERVICE = "mail-service";
     public static final String FRM_CHECK_RELEASE = "check-release";
     public static final String FRM_DOC_LOCK = "doclock";  
-            
+    public static final String FRM_USER_MESSAGES = "messages";
+    public static final String FRM_MAIL_MESSAGE = "mail-message";
+    public static final String FRM_MAIL_BOX = "mail-box";
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     
 }

@@ -14,13 +14,15 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.utils.FileUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.utils.EscomFileUtils;
+import com.maxfill.model.metadates.Metadates;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -473,34 +475,37 @@ public class ExplorerBean implements Serializable {
             filterTree.setExpanded(true);
             
             //формируем корневой элемент для фильтров detail объекта
-            List<Filter> sourceTreeItems = filtersFacade.findDetailItems(null);                         
-            final String tableJurnalName = tableBean.getMetadatesObj().getBundleJurnalName();
+            List<Filter> sourceTreeItems = filtersFacade.findRootItems();
+            Metadates tableMD = tableBean.getMetadatesObj();
+            final String tableJurnalName = tableMD.getBundleJurnalName();
             sourceTreeItems.stream()
                     .forEach(treeItem -> {
-                        treeItem.setIcon(tableBean.getMetadatesObj().getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeDetail, tableJurnalName);
+                        treeItem.setIcon(tableMD.getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeDetail, tableJurnalName, tableMD);
                     }
             );
 
             //формируем корневой элемент для фильтров tree объекта
             if (treeBean != null){
-                sourceTreeItems = filtersFacade.findDetailItems(null);
-                final String treeJurnalName = treeBean.getMetadatesObj().getBundleJurnalName();
+                sourceTreeItems = filtersFacade.findRootItems();
+                Metadates treeMD = treeBean.getMetadatesObj();
+                final String treeJurnalName = treeMD.getBundleJurnalName();
                 sourceTreeItems.stream()
                     .forEach(treeItem -> {
-                        treeItem.setIcon(treeBean.getMetadatesObj().getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeTree, treeJurnalName);
+                        treeItem.setIcon(treeMD.getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeTree, treeJurnalName, treeMD);
                     }
                 );
             }
             //формируем корневой элемент для фильтров root объекта
             if (rootBean != null){
-                sourceTreeItems = filtersFacade.findDetailItems(null);
-                final String treeJurnalName = rootBean.getMetadatesObj().getBundleJurnalName();
+                sourceTreeItems = filtersFacade.findRootItems();
+                Metadates rootMD = rootBean.getMetadatesObj();
+                final String treeJurnalName = rootMD.getBundleJurnalName();
                 sourceTreeItems.stream()
                     .forEach(treeItem -> {
-                        treeItem.setIcon(rootBean.getMetadatesObj().getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeRoot, treeJurnalName);
+                        treeItem.setIcon(rootMD.getIconObject());
+                        addFilterInTree(filterTree, treeItem, typeRoot, treeJurnalName, rootMD);
                     }
                 );
             }
@@ -509,7 +514,7 @@ public class ExplorerBean implements Serializable {
     }
     
     /* ФИЛЬТР: добавление узла в дерево фильтров при его формировании  */
-    private TreeNode addFilterInTree(TreeNode parentNode, BaseDict item, String nodeType, String nodeName) {           
+    private TreeNode addFilterInTree(TreeNode parentNode, BaseDict item, String nodeType, String nodeName, Metadates metadate) {           
         TreeNode newNode;
 
         synchronized (this) {
@@ -520,9 +525,9 @@ public class ExplorerBean implements Serializable {
         String bundleName = EscomBeanUtils.getBandleLabel(nodeName);
         item.setName(bundleName);
 
-        List<Filter> childs = filtersFacade.findChilds((Filter)item);
+        List<Filter> childs = filtersFacade.findChildsFilters((Filter)item, metadate);
         childs.stream()
-                .forEach(itemChild -> addFilterInTree(newNode, itemChild, nodeType, itemChild.getName())
+                .forEach(itemChild -> addFilterInTree(newNode, itemChild, nodeType, itemChild.getName(), metadate)
         );        
 
         return newNode;
@@ -536,9 +541,8 @@ public class ExplorerBean implements Serializable {
     
     /* ФИЛЬТР: обработка события выбора фильтра */
     private void doFilterTreeNodeSelect(TreeNode node){
-        if (node == null){
-            return;
-        }
+        if (node == null) return;
+        
         setCurrentTab(DictExplForm.TAB_FILTER);
         Filter filter = (Filter) node.getData();
         if (filter == null){
@@ -1481,9 +1485,9 @@ public class ExplorerBean implements Serializable {
     }
     
     public void onUploadFile(FileUploadEvent event) throws IOException{     
-        UploadedFile uploadedFile = FileUtils.handleUploadFile(event);
+        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         User author = sessionBean.getCurrentUser();        
-        Attaches attache = FileUtils.doUploadAtache(uploadedFile, author, sessionBean.getConfiguration());
+        Attaches attache = EscomFileUtils.uploadAtache(uploadedFile, author, sessionBean.getConfiguration());
         createParams.put("attache", attache);
     }
         
@@ -1511,7 +1515,7 @@ public class ExplorerBean implements Serializable {
     public void prepareSendMailDocs(String mode){
         List<BaseDict> checked = prepareCheckedItems();
         if (!checked.isEmpty()){
-            EscomBeanUtils.openMailMsgForm(mode, checked);
+            sessionBean.openMailMsgForm(mode, checked);
         } else {
             EscomBeanUtils.WarnMsgAdd("Error", "NO_SELECT_DOCS");
         }
@@ -1534,6 +1538,11 @@ public class ExplorerBean implements Serializable {
     
     public void onEditDocument(){
         docBean.onOpenFormLockMainAttache((Doc) currentItem);
+    }
+    
+    public void onViewDocument(BaseDict item){
+        onSetCurrentItem(item);
+        docBean.onViewMainAttache((Doc) currentItem);
     }
     
     /* ПРОЧИЕ МЕТОДЫ */

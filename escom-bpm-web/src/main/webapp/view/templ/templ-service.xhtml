@@ -7,13 +7,35 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:define name="body">
+        <script type="text/javascript">
+            var isClose = 0;            
+            
+            window.onbeforeunload = function (evt) {
 
-        <pe:layout fullPage="true" options="#{_bean.layoutOptions}">
-            <pe:layoutPane position="center" resizable="true">
+                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
+                if (typeof evt == "undefined") {
+                    evt = window.event;
+                }
+
+                if (isClose == 0) {
+                    if (evt) {
+                        evt.returnValue = message;
+
+                    }
+                    ;
+                    return message;
+                }
+            };
+
+        </script>
+        
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;">
+            <pe:layoutPane position="center" resizable="true" >
                 <f:facet name="header"  >  
                     <p:outputLabel value="#{bundle.LogEventHistory}" />
                 </f:facet> 
                 <h:form id="centerFRM" style="font-size: 80%;">
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>
                     <ui:include src="/view/services/common/log-events.xhtml"/>
                 </h:form>
             </pe:layoutPane>
@@ -41,12 +63,14 @@
                     <ui:include src="/view/services/common/sheduler.xhtml"/>
                     <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;" /> 
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
-                        <p:separator />
-                        <p:commandButton icon="ui-icon-gear" value="#{bundle.Perform}"
-                                         title="#{bundle.StartImmediately}"
-                                         actionListener="#{_bean.doRunService()}"
-                                         onclick="document.getElementById('eastFRM:btnEastSave').click();"
-                                         update="centerFRM, logFRM:logDetailPanel" />
+                        <h:panelGrid columns="1" styleClass="ui-grid-col-12">
+                            <p:separator />
+                            <p:commandButton icon="ui-icon-play" value="#{bundle.OneTimeStartup}"
+                                             title="#{bundle.StartImmediately}"
+                                             actionListener="#{_bean.doRunService()}"
+                                             onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                                             update="centerFRM, logFRM:logDetailPanel" />
+                        </h:panelGrid>
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

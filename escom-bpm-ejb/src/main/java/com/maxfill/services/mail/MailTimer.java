@@ -1,12 +1,13 @@
 package com.maxfill.services.mail;
 
 import com.google.gson.Gson;
-import com.maxfill.Configuration;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.Authenticator;
@@ -14,17 +15,17 @@ import javax.mail.Session;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Stateless
 public class MailTimer extends BaseTimer<MailSettings>{
     
     @EJB
     private MailBoxFacade mailBoxFacade;
-    @EJB
-    private Configuration conf;
     
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings){
@@ -48,12 +49,17 @@ public class MailTimer extends BaseTimer<MailSettings>{
                         String subject = message.getSubject(); 
                         String content = message.getMsgContent();
                         Gson gson = new Gson();
-                        Map<String, String> attachments = gson.fromJson(message.getAttaches(), Map.class); 
-
+                        Map<String, String> attachments;
+                        if (message.getAttaches() != null){
+                            attachments = gson.fromJson(message.getAttaches(), Map.class);
+                        } else {
+                            attachments = new HashMap<>();
+                        }
                         String from = message.getSender();                
                         String to = message.getAddresses();
                         String copyes = message.getCopies();
-                        MailUtils.sendMultiMessage(session, from, to, copyes, content, subject, conf.getEncoding(), attachments);
+                        String encoding = conf.getEncoding();
+                        MailUtils.sendMultiMessage(session, from, to, copyes, content, subject, encoding, attachments);
                         detailInfoAddRow(detailInfo, "The message id=" + message.getId() + " is sent!");
                         mailBoxFacade.remove(message);
                     }
@@ -79,7 +85,15 @@ public class MailTimer extends BaseTimer<MailSettings>{
 
     @Override
     protected MailSettings restoreSettings(Services service) {
-        return (MailSettings) JAXB.unmarshal(new StringReader(service.getSettings()), MailSettings.class);
+        MailSettings mailSettings = null;
+        try {
+            byte[] compressXML = service.getSheduler();
+            String settingsXML = EscomUtils.decompress(compressXML);
+            mailSettings = (MailSettings) JAXB.unmarshal(new StringReader(settingsXML), MailSettings.class);
+        } catch (IOException ex) {
+            Logger.getLogger(MailTimer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return mailSettings;
     }
     
 }

@@ -1,4 +1,3 @@
-
 package com.maxfill.services.common.history;
 
 import com.maxfill.services.Services;
@@ -19,10 +18,6 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Журнал истории событий служб
- * @author Maxim
- */
 @Entity
 @Table(name = "services_events")
 public class ServicesEvents implements Serializable {
@@ -59,7 +54,7 @@ public class ServicesEvents implements Serializable {
     private Services serviceId;
 
     @XmlTransient
-    public Date getDuration(){
+    public String getDuration(){
         return DateUtils.differenceDate(dateStart, dateFinish);
     }
     

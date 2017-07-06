@@ -29,8 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Lob;
 
 /* Базовый класс справочников

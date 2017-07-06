@@ -5,12 +5,15 @@ import com.maxfill.facade.UserFacade;
 import com.maxfill.services.*;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
@@ -184,7 +187,15 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
 
     @Override
     protected LdapSettings restoreSettings(Services service) {
-        return (LdapSettings) JAXB.unmarshal(new StringReader(service.getSettings()), LdapSettings.class);
+        LdapSettings ldapSettings = null;
+        try {
+            byte[] compressXML = service.getSheduler();
+            String settingsXML = EscomUtils.decompress(compressXML);
+            ldapSettings = (LdapSettings) JAXB.unmarshal(new StringReader(settingsXML), LdapSettings.class);
+        } catch (IOException ex) {
+            Logger.getLogger(LdapTimer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ldapSettings;
     }
 
 }

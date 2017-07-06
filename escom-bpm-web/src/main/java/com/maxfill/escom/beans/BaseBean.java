@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.services.attaches.AttacheService;
@@ -14,12 +15,13 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
-import com.maxfill.escom.utils.FileUtils;
+import com.maxfill.utils.FileUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.groups.UserGroups;
+import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -274,7 +276,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         byte[] compressXML = item.getAccess();
         if (compressXML != null && compressXML.length >0){
             try {
-                String accessXML = EscomBeanUtils.decompress(compressXML);            
+                String accessXML = EscomUtils.decompress(compressXML);            
                 StringReader access = new StringReader(accessXML);         
                 actualRight = (Rights) JAXB.unmarshal(access, Rights.class);  
                 settingRightItem(item, actualRight);
@@ -294,7 +296,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     public void saveAccess(T item, String xml){        
         try {
-            byte[] compressXML = EscomBeanUtils.compress(xml);
+            byte[] compressXML = EscomUtils.compress(xml);
             item.setAccess(compressXML);
         } catch (IOException ex) {
             Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -303,7 +305,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     public void saveAccessChild(T item, String xml){        
         try {
-            byte[] compressXML = EscomBeanUtils.compress(xml);
+            byte[] compressXML = EscomUtils.compress(xml);
             item.setAccessChild(compressXML);
         } catch (IOException ex) {
             Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
@@ -363,8 +365,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         FileUtils.attacheDownLoad(path, attache.getName());
     }
     
-    public Attaches uploadAtache(UploadedFile file)throws IOException{
-        return FileUtils.doUploadAtache(file, currentUser, conf);
+    public Attaches uploadAtache(UploadedFile file) throws IOException{
+        return EscomFileUtils.uploadAtache(file, currentUser, conf);
     }
     
     public Integer getMaxFileSize(){

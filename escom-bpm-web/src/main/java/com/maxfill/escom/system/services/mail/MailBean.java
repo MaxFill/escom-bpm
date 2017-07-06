@@ -1,7 +1,7 @@
 package com.maxfill.escom.system.services.mail;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.escom.beans.BaseServicesBean;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
@@ -9,12 +9,11 @@ import com.maxfill.services.mail.MailAuth;
 import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.mail.MailTimer;
 import com.maxfill.services.mail.MailUtils;
-import com.maxfill.services.mail.Mailbox;
+import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -32,15 +31,8 @@ public class MailBean extends BaseServicesBean<MailSettings>{
     private static final Integer MAIL_SERVICE_ID = 2;
     
     @EJB
-    private MailTimer mailTimer;   
-    @EJB
-    private MailBoxFacade mailBoxFacade;
-    
-    private List<Mailbox> messages = new ArrayList<>();
+    private MailTimer mailTimer;       
             
-    /**
-     * Тест проверки соединения с Почтовым сервером и отправки тестового письма
-     */
     public void onCheckConnect(){
         String subject = "Mail test from Escom3"; 
         String content = "<h1>Hello!</h1><br/><h2>This is the test message from escom3</h2>"; 
@@ -61,11 +53,27 @@ public class MailBean extends BaseServicesBean<MailSettings>{
 
     @Override
     protected MailSettings createSettings() {     
-        MailSettings settings;
-        if (StringUtils.isNotBlank(service.getSettings())){
-            settings = (MailSettings) JAXB.unmarshal(new StringReader(service.getSettings()), MailSettings.class); 
-        } else {
+        MailSettings settings = null;
+        byte[] compressXML = service.getSettings();
+        if (compressXML != null && compressXML.length >0){
+            try {
+                String settingsXML = EscomUtils.decompress(compressXML);
+                settings = (MailSettings) JAXB.unmarshal(new StringReader(settingsXML), MailSettings.class); 
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, null, ex);
+            }
+        } 
+        if (settings == null) {
             settings = new MailSettings();
+        }
+        if (StringUtils.isBlank(settings.getAdressSender())){
+            settings.setAdressSender(conf.getDefaultSenderEmail());
+        }
+        if (StringUtils.isBlank(settings.getServerAdress())){
+            settings.setServerAdress(conf.getDefaultEmailServer());
+        }
+        if (settings.getSmtpPort() == null){
+            settings.setSmtpPort(Integer.valueOf(conf.getDefaultEmailServerPort()));
         }
         return settings;
     }
@@ -80,40 +88,14 @@ public class MailBean extends BaseServicesBean<MailSettings>{
         return mailTimer;
     }
     
-    /**
-     * Ручной запуск службы на выполнение
-     */
     @Override
     public void doRunService(){        
         ServicesEvents selectedEvent = mailTimer.doExecuteTask(service, getSettings());
         setSelectedEvent(selectedEvent);
         getServicesFacade().edit(service);        
     }
-
-    /**
-     * Сброс буфера сообщений для обновления
-     */
-    public void refreshMessages(){
-        messages = null;
-    }
     
-    /**
-     * Удаление сообщения
-     * @param message 
-     */
-    public void deleteMessage(Mailbox message){
-        mailBoxFacade.remove(message);
-        messages.remove(message);
+    public void onOpenMailBox(){
+        sessionBean.openDialogFrm(DictDlgFrmName.FRM_MAIL_BOX, null);
     }
-    
-    public List<Mailbox> getMessages() {
-        if (messages == null) {
-            messages = mailBoxFacade.findAll();
-        }
-        return messages;
-    }
-    public void setMessages(List<Mailbox> messages) {
-        this.messages = messages;
-    }
-    
 }

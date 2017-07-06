@@ -1,4 +1,3 @@
-
 package com.maxfill.services.mail;
 
 import java.io.Serializable;
@@ -9,30 +8,25 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Настройки почтовой службы
- * @author mfilatov
- */
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
 public class MailSettings implements Serializable{    
     private static final long serialVersionUID = -2606513436608294285L;
     
     @XmlElement(name = "ServerAdress")
-    private String serverAdress = "smtp.rambler.ru";
+    private String serverAdress;
     
     @XmlElement(name = "User")
-    private String user = "test";
+    private String user;
     
     @XmlElement(name = "Password")
     private String password;
     
     @XmlElement(name = "SmtpPort")
-    private Integer smtpPort = 25;
+    private Integer smtpPort;
     
     @XmlElement(name = "AdressSender")
-    private String adressSender = "test@rambler.ru";
-    
+    private String adressSender;    
     
     public String getServerAdress() {
         return serverAdress;

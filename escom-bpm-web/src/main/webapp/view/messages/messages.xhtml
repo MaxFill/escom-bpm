@@ -1,0 +1,105 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ.xhtml">
+
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{userMsgBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">
+        #{bundle.Messages}
+    </ui:define>
+
+    <ui:define name="body">
+        <pe:layout fullPage="true" options="#{userMsgBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{userMsgBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="msgForm" style="font-size: 90%;"> 
+                    <p:commandButton id="openDocBtn" style="display: none;"                                           
+                                     actionListener="#{userMsgBean.onGoToDocument()}"> 
+                        <p:ajax event="dialogReturn" update="messageTBL"/>
+                    </p:commandButton> 
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+
+                        <p:toolbar styleClass="ui-grid-col-12">
+                            <f:facet name="left">
+                                <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"                                 
+                                                         itemLabel="#{bundle.ShowOnlyUnReadMessage}">
+                                    <p:ajax update="messageTBL" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/> 
+                                </p:selectBooleanCheckbox>
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:commandButton value="#{bundle.MarkAsRead}" style="float:right;"
+                                               update="messageTBL"
+                                               actionListener="#{userMsgBean.markAsRead()}"> 
+                                </p:commandButton>
+                            </f:facet>
+                        </p:toolbar>                    
+
+                        <p:dataTable id="messageTBL" value="#{userMsgBean.messages}" 
+                                     emptyMessage="#{bundle.EmptyTable}"
+                                     paginator="true" paginatorPosition="bottom"                       
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="10,25,50" rows="10"
+                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                                     var="item" sortBy="#{item.dateSent}" sortOrder="descending"
+                                     selection="#{userMsgBean.checkedMessages}">   
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                            
+                            <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}">
+                                <h:outputLabel value="#{item.dateSent}">
+                                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                                </h:outputLabel>
+                            </p:column>   
+
+                            <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
+                                <h:outputLabel value="#{item.name}"/>
+                            </p:column>
+
+                            <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
+                                <h:outputLabel value="#{item.sender}"/>
+                            </p:column>   
+
+                            <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}">
+                                <h:outputLabel value="#{item.dateReading}" >
+                                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                                </h:outputLabel>
+                            </p:column> 
+
+                            <p:column headerText="#{bundle.Doc}">
+                                <p:commandLink  value="#{bundle.GoToDocument}"
+                                                rendered="#{item.document != null}"
+                                                actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                                oncomplete="document.getElementById('msgForm:openDocBtn').click();"/>
+                            </p:column>
+                            <p:column >                    
+                                <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
+                                                update="messageTBL"
+                                                rendered="#{item.dateReading == null}"
+                                                actionListener="#{userMsgBean.markAsRead(item)}">                                    
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable> 
+                        <p:toolbar styleClass="ui-grid-col-12">
+                            <f:facet name="right">
+                                <p:commandButton value="#{bundle.Close}" style="float:right;"
+                                                 title="#{bundle.Close}"
+                                                 action="#{userMsgBean.onCloseCard()}">                                                                         
+                                </p:commandButton> 
+                            </f:facet>
+                        </p:toolbar>
+                    </p:panelGrid>
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
+    </ui:define>
+</ui:composition>

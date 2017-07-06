@@ -39,11 +39,6 @@
             function OpenFolder(sFolderUrl) {
                 ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
             }
-             
-            function EditDoc(sDocumentUrl, sFolderUrl) {
-                var oNs = ITHit.WebDAV.Client.DocManager;
-                    oNs.DavProtocolEditDocument(sDocumentUrl, sFolderUrl, ProtocolInstallCallback);
-            }
             
             function ProtocolInstallCallback(message) {
                 var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" + 
@@ -55,7 +50,7 @@
             }
         </script>
         
-        <f:event listener="#{sessionBean.showNotifBar()}" type="preRenderView" />
+        <f:event listener="#{sessionBean.showNotification()}" type="preRenderView" />
 
         <h:form id="mainFRM" style="font-size: 90%">           
             <style type="text/css">
@@ -81,14 +76,16 @@
                         <h:outputText value="#{msg.GetInfoAboutNewversion}" />
                     </h:outputLink>
                 </h:panelGrid>
-            </p:notificationBar>
-
+            </p:notificationBar>           
+            
+            <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm()}">
+                <p:ajax event="dialogReturn" update="mainFRM:linkMsgInfo"/>
+            </p:commandButton>
+            
             <p:toolbar style="">
-                <f:facet name="left">    
-                    <p:commandButton value="ACCESS" actionListener="#{sessionBean.test()}" />
-                    <p:commandButton value="test" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/artifacts/other/');" />
-                    <p:commandButton value="test2" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/sample/default/');" />
-                    <p:commandButton value="test3" onclick="EditDoc('https://fil-pc:8443/modeshape-webdav/sample/default/newdoc.docx', 'https://localhost:8443/modeshape-webdav/sample/default/');" />
+                <f:facet name="left">
+                    <p:commandButton value="testSample" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/sample/default/');" />
+                    <p:commandButton value="testArtifacts" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/artifacts/other/');" />
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
@@ -114,7 +111,9 @@
                 </f:facet>
             </p:toolbar>
 
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+            <p:growl id="growl" showDetail="true" autoUpdate="true"/> 
+                            
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >              
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
 
                     <p:panel id="admObjects" header="#{bundle.Administation}" 
@@ -123,15 +122,19 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
                             <p:commandLink value="#{bundle.SettigsObject}" 
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="objectsExpl"/>
                             <p:commandLink value="#{bundle.Users}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="user-explorer"/>
                             <p:commandLink value="#{bundle.Numerators}" title="#{bundle.NumeratorsPatterns}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="numPatternsExpl"/>
                             <p:commandLink value="#{bundle.Statuses}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="statusesdoc-explorer"/>
                         </p:panelGrid>
                     </p:panel>
@@ -140,9 +143,9 @@
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
-                            <p:commandLink value="#{bundle.MailService}" title="#{bundle.MailService}"                                           
-                                           actionListener="#{sessionBean.openMailServiceForm()}"/>
-                            <p:commandLink value="#{bundle.LdapService}" title="#{bundle.LdapService}"
+                            <p:commandLink value="#{bundle.MailService}"                                            
+                                           actionListener="#{sessionBean.openMailService()}"/>
+                            <p:commandLink value="#{bundle.LdapService}" 
                                            actionListener="#{sessionBean.openLdapService()}"/>
                         </p:panelGrid>
                     </p:panel>
@@ -164,7 +167,9 @@
                                 </p:column>
                                 <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
                             </p:themeSwitcher>
-                            
+                            <p:separator />
+                            <p:commandLink id="linkMsgInfo" value="#{sessionBean.messagesInfo}" 
+                                           onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
                         </p:panelGrid>
                     </p:panel>
 
@@ -172,9 +177,11 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.DocsExplorer}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="doc-explorer"/>
                             <p:commandLink value="#{bundle.DocsTypes}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="doctype-explorer"/>
                         </p:panelGrid>
                     </p:panel>
@@ -183,9 +190,11 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:commandLink value="#{bundle.Posts}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="post-explorer"/> 
                             <p:commandLink value="#{bundle.OrgStructureExplorer}" 
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="staff-explorer"/>
                         </p:panelGrid>
                     </p:panel>
@@ -194,9 +203,11 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.Partners}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="partner-explorer"/>
                             <p:commandLink value="#{bundle.PartnerTypes}"
                                            onstart="return isClose = 1;"
+                                           ajax="false"
                                            action="partnertype-explorer"/>
                         </p:panelGrid>
                     </p:panel>

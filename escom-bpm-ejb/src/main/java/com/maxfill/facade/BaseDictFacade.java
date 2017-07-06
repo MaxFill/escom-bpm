@@ -3,6 +3,7 @@ package com.maxfill.facade;
 import com.maxfill.Configuration;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
@@ -95,6 +96,28 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return q.getResultList();
     }
     
+    /* Возвращает корневые объекты  */
+    public List<T> findRootItems(){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.isNull(c.get("parent")));
+        criteries.add(builder.equal(c.get("deleted"), false));
+        criteries.add(builder.equal(c.get("actual"), true));
+        criteries.add(builder.isNull(c.get("owner")));
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(c).where(builder.and(predicates));               
+        cq.orderBy(builder.asc(c.get("name")));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
     /* Отбор объектов, созданных пользователем  */
     public List<T> findItemsCreatedByUser(User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -160,7 +183,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }                       
-                          
+    
+    /* Возвращает документы, заблокированные пользователем */
+    public List<T> loadLockDocuments(User editor){
+        return null;
+    }
+    
     /* ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ */
 
     /* Добавление события в журнал событий */

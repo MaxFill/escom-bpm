@@ -4,6 +4,7 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
@@ -17,7 +18,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXB;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T , O > {
@@ -55,7 +55,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         byte[] compressXML = item.getAccessChild();
         if (compressXML != null && compressXML.length >0){
             try {
-                String accessXML = EscomBeanUtils.decompress(compressXML);            
+                String accessXML = EscomUtils.decompress(compressXML);            
                 StringReader access = new StringReader(accessXML);         
                 actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
             } catch (IOException ex) {

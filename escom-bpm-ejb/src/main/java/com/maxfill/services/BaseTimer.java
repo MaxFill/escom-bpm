@@ -1,6 +1,6 @@
-
 package com.maxfill.services;
 
+import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.common.history.ServicesEvents;
@@ -16,11 +16,6 @@ import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Таймер запуска службы по заданному интервалу 
- * @author Maxim
- * @param <P>
- */
 public abstract class BaseTimer<P> {
     protected static final Logger LOG = Logger.getLogger(BaseTimer.class.getName());
     protected static final String RESULT_FAIL = "Error";
@@ -30,6 +25,8 @@ public abstract class BaseTimer<P> {
     private ServicesFacade servicesFacade;
     @EJB
     protected ServicesEventsFacade servicesEventsFacade;
+    @EJB
+    protected Configuration conf;
     
     @Resource
     TimerService timerService;
