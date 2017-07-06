@@ -16,6 +16,7 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.FileUtils;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -37,53 +38,57 @@ import org.primefaces.model.UploadedFile;
 
 @Named(value = "docsBean")
 @SessionScoped
-public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
-    private static final long serialVersionUID = 923378036800543406L;         
-    
+public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
+
+    private static final long serialVersionUID = 923378036800543406L;
+    private Integer documentId; //используется при открытии файла на просмотр через прямую гиперсылку 
+
     @Inject
     private FoldersBean ownerBean;
-    
+
     @EJB
-    private DocFacade docsFacade;    
+    private DocFacade docsFacade;
     @EJB
     private AttacheFacade attacheFacade;
-    
+
     @Override
-    public void preparePasteItem(Doc pasteItem, BaseDict target){        
-        pasteItem.setOwner((Folder)target);
+    public void preparePasteItem(Doc pasteItem, BaseDict target) {
+        pasteItem.setOwner((Folder) target);
     }
 
     @Override
     public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
+        if (item == null) {
+            return null;
+        }
+
         if (!item.isInherits()) {
             return getActualRightItem(item);
-        } 
+        }
         if (item.getOwner() != null) {
             Rights childRight = ownerBean.getRightForChild(item.getOwner()); //РїРѕР»СѓС‡Р°РµРј РїСЂР°РІР° РёР· СЃРїРµС†.РїСЂР°РІ 
-            if (childRight != null){
+            if (childRight != null) {
                 return childRight;
             }
         }
-        return getDefaultRights(item);  
-    }        
-    
+        return getDefaultRights(item);
+    }
+
     @Override
-    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params){
+    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
         Folder folder = doc.getOwner();
-        if (folder != null){
+        if (folder != null) {
             DocType docType = folder.getDocTypeDefault();
             doc.setDocType(docType);
         }
         doc.setDateDoc(new Date());
-        if (doc.getOwner().getId() == null){ //СЃР±СЂРѕСЃ owner РµСЃР»Рё РґРѕРєСѓРјРµРЅС‚ СЃРѕР·РґР°С‘С‚СЃСЏ РІ РєРѕСЂРЅРµ Р°СЂС…РёР°!
+        if (doc.getOwner().getId() == null) { //СЃР±СЂРѕСЃ owner РµСЃР»Рё РґРѕРєСѓРјРµРЅС‚ СЃРѕР·РґР°С‘С‚СЃСЏ РІ РєРѕСЂРЅРµ Р°СЂС…РёР°!
             doc.setOwner(null);
         }
-        if (params != null && !params.isEmpty()){
-            Attaches attache = (Attaches)params.get("attache");
-            if (attache != null){
-                Integer version = doc.getNextVersionNumber();            
+        if (params != null && !params.isEmpty()) {
+            Attaches attache = (Attaches) params.get("attache");
+            if (attache != null) {
+                Integer version = doc.getNextVersionNumber();
                 attache.setNumber(version);
                 attache.setDoc(doc);
                 String fileName = attache.getName();
@@ -91,30 +96,30 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
                 doc.getAttachesList().add(attache);
             }
         }
-    }    
-    
+    }
+
     @Override
     public SearcheModel initSearcheModel() {
         return new DocsSearche();
-    }    
-    
+    }
+
     @Override
     public List<Folder> getGroups(Doc item) {
         List<Folder> groups = new ArrayList<>();
         groups.add(item.getOwner());
         return groups;
     }
-    
+
     @Override
     public DocFacade getItemFacade() {
         return docsFacade;
     }
-    
+
     @Override
     public BaseExplBean getOwnerBean() {
         return ownerBean;
     }
-    
+
     @Override
     public BaseExplBean getDetailBean() {
         return null;
@@ -129,23 +134,22 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
     public Class<Folder> getOwnerClass() {
         return Folder.class;
     }
- 
-    public void openDocCountTypesReport(){
+
+    public void openDocCountTypesReport() {
         sessionBean.openDialogFrm(DictDlgFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
     }
-    
-    public boolean docIsHaveLock(Doc doc){
+
+    public boolean docIsHaveLock(Doc doc) {
         return attacheFacade.countLockAttachesByDoc(doc) > 0;
     }
-    
+
     /* ВЛОЖЕНИЯ */
-    
-    public void addAttache(FileUploadEvent event) throws IOException{     
+    public void addAttache(FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
-        User author = sessionBean.getCurrentUser();        
+        User author = sessionBean.getCurrentUser();
         Attaches attache = EscomFileUtils.uploadAtache(uploadedFile, author, sessionBean.getConfiguration());
         Doc doc = (Doc) event.getComponent().getAttributes().get("item");
-        Integer version = doc.getNextVersionNumber();            
+        Integer version = doc.getNextVersionNumber();
         attache.setNumber(version);
         attache.setDoc(doc);
         attache.setCurrent(Boolean.TRUE);
@@ -157,59 +161,97 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder>{
         getItemFacade().edit(doc);
         EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
     }
-    
-    public void onOpenFormLockMainAttache(Doc doc){
+
+    public void onOpenFormLockMainAttache(Doc doc) {
         Attaches attache = doc.getAttache();
-        if (attache != null){
+        if (attache != null) {
             onOpenFormLockAttache(attache);
         } else {
             EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
         }
     }
-    
-    public void onOpenFormLockAttache(Attaches attache){
+
+    public void onOpenFormLockAttache(Attaches attache) {
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> paramList = new ArrayList<>();
         paramList.add(attache.getId().toString());
         paramMap.put("attache", paramList);
-        sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_LOCK, paramMap);    
+        sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_LOCK, paramMap);
     }
-    
-    public void onViewMainAttache(Doc doc){
-        Attaches attache = doc.getAttache();
-        if (attache != null){
-            onViewAttache(attache);
+
+    public void onDownLoadAttachePDFByExtLink() {
+        if (documentId == null) return;            
+        Doc doc = docsFacade.find(documentId);
+        if (doc == null) return;
+        actualizeRightItem(doc);
+        if (isHaveRightView(doc)) {
+            Attaches attache = doc.getAttache();
+            if (attache != null) {
+                attacheDownLoadPDF(attache);
+            } else {
+                EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+            }
         } else {
-            EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+            EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
         }
     }
+
+    /* Просмотр файла вложения основной версии документа как PDF */
+    public void onViewMainAttache(Doc doc) {
+        if (doc == null) {
+            return;
+        }
+        actualizeRightItem(doc);
+        if (isHaveRightView(doc)) {
+            Attaches attache = doc.getAttache();
+            if (attache != null) {
+                onViewAttache(attache);
+            } else {
+                EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+            }
+        } else {
+            EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
+        }
+    }
+
+    /* Скачивание файла вложения основной версии документа как PDF */
+    public void attacheDownLoadPDF(Attaches attache){
+        if (attache == null) return;
+        String path = conf.getUploadPath() + attache.getFullNamePDF();         
+        EscomFileUtils.attacheDownLoad(path, attache.getNamePDF());
+    }
     
+    public Integer getDocumentId() {
+        return documentId;
+    }
+    public void setDocumentId(Integer documentId) {
+        this.documentId = documentId;
+    }
+
     @FacesConverter("docsConvertor")
     public static class docsConvertors implements Converter {
-    
+
         @Override
         public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {       
-                 DocBean bean = EscomBeanUtils.findBean("docsBean", fc);
-                 return bean.getItemFacade().find(Integer.parseInt(value));
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
+            if (value != null && value.trim().length() > 0) {
+                try {
+                    DocBean bean = EscomBeanUtils.findBean("docsBean", fc);
+                    return bean.getItemFacade().find(Integer.parseInt(value));
+                } catch (NumberFormatException e) {
+                    throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
+                }
+            } else {
+                return null;
+            }
         }
 
         @Override
         public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((User)object).getId());
-            }
-            else {
+            if (object != null) {
+                return String.valueOf(((User) object).getId());
+            } else {
                 return "";
             }
-        }      
+        }
     }
 }

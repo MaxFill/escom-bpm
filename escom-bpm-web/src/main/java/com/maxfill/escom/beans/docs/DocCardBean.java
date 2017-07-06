@@ -47,7 +47,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private final List<Attaches> forDelAttaches = new ArrayList<>();
     
     private String docURL;  
-    private Integer documentId; //используется при открытии файла на просмотр через прямую гиперсылку  
     private Attaches selectedAttache;
     
     @Inject
@@ -240,24 +239,13 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Скачивание текущей версии документа */
     public void downloadCurrentVersion(){
-        if (getEditedItem() == null && documentId != null){
-            setEditedItem(getItemFacade().find(documentId));
-        }        
+        if (getEditedItem() == null) return;        
         Doc doc = getEditedItem();        
-        if (doc != null){
-            actualizeRightItem(doc);
-            if (isHaveRightView(doc)) {
-                Attaches attache = attacheService.findAttacheByDoc(doc);                               
-                if (attache != null){
-                    attacheDownLoad(attache);                    
-                } else {
-                    EscomBeanUtils.WarnMsgAdd("Error", "FileNotFound");
-                }
-            } else {                
-                EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
-            }
+        Attaches attache = attacheService.findAttacheByDoc(doc);                               
+        if (attache != null){
+            attacheDownLoad(attache);               
         } else {
-            EscomBeanUtils.WarnMsgAdd("Error", "DocumentNotFound");
+            EscomBeanUtils.WarnMsgAdd("Error", "FileNotFound");
         }
     }        
     
@@ -396,13 +384,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     public void setDocURL(String docURL) {
         this.docURL = docURL;
-    }
-
-    public Integer getDocumentId() {
-        return documentId;
-    }
-    public void setDocumentId(Integer documentId) {
-        this.documentId = documentId;
     }
     
     @Override

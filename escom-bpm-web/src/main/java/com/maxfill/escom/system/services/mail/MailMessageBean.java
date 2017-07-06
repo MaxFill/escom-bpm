@@ -12,6 +12,7 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -25,6 +26,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FilenameUtils;
 
 @Named
 @ViewScoped
@@ -124,6 +126,7 @@ public class MailMessageBean extends BaseDialogBean{
             }
         }
         links.append("<br/>");
+        
         String emailSign = sessionBean.getRefreshCurrentUser().getEmailSign();
         if (StringUtils.isNotBlank(emailSign)){
             links.append(emailSign);
@@ -160,9 +163,13 @@ public class MailMessageBean extends BaseDialogBean{
     
     private StringBuilder prepareDocLinks(Doc doc){        
         StringBuilder links = new StringBuilder();
-        String url = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
-        links.append(EscomBeanUtils.getBandleLabel("Document")).append(": ");
-        links.append("<a href=").append(url).append(">").append(doc.getFullName()).append("</a>");
+        String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
+        links.append(EscomBeanUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
+        links.append("<a href=").append(urlDownLoad).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
+        links.append("<br />");
+        String urlViewDoc = EscomBeanUtils.doGetItemURL(doc, "docs/doc-viewer", "0");
+        links.append(EscomBeanUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
+        links.append("<a href=").append(urlViewDoc).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
     }
@@ -170,8 +177,10 @@ public class MailMessageBean extends BaseDialogBean{
     public String sendMail(){        
         if (checkAdresses()){
             Gson gson = new Gson();            
-            String attacheJson = gson.toJson(attaches);
-            selected.setAttaches(attacheJson);
+            if (attaches != null){
+                String attacheJson = gson.toJson(attaches);
+                selected.setAttaches(attacheJson);
+            }    
             mailBoxFacade.create(selected);
             return onCloseCard();
         } else {

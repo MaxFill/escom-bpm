@@ -32,7 +32,6 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
-import com.maxfill.services.webDav.WebDavService;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.utils.EscomUtils;
@@ -51,19 +50,19 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.inject.Named;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -468,7 +467,7 @@ public class SessionBean implements Serializable{
     public void saveFormSize(String formName, Integer width, Integer heaght){
         Tuple<Integer, Integer> size = new Tuple(width, heaght);
         userSettings.getFormsSize().put(formName, size);
-    }
+    }       
     
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     

@@ -110,6 +110,7 @@
                     actionListener="#{docsBean.onViewAttache(item.getAttache())}"/>
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"
+                    onstart="return isClose = 1;"
                     rendered="#{explorerBean.isItemHaveAttache(item)}"
                     action="#{docsBean.attacheDownLoad(item.getAttache())}"/>
     </ui:define>

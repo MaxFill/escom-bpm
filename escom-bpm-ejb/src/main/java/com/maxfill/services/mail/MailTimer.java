@@ -18,8 +18,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.lang.StringUtils;
 
 @Stateless
 public class MailTimer extends BaseTimer<MailSettings>{
@@ -48,13 +51,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
                     for (Mailbox message : messages){
                         String subject = message.getSubject(); 
                         String content = message.getMsgContent();
-                        Gson gson = new Gson();
-                        Map<String, String> attachments;
-                        if (message.getAttaches() != null){
-                            attachments = gson.fromJson(message.getAttaches(), Map.class);
-                        } else {
-                            attachments = new HashMap<>();
-                        }
+                        Map<String, String> attachments = prepareAttaches(message.getAttaches());                       
                         String from = message.getSender();                
                         String to = message.getAddresses();
                         String copyes = message.getCopies();
@@ -80,9 +77,24 @@ public class MailTimer extends BaseTimer<MailSettings>{
             servicesEventsFacade.create(selectedEvent);
             service.getServicesEventsList().add(selectedEvent); 
             return selectedEvent;           
-        }        
-    }    
+        }     
+    }
 
+    private Map<String, String> prepareAttaches(String attaches){
+        Map<String, String> attachments = new HashMap<>(); 
+        if (StringUtils.isNotBlank(attaches) ){
+            String path = conf.getUploadPath();
+            Gson gson = new Gson();
+            attachments = gson.fromJson(attaches, Map.class);
+            Set<Entry<String, String>> attachesSet = attachments.entrySet();
+            for (Entry<String, String> entry : attachesSet){
+                String fileName = path + entry.getValue();
+                entry.setValue(fileName);
+            }
+        } 
+        return attachments;
+    }
+    
     @Override
     protected MailSettings restoreSettings(Services service) {
         MailSettings mailSettings = null;

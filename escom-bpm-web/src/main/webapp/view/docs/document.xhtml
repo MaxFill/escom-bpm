@@ -14,26 +14,25 @@
     
     <ui:define name="preRendered">
         <f:metadata>
-            <f:viewParam name="docId" value="#{docCardBean.documentId}" />
-            <f:event listener="#{docCardBean.downloadCurrentVersion()}" type="preRenderView" />
+            <f:viewParam name="itemId" value="#{docsBean.documentId}" />
+            <f:event listener="#{docsBean.onDownLoadAttachePDFByExtLink()}" type="preRenderView" />
         </f:metadata>  
     </ui:define>
     
     <ui:define name="body">
 
-        <h:form id="downloadDocFRM">            
+        <h:form id="downloadDocFRM"> 
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" /> 
             <p:panel styleClass="panelLogin">
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
                     <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                    <h:panelGroup style="width: 100%;">
+                    <h:panelGroup styleClass="ui-grid-col-12">
                         <h4>
                             <h:outputLabel value="#{msg.LoadedDocHelp}"/> 
                         </h4>
                         <p:commandLink value="#{bundle.Download}" update="downloadDocFRM"/>
                     </h:panelGroup>
-                    <p:spacer />
-                    <p:commandButton value="#{bundle.Back}" title="#{bundle.GotoIndex}" icon="ui-icon-arrowreturnthick-1-w" 
-                                    type="submit" action="#{sessionBean.goToIndex() }"/>   
+                    <p:spacer />                    
                 </p:panelGrid>
             </p:panel>
         </h:form>

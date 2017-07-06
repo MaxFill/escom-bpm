@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.context.FacesContext;
 import javax.xml.bind.JAXB;
 import org.apache.commons.io.FilenameUtils;
 import org.primefaces.model.UploadedFile;
@@ -362,7 +363,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     public void attacheDownLoad(Attaches attache){
         if (attache == null) return;
         String path = conf.getUploadPath() + attache.getFullName(); 
-        FileUtils.attacheDownLoad(path, attache.getName());
+        EscomFileUtils.attacheDownLoad(path, attache.getName());
     }
     
     public Attaches uploadAtache(UploadedFile file) throws IOException{

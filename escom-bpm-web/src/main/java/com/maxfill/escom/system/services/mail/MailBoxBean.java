@@ -25,7 +25,7 @@ public class MailBoxBean extends BaseDialogBean{
     }
     
     @Override
-    protected void onOpenCard(){
+    public void onOpenCard(){
     }
     
     @Override
@@ -35,7 +35,7 @@ public class MailBoxBean extends BaseDialogBean{
 
     @Override
     protected String getFormName() {
-        return DictDlgFrmName.FRM_MAIL_MESSAGE;
+        return DictDlgFrmName.FRM_MAIL_BOX;
     }
     
     public void refreshMessages(){
