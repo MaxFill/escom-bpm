@@ -14,10 +14,8 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.FileUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.docs.DocBean;
@@ -81,7 +79,7 @@ public class ExplorerBean implements Serializable {
     
     @EJB
     private FiltersFacade filtersFacade;
-     
+    
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
     protected BaseExplBean tableBean;
@@ -1485,12 +1483,11 @@ public class ExplorerBean implements Serializable {
     }
     
     public void onUploadFile(FileUploadEvent event) throws IOException{     
-        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
-        User author = sessionBean.getCurrentUser();        
-        Attaches attache = EscomFileUtils.uploadAtache(uploadedFile, author, sessionBean.getConfiguration());
+        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);      
+        Attaches attache = sessionBean.uploadAtache(uploadedFile);
         createParams.put("attache", attache);
     }
-        
+    
     /* Показать документ в папке */
     public void onShowDocInFolder(){         
         if (selectedDocId != null){

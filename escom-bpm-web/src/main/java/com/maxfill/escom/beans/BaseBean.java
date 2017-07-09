@@ -15,7 +15,6 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
-import com.maxfill.utils.FileUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -36,11 +35,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.faces.context.FacesContext;
 import javax.xml.bind.JAXB;
 import org.apache.commons.io.FilenameUtils;
-import org.primefaces.model.UploadedFile;
-
 
 /* Базовый бин */
 public abstract class BaseBean <T extends BaseDict> implements Serializable{
@@ -57,6 +53,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     protected PrintService printService;
     @EJB
     protected FavoriteService favoriteService;
+
     @EJB
     protected NumeratorService numeratorService;
     @EJB
@@ -365,15 +362,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         String path = conf.getUploadPath() + attache.getFullName(); 
         EscomFileUtils.attacheDownLoad(path, attache.getName());
     }
-    
-    public Attaches uploadAtache(UploadedFile file) throws IOException{
-        return EscomFileUtils.uploadAtache(file, currentUser, conf);
-    }
-    
-    public Integer getMaxFileSize(){
-        return FileUtils.MAX_FILE_SIZE;
-    }
-    
+        
     /* СЛУЖЕБНЫЕ МЕТОДЫ */    
     
     /* Установка признака изменения объекта  */

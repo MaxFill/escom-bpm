@@ -12,8 +12,8 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import javax.ejb.EJB;
@@ -32,7 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 @ViewScoped
 public class MailMessageBean extends BaseDialogBean{    
     private static final long serialVersionUID = 9011875090040784420L;
-    private static final Logger LOGGER = Logger.getLogger(MailMessageBean.class.getName());
+    private static final Logger LOG = Logger.getLogger(MailMessageBean.class.getName());
     private static final String ADRESS_SEPARATOR = ",";
     
     private static final String MODE_SEND_ATTACHE = "asAttache";
@@ -50,6 +50,7 @@ public class MailMessageBean extends BaseDialogBean{
     private Mailbox selected;
     private Map<String, String> attaches = null;
     private String modeSentAttache = null;
+    private String content;
     
     @Override
     protected void initBean() {    
@@ -131,7 +132,13 @@ public class MailMessageBean extends BaseDialogBean{
         if (StringUtils.isNotBlank(emailSign)){
             links.append(emailSign);
         }
-        selected.setMsgContent(links.toString());
+        try {
+            content = links.toString();
+            byte[] compressXML = EscomUtils.compress(content);
+            selected.setMsgContent(compressXML);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
         selected.setAddresses(adresses.toString());
         selected.setCopies(copies.toString());
     }
@@ -178,8 +185,13 @@ public class MailMessageBean extends BaseDialogBean{
         if (checkAdresses()){
             Gson gson = new Gson();            
             if (attaches != null){
-                String attacheJson = gson.toJson(attaches);
-                selected.setAttaches(attacheJson);
+                try {                    
+                    selected.setMsgContent(EscomUtils.compress(content));
+                    String attacheJson = gson.toJson(attaches);                    
+                    selected.setAttaches(EscomUtils.compress(attacheJson));
+                } catch (IOException ex) {
+                    LOG.log(Level.SEVERE, null, ex);
+                }
             }    
             mailBoxFacade.create(selected);
             return onCloseCard();
@@ -195,7 +207,7 @@ public class MailMessageBean extends BaseDialogBean{
             try {
                 InternetAddress internetAddress = new InternetAddress(adress);
             } catch (AddressException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, null, ex);
                 return false;
             }
         }
@@ -219,6 +231,12 @@ public class MailMessageBean extends BaseDialogBean{
         return attaches.keySet();
     }
 
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
     @Override
     public String onCloseCard() {

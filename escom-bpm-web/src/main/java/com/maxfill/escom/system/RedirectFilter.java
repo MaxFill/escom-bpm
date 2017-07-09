@@ -42,7 +42,7 @@ public class RedirectFilter implements Filter {
 
         String serverURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "").toString();
         String reqURL = request.getRequestURI();
-
+                
         if (reqURL.contains(SysParams.PRIME_URL) || reqURL.contains(SysParams.RESOURCE_URL)){
             chain.doFilter(request, response);
             return; 
@@ -77,17 +77,17 @@ public class RedirectFilter implements Filter {
                 response.getWriter().printf(AJAX_REDIRECT_XML, reqURL);
                 chain.doFilter(request, response);
                 return;
-            } else {
+            } else {                
                 String targetUrl = reqURL.replaceAll(ctxPath, "").replaceAll("/faces", "").replaceAll("/", "%2F");
                 StringBuilder loginURL = new StringBuilder();
                 loginURL.append(serverURL).append(ctxPath).append("/faces/");
-                loginURL.append(SysParams.LOGIN_PAGE).append("?from=").append(targetUrl);
+                loginURL.append(SysParams.LOGIN_PAGE).append("?from=").append(targetUrl).append(makeParams(request.getParameterMap()));
                 Map<String,String[]> params = request.getParameterMap();
                 if (params.containsKey("docId")){
                     String[] param = params.get("docId");
                     loginURL.append("?docId=").append(param[0]);
                 }                
-                response.sendRedirect(loginURL.toString());
+                response.sendRedirect(loginURL.toString());                
                 return;
             }
         }
@@ -104,7 +104,16 @@ public class RedirectFilter implements Filter {
             }
         }
     }
-     
+    
+    private String makeParams(Map<String, String[]> paramMap){
+        StringBuilder result = new StringBuilder();
+        if (paramMap.containsKey("itemId")){
+            String[] values = paramMap.get("itemId");
+            result.append("?itemId=").append(values[0]);
+        } 
+        return result.toString();
+    }
+    
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {

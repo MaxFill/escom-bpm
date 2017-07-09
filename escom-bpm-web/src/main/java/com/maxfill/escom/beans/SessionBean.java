@@ -34,6 +34,8 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.services.files.FileService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
@@ -56,6 +58,7 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
@@ -66,6 +69,7 @@ import javax.inject.Named;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.primefaces.extensions.model.layout.LayoutOptions;
+import org.primefaces.model.UploadedFile;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -96,7 +100,9 @@ public class SessionBean implements Serializable{
     private StaffFacade staffFacade;
     @EJB 
     private UserMessagesFacade messagesFacade;
-        
+    @EJB
+    protected FileService fileService;
+    
     @Inject
     private ApplicationBean appBean;    
     @Inject
@@ -252,26 +258,9 @@ public class SessionBean implements Serializable{
     
     /* Завершение сессии пользователя  */           
     private void doSessionExit(String page) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            doSaveUserSettings();
-            appBean.clearUserLock(currentUser);
-            ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-            ectx.getFlash().setKeepMessages(true); 
-            HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
-            URL reconstructedURL = new URL(request.getScheme(),
-                    request.getServerName(),
-                    request.getServerPort(),
-                    "");
-            String serverURL = reconstructedURL.toString();            
-            sb.append(serverURL).append(ectx.getRequestContextPath()).append(page);            
-            ectx.invalidateSession();            
-            ectx.redirect(sb.toString());            
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }         
+        doSaveUserSettings();
+        appBean.clearUserLock(currentUser);
+        redirectToPage(page, Boolean.TRUE);
     }
 
     /* Сохранение настроек текущего пользователя в базу данных */
@@ -285,7 +274,7 @@ public class SessionBean implements Serializable{
             currentUser.setUserSettings(compressXML);
             userFacade.edit(currentUser);
         } catch (IOException ex) {
-            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -468,6 +457,50 @@ public class SessionBean implements Serializable{
         Tuple<Integer, Integer> size = new Tuple(width, heaght);
         userSettings.getFormsSize().put(formName, size);
     }       
+    
+    /* редирект на страницу */
+    public void redirectToPage(String page, Boolean invalidate){
+        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+        StringBuilder sb = new StringBuilder();
+        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
+        try {
+            URL reconstructedURL = new URL(request.getScheme(),
+                    request.getServerName(),
+                    request.getServerPort(),
+                    "");
+            String serverURL = reconstructedURL.toString();            
+            sb.append(serverURL).append(ectx.getRequestContextPath()).append(page);
+            if (invalidate){
+                ectx.invalidateSession();
+            }
+            ectx.redirect(sb.toString()); 
+        } catch (MalformedURLException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        } 
+    }
+    
+    /* Вложения */ 
+    public Attaches uploadAtache(UploadedFile uploadFile) throws IOException{
+        Attaches attache = new Attaches();
+        if (uploadFile != null) {
+            int length = uploadFile.getContents().length;
+
+            String fileName = uploadFile.getFileName();
+            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+
+            attache.setName(fileName);
+            attache.setExtension(fileExt);
+            attache.setType(uploadFile.getContentType());
+            attache.setSize(length);
+            attache.setAuthor(currentUser);
+            attache.setDateCreate(new Date());                        
+
+            fileService.doUpload(attache, uploadFile.getInputstream());            
+        }
+        return attache;
+    }
     
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     

@@ -148,13 +148,13 @@ public final class EscomUtils {
     }
     
     public static byte[] compress(String data) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
-            GZIPOutputStream gzip = new GZIPOutputStream(bos);
-            gzip.write(data.getBytes());
-            gzip.close();
-            byte[] compressed = bos.toByteArray();
-            bos.close();
-            return compressed;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length());
+        GZIPOutputStream gzip = new GZIPOutputStream(bos);
+        gzip.write(data.getBytes("UTF-8"));
+        gzip.close();
+        byte[] compressed = bos.toByteArray();
+        bos.close();
+        return compressed;
     }
 	
     public static String decompress(byte[] compressed) throws IOException {

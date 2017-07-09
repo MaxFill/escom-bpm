@@ -1,14 +1,11 @@
-
 package com.maxfill.dictionary;
 
-/**
- * Системные параметры
- * @author mfilatov
- */
 public final class SysParams {
 
     private SysParams() {
     }
+    
+    public static final int MAX_FILE_SIZE = 1000000;
     
     public static final String ALL = "*";
     public static final Integer ADMIN_ID = 1;

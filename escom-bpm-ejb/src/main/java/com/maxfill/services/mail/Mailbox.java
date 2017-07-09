@@ -1,4 +1,3 @@
-
 package com.maxfill.services.mail;
 
 import com.maxfill.model.users.User;
@@ -12,6 +11,7 @@ import javax.persistence.GenerationType;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -23,10 +23,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Класс таблицы базы данных
- * @author mfilatov
- */
 @Entity
 @Table(name = "mailbox")
 @NamedQueries({
@@ -67,17 +63,17 @@ public class Mailbox implements Serializable {
     @Column(name = "Addresses")
     private String addresses;
     
-    @Size(max = 2147483647)
-    @Column(name = "MsgContent")
-    private String msgContent;
+    @Lob
+    @Column(name = "MsgContent", length = 2048)
+    private byte[] msgContent;
     
     @Size(max = 1024)
     @Column(name = "CopyAddres")
     private String copies;
     
-    @Size(max = 2147483647)
-    @Column(name = "Attaches")
-    private String attaches;
+    @Lob
+    @Column(name = "Attaches", length = 2048)
+    private byte[] attaches;
     
     @XmlTransient
     @Basic(optional = false)
@@ -90,7 +86,6 @@ public class Mailbox implements Serializable {
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -98,7 +93,6 @@ public class Mailbox implements Serializable {
     public String getSubject() {
         return subject;
     }
-
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -106,7 +100,6 @@ public class Mailbox implements Serializable {
     public Date getDateCreate() {
         return dateCreate;
     }
-
     public void setDateCreate(Date dateCreate) {
         this.dateCreate = dateCreate;
     }
@@ -114,7 +107,6 @@ public class Mailbox implements Serializable {
     public User getAuthor() {
         return author;
     }
-
     public void setAuthor(User author) {
         this.author = author;
     }
@@ -122,17 +114,8 @@ public class Mailbox implements Serializable {
     public String getAddresses() {
         return addresses;
     }
-
     public void setAddresses(String addresses) {
         this.addresses = addresses;
-    }
-
-    public String getMsgContent() {
-        return msgContent;
-    }
-
-    public void setMsgContent(String msgContent) {
-        this.msgContent = msgContent;
     }
 
     public String getCopies() {
@@ -142,18 +125,9 @@ public class Mailbox implements Serializable {
         this.copies = copies;
     }
 
-    public String getAttaches() {
-        return attaches;
-    }
-
-    public void setAttaches(String attaches) {
-        this.attaches = attaches;
-    }
-
     public boolean isActual() {
         return actual;
     }
-
     public void setActual(boolean actual) {
         this.actual = actual;
     }
@@ -161,9 +135,22 @@ public class Mailbox implements Serializable {
     public String getSender() {
         return sender;
     }
-
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public byte[] getMsgContent() {
+        return msgContent;
+    }
+    public void setMsgContent(byte[] msgContent) {
+        this.msgContent = msgContent;
+    }
+
+    public byte[] getAttaches() {
+        return attaches;
+    }
+    public void setAttaches(byte[] attaches) {
+        this.attaches = attaches;
     }
 
     @Override

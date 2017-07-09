@@ -10,7 +10,6 @@ import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.Serializable;
@@ -81,7 +80,7 @@ public class LoginBean implements Serializable{
         }
     }
     
-    public String login() throws NoSuchAlgorithmException{
+    public void login() throws NoSuchAlgorithmException{
         RequestContext context = RequestContext.getCurrentInstance();
         Set<FacesMessage> errors = new HashSet<>(); 
         
@@ -112,7 +111,7 @@ public class LoginBean implements Serializable{
         
         if (!errors.isEmpty()){
             EscomBeanUtils.showFacesMessages(errors);
-            return "";
+            return;
         }
         
         /*
@@ -126,7 +125,7 @@ public class LoginBean implements Serializable{
         if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
             targetPage = SysParams.MAIN_PAGE;
         }
-        return targetPage;
+        sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }
     
     /* Инициализация текущего пользователя */
@@ -144,7 +143,7 @@ public class LoginBean implements Serializable{
                 String settingsXML = EscomUtils.decompress(compressXML);
                 userSettings = (UserSettings) JAXB.unmarshal(new StringReader(settingsXML), UserSettings.class);
             } catch (IOException ex) {
-                Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
+                LOG.log(Level.SEVERE, null, ex);
             }
         }
         userSettings.setLanguage(selectedLang.getName());

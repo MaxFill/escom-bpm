@@ -1,8 +1,11 @@
 package com.maxfill.facade;
 
 import com.maxfill.services.mail.Mailbox;
+import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,7 +15,7 @@ import javax.persistence.criteria.Root;
 
 @Stateless
 public class MailBoxFacade extends BaseFacade<Mailbox> {
-
+    
     public MailBoxFacade() {
         super(Mailbox.class);
     }
@@ -36,14 +39,19 @@ public class MailBoxFacade extends BaseFacade<Mailbox> {
     }
     
     public void createMailBox(String subject, String adresses, String sender, String content){
-        Mailbox mailbox = new Mailbox();
-        mailbox.setSubject(subject);
-        mailbox.setAddresses(adresses);
-        mailbox.setSender(sender);
-        mailbox.setMsgContent(content);
-        mailbox.setActual(true);
-        mailbox.setCopies("");
-        mailbox.setDateCreate(new Date());
-        create(mailbox);
+        try {
+            Mailbox mailbox = new Mailbox();
+            mailbox.setSubject(subject);
+            mailbox.setAddresses(adresses);
+            mailbox.setSender(sender);
+            byte[] compressXML = EscomUtils.compress(content);
+            mailbox.setMsgContent(compressXML);
+            mailbox.setActual(true);
+            mailbox.setCopies("");
+            mailbox.setDateCreate(new Date());
+            create(mailbox);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
 }

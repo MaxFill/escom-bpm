@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -16,7 +17,6 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.FileUtils;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -144,10 +144,14 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     /* ВЛОЖЕНИЯ */
+    
+    public Integer getMaxFileSize(){
+        return SysParams.MAX_FILE_SIZE;
+    }
+        
     public void addAttache(FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
-        User author = sessionBean.getCurrentUser();
-        Attaches attache = EscomFileUtils.uploadAtache(uploadedFile, author, sessionBean.getConfiguration());
+        Attaches attache = sessionBean.uploadAtache(uploadedFile);
         Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         Integer version = doc.getNextVersionNumber();
         attache.setNumber(version);

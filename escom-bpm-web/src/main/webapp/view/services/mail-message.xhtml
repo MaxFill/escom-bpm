@@ -77,9 +77,8 @@
                                 <p:outputLabel value="#{bundle.Content}"/>
                             </p:panelGrid>
 
-                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                                <p:editor value="#{mailMessageBean.selected.msgContent}" styleClass="ui-grid-col-12"/>
-                            </p:panelGrid>
+                            <p:editor value="#{mailMessageBean.content}" styleClass="ui-grid-col-12"/>
+
                         </h:panelGroup>
 
                         <p:toolbar style="margin-bottom: 5px;">

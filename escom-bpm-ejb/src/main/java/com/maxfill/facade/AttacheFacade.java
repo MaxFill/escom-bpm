@@ -54,4 +54,15 @@ public class AttacheFacade extends BaseFacade<Attaches>{
         Query query = getEntityManager().createQuery(cq);
         return ((Long) query.getSingleResult()).intValue();
     }
+    
+    public List<Attaches> findAttachesByDoc(Doc doc){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
+        Root<Attaches> c = cq.from(Attaches.class);        
+        Predicate crit1 = builder.equal(c.get("doc"), doc);
+        cq.select(c).where(builder.and(crit1));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
 }

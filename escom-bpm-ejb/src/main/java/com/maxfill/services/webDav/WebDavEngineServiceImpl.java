@@ -2,13 +2,12 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.utils.FileUtils;
+import com.maxfill.services.files.FileService;
 import com.sun.security.auth.UserPrincipal;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
 import java.util.logging.Level;
@@ -32,6 +31,8 @@ public class WebDavEngineServiceImpl implements WebDavService{
     
     @EJB
     private Configuration conf;
+    @EJB 
+    private FileService fileService;
     
     /* Загрузка файла в хранилище */
     @Override
@@ -80,15 +81,14 @@ public class WebDavEngineServiceImpl implements WebDavService{
             //String id = contentNode.getIdentifier();
                         
             Binary content = contentNode.getProperty("jcr:data").getBinary();
-            InputStream stream = content.getStream();
-            FileUtils.doUpload(attache, stream, conf);
+            fileService.doUpload(attache, content.getStream());
             
             contentNode.remove();
             fileNode.remove();
             folder.remove();
             
             session.save();
-        } catch (RepositoryException | IOException ex) {
+        } catch (RepositoryException ex) {
             Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

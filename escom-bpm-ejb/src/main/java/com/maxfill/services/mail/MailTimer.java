@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import org.apache.commons.lang.StringUtils;
 
 @Stateless
@@ -50,8 +51,12 @@ public class MailTimer extends BaseTimer<MailSettings>{
                 if (session != null){
                     for (Mailbox message : messages){
                         String subject = message.getSubject(); 
-                        String content = message.getMsgContent();
+                        
+                        byte[] compressXML = message.getMsgContent();
+                        String content = EscomUtils.decompress(compressXML);
+                        
                         Map<String, String> attachments = prepareAttaches(message.getAttaches());                       
+                        
                         String from = message.getSender();                
                         String to = message.getAddresses();
                         String copyes = message.getCopies();
@@ -67,7 +72,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
             } else {
                 detailInfoAddRow(detailInfo, "No message to sent!");
             }    
-        } catch(Exception e){
+        } catch(IOException | MessagingException e){
             detailInfoAddRow(detailInfo, e.getMessage());
         } finally{
             Date finishDate = new Date();
@@ -80,16 +85,21 @@ public class MailTimer extends BaseTimer<MailSettings>{
         }     
     }
 
-    private Map<String, String> prepareAttaches(String attaches){
+    private Map<String, String> prepareAttaches(byte[] compressXML){
         Map<String, String> attachments = new HashMap<>(); 
-        if (StringUtils.isNotBlank(attaches) ){
+        if (compressXML != null && compressXML.length >0){
             String path = conf.getUploadPath();
             Gson gson = new Gson();
-            attachments = gson.fromJson(attaches, Map.class);
-            Set<Entry<String, String>> attachesSet = attachments.entrySet();
-            for (Entry<String, String> entry : attachesSet){
-                String fileName = path + entry.getValue();
-                entry.setValue(fileName);
+            try {
+                String settingsXML = EscomUtils.decompress(compressXML);
+                attachments = gson.fromJson(settingsXML, Map.class);
+                Set<Entry<String, String>> attachesSet = attachments.entrySet();
+                for (Entry<String, String> entry : attachesSet){
+                    String fileName = path + entry.getValue();
+                    entry.setValue(fileName);
+                }
+            } catch (IOException ex) {
+                LOG.log(Level.SEVERE, null, ex);
             }
         } 
         return attachments;

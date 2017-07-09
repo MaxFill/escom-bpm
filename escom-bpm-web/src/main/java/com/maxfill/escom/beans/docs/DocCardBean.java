@@ -60,9 +60,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private DocStatusFacade docStatusFacade;
     @EJB
     private AttacheFacade attacheFacade;
-    @EJB
-    private WebDavService webDavService;
-        
+       
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -122,12 +120,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     protected void afterCreateItem(Doc doc) {
         addDocStatusFromType(doc, doc.getDocType());
     }
-     
-    /* Возвращает true если у документа есть заблокированные вложения */
-    public boolean getDocIsHaveLock(){
-        return docsBean.docIsHaveLock(getEditedItem());
-    }
-    
+        
     /* Запрос на формирование ссылки URL для просмотра документа  */
     public void onGetDocViewURL(Doc doc){
         docURL = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
@@ -164,9 +157,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         sessionBean.openMailMsgForm(mode, docs);
     }
     
-    public void test(Attaches attache){
-        webDavService.downloadFile(attache);
-    }
     /* ВЛОЖЕНИЯ */
     
     public void onSetSelectedAttache(Attaches attache){
@@ -178,7 +168,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         onItemChange();
         Doc doc = getEditedItem();
         UploadedFile file = EscomFileUtils.handleUploadFile(event);
-        Attaches attache = uploadAtache(file);
+        Attaches attache = sessionBean.uploadAtache(file);
         Integer version = doc.getNextVersionNumber();            
         attache.setNumber(version);
         attache.setDoc(doc);
@@ -299,6 +289,11 @@ public class DocCardBean extends BaseCardBean<Doc>{
         addDocStatusFromType(getEditedItem(), docType);
     }      
   
+    /* Возвращает true если у документа есть заблокированные вложения */
+    public boolean getDocIsHaveLock(){
+        return docsBean.docIsHaveLock(getEditedItem());
+    }
+    
     /* СТАТУСЫ ДОКУМЕНТА */
     
     /* СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа   */
@@ -377,6 +372,13 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
 
+    public void onUpdateSelectedAttache(){
+        List<Attaches> attaches = getEditedItem().getAttachesList();
+        attaches.remove(selectedAttache);
+        selectedAttache = attacheFacade.find(selectedAttache.getId());
+        attaches.add(selectedAttache);
+    }
+    
     /* GETS & SETS */
     
     public String getDocURL() {

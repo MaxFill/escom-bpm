@@ -8,7 +8,7 @@
         <p:fileUpload id="file" 
                       disabled="#{_bean.isReadOnly()}"
                       allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
-                      sizeLimit="#{_bean.maxFileSize}"
+                      sizeLimit="#{docsBean.maxFileSize}"
                       invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
                       invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
                       fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
@@ -22,7 +22,7 @@
                       fileUploadListener="#{docCardBean.addAttache}">                
         </p:fileUpload>
 
-        <p:dataTable id="versionsTBL" value="#{_bean.editedItem.attachesList}" 
+        <p:dataTable id="versionsTBL" value="#{docCardBean.editedItem.attachesList}" 
                      emptyMessage="#{bundle.EmptyTable}"
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
                      paginator="true" paginatorPosition="bottom"                       
@@ -81,8 +81,8 @@
             <p:column width="45">                    
                 <p:splitButton  icon="ui-icon-search" value="#{bundle.View}" title="#{bundle.Commands}" 
                                 actionListener="#{_bean.onViewAttache(attache)}">
-                    <p:menuitem value="test" actionListener="#{docCardBean.test(attache)}"/>
-                    <p:menuitem icon=" ui-icon-pencil" value="#{bundle.EditFile}"
+                    <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditFile}"
+                                rendered="#{attache.id != null}"
                                 actionListener="#{_bean.onSetSelectedAttache(attache)}"
                                 oncomplete="document.getElementById('#{_frm}:setLockBtn').click();"/>
                     <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"

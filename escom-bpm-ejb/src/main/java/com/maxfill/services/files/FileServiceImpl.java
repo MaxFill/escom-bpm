@@ -1,4 +1,4 @@
-package com.maxfill.utils;
+package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
@@ -9,18 +9,23 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.lang3.StringUtils;
 
-/* Утилиты для работы с файлами */
-public final class FileUtils {
-    public static final int MAX_FILE_SIZE = 1000000;
+@Stateless
+public class FileServiceImpl implements FileService{
+    protected static final Logger LOG = Logger.getLogger(FileServiceImpl.class.getName());
     
-    private FileUtils() {
-    }         
-
-    public static void doUpload(Attaches attache, InputStream inputStream, Configuration conf) throws IOException {
+    @EJB    
+    protected Configuration conf;
+    
+    @Override
+    @Asynchronous
+    public void doUpload(Attaches attache, InputStream inputStream) {
         FileOutputStream outputStream = null;
         try {
             String uploadPath = conf.getUploadPath();
@@ -39,21 +44,29 @@ public final class FileUtils {
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
         } catch (IOException e) {
-            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, e);
+            LOG.log(Level.SEVERE, null, e);
         } finally {
             if (outputStream != null) {
-                outputStream.close();
+                try {
+                    outputStream.close();
+                } catch (IOException ex) {
+                    LOG.log(Level.SEVERE, null, ex);
+                }
             }
             if (inputStream != null) {
-                inputStream.close();
+                try {
+                    inputStream.close();
+                } catch (IOException ex) {
+                    LOG.log(Level.SEVERE, null, ex);
+                }
             }
         }
     }
-    
-    public static void makeCopyToPDF(String file, String convertor){
-        if (StringUtils.isBlank(convertor)) return;
+
+    private void makeCopyToPDF(String file, String pdfConvertor) {       
+        if (StringUtils.isBlank(pdfConvertor)) return;
         try {            
-            CommandLine commandLine = CommandLine.parse(convertor);
+            CommandLine commandLine = CommandLine.parse(pdfConvertor);
             commandLine.addArgument("-f");
             commandLine.addArgument("pdf");
             commandLine.addArgument(file);
@@ -62,7 +75,9 @@ public final class FileUtils {
             executor.setExitValue(0);
             executor.execute(commandLine);
         } catch (IOException ex) {
-            Logger.getLogger(FileUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 }

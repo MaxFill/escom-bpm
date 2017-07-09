@@ -114,7 +114,7 @@
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
                             update="#{_frmExpl}:menuTbl"
                             actionListener="#{explorerBean.onCopyItem(item)}"/>
-                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}" 
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"                             
                             update="#{_frmTree} #{_frmExpl}"
                             actionListener="#{explorerBean.onMoveContentToTrash(item)}"
                             oncomplete="initDND()">

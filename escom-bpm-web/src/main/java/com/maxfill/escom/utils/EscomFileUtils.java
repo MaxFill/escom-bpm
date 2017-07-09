@@ -1,21 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.maxfill.escom.utils;
 
-import com.maxfill.Configuration;
-import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.users.User;
-import static com.maxfill.utils.FileUtils.doUpload;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
@@ -23,7 +13,6 @@ import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-
 
 public final class EscomFileUtils {
     public static final int MAX_FILE_SIZE = 1000000;
@@ -73,27 +62,6 @@ public final class EscomFileUtils {
         } catch (UnsupportedEncodingException ex) {
             LOG.log(Level.SEVERE, null, ex);
         }
-    }
-    
-    /* Загрузка файла на сервер  */
-    public static Attaches uploadAtache(UploadedFile uploadFile, User user, Configuration conf) throws IOException {
-        Attaches attache = new Attaches();
-        if (uploadFile != null) {
-            int length = uploadFile.getContents().length;
-
-            String fileName = uploadFile.getFileName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-
-            attache.setName(fileName);
-            attache.setExtension(fileExt);
-            attache.setType(uploadFile.getContentType());
-            attache.setSize(length);
-            attache.setAuthor(user);
-            attache.setDateCreate(new Date());                        
-
-            doUpload(attache, uploadFile.getInputstream(), conf);            
-        }
-        return attache;
     }
     
     /* Обработка действия загрузки файла  */

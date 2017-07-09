@@ -44,8 +44,8 @@
     </ui:define>
 
     <ui:define name="card_scripts">
-        <p:commandButton id="setLockBtn" actionListener="#{_bean.onLockSelectedAttache()}" style="display: none;">
-            <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:versionsTBL"/>
+        <p:commandButton id="setLockBtn" actionListener="#{docCardBean.onLockSelectedAttache()}" style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{docCardBean.onUpdateSelectedAttache()}" update="#{_frm}:mainTabView:versionsTBL"/>
         </p:commandButton>
     </ui:define>
     
