@@ -368,8 +368,11 @@ public final class EscomBeanUtils {
         options.put("contentHeight", "100%");
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> itemKeyList = new ArrayList<>();
+        List<String> openInDialogList = new ArrayList<>();
+        openInDialogList.add("true");
         itemKeyList.add(itemOpenKey);
-        paramMap.put("itemOpenKey", itemKeyList);
+        paramMap.put("itemId", itemKeyList);
+        paramMap.put("openInDialog", openInDialogList);
         RequestContext.getCurrentInstance().openDialog(formName + "-card", options, paramMap);
     }    
     
@@ -383,8 +386,8 @@ public final class EscomBeanUtils {
         options.put("minWidth", 600);
         options.put("minHeight", 400);
         options.put("maximizable", true);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
+        options.put("closable", false);
+        options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog(dlgName, options, paramMap);
