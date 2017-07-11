@@ -391,7 +391,7 @@ public final class EscomBeanUtils {
     }    
     
     /* Формирует ссылку URL для объекта  */
-    public static String doGetItemURL(BaseDict item, String page, String openMode){
+    public static String doGetItemURL(BaseDict item, String page){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
         
@@ -413,8 +413,6 @@ public final class EscomBeanUtils {
 
             builder.append("/faces/view/").append(page).append(".xhtml").append("?itemId=");
             builder.append(item.getId());
-            //builder.append("?openMode=");
-            //builder.append(openMode);
             docURL = builder.toString();
         }
         return docURL;
