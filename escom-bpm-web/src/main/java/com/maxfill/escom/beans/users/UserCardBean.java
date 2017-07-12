@@ -15,9 +15,12 @@ import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
+import org.primefaces.context.RequestContext;
 
 /* Карточка пользователя */
 @Named
@@ -40,6 +43,14 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         String login = name.replace(" ", "").replace(".", "").replace(",", "").toLowerCase();
         login = EscomBeanUtils.rusToEngTranlit(login);        
         getEditedItem().setLogin(WordUtils.capitalize(login));
+    }
+    
+    public void onChangePassword(ValueChangeEvent event) throws NoSuchAlgorithmException{
+        String newValue = EscomUtils.encryptPassword((String) event.getNewValue());
+        String oldValue = (String) event.getOldValue();
+        if (!Objects.equals(newValue, oldValue)){
+            onItemChange();
+        }
     }
     
     @Override

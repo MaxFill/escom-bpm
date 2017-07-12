@@ -17,6 +17,11 @@ public class StateFacade extends BaseFacade {
         super(State.class);
     }
     
+    @Override
+    public State find(Object id){
+        return getEntityManager().find(State.class, id);
+    }
+    
     public List<State> findStateDocList(){
         getEntityManager().getEntityManagerFactory().getCache().evict(State.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

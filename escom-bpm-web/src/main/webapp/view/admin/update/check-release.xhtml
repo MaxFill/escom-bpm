@@ -6,6 +6,8 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
                  template="/view/templ/templ.xhtml">
 
+    <ui:param name="_frm" value="checkFRM" />
+        
     <ui:define name="systems">
         <script language="javascript" type="text/javascript">
             var wsUri = "ws://localhost:8080/escom-bpm-info-1.0-SNAPSHOT/release_info";
@@ -30,10 +32,10 @@
             function onMessage(evt) {
                 console.log("RECEIVED: " + evt.data);
                 var json = JSON.parse(evt.data); 
-                document.getElementById('checkFRM:actualRelease').value = json.number;
-                document.getElementById('checkFRM:pageRelease').value = json.page;
-                document.getElementById('checkFRM:dateRelease').value = json.date;
-                document.getElementById('checkFRM:versionRelease').value = json.version;
+                document.getElementById('#{_frm}:actualRelease').value = json.number;
+                document.getElementById('#{_frm}:pageRelease').value = json.page;
+                document.getElementById('#{_frm}:dateRelease').value = json.date;
+                document.getElementById('#{_frm}:versionRelease').value = json.version;
                 updateReleaseInfo();
             }
 
@@ -60,22 +62,39 @@
     <ui:define name="title">
         #{bundle.CheckUpdates}
     </ui:define>
-
+    
     <ui:define name="body">                
         <pe:layout fullPage="true" options="#{checkReleaseBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{checkReleaseBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="checkFRM" style="font-size: 90%;"> 
+                <h:form id="#{_frm}" style="font-size: 90%;"> 
                     <p:remoteCommand name="updateReleaseInfo" action="#{checkReleaseBean.updateReleaseInfo()}"/>
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             action="#{checkReleaseBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>                
 
                     <p:inputText id="dateRelease" value="#{checkReleaseBean.strDateRelease}" style="display: none;"/>                    
                     <p:inputText id="versionRelease" value="#{checkReleaseBean.versionRelease}" style="display: none;"/>
                     <p:inputText id="actualRelease" value="#{checkReleaseBean.releaseNumber}" style="display: none;"/>
                     <p:inputText id="pageRelease" value="#{checkReleaseBean.pageRelease}" style="display: none;"/>
 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                        
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                           
                         <h:panelGroup>
                             <h:outputLabel value="#{bundle.ActualRelease}" />
                             <p:separator/>

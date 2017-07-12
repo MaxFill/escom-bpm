@@ -110,7 +110,12 @@ public class RedirectFilter implements Filter {
         if (paramMap.containsKey("itemId")){
             String[] values = paramMap.get("itemId");
             result.append("?itemId=").append(values[0]);
-        } 
+
+            if (paramMap.containsKey("openMode")){
+                values = paramMap.get("openMode");
+                result.append("&openMode=").append(values[0]);
+            }
+        }    
         return result.toString();
     }
     

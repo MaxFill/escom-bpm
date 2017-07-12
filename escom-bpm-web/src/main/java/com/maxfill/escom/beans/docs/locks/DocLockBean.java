@@ -1,25 +1,22 @@
 package com.maxfill.escom.beans.docs.locks;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
+import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.users.User;
 import com.maxfill.services.webDav.WebDavRemainder;
 import com.maxfill.utils.DateUtils;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
@@ -32,7 +29,9 @@ public class DocLockBean extends BaseDialogBean{
     private AttacheFacade attacheFacade;
     @EJB
     private WebDavRemainder remainder;
-            
+    @EJB
+    private DocFacade docFacade;
+    
     private Date lockDate;
     private String minLockDate;
     private String maxLockDate;
@@ -43,7 +42,7 @@ public class DocLockBean extends BaseDialogBean{
         Date maxDate = DateUtils.addDays(new Date(), 10); 
         maxLockDate = DateUtils.dateToString(maxDate, "");
         Date minDate = DateUtils.addMinute(new Date(), 10);
-        minLockDate = DateUtils.dateToString(minDate, "");        
+        minLockDate = DateUtils.dateToString(minDate, ""); 
     }
 
     @Override
@@ -70,13 +69,16 @@ public class DocLockBean extends BaseDialogBean{
     }
     
     public String makeLock(){
-        remainder.createTimer(attache, sessionBean.getCurrentUser(), lockDate);              
+        User editor = sessionBean.getCurrentUser();
+        remainder.createTimer(attache, editor, lockDate);
+        docFacade.doSetEditState(attache.getDoc(), editor);
         openFile();
         return onCloseCard();
     }
     
     public String makeUnLock(){
         remainder.cancelTimer(attache);
+        docFacade.doRemoveEditState(attache.getDoc());
         return onCloseCard();
     }
      
@@ -87,8 +89,8 @@ public class DocLockBean extends BaseDialogBean{
     
     public void onChangeDateLock(SelectEvent event){
         Date newDate = (Date) event.getObject();
-        if (isAttacheLock() && isUserIsEditor() && !Objects.equals(newDate, attache.getPlanUnlockDate())){
-            RequestContext requestContext = RequestContext.getCurrentInstance();
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        if (isAttacheLock() && isUserIsEditor() && !Objects.equals(newDate, attache.getPlanUnlockDate())){            
             requestContext.update("lockForm");
         }
     }
@@ -137,11 +139,12 @@ public class DocLockBean extends BaseDialogBean{
     }
     
     public boolean isCanShowRestartTimerBtn(){        
+        if (attache.getPlanUnlockDate() == null) return false;
         return isAttacheLock() && isUserIsEditor() && lockDate.after(attache.getPlanUnlockDate());
     }
     
     /* GETS & SETS */
-    
+        
     public Date getLockDate() {
         return lockDate;
     }

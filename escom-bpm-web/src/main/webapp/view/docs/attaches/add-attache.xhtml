@@ -1,0 +1,70 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ.xhtml">
+
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{addAttacheBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">
+        #{bundle.ADD_VERSION}
+    </ui:define>
+
+    <ui:param name="_frm" value="addAttacheForm" />
+    
+    <ui:define name="body">
+        <pe:layout fullPage="true" options="#{addAttacheBean.layoutOptions}" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{addAttacheBean.handleResize}"/> 
+            <pe:layoutPane position="center" resizable="true">
+                <h:form id="#{_frm}" style="font-size: 90%;">
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true"
+                                             action="#{addAttacheBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                                                
+
+                        <p:fileUpload id="file" disabled="#{addAttacheBean.doc == null}"
+                                      allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
+                                      sizeLimit="#{docsBean.maxFileSize}"
+                                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                      label="#{bundle.SelectFile}"                       
+                                      process="@this" auto="true"
+                                      mode="advanced" dragDropSupport="true"
+                                      cancelLabel="#{bundle.Cancel}"
+                                      uploadLabel="#{bundle.SaveFiles}"
+                                      update="messages"
+                                      fileUploadListener="#{addAttacheBean.addAttache}">                            
+                            <f:attribute name="item" value="#{item}" />
+                        </p:fileUpload>                    
+ 
+                    </p:panelGrid>
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
+    </ui:define>
+</ui:composition>

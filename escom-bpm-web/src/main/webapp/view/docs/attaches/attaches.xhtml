@@ -16,7 +16,7 @@
                       mode="advanced" auto="true"
                       update="versionsTBL"
                       dragDropSupport="true"
-                      label="#{bundle.UPLOAD_VERSION}" 
+                      label="#{bundle.ADD_VERSION}" 
                       cancelLabel="#{bundle.Cancel}"
                       uploadLabel="#{bundle.SaveFiles}"
                       fileUploadListener="#{docCardBean.addAttache}">                
@@ -31,7 +31,7 @@
                      rowKey="#{attache.tempId}" selectionMode="single"
                      var="attache" >   
 
-            <p:column width="20" rendered="#{docCardBean.docIsHaveLock}">                
+            <p:column width="20" rendered="#{docCardBean.docIsLock}">                
                 <p:rowToggler rendered="#{attache.lockDate != null}"/>                
             </p:column>
             

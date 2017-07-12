@@ -32,10 +32,17 @@
                                      oncomplete="return itemChange = 0;">            
                     </p:remoteCommand>
 
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    <p:panel styleClass="ui-grid-col-12">
-
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank" >
+                    <p:menubar styleClass="without-spaces">
+                        <f:facet name="options">
+                            <p:commandButton icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             action="#{rightCardBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                    
 
                             <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
                                 <h:outputLabel value="#{bundle.ForState}:"/>

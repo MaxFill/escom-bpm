@@ -16,6 +16,8 @@ public final class DictDlgFrmName {
     public static final String FRM_USER_MESSAGES = "messages";
     public static final String FRM_MAIL_MESSAGE = "mail-message";
     public static final String FRM_MAIL_BOX = "mail-box";
+    public static final String FRM_ADD_ATTACHE = "add-attache";
+    
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     
 }

@@ -35,6 +35,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
@@ -196,7 +197,12 @@ public class SessionBean implements Serializable{
     }
     
     /* ITEM HELPER */    
-            
+        
+    public BaseDict reloadItem(BaseDict item){
+        BaseExplBean bean = getItemBean(item);
+        return (BaseDict)bean.getItemFacade().find(item.getId());
+    }
+    
     public BaseDict prepEditItem(BaseDict item){
         BaseExplBean bean = getItemBean(item);
         return bean.prepEditItem(item);
@@ -354,6 +360,15 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_MAIL_MESSAGE, paramMap);
     }
     
+    /* Открытие формы добавления версии */
+    public void openAttacheAddForm(Doc doc){        
+        List<String> docsList = new ArrayList<>();
+        docsList.add(doc.getId().toString()); 
+        Map<String, List<String>> paramMap = new HashMap<>();
+        paramMap.put("docId", docsList);
+        openDialogFrm(DictDlgFrmName.FRM_ADD_ATTACHE, paramMap); 
+    }
+    
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
         openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
@@ -438,7 +453,7 @@ public class SessionBean implements Serializable{
     
     /* Возвращает url по которому автоматически происходит переход на новую страницу  */
     public String onShowDocInFolder(BaseDict doc){
-        return EscomBeanUtils.doGetItemURL(doc, "docs/doc-explorer", "0");
+        return EscomBeanUtils.doGetItemURL(doc, "docs/doc-explorer");
     } 
     
     /* Возврашает размеры формы карточки */

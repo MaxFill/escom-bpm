@@ -69,16 +69,20 @@
                     </p:hotkey>
 
                     <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
+                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
+                            <ui:insert name="specActionMenu" />
+                            <p:separator />
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnCancel').click();">  
+                            </p:menuitem>
+                        </p:submenu>
                         <p:submenu label="#{bundle.Print}" icon="ui-icon-print" styleClass="submenu">
                             <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
                                         actionListener="#{_bean.onPreViewItemCard()}"/>
                             <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}" 
                                         actionListener="#{_bean.onPreViewBarcode()}"/>                        
-                        </p:submenu>
-                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
-                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
-                            <ui:insert name="specActionMenu" />
                         </p:submenu>
                         <ui:insert name="specSubMenu" />
                         <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}" 
@@ -102,8 +106,7 @@
                             <f:param name="isRequired" value="true"/>
                         </p:menuitem>
                         <f:facet name="options">
-                            <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
-                                             immediate="true"                                                 
+                            <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"                                                                                             
                                              action="#{_bean.onCancelItemSave()}"
                                              icon="ui-icon-circle-close"
                                              onclick="if (itemChange == 1)

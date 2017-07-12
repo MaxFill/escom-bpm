@@ -64,9 +64,9 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     @ManyToOne(optional = false)
     private DocType docType;
     
-    @JoinColumn(name = "Manager", referencedColumnName = "Id")
+    @JoinColumn(name = "Editor", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Staff manager;
+    private User editor;
 
     @JoinColumn(name = "Company", referencedColumnName = "Id")
     @NotNull
@@ -248,11 +248,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         this.attachesList = attachesList;
     }
 
-    public Staff getManager() {
-        return manager;
+    public User getEditor() {
+        return editor;
     }
-    public void setManager(Staff manager) {
-        this.manager = manager;
+    public void setEditor(User editor) {
+        this.editor = editor;
     }
 
     public String getRegNumber() {

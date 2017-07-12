@@ -44,6 +44,10 @@
         <from-view-id>*</from-view-id>        
         
         <navigation-case>
+            <from-outcome>add-attache</from-outcome>
+            <to-view-id>/view/docs/attaches/add-attache.xhtml</to-view-id>
+            </navigation-case>
+        <navigation-case>
             <from-outcome>messages</from-outcome>
             <to-view-id>/view/messages/messages.xhtml</to-view-id>
         </navigation-case>

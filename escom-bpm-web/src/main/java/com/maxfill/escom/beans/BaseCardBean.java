@@ -30,6 +30,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = 6864719383155087328L;    
     
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
+    private Boolean openInDialog;
     private Integer rightPageIndex;
     private String itemOpenKey;      
     private Integer typeEdit;                   //режим редактирования записи
@@ -48,10 +49,29 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void onOpenCard(){
         if (getEditedItem() == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-            itemOpenKey = params.get("itemOpenKey");
-            Tuple<Integer, BaseDict> tuple = appBean.getOpenedItemTuple(itemOpenKey);
-            T item = (T) tuple.b;
-            setTypeEdit(tuple.a);
+            openInDialog = params.containsKey("openInDialog");
+            itemOpenKey = params.get("itemId");
+            T item;
+            if (params.containsKey("openMode")){ //only if enter from url
+               item = (T)getItemFacade().find(Integer.valueOf(itemOpenKey));
+               if (item == null) return;
+               makeRightItem(item);
+               typeEdit = Integer.valueOf(params.get("openMode"));
+               if (typeEdit.equals(DictEditMode.EDIT_MODE)){
+                   String itemKey = item.getItemKey();
+                   User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект
+                   if (user != null){
+                       typeEdit = DictEditMode.VIEW_MODE;
+                   } else {
+                       itemOpenKey = appBean.addLockedItem(itemKey, DictEditMode.EDIT_MODE, item, currentUser);
+                   }
+               }
+            } else { //only if enter from bean
+                Tuple<Integer, BaseDict> tuple = appBean.getOpenedItemTuple(itemOpenKey);
+                item = (T) tuple.b;
+                typeEdit = tuple.a;     
+            }
+            
             setEditedItem(item);
             owner = item.getAuthor();
             
@@ -187,7 +207,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     protected String closeItemForm(Boolean isNeedUpdate) {
         attacheService.deleteTmpFiles(currentUser.getLogin());
         clearLockItem();
-        RequestContext.getCurrentInstance().closeDialog(new Tuple(isNeedUpdate, itemOpenKey));
+        if (openInDialog){
+            RequestContext.getCurrentInstance().closeDialog(new Tuple(isNeedUpdate, itemOpenKey));
+        }
         return "/view/index?faces-redirect=true";
     }
 

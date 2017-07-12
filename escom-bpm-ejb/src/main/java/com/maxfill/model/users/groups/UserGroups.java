@@ -46,6 +46,12 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserGroupsLog> itemLogs = new ArrayList<>();
     
+    @Column(name = "TypeActualize")
+    private Integer typeActualize;
+    
+    @Column(name = "RoleFieldName")
+    private String roleFieldName;
+    
     public UserGroups() {
     }
 
@@ -83,7 +89,21 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
+    public Integer getTypeActualize() {
+        return typeActualize;
+    }
+    public void setTypeActualize(Integer typeActualize) {
+        this.typeActualize = typeActualize;
+    }
+
+    public String getRoleFieldName() {
+        return roleFieldName;
+    }
+    public void setRoleFieldName(String roleFieldName) {
+        this.roleFieldName = roleFieldName;
+    }
+           
     @Override
     public int hashCode() {
         int hash = 0;

@@ -16,13 +16,35 @@
         #{bundle.Administation}
     </ui:define>
 
+    <ui:param name="_frm" value="admForm" />
+    
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{admObjectBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{admObjectBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="admForm" style="font-size: 90%;"> 
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
+                <h:form id="#{_frm}" style="font-size: 90%;">
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true"
+                                             action="#{admObjectBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                        
+                        <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
                         <p:tab title="#{bundle.Replace}">
                             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                                 <h:panelGroup styleClass="ui-grid-col-12">
@@ -50,24 +72,17 @@
                                     <p:commandButton value="#{bundle.Select}" 
                                                      process="@this" 
                                                      actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
-                                        <p:ajax event="dialogReturn" update="admForm:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
+                                        <p:ajax event="dialogReturn" update="#{_frm}:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
                                     </p:commandButton>
 
-                                    <p:commandButton value="#{bundle.Execute}" update="admForm"                                        
+                                    <p:commandButton value="#{bundle.Execute}" update="#{_frm}"                                        
                                                      disabled="#{admObjectBean.replaceItem == null}"
                                                      action="#{admObjectBean.onReplaceItem()}"/>
                                 </h:panelGroup>
                             </p:panelGrid>
                         </p:tab>
-                    </p:tabView>
-                    <p:toolbar styleClass="ui-grid-col-12">
-                        <f:facet name="right">
-                            <p:commandButton value="#{bundle.Close}" style="float:right;"
-                                             title="#{bundle.Close}"
-                                             action="#{admObjectBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
-                    </p:toolbar>
+                    </p:tabView> 
+                    </p:panelGrid>
                 </h:form>
             </pe:layoutPane>
         </pe:layout>

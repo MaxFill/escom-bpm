@@ -101,7 +101,8 @@
                                 feedback="true"
                                 disabled="#{_bean.isReadOnly()}"
                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                />
+                                valueChangeListener="#{_bean.onChangePassword}">
+                    </p:password>
                 </p:panelGrid>
             </p:panelGrid>
         </p:tab>    

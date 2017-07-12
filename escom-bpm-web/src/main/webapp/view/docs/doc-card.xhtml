@@ -33,13 +33,17 @@
                         actionListener="#{_bean.onShowScan()}"/> 
             <p:separator/> 
             <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkPDF}"
-                        actionListener="#{_bean.prepareSendMailDoc('asLinkPDF')}"/>
+                        rendered="#{_bean.editedItem.id != null}"
+                        actionListener="#{docCardBean.prepareSendMailDoc('asLinkPDF')}"/>
             <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkCard}"
-                        actionListener="#{_bean.prepareSendMailDoc('asLinkCard')}"/>
+                        rendered="#{_bean.editedItem.id != null}"
+                        actionListener="#{docCardBean.prepareSendMailDoc('asLinkCard')}"/>
             <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsPDF}"
-                        actionListener="#{_bean.prepareSendMailDoc('asAttachePDF')}"/>
+                        rendered="#{_bean.editedItem.id != null}"
+                        actionListener="#{docCardBean.prepareSendMailDoc('asAttachePDF')}"/>
             <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsAttache}"
-                        actionListener="#{_bean.prepareSendMailDoc('asAttache')}"/>
+                        rendered="#{_bean.editedItem.id != null}"
+                        actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
         </p:submenu>
     </ui:define>
 
@@ -135,17 +139,6 @@
                     </h:panelGrid>
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.State}:" />
-                <p:selectOneMenu value="#{_bean.editedItem.state}" id="state" converter="stateConvertor"                                
-                                 disabled="#{_bean.isReadOnly()}"
-                                 title="#{bundle.CurrentDocState}"
-                                 onchange="return itemChange = 1;"
-                                 required="#{param['isRequired'] == 'true'}" 
-                                 requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-                    <f:selectItems value="#{stateBean.findAll()}" var="states" itemLabel="#{states.name}" itemValue="#{states}" />
-                    <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" itemDisabled="true"/>
-                </p:selectOneMenu>
-
                 <p:outputLabel value="#{bundle.Partner}:" />
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
@@ -160,21 +153,7 @@
                     <ui:param name="_actionSelect" value="onPartnerSelected"/>
                     <ui:param name="_update" value=""/>
                 </ui:include>
-
-                <p:outputLabel value="#{bundle.Manager}:" />
-                <ui:include src="/view/common/item-select-btn.xhtml" >
-                    <ui:param name="_itemValue" value="#{_bean.editedItem.manager}"/>
-                    <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                    <ui:param name="_converter" value="staffConvertor" />
-                    <ui:param name="_itemPanel" value="managerPanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.Manager}"/>
-                    <ui:param name="_items" value="#{staffBean.findAll()}"/>
-                    <ui:param name="_selectorBean" value="#{staffBean}"/>
-                    <ui:param name="_actionClear" value="setManager"/>
-                    <ui:param name="_actionSelect" value="onManagerSelected"/>
-                    <ui:param name="_update" value=""/>
-                </ui:include>
+                
             </p:panelGrid>
         </p:tab> 
 

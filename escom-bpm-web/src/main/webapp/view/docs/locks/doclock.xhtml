@@ -16,12 +16,14 @@
         #{docLockBean.attacheLock ? bundle.UnLock : bundle.SettingLock}
     </ui:define>
 
+    <ui:param name="_frm" value="lockForm" />
+    
     <ui:define name="body">
 
         <pe:layout fullPage="true" options="#{docLockBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{docLockBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="lockForm" style="font-size: 90%;"> 
+                <h:form id="#{_frm}" style="font-size: 90%;"> 
                     <h:outputScript library="js" name="ITHitWebDAVClient.js" /> 
 
                     <script type="text/javascript">
@@ -44,8 +46,48 @@
                         }
                     </script>
 
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem value="#{bundle.SetLock}" title="#{bundle.SetLockAndEdit}"
+                                        icon="ui-icon-locked"
+                                        rendered="#{!docLockBean.attacheLock}"
+                                        onclick="document.getElementById('#{_frm}:btnSetLock').click();"/>
+                            <p:menuitem value="#{bundle.SetUnLock}" 
+                                        icon="ui-icon-unlocked"
+                                        rendered="#{docLockBean.attacheLock}"
+                                        onclick="document.getElementById('#{_frm}:btnSetUnLock').click();"/> 
+                            <p:separator/>
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton value="#{bundle.RestartTimer}"  
+                                             rendered="#{docLockBean.canShowRestartTimerBtn}"                                             
+                                             actionListener="#{docLockBean.changeDatePlanLock()}"/>
+                            <p:commandButton value="#{bundle.GetURL}" title="#{bundle.GetLinkForEdit}" 
+                                             rendered="#{docLockBean.attacheLock and docLockBean.userIsEditor}"
+                                             actionListener="#{docLockBean.showFileLink()}"/>
+                            <p:commandButton id="btnSetLock" value="#{bundle.SetLock}" title="#{bundle.SetLockAndEdit}"
+                                             rendered="#{!docLockBean.attacheLock}"
+                                             action="#{docLockBean.makeLock()}"/>
+                            <p:commandButton id="btnSetUnLock" value="#{bundle.SetUnLock}" 
+                                             rendered="#{docLockBean.attacheLock}"
+                                             action="#{docLockBean.makeUnLock()}"/> 
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true"
+                                             action="#{docLockBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">                             
                             <p:outputLabel value="#{bundle.LockPeriod}"/>
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
@@ -68,27 +110,6 @@
                                 <h:outputText value="#{msg.SetUnLockDoc}" rendered="#{docLockBean.attacheLock}"/>
                             </h:panelGroup>
                         </p:panelGrid>
-                        <p:toolbar styleClass="ui-grid-col-12">
-                            <f:facet name="left">
-                                <p:commandButton value="#{bundle.RestartTimer}"  
-                                                 rendered="#{docLockBean.canShowRestartTimerBtn}"                                             
-                                                 actionListener="#{docLockBean.changeDatePlanLock()}"/>
-                                <p:commandButton value="#{bundle.GetURL}" title="#{bundle.GetLinkForEdit}" 
-                                                 rendered="#{docLockBean.attacheLock and docLockBean.userIsEditor}"
-                                                 actionListener="#{docLockBean.showFileLink()}"/>
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:commandButton value="#{bundle.SetLock}" title="#{bundle.SetLockAndEdit}"
-                                                 rendered="#{!docLockBean.attacheLock}"
-                                                 action="#{docLockBean.makeLock()}"/>
-                                <p:commandButton value="#{bundle.SetUnLock}" 
-                                                 rendered="#{docLockBean.attacheLock}"
-                                                 action="#{docLockBean.makeUnLock()}"/>
-                                <p:commandButton value="#{bundle.Close}" style="float:right;"                                             
-                                                 process="@this"
-                                                 action="#{docLockBean.onCloseCard()}"/> 
-                            </f:facet>
-                        </p:toolbar>
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

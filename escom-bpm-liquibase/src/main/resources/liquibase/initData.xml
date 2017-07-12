@@ -8,9 +8,10 @@
     <changeSet id="fill_posts" author="filatov" context="initdata" runOnChange="true">          
         <!-- Состояния объектов -->
         <sql>
-            INSERT states (ID, Name, IsActual) VALUES (5, N'Черновик', 1);
-            INSERT states (ID, Name, IsActual) VALUES (6, N'Архивный', 1);
-            INSERT states (ID, Name, IsActual) VALUES (7, N'Действующий', 1);                                    
+            INSERT states (ID, Name, IsActual, Icon) VALUES (5, N'Draft', 1, N'/resources/icon/doc_draft20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (6, N'Arhival', 1, N'/resources/icon/doc_storage20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (7, N'Valid', 1, N'/resources/icon/doc_check20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (8, N'Edited', 1, N'/resources/icon/doc_lock20.png');
         </sql>
         
         <!-- Пользователи -->
@@ -42,92 +43,113 @@
         <!-- Объекты метаданных -->
         <sql>
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (1, N'Doc', N'Document', N'Documents', 1, N'ui-icon-document', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (2, N'Folder', N'Folder', N'Folders', 1, N'ui-icon-folder-open', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (3, N'User', N'User', N'Users', 1, N'ui-icon-person', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (4, N'Partner', N'Partner', N'Partners', 1, N'ui-icon-contact', 3, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (5, N'PartnerGroups', N'PartnerGroup', N'GroupsPartners', 1, N'ui-icon-folder-open', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (6, N'UserGroups', N'UsersGroup', N'UsersGroups', 1, N'ui-icon-folder-open', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (7, N'DocType', N'DocTypes', N'DocsTypes', 1, N'ui-icon-note', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (9, N'Staff', N'Staff', N'Staffs', 1, N'ui-icon-person', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (10, N'Company', N'Company', N'Companies', 1, N'ui-icon-home', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (11, N'Department', N'Departament', N'Departaments', 1, N'ui-icon-folder-open', 3, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (12, N'Post', N'Post', N'Posts', 1, N'1', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (13, N'StatusesDoc', N'DocStatus', N'DocStatus', 0, N'ui-icon-note', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (15, N'Metadates', N'Metadates', N'Metadates', 0, N'ui-icon-note', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (16, N'DocTypeGroups', N'DocTypeGroups', N'DocTypeGroups', 0, N'ui-icon-folder-open', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (17, N'NumeratorPattern', N'NumeratorsPatterns', N'NumeratorsPatterns', 0, N'ui-icon-note', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (18, N'PartnerTypes', N'PartnerTypes', N'PartnerTypes', 0, N'ui-icon-note', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (19, N'Filter', N'Filters', N'Filters', 0, N'ui-icon-search', NULL, 5);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (2, N'Folder', N'Folder', N'Folders', 1, N'ui-icon-folder-open', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (3, N'User', N'User', N'Users', 1, N'ui-icon-person', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (4, N'Partner', N'Partner', N'Partners', 1, N'ui-icon-contact', 3, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (5, N'PartnerGroups', N'PartnerGroup', N'GroupsPartners', 1, N'ui-icon-folder-open', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (6, N'UserGroups', N'UsersGroup', N'UsersGroups', 1, N'ui-icon-folder-open', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (7, N'DocType', N'DocTypes', N'DocsTypes', 1, N'ui-icon-note', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (9, N'Staff', N'Staff', N'Staffs', 1, N'ui-icon-person', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (10, N'Company', N'Company', N'Companies', 1, N'ui-icon-home', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (11, N'Department', N'Departament', N'Departaments', 1, N'ui-icon-folder-open', 3, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (12, N'Post', N'Post', N'Posts', 1, N'1', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (13, N'StatusesDoc', N'DocStatus', N'DocStatus', 0, N'ui-icon-note', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (15, N'Metadates', N'Metadates', N'Metadates', 0, N'ui-icon-note', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (16, N'DocTypeGroups', N'DocTypeGroups', N'DocTypeGroups', 0, N'ui-icon-folder-open', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (17, N'NumeratorPattern', N'NumeratorsPatterns', N'NumeratorsPatterns', 0, N'ui-icon-note', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (18, N'PartnerTypes', N'PartnerTypes', N'PartnerTypes', 0, N'ui-icon-note', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (19, N'Filter', N'Filters', N'Filters', 0, N'ui-icon-search', NULL, 7);
         </sql>
         
         <!-- Фильтры -->
         <sql>
             INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (7, NULL, NULL, 4, N'ui-icon-document', N'Объекты / Документы', 5, 8, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (8, NULL, 7, 4, N'ui-icon-trash', N'Trash', 5, 9, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (9, NULL, 7, 4, N'ui-icon-star', N'Favorites', 5, 10, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (10, NULL, 7, 4, N'ui-icon-person', N'CreatedByMe', 5, 11, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (11, NULL, 7, 4, N'ui-icon-calendar', N'LastModified', 5, 12, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (12, NULL, 7, 4, N'ui-icon-folder-collapsed', N'NotRelevant', 5, 13, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (8, NULL, 7, NULL, N'ui-icon-trash', N'Trash', 5, 9, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (9, NULL, 7, NULL, N'ui-icon-star', N'Favorites', 5, 10, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (10, NULL, 7, NULL, N'ui-icon-person', N'CreatedByMe', 5, 11, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (11, NULL, 7, NULL, N'ui-icon-calendar', N'LastModified', 5, 12, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (12, NULL, 7, NULL, N'ui-icon-folder-collapsed', N'NotRelevant', 5, 13, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT filters (Id, Owner, Parent, Metadates, Icon, Name, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (14, NULL, 7, 1, N'ui-icon-locked', N'OnMyEdit', 5, 13, NULL, 0, 1, 1, NULL, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
         
         <!-- Права доступа по умолчанию -->
         <sql>
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (15, 0, 2, 1, 1, 1, 1, 1, 0, 1, 8);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (78, 0, 15, 1, 1, 1, 1, 1, 0, 1, 8);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (16, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (17, 0, 2, 1, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (18, 0, 0, 1, 1, 1, 1, 1, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (21, 0, 0, 1, 1, 0, 0, 0, 0, 0, 6);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (25, 0, 2, 1, 1, 1, 1, 1, 0, 1, 6);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (22, 0, 0, 1, 1, 1, 1, 1, 0, 0, 7);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (23, 0, 2, 1, 1, 1, 1, 1, 0, 1, 7);
-            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (25, 0, 2, 1, 1, 1, 1, 1, 0, 1, 6);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (27, 0, 0, 2, 1, 1, 1, 1, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (28, 0, 2, 2, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (30, 0, 0, 2, 1, 0, 0, 0, 0, 0, 6);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (31, 0, 0, 2, 1, 1, 1, 1, 0, 0, 7);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (32, 0, 2, 2, 1, 1, 1, 1, 0, 1, 7);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (35, 0, 2, 2, 1, 1, 1, 1, 0, 1, 6);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (40, 0, 0, 15, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (41, 0, 2, 15, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (42, 0, 0, 13, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (43, 0, 2, 13, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (44, 0, 0, 11, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (45, 0, 2, 11, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (46, 0, 0, 6, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (47, 0, 2, 6, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (48, 0, 2, 5, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (49, 0, 0, 5, 1, 0, 0, 0, 0, 0, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (50, 0, 0, 4, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (51, 0, 2, 4, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (52, 0, 0, 3, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (53, 0, 2, 3, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (54, 0, 0, 9, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (55, 0, 2, 9, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (56, 0, 0, 12, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (57, 0, 2, 12, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (60, 0, 0, 7, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (61, 0, 2, 7, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (64, 0, 0, 10, 1, 0, 0, 0, 0, 0, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (65, 0, 2, 10, 1, 1, 1, 1, 0, 1, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (66, 0, 2, 16, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (68, 0, 0, 16, 1, 0, 0, 0, 0, 0, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (69, 0, 2, 17, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (70, 0, 0, 17, 1, 0, 0, 0, 0, 0, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (72, 0, 2, 18, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (74, 0, 0, 18, 1, 0, 0, 0, 0, 0, 5);
+            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (75, 0, 2, 19, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (77, 0, 0, 19, 1, 1, 1, 1, 0, 1, 5);
         </sql>
         
         <!-- Группы пользователей -->
         <sql>
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'Все', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, 0, NULL, N'Администраторы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, 0, NULL, N'Супервизоры', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, 0, NULL, N'Бухгалтерия', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (7, 0, NULL, N'Юристы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (8, 0, NULL, N'Менеджеры', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (9, 0, NULL, N'Администрация', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (11, 0, NULL, N'ESCOM_GROUP', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (12, 0, NULL, N'Пользователи домена', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (14, 0, NULL, N'Модераторы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (0, NULL, NULL, N'Все', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (2, 0, NULL, N'Администраторы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (3, 0, NULL, N'Супервизоры', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (5, 0, NULL, N'Бухгалтерия', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (7, 0, NULL, N'Юристы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (8, 0, NULL, N'Менеджеры', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (9, 0, NULL, N'Администрация', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (11, 0, NULL, N'ESCOM_GROUP', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (12, 0, NULL, N'Пользователи домена', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (14, 0, NULL, N'Модераторы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (15, 0, NULL, N'Редактор', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, NULL);
         </sql>
         
         <!-- Пользователи в группах -->
@@ -435,6 +457,50 @@
         <sql>
             UPDATE SYS_ID_GEN SET GEN_VALUE = 100;
         </sql>
+        
+        <sql>
+            INSERT objectsStates (ObjId, StateId) VALUES (1, 5);
+            INSERT objectsStates (ObjId, StateId) VALUES (1, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (1, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (1, 8);
+            INSERT objectsStates (ObjId, StateId) VALUES (2, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (2, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (3, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (3, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (4, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (4, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (5, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (5, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (6, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (6, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (7, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (7, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (9, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (9, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (10, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (10, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (11, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (11, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (12, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (12, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (13, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (13, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (15, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (15, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (16, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (16, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (17, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (17, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (18, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (18, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (19, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (19, 7);
+        </sql>
+        
+        <sql>
+            INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (1, N'LDAP', NULL, NULL, 0, NULL, NULL);
+            INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (2, N'MAIL', NULL, NULL, 0, NULL, NULL);            
+        </sql> 
         
     </changeSet>
 </databaseChangeLog> 

@@ -25,6 +25,7 @@ public final class DateUtils {
     public final static Integer MONTHLY_REPEAT = 2;
     
     static final int MINUTES_PER_HOUR = 60;
+    static final int HOURS_PER_DAY = 24;
     static final int SECONDS_PER_MINUTE = 60;
     static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
     
@@ -134,7 +135,7 @@ public final class DateUtils {
     }
     
     /* Возвращает разницу во времени между двумя датами */
-    public static String differenceDate(Date dateStart, Date dateEnd) {        
+    public static String differenceTime(Date dateStart, Date dateEnd) {        
         LocalDateTime ldStart = toLocalDateTime(dateStart);
         LocalDateTime ldEnd = toLocalDateTime(dateEnd);
         Duration duration = Duration.between(ldStart, ldEnd);

@@ -50,7 +50,7 @@ public class ApplicationBean implements Serializable{
     private final ConcurrentHashMap<String, Tuple<Integer, BaseDict>> openedItems = new ConcurrentHashMap<>();
     
     //объекты (ItemKey), заблокированные пользователем (UserId) 
-    private final ConcurrentHashMap<String, Integer> itemsLock = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, User> itemsLock = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Rights> defRights = new ConcurrentHashMap<>();
     
     @PostConstruct
@@ -98,7 +98,7 @@ public class ApplicationBean implements Serializable{
         String itemOpenKey = EscomBeanUtils.makeOpenItemKey(itemKey, editMode, user);
         openedItems.put(itemOpenKey, tuple); //запись в буфер открытых объектов для передачи во view
         if (editMode.equals(DictEditMode.EDIT_MODE)){ //если объект открывается для редактирования, то он блокируется
-            itemsLock.put(itemKey, user.getId());
+            itemsLock.put(itemKey, user);
         }
         return itemOpenKey;
     }
@@ -119,7 +119,7 @@ public class ApplicationBean implements Serializable{
     }
     
     /* Возвращает Id пользователя, заблокировавшего объект (key)  */
-    public Integer whoLockedItem(String itemKey){        
+    public User whoLockedItem(String itemKey){        
         return itemsLock.get(itemKey);
     }
     

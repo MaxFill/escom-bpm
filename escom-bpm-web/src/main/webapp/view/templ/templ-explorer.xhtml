@@ -26,7 +26,7 @@
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{explorerBean.onOpen()}"/>
+            <f:event type="preRenderView" listener="#{explorerBean.onOpenExplorer()}"/>
             <ui:insert name="preRenderAction" />
         </f:metadata>
     </ui:define>
@@ -88,7 +88,7 @@
                         <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
 
                         <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;">
-                            <p:ajax event="dialogReturn" 
+                            <p:ajax event="dialogReturn" listener="#{explorerBean.onUpdateAfterCloseForm}"
                                     update="#{_frmExpl} #{_frmTree}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
@@ -103,7 +103,7 @@
                         <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}"                                         
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl}"
+                                    update="#{_frmExpl}" listener="#{explorerBean.onUpdateAfterChangeItem}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>                                                 
                         

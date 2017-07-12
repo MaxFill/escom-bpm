@@ -19,12 +19,7 @@
                      onkeypress="keyPress();">
         </p:inputText>
     </ui:define>
-
-    <ui:define name="preRenderAction">        
-        <f:viewParam name="docId" value="#{explorerBean.currentItem}" />
-        <f:event type="preRenderView" listener="#{explorerBean.onShowDocInFolder()}"/>        
-    </ui:define>
-
+    
     <!-- специфичные пункты в меню тулбара обозревателя -->
     <ui:define name="addMenuActions">
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
@@ -53,10 +48,6 @@
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDoc}" />
     <ui:param name="_updates" value="fileUploadFRM" />
 
-    <ui:define name="rowTogglerColumns" >
-        <p:rowToggler rendered="#{explorerBean.isItemCanHaveAttache(item)}" />
-    </ui:define>
-
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
 
@@ -68,27 +59,6 @@
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
 
-        <p:rowExpansion rendered="#{explorerBean.isItemCanHaveAttache(item) == true}">
-            <p:outputPanel rendered="#{explorerBean.isItemCanHaveAttache(item) == true}" styleClass="ui-grid-col-12 without-spaces">
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12 without-spaces">
-                    <p:fileUpload id="file"
-                                  allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
-                                  sizeLimit="#{docsBean.maxFileSize}"
-                                  invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                                  invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                                  fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                                  label="#{bundle.ADD_VERSION}"                       
-                                  process="@this" auto="true"
-                                  mode="advanced" dragDropSupport="true"
-                                  cancelLabel="#{bundle.Cancel}"
-                                  uploadLabel="#{bundle.SaveFiles}"
-                                  fileUploadListener="#{docsBean.addAttache}">
-                        <f:attribute name="item" value="#{item}" />
-                    </p:fileUpload>                    
-                </p:panelGrid>
-            </p:outputPanel>
-        </p:rowExpansion>
-
     </ui:define> 
 
     <ui:define name="specCommandLinks">
@@ -99,12 +69,12 @@
     </ui:define>    
     
     <ui:define name="addItemMenu">
-        <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditDoc}" 
+        <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditDoc}" 
                     actionListener="#{explorerBean.onSetCurrentItem(item)}"
                     disabled="#{item.attache == null}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     oncomplete="document.getElementById('#{_frmExpl}:editDocument').click();"/>
-        <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" title="#{bundle.ViewDoc}"                    
+        <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.attache == null}"
                     actionListener="#{docsBean.onViewAttache(item.getAttache())}"/>
@@ -113,6 +83,13 @@
                     onstart="return isClose = 1;"
                     rendered="#{explorerBean.isItemHaveAttache(item)}"
                     action="#{docsBean.attacheDownLoad(item.getAttache())}"/>
+        <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
+                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                    actionListener="#{sessionBean.openAttacheAddForm(item)}"/>
+        <p:separator />
+        <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" 
+                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"                    
+                    actionListener="#{explorerBean.onShowDocInFolder(item)}"/>
     </ui:define>
 
     <ui:define name="addToolButtons">

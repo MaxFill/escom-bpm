@@ -16,14 +16,38 @@
         </f:metadata>
     </ui:define>
 
+    <ui:param name="_frm" value="messageFRM" />
+    
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{mailMessageBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{mailMessageBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="messageFRM" styleClass="formLayoute">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                <h:form id="#{_frm}" styleClass="formLayoute">
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                   <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton value="#{bundle.Send}"
+                                            icon="ui-icon-mail-closed"
+                                            update="#{_frm}:msgPanel"
+                                            type="submit"
+                                            action="#{mailMessageBean.sendMail()}"/>
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true"
+                                             action="#{mailMessageBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
 
                         <h:panelGroup id="msgPanel">
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
@@ -70,7 +94,7 @@
                                     <ui:repeat var="attache" value="#{mailMessageBean.attaches}">
                                         <p:commandButton icon="ui-icon-close" value="#{attache}" title="#{bundle.Delete}"
                                                          actionListener="#{mailMessageBean.removeAttache(attache)}"
-                                                         update="messageFRM:attaches"/>
+                                                         update="#{_frm}:attaches"/>
                                     </ui:repeat>
                                 </p:panel>
 
@@ -80,19 +104,6 @@
                             <p:editor value="#{mailMessageBean.content}" styleClass="ui-grid-col-12"/>
 
                         </h:panelGroup>
-
-                        <p:toolbar style="margin-bottom: 5px;">
-                            <f:facet name="right">
-                                <p:commandButton value="#{bundle.Cancel}" icon="ui-icon-close"
-                                                 style="float: right;" immediate="true"
-                                                 action="#{mailMessageBean.onCloseCard()}"/>
-                                <p:commandButton value="#{bundle.Send}"
-                                                 icon="ui-icon-mail-closed"
-                                                 update="messageFRM:msgPanel"
-                                                 type="submit" style="float: right;"
-                                                 action="#{mailMessageBean.sendMail()}"/>
-                            </f:facet>
-                        </p:toolbar>
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

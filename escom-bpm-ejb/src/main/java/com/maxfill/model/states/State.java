@@ -1,5 +1,6 @@
 package com.maxfill.model.states;
 
+import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,10 +17,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- *  Состояния 
- * @author mfilatov
- */
 @Entity
 @Table(name = "states")
 @XmlRootElement
@@ -53,6 +50,11 @@ public class State implements Serializable{
     @Column(name = "IsActual")
     private boolean isActual;
     
+    @Basic(optional = false)
+    @NotNull    
+    @Column(name = "Icon", length = 1024)
+    private String icon;
+    
     public State() {
     }    
 
@@ -63,6 +65,10 @@ public class State implements Serializable{
         this.id = id;
     }
 
+    public String getBundleName(){
+        return ItemUtils.getBandleLabel(getName());
+    }
+    
     public String getName() {
         return name;
     }
@@ -76,6 +82,13 @@ public class State implements Serializable{
     public void setIsActual(boolean isActual) {
         this.isActual = isActual;
     }
+
+    public String getIcon() {
+        return icon;
+    }
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }   
     
     @Override
     public int hashCode() {

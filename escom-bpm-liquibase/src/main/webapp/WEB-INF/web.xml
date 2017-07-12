@@ -6,7 +6,7 @@
 	 version="3.1">
     <context-param>
         <param-name>liquibase.changelog</param-name>
-        <param-value>liquibase/changesets.xml</param-value>
+        <param-value>liquibase/_changesets.xml</param-value>
     </context-param>
     <context-param>
         <param-name>changelogSchemaName</param-name>

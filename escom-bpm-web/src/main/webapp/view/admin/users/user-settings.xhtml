@@ -14,12 +14,25 @@
         <pe:layout fullPage="true" options="#{userSettingsBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{userSettingsBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="settingsFRM">                    
+                <h:form id="settingsFRM" styleClass="formLayoute">  
+                    <p:menubar styleClass="without-spaces">
+                        <f:facet name="options">
+                            <p:commandButton icon="ui-icon-circle-close" style="float:right;"
+                                             immediate="true"
+                                             title="#{bundle.Close}"
+                                             action="#{userSettingsBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+
                     <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
                         <br/>
                         <h3>#{msg.UsedLDAPauth}</h3>
                     </p:outputPanel>
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12"
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding"
                                  rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}">
                         <p:outputLabel value="#{bundle.CurrentPassword}:"/>
                         <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"

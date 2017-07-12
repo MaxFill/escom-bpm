@@ -55,7 +55,7 @@ public class ServicesEvents implements Serializable {
 
     @XmlTransient
     public String getDuration(){
-        return DateUtils.differenceDate(dateStart, dateFinish);
+        return DateUtils.differenceTime(dateStart, dateFinish);
     }
     
     public ServicesEvents() {

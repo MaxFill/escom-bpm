@@ -145,7 +145,7 @@ public class ExplorerBean implements Serializable {
     }
     
     /* Cобытие при открытии формы обозревателя/селектора  */
-    public void onOpen(){
+    public void onOpenExplorer(){
         if (viewMode == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             if (params.containsKey("selectMode")){
@@ -247,6 +247,15 @@ public class ExplorerBean implements Serializable {
         createParams.clear();
         reloadDetailsItems(); 
         onSetCurrentItem(editItem);
+    }
+    
+    public void onUpdateAfterChangeItem(SelectEvent event){
+        editItem = sessionBean.reloadItem(currentItem);
+        try {                    
+            BeanUtils.copyProperties(currentItem, editItem);
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } 
     }
     
     public boolean isItemDetailType(BaseDict item){
@@ -1477,10 +1486,6 @@ public class ExplorerBean implements Serializable {
         return doc.getAttache() != null;
     }   
     
-    public boolean isItemCanHaveAttache(BaseDict item){
-        if (item == null) return false;        
-        return item.getClass().getSimpleName().equals(DictObjectName.DOC);
-    }
     
     public void onUploadFile(FileUploadEvent event) throws IOException{     
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);      
@@ -1489,24 +1494,21 @@ public class ExplorerBean implements Serializable {
     }
     
     /* Показать документ в папке */
-    public void onShowDocInFolder(){         
-        if (selectedDocId != null){
-            BaseDict doc = sessionBean.getItemBeanByClassName("").findItem(selectedDocId);
-            if (doc != null){
-                Folder owner = (Folder) doc.getOwner();
-                TreeNode node = null;
-                if (owner != null){
-                    node = EscomBeanUtils.findTreeNode(getTree(), owner);
-                }
-                if (getTreeSelectedNode() != null) {
-                    getTreeSelectedNode().setSelected(false);
-                }
-                setTreeSelectedNode(node);
-                setSelectedDocId(null);
-                RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
+    public void onShowDocInFolder(Doc doc){
+        if (doc != null){
+            Folder owner = (Folder) doc.getOwner();
+            TreeNode node = null;
+            if (owner != null){
+                node = EscomBeanUtils.findTreeNode(getTree(), owner);
             }
+            if (getTreeSelectedNode() != null) {
+                getTreeSelectedNode().setSelected(false);
+            }
+            setTreeSelectedNode(node);
+            setSelectedDocId(null);
+            RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
         }
-    }    
+    }
     
     /* Подготовка вложений документов для отправки на e-mail  */
     public void prepareSendMailDocs(String mode){

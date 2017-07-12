@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.docs.Doc;
@@ -9,6 +8,7 @@ import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.Doc_;
@@ -29,12 +29,13 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/* Документы  */
 @Stateless
 public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
     @EJB
     private AttacheService attacheService;
-            
+    @EJB
+    private StateFacade stateFacade;
+           
     public DocFacade() {
         super(Doc.class, DocLog.class);
     }          
@@ -161,6 +162,20 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         delete.where(cb.equal(e.get("owner"), folder));
         getEntityManager().createQuery(delete).executeUpdate();
     }    
+        
+    /* Установка состояния редактирования документа */
+    public void doSetEditState(Doc doc, User editor){
+        doc.setState(stateFacade.find(DictStates.STATE_EDITED));
+        doc.setEditor(editor);
+        edit(doc);
+    }
+    
+    /* Снятие состояния редактировани документа */
+    public void doRemoveEditState(Doc doc){
+        doc.setState(stateFacade.find(DictStates.STATE_VALID));
+        doc.setEditor(null);
+        edit(doc);
+    }
     
     /* Удаление документа  */
     @Override

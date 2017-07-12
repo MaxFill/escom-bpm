@@ -16,22 +16,36 @@
         #{bundle.View}
     </ui:define>
 
+    <ui:param name="_frm" value="docViewerFRM" />
+    
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{attacheBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{attacheBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="docViewerFRM"> 
+                <h:form id="#{_frm}"> 
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    
                     <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
 
-                    <p:toolbar styleClass="#{attacheBean.content == null ? 'panelLogin' : 'ui-grid-col-12' }">
-                        <f:facet name="right">
-                            <p:commandButton icon="ui-icon-circle-close" style="float:right;"
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">                            
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
+                            </p:menuitem>
+                        </p:submenu>
+                    
+                        <f:facet name="options">
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              title="#{bundle.Close}"
                                              action="#{attacheBean.onCloseCard()}"> 
                             </p:commandButton> 
                         </f:facet>
-                    </p:toolbar>
-
+                                        
+                    </p:menubar>
+                    
                     <p:panelGrid layout="grid" columns="1" rendered="#{attacheBean.content != null}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                         <pe:documentViewer value="#{attacheBean.content}" height="750" style="width: 100%;"/>                        
                     </p:panelGrid>

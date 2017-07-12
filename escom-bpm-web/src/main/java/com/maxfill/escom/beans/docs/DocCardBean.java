@@ -14,15 +14,12 @@ import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
 import com.maxfill.services.numerator.DocNumerator;
-import com.maxfill.services.webDav.WebDavService;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.UploadedFile;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
@@ -123,12 +120,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
         
     /* Запрос на формирование ссылки URL для просмотра документа  */
     public void onGetDocViewURL(Doc doc){
-        docURL = EscomBeanUtils.doGetItemURL(doc, "docs/document", "0");
+        docURL = EscomBeanUtils.doGetItemURL(doc, "docs/document");
     }
     
     /* Запрос на формирование ссылки URL на открытие карточки документа */
     public void onGetDocOpenURL(Doc doc){
-        docURL = EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer", "0");
+        docURL = EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer");
     }   
             
     /* Сброс регистрационного номера */
@@ -164,16 +161,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     /* Добавление версии к документу   */
-    public Attaches addAttache(FileUploadEvent event) throws IOException{
-        onItemChange();
-        Doc doc = getEditedItem();
-        UploadedFile file = EscomFileUtils.handleUploadFile(event);
-        Attaches attache = sessionBean.uploadAtache(file);
-        Integer version = doc.getNextVersionNumber();            
-        attache.setNumber(version);
-        attache.setDoc(doc);
-        getEditedItem().getAttachesList().add(attache);
-        return attache;
+    public void addAttache(FileUploadEvent event) throws IOException{
+        onItemChange();        
+        docsBean.addAttache(getEditedItem(), event);                
     }
         
     /* Удаление текущей версии документа  */
@@ -259,20 +249,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void onPartnerSelected(ValueChangeEvent event){
         Partner partner = (Partner) event.getNewValue();
         getEditedItem().setPartner(partner);
-    } 
-    
-    /* Выбор штатной единицы */
-    public void onManagerSelected(SelectEvent event){
-        List<Staff> items = (List<Staff>) event.getObject();
-        if (items.isEmpty()){return;}
-        Staff item = items.get(0);
-        onItemChange();
-        getEditedItem().setManager(item);
-    }
-    public void onManagerSelected(ValueChangeEvent event){
-        Staff manager = (Staff) event.getNewValue();
-        getEditedItem().setManager(manager);
-    } 
+    }     
     
     /* Событие изменения типа документа на форме документа  */
     public void onDocTypeSelected(SelectEvent event){
@@ -290,8 +267,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }      
   
     /* Возвращает true если у документа есть заблокированные вложения */
-    public boolean getDocIsHaveLock(){
-        return docsBean.docIsHaveLock(getEditedItem());
+    public boolean getDocIsLock(){
+        return docsBean.docIsLock(getEditedItem());
     }
     
     /* СТАТУСЫ ДОКУМЕНТА */

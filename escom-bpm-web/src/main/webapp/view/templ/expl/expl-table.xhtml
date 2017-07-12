@@ -27,16 +27,12 @@
 
         <p:column id="colIcon" width="40" style="font-size: 90%;" sortBy="#{item.iconName}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
-            <ui:insert name="rowTogglerColumns"/>
         </p:column>
 
-        <p:column style="width:16px; font-size: 90%;">
-            <h:graphicImage id="iconDone" value="/resources/icon/done.png"
-                            rendered="#{item.actual and !item.deleted}" title="#{bundle.Actual}"/>
-            <h:graphicImage id="iconLock" value="/resources/icon/doc_lock.png"
-                            rendered="#{!item.actual and !item.deleted}" title="#{bundle.NoActual}"/>
-            <h:graphicImage id="iconTrash" value="/resources/icon/red_stop.png" title="#{bundle.Deleted}"
-                            rendered="#{item.deleted}"/>
+        <p:column headerText="#{bundle.State}" sortBy="#{item.state.name}">            
+            <h:graphicImage id="iconDone" value="#{item.state.icon}" />
+            <p:spacer width="3"/>
+            #{item.state.bundleName}
         </p:column>
 
         <ui:insert name="specDetailColumns"/>
@@ -57,10 +53,6 @@
        
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
-
-        <p:column headerText="#{bundle.State}" sortBy="#{item.state.name}">
-            <h:outputLabel value="#{item.state.name}" />
-        </p:column>
         
         <p:column headerText="#{bundle.DateChange}" priority="3"
                   rendered="#{_showDateChange != false}"

@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 
-/* Базовый bean справочников  */
 public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> extends BaseBean<T> {
     private static final long serialVersionUID = -4409411219233607045L; 
        
@@ -84,6 +84,29 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return newItem;
     }
 
+    /* Открытие карточки объекта*/
+    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        
+        String itemKey = item.getItemKey();
+        
+        if (editMode.equals(DictEditMode.EDIT_MODE)){
+            User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
+            if (user != null){
+                String objName = user.getName();
+                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
+                return;
+            }
+        }
+
+        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, currentUser);
+        String cardName = item.getClass().getSimpleName().toLowerCase();
+        EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
+    }  
+    
     /* Действия перед созданием объекта */
     private void prepCreate(T newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
         boolean isAllowedEditOwner = true;
@@ -180,31 +203,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта */
     public List<List<?>> doGetDependency(T item){
         return null;
-    }
-    
-    /* Открытие карточки объекта*/
-    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
-        if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
-            return;
-        }
-        
-        String itemKey = item.getItemKey();
-        
-        if (editMode.equals(DictEditMode.EDIT_MODE)){
-            Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
-            if (userLockId != null){
-                User user = rightFacade.findUserById(userLockId);
-                String objName = user.getName();
-                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
-                return;
-            }
-        }
-
-        String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, currentUser);
-        String cardName = item.getClass().getSimpleName().toLowerCase();
-        EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
-    }         
+    }           
     
     /* Обработка перед добавлением объекта в группу  */
     public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
@@ -223,14 +222,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
 
-    private void checkLockItem(T item, Set<String> errors){
+    protected void checkLockItem(T item, Set<String> errors){
         String itemKey = item.getItemKey();
-        Integer userLockId = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
-        if (userLockId != null){
-            User user = rightFacade.findUserById(userLockId);
+        User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
+        if (user != null){
             Object[] messageParameters = new Object[]{item.getName(), user.getName()};
             String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
-            errors.add(error);            
+            errors.add(error);
         }
     }
         

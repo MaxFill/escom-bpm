@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
@@ -9,6 +10,7 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
@@ -18,6 +20,7 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import java.io.IOException;
+import java.text.MessageFormat;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -135,12 +139,23 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         return Folder.class;
     }
 
+    @Override
+    protected void checkLockItem(Doc item, Set<String> errors){
+        if (item.getState().getId().equals(DictStates.STATE_EDITED)){
+            Object[] messageParameters = new Object[]{item.getName(), item.getEditor()};
+            String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
+            errors.add(error);
+            return;
+        }
+        super.checkLockItem(item, errors);
+    }
+    
     public void openDocCountTypesReport() {
         sessionBean.openDialogFrm(DictDlgFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
     }
 
-    public boolean docIsHaveLock(Doc doc) {
-        return attacheFacade.countLockAttachesByDoc(doc) > 0;
+    public boolean docIsLock(Doc doc) {
+        return doc.getState().getId().equals(DictStates.STATE_EDITED);
     }
 
     /* ВЛОЖЕНИЯ */
@@ -149,10 +164,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         return SysParams.MAX_FILE_SIZE;
     }
         
-    public void addAttache(FileUploadEvent event) throws IOException {
+    public Attaches addAttache(Doc doc, FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         Attaches attache = sessionBean.uploadAtache(uploadedFile);
-        Doc doc = (Doc) event.getComponent().getAttributes().get("item");
+        //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         Integer version = doc.getNextVersionNumber();
         attache.setNumber(version);
         attache.setDoc(doc);
@@ -161,9 +176,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         attaches.stream()
                 .filter(attacheVersion -> attacheVersion.getCurrent())
                 .forEach(attacheVersion -> attacheVersion.setCurrent(false));
-        doc.getAttachesList().add(attache);
-        getItemFacade().edit(doc);
+        doc.getAttachesList().add(attache);        
         EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
+        return attache;
     }
 
     public void onOpenFormLockMainAttache(Doc doc) {
