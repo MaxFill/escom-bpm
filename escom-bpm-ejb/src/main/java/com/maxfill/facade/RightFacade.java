@@ -1,11 +1,13 @@
 package com.maxfill.facade;
 
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
+import com.maxfill.utils.ItemUtils;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -60,15 +62,29 @@ public class RightFacade extends BaseFacade<Right> {
     public void prepareRightsForView(List<Right> sourceRights){
         String accessorName;
         for (Right rg: sourceRights){
+            switch (rg.getObjType()){
+                case (DictRights.TYPE_GROUP):{
+                    rg.setIcon("folder_open20");
+                    break;
+                }
+                case (DictRights.TYPE_ROLE):{
+                    rg.setIcon("roles20");
+                    break;
+                }
+                case (DictRights.TYPE_USER):{
+                    rg.setIcon("user20");
+                    break;
+                }
+            }
             //хардкодные проверки
-            if (rg.getObjId() == 1 && rg.getObjType() == 0){
-               accessorName = "Все"; //ToDo в bundle!
+            if (rg.getObjId() == 0 && rg.getObjType() == DictRights.TYPE_GROUP){
+               accessorName = ItemUtils.getBandleLabel("All"); //ToDo в bundle!
             } else
-                if (rg.getObjId() == 2 && rg.getObjType() == 0){
-                  accessorName = "Администраторы"; 
+                if (rg.getObjId() == 2 && rg.getObjType() == DictRights.TYPE_GROUP){
+                  accessorName = ItemUtils.getBandleLabel("Administrators"); 
                 } else
-                    if (rg.getObjId() == 1 && rg.getObjType() == 1){
-                        accessorName = "Администратор"; 
+                    if (rg.getObjId() == 1 && rg.getObjType() == DictRights.TYPE_USER){
+                        accessorName = ItemUtils.getBandleLabel("Administrator"); 
                       } else{ //тогда ищем названия в базе
                             accessorName = getAccessName(rg);
                         }
@@ -105,10 +121,10 @@ public class RightFacade extends BaseFacade<Right> {
     /* Возвращает название пользователя или группы для которого назначаются права */ 
     private String getAccessName(Right rg) {
         String accessorName = "";
-        if (rg.getObjType() == 0){
-          accessorName = findGroupUserById(rg.getObjId()).getName();
+        if (rg.getObjType() == 1 ){
+            accessorName = findUserById(rg.getObjId()).getShortFIO();          
         } else {
-          accessorName = findUserById(rg.getObjId()).getShortFIO();
+            accessorName = findGroupUserById(rg.getObjId()).getName();
         }
         return accessorName;
     } 

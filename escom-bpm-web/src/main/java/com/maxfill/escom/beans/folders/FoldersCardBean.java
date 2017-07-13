@@ -4,8 +4,9 @@ import com.maxfill.facade.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.rights.Rights;
+import com.maxfill.model.states.State;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -23,6 +24,8 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     
     @Inject
     private FoldersBean foldersBean;
+    @Inject
+    private DocBean docBean;
     
     @EJB
     private FoldersFacade foldersFacade;                     
@@ -38,6 +41,11 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     public void onDocTypeDefaultSelected(ValueChangeEvent event){
         DocType docType = (DocType) event.getNewValue();
         getEditedItem().setDocTypeDefault(docType);
+    }
+    
+    @Override
+    public List<State> getStateForChild(){
+        return docBean.getMetadatesObj().getStatesList();
     }
     
     @Override

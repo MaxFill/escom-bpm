@@ -1,7 +1,5 @@
-
 package com.maxfill.model;
 
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;

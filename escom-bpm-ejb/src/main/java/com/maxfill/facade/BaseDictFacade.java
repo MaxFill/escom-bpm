@@ -3,7 +3,6 @@ package com.maxfill.facade;
 import com.maxfill.Configuration;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
@@ -189,6 +188,16 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return null;
     }
     
+    /* Проверка вхождения пользователя в роль */
+    public boolean checkUserInRole(T item, String roleName, User user){
+        return false;
+    }
+    
+    /* Возвращает имя испольнителя роли */
+    public String getActorName(T item, String roleName){
+        return null;
+    }
+        
     /* ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ */
 
     /* Добавление события в журнал событий */
@@ -214,7 +223,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             logEvent.setItem(item);
             return logEvent;
         } catch (IllegalAccessException | InstantiationException ex) {
-            Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }         

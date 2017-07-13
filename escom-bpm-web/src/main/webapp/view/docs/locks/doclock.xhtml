@@ -75,9 +75,11 @@
                                              actionListener="#{docLockBean.showFileLink()}"/>
                             <p:commandButton id="btnSetLock" value="#{bundle.SetLock}" title="#{bundle.SetLockAndEdit}"
                                              rendered="#{!docLockBean.attacheLock}"
+                                             update="#{_frm}"
                                              action="#{docLockBean.makeLock()}"/>
                             <p:commandButton id="btnSetUnLock" value="#{bundle.SetUnLock}" 
                                              rendered="#{docLockBean.attacheLock}"
+                                             update="#{_frm}"
                                              action="#{docLockBean.makeUnLock()}"/> 
                             <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              title="#{bundle.Close}"

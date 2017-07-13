@@ -3,7 +3,6 @@ package com.maxfill.model.docs;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
-import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
@@ -12,7 +11,11 @@ import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,8 +34,10 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang.StringUtils;
 
 /* Класс сущности "Документы" */
@@ -64,10 +69,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     @ManyToOne(optional = false)
     private DocType docType;
     
-    @JoinColumn(name = "Editor", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private User editor;
-
     @JoinColumn(name = "Company", referencedColumnName = "Id")
     @NotNull
     @ManyToOne(optional = false)
@@ -83,7 +84,10 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
-
+    
+    @Column(name = "RoleJson", length = 2048)
+    private String roleJson;
+    
     @Column(name = "DateDoc")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDoc;
@@ -105,7 +109,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DocLog> itemLogs = new ArrayList<>();
-    
+       
     public Doc() {
     }
 
@@ -205,6 +209,13 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     public void setPartner(Partner partner) {
         this.partner = partner;
     }
+ 
+    public String getRoleJson() {
+        return roleJson;
+    }
+    public void setRoleJson(String roleJson) {
+        this.roleJson = roleJson;
+    }
     
     @Override
     public String getIconName() {
@@ -248,13 +259,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
         this.attachesList = attachesList;
     }
 
-    public User getEditor() {
-        return editor;
-    }
-    public void setEditor(User editor) {
-        this.editor = editor;
-    }
-
     public String getRegNumber() {
         return regNumber;
     }
@@ -282,7 +286,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     public void setDocsStatusList(List<DocStatuses> docsStatusList) {
         this.docsStatusList = docsStatusList;
     }
-    
+        
     @Override
     public Integer getId() {
         return id;

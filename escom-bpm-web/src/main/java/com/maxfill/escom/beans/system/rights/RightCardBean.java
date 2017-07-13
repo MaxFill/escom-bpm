@@ -39,15 +39,17 @@ public class RightCardBean extends BaseDialogBean{
 
     @EJB
     private StateFacade stateFacade;
-
+    
     private Right selRight;
     private Right sourceRight;
     private User selUser;
     private UserGroups selUsGroup;
+    private UserGroups selUsRole;
     private Integer editMode;
     private String keyRight;
     private List<User> users;
-    private List<UserGroups> userGroupses;        
+    private List<UserGroups> userGroupses; 
+    private List<UserGroups> roles;
     
     @Override
     protected void initBean(){    
@@ -83,12 +85,20 @@ public class RightCardBean extends BaseDialogBean{
             switch (selRight.getObjType()){
                 case DictRights.TYPE_GROUP: {  
                     selUser = null;
+                    selUsRole = null;
                     selUsGroup = userGroupBean.findItem(selRight.getObjId());
                     break;
                 }
                 case DictRights.TYPE_USER: {
                     selUser = userBean.findItem(selRight.getObjId());
                     selUsGroup = null;
+                    selUsRole = null;
+                    break;
+                }
+                case DictRights.TYPE_ROLE: {
+                    selUser = null;
+                    selUsGroup = null;
+                    selUsRole = userGroupBean.findItem(selRight.getObjId());
                     break;
                 }
             }
@@ -140,8 +150,10 @@ public class RightCardBean extends BaseDialogBean{
     /* Событие изменения пользователя в карточке права */ 
     public void onUserChange(ValueChangeEvent event){
         User user = (User) event.getNewValue();
-        selRight.setName(user.getShortFIO());
-        selRight.setObjId(user.getId());
+        if (user != null){
+            selRight.setName(user.getShortFIO());
+            selRight.setObjId(user.getId());
+        }
     }
     
     /* Событие изменение группы на карточке права */ 
@@ -153,6 +165,15 @@ public class RightCardBean extends BaseDialogBean{
         }
     }  
     
+    /* Событие изменение группы на карточке права */ 
+    public void onRoleChange(ValueChangeEvent event){     
+        UserGroups usRole = (UserGroups) event.getNewValue();
+        if (usRole != null){
+            selRight.setObjId(usRole.getId());
+            selRight.setName(usRole.getName());
+        }
+    } 
+    
     /* Событие изменения типа права в карточке права  */ 
     public void onTypeChangeRight(ValueChangeEvent event){
         selRight.setObjType((Integer) event.getNewValue());
@@ -161,12 +182,24 @@ public class RightCardBean extends BaseDialogBean{
             case DictRights.TYPE_GROUP: {
                 if (selUsGroup != null){
                     name = selUsGroup.getName();
+                    selUser = null;
+                    selUsRole = null;
                 } 
                 break;
             }
             case DictRights.TYPE_USER: {
                 if (selUser != null){
+                    selUsRole = null;
+                    selUsGroup = null;
                     name = selUser.getShortFIO();
+                }
+                break;
+            }
+            case DictRights.TYPE_ROLE: {
+                if (selUsRole != null){
+                    selUsGroup = null;
+                    selUser = null;
+                    name = selUsRole.getName();
                 }
                 break;
             }
@@ -190,18 +223,32 @@ public class RightCardBean extends BaseDialogBean{
 
     public List<UserGroups> getUserGroupses() {
         if (userGroupses == null){
-            userGroupses = userGroupBean.findAll();
+            userGroupses = userGroupBean.findOnlyGroups();
         }
         return userGroupses;
     }
     
+    public List<UserGroups> getRoles() {
+        if (roles == null){
+            roles = userGroupBean.findOnlyRoles();
+        }
+        return roles;
+    }
+        
     public Right getSelRight() {
         return selRight;
     }
     public void setSelRight(Right selRight) {
         this.selRight = selRight;
     }
-    
+
+    public UserGroups getSelUsRole() {
+        return selUsRole;
+    }
+    public void setSelUsRole(UserGroups selUsRole) {
+        this.selUsRole = selUsRole;
+    }
+        
     public User getSelUser() {
         return selUser;
     }

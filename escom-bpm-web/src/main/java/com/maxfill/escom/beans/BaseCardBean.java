@@ -226,8 +226,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         Integer x = width.intValue() + 14;
         Integer y = height.intValue() + 14;
         sessionBean.saveFormSize(getItemObjName(), x, y);
-    }
-     
+    }      
+    
     /* Сброс блокировок объекта  */
     private void clearLockItem(){
         T item = getEditedItem();
@@ -246,16 +246,18 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setRightPageIndex(tabId);
     }
 
+    /* Событие обработки изменения Владельца на карточке объекта */
     public void onChangeOwner(SelectEvent event){
-        List<User> items = (List<User>) event.getObject();
-        if (items.isEmpty()) return;
-        User item = items.get(0);
-        onItemChange();
-        getEditedItem().setAuthor(item);
+        List<User> users = (List<User>) event.getObject();
+        if (users.isEmpty()) return;
+        User user = users.get(0);
+        getEditedItem().doSetSingleRole("owner", user);
+        onItemChange();        
     }
     public void onChangeOwner(ValueChangeEvent event){
         User user = (User) event.getNewValue();
         getEditedItem().setAuthor(user);
+        getEditedItem().doSetSingleRole("owner", user);
     }
     
     public boolean lockChangeOwner(){

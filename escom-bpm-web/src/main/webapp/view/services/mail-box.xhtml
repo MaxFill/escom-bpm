@@ -16,26 +16,40 @@
         </f:metadata>
     </ui:define>
 
+    <ui:param name="_frm" value="mailBoxFRM" />
+    
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{mailBoxBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{mailBoxBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
 
-                <h:form id="mailBoxFRM" styleClass="formLayoute">                    
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />                    
+                <h:form id="#{_frm}" styleClass="formLayoute">                                        
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                        <p:toolbar >
-                            <f:facet name="left">
-                                <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                                                 update="mailBoxFRM:tblDetail" 
-                                                 actionListener="#{mailBoxBean.refreshMessages()}"/>                        
-                            </f:facet>
-                            <f:facet name="right">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />  
+                        
+                        <p:menubar styleClass="without-spaces">
+                            <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                                <p:menuitem value="#{bundle.Refresh}" 
+                                            icon="ui-icon-refresh"
+                                            onclick="document.getElementById('#{_frm}:btnRefresh').click();"/> 
+                                <p:separator/>
+                                <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                            onclick="document.getElementById('#{_frm}:btnClose').click();">  
+                                </p:menuitem>
+                            </p:submenu>
+                            <f:facet name="options">
+                                <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
+                                                 update="#{_frm}:tblDetail" 
+                                                 actionListener="#{mailBoxBean.refreshMessages()}"/>
                                 <p:commandButton title="#{bundle.Close}" icon="ui-icon-circle-close"
                                                  style="float: right;" immediate="true"
                                                  action="#{mailBoxBean.onCloseCard()}"/>
                             </f:facet>
-                        </p:toolbar>
+                         </p:menubar>
                     
                     <p:dataTable id="tblDetail"
                                  value="#{mailBoxBean.messages}" var="item" 

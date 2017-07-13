@@ -1,6 +1,7 @@
 
 package com.maxfill.model.rights;
 
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.states.State;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.utils.ItemUtils;
@@ -123,6 +124,10 @@ public class Right implements Serializable{
     @XmlTransient
     private String name;
     
+    @Transient
+    @XmlTransient
+    private String icon;
+    
     public Right() {
     }
 
@@ -136,17 +141,28 @@ public class Right implements Serializable{
 
     @XmlTransient
     //формирование имени типа для отображения на карточке
-    public String getTypeName(){ 
-        if (objType == null) {
-            return "";
-        }
-        if (objType == 0){
-            return ItemUtils.getBandleLabel("RightForGroup"); 
-        } else {
-            return ItemUtils.getBandleLabel("RightForUser"); 
+    public String getTypeName(){         
+        switch (objType){
+            case (DictRights.TYPE_GROUP):{  
+                return ItemUtils.getBandleLabel("RightForGroup");                
+            }
+            case (DictRights.TYPE_USER): {
+                return ItemUtils.getBandleLabel("RightForUser"); 
+            }
+            case (DictRights.TYPE_ROLE): {
+                return ItemUtils.getBandleLabel("RightForRole"); 
+            }
         }   
+        return "";
     } 
-    
+
+    public String getIcon() {
+        return icon;
+    }
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+        
     public Integer getId() {
         return id;
     }

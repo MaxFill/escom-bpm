@@ -16,8 +16,7 @@
             </p:selectBooleanCheckbox>
             
             <p:outputLabel value="#{bundle.State}"/>
-            <p:inputText  value="#{_bean.editedItem.state.name}" readonly="true"
-                          styleClass="ui-grid-col-12"
+            <p:inputText  value="#{_bean.editedItem.state.bundleName}" readonly="true"
                           onkeypress="checkEsc(#{_bean.cancelBtnName});">
             </p:inputText>
 

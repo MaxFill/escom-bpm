@@ -4,6 +4,9 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.facade.CompanyFacade;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.departaments.DepartmentBean;
+import com.maxfill.model.states.State;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -17,10 +20,17 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     
     @Inject
     private CompanyBean companyBean;
-            
+    @Inject
+    private DepartmentBean departmentBean;
+    
     @EJB
     private CompanyFacade itemsFacade;
-            
+    
+    @Override
+    public List<State> getStateForChild(){
+        return departmentBean.getMetadatesObj().getStatesList();
+    }
+    
     @Override
     public CompanyFacade getItemFacade() {
         return itemsFacade;

@@ -2,6 +2,7 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.facade.AttacheFacade;
+import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -46,26 +47,42 @@ public class WebDavRemainder {
     private UserMessagesFacade messagesFacade;
     @EJB
     private Configuration conf;
-    
+    @EJB
+    private DocFacade docFacade;
+                
     public void createTimer(Attaches attache, User editor, Date lockDate){
-        startTimer(attache, editor, lockDate);               
+        Timer timer = startTimer(attache, lockDate); 
+        attache.setLockAuthor(editor);
+        attache.setLockDate(new Date());
+        attache.setPlanUnlockDate(lockDate);
+        attache.setCountRemainingCycles(COUNT_REMAINING_CYCLES);
+        attache.setTimeHandle(getTimerHandlerBytes(timer));
+        attacheFacade.edit(attache);
+        docFacade.doSetEditState(attache.getDoc(), editor);
         webDavService.uploadFile(attache);  // скопировать файл в хранилище                
         LOG.log(Level.INFO, "Successfully create remainder timer : {0}", attache.getName());        
     }        
     
     public void changeTimer(Attaches attache, User editor, Date lockDate){
         stopTimer(attache);
-        startTimer(attache, editor, lockDate);
+        startTimer(attache, lockDate);
         LOG.log(Level.INFO, "Successfully change remainder timer : {0}", attache.getName());
     }
     
     public void cancelTimer(Attaches attache){
         stopTimer(attache);
+        attache.setLockAuthor(null);
+        attache.setLockDate(null);
+        attache.setPlanUnlockDate(null);
+        attache.setTimeHandle(null);
+        attache.setCountRemainingCycles(null);
+        attacheFacade.edit(attache);
+        docFacade.doRemoveEditState(attache.getDoc());
         webDavService.downloadFile(attache);    // забрать файл из хранилища 
         LOG.log(Level.INFO, "Remainder for attache {0} is cancelled!", attache.getName()); 
     }
     
-    private void startTimer(Attaches attache, User editor, Date lockDate){      
+    private Timer startTimer(Attaches attache, Date lockDate){      
         TimerConfig config = new TimerConfig(attache, true);
                 
         Date remainDate = DateUtils.addDays(lockDate, -1);                        
@@ -78,15 +95,9 @@ public class WebDavRemainder {
         schedule.dayOfWeek("Mon, Tue, Wed, Thu, Fri");                     
         schedule.timezone(TimeZone.getDefault().getID());
         Timer timer = timerService.createCalendarTimer(schedule, config);
-        Date nextDate = timer.getNextTimeout();        
-        
-        attache.setLockAuthor(editor);
-        attache.setLockDate(new Date());
-        attache.setPlanUnlockDate(lockDate);
-        attache.setCountRemainingCycles(COUNT_REMAINING_CYCLES);
-        attache.setTimeHandle(getTimerHandlerBytes(timer));
-        attacheFacade.edit(attache);
+        Date nextDate = timer.getNextTimeout();      
         LOG.log(Level.INFO, "Timer start! Next date {0}", nextDate);
+        return timer;
     }
     
     private String makeHours(Integer firstHour){         
@@ -117,13 +128,7 @@ public class WebDavRemainder {
             TimerHandle timerHandle =(TimerHandle)ins.readObject();
             ins.close();
             timerHandle.getTimer().cancel();
-            
-            attache.setLockAuthor(null);
-            attache.setLockDate(null);
-            attache.setPlanUnlockDate(null);
-            attache.setTimeHandle(null);
-            attache.setCountRemainingCycles(null);
-            attacheFacade.edit(attache);
+                        
             LOG.log(Level.INFO, "Timer stop! ");
         }  catch (NoSuchObjectLocalException | IOException | ClassNotFoundException exception) {
             throw new RuntimeException(exception);
@@ -171,11 +176,11 @@ public class WebDavRemainder {
         StringBuilder docUrl = new StringBuilder(conf.getServerURL());
         docUrl.append("faces/view/").append("docs/").append("doc-card").append(".xhtml").append("?itemId=");
         docUrl.append(doc.getId());
-        docUrl.append("?openMode=0");
+        docUrl.append("&openMode=0");
         
         StringBuilder content = new StringBuilder();
         content.append(ItemUtils.getBandleLabel("Document")).append(": ");
-        content.append("<a href=").append(docUrl).append(">").append(doc.getFullName()).append("</a>").append("<br />");
+        content.append("<a href=").append(docUrl).append(">").append(doc.getFullName()).append("</a>").append("<br />");        
         
         if (countRemainingCycles == 0){
             cancelTimer(attache);
@@ -193,4 +198,6 @@ public class WebDavRemainder {
             attacheFacade.edit(attache);
         }
     }
+    
+    
 }

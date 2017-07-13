@@ -74,8 +74,7 @@
         
         <!-- Права доступа по умолчанию -->
         <sql>
-            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (15, 0, 2, 1, 1, 1, 1, 1, 0, 1, 8);
-            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (78, 0, 15, 1, 1, 1, 1, 1, 0, 1, 8);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (15, 0, 2, 1, 1, 1, 1, 1, 0, 1, 8);            
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (16, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (17, 0, 2, 1, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (18, 0, 0, 1, 1, 1, 1, 1, 0, 0, 5);
@@ -135,6 +134,10 @@
             
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (75, 0, 2, 19, 1, 1, 1, 1, 0, 1, 5);
             INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (77, 0, 0, 19, 1, 1, 1, 1, 0, 1, 5);
+        
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (78, 2, 15, 1, 1, 1, 1, 1, 0, 1, 8);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (79, 2, 16, 1, 1, 1, 1, 1, 0, 1, 5);
+            INSERT access (Id, ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, State) VALUES (79, 2, 16, 1, 1, 1, 1, 1, 0, 1, 7);
         </sql>
         
         <!-- Группы пользователей -->
@@ -149,7 +152,9 @@
             INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (11, 0, NULL, N'ESCOM_GROUP', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
             INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (12, 0, NULL, N'Пользователи домена', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
             INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (14, 0, NULL, N'Модераторы', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (15, 0, NULL, N'Редактор', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, NULL);
+            
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (15, 0, NULL, N'Редактор', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Editor");
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (16, 0, NULL, N'Владелец', NULL, 1, 1, 0, 5, NULL, 1, NULL, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Owner");
         </sql>
         
         <!-- Пользователи в группах -->

@@ -9,8 +9,7 @@
     <ui:define name="page_body">
                 
           <p:tab id="cardTab" title="#{bundle.Explorer}">     
-            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"
-                         columnClasses="ui-grid-col-12 col-padding">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
                 <p:outputLabel value="#{bundle.Name}" />
                 <p:inputText id="name" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12 col-padding"
@@ -21,7 +20,9 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                 <h:panelGroup rendered="#{_bean.editedItem.id != null}">
                     <p:separator />
-                    <p:commandButton value="#{bundle.AddStatusInTypeDocs}" actionListener="#{_bean.onAddStatusInTypeDocs()}">
+                    <p:commandButton value="#{bundle.AddStatusInTypeDocs}" 
+                                     update="#{_frm}"
+                                     actionListener="#{_bean.onAddStatusInTypeDocs()}">
                         <p:ajax event="dialogReturn" listener="#{_bean.doAddStatusInTypeDocs}"/>
                     </p:commandButton>
                 </h:panelGroup>

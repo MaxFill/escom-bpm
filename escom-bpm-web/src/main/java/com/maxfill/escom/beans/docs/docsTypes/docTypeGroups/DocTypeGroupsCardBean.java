@@ -4,6 +4,9 @@ import com.maxfill.facade.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
+import com.maxfill.model.states.State;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -17,9 +20,16 @@ public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     
     @Inject
     private DocTypeGroupsBean docTypeGroupsBean;
+    @Inject
+    private DocTypeBean docTypeBean;
     
     @EJB
     private DocTypeGroupsFacade itemsFacade;     
+    
+    @Override
+    public List<State> getStateForChild(){
+        return docTypeBean.getMetadatesObj().getStatesList();
+    }
     
     @Override
     public DocTypeGroupsFacade getItemFacade() {

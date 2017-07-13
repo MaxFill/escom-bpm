@@ -74,6 +74,8 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         }
     }
     
+    protected abstract List<State> getStateForChild();
+    
     /* Удаление права доступа к дочерним объеткам из списка  */
     public void onDeleteRightChild(Right right) {
         getEditedItem().getRightForChild().getRights().remove(right);

@@ -123,7 +123,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
                
     @Override
     public String getIconName() {
-        return "folder_open";
+        return "folder_open20";
     }
     
     public boolean getIsModeration() {return isModeration;}

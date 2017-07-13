@@ -17,6 +17,8 @@
         #{bundle.Rights}
     </ui:define>
 
+    <ui:param name="_frm" value="frmRightEdit" />
+
     <ui:define name="body">
         <script type="text/javascript" >
             var itemChange = 0;
@@ -25,7 +27,12 @@
         <pe:layout fullPage="true" options="#{rightCardBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{rightCardBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="frmRightEdit" style="font-size: 90%;">
+                <h:form id="#{_frm}" style="font-size: 90%;">
+
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
 
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{rightCardBean.onItemChange()}"
@@ -33,105 +40,124 @@
                     </p:remoteCommand>
 
                     <p:menubar styleClass="without-spaces">
-                        <f:facet name="options">
-                            <p:commandButton icon="ui-icon-circle-close" style="float:right;"
-                                             title="#{bundle.Close}"
-                                             action="#{rightCardBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
-                    </p:menubar>
-                    
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                    
-
-                            <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-                                <h:outputLabel value="#{bundle.ForState}:"/>
-                                <p:outputLabel value="#{rightCardBean.selRight.state.name}"/>
-
-                                <h:outputLabel value="#{bundle.Object}:" rendered="#{rightCardBean.selRight.objLink != null}"/>
-                                <p:outputLabel value="#{rightCardBean.selRight.objLink.name}" rendered="#{rightCardBean.selRight.objLink != null}"/>                        
-
-                                <h:outputLabel value="#{rightCardBean.selRight.typeName}:" />
-                                <p:outputLabel value="#{rightCardBean.selRight.name}" id="lbRightName"/> 
-                            </p:panelGrid>
-
-                            <p:selectOneRadio id="rbRightType" value="#{rightCardBean.selRight.objType}" layout="custom" valueChangeListener="#{rightCardBean.onTypeChangeRight}">
-                                <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="0" />
-                                <f:selectItem itemLabel="#{bundle.ForUser}"  itemValue="1" />
-                                <p:ajax event="valueChange" update="frmRightEdit" oncomplete="itemChange = 1;"/>
-                            </p:selectOneRadio>
-
-                            <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
-                                <p:outputLabel value="#{bundle.ForUser}"/>
-                                <p:radioButton id="optUser" for="rbRightType" itemIndex="1" />                        
-                                <p:selectOneMenu id="selUser" value="#{rightCardBean.selUser}" filter="true" filterMatchMode="startsWith" 
-                                                 valueChangeListener="#{rightCardBean.onUserChange}" style="width: 100%;"
-                                                 converter="usersConvertor" 
-                                                 disabled="#{rightCardBean.selRight.objType == 0}">                    
-                                    <f:selectItems value="#{rightCardBean.users}" var="users" itemLabel="#{users.shortFIO}" itemValue="#{users}"/>
-                                    <f:selectItem itemValue="#{rightCardBean.selUser}" itemLabel="#{rightCardBean.selUser.shortFIO}" />
-                                    <p:ajax event="change" update=":frmRightEdit:lbRightName" oncomplete="itemChange = 1;"/>
-                                </p:selectOneMenu>
-
-                                <p:outputLabel value="#{bundle.ForGroup}"/>
-                                <p:radioButton id="optGroup" for="rbRightType" itemIndex="0" />
-                                <p:selectOneMenu id="selGroup" value="#{rightCardBean.selUsGroup}"  filter="true" filterMatchMode="startsWith"
-                                                 valueChangeListener="#{rightCardBean.onGroupChange}" style="width: 100%;"
-                                                 converter="groupsUserConvertor"
-                                                 disabled="#{rightCardBean.selRight.objType == 1}" >
-                                    <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
-                                    <p:ajax event="change" update=":frmRightEdit:lbRightName" oncomplete="itemChange = 1;"/>
-                                </p:selectOneMenu>
-                            </p:panelGrid>
-
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-circle-check" value="#{bundle.Save}"
+                                        onclick="document.getElementById('#{_frm}:btnSave').click();"> 
+                            </p:menuitem>
                             <p:separator />
-
-                            <h:panelGrid columns="1">
-                                <p:selectBooleanCheckbox id="chBoxAll" itemLabel="#{bundle.All}"
-                                                         valueChangeListener="#{rightCardBean.onChangeAllRight}" 
-                                                         title="#{bundle.CheckUncheck}">
-                                    <p:ajax update="chBoxPanel" oncomplete="itemChange = 1;"/>
-                                </p:selectBooleanCheckbox>
-                            </h:panelGrid>
-
-                            <h:panelGrid id="chBoxPanel" columns="5">
-                                <p:selectBooleanCheckbox value="#{rightCardBean.selRight.read}" id="chBoxRead"
-                                                         itemLabel="#{bundle.View}" onchange="itemChange = 1;"/>
-
-                                <p:selectBooleanCheckbox value="#{rightCardBean.selRight.update}" id="chBoxUpdate"
-                                                         itemLabel="#{bundle.Edit}" onchange="itemChange = 1;"/>
-
-                                <p:selectBooleanCheckbox value="#{rightCardBean.selRight.create}" id="chBoxCreate"
-                                                         itemLabel="#{bundle.Create}" onchange="itemChange = 1;"/>
-
-                                <p:selectBooleanCheckbox value="#{rightCardBean.selRight.delete}" id="chBoxDelete"
-                                                         itemLabel="#{bundle.Delete}" onchange="itemChange = 1;"/>
-
-                                <p:selectBooleanCheckbox value="#{rightCardBean.selRight.changeRight}" id="chBoxRight"
-                                                         itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>
-                            </h:panelGrid>
-                        </p:panelGrid>
-                    </p:panel>
-
-                    <p:toolbar styleClass="ui-grid-col-12">
-                        <f:facet name="right">
-                            <p:commandButton value="#{bundle.Cancel}" style="float: right;"
-                                             title="#{bundle.Cancel}"
-                                             process="@this" immediate="true"
-                                             icon="ui-icon-circle-close" 
-                                             action="#{rightCardBean.onCancelSave()}"
-                                             onclick="if (itemChange == 1)
-                                                 onChangeItem();"> 
-                            </p:commandButton> 
-                            <p:commandButton value="#{bundle.Save}" style="float: right;"
+                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+ 
+                            <p:commandButton id="btnSave" value="#{bundle.Save}" 
                                              title="#{bundle.SaveAndClose}"
-                                             icon="ui-icon-circle-check"
+                                             update="#{_frm}"
                                              action="#{rightCardBean.onSaveChangeRight()}"
                                              onclick="if (itemChange == 1)
                                                  onChangeItem();"> 
-                            </p:commandButton>  
+                            </p:commandButton> 
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float: right;"
+                                             title="#{bundle.Cancel}"
+                                             immediate="true"
+                                             action="#{rightCardBean.onCancelSave()}"
+                                             onclick="if (itemChange == 1)
+                                                 onChangeItem();"/>
                         </f:facet>
-                    </p:toolbar>
+                    </p:menubar>
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                    
+
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 col-padding">
+                            <h:outputLabel value="#{bundle.Object}:" rendered="#{rightCardBean.selRight.objLink != null}"/>
+                            <p:outputLabel value="#{rightCardBean.selRight.objLink.name}" rendered="#{rightCardBean.selRight.objLink != null}"/>
+                            
+                            <h:outputLabel value="#{bundle.ForState}:"/>
+                            <p:outputLabel value="#{rightCardBean.selRight.state.bundleName}"/>
+                           
+                            <h:outputLabel value="#{rightCardBean.selRight.typeName}:" />
+                            <p:outputLabel value="#{rightCardBean.selRight.name}" id="lbRightName"/> 
+
+                        </p:panelGrid>
+
+                        <p:selectOneRadio id="rbRightType" value="#{rightCardBean.selRight.objType}" layout="custom" 
+                                          valueChangeListener="#{rightCardBean.onTypeChangeRight}">
+                            <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="0" />
+                            <f:selectItem itemLabel="#{bundle.ForUser}"  itemValue="1" />
+                            <f:selectItem itemLabel="#{bundle.ForRole}"  itemValue="2" />
+                            <p:ajax event="valueChange" update="#{_frm}" oncomplete="itemChange = 1;"/>
+                        </p:selectOneRadio>
+
+                        <p:panelGrid columns="3" styleClass="ui-panelgrid-blank">
+                            <p:outputLabel value="#{bundle.ForUser}"/>
+                            <p:radioButton id="optUser" for="rbRightType" itemIndex="1" />                        
+                            <p:selectOneMenu id="selUser" value="#{rightCardBean.selUser}" filter="true" filterMatchMode="startsWith" 
+                                             valueChangeListener="#{rightCardBean.onUserChange}" styleClass="ui-grid-col-12"
+                                             required="#{rightCardBean.selRight.objType == 1}"
+                                             requiredMessage="#{bundle.Field} [#{bundle.ForUser}] #{bundle.MustBeFilled}"
+                                             converter="usersConvertor" 
+                                             disabled="#{rightCardBean.selRight.objType != 1}">                    
+                                <f:selectItems value="#{rightCardBean.users}" var="users" itemLabel="#{users.shortFIO}" itemValue="#{users}"/>
+                                <f:selectItem itemValue="#{rightCardBean.selUser}" itemLabel="#{rightCardBean.selUser.shortFIO}" />
+                                <p:ajax event="change" update="#{_frm}:lbRightName" oncomplete="itemChange = 1;"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="#{bundle.ForGroup}"/>
+                            <p:radioButton id="optGroup" for="rbRightType" itemIndex="0" />
+                            <p:selectOneMenu id="selGroup" value="#{rightCardBean.selUsGroup}"  filter="true" filterMatchMode="startsWith"
+                                             valueChangeListener="#{rightCardBean.onGroupChange}" styleClass="ui-grid-col-12"
+                                             required="#{rightCardBean.selRight.objType == 0}"
+                                             requiredMessage="#{bundle.Field} [#{bundle.ForGroup}] #{bundle.MustBeFilled}"
+                                             converter="groupsUserConvertor"
+                                             disabled="#{rightCardBean.selRight.objType != 0}" >
+                                <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
+                                <f:selectItem itemValue="#{rightCardBean.selUsGroup}" itemLabel="#{rightCardBean.selUsGroup.name}" />
+                                <p:ajax event="change" update="#{_frm}:lbRightName" oncomplete="itemChange = 1;"/>
+                            </p:selectOneMenu>
+                            
+                            <p:outputLabel value="#{bundle.ForRole}"/>
+                            <p:radioButton id="optRole" for="rbRightType" itemIndex="2" />
+                            <p:selectOneMenu id="selRole" value="#{rightCardBean.selUsRole}"  filter="true" filterMatchMode="startsWith"
+                                             valueChangeListener="#{rightCardBean.onRoleChange}" styleClass="ui-grid-col-12"
+                                             converter="groupsUserConvertor"
+                                             required="#{rightCardBean.selRight.objType == 2}"
+                                             requiredMessage="#{bundle.Field} [#{bundle.ForRole}] #{bundle.MustBeFilled}"
+                                             disabled="#{rightCardBean.selRight.objType != 2}" >
+                                <f:selectItems value="#{rightCardBean.roles}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
+                                <p:ajax event="change" update="#{_frm}:lbRightName" oncomplete="itemChange = 1;"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <p:separator />
+
+                        <h:panelGrid columns="1">
+                            <p:selectBooleanCheckbox id="chBoxAll" itemLabel="#{bundle.All}"
+                                                     valueChangeListener="#{rightCardBean.onChangeAllRight}" 
+                                                     title="#{bundle.CheckUncheck}">
+                                <p:ajax update="chBoxPanel" oncomplete="itemChange = 1;"/>
+                            </p:selectBooleanCheckbox>
+                        </h:panelGrid>
+
+                        <h:panelGrid id="chBoxPanel" columns="5">
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.read}" id="chBoxRead"
+                                                     itemLabel="#{bundle.View}" onchange="itemChange = 1;"/>
+
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.update}" id="chBoxUpdate"
+                                                     itemLabel="#{bundle.Edit}" onchange="itemChange = 1;"/>
+
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.create}" id="chBoxCreate"
+                                                     itemLabel="#{bundle.Create}" onchange="itemChange = 1;"/>
+
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.delete}" id="chBoxDelete"
+                                                     itemLabel="#{bundle.Delete}" onchange="itemChange = 1;"/>
+
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.changeRight}" id="chBoxRight"
+                                                     itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>
+                        </h:panelGrid>
+                    </p:panelGrid>
+
                 </h:form>
             </pe:layoutPane>
         </pe:layout>

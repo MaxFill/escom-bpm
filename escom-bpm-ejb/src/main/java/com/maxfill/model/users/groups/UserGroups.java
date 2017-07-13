@@ -47,7 +47,7 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     private List<UserGroupsLog> itemLogs = new ArrayList<>();
     
     @Column(name = "TypeActualize")
-    private Integer typeActualize;
+    private Integer typeActualize = 0;
     
     @Column(name = "RoleFieldName")
     private String roleFieldName;

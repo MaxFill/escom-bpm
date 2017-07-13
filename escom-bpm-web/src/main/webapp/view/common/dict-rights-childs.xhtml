@@ -11,13 +11,14 @@
         <p:ajax update="docRightsGrid inheritsAccessChilds"/>
     </p:selectBooleanCheckbox>
     <h:panelGroup id="docRightsGrid" style="font-size: 80%;">        
-        <ui:repeat var="state" value="#{_bean.metadatesObj.statesList}">             
+        <ui:repeat var="state" value="#{_bean.stateForChild}">
             <p:accordionPanel activeIndex="null">
-                <p:tab title="#{bundle.State}: #{state.name}" rendered="#{_bean.editedItem != null}" > 
+                <p:tab title="#{bundle.State}: #{state.bundleName}" rendered="#{_bean.editedItem != null}" > 
                     <p:dataTable id="tblRight" value="#{_bean.getRightChildsForState(_bean.editedItem, state)}" var="right" 
                                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                                  emptyMessage="#{bundle.EmptyTable}">
                         <p:column headerText="#{bundle.RightOwner}">
+                             <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
                             <h:outputText value="#{right.name}"/>
                         </p:column>
                         <p:column headerText="#{bundle.Read}" style="text-align: center;">

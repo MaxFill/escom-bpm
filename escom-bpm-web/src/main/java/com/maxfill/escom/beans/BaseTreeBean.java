@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans;
 
-import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Rights;

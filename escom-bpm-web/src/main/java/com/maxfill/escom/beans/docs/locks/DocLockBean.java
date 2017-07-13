@@ -1,11 +1,9 @@
 package com.maxfill.escom.beans.docs.locks;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
-import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.services.webDav.WebDavRemainder;
@@ -29,8 +27,6 @@ public class DocLockBean extends BaseDialogBean{
     private AttacheFacade attacheFacade;
     @EJB
     private WebDavRemainder remainder;
-    @EJB
-    private DocFacade docFacade;
     
     private Date lockDate;
     private String minLockDate;
@@ -71,14 +67,12 @@ public class DocLockBean extends BaseDialogBean{
     public String makeLock(){
         User editor = sessionBean.getCurrentUser();
         remainder.createTimer(attache, editor, lockDate);
-        docFacade.doSetEditState(attache.getDoc(), editor);
         openFile();
         return onCloseCard();
     }
     
     public String makeUnLock(){
-        remainder.cancelTimer(attache);
-        docFacade.doRemoveEditState(attache.getDoc());
+        remainder.cancelTimer(attache);        
         return onCloseCard();
     }
      
@@ -90,7 +84,7 @@ public class DocLockBean extends BaseDialogBean{
     public void onChangeDateLock(SelectEvent event){
         Date newDate = (Date) event.getObject();
         RequestContext requestContext = RequestContext.getCurrentInstance();
-        if (isAttacheLock() && isUserIsEditor() && !Objects.equals(newDate, attache.getPlanUnlockDate())){            
+        if (isAttacheLock() && isUserIsEditor()){            
             requestContext.update("lockForm");
         }
     }
@@ -140,7 +134,7 @@ public class DocLockBean extends BaseDialogBean{
     
     public boolean isCanShowRestartTimerBtn(){        
         if (attache.getPlanUnlockDate() == null) return false;
-        return isAttacheLock() && isUserIsEditor() && lockDate.after(attache.getPlanUnlockDate());
+        return isAttacheLock() && isUserIsEditor() && lockDate.after(new Date());
     }
     
     /* GETS & SETS */

@@ -16,6 +16,7 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.facade.UserFacade;
+import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
@@ -37,6 +38,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXB;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /* Базовый бин */
 public abstract class BaseBean <T extends BaseDict> implements Serializable{
@@ -62,6 +64,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     protected RightFacade rightFacade;
     @EJB
     protected UserFacade userFacade;
+    @EJB
+    protected UserGroupsFacade userGroupsFacade;
     
     private boolean isItemChange;               //признак изменения записи  
 
@@ -116,12 +120,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     public void settingRightItem(BaseDict item, Rights newRight) {
         if (item != null) {
             item.setRightItem(newRight);
-            Integer mask;
-            if (currentUser.equals(item.getAuthor())){
-                mask = 248; //полные права владельцу объекта
-            } else {
-                mask = getAccessMask(item.getState(), newRight, currentUser);
-            }             
+            Integer mask;            
+            mask = getAccessMask(item, newRight, currentUser);                         
             item.setRightMask(mask);            
         }
     } 
@@ -169,6 +169,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     }        
     
     /* ПРАВА ДОСТУПА: возвращает дефолтную маску доступа к объекту для текущего пользователя  */
+    /*
     public Integer getDefaultMaskAccess() {
         if (defaultMaskAccess == null) {
             Rights rights = getDefaultRights();
@@ -177,22 +178,29 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         }
         return defaultMaskAccess;
     }
-        
+      */  
     /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
-    public Integer getAccessMask(State state, Rights sourcesRight, User user) {
+    public Integer getAccessMask(BaseDict item, Rights sourcesRight, User user) {
+        State state = item.getState();
         Integer userId = user.getId();
         Integer accessMask = 0;
         for (Right right : sourcesRight.getRights()) {  //распарсиваем права 
             if (right.getState().equals(state)) {
                 switch (right.getObjType()) {
-                    case 1: {    //права указаны для пользователя
+                    case DictRights.TYPE_USER: {    //права указаны для пользователя
                         if (right.getObjId().equals(userId)) { //это текущий пользователь, добавляем ему права
                             accessMask = accessMask | makeAccessMask(right, accessMask);
                         }
                         break;
                     }
-                    case 0: {    //права указаны для группы
+                    case DictRights.TYPE_GROUP: {    //права указаны для группы
                         if (checkUserInGroup(right.getObjId(), user)) {
+                            accessMask = accessMask | makeAccessMask(right, accessMask);
+                        }
+                        break;
+                    }
+                    case DictRights.TYPE_ROLE: {    //права указаны для роли
+                        if (checkUserInRole(item, right.getObjId(), user)) {
                             accessMask = accessMask | makeAccessMask(right, accessMask);
                         }
                         break;
@@ -226,14 +234,23 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         return accessMask;
     }
     
+    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в роль */
+    private boolean checkUserInRole(BaseDict item, Integer groupId, User user) {
+        UserGroups group = userGroupsFacade.find(groupId);
+        String roleName = group.getRoleFieldName();
+        if (StringUtils.isBlank(roleName)) return false;
+        return getItemFacade().checkUserInRole(item, roleName, user);
+    }
+    
     /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
     private boolean checkUserInGroup(Integer groupId, User user) {
         if (groupId == 0) return true; //группа ВСЕ
-        for (UserGroups group : user.getUsersGroupsList()) {
-            if (group.getId().equals(groupId)) {
+        
+        for (UserGroups userGroup : user.getUsersGroupsList()) {
+            if (userGroup.getId().equals(groupId)) {
                 return true;
             }
-        }
+        }        
         return false;
     }
     
@@ -258,9 +275,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     /* ПРАВА ДОСТУПА: проверка маски доступа к объекту */
     public boolean checkMaskAccess(Integer mask, Integer right) {
-        if (mask == null) {
-            return false;
-        }
+        if (mask == null) return false;
         Integer m = mask & right;
         return m.equals(right);
     }

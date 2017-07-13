@@ -25,18 +25,18 @@
         
         <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
-        <p:column id="colIcon" width="40" style="font-size: 90%;" sortBy="#{item.iconName}">
+        <p:column id="colIcon" width="36" style="font-size: 90%;" sortBy="#{item.iconName}">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
+
+        <ui:insert name="specDetailColumns"/>
 
         <p:column headerText="#{bundle.State}" sortBy="#{item.state.name}">            
             <h:graphicImage id="iconDone" value="#{item.state.icon}" />
             <p:spacer width="3"/>
             #{item.state.bundleName}
         </p:column>
-
-        <ui:insert name="specDetailColumns"/>
-                 
+        
         <p:column headerText="#{bundle.ShortName}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{explorerBean.isItemTreeType(item)}"

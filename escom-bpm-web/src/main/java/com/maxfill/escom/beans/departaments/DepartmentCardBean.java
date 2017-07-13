@@ -7,10 +7,13 @@ import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.staffs.StaffBean;
+import com.maxfill.model.states.State;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 
@@ -22,10 +25,17 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
                 
     @Inject
     private DepartmentBean departmentBean;
-
+    @Inject
+    private StaffBean staffBean;
+            
     @EJB
     private DepartmentFacade itemsFacade;     
 
+    @Override
+    public List<State> getStateForChild(){
+        return staffBean.getMetadatesObj().getStatesList();
+    }
+    
     @Override
     public DepartmentFacade getItemFacade() {
         return itemsFacade;

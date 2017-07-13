@@ -3,12 +3,10 @@ package com.maxfill.facade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.model.users.groups.UserGroupsLog;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +15,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
@@ -45,6 +44,49 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return q.getResultList();  
     }
   
+    /* Получение списка групп root уровня без групп, являющихся ролями */
+    @Override
+    public List<UserGroups> findChilds(UserGroups parent){
+        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
+        Root<UserGroups> c = cq.from(UserGroups.class);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.equal(c.get("parent"), parent));
+        criteries.add(builder.equal(c.get("deleted"), false));
+        criteries.add(builder.equal(c.get("actual"), true));
+        criteries.add(builder.equal(c.get("typeActualize"), 0));        
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(c).where(builder.and(predicates));               
+        cq.orderBy(builder.asc(c.get("name")));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
+    public List<UserGroups> findGroupsByType(Integer typeActualize){
+        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
+        Root<UserGroups> c = cq.from(UserGroups.class);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.equal(c.get("deleted"), false));
+        criteries.add(builder.equal(c.get("actual"), true));
+        criteries.add(builder.equal(c.get("typeActualize"), typeActualize));        
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(c).where(builder.and(predicates));               
+        cq.orderBy(builder.asc(c.get("name")));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
     @Override
     public String getFRM_NAME() {
         return UserGroups.class.getSimpleName().toLowerCase();

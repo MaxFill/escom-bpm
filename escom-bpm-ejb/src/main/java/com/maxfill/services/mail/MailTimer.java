@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
-import org.apache.commons.lang.StringUtils;
 
 @Stateless
 public class MailTimer extends BaseTimer<MailSettings>{

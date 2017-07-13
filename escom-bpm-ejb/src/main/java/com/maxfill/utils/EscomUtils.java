@@ -23,7 +23,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public final class EscomUtils {
-     
+             
     /* Получение номера актуального релиза */
     public static String getReleaseInfo(String licenceNumber){
         String result= "";

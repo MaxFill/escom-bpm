@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.users.groups;
 
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.facade.UserGroupsFacade;
@@ -21,6 +22,7 @@ import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
@@ -36,6 +38,18 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     @EJB
     private UserGroupsFacade itemFacade;     
     
+    public List<UserGroups> findOnlyGroups(){
+        return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP).stream()
+                    .filter(item -> preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+    }
+    
+    public List<UserGroups> findOnlyRoles(){
+        return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD).stream()
+                    .filter(item -> preloadCheckRightView(item))
+                    .collect(Collectors.toList());
+    }
+        
     /* Получение прав доступа для иерархического справочника */
     @Override
     public Rights getRightItem(BaseDict item) {
@@ -51,7 +65,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
         
         return getDefaultRights(item);
     }
-    
+        
     @Override
     public UserGroupsFacade getItemFacade() {
         return itemFacade;

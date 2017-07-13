@@ -22,4 +22,8 @@ public final class DictRights {
     
     public static final int TYPE_GROUP = 0;
     public static final int TYPE_USER = 1;
+    public static final int TYPE_ROLE = 2;
+    
+    public static final int ACTUALISE_IN_GROUP = 0;
+    public static final int ACTUALISE_IN_CARD = 1;
 }

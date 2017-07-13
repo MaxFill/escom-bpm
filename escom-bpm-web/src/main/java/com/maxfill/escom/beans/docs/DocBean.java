@@ -12,7 +12,6 @@ import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
-import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -52,8 +51,6 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     @EJB
     private DocFacade docsFacade;
-    @EJB
-    private AttacheFacade attacheFacade;
 
     @Override
     public void preparePasteItem(Doc pasteItem, BaseDict target) {
@@ -62,15 +59,13 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     @Override
     public Rights getRightItem(BaseDict item) {
-        if (item == null) {
-            return null;
-        }
+        if (item == null) return null;        
 
         if (!item.isInherits()) {
             return getActualRightItem(item);
         }
         if (item.getOwner() != null) {
-            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //РїРѕР»СѓС‡Р°РµРј РїСЂР°РІР° РёР· СЃРїРµС†.РїСЂР°РІ 
+            Rights childRight = ownerBean.getRightForChild(item.getOwner()); 
             if (childRight != null) {
                 return childRight;
             }
@@ -142,7 +137,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     protected void checkLockItem(Doc item, Set<String> errors){
         if (item.getState().getId().equals(DictStates.STATE_EDITED)){
-            Object[] messageParameters = new Object[]{item.getName(), item.getEditor()};
+            Object[] messageParameters = new Object[]{item.getName(), getItemFacade().getActorName(item, "editor")};
             String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
             errors.add(error);
             return;

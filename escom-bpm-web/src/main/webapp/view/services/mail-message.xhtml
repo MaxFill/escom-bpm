@@ -36,8 +36,7 @@
                         <f:facet name="options">
                             <p:commandButton value="#{bundle.Send}"
                                             icon="ui-icon-mail-closed"
-                                            update="#{_frm}:msgPanel"
-                                            type="submit"
+                                            update="#{_frm}"
                                             action="#{mailMessageBean.sendMail()}"/>
                             <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              title="#{bundle.Close}"

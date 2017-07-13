@@ -8,19 +8,21 @@
                 emptyMessage="#{bundle.EmptyTable}"
                 paginator="true" paginatorPosition="bottom" rows="7" style="font-size: 80%" >
         <p:accordionPanel>
-            <p:tab title="#{bundle.State}: #{state.name}" rendered="#{metadatesBean.selectedObject != null}">
+            <p:tab title="#{bundle.State}: #{state.bundleName}" rendered="#{metadatesBean.selectedObject != null}">
 
                 <h:panelGrid columns="2" styleClass="ui-panelgrid-blank" >                
-                    <p:commandButton id="btnRight" value="#{bundle.Add}" title="#{bundle.Add}"
+                    <p:commandButton id="btnRight" value="#{bundle.Add}" title="#{bundle.Add}" style="float: top;"
                                      icon="ui-icon-circle-plus"
                                      actionListener="#{metadatesBean.onAddRight(state)}">
                         <p:ajax event="dialogReturn" update="tblRightDoc"
                                     listener="#{metadatesBean.onCloseRightCard}"/>
                     </p:commandButton>
                     <p:dataTable id="tblRightDoc" value="#{metadatesBean.getRightsInState(state)}" 
+                                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
                                  selection="#{metadatesBean.selRight}" emptyMessage="#{bundle.EmptyTable}"
                                  var="right">
                         <p:column headerText="#{bundle.RightOwner}">
+                            <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
                             <h:outputText value="#{right.name}"/>
                         </p:column>
                         <p:column headerText="#{bundle.Read}" style="text-align: center;">

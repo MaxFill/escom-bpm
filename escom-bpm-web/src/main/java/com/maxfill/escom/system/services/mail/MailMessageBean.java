@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;

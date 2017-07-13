@@ -8,7 +8,11 @@ import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -176,6 +180,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Transient
     @XmlTransient
     private Rights rightForChild; //права для дочерних объектов 
+    
+    /* Роли объекта */
+    @Transient
+    @XmlTransient 
+    private Map<String, Set<Integer>> roles = new HashMap<>();
         
     public BaseDict(){}
         
@@ -386,6 +395,38 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setIconName(String iconName) {
         this.iconName = iconName;
     }     
+    
+    public Map<String, Set<Integer>> getRoles() {
+        return roles;
+    }
+    public void setRoles(Map<String, Set<Integer>> roles) {
+        this.roles = roles;
+    }
+        
+    /* Установка одиночной роли */
+    public void doSetSingleRole(String roleName, User user){
+        Set<Integer> usersId = new HashSet<>();
+        if (user != null){
+            usersId.add(user.getId());
+        }
+        doSetMultyRole(roleName, usersId);
+    }
+    
+    /* перезапись исполнителя в роле */
+    public void doSetMultyRole(String roleName, Set<Integer> usersId){
+        roles.put(roleName, usersId);
+    }
+    /* добавление исполнителя в роль */
+    public void doAddRole(String roleName, Integer userId){
+        Set<Integer> usersId;
+        if (roles.containsKey(roleName)){
+            usersId = roles.get(roleName);
+        } else {
+            usersId = new HashSet<>();
+        }
+        usersId.add(userId);
+        roles.put(roleName, usersId);
+    }
     
     /* Установка даты создания */  
     @PrePersist  

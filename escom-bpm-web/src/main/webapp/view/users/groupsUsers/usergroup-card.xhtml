@@ -19,18 +19,6 @@
                             disabled="#{_bean.isReadOnly()}"
                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">                   
                 </p:inputText>
-                <p:outputLabel value="#{bundle.TypeFilledGroup}:"/>
-                <p:selectOneRadio value="#{_bean.editedItem.typeActualize}" layout="grid" columns="1" >
-                    <f:selectItem itemLabel="#{bundle.InPropertiesGroup}" itemValue="0" />
-                    <f:selectItem itemLabel="#{bundle.InCardObject}" itemValue="1" />
-                    <p:ajax event="select" update="#{_frm}" />
-                </p:selectOneRadio>
-                <h:panelGroup rendered="#{_bean.editedItem.typeActualize == 1}" styleClass="ui-grid-col-12">
-                    <p:outputLabel value="#{bundle.SystemRoleName}:"/>
-                    <p:inputText value="#{_bean.editedItem.roleFieldName}" 
-                                 disabled="#{_bean.isReadOnly()}"
-                                 styleClass="ui-grid-col-12"/>
-                </h:panelGroup>
             </p:panelGrid>
         </p:tab>
         <p:tab title="#{bundle.Users}" rendered="#{_bean.editedItem.typeActualize == 0}"> 
