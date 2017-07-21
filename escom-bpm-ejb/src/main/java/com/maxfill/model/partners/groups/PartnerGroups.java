@@ -13,17 +13,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Группы контрагентов */
 @Entity
 @Table(name = "partnersGroups")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partner, PartnerGroupsLog>{
+public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partner, PartnerGroupsLog, PartnerGroupsStates>{
     private static final long serialVersionUID = 9082567805735998647L;
 
     @TableGenerator(
@@ -49,9 +52,23 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<PartnerGroupsLog> itemLogs = new ArrayList<>();
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private PartnerGroupsStates state;
+        
     public PartnerGroups() {
     }
 
+    @Override
+    public PartnerGroupsStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(PartnerGroupsStates state) {
+        this.state = state;
+    }
+    
     public List<Partner> getPartnersList() {
         return partnersList;
     }

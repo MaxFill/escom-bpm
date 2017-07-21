@@ -23,12 +23,13 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Вид документа */
 @Entity
 @Table(name = "docsTypes")
 @DiscriminatorColumn(name="REF_TYPE")
-public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLog>{      
+public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLog, DocTypeStates>{      
     private static final long serialVersionUID = 9082567805735735647L;
     
     @TableGenerator(
@@ -45,6 +46,11 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @Column(name = "Id")
     private Integer id;
        
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private DocTypeStates state;
+        
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private DocTypeGroups owner;    
@@ -72,6 +78,15 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @ManyToMany
     private List<StatusesDoc> statusDocList;
 
+    @Override
+    public DocTypeStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(DocTypeStates state) {
+        this.state = state;
+    }
+    
     @Override
     public String getIconName() {
         return "doc16"; 

@@ -13,17 +13,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Группы пользователей  */
 @Entity
 @Table(name = "usersGroups")
 @DiscriminatorColumn(name="REF_TYPE")
-public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroupsLog>{
+public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroupsLog, UserGroupsStates>{
     private static final long serialVersionUID = 9082349235115998647L;
     
     @TableGenerator(
@@ -52,9 +55,23 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     @Column(name = "RoleFieldName")
     private String roleFieldName;
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private UserGroupsStates state;
+        
     public UserGroups() {
     }
 
+    @Override
+    public UserGroupsStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(UserGroupsStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<UserGroupsLog> getItemLogs() {
         return itemLogs;

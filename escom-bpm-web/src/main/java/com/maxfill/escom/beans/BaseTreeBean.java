@@ -45,9 +45,9 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
             return getRightForChild(item.getOwner()); //получаем права от владельца
         }
 
-        return getDefaultRights();
+        return getDetailBean().getDefaultRights();
     }
-
+    
     /* Получение актуальных прав дочерних объектов от объекта */
     private Rights getActualRightChildItem(T item) {
         Rights actualRight = null;

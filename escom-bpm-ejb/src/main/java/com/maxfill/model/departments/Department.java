@@ -20,12 +20,13 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Подразделения */
 @Entity
 @Table(name = "departments")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Department extends BaseDict<Company, Department, Staff, DepartamentLog> {
+public class Department extends BaseDict<Company, Department, Staff, DepartamentLog, DepartmentStates> {
     private static final long serialVersionUID = -8752263203249959973L;
     
         @TableGenerator(
@@ -44,8 +45,8 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
      
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Company owner;
-    
+    private Company owner;    
+        
     @OneToMany(mappedBy = "parent")
     private List<Department> departmentList;
     
@@ -63,10 +64,24 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     @Size(max=50)
     @Column(name = "Code")
     private String code;
+       
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private DepartmentStates state;
         
     public Department() {
     }
 
+    @Override
+    public DepartmentStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(DepartmentStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<DepartamentLog> getItemLogs() {
         return itemLogs;

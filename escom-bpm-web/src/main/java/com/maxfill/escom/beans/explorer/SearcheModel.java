@@ -1,12 +1,14 @@
 package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /* Базовая модель данных для поиска объектов */
 public class SearcheModel implements Serializable {
@@ -14,7 +16,7 @@ public class SearcheModel implements Serializable {
         
     private String nameSearche;             //поиск в поле name
     private User authorSearche;             //поиск в поле автор
-    private List<Integer> stateSearche;     //поиск по состояниям
+    private List<State> stateSearche;     //поиск по состояниям
     private boolean onlyActualItem = true;  //признак поиска только актуальных объектов
     private boolean searcheInGroups;        //признак поиска с учётом групп
     private Date dateCreateStart;
@@ -127,10 +129,10 @@ public class SearcheModel implements Serializable {
         this.authorSearche = authorSearche;
     }
 
-    public List<Integer> getStateSearche() {
+    public List<State> getStateSearche() {
         return stateSearche;
     }
-    public void setStateSearche(List<Integer> stateSearche) {
+    public void setStateSearche(List<State> stateSearche) {
         this.stateSearche = stateSearche;
     }
 

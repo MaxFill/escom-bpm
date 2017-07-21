@@ -1,9 +1,9 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.companies.CompanyLog;
+import com.maxfill.model.companies.CompanyStates;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,16 +11,15 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.lang.StringUtils;
 
-/* Комапнии  */
 @Stateless
-public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog> {
+public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, CompanyStates> {
     protected static final Logger LOG = Logger.getLogger(CompanyFacade.class.getName());
     
     @EJB
     private UserFacade userFacade;
     
     public CompanyFacade() {
-        super(Company.class, CompanyLog.class);
+        super(Company.class, CompanyLog.class, CompanyStates.class);
     }
 
     @Override

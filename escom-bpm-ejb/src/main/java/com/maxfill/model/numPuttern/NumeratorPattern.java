@@ -1,4 +1,3 @@
-
 package com.maxfill.model.numPuttern;
 
 import com.maxfill.model.BaseDict;
@@ -14,20 +13,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
-/**
- * Шаблоны нумераторов
- * @author mfilatov
- */
 @Entity
 @Table(name = "numeratorPattern")
 @DiscriminatorColumn(name="REF_TYPE")
-public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPattern, NumeratorPattern, NumeratorPatternLog> {
+public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPattern, NumeratorPattern, NumeratorPatternLog, NumeratorPatternStates> {
     private static final long serialVersionUID = 7646428401886042406L;
 
     @TableGenerator(
@@ -69,7 +67,12 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     @NotNull
     @Column(name = "LeadingZeros")
     private Integer leadingZeros = 0;
-            
+    
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private NumeratorPatternStates state;
+        
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsResetNewYear")
@@ -84,6 +87,15 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     public NumeratorPattern() {
     }
 
+    @Override
+    public NumeratorPatternStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(NumeratorPatternStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<NumeratorPatternLog> getItemLogs() {
         return itemLogs;

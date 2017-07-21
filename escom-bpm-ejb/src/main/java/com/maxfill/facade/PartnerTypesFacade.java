@@ -4,14 +4,15 @@ package com.maxfill.facade;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.model.partners.types.PartnerTypesLog;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.partners.types.PartnerTypesStates;
 import javax.ejb.Stateless;
 
 /* Типы организаций контрагента */
 @Stateless
-public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerTypes, PartnerTypesLog> {
+public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerTypes, PartnerTypesLog, PartnerTypesStates> {
 
     public PartnerTypesFacade() {
-        super(PartnerTypes.class, PartnerTypesLog.class);
+        super(PartnerTypes.class, PartnerTypesLog.class, PartnerTypesStates.class);
     }
 
     @Override

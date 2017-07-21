@@ -75,7 +75,7 @@
 
             <ui:insert name="searche"/>
 
-            <p:outputLabel value="#{bundle.Author}"/>
+            <p:outputLabel value="#{bundle.Owner}"/>
             <p:selectOneMenu value="#{explorerBean.model.authorSearche}" filter="true" converter="usersConvertor" 
                              styleClass="ui-grid-col-12">
                 <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
@@ -83,10 +83,11 @@
             </p:selectOneMenu>        
 
             <p:outputLabel value="#{bundle.States}"/>
-            <p:selectCheckboxMenu id="stateChecks" value="#{explorerBean.model.stateSearche}" label="#{bundle.Select}" 
-                                  styleClass="ui-grid-col-12">
-                <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state.id}"/>
-            </p:selectCheckboxMenu>
+            <p:selectManyMenu id="stateChecks" value="#{explorerBean.model.stateSearche}" showCheckbox="true"
+                                label="#{bundle.Select}" converter="stateConvertor"
+                                styleClass="ui-grid-col-12">
+                <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{state.bundleName}" itemValue="#{state}"/>
+            </p:selectManyMenu>
 
             <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" 
                                      title="#{bundle.SearcheDateCreate}" 

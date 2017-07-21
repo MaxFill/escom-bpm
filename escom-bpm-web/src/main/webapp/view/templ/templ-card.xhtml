@@ -74,7 +74,17 @@
                                         actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
                             <ui:insert name="specActionMenu" />
                             <p:separator />
-                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
+                            <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}" 
+                                    rendered="#{!_bean.isReadOnly()}" 
+                                    onclick="document.getElementById('#{_frm}:btnSaveOnly').click();">
+                            </p:menuitem>
+                            <p:menuitem value="#{bundle.SaveClose}" 
+                                        rendered="#{!_bean.isReadOnly()}" 
+                                        icon="ui-icon-circle-check"                                      
+                                        onclick="document.getElementById('#{_frm}:btnSaveClose').click();">
+                            </p:menuitem>
+                            <p:separator />
+                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
                                         onclick="document.getElementById('#{_frm}:btnCancel').click();">  
                             </p:menuitem>
                         </p:submenu>
@@ -85,7 +95,7 @@
                                         actionListener="#{_bean.onPreViewBarcode()}"/>                        
                         </p:submenu>
                         <ui:insert name="specSubMenu" />
-                        <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}" 
+                        <p:menuitem id="btnSaveOnly" icon="ui-icon-disk" value="#{bundle.Save}" 
                                     rendered="#{!_bean.isReadOnly()}"                        
                                     update="#{_frm}"
                                     actionListener="#{_bean.doSaveItem()}"
@@ -106,9 +116,11 @@
                             <f:param name="isRequired" value="true"/>
                         </p:menuitem>
                         <f:facet name="options">
+                            <ui:insert name="specMenuButtons" />
                             <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"                                                                                             
                                              action="#{_bean.onCancelItemSave()}"
                                              icon="ui-icon-circle-close"
+                                             immediate="true"
                                              onclick="if (itemChange == 1)
                                                              onChangeItem();">
                                 <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>

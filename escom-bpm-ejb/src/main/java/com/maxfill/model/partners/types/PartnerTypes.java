@@ -12,16 +12,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Класс сущности для Типов контрагентов */
 @Entity
 @Table(name = "partnerTypes")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTypes, PartnerTypesLog> {
+public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTypes, PartnerTypesLog, PartnerTypesStates> {
     private static final long serialVersionUID = 311428867470166273L;
     
     @TableGenerator(
@@ -44,7 +47,21 @@ public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTy
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<PartnerTypesLog> itemLogs = new ArrayList<>();
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private PartnerTypesStates state;
+        
     public PartnerTypes() {
+    }
+
+    @Override
+    public PartnerTypesStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(PartnerTypesStates state) {
+        this.state = state;
     }
 
     @Override

@@ -23,19 +23,17 @@
         <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="page" listener="#{explorerBean.onPageChange}" oncomplete="initDND()"/>             
         
-        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+        <p:column width="16" selectionMode="multiple" style="text-align:center"/>
 
-        <p:column id="colIcon" width="36" style="font-size: 90%;" sortBy="#{item.iconName}">
+        <p:column width="16" sortBy="#{item.state.currentState.name}">
+            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{item.state.currentState.bundleName}"/>            
+        </p:column>
+        
+        <p:column width="16" sortBy="#{item.iconName}" id="colIcon">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
         <ui:insert name="specDetailColumns"/>
-
-        <p:column headerText="#{bundle.State}" sortBy="#{item.state.name}">            
-            <h:graphicImage id="iconDone" value="#{item.state.icon}" />
-            <p:spacer width="3"/>
-            #{item.state.bundleName}
-        </p:column>
         
         <p:column headerText="#{bundle.ShortName}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 

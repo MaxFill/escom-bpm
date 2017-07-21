@@ -5,6 +5,7 @@ import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.model.users.groups.UserGroupsLog;
+import com.maxfill.model.users.groups.UserGroupsStates;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,19 +20,14 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- *
- * @author Maxim
- */
 @Stateless
-public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, UserGroupsLog> {
-    protected static final Logger LOG = Logger.getLogger(UserGroups.class.getName());
+public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, UserGroupsLog, UserGroupsStates> {
     
     @EJB
     private UserFacade userFacade;
 
     public UserGroupsFacade() {
-        super(UserGroups.class, UserGroupsLog.class);
+        super(UserGroups.class, UserGroupsLog.class, UserGroupsStates.class);
     }
     
     /* Получение списка пользователей в группах */ 
@@ -147,7 +143,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         UserGroups group = createItem(userFacade.getAdmin());        
         group.setName(groupName);                
         create(group);        
-        LOG.log(Level.INFO, "Create userGroups = {0}", groupName);
+        LOGGER.log(Level.INFO, "Create userGroups = {0}", groupName);
         return group;
     }
 

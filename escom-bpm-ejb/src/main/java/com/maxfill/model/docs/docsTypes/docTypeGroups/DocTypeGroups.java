@@ -13,19 +13,22 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Группы видов документов */
 @Entity
 @Table(name = "docTypeGroups")
 @DiscriminatorColumn(name="REF_TYPE")
-public class DocTypeGroups extends BaseDict<DocTypeGroups, DocTypeGroups, DocType, DocTypeGroupsLog> {
+public class DocTypeGroups extends BaseDict<DocTypeGroups, DocTypeGroups, DocType, DocTypeGroupsLog, DocTypeGroupsStates> {
 private static final long serialVersionUID = -2116686297842684933L;
 
-@TableGenerator(
+    @TableGenerator(
         name="DocTypeGroupIdGen", 
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
@@ -48,9 +51,23 @@ private static final long serialVersionUID = -2116686297842684933L;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DocTypeGroupsLog> itemLogs = new ArrayList<>();
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private DocTypeGroupsStates state;
+        
     public DocTypeGroups() {
     } 
 
+    @Override
+    public DocTypeGroupsStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(DocTypeGroupsStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<DocTypeGroupsLog> getItemLogs() {
         return itemLogs;

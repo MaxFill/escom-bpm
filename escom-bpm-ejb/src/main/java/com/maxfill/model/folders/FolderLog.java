@@ -1,4 +1,3 @@
-
 package com.maxfill.model.folders;
 
 import com.maxfill.model.BaseLogTable;
@@ -12,10 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author mfilatov
- */
 @Entity
 @Table(name = "foldersLog")
 @DiscriminatorColumn(name="REF_TYPE")

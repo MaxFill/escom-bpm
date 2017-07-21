@@ -12,20 +12,23 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Компания, организация */
 @Entity
 @Table(name = "companies")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Company extends BaseDict<Company, Company, Department, CompanyLog> {    
+public class Company extends BaseDict<Company, Company, Department, CompanyLog, CompanyStates> {    
     private static final long serialVersionUID = 8479016605948929175L;
 
-        @TableGenerator(
+    @TableGenerator(
         name="idCompanyGen", 
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
@@ -43,8 +46,13 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog> 
     @Basic(optional = false)
     @Size(max=10)
     @Column(name = "Code")
-    private String code;
+    private String code;      
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private CompanyStates state;
+        
     @OneToMany(mappedBy = "owner")
     private List<Department> departmentsList = new ArrayList<>();
     
@@ -53,6 +61,15 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog> 
     
     public Company() {
     }
+
+    @Override
+    public CompanyStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(CompanyStates state) {
+        this.state = state;
+    }  
     
     @Override
     public List<CompanyLog> getItemLogs() {

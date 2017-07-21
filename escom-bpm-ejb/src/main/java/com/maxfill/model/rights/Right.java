@@ -11,6 +11,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -37,17 +38,21 @@ import javax.xml.bind.annotation.XmlTransient;
 public class Right implements Serializable{
     private static final long serialVersionUID = -6841901267921264389L;
    
+    /*
     @TableGenerator(
         name="rightIdGen", 
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
         valueColumnName="GEN_VALUE", 
         pkColumnValue="RIGHT_ID", allocationSize = 1)
-        
+     
+    */
+    
     @Id
     @Basic(optional = false)
     @NotNull
-    @GeneratedValue(strategy=TABLE, generator="rightIdGen")
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    //@GeneratedValue(strategy=TABLE, generator="rightIdGen")
     @Column(name = "Id")
     @XmlElement(name = "Id")
     private Integer id;     

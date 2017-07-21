@@ -75,6 +75,10 @@ public class Metadates implements Serializable{
     private List<Right> rightList;
     
     @XmlTransient
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadateObj")
+    private List<MetadatesStates> metadatesStates; //list satates object for available moved
+        
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "Metadates")
     private List<Filter> filters = new ArrayList<>();
     
@@ -83,7 +87,7 @@ public class Metadates implements Serializable{
         @JoinColumn(name = "ObjId", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "StateId", referencedColumnName = "ID")})
     @ManyToMany
-    private List<State> statesList;
+    private List<State> statesList; //list states available for object
           
     @JoinColumn(name = "StateForNewObj", referencedColumnName = "ID")
     @ManyToOne(optional = false)
@@ -105,6 +109,13 @@ public class Metadates implements Serializable{
         return iconObject;
     }
 
+    public List<MetadatesStates> getMetadatesStates() {
+        return metadatesStates;
+    }
+    public void setMetadatesStates(List<MetadatesStates> metadatesStates) {
+        this.metadatesStates = metadatesStates;
+    }
+    
     public String getName(){
         return ItemUtils.getBandleLabel(bundleName);
     }

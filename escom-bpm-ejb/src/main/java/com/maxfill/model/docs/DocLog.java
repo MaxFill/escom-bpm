@@ -1,4 +1,3 @@
-
 package com.maxfill.model.docs;
 
 import com.maxfill.model.BaseLogTable;
@@ -11,10 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-/**
- *
- * @author mfilatov
- */
 @Entity
 @Table(name = "docsLog")
 @DiscriminatorColumn(name="REF_TYPE")

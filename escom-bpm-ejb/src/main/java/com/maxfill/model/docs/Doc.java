@@ -44,7 +44,7 @@ import org.apache.commons.lang.StringUtils;
 @Entity
 @Table(name = "docs")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {            
+public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {            
     private static final long serialVersionUID = 5208895312598249913L;
 
     @TableGenerator(
@@ -98,6 +98,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     @ManyToMany
     private List<User> userList;
 
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private DocStates state;
+        
     /* Список статусов документа  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
     private List<DocStatuses> docsStatusList = new ArrayList<>();
@@ -113,6 +118,15 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog> {
     public Doc() {
     }
 
+    @Override
+    public DocStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(DocStates state) {
+        this.state = state;
+    }
+    
     @Override
     public Folder getOwner() {
         return owner;

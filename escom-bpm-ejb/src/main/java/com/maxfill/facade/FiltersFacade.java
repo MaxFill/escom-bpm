@@ -4,6 +4,7 @@ package com.maxfill.facade;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.filters.FilterLog;
+import com.maxfill.model.filters.FiltersStates;
 import com.maxfill.model.metadates.Metadates;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -15,10 +16,10 @@ import javax.persistence.criteria.Root;
 
 /* Фильтры */
 @Stateless
-public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog> {
+public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, FiltersStates> {
 
     public FiltersFacade() {
-        super(Filter.class, FilterLog.class);
+        super(Filter.class, FilterLog.class, FiltersStates.class);
     }
     
     @Override

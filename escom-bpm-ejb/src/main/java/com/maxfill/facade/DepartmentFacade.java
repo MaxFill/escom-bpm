@@ -4,6 +4,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
+import com.maxfill.model.departments.DepartmentStates;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,14 +21,14 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 
 @Stateless
-public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog> {
+public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog, DepartmentStates> {
     protected static final Logger LOG = Logger.getLogger(DepartmentFacade.class.getName());
 
     @EJB
     private UserFacade userFacade;
     
     public DepartmentFacade() {
-        super(Department.class, DepartamentLog.class);
+        super(Department.class, DepartamentLog.class, DepartmentStates.class);
     }
 
     @Override

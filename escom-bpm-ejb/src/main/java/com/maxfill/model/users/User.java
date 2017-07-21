@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -29,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "users")
 @DiscriminatorColumn(name="REF_TYPE")
-public class User extends BaseDict<UserGroups, User, User, UserLog>{    
+public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{    
     private static final long serialVersionUID = 9082349804115998647L;
 
     @TableGenerator(
@@ -101,6 +102,20 @@ public class User extends BaseDict<UserGroups, User, User, UserLog>{
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserLog> itemLogs = new ArrayList<>();
+        
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private UserStates state;
+
+    @Override
+    public UserStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(UserStates state) {
+        this.state = state;
+    }
         
     //возвращает сокращённое ФИО сотрудника
     @XmlTransient

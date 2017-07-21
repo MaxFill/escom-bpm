@@ -21,12 +21,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Штатная единица */
 @Entity
 @Table(name = "staffs")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
+public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffStates> {
     private static final long serialVersionUID = 7883918061335878269L;
 
     @TableGenerator(
@@ -67,9 +68,23 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog> {
     @Column(name = "IsFired")
     private boolean isFired;
 
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private StaffStates state;
+        
     public Staff() {
     }
 
+    @Override
+    public StaffStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(StaffStates state) {
+        this.state = state;
+    }
+    
     /* Формирует наименование Компания + Подразделение   */
     public String getOrgUnit() {
         StringBuilder orgUnit = new StringBuilder();

@@ -4,7 +4,6 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -13,6 +12,7 @@ import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
@@ -161,11 +161,16 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     /* Добавление версии к документу   */
-    public void addAttache(FileUploadEvent event) throws IOException{
+    public void addAttacheFromFile(FileUploadEvent event) throws IOException{
         onItemChange();        
-        docsBean.addAttache(getEditedItem(), event);                
+        docsBean.addAttacheFromFile(getEditedItem(), event);
     }
-        
+    
+    public void addAttacheFromScan(SelectEvent event){
+        onItemChange();
+        docsBean.addAttacheFromScan(getEditedItem(), event);
+    }
+    
     /* Удаление текущей версии документа  */
     public void removeCurrentVersion(){
         Attaches version =  null;
@@ -269,6 +274,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
     /* Возвращает true если у документа есть заблокированные вложения */
     public boolean getDocIsLock(){
         return docsBean.docIsLock(getEditedItem());
+    }
+    
+    @Override
+    public String prepSaveItemAndPublic(){
+        getItemFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
+        return super.prepSaveItemAndClose(); 
     }
     
     /* СТАТУСЫ ДОКУМЕНТА */

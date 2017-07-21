@@ -16,10 +16,14 @@
             </p:selectBooleanCheckbox>
             
             <p:outputLabel value="#{bundle.State}"/>
-            <p:inputText  value="#{_bean.editedItem.state.bundleName}" readonly="true"
-                          onkeypress="checkEsc(#{_bean.cancelBtnName});">
-            </p:inputText>
-
+            <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
+                           disabled="#{_bean.isReadOnly()}"
+                           required="#{param['isRequired'] == 'true'}" 
+                           requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{state.bundleName}" itemValue="#{state}" />                
+                <p:ajax event="change" listener="#{_bean.onStateChange()}" oncomplete="return itemChange = 1;"/>
+            </p:selectOneMenu>
+            
             <p:outputLabel value="#{bundle.DateCreate}" />                            
             <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
                          onkeypress="checkEsc(#{_bean.cancelBtnName});">

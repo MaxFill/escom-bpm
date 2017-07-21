@@ -4,14 +4,15 @@ package com.maxfill.facade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsStates;
 import javax.ejb.Stateless;
 
 /* Фасад для "Группы видов документов" */
 @Stateless
-public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGroups, DocTypeGroupsLog> {
+public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGroups, DocTypeGroupsLog, DocTypeGroupsStates> {
 
     public DocTypeGroupsFacade() {
-        super(DocTypeGroups.class, DocTypeGroupsLog.class);
+        super(DocTypeGroups.class, DocTypeGroupsLog.class, DocTypeGroupsStates.class);
     }  
 
     @Override

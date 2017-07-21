@@ -7,7 +7,11 @@ import com.maxfill.model.states.State;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
@@ -36,6 +40,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
     private User owner;
+    private State itemCurrentState;
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
     
     protected abstract void afterCreateItem(T item);
@@ -74,6 +79,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             
             setEditedItem(item);
             owner = item.getAuthor();
+            itemCurrentState = item.getState().getCurrentState();
             
             //если создание!
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
@@ -81,9 +87,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 afterCreateItem(item);
                 Set<String> errors = new LinkedHashSet<>();
                 checkCorrectItemRight(item, errors);
+                item.setDateCreate(new Date());
                 if (!errors.isEmpty()) {
                    EscomBeanUtils.showErrorsMsg(errors);
                 }
+                getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
             }
 
             prepareRightsForView(item);
@@ -116,6 +124,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             return "";
         }
         return closeItemForm(Boolean.TRUE);
+    }
+    
+    public String prepSaveItemAndPublic(){
+       return  prepSaveItemAndClose(); 
     }
     
     public boolean doSaveItem(){
@@ -246,12 +258,18 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         setRightPageIndex(tabId);
     }
 
-    /* Событие обработки изменения Владельца на карточке объекта */
+    /* Обработка события изменения состояния */
+    public void onStateChange(){
+        getEditedItem().getState().setPreviousState(itemCurrentState);
+    }
+    
+    /* Обработка события изменения Владельца на карточке объекта */
     public void onChangeOwner(SelectEvent event){
         List<User> users = (List<User>) event.getObject();
         if (users.isEmpty()) return;
         User user = users.get(0);
         getEditedItem().doSetSingleRole("owner", user);
+        getEditedItem().setAuthor(user);
         onItemChange();        
     }
     public void onChangeOwner(ValueChangeEvent event){
@@ -371,12 +389,13 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private void checkCorrectItemRight(T item, Set<String> errors){
         checkItemHaveRightEdit(item, errors);
         checkItemHaveRightView(item, errors);
-        checkRightsChilds(item, item.isInheritsAccessChilds(), errors);
+        //checkRightsChilds(item, item.isInheritsAccessChilds(), errors);
     }
     
+    /*
     protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){        
     }
-    
+    */
     /* ПРАВА ДОСТУПА: Возвращает список прав к объекту в конкретном состоянии
      * Права объекта, после того как они актуализированы, хранятся в поле rightItem объекта   */
     public List<Right> getRightItemForState(T item, State state) {
@@ -418,19 +437,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    /* Открытие окна сканирования */
-    public void onShowScan(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 900);
-        options.put("height", 700);
-        options.put("maximizable", true);
-        options.put("closable", true);
-        options.put("closeOnEscape", true);
-        RequestContext.getCurrentInstance().openDialog("scanning", options, null);
     }
     
     public String getCancelBtnName() {
@@ -491,6 +497,21 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return owner;  //пользователь, владелец объекта
     }
 
+    /* Возвращает список состояний доступных объекту из его текущего состояния */
+    public List<State> getAvailableStates(){        
+        Metadates metaObj = getMetadatesObj();
+        List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
+        List<State> result = metadatesStates.stream()
+                .filter(metadatesState -> Objects.equals(itemCurrentState, metadatesState.getStateSource()) 
+                        && !DictStates.MOVED_AUTO.equals(metadatesState.getMoveType()))
+                .map(metadatesState -> metadatesState.getStateTarget())
+                .collect(Collectors.toList());
+        if (!result.contains(itemCurrentState)){
+            result.add(itemCurrentState);
+        }
+        return result;
+    }
+    
     public Integer getRightPageIndex() {
         return rightPageIndex;
     }

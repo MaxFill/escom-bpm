@@ -7,6 +7,7 @@ import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.partners.PartnerStates;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -20,13 +21,13 @@ import javax.persistence.criteria.Root;
 
 /* Контрагенты */
 @Stateless
-public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, PartnersLog> {
+public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, PartnersLog, PartnerStates> {
 
     @EJB
     private PartnersGroupsFacade partnersGroupsFacade;    
     
     public PartnersFacade() {
-        super(Partner.class, PartnersLog.class);
+        super(Partner.class, PartnersLog.class, PartnerStates.class);
     }
         
     @Override

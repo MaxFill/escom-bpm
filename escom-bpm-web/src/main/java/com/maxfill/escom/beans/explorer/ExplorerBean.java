@@ -79,7 +79,7 @@ public class ExplorerBean implements Serializable {
     
     @EJB
     private FiltersFacade filtersFacade;
-    
+        
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
     protected BaseExplBean tableBean;
@@ -215,6 +215,21 @@ public class ExplorerBean implements Serializable {
         editItem = tableBean.createItemAndOpenCard(parent, owner, createParams);
     }
     
+    public Boolean checkCanCreateDetailItem(Set<String> errors){
+        typeEdit = DictEditMode.INSERT_MODE;
+        BaseDict parent = null;
+        BaseDict owner = null;
+        if (treeSelectedNode != null){
+            owner = (BaseDict) treeSelectedNode.getData();
+        }        
+        tableBean.checkCanCreateItem(parent, owner, errors, createParams);
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return false;
+        }
+        return true;
+    }
+        
     /* КАРТОЧКИ: обработка после закрытия карточки  */
     public void onUpdateAfterCloseForm(SelectEvent event){
         Tuple<Boolean, String> tuple = (Tuple) event.getObject();
@@ -243,7 +258,7 @@ public class ExplorerBean implements Serializable {
                 }
             }
             EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
-        }        
+        }
         createParams.clear();
         reloadDetailsItems(); 
         onSetCurrentItem(editItem);
@@ -1083,12 +1098,9 @@ public class ExplorerBean implements Serializable {
         if (StringUtils.isNotEmpty(name) && !SysParams.ALL.equals(name.trim())) {
             paramLIKE.put("name", name);
         }
-
+        
         //добавление в запрос критериев на вхождение
-        List<Integer> states = model.getStateSearche();
-        if (states != null && !states.isEmpty()) {
-            paramIN.put("state", states);
-        }
+        //paramIN.put("state", states);
 
         //добавление в запрос даты создания
         if (model.isDateCreateSearche()) {
@@ -1109,7 +1121,10 @@ public class ExplorerBean implements Serializable {
         Map<String, Object> addParams = new HashMap<>();
         model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
         
-        List<BaseDict> result = searcheBean.doSearche(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        List<Integer> statesIds = model.getStateSearche().stream().map(item -> item.getId()).collect(Collectors.toList());        
+                
+        List<BaseDict> result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();
         makeJurnalHeader(EscomBeanUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
@@ -1485,14 +1500,15 @@ public class ExplorerBean implements Serializable {
         Doc doc = (Doc) item;
         return doc.getAttache() != null;
     }   
-    
-    
-    public void onUploadFile(FileUploadEvent event) throws IOException{     
-        UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);      
-        Attaches attache = sessionBean.uploadAtache(uploadedFile);
-        createParams.put("attache", attache);
-    }
-    
+       
+    public void onUploadFile(FileUploadEvent event) throws IOException{        
+        if (checkCanCreateDetailItem(new HashSet<>())){
+            UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event); 
+            Attaches attache = sessionBean.uploadAtache(uploadFile);
+            createParams.put("attache", attache);
+        }
+    }    
+        
     /* Показать документ в папке */
     public void onShowDocInFolder(Doc doc){
         if (doc != null){
@@ -1809,7 +1825,7 @@ public class ExplorerBean implements Serializable {
     
     public Deque getNavigator() {
         return navigator;
-    }
+    }    
     
     public Map<String, Object> getCreateParams() {
         return createParams;

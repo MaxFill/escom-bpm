@@ -1,9 +1,9 @@
 package com.maxfill.model;
 
-import com.maxfill.model.states.State;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ import javax.persistence.Lob;
 @MappedSuperclass
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends BaseDict, L extends BaseLogTable> implements Serializable {
+public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends BaseDict, L extends BaseLogTable, T extends BaseStateItem> implements Serializable {
     private static final long serialVersionUID = 1844448252960314998L;
     private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
     
@@ -102,12 +102,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Basic(optional = false)
     @Column(name = "IsInheritsAccessChilds")
     private boolean inheritsAccessChilds;   
-    
+   
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private State state;
-      
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private T state;   
+    
     /* Журнал истории объекта  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<L> itemLogs = new ArrayList<>();
@@ -334,11 +334,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setAccessChild(byte[] accessChild) {
         this.accessChild = accessChild;
     }      
-    
-    public State getState() {
+
+    public T getState() {
         return state;
     }
-    public void setState(State state) {
+    public void setState(T state) {
         this.state = state;
     }
     
@@ -403,7 +403,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         this.roles = roles;
     }
         
-    /* Установка одиночной роли */
+    /* установка (перезапись) одиночной роли */
     public void doSetSingleRole(String roleName, User user){
         Set<Integer> usersId = new HashSet<>();
         if (user != null){
@@ -412,12 +412,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         doSetMultyRole(roleName, usersId);
     }
     
-    /* перезапись исполнителя в роле */
+    /* установка (перезапись) списоковой роли */
     public void doSetMultyRole(String roleName, Set<Integer> usersId){
         roles.put(roleName, usersId);
     }
     /* добавление исполнителя в роль */
-    public void doAddRole(String roleName, Integer userId){
+    public void doAddInRole(String roleName, Integer userId){
         Set<Integer> usersId;
         if (roles.containsKey(roleName)){
             usersId = roles.get(roleName);

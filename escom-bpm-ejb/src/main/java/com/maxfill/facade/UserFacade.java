@@ -11,6 +11,7 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.model.users.UserStates;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
@@ -33,8 +34,8 @@ import org.apache.commons.lang.StringUtils;
 
 /* Пользователи */
 @Stateless
-public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
-    protected static final Logger LOG = Logger.getLogger(UserFacade.class.getName());    
+public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserStates> {
+ 
     @EJB    
     private PostFacade postFacade;
     @EJB    
@@ -47,7 +48,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
     private UserGroupsFacade userGroupsFacade;
 
     public UserFacade() {
-        super(User.class, UserLog.class);
+        super(User.class, UserLog.class, UserStates.class);
     }
         
     @Override
@@ -150,7 +151,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog> {
         user.setEmail(email);
         user.setLDAPname(LDAPname); 
         create(user);        
-        LOG.log(Level.INFO, "Create user = {0}", login);
+        LOGGER.log(Level.INFO, "Create user = {0}", login);
         return user;
     } 
     

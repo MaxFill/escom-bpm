@@ -10,7 +10,7 @@
     <ui:param name="_item" value="#{_bean.editedItem}"/>
   
     <ui:define name="specActionMenu">
-        <p:separator/> 
+        <p:separator rendered="#{_item.id != null}"/> 
         <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
                     rendered="#{_item.id != null}"
                     update="dlgDocUrl:urlPanel"
@@ -26,11 +26,8 @@
     <ui:define name="specSubMenu"> 
         <p:submenu label="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
             <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}" title="#{bundle.DownloadCurrentVersion}"
-                        disabled="#{_bean.editedItem.attache == null}"
-                        actionListener="#{_bean.downloadCurrentVersion()}"/>
-            <p:separator/> 
-            <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}" title="#{bundle.Scaning}"        
-                        actionListener="#{_bean.onShowScan()}"/> 
+                        disabled="#{_bean.editedItem.attache == null}" ajax="false"
+                        action="#{_bean.downloadCurrentVersion()}"/>
             <p:separator/> 
             <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkPDF}"
                         rendered="#{_bean.editedItem.id != null}"
@@ -47,6 +44,19 @@
         </p:submenu>
     </ui:define>
 
+    <ui:define name="specMenuButtons">
+        <p:commandButton id="btnSaveCloseAndPublic" value="#{bundle.SaveAndPublish}" 
+                        rendered="#{!_bean.isReadOnly() and _bean.editedItem.state.currentState.id == 5}"
+                        icon="ui-icon-extlink"
+                        update="#{_frm}"
+                        action="#{_bean.prepSaveItemAndPublic()}"
+                        onclick="if (itemChange == 1) {
+                                    onChangeItem();
+                                }">
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
+    </ui:define>
+    
     <ui:define name="card_scripts">
         <p:commandButton id="setLockBtn" actionListener="#{docCardBean.onLockSelectedAttache()}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docCardBean.onUpdateSelectedAttache()}" update="#{_frm}:mainTabView:versionsTBL"/>
@@ -55,22 +65,22 @@
     
     <ui:define name="page_body">        
         <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
-            <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                <p:outputLabel value="#{bundle.Organization}:"/>
+            <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Organization}:" for="company"/>
                 <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
                                      disabled="#{_bean.isReadOnly() or _item.number != null}"
-                                     styleClass="ui-grid-col-12"
+                                     styleClass="ui-grid-col-12" 
                                      required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" itemDisabled="true"/>
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
                         <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.DocTypes}:" />
+                <p:outputLabel value="#{bundle.DocTypes}:"/>
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
                     <ui:param name="_required" value="#{true}" />

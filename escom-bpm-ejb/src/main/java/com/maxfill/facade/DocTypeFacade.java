@@ -7,6 +7,7 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.docs.docsTypes.DocTypeStates;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -18,10 +19,10 @@ import javax.persistence.criteria.Root;
 
 /* Фасад для сущности "Виды документов" */
 @Stateless
-public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTypeLog> {
+public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTypeLog, DocTypeStates> {
 
     public DocTypeFacade() {
-        super(DocType.class, DocTypeLog.class);
+        super(DocType.class, DocTypeLog.class, DocTypeStates.class);
     }  
 
     @Override

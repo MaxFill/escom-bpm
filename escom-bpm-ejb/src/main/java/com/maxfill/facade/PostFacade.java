@@ -5,11 +5,9 @@ import com.maxfill.model.posts.PostLog;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import java.util.HashMap;
-import java.util.Map;
+import com.maxfill.model.posts.PostStates;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -24,14 +22,13 @@ import org.apache.commons.lang.StringUtils;
  * @author Maxim
  */
 @Stateless
-public class PostFacade extends BaseDictFacade<Post, Post, PostLog> {
-    protected static final Logger LOG = Logger.getLogger(PostFacade.class.getName());    
+public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> {  
     
     @EJB
     private UserFacade userFacade;
 
     public PostFacade() {
-        super(Post.class, PostLog.class);
+        super(Post.class, PostLog.class, PostStates.class);
     }
 
     @Override
@@ -61,7 +58,7 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog> {
         Post post = createItem(userFacade.getAdmin());
         post.setName(postName);
         create(post);
-        LOG.log(Level.INFO, "Create post = {0}", postName);
+        LOGGER.log(Level.INFO, "Create post = {0}", postName);
         return post;
     }
 

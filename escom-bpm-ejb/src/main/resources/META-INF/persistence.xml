@@ -43,12 +43,29 @@
     <class>com.maxfill.model.metadates.Metadates</class>
     <class>com.maxfill.model.folders.Folder</class>
     <class>com.maxfill.model.folders.FolderLog</class>
+    <class>com.maxfill.model.folders.FolderStates</class>
     <class>com.maxfill.model.filters.Filter</class>
     <class>com.maxfill.model.filters.FilterLog</class>
     <class>com.maxfill.model.docs.docStatuses.DocStatuses</class>
     <class>com.maxfill.model.users.groups.UserGroupsLog</class>
     <class>com.maxfill.model.users.groups.UserGroups</class>
     <class>com.maxfill.model.messages.UserMessages</class>
+    <class>com.maxfill.model.users.groups.UserGroupsStates</class>
+    <class>com.maxfill.model.companies.CompanyStates</class>
+    <class>com.maxfill.model.departments.DepartmentStates</class>
+    <class>com.maxfill.model.docs.DocStates</class>
+    <class>com.maxfill.model.docs.docsTypes.DocTypeStates</class>
+    <class>com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsStates</class>
+    <class>com.maxfill.model.filters.FiltersStates</class>
+    <class>com.maxfill.model.numPuttern.NumeratorPatternStates</class>
+    <class>com.maxfill.model.partners.PartnerStates</class>
+    <class>com.maxfill.model.partners.groups.PartnerGroupsStates</class>
+    <class>com.maxfill.model.partners.types.PartnerTypesStates</class>
+    <class>com.maxfill.model.posts.PostStates</class>
+    <class>com.maxfill.model.staffs.StaffStates</class>
+    <class>com.maxfill.model.statuses.StatusesDocStates</class>
+    <class>com.maxfill.model.users.UserStates</class>
+    <class>com.maxfill.model.metadates.MetadatesStates</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

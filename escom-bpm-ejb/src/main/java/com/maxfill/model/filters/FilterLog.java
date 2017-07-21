@@ -1,4 +1,3 @@
-
 package com.maxfill.model.filters;
 
 import com.maxfill.model.BaseLogTable;
@@ -13,10 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author mfilatov
- */
 @Entity
 @Table(name = "filtersLog")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -63,7 +58,7 @@ public class FilterLog extends BaseLogTable<Filter>{
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.partners.PartnersLog[ id=" + id + " ]";
+        return "FilterLog[ id=" + id + " ]";
     }
     
 }

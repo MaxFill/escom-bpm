@@ -1,9 +1,11 @@
 package com.maxfill.facade;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
 import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -22,6 +25,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -32,10 +36,12 @@ import javax.persistence.criteria.Subquery;
  * @param <T>   //класс объекта
  * @param <O>   //класс владельца объекта
  * @param <L>   //класс таблицы лога
+ * @param <S>   //класс таблицы состояний
  */
-public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogTable> extends BaseFacade<T>{
+public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogTable, S extends BaseStateItem> extends BaseFacade<T>{
     private final Class<T> itemClass; 
-    private final Class<L> logClass;   
+    private final Class<L> logClass; 
+    private final Class<S> stateClass;
     
     @EJB
     private MetadatesFacade metadatesFacade; 
@@ -45,30 +51,64 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     protected RightFacade rightFacade;    
     @EJB
     protected Configuration configuration;          
-    
+    @EJB
+    private StateFacade stateFacade;
+        
+    public BaseDictFacade(Class<T> itemClass, Class<L> logClass, Class<S> stateClass) {
+        super(itemClass);
+        this.itemClass = itemClass;
+        this.logClass = logClass;
+        this.stateClass = stateClass;
+    } 
+        
     /* СОЗДАНИЕ: cоздание объекта */
     public T createItem(User author) {
         try {
-            State state = getMetadatesObj().getStateForNewObj();
             T item = itemClass.newInstance();
             item.setAuthor(author);
             item.setActual(true);
             item.setDeleted(false);
-            item.setInherits(true);            
-            item.setState(state);
+            item.setInherits(true);
+            item.doSetSingleRole("owner", author);
+            doSetState(item, getMetadatesObj().getStateForNewObj());
             return item;
         } catch (IllegalAccessException | InstantiationException ex) {
-            Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }    
-                
-    public BaseDictFacade(Class<T> itemClass, Class<L> logClass) {
-        super(itemClass);
-        this.itemClass = itemClass;
-        this.logClass = logClass;
-    }  
     
+    /* установка состояния объекта */     
+    public void doSetState(T item, State currentState){
+        try {
+            BaseStateItem stateItem = item.getState();
+            State previousState = null;
+            if (stateItem == null){
+                stateItem = stateClass.newInstance();
+            } else {
+                previousState = stateItem.getCurrentState();
+            }
+            stateItem.setPreviousState(previousState);
+            stateItem.setCurrentState(currentState);
+            item.setState(stateItem);
+        } catch (IllegalAccessException | InstantiationException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void doSetStateById(T item, Integer stateId){
+        doSetState(item, stateFacade.find(stateId)); 
+    }
+    
+    public void returnToPrevState(T item){
+        BaseStateItem stateItem = item.getState();
+        State previousState = stateItem.getPreviousState();
+        if (previousState != null){
+            stateItem.setCurrentState(previousState);
+            item.setState(stateItem);
+        }
+    }
+            
     /* Возвращает подчинённые объекты для владельца  */
     public List<T> findDetailItems(O owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -234,13 +274,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         getEntityManager().remove(entity);
     }
         
-    public List<T> getByParameters(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
-        CriteriaQuery<T> criteriaQuery = selectQueryByParameters(paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
+    public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
+        CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);
         return query.getResultList();
     }
 
-    protected <EC> CriteriaQuery<EC> selectQueryByParameters(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> entityClass, Map<String, Object> addParams) {
+    protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> entityClass, Map<String, Object> addParams) {
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<EC> criteriaQuery = builder.createQuery(entityClass);
@@ -248,6 +288,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         
         List<Predicate> criteries = new ArrayList<>(); 
         criteries.add(builder.equal(root.get("deleted"), false));
+        
+        
+        if (!states.isEmpty()) { 
+            Join stateJoin = root.join("state");
+            Predicate predicate = stateJoin.get("currentState").in(states);
+            criteries.add(predicate);
+        }
         
         for (Map.Entry<String, Object> param : paramIN.entrySet()) { 
             Predicate predicate = root.get(param.getKey()).in((List<Integer>)param.getValue());

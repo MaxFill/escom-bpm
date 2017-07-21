@@ -2,6 +2,7 @@ package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.utils.EscomUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -63,6 +64,35 @@ public class FileServiceImpl implements FileService{
         }
     }
 
+    @Override
+    @Asynchronous
+    public void uploadScan(Attaches attache, byte[] data){
+        FileOutputStream outputStream = null;
+        try {            
+            String uploadPath = conf.getUploadPath();
+            StringBuilder sb = new StringBuilder();
+            String fileName = attache.getName();
+            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
+            File outputFile = new File(basePath);
+            outputStream = new FileOutputStream(outputFile);
+            outputStream.write(data, 0, data.length);
+            if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
+                makeCopyToPDF(basePath, conf.getConvertorPDF());
+            }
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, null, e);
+        } finally {
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException ex) {
+                    LOG.log(Level.SEVERE, null, ex);
+                }
+            }
+        }    
+    }
+    
     private void makeCopyToPDF(String file, String pdfConvertor) {       
         if (StringUtils.isBlank(pdfConvertor)) return;
         try {            

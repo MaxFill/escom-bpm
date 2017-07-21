@@ -50,7 +50,6 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-
         <p:column headerText="#{bundle.Type}" sortBy="#{item.typeName}" >
             <h:outputText value="#{item.typeName}"/>           
         </p:column>
@@ -58,7 +57,6 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-
     </ui:define> 
 
     <ui:define name="specCommandLinks">
@@ -92,7 +90,10 @@
                     actionListener="#{explorerBean.onShowDocInFolder(item)}"/>
     </ui:define>
 
-    <ui:define name="addToolButtons">
+    <ui:define name="addMenuCreates" >        
+    </ui:define>
+    
+    <ui:define name="addToolButtons">        
         <p:menuButton value="#{bundle.Reports}" >
             <p:menuitem value="#{bundle.DocReportCountTypes}" 
                         icon="ui-icon-note"

@@ -22,7 +22,8 @@
         <pe:layout fullPage="true" options="#{addAttacheBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{addAttacheBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%;">
+                <h:form id="#{_frm}" style="font-size: 90%;">                    
+                    
                     <p:hotkey bind="esc" id="hotskey"
                               immediate="true"                             
                               onstart="document.getElementById('#{_frm}:btnClose').click();"> 
@@ -30,11 +31,20 @@
                     
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.Close}"
-                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
-                            </p:menuitem>
+                                <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}"
+                                            onclick="document.getElementById('#{_frm}:btnScan').click();">
+                                </p:menuitem>
+                                <p:separator />
+                                <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                            onclick="document.getElementById('#{_frm}:btnClose').click();">
+                                </p:menuitem>
                         </p:submenu>
+
                         <f:facet name="options">
+                            <p:commandButton id="btnScan" icon="ui-icon-clipboard" value="#{bundle.Scaning}"     
+                                actionListener="#{sessionBean.openScaningForm()}"> 
+                                <p:ajax event="dialogReturn" listener="#{addAttacheBean.addAttacheFromScan}"/>
+                            </p:commandButton>
                             <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              title="#{bundle.Close}"
                                              immediate="true"

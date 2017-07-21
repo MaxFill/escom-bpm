@@ -74,11 +74,12 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     }    
     
     /* Проверка на наличие у объекта корректных прав доступа */
+    /*
     @Override
     protected void checkRightsChilds(Department item, Boolean isInheritsAccessChilds, Set<String> errors){ 
         //Подразделение может наследовать права доступа для дочерних объектов от компании
     }
-    
+    */
     @Override
     protected void afterCreateItem(Department item) {        
         makeCode();

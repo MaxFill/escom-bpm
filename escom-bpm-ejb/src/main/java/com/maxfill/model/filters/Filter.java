@@ -19,12 +19,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Фильтры журнала объектов  */
 @Entity
 @Table(name = "filters")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog> {
+public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStates> {
     private static final long serialVersionUID = 6183682742885585999L;
     
     @TableGenerator(
@@ -51,9 +52,23 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<FilterLog> itemLogs = new ArrayList<>();
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private FiltersStates state;
+        
     public Filter() {
     }
 
+    @Override
+    public FiltersStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(FiltersStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<FilterLog> getItemLogs() {
         return itemLogs;

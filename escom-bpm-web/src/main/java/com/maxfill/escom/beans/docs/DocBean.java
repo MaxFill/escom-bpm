@@ -37,6 +37,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
 @Named(value = "docsBean")
@@ -81,9 +82,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             doc.setDocType(docType);
         }
         doc.setDateDoc(new Date());
-        if (doc.getOwner().getId() == null) { //СЃР±СЂРѕСЃ owner РµСЃР»Рё РґРѕРєСѓРјРµРЅС‚ СЃРѕР·РґР°С‘С‚СЃСЏ РІ РєРѕСЂРЅРµ Р°СЂС…РёР°!
+        if (doc.getOwner().getId() == null) { 
             doc.setOwner(null);
-        }
+        }        
         if (params != null && !params.isEmpty()) {
             Attaches attache = (Attaches) params.get("attache");
             if (attache != null) {
@@ -150,19 +151,31 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     public boolean docIsLock(Doc doc) {
-        return doc.getState().getId().equals(DictStates.STATE_EDITED);
+        return DictStates.STATE_EDITED.equals(doc.getState().getCurrentState().getId());
     }
-
+       
     /* ВЛОЖЕНИЯ */
     
     public Integer getMaxFileSize(){
         return SysParams.MAX_FILE_SIZE;
     }
-        
-    public Attaches addAttache(Doc doc, FileUploadEvent event) throws IOException {
+    
+    public Attaches addAttacheFromScan(Doc doc, SelectEvent event){
+        if (event.getObject() == null) return null;
+        Attaches attache = (Attaches) event.getObject();
+        addAttacheInDoc(doc, attache);
+        return attache;
+    }
+    
+    public Attaches addAttacheFromFile(Doc doc, FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         Attaches attache = sessionBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
+        addAttacheInDoc(doc, attache);        
+        return attache;
+    }
+            
+    private void addAttacheInDoc(Doc doc, Attaches attache){
         Integer version = doc.getNextVersionNumber();
         attache.setNumber(version);
         attache.setDoc(doc);
@@ -173,9 +186,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
                 .forEach(attacheVersion -> attacheVersion.setCurrent(false));
         doc.getAttachesList().add(attache);        
         EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
-        return attache;
     }
-
+    
     public void onOpenFormLockMainAttache(Doc doc) {
         Attaches attache = doc.getAttache();
         if (attache != null) {

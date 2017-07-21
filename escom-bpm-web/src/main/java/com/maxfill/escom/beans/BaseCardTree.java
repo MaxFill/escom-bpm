@@ -43,7 +43,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         onItemChange();
         Set<String> errors = new LinkedHashSet<>();
         Boolean inherit = (Boolean) event.getNewValue();
-        checkRightsChilds(getEditedItem(), inherit, errors);
+        //checkRightsChilds(getEditedItem(), inherit, errors);
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return;
@@ -66,14 +66,16 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         }
     }
     
+    
     /* Проверка на наличие у объекта корректных прав доступа для дочерних объектов */
+    /*
     @Override
     protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){ 
         if (isInheritsAccessChilds && item.getParent() == null){
             errors.add(getMessageLabel("RightsChildInheritIncorrect"));
         }
     }
-    
+    */
     protected abstract List<State> getStateForChild();
     
     /* Удаление права доступа к дочерним объеткам из списка  */

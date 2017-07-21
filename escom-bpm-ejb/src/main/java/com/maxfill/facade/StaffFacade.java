@@ -11,6 +11,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.model.staffs.StaffStates;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +30,14 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
-public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog> {
+public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, StaffStates> {
     protected static final Logger LOG = Logger.getLogger(StaffFacade.class.getName());
     
     @EJB
     private UserFacade userFacade;
 
     public StaffFacade() {
-        super(Staff.class, StaffLog.class);
+        super(Staff.class, StaffLog.class, StaffStates.class);
     }
     
     @Override

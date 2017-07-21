@@ -5,14 +5,15 @@ import com.maxfill.model.statuses.StatusesDocLog;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.model.statuses.StatusesDocStates;
 import javax.ejb.Stateless;
 
 /* Cтатусы документов */
 @Stateless
-public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog> {
+public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog, StatusesDocStates> {
 
     public StatusesDocFacade() {
-        super(StatusesDoc.class, StatusesDocLog.class);
+        super(StatusesDoc.class, StatusesDocLog.class, StatusesDocStates.class);
     }
 
     @Override

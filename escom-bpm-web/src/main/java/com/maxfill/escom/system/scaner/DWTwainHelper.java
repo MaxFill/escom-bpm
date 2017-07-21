@@ -13,7 +13,7 @@ public class DWTwainHelper {
     private String productKey;
     private Boolean isTrial;
 
-    private final Map<String, String> scanFileTypesLabel = new HashMap<String, String>();
+    private final Map<String, String> scanFileTypesLabel = new HashMap<>();
 
     private enum ScanFileType {
         BMP,

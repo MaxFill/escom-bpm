@@ -34,7 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 @Entity
 @Table(name = "partners")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersLog>{     
+public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersLog, PartnerStates>{     
     private static final long serialVersionUID = 9082567804115998647L;
         
     @TableGenerator(
@@ -89,10 +89,24 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Transient
     @XmlTransient
     private Integer templRegNumber; //номер регистрационный, сохраняется только на время регистрации для отката
+       
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private PartnerStates state;
         
     public Partner() {
     }
 
+    @Override
+    public PartnerStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(PartnerStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<PartnersLog> getItemLogs() {
         return itemLogs;

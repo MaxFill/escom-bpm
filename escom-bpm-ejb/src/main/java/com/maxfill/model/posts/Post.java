@@ -11,16 +11,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Должность */
 @Entity
 @Table(name = "posts")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Post extends BaseDict<Post, Post, Post, PostLog> {
+public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
     private static final long serialVersionUID = 9047767804115998647L;
 
     @TableGenerator(
@@ -40,9 +43,23 @@ public class Post extends BaseDict<Post, Post, Post, PostLog> {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<PostLog> itemLogs = new ArrayList<>();
 
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private PostStates state;
+        
     public Post() {
     }
 
+    @Override
+    public PostStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(PostStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<PostLog> getItemLogs() {
         return itemLogs;

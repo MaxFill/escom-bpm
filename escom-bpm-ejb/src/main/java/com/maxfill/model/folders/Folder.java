@@ -1,6 +1,7 @@
 package com.maxfill.model.folders;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.departments.DepartmentStates;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.users.User;
@@ -21,12 +22,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Класс сущности "Папки документов"  */
 @Entity
 @Table(name = "folders")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
+public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderStates>{
     private static final long serialVersionUID = -7531636538666889579L;
 
     @TableGenerator(
@@ -50,6 +52,11 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     @ManyToOne(optional = false)
     private User moderator;
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private FolderStates state;
+        
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsModeration")
@@ -73,6 +80,15 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
     public Folder(){
     }
 
+    @Override
+    public FolderStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(FolderStates state) {
+        this.state = state;
+    }
+    
     @Override
     public List<Doc> getDetailItems() {
         return docsList;
@@ -115,10 +131,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog>{
         } else{
             return ItemUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
-    }
-    
-    public Folder(Integer id) {  
-        this.id = id;
     }
                
     @Override

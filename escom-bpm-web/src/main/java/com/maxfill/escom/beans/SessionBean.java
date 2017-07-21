@@ -346,6 +346,12 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
     }
     
+    /* Открытие окна сканирования */
+    public void openScaningForm(){
+        Map<String, List<String>> paramMap = new HashMap<>();
+        openDialogFrm(DictDlgFrmName.FRM_SCANING, paramMap);
+    }
+    
     /* Открытие формы нового почтового сообщения  */
     public void openMailMsgForm(String mode, List<BaseDict> docs){      
         List<String> openModeList = new ArrayList<>();
@@ -510,7 +516,7 @@ public class SessionBean implements Serializable{
             attache.setType(uploadFile.getContentType());
             attache.setSize(length);
             attache.setAuthor(currentUser);
-            attache.setDateCreate(new Date());                        
+            attache.setDateCreate(new Date());
 
             fileService.doUpload(attache, uploadFile.getInputstream());            
         }

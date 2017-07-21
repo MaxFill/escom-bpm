@@ -2,7 +2,6 @@
 package com.maxfill.model.statuses;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -13,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /* Справочник статусов для документов */
 @Entity
@@ -27,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
 @DiscriminatorColumn(name="REF_TYPE")
-public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc, StatusesDocLog> {
+public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc, StatusesDocLog, StatusesDocStates> {
     private static final long serialVersionUID = -8577581379121348639L;
 
     @TableGenerator(
@@ -47,6 +49,20 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<StatusesDocLog> itemLogs = new ArrayList<>();            
     
+    @XmlTransient
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private StatusesDocStates state;
+
+    @Override
+    public StatusesDocStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(StatusesDocStates state) {
+        this.state = state;
+    }
+            
     @Override
     public Integer getId() {
         return id;

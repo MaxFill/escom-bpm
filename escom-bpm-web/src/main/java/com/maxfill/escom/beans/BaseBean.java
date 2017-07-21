@@ -70,7 +70,6 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     private boolean isItemChange;               //признак изменения записи  
 
     protected User currentUser;
-    private Integer defaultMaskAccess;          //дефолтная маска доступа текущего пользователя 
     private Metadates metadatesObj;             //объект метаданных
     
     public abstract BaseDictFacade getItemFacade(); //установка фасада объекта    
@@ -181,7 +180,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
       */  
     /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
     public Integer getAccessMask(BaseDict item, Rights sourcesRight, User user) {
-        State state = item.getState();
+        State state = item.getState().getCurrentState();
         Integer userId = user.getId();
         Integer accessMask = 0;
         for (Right right : sourcesRight.getRights()) {  //распарсиваем права 

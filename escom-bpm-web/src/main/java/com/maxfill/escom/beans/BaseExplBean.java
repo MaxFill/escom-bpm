@@ -70,7 +70,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
-        }       
+        }
         openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
         return editItem;
     } 
@@ -78,12 +78,18 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Создание объекта с открытием карточки */
     public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> params){
         Set<String> errors = new HashSet<>();
-        T newItem = createItem(owner, currentUser);
-        prepCreate(newItem, parent, errors, params);         
-        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);        
+        T newItem = checkCanCreateItem(parent, owner, errors, params);
+        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);
         return newItem;
     }
 
+    /* Проверка возможности создание объекта с открытием карточки */
+    public T checkCanCreateItem(BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
+        T newItem = createItem(owner, currentUser);
+        prepCreate(newItem, parent, errors, params);
+        return newItem;
+    }
+    
     /* Открытие карточки объекта*/
     public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
         if (!errors.isEmpty()){
@@ -110,7 +116,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Действия перед созданием объекта */
     private void prepCreate(T newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
         boolean isAllowedEditOwner = true;
-        BaseDictFacade facade = getItemFacade();
         BaseDict owner = newItem.getOwner();
         if (owner != null) {
             getOwnerBean().actualizeRightItem(owner);
@@ -120,10 +125,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             newItem.setParent(parent);
             makeRightItem(newItem);
             if (isHaveRightCreate(newItem)) {
-                setSpecAtrForNewItem(newItem, params);
-                facade.addLogEvent(newItem, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
+                setSpecAtrForNewItem(newItem, params);                
             } else {
-                String objName = ItemUtils.getBandleLabel(facade.getMetadatesObj().getBundleName());
+                String objName = ItemUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
                 String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
                 errors.add(error);
             }
@@ -479,9 +483,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public List<T> doSearche(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
-        List<T> sourceItems = getItemFacade().getByParameters(paramEQ, paramLIKE, paramIN, paramDATE, addParams);        
-        if (searcheGroups.isEmpty()){            
+    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
+        List<T> sourceItems = getItemFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+        if (searcheGroups.isEmpty()){
             return prepareSetDetails(sourceItems);
         } else {
             List<T> searcheItems = new ArrayList<>();
@@ -502,9 +506,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 if (include){
                     searcheItems.add(item);
                 }
-            }            
+            }
             return prepareSetDetails(searcheItems);
-        }                
+        }
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

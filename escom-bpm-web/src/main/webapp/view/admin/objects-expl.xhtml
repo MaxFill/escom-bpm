@@ -4,11 +4,24 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ.xhtml">
-
+        
     <ui:param name="_explorerHeader" value="#{bundle.Rights}"/>        
 
     <ui:define name="body">
 
+    <style>
+        .ui-tabs-left>.ui-tabs-panels{
+            float:left !important;
+        }
+        .ui-tabs .ui-tabs-panel{
+            padding: 0em 1.4em !important;
+        }
+        ul.ui-menu-child {
+            white-space: nowrap;
+            width: auto !important;
+        }
+    </style>
+    
         <pe:layout fullPage="true" widgetVar="wvFoldersExpl" options="#{metadatesBean.layoutOptions}">
             <pe:layoutPane id="luFrmObjTree" position="west"  resizable="true" > 
                 <h:form style="font-size: 80%;">
@@ -29,7 +42,7 @@
 
             <pe:layoutPane id="luFrmDocs" position="center" resizable="true">                 
                 <h:form id="frmFldDefRight" style="font-size: 90%;"> 
-                    <p:tabView id="mainTab">
+                    <p:tabView id="mainTab" orientation="left">
                         <p:tab title="#{bundle.Rights}" > 
                             <ui:include src="/view/admin/rights/objectsRight.xhtml"/>
                         </p:tab>

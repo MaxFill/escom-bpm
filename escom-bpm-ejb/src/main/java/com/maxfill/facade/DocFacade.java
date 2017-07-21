@@ -12,16 +12,14 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
+import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -37,16 +35,14 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 
 @Stateless
-public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
+public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     @EJB
     private AttacheService attacheService;
-    @EJB
-    private StateFacade stateFacade;
     @EJB
     private UserFacade userFacade;
     
     public DocFacade() {
-        super(Doc.class, DocLog.class);
+        super(Doc.class, DocLog.class, DocStates.class);
     }          
     
     @Override
@@ -174,14 +170,14 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog>{
         
     /* Установка состояния редактирования документа */
     public void doSetEditState(Doc doc, User user){
-        doc.setState(stateFacade.find(DictStates.STATE_EDITED));
+        doSetStateById(doc, DictStates.STATE_EDITED);
         doc.doSetSingleRole("editor", user);
         edit(doc);
     }
     
     /* Снятие состояния редактировани документа */
     public void doRemoveEditState(Doc doc){
-        doc.setState(stateFacade.find(DictStates.STATE_VALID));
+        returnToPrevState(doc);        
         doc.doSetSingleRole("editor", null);
         edit(doc);
     }

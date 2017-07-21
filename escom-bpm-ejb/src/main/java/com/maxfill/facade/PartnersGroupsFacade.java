@@ -6,6 +6,7 @@ import com.maxfill.model.partners.groups.PartnerGroupsLog;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.model.partners.groups.PartnerGroupsStates;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +14,10 @@ import javax.ejb.Stateless;
 
 /* Группы контрагентов */
 @Stateless
-public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerGroups, PartnerGroupsLog> {
+public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerGroups, PartnerGroupsLog, PartnerGroupsStates> {
 
     public PartnersGroupsFacade() {
-        super(PartnerGroups.class, PartnerGroupsLog.class);
+        super(PartnerGroups.class, PartnerGroupsLog.class, PartnerGroupsStates.class);
     }    
 
     @Override

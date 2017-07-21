@@ -2,7 +2,6 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.facade.BaseFacade;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.Doc;
 import java.util.List;
@@ -11,7 +10,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 

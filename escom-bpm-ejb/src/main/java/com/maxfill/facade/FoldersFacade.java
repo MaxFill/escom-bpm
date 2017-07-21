@@ -5,10 +5,8 @@ import com.maxfill.model.folders.FolderLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.model.folders.FolderStates;
 import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,12 +16,10 @@ import javax.persistence.criteria.Root;
 
 /* Папки  */
 @Stateless
-public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog> {
-    @EJB
-    private DocTypeFacade docTypeFacade;
+public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, FolderStates> {
     
     public FoldersFacade() {
-        super(Folder.class, FolderLog.class);
+        super(Folder.class, FolderLog.class, FolderStates.class);
     }        
      
     @Override

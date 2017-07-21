@@ -163,6 +163,11 @@ public class WebDavRemainder {
     @Timeout
     public void doTimer(Timer timer) {      
         Attaches attache = (Attaches) timer.getInfo();
+        if (attache == null){
+            timer.cancel();
+            LOG.log(Level.INFO, "The timer is stopped because феесфру is null ! ");
+            return;
+        }
         LOG.log(Level.INFO, "Start work remainder for attache: {0}", attache.getName());
         timerWork(attache);        
         LOG.log(Level.INFO, "Finish work remainder for attache: {0}", attache.getName());

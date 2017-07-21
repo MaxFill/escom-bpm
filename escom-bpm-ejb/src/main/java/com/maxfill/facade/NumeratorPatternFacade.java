@@ -4,6 +4,7 @@ package com.maxfill.facade;
 import com.maxfill.model.numPuttern.NumeratorPatternLog;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.numPuttern.NumeratorPatternStates;
 import javax.ejb.Stateless;
 
 /**
@@ -11,10 +12,10 @@ import javax.ejb.Stateless;
  * @author mfilatov
  */
 @Stateless
-public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, NumeratorPattern, NumeratorPatternLog> {
+public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, NumeratorPattern, NumeratorPatternLog, NumeratorPatternStates> {
 
     public NumeratorPatternFacade() {
-        super(NumeratorPattern.class, NumeratorPatternLog.class);
+        super(NumeratorPattern.class, NumeratorPatternLog.class, NumeratorPatternStates.class);
     }
     
     @Override
