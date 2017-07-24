@@ -25,6 +25,9 @@
     
     <ui:define name="specSubMenu"> 
         <p:submenu label="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
+            <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"     
+                        oncomplete="document.getElementById('#{_frm}:mainTabView:btnScan').click();"/>                             
+            <p:separator/>
             <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}" title="#{bundle.DownloadCurrentVersion}"
                         disabled="#{_bean.editedItem.attache == null}" ajax="false"
                         action="#{_bean.downloadCurrentVersion()}"/>
@@ -63,7 +66,7 @@
         </p:commandButton>
     </ui:define>
     
-    <ui:define name="page_body">        
+    <ui:define name="page_body">       
         <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Organization}:" for="company"/>

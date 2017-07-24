@@ -7,7 +7,7 @@
     <p:tab title="#{bundle.Versions}" >                 
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 col-padding">            
-                <p:commandButton icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"         
+                <p:commandButton icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" id="btnScan"        
                                  actionListener="#{sessionBean.openScaningForm()}">
                     <p:ajax event="dialogReturn" listener="#{docCardBean.addAttacheFromScan}" update="versionsTBL"/>
                 </p:commandButton>
@@ -98,13 +98,15 @@
                                         ajax="false"
                                         disabled="#{_bean.isReadOnly()}"                           
                                         action="#{_bean.attacheDownLoad(attache)}"/>
-                            <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}"
+                            <p:separator />
+                            <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}" title="#{bundle.MakeMainVersion}"
                                         process="versionsTBL"
                                         disabled="#{_bean.isReadOnly() or _bean.editedItem.attache.equals(attache)}"
                                         update="versionsTBL"
                                         actionListener="#{_bean.makeCurrentVersion(attache)}">
                                 <p:confirm header="#{bundle.ChangeVersion}" message="#{bundle.ChangeCurrentVersion}" icon="fa-question-circle" />
                             </p:menuitem> 
+                            <p:separator />
                             <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"
                                         process="versionsTBL"
                                         disabled="#{_bean.isReadOnly()}"

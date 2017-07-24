@@ -11,8 +11,8 @@ var Dynamsoft = Dynamsoft || { WebTwainEnv: {} };
 
 Dynamsoft.WebTwainEnv.AutoLoad = false;
 ///
-Dynamsoft.WebTwainEnv.Containers = [{ContainerId:'dwtcontrolContainer', Width: 300, Height:350}, 
-{ContainerId:'dwtcontrolContainerLargeViewer', Width:400, Height:550}];
+Dynamsoft.WebTwainEnv.Containers = [{ContainerId:'dwtcontrolContainer', Width: 239, Height:333}, 
+{ContainerId:'dwtcontrolContainerLargeViewer', Width:420, Height:518}];
 ///
 Dynamsoft.WebTwainEnv.ProductKey = '141DF2BD66C3D11532ACD2E8374DFB0B8CB992EFE4BF96A81DD8E07F9FEC22B8285BC0A47C3C66D2002B2E3C80E58FCD285BC0A47C3C66D2B4FBCA4C7189FB0E8CB992EFE4BF96A880BA97FB7C4BE10940000000;t0068WQAAAABNEAKQABKQre+1uApYylq2En5Eqq0sQ5pXI8M3oilF4AVqgxVXufFr1+ldPIEOaH3YnuoFdhDALT8coZZx7xY=';
 ///

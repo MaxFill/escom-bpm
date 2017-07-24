@@ -224,6 +224,14 @@ body{
   width:150px !important;
 }
 
+.ico_arrow_next {background-image: url('../resources/icon/arrow_next.png') !important;}
+.ico_arrow_back {background-image: url('../resources/icon/arrow_back.png') !important;}
+.ico_arrow_last {background-image: url('../resources/icon/arrow_last.png') !important;}
+.ico_arrow_first {background-image: url('../resources/icon/arrow_first.png') !important;}
+.ico_delete_file {background-image: url('../resources/icon/delete_file.png') !important;}
+.ico_rotate {background-image: url('../resources/icon/rotate.png') !important;}
+.ico_rotateLeft{background-image: url('../resources/icon/rotateLeft.png') !important;}
+.ico_rotateRight{background-image: url('../resources/icon/rotateRight.png') !important;}
 .ico_doc16 {background-image: url('../resources/icon/doc16.png') !important;}
 .ico_doc32 {background-image: url('../resources/icon/doc32.png') !important;}
 .ico_done {background-image: url('../resources/icon/done.png') !important;}
@@ -252,3 +260,4 @@ body{
 .ico_info{background-image: url('../resources/icon/info.png') !important; }
 .ico_inspector{background-image: url('../resources/icon/inspector.png') !important;} 
 .ico_folder_open{background-image: url('../resources/icon/folder_open.png') !important;} 
+.ico_editor{background-image: url('../resources/icon/editor.png') !important;} 

@@ -9,10 +9,9 @@
               maximizable="false" closeOnEscape="true">
         <h:form>
             <p:panel styleClass="ui-grid-col-12">
-                <p:panelGrid columns="1" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-                    <br/>
-                    #{bundle.PressSaveOrCancel}
-                    <p:spacer/>
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="ui-grid-col-12 ui-panelgrid-blank">
+                    <p:graphicImage id="itemIcon" value="/resources/images/info.jpg"/>
+                    <h:outputText value="#{bundle.PressSaveOrCancel}" />
                 </p:panelGrid>
             </p:panel>
 

@@ -1491,8 +1491,15 @@ public class ExplorerBean implements Serializable {
         return doClose(groups);
     }
     
-    /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */
-    
+    /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */    
+            
+    public void addAttacheFromScan(SelectEvent event){
+        if (currentItem == null) return;
+        Doc doc = (Doc) currentItem;
+        docBean.addAttacheFromScan(doc, event);
+        docBean.getItemFacade().edit(doc);
+    }
+        
     public boolean isItemHaveAttache(BaseDict item){
         if (!item.getClass().getSimpleName().equals(DictObjectName.DOC)){
             return false;

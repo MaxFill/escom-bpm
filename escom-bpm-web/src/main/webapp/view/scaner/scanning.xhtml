@@ -53,7 +53,7 @@
                             </p:menuitem>
                         </p:submenu>                
                         <f:facet name="options">
-                            <p:commandButton widgetVar="saveButtonWidget" value="#{bundle.SaveAndClose}"
+                            <p:commandButton widgetVar="saveBtnWidget" value="#{bundle.SaveAndClose}"
                                              icon="ui-icon-disk"
                                              onclick="Neoflex.prepareScannedImageToSave()"
                                              action="#{scanBean.onSaveAndClose()}">
@@ -69,74 +69,104 @@
 
                     <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
 
-                    <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-1, ui-grid-col-8" styleClass="ui-grid-col-12 col-padding">
+                    <p:panelGrid columns="3" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-2 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 col-padding">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">                            
-                            <p:outputLabel value="#{bundle.Name}" />
-                            <h:panelGroup styleClass="ui-grid-col-12">
-                                <p:inputText value="#{scanBean.model.fileName}" styleClass="ui-grid-col-8"
+                            <p:outputLabel value="#{bundle.FileFormat}" />
+                            <p:selectOneMenu id="fileExtension" 
                                              required="#{param['isRequired'] == 'true'}" 
-                                             requiredMessage="#{bundle.Field} [#{bundle.FileName}] #{bundle.MustBeFilled}"/>
-                                <p:selectOneMenu id="fileExtension" 
-                                                 required="#{param['isRequired'] == 'true'}" 
-                                                 requiredMessage="#{bundle.Field} [#{bundle.FileFormat}] #{bundle.MustBeFilled}"
-                                                 widgetVar="fileExtensionWidget"
-                                                 onchange="Neoflex.changeFileExtension()"
-                                                 value="#{scanBean.model.fileExtensionValue}">
-                                    <f:selectItems value="#{scanBean.model.fileExtensions}"
-                                                   var="_fileExtension" itemLabel="#{_fileExtension.label}"
-                                                   itemValue="#{_fileExtension.value}"/>
-                                </p:selectOneMenu>
-                            </h:panelGroup>
-                            <p:commandButton widgetVar="scanButtonWidget" id="btnScan" value="#{bundle.Scaning}"
-                                             icon="ui-icon-circle-arrow-e"
-                                             process="@this"/>
-                            <p:separator />
+                                             requiredMessage="#{bundle.Field} [#{bundle.FileFormat}] #{bundle.MustBeFilled}"
+                                             widgetVar="fileExtensionWidget"
+                                             onchange="Neoflex.changeFileExtension()"
+                                             value="#{scanBean.model.fileExtensionValue}">
+                                <f:selectItems value="#{scanBean.model.fileExtensions}"
+                                               var="_fileExtension" itemLabel="#{_fileExtension.label}"
+                                               itemValue="#{_fileExtension.value}"/>
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="#{bundle.Name}" />
+                            <p:inputText value="#{scanBean.model.fileName}" styleClass="ui-grid-col-12"
+                                         required="#{param['isRequired'] == 'true'}" 
+                                         requiredMessage="#{bundle.Field} [#{bundle.FileName}] #{bundle.MustBeFilled}"/>
                             
-                            <select size="1" id="source" style="position: relative; width: 200px;"></select>
+                            <p:outputLabel value="#{bundle.Scaner}" />
+                            <select size="1" id="source" style="position: relative; width: 100%;"></select>
                             
                             <p:selectBooleanCheckbox id="cbShowUI" widgetVar="myCheckboxWidget" itemLabel="#{bundle.ShowScanerUI}"/>                                                            
                             
                             <div id="dwtcontrolContainer" style="float: left; min-width: 200px; width: 100%; height: 350px;"></div>
                         </p:panelGrid>
-                        
-                        <!-- основные кнопки управления -->
+
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
-                            <p:commandButton widgetVar="rotate180BtnWidget" value="#{bundle.Rotate180}" 
+                            <p:commandButton widgetVar="scanBtnWidget" 
+                                             id="btnScan" value="#{bundle.Scaning}" title="#{bundle.Scaning}"                                             
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/>
+                            <p:separator />
+                            <p:commandButton icon="ico_rotate" widgetVar="rotate180BtnWidget" 
+                                             value="#{bundle.Rotate180}" title="#{bundle.Rotate180}"
                                              onclick="Rotate180();"
-                                             icon="ico_done" process="@this" styleClass="ui-grid-col-12 col-padding"/>
-                            <p:commandButton widgetVar="rotateLeftBtnWidget" value="#{bundle.RotateLeft}" 
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/>
+                            <p:commandButton icon="ico_rotateLeft" widgetVar="rotateLeftBtnWidget" 
+                                             value="#{bundle.RotateLeft}" title="#{bundle.RotateLeft}"
                                              onclick="RotateLeft();"
-                                             icon="ico_done" process="@this" styleClass="ui-grid-col-12 col-padding"/>
-                            <p:commandButton widgetVar="rotateRightBtnWidget" value="#{bundle.RotateRight}" 
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/>
+                            <p:commandButton icon="ico_rotateRight" widgetVar="rotateRightBtnWidget" 
+                                             value="#{bundle.RotateRight}" title="#{bundle.RotateRight}"
                                              onclick="RotateRight();"
-                                             icon="ico_done" process="@this" styleClass="ui-grid-col-12 col-padding"/>
-                            <p:commandButton widgetVar="deleteButtonWidget" value="#{bundle.DeleteSelected}" title="#{RemoveSelectedImages}"
-                                             icon="ico_cancel" process="@this" styleClass="ui-grid-col-12 col-padding"/> 
-                            <p:commandButton widgetVar="deleteButtonWidgetAll" value="#{bundle.DeleteAll}" title="#{RemoveAlImages}"
-                                             icon="ico_cancel" process="@this" styleClass="ui-grid-col-12 col-padding"/> 
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/>
+                            <p:commandButton icon="ico_delete_file" widgetVar="deleteBtnWidget" 
+                                             value="#{bundle.DeleteSelected}" title="#{bundle.RemoveSelectedImages}"
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/> 
+                            <p:commandButton icon="ico_delete_file" widgetVar="deleteAllBtnWidget" 
+                                             value="#{bundle.DeleteAll}" title="#{bundle.RemoveAlImages}"
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/> 
+                            <p:commandButton icon="ico_editor" widgetVar="editorBtnWidget" 
+                                             value="#{bundle.ShowInEditor}" title="#{bundle.ShowInEditor}"
+                                             onclick="ShowImageEditor()"
+                                             process="@this" styleClass="ui-grid-col-12 col-padding"/> 
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
+                            <div id="dwtcontrolContainerLargeViewer" style="float: left; min-width: 400px; width: 100%; height: 400px;"></div>
+                            <h:inputHidden id="image" value="#{scanBean.model.imageStringBase64}" />
+                        </p:panelGrid> 
+
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
+                            <h:panelGroup styleClass="ui-grid-col-12 col-padding">
+                                    <p:outputLabel value="#{bundle.PreviewMode}:" />
+                                    <select size="1" id="DW_PreviewMode" onchange="setlPreviewMode();">
+                                        <option value="0">1X1</option>
+                                        <option value="1">1X2</option>
+                                        <option value="2">1X3</option>
+                                        <option value="3">1X5</option>                             
+                                    </select> 
+                            </h:panelGroup>
                         </p:panelGrid>
                         
-                        <!-- окно просмоторщика --> 
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
-                            <div id="dwtcontrolContainerLargeViewer" style="float: left; min-width: 300px; width: 100%; height: 450px;"></div>
-                            <h:inputHidden id="image" value="#{scanBean.model.imageStringBase64}" />
-                        </p:panelGrid>                        
+                        <p:spacer />
                         
-                        <!-- кнопки навигации -->
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding"> 
-                            <input onclick="btnFirstImage_onclick()" type="button" value=" first " />
-                            <input onclick="btnPreImage_onclick()" type="button" value=" back " />
-                            <input type="text" size="2" id="DW_CurrentImage" readonly="readonly" value="0" />
-                            <input type="text" size="2" id="DW_TotalImage" readonly="readonly" value="0" />
-                            <input onclick="btnNextImage_onclick()" type="button" value=" next " />
-                            <input onclick="btnLastImage_onclick()" type="button" value=" last " />
-                            <p:outputLabel value="Preview Mode:" />
-                            <select size="1" id="DW_PreviewMode" onchange="setlPreviewMode();">
-                                <option value="0">1X1</option>
-                                <option value="1">1X3</option>
-                                <option value="2">1X5</option>                             
-                            </select>                            
-                        </p:panelGrid>                   
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
+                            <h:panelGroup styleClass="ui-grid-col-12 col-padding">
+                                <p:commandButton icon="ico_arrow_first" widgetVar="firstImgBtnWidget" title="#{bundle.GotoFirst}"
+                                                 onclick="btnFirstImage_onclick()"
+                                                 process="@this" /> 
+                                <p:commandButton icon="ico_arrow_back" widgetVar="backImgBtnWidget" title="#{bundle.GotoBack}"
+                                                 onclick="btnPreImage_onclick()"
+                                                 process="@this"/>
+                                <p:spacer width="2"/>
+                                <p:inputText id="DW_CurrentImage" widgetVar="currentNumberWidget" readonly="readonly" value="0" size="2" />
+                                <p:spacer width="2"/>
+                                <p:outputLabel value="#{bundle.From}" />
+                                <p:spacer width="2"/>
+                                <p:inputText id="DW_TotalImage" widgetVar="totalCountWidget" readonly="readonly" value="0" size="2" />
+                                <p:spacer width="2"/>
+                                <p:commandButton icon="ico_arrow_next" widgetVar="nextImgBtnWidget" title="#{bundle.GotoNext}"
+                                                 onclick="btnNextImage_onclick()"
+                                                 process="@this" /> 
+                                <p:commandButton icon="ico_arrow_last" widgetVar="lastImgBtnWidget" title="#{bundle.GotoLast}"
+                                                 onclick="btnLastImage_onclick()"
+                                                 process="@this" /> 
+                            </h:panelGroup>
+                        </p:panelGrid>
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

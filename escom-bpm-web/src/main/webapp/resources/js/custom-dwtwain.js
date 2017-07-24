@@ -36,29 +36,36 @@ var console = window['console']?window['console']:{'log':function(){}};
 			validateScanControls: function () {
                                 console.log('Установка контролов');
 				if (this.dwThumb.SourceCount == 0) {
-					alert("Ошибка подключения сканера. Проверьте настройки и повторите попытку!");
-					return;
+                                    alert("Ошибка подключения сканера. Проверьте настройки и повторите попытку!");
+                                    return;
 				} else {
-					PrimeFaces.widgets.scanButtonWidget.enable();
+                                    PrimeFaces.widgets.scanBtnWidget.enable();
 				}
 				
 				if (this.dwThumb.HowManyImagesInBuffer == 0) {
-					PrimeFaces.widgets.saveButtonWidget.disable();
-					PrimeFaces.widgets.deleteButtonWidget.disable();
-                                        PrimeFaces.widgets.deleteButtonWidgetAll.disable();
+                                    PrimeFaces.widgets.saveBtnWidget.disable();
+                                    PrimeFaces.widgets.deleteBtnWidget.disable();
+                                    PrimeFaces.widgets.deleteAllBtnWidget.disable();
+                                    PrimeFaces.widgets.rotateLeftBtnWidget.disable();
+                                    PrimeFaces.widgets.rotateRightBtnWidget.disable();
+                                    PrimeFaces.widgets.rotate180BtnWidget.disable();
+                                    PrimeFaces.widgets.editorBtnWidget.disable();
 				} else {
-					PrimeFaces.widgets.deleteButtonWidget.enable();
-                                        PrimeFaces.widgets.deleteButtonWidgetAll.enable();
-                                        
-					var imagesSizeMb = this.bufferedImagesSizeMb(),
-						maxImagesSize = this.getMaxFileSize();
-					if (maxImagesSize < imagesSizeMb) {
-						PrimeFaces.widgets.saveButtonWidget.disable();
-						alert("Scanned images are bigger than " + maxImagesSize + "Mb");
-					} else { 
-						PrimeFaces.widgets.saveButtonWidget.enable();
-					}
-				}
+                                    PrimeFaces.widgets.editorBtnWidget.enable();
+                                    PrimeFaces.widgets.deleteBtnWidget.enable();
+                                    PrimeFaces.widgets.deleteAllBtnWidget.enable();
+                                    PrimeFaces.widgets.rotateLeftBtnWidget.enable();
+                                    PrimeFaces.widgets.rotateRightBtnWidget.enable();
+                                    PrimeFaces.widgets.rotate180BtnWidget.enable();
+                                    var imagesSizeMb = this.bufferedImagesSizeMb(),
+                                            maxImagesSize = this.getMaxFileSize();
+                                    if (maxImagesSize < imagesSizeMb) {
+                                            PrimeFaces.widgets.saveBtnWidget.disable();
+                                            alert("Scanned images are bigger than " + maxImagesSize + "Mb");
+                                    } else { 
+                                            PrimeFaces.widgets.saveBtnWidget.enable();
+                                    }
+				}                                
 			},
 			getProductKey: function () {
                                 console.log('Получение ключа продукта');
@@ -90,31 +97,33 @@ function initDTW(){
             console.log('LargeViewer is ok!');
         }
         Neoflex.dwViewer.SetViewMode(-1, -1); 
-        Neoflex.dwViewer.MaxImagesInBuffer = 1;         
+        Neoflex.dwViewer.MaxImagesInBuffer = 1;
         var count = Neoflex.dwThumb.SourceCount;
         if(count == 0 && Dynamsoft.Lib.env.bMac){
-                Neoflex.dwThumb.CloseSourceManager();
-                Neoflex.dwThumb.ImageCaptureDriverType = 0;
-                Neoflex.dwThumb.OpenSourceManager();
-                count = Neoflex.dwThumb.SourceCount;
-        }				
+            Neoflex.dwThumb.CloseSourceManager();
+            Neoflex.dwThumb.ImageCaptureDriverType = 0;
+            Neoflex.dwThumb.OpenSourceManager();
+            count = Neoflex.dwThumb.SourceCount;
+        }
         for (var i = 0; i < count; i++){
             document.getElementById("source").options.add(new Option(Neoflex.dwThumb.GetSourceNameItems(i), i));
         }
-               
         if (Neoflex.dwThumb.ErrorCode == 0) {   
             console.log('RegisterEvent work... ');
             //Neoflex.dwThumb.SetViewMode(5, -1);
 
             Neoflex.dwThumb.RegisterEvent('OnPostTransfer', function(){
+                Neoflex.validateScanControls(); 
                 updatePageInfo();
             });
             Neoflex.dwThumb.RegisterEvent('OnPostAllTransfers', function(){
-                    Neoflex.dwThumb.selectAllImages();
-                    Neoflex.validateScanControls();
+                Neoflex.dwThumb.selectAllImages();
+                Neoflex.validateScanControls();
+                updatePageInfo();
             });
             Neoflex.dwThumb.RegisterEvent("OnMouseClick", function(){
                 updateLargeViewer();
+                updatePageInfo();
             });
             Neoflex.dwThumb.selectAllImages = function () {
                 Neoflex.dwThumb.SelectedImagesCount = Neoflex.dwThumb.HowManyImagesInBuffer;
@@ -125,58 +134,57 @@ function initDTW(){
                 return result;
             }
             Neoflex.dwThumb.RegisterEvent("OnTopImageInTheViewChanged", function (index) {
-                    Neoflex.dwThumb.CurrentImageIndexInBuffer = index;
-                    updatePageInfo();
+                Neoflex.dwThumb.CurrentImageIndexInBuffer = index;
+                updatePageInfo();
             });
             console.log('RegisterEvent work.... ');            
 
-            PrimeFaces.widgets.saveButtonWidget.disable();
-            PrimeFaces.widgets.deleteButtonWidget.disable();
-            PrimeFaces.widgets.deleteButtonWidgetAll.disable();
-            PrimeFaces.widgets.scanButtonWidget.disable();
             Neoflex.validateScanControls();
-
+            updatePageInfo();
+            
             console.log('RegisterEvent work.....');
-            var scanButton = document.getElementById(PrimeFaces.widgets.scanButtonWidget.id);
+            var scanButton = document.getElementById(PrimeFaces.widgets.scanBtnWidget.id);
             if (scanButton) {
-                    scanButton.addEventListener("click", function() {
-                        if(Neoflex.dwThumb) {
-                            var OnAcquireImageSuccess, OnAcquireImageFailure;
-                            OnAcquireImageSuccess = OnAcquireImageFailure = function (){
-                                    Neoflex.dwThumb.CloseSource();
-                            };
-                            Neoflex.dwThumb.IfDisableSourceAfterAcquire = true;                            
-                            //If show UI
-                            if (PrimeFaces.widgets.myCheckboxWidget.input.is(':checked')){
-                            //if (document.getElementById("scanform:cbShowUI").checked){
-                                Neoflex.dwThumb.IfShowUI = true; //Enable the Data Source's default User Interface
-                            } else {
-                                Neoflex.dwThumb.IfShowUI = false; //Disable the Data Source's default User Interface
-                            }
+                scanButton.addEventListener("click", function() {
+                    if(Neoflex.dwThumb) {
+                        var OnAcquireImageSuccess, OnAcquireImageFailure;
+                        OnAcquireImageSuccess = OnAcquireImageFailure = function (){
+                                Neoflex.dwThumb.CloseSource();
+                        };
+                        Neoflex.dwThumb.IfDisableSourceAfterAcquire = true;                            
+                        //If show UI
+                        if (PrimeFaces.widgets.myCheckboxWidget.input.is(':checked')){
+                        //if (document.getElementById("scanform:cbShowUI").checked){
+                            Neoflex.dwThumb.IfShowUI = true; //Enable the Data Source's default User Interface
+                        } else {
+                            Neoflex.dwThumb.IfShowUI = false; //Disable the Data Source's default User Interface
+                        }
 
-                            Neoflex.dwThumb.SelectSourceByIndex(document.getElementById("source").selectedIndex);                                 
-                            Neoflex.dwThumb.OpenSource();
-                            Neoflex.dwThumb.AcquireImage(OnAcquireImageSuccess, OnAcquireImageFailure);
-                        } 
-                    });
+                        Neoflex.dwThumb.SelectSourceByIndex(document.getElementById("source").selectedIndex);                                 
+                        Neoflex.dwThumb.OpenSource();
+                        Neoflex.dwThumb.AcquireImage(OnAcquireImageSuccess, OnAcquireImageFailure);
+                    } 
+                });
             }
-            var deleteButton = document.getElementById(PrimeFaces.widgets.deleteButtonWidget.id);
+            var deleteButton = document.getElementById(PrimeFaces.widgets.deleteBtnWidget.id);
             if (deleteButton) {
-                    deleteButton.addEventListener("click", function() {
-                        if (Neoflex.dwThumb) {
-                            Neoflex.dwThumb.RemoveAllSelectedImages();
-                            updatePageInfo();
-                            Neoflex.validateScanControls();
-                        }                       
-                    });
+                deleteButton.addEventListener("click", function() {
+                    if (Neoflex.dwThumb) {
+                        Neoflex.dwThumb.RemoveAllSelectedImages();
+                        Neoflex.dwViewer.RemoveAllImages();
+                        Neoflex.validateScanControls();
+                        updatePageInfo();
+                    }                       
+                });
             }
-            var deleteButtonAll = document.getElementById(PrimeFaces.widgets.deleteButtonWidgetAll.id);
+            var deleteButtonAll = document.getElementById(PrimeFaces.widgets.deleteAllBtnWidget.id);
             if (deleteButtonAll){
                 deleteButtonAll.addEventListener("click", function() {
                     if (Neoflex.dwThumb) {
                         Neoflex.dwThumb.RemoveAllImages();
-                        document.getElementById("DW_TotalImage").value = "0";
-                        document.getElementById("DW_CurrentImage").value = "0";
+                        Neoflex.dwViewer.RemoveAllImages();
+                        document.getElementById("scanform:DW_TotalImage").value = "0";
+                        document.getElementById("scanform:DW_CurrentImage").value = "0";
                         Neoflex.validateScanControls();
                     }
                 });
@@ -200,74 +208,90 @@ function initDTW(){
     }
 
     function btnPreImage_onclick() {
-            if (Neoflex.dwThumb) {
-                if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
-                    Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.CurrentImageIndexInBuffer - 1;
-                    updatePageInfo();
-                }
+        if (Neoflex.dwThumb) {
+            if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
+                Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.CurrentImageIndexInBuffer - 1;
+                updatePageInfo();
             }
         }
+    }
 
-        function btnNextImage_onclick() {
-            if (Neoflex.dwThumb) {
-                if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
-                    Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.CurrentImageIndexInBuffer + 1;
-                    updatePageInfo();
-                }
+    function btnNextImage_onclick() {
+        if (Neoflex.dwThumb) {
+            if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
+                Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.CurrentImageIndexInBuffer + 1;
+                updatePageInfo();
             }
         }
+    }
 
-        function btnFirstImage_onclick() {
-            if (Neoflex.dwThumb) {
-                if (Neoflex.dwThumb.HowManyImagesInBuffer != 0 && Neoflex.dwThumb.CurrentImageIndexInBuffer != 0) {
-                    Neoflex.dwThumb.CurrentImageIndexInBuffer = 0;
-                    updatePageInfo();
-                }
+    function btnFirstImage_onclick() {
+        if (Neoflex.dwThumb) {
+            if (Neoflex.dwThumb.HowManyImagesInBuffer != 0 && Neoflex.dwThumb.CurrentImageIndexInBuffer != 0) {
+                Neoflex.dwThumb.CurrentImageIndexInBuffer = 0;
+                updatePageInfo();
             }
         }
+    }
 
-        function btnLastImage_onclick() {
-            if (Neoflex.dwThumb) {
-                if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
-                    Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.HowManyImagesInBuffer - 1;
-                    updatePageInfo();
-                }
+    function btnLastImage_onclick() {
+        if (Neoflex.dwThumb) {
+            if (Neoflex.dwThumb.HowManyImagesInBuffer > 0) {
+                Neoflex.dwThumb.CurrentImageIndexInBuffer = Neoflex.dwThumb.HowManyImagesInBuffer - 1;
+                updatePageInfo();
             }
         }
-        
-        function setlPreviewMode() {
-            if (Neoflex.dwThumb) {
-                var o = parseInt(document.getElementById("DW_PreviewMode").selectedIndex + 1);
-                Neoflex.dwThumb.SetViewMode(o, o);
-            }
-        }
+    }
 
-        function Rotate180() {
-            RotateLeft();
-            RotateLeft();
+    function setlPreviewMode() {
+        if (Neoflex.dwThumb) {
+            var s = parseInt(document.getElementById("DW_PreviewMode").selectedIndex + 1);
+            console.log('s=' + s);
+            Neoflex.dwThumb.SetViewMode(1, s);
         }
-        
-        function RotateLeft() {
-            if (Neoflex.dwThumb) 
-                if (Neoflex.dwThumb.HowManyImagesInBuffer > 0)
-                    Neoflex.dwThumb.RotateLeft(Neoflex.dwThumb.CurrentImageIndexInBuffer);
-        }
+    }
 
-        function RotateRight() {
-            if (Neoflex.dwThumb) 
-                if (Neoflex.dwThumb.HowManyImagesInBuffer > 0)
-                    Neoflex.dwThumb.RotateRight(Neoflex.dwThumb.CurrentImageIndexInBuffer);
+    function Rotate180() {
+        RotateLeft();
+        RotateLeft();
+    }
+
+    function RotateLeft() {
+        if (Neoflex.dwThumb) 
+            if (Neoflex.dwThumb.HowManyImagesInBuffer > 0){
+                Neoflex.dwThumb.RotateLeft(Neoflex.dwThumb.CurrentImageIndexInBuffer);
+            }
+        updateLargeViewer();        
+    }
+
+    function RotateRight() {
+        if (Neoflex.dwThumb) 
+            if (Neoflex.dwThumb.HowManyImagesInBuffer > 0){
+                Neoflex.dwThumb.RotateRight(Neoflex.dwThumb.CurrentImageIndexInBuffer);
+            }
+        updateLargeViewer();
+    }
+
+    function updatePageInfo() {
+        if (Neoflex.dwThumb) {
+            document.getElementById("scanform:DW_TotalImage").value = Neoflex.dwThumb.HowManyImagesInBuffer;
+            document.getElementById("scanform:DW_CurrentImage").value = Neoflex.dwThumb.CurrentImageIndexInBuffer + 1;
+            updateLargeViewer();
         }
-        
-        function updatePageInfo() {
-            if (Neoflex.dwThumb) {
-                document.getElementById("DW_TotalImage").value = Neoflex.dwThumb.HowManyImagesInBuffer;
-                document.getElementById("DW_CurrentImage").value = Neoflex.dwThumb.CurrentImageIndexInBuffer + 1;
-                updateLargeViewer();
+    }
+
+    function updateLargeViewer() {
+        Neoflex.dwThumb.CopyToClipboard(Neoflex.dwThumb.CurrentImageIndexInBuffer); 
+        Neoflex.dwViewer.LoadDibFromClipboard(); 
+    }
+
+    function ShowImageEditor() {
+        if (Neoflex.dwThumb) {
+            if (Neoflex.dwThumb.HowManyImagesInBuffer == 0)
+                alert("There is no image in buffer.");
+            else{
+                Neoflex.dwViewer.RemoveAllImages();
+                Neoflex.dwThumb.ShowImageEditor();
             }
         }
-        
-        function updateLargeViewer() {
-            Neoflex.dwThumb.CopyToClipboard(Neoflex.dwThumb.CurrentImageIndexInBuffer); 
-            Neoflex.dwViewer.LoadDibFromClipboard(); 
-        }
+    }

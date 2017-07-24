@@ -51,7 +51,7 @@ public class AddAttacheBean extends BaseDialogBean{
         docBean.addAttacheFromScan(doc, event);
         docFacade.edit(doc);
     }
-        
+
     @Override
     public String onCloseCard() {
         return super.onFinalCloseCard(null);

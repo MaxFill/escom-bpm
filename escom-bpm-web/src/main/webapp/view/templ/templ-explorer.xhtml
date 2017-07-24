@@ -107,6 +107,11 @@
                                     oncomplete="initDND()"/>
                         </p:commandButton>                                                 
                         
+                        <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"     
+                                actionListener="#{sessionBean.openScaningForm()}"> 
+                            <p:ajax event="dialogReturn" listener="#{explorerBean.addAttacheFromScan}"/>
+                        </p:commandButton>
+                        
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
                         <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
