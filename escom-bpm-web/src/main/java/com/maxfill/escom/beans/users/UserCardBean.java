@@ -46,9 +46,11 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     }
     
     public void onChangePassword(ValueChangeEvent event) throws NoSuchAlgorithmException{
-        String newValue = EscomUtils.encryptPassword((String) event.getNewValue());
-        String oldValue = (String) event.getOldValue();
-        if (!Objects.equals(newValue, oldValue)){
+        String newValue = (String) event.getNewValue();
+        getEditedItem().setPwl(newValue);
+        String newPwl = EscomUtils.encryptPassword(newValue);
+        String oldPwl = (String) event.getOldValue();
+        if (!Objects.equals(newPwl, oldPwl)){
             onItemChange();
         }
     }

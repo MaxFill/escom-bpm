@@ -1,4 +1,3 @@
-
 package com.maxfill.model.rights;
 
 import com.maxfill.dictionary.DictRights;
@@ -27,32 +26,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *  Права доступа
- * @author Maxim
- */
 @Entity
 @Table(name = "access")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
 public class Right implements Serializable{
     private static final long serialVersionUID = -6841901267921264389L;
-   
-    /*
-    @TableGenerator(
-        name="rightIdGen", 
-        table="SYS_ID_GEN", 
-        pkColumnName="GEN_KEY", 
-        valueColumnName="GEN_VALUE", 
-        pkColumnValue="RIGHT_ID", allocationSize = 1)
-     
-    */
-    
+      
     @Id
     @Basic(optional = false)
     @NotNull
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    //@GeneratedValue(strategy=TABLE, generator="rightIdGen")
     @Column(name = "Id")
     @XmlElement(name = "Id")
     private Integer id;     
@@ -92,6 +76,12 @@ public class Right implements Serializable{
     @Column(name = "IsChangeRight")
     @XmlElement(name = "ChangeRight")
     private boolean changeRight;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "IsAddChild")
+    @XmlElement(name = "IsAddChild")
+    private boolean addChild = false;
         
     @Basic(optional = false)
     @NotNull
@@ -215,6 +205,13 @@ public class Right implements Serializable{
     }
     public void setExecute(boolean execute) {
         this.execute = execute;
+    }
+
+    public boolean isAddChild() {
+        return addChild;
+    }
+    public void setAddChild(boolean addChild) {
+        this.addChild = addChild;
     }
     
     public String getName() {

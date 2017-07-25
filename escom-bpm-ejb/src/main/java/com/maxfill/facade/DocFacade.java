@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
@@ -9,6 +10,7 @@ import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
@@ -16,10 +18,13 @@ import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -171,31 +176,42 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     /* Установка состояния редактирования документа */
     public void doSetEditState(Doc doc, User user){
         doSetStateById(doc, DictStates.STATE_EDITED);
-        doc.doSetSingleRole("editor", user);
+        doc.doSetSingleRole(DictRoles.ROLE_EDITOR, user);
         edit(doc);
     }
     
     /* Снятие состояния редактировани документа */
     public void doRemoveEditState(Doc doc){
         returnToPrevState(doc);        
-        doc.doSetSingleRole("editor", null);
+        doc.doSetSingleRole(DictRoles.ROLE_EDITOR, null);
         edit(doc);
     }
     
     @Override
     public void edit(Doc doc) {
+        doSaveRoleToJson(doc);
+        super.edit(doc);
+    }
+
+    @Override
+    public void create(Doc doc) {
+        doSaveRoleToJson(doc);
+        super.create(doc); 
+    }
+    
+    private void doSaveRoleToJson(Doc doc){
         Gson gson = new Gson();
         String attacheJson = gson.toJson(doc.getRoles());        
         doc.setRoleJson(attacheJson);
-        getEntityManager().merge(doc);
     }
     
     /* Проверка вхождения пользователя в роль */
     @Override
     public boolean checkUserInRole(Doc doc, String roleName, User user){        
+        roleName = roleName.toLowerCase();
         Map<String, Set<Integer>> roles = getRoleMap(doc);
-        if (roles.isEmpty() || !roles.containsKey(roleName)) return false;
-        Set<Integer> usersId = roles.get(roleName);
+        if (roles.isEmpty() || !roles.containsKey(roleName)) return false;       
+        ArrayList<Integer> usersId = (ArrayList<Integer>)roles.get(roleName);
         if (usersId == null || usersId.isEmpty()) return false;        
         return usersId.contains(user.getId());
     }
@@ -222,9 +238,13 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         if (roles.isEmpty()){
             String roleJson = doc.getRoleJson();
             if (StringUtils.isBlank(roleJson)) return roles;
-            Gson gson = new Gson();
-            roles = gson.fromJson(roleJson, Map.class);
-            doc.setRoles(roles);
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                roles = mapper.readValue(roleJson, Map.class);
+                doc.setRoles(roles);
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
         }
         return roles;
     }

@@ -10,6 +10,7 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.BaseDict;
@@ -25,6 +26,7 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -191,10 +193,22 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void onOpenFormLockMainAttache(Doc doc) {
         Attaches attache = doc.getAttache();
         if (attache != null) {
+            Set<String> errors = new HashSet<>();
+            makeRightItem(doc);
+            if (!isHaveRightEdit(doc)){              
+                String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
+                String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
+                errors.add(error);
+            }
+            if (!errors.isEmpty()){
+                EscomBeanUtils.showErrorsMsg(errors);
+                return;
+            }
             onOpenFormLockAttache(attache);
         } else {
             EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
         }
+        
     }
 
     public void onOpenFormLockAttache(Attaches attache) {

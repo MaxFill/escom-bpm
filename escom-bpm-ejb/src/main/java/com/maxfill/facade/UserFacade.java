@@ -13,6 +13,7 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.users.UserStates;
 import com.maxfill.services.ldap.LdapUsers;
+import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
@@ -46,11 +47,33 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     private DepartmentFacade departmentFacade;
     @EJB    
     private UserGroupsFacade userGroupsFacade;
-
+    @EJB    
+    private UsersService usersService;
+    
     public UserFacade() {
         super(User.class, UserLog.class, UserStates.class);
     }
-        
+
+    @Override
+    public void create(User user) {
+        updateUserInfoInRealm(user);
+        super.create(user);
+    }
+
+    @Override
+    public void edit(User user) {
+        updateUserInfoInRealm(user);
+        super.edit(user);
+    }
+    
+    private void updateUserInfoInRealm(User user){
+        String login = user.getLogin();
+        String pwl = user.getPwl();
+        if (StringUtils.isNotBlank(login) && StringUtils.isNotBlank(pwl)){
+            usersService.addUserInRealm(login, pwl);
+        }
+    }
+    
     @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();
@@ -190,6 +213,5 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     public void replaceItem(User oldItem, User newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
     
 }

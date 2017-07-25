@@ -116,13 +116,18 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Действия перед созданием объекта */
     private void prepCreate(T newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
         boolean isAllowedEditOwner = true;
+        boolean isAllowedEditParent = true;
         BaseDict owner = newItem.getOwner();
         if (owner != null) {
             getOwnerBean().actualizeRightItem(owner);
-            isAllowedEditOwner = isHaveRightEdit(owner); //можно ли редактировать owner?
+            isAllowedEditOwner = isHaveRightAddChild(owner); //можно ли создавать дочерние объекты?
         }
-        if (isAllowedEditOwner) {
-            newItem.setParent(parent);
+        if (parent != null){
+            actualizeRightItem(parent);
+            isAllowedEditParent = isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
+        }
+        if (isAllowedEditOwner && isAllowedEditParent) {
+            newItem.setParent(parent);            
             makeRightItem(newItem);
             if (isHaveRightCreate(newItem)) {
                 setSpecAtrForNewItem(newItem, params);                
@@ -133,7 +138,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             }
         } else {
             if (owner != null){
-                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightEditNo"), new Object[]{owner.getName()});
+                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
                 errors.add(error);
             }
         }

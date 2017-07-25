@@ -59,14 +59,12 @@ public final class EscomUtils {
     	messageDigest.reset();
     	bs = messageDigest.digest(password.getBytes());
     	StringBuilder stringBuilder = new StringBuilder();
-    	for (int i = 0; i < bs.length; i++)
-    	{
-    		String hexVal = Integer.toHexString(0xFF & bs[i]);
-    		if (hexVal.length() == 1)
-    		{
-    			stringBuilder.append("0");
-    		}
-    		stringBuilder.append(hexVal);
+    	for (int i = 0; i < bs.length; i++){
+            String hexVal = Integer.toHexString(0xFF & bs[i]);
+            if (hexVal.length() == 1){
+                stringBuilder.append("0");
+            }
+            stringBuilder.append(hexVal);
     	}
     	return stringBuilder.toString();	
     }

@@ -1,5 +1,6 @@
 package com.maxfill;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.licence.Licence;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +25,9 @@ public class Configuration {
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
     
+    private String serverOS;
     private String serverURL;
+    private String serverPath;
     private String uploadPath;
     private String encoding;
     private String defaultSenderEmail;
@@ -36,6 +39,7 @@ public class Configuration {
     private String convertorPDF;
     private Licence licence;
     private Integer serverId;
+    private String separator;
     
     @PostConstruct
     private void init() {
@@ -45,25 +49,45 @@ public class Configuration {
 
         try {
             properties.load(new FileInputStream(file));
+            serverOS = (String) properties.get("SERVER_OS");
+            serverURL = (String) properties.get("SERVER_URL");
+            serverPath = (String) properties.get("SERVER_PATH");
+            uploadPath = (String) properties.get("UPLOAD_PATH");
+            encoding = (String) properties.get("ENCODING");
+            defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
+            defaultEmailServer = (String) properties.get("DEFAULT_EMAIL_SERVER");
+            defaultEmailServerPort = (String) properties.get("DEFAULT_EMAIL_SERVER_PORT");
+            ldapServer = (String) properties.get("LDAP_SERVER");
+            licence = new Licence();
+            licence.setLicenceNumber((String) properties.get("LICENCE_NUMBER"));
+            serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
+            tempFolder = (String) properties.get("TEMP_FOLDER");
+            jasperReports = (String) properties.get("JASPER_REPORTS");
+            convertorPDF = (String) properties.get("CONVERTOR_PDF");
+            switch (serverOS){
+                case SysParams.OS_UNIX:{
+                    separator = "//";
+                    break;
+                }
+                case SysParams.OS_WIN:{
+                    separator = "\\";
+                    break;
+                }
+            }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-
-        serverURL = (String) properties.get("SERVER_URL");
-        uploadPath = (String) properties.get("UPLOAD_PATCH");
-        encoding = (String) properties.get("ENCODING");
-        defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
-        defaultEmailServer = (String) properties.get("DEFAULT_EMAIL_SERVER");
-        defaultEmailServerPort = (String) properties.get("DEFAULT_EMAIL_SERVER_PORT");
-        ldapServer = (String) properties.get("LDAP_SERVER");
-        licence = new Licence();
-        licence.setLicenceNumber((String) properties.get("LICENCE_NUMBER"));
-        serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
-        tempFolder = (String) properties.get("TEMP_FOLDER");
-        jasperReports = (String) properties.get("JASPER_REPORTS");
-        convertorPDF = (String) properties.get("CONVERTOR_PDF");
     }
-    
+
+    public String getSeparator() {
+        return separator;
+    }    
+    public String getServerOS() {
+        return serverOS;
+    }
+    public String getServerPath() {
+        return serverPath;
+    }    
     public String getUploadPath() {
         return uploadPath;
     }

@@ -157,7 +157,12 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EDIT);                 
     }
     
-    /* ПРАВА ДОСТУПА: Проверяет право текущего пользователя на удаление объекта  */
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание дочерних объектов */
+    public Boolean isHaveRightAddChild(BaseDict item) {
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_ADD_CHILDS);                 
+    }
+    
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на удаление объекта  */
     public Boolean isHaveRightDelete(BaseDict item) {
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
     }
@@ -229,6 +234,9 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
         }
         if (right.isChangeRight()) {
             accessMask = accessMask | DictRights.RIGHT_CHANGE_RIGHT;
+        }
+        if (right.isAddChild()) {
+            accessMask = accessMask | DictRights.RIGHT_ADD_CHILDS;
         }
         return accessMask;
     }

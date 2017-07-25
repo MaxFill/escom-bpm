@@ -10,12 +10,23 @@
         #{bundle.Settings}
     </ui:define>
 
+    <ui:param name="_frm" value="settingsFRM" />
+    
     <ui:define name="body">        
         <pe:layout fullPage="true" options="#{userSettingsBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{userSettingsBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="settingsFRM" styleClass="formLayoute">  
+                <h:form id="#{_frm}" styleClass="formLayoute">  
+                     <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
                     <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
                         <f:facet name="options">
                             <p:commandButton icon="ui-icon-circle-close" style="float:right;"
                                              immediate="true"
@@ -53,7 +64,7 @@
                                     styleClass="ui-grid-col-12"/>
                         <p:spacer />
                         <p:commandButton icon="ui-icon-circle-check" value="#{bundle.Make}" 
-                                         update="settingsFRM" style="float: right;"
+                                         update="#{_frm}" style="float: right;"
                                          actionListener="#{userSettingsBean.onChangePassword()}"/>
                         <p:commandButton icon="ui-icon-disk" value="#{bundle.SaveSettings}" 
                                          style="float: right; display: none;"

@@ -14,11 +14,12 @@ public final class DictRights {
     private DictRights() {
     }
     
-    public static final Integer RIGHT_VIEW = 8;
-    public static final Integer RIGHT_EDIT = 16;
-    public static final Integer RIGHT_DELETE = 32;
-    public static final Integer RIGHT_CHANGE_RIGHT = 64;
-    public static final Integer RIGHT_CREATE = 128;
+    public static final int RIGHT_VIEW = 8;
+    public static final int RIGHT_EDIT = 16;
+    public static final int RIGHT_DELETE = 32;
+    public static final int RIGHT_CHANGE_RIGHT = 64;
+    public static final int RIGHT_CREATE = 128;
+    public static final int RIGHT_ADD_CHILDS = 256;
     
     public static final int TYPE_GROUP = 0;
     public static final int TYPE_USER = 1;

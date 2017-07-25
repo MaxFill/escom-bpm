@@ -1,7 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.Configuration;
-import com.maxfill.dictionary.DictStates;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
 import com.maxfill.model.metadates.Metadates;
@@ -15,9 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.persistence.Query;
@@ -69,7 +68,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setActual(true);
             item.setDeleted(false);
             item.setInherits(true);
-            item.doSetSingleRole("owner", author);
+            item.doSetSingleRole(DictRoles.ROLE_OWNER, author);
             doSetState(item, getMetadatesObj().getStateForNewObj());
             return item;
         } catch (IllegalAccessException | InstantiationException ex) {
@@ -230,7 +229,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* Проверка вхождения пользователя в роль */
     public boolean checkUserInRole(T item, String roleName, User user){
-        return false;
+        return "owner".equals(roleName.toLowerCase()) && Objects.equals(item.getAuthor(), user);
     }
     
     /* Возвращает имя испольнителя роли */

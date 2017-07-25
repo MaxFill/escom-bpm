@@ -65,7 +65,7 @@ public class UserSettingsBean extends BaseDialogBean{
     }  
 
     @Override
-    protected String onCloseCard() {
+    public String onCloseCard() {
        return super.onFinalCloseCard(null);
     }
     

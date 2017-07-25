@@ -7,6 +7,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
@@ -268,14 +269,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         List<User> users = (List<User>) event.getObject();
         if (users.isEmpty()) return;
         User user = users.get(0);
-        getEditedItem().doSetSingleRole("owner", user);
+        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user);
         getEditedItem().setAuthor(user);
         onItemChange();        
     }
     public void onChangeOwner(ValueChangeEvent event){
         User user = (User) event.getNewValue();
         getEditedItem().setAuthor(user);
-        getEditedItem().doSetSingleRole("owner", user);
+        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user);
     }
     
     public boolean lockChangeOwner(){
@@ -455,7 +456,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
             case DictEditMode.EDIT_MODE:{
                 sb.append(getEditedItem().getName());                
-                sb.append(" <").append(EscomBeanUtils.getBandleLabel("Edited")).append(">");
+                sb.append(" <").append(EscomBeanUtils.getBandleLabel("Correction")).append(">");
                 break;
             }
             case DictEditMode.INSERT_MODE:{
@@ -479,8 +480,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
 
     public boolean isReadOnly(){
-        return getTypeEdit().equals(DictEditMode.VIEW_MODE);
-    }    
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
+    }
 
     public String getItemObjName(){
         return getItemFacade().getFRM_NAME().toLowerCase();

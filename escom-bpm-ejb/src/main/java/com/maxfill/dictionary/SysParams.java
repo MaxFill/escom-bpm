@@ -27,5 +27,8 @@ public final class SysParams {
     public static final String PRIME_URL    = "javax.faces.resource";
     public static final String RESOURCE_URL = "/faces/resources/";    
     
+    public static final String OS_UNIX = "UNIX";
+    public static final String OS_WIN = "WIN";
+    
     public static final int DEFAULT_DOC_TYPE_ID = 1;
 }

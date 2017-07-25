@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -108,6 +109,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private UserStates state;
 
+    @Transient
+    private String pwl; 
+    
     @Override
     public UserStates getState() {
         return state;
@@ -149,7 +153,14 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public String getIconName() {
         return "user";
     }
-    
+
+    public String getPwl() {
+        return pwl;
+    }
+    public void setPwl(String pwl) {
+        this.pwl = pwl;
+    }
+        
     public String getLogin() {
         return login;
     }

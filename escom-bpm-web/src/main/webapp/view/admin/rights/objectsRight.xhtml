@@ -37,18 +37,23 @@
                         <p:column headerText="#{bundle.Remove}" style="text-align: center;">
                             <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
                         </p:column> 
+                        <p:column headerText="#{bundle.AddChildsRight}" width="100" style="text-align: center;">                                    
+                            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
+                        </p:column>
                         <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
                             <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
                         </p:column>                         
                         <p:column headerText="#{bundle.Commands}" style="text-align: center;" >
-                            <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
-                                             actionListener="#{metadatesBean.onEditRight(right)}" >
-                                <p:ajax event="dialogReturn" update="tblRightDoc"
-                                            listener="#{metadatesBean.onCloseRightCard}"/>
-                            </p:commandButton>
-                            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                             update="tblRightDoc"
-                                             actionListener="#{metadatesBean.onDeleteRight(right)}" />
+                            <h:panelGroup styleClass="ui-grid-col-12 without-spaces">
+                                <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
+                                                 actionListener="#{metadatesBean.onEditRight(right)}" >
+                                    <p:ajax event="dialogReturn" update="tblRightDoc"
+                                                listener="#{metadatesBean.onCloseRightCard}"/>
+                                </p:commandButton>
+                                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                                 update="tblRightDoc"
+                                                 actionListener="#{metadatesBean.onDeleteRight(right)}" />
+                            </h:panelGroup>
                         </p:column>                        
                     </p:dataTable>
                 </h:panelGrid>  

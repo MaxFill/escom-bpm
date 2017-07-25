@@ -41,7 +41,7 @@
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-circle-check" value="#{bundle.Save}"
+                            <p:menuitem icon="ui-icon-circle-check" value="#{bundle.SaveAndClose}"
                                         onclick="document.getElementById('#{_frm}:btnSave').click();"> 
                             </p:menuitem>
                             <p:separator />
@@ -51,7 +51,7 @@
                         </p:submenu>
                         <f:facet name="options">
  
-                            <p:commandButton id="btnSave" value="#{bundle.Save}" 
+                            <p:commandButton id="btnSave" value="#{bundle.SaveAndClose}" 
                                              title="#{bundle.SaveAndClose}"
                                              update="#{_frm}"
                                              action="#{rightCardBean.onSaveChangeRight()}"
@@ -140,7 +140,7 @@
                             </p:selectBooleanCheckbox>
                         </h:panelGrid>
 
-                        <h:panelGrid id="chBoxPanel" columns="5">
+                        <h:panelGrid id="chBoxPanel" columns="6" >
                             <p:selectBooleanCheckbox value="#{rightCardBean.selRight.read}" id="chBoxRead"
                                                      itemLabel="#{bundle.View}" onchange="itemChange = 1;"/>
 
@@ -155,6 +155,9 @@
 
                             <p:selectBooleanCheckbox value="#{rightCardBean.selRight.changeRight}" id="chBoxRight"
                                                      itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>
+                            
+                            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.addChild}"
+                                                     itemLabel="#{bundle.AddChildsRight}" onchange="itemChange = 1;"/>                            
                         </h:panelGrid>
                     </p:panelGrid>
 

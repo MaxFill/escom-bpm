@@ -145,6 +145,7 @@ public class RightCardBean extends BaseDialogBean{
         getSelRight().setRead(newValue);
         getSelRight().setChangeRight(newValue);
         getSelRight().setExecute(newValue);
+        getSelRight().setAddChild(newValue);
     }
     
     /* Событие изменения пользователя в карточке права */ 
