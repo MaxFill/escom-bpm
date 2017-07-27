@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -55,15 +56,12 @@ public class ApplicationBean implements Serializable{
     
     @PostConstruct
     public void init() { 
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         licence = configuration.getLicence();
-        licence.setVersionNumber("1.01");
-        licence.setReleaseNumber("001");
-        Date releaseDate = DateUtils.convertStrToDate("2017-05-01", locale);
-        licence.setReleaseDate(releaseDate);
-        licence.setTotalLicence(5);
-        licence.setLicenceName(EscomBeanUtils.getBandleLabel("LicenceBaseType")); //TODO надо откуда то получать!
-        licence.setTermLicence(DateUtils.addDays(new Date(), 10));
+        licence.setVersionNumber(ec.getInitParameter("VersionNumber"));
+        licence.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
+        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
         loadDefaultRights();
     }
     

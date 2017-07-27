@@ -4,7 +4,7 @@ import com.maxfill.utils.DateUtils;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Licence implements Serializable{
+public final class Licence implements Serializable{
     private static final long serialVersionUID = 1156677344730726415L;
     
     private String versionNumber;       //версия используемого релиза
@@ -16,43 +16,59 @@ public class Licence implements Serializable{
     private String actualReleaseNumber; //номер актуального релиза
     private String actualReleasePage;   //страница на сайте тех. поддержки актуального релиза
     private Date actualReleaseDate;     //дата актуального релиза
-    
-    private Integer totalLicence;       //всего лицензий
-    private String licenceName;
-    private String licenceNumber;
-    private Date termLicence;           //срок действия лицензии
+      
+    private final String licensor;
+    private final Integer totalLicence;       //всего лицензий
+    private final String termLicence;         //срок действия лицензии
+    private final String licenceName;
+    private final String licenceNumber;
+    private final Date dateTermLicence;
     
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
+
+    public Licence(String termLicence, Integer totalLicence, String licenceName, String licenceNumber, String licensor) {
+        this.termLicence = termLicence;
+        this.totalLicence = totalLicence;
+        this.licenceName = licenceName;
+        this.licenceNumber = licenceNumber;
+        this.licensor = licensor;
+
+        Date newDate = DateUtils.convertStrToDate(termLicence);
+        if (newDate == null){
+            this.dateTermLicence = new Date();
+        } else {
+            this.dateTermLicence = newDate;
+        }
+    }
+    
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+        
+    public String getLicensor() {
+        return licensor;
+    } 
+    
     public Integer getTotalLicence() {
         return totalLicence;
-    }
-    public void setTotalLicence(Integer totalLicence) {
-        this.totalLicence = totalLicence;
     }
     
     public String getLicenceName() {
         return licenceName;
+    }    
+
+    public Date getDateTermLicence() {
+        return dateTermLicence;
     }
-    public void setLicenceName(String licenceName) {
-        this.licenceName = licenceName;
-    }
-    
-    public Date getTermLicence() {
-        return termLicence;
-    }
-    public String getStrTermLicence() {
-        Date clearDate = DateUtils.clearDate(termLicence);
-        return DateUtils.dateToString(clearDate, "dd.MM.YY");
-    }
-    
+        
     public Boolean isExpired(){
         Date currentClearDate = DateUtils.clearDate(new Date());
-        Date licenceClearDate = DateUtils.clearDate(termLicence);
+        Date licenceClearDate = DateUtils.clearDate(dateTermLicence);
         return !licenceClearDate.after(currentClearDate);         
     }
-    
-    public void setTermLicence(Date termLicence) {
-        this.termLicence = termLicence;
+
+    public String getTermLicence() {
+        return termLicence;
     }
     
     public String getVersionNumber() {
@@ -68,13 +84,6 @@ public class Licence implements Serializable{
     public void setReleaseNumber(String releaseNumber) {
         this.releaseNumber = releaseNumber;
     }  
-
-    public String getLicenceNumber() {
-        return licenceNumber;
-    }
-    public void setLicenceNumber(String licenceNumber) {
-        this.licenceNumber = licenceNumber;
-    }
 
     public Date getReleaseDate() {
         return releaseDate;

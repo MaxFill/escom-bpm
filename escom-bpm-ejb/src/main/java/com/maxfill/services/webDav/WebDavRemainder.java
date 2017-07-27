@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -192,7 +193,7 @@ public class WebDavRemainder {
             String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked");
             messagesFacade.createSystemMessage(adressee, subject, content.toString(), doc);
         } else {
-            String dateUnlock = DateUtils.dateToString(attache.getPlanUnlockDate(), "");
+            String dateUnlock = DateUtils.dateToString(attache.getPlanUnlockDate(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale());
             String msgError = ItemUtils.getFormatMessage("DocumentWilBeAutomaticallyUnlocked", new Object[]{dateUnlock});
             
             StringBuilder subject = new StringBuilder();

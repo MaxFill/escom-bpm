@@ -46,7 +46,7 @@
 
                             <p:column headerText="#{bundle.DateLogin}">
                                 <p:outputLabel value="#{item.dateConnect}">
-                                    <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                                 </p:outputLabel>
                             </p:column>
 

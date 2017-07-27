@@ -15,9 +15,9 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.lang.StringUtils;
 
 public final class DateUtils {
+    public final static Logger LOGGER = Logger.getLogger(DateUtils.class.getName());
     public final static Integer MINUTE_TYPE = 0;
     public final static Integer HOUR_TYPE = 1;
     public final static Integer DAILY_REPEAT = 0;
@@ -32,13 +32,24 @@ public final class DateUtils {
     private DateUtils() { }
 
     /* Преобразование строки yyyy-MM-dd в дату */
+    public static Date convertStrToDate(String dateStr){ 
+        Date rezult = null;
+        try {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            rezult = df.parse(dateStr);
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return rezult;
+    }
+    
     public static Date convertStrToDate(String dateStr, Locale locale){        
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", locale);
         Date date = null;
         try {
             date = format.parse(dateStr);
         } catch (ParseException ex) {
-            Logger.getLogger(DateUtils.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return date;
     }
@@ -61,15 +72,17 @@ public final class DateUtils {
     }
     
     /* Преобразование даты в строку */ 
-    public static String dateToString(Date sourceDate, String strFormatDate){
-        if (StringUtils.isBlank(strFormatDate)){
-            strFormatDate = "dd.MM.YY HH:mm";
+    public static String dateToString(Date sourceDate, Integer formatDate, Integer formatTime, Locale locale){
+        if (sourceDate == null || formatDate == null || locale == null) return null;       
+        String rezult;
+        if (formatTime != null){
+            DateFormat df = DateFormat.getDateTimeInstance(formatDate, formatTime, locale);                
+            rezult = df.format(sourceDate);
+        } else {
+            DateFormat df = DateFormat.getDateInstance(formatDate, locale);
+            rezult = df.format(sourceDate);
         }
-        if (sourceDate != null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(strFormatDate);            
-            strFormatDate = simpleDateFormat.format(sourceDate);
-        }
-        return strFormatDate;  
+        return rezult;  
     } 
     
     /* Преобразование даты в локальную дату */

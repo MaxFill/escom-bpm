@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.beans.system.login;
 
 import com.maxfill.Configuration;
@@ -10,12 +9,15 @@ import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -84,8 +86,10 @@ public class LoginBean implements Serializable{
         RequestContext context = RequestContext.getCurrentInstance();
         Set<FacesMessage> errors = new HashSet<>(); 
         
-        if (appBean.getLicence().isExpired()){     
-            errors.add(EscomBeanUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{appBean.getLicence().getStrTermLicence()}));
+        if (appBean.getLicence().isExpired()){
+            Date termLicense = appBean.getLicence().getDateTermLicence();            
+            String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
+            errors.add(EscomBeanUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
         }
         
         if (appBean.isNoAvailableLicence()){
@@ -121,15 +125,18 @@ public class LoginBean implements Serializable{
             return showErrMsg(errorsKey, context);            
         }
         */
-        initCurrentUser(user);
-        if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
-            targetPage = SysParams.MAIN_PAGE;
+        if (initCurrentUser(user)){
+            if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
+                targetPage = SysParams.MAIN_PAGE;
+            }
+        } else {
+            targetPage = SysParams.AGREE_LICENSE;
         }
         sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }
     
     /* Инициализация текущего пользователя */
-    private void initCurrentUser(User user){
+    private boolean initCurrentUser(User user){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();      
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
         HttpSession httpSession = request.getSession();
@@ -149,8 +156,8 @@ public class LoginBean implements Serializable{
         userSettings.setLanguage(selectedLang.getName());
         sessionBean.setUserSettings(userSettings);
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
-        appBean.addBusyLicence(user, httpSession);        
-        LOG.log(Level.INFO, "User is login = {0}", userName);
+        appBean.addBusyLicence(user, httpSession);
+        return userSettings.isAgreeLicense();
     }
     
     /* Проверка подключения к LDAP серверу  */

@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.maxfill.model.docs.Doc;
@@ -21,6 +22,8 @@ import com.maxfill.model.users.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -210,10 +213,10 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     public boolean checkUserInRole(Doc doc, String roleName, User user){        
         roleName = roleName.toLowerCase();
         Map<String, Set<Integer>> roles = getRoleMap(doc);
-        if (roles.isEmpty() || !roles.containsKey(roleName)) return false;       
-        ArrayList<Integer> usersId = (ArrayList<Integer>)roles.get(roleName);
-        if (usersId == null || usersId.isEmpty()) return false;        
-        return usersId.contains(user.getId());
+        if (roles.isEmpty() || !roles.containsKey(roleName)) return false; 
+        HashSet<Integer> usersId = (HashSet<Integer>)roles.get(roleName);
+        if (usersId.isEmpty()) return false;        
+        return usersId.contains(user.getId());             
     }
     
     /* Возвращает имя испольнителя роли */
@@ -240,7 +243,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
             if (StringUtils.isBlank(roleJson)) return roles;
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                roles = mapper.readValue(roleJson, Map.class);
+                roles = mapper.readValue(roleJson, new TypeReference<HashMap<String, HashSet<Integer>>>() {});
                 doc.setRoles(roles);
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);

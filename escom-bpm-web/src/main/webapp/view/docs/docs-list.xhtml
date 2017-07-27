@@ -38,7 +38,7 @@
         
         <p:column headerText="#{bundle.DateChange}" sortBy="#{doc.dateChange}">
             <h:outputText value="#{doc.dateChange}" >
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputText>    
         </p:column>
         

@@ -15,7 +15,7 @@
         <h:panelGrid columns="2" rendered="#{_bean.service.started}">
             <p:outputLabel value="#{bundle.DateNextStart}"/>
             <p:inputText value="#{_bean.service.dateNextStart}" readonly="true">
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </p:inputText>
         </h:panelGrid>
 
@@ -45,8 +45,9 @@
                     <p:calendar value="#{_bean.scheduler.startDate}" 
                                 disabled="#{_bean.service.started}"
                                 showButtonPanel="true" showHour="true" showMinute="true"
-                                pattern="dd.MM.yyyy HH:mm" mask="99.99.9999 99:99"
-                                navigator="true" locale="ru" yearRange="1900:+0" mindate="#{currentDate}"                  
+                                mask="99.99.9999 99:99"
+                                locale="#{sessionBean.locale}"
+                                navigator="true" locale="#{sessionBean.locale}" yearRange="1900:+0" mindate="#{currentDate}"                  
                                 required="true" 
                                 requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
                     </p:calendar>

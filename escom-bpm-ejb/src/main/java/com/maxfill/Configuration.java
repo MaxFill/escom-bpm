@@ -1,10 +1,13 @@
 package com.maxfill;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.licence.Licence;
+import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.ItemUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +29,7 @@ public class Configuration {
     private javax.jcr.Repository repository;
     
     private String serverOS;
+    private Locale serverLocale;
     private String serverURL;
     private String serverPath;
     private String uploadPath;
@@ -38,8 +42,7 @@ public class Configuration {
     private String jasperReports;
     private String convertorPDF;
     private Licence licence;
-    private Integer serverId;
-    private String separator;
+    private Integer serverId;        
     
     @PostConstruct
     private void init() {
@@ -58,29 +61,19 @@ public class Configuration {
             defaultEmailServer = (String) properties.get("DEFAULT_EMAIL_SERVER");
             defaultEmailServerPort = (String) properties.get("DEFAULT_EMAIL_SERVER_PORT");
             ldapServer = (String) properties.get("LDAP_SERVER");
-            licence = new Licence();
-            licence.setLicenceNumber((String) properties.get("LICENCE_NUMBER"));
             serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
             tempFolder = (String) properties.get("TEMP_FOLDER");
             jasperReports = (String) properties.get("JASPER_REPORTS");
             convertorPDF = (String) properties.get("CONVERTOR_PDF");
-            switch (serverOS){
-                case SysParams.OS_UNIX:{
-                    separator = "//";
-                    break;
-                }
-                case SysParams.OS_WIN:{
-                    separator = "\\";
-                    break;
-                }
-            }
+            initLicense();
+            initServerLocale((String) properties.get("SERVER_LOCALE"));
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
-    public String getSeparator() {
-        return separator;
+    public Locale getServerLocale() {
+        return serverLocale;
     }    
     public String getServerOS() {
         return serverOS;
@@ -131,5 +124,24 @@ public class Configuration {
     public Repository getRepository() {
         return repository;
     }
+ 
+    private void initServerLocale(String nameLocale){
+        serverLocale = new Locale(nameLocale);
+    }
     
+    private void initLicense(){
+        String propertyFile = System.getProperty("license.properties");
+        File file = new File(propertyFile);
+        Properties properties = new Properties();
+        try {
+            properties.load(new FileInputStream(file));            
+            licence = new Licence((String)properties.get("LICENCE_TERM"),
+                Integer.valueOf((String) properties.get("LICENCE_COUNT")),
+                (String) properties.get("LICENCE_EDITION"),
+                (String) properties.get("LICENCE_NUMBER"),
+                (String) properties.get("LICENSOR"));
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
 }

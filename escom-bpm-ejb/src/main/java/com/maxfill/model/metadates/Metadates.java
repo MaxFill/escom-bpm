@@ -119,6 +119,7 @@ public class Metadates implements Serializable{
     public String getName(){
         return ItemUtils.getBandleLabel(bundleName);
     }
+    
     public String getObjectName() {
         return objectName;
     }    

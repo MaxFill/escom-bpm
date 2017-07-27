@@ -120,8 +120,8 @@
                                 disabled="#{_bean.isReadOnly() or _item.number != null}"
                                 onselect="return itemChange = 1;"
                                 required="#{param['isRequired'] == 'true'}" 
-                                showButtonPanel="true"
-                                pattern="dd.MM.yyyy" mask="99.99.9999"
+                                showButtonPanel="true" locale="#{sessionBean.locale}"                                
+                                mask="99.99.9999"
                                 navigator="true" yearRange="c-120:c+20"                                
                                 requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                     </p:calendar>              

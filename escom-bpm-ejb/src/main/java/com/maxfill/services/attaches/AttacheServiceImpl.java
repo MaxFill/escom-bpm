@@ -21,6 +21,7 @@ import org.apache.commons.io.FilenameUtils;
 /* Сервис работы с файлами вложений */
 @Stateless
 public class AttacheServiceImpl implements AttacheService{
+    private static final Logger LOGGER = Logger.getLogger(AttacheServiceImpl.class.getName());
     @EJB
     private AttacheFacade attacheFacade;    
     @EJB
@@ -33,14 +34,18 @@ public class AttacheServiceImpl implements AttacheService{
     
     @Override
     public void deleteAttache(Attaches attache){
-        StringBuilder sb = new StringBuilder(configuration.getUploadPath());
-        sb.append(attache.getFullName());
-        String fileName = sb.toString();
-        File file = new File(fileName);
-        file.delete();
-        String pdfFileName = FilenameUtils.removeExtension(fileName)+".pdf";
-        File pdfFile = new File(pdfFileName);
-        pdfFile.delete();
+        try{
+            StringBuilder sb = new StringBuilder(configuration.getUploadPath());
+            sb.append(attache.getFullName());
+            String fileName = sb.toString();
+            File file = new File(fileName);
+            file.delete();
+            String pdfFileName = FilenameUtils.removeExtension(fileName)+".pdf";
+            File pdfFile = new File(pdfFileName);
+            pdfFile.delete();
+        } catch (Exception ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
         
     @Override
@@ -69,7 +74,7 @@ public class AttacheServiceImpl implements AttacheService{
                             }
                     });
         } catch (IOException ex) {
-            Logger.getLogger(AttacheServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 }

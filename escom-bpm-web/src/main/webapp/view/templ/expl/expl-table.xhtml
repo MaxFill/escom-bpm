@@ -56,7 +56,7 @@
                   rendered="#{_showDateChange != false}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
 
@@ -64,7 +64,7 @@
                   rendered="#{_showDateCreate != false}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
 
@@ -104,7 +104,8 @@
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
                             update="#{_frmExpl}:menuTbl"
                             actionListener="#{explorerBean.onCopyItem(item)}"/>
-                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"                             
+                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                            disabled="#{item.id == 0}"
                             update="#{_frmTree} #{_frmExpl}"
                             actionListener="#{explorerBean.onMoveContentToTrash(item)}"
                             oncomplete="initDND()">

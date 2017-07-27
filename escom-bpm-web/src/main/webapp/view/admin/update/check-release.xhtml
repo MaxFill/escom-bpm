@@ -92,67 +92,60 @@
                     <p:inputText id="actualRelease" value="#{checkReleaseBean.releaseNumber}" style="display: none;"/>
                     <p:inputText id="pageRelease" value="#{checkReleaseBean.pageRelease}" style="display: none;"/>
 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
-                           
-                        <h:panelGroup>
-                            <h:outputLabel value="#{bundle.ActualRelease}" />
-                            <p:separator/>
-                        </h:panelGroup>
-                     
-                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12">
-                            <p:outputLabel value="#{bundle.Version}:" />
-                            <p:inputText value="#{checkReleaseBean.versionRelease}" readonly="true"/>
-                            
-                            <p:outputLabel value="#{bundle.Number}:" />
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ">
                             <h:panelGroup>
-                                <p:inputText value="#{checkReleaseBean.releaseNumber}" readonly="true"/>
-                                <p:spacer/>
-                                <p:commandButton icon="ui-icon-arrowrefresh-1-w" value="#{bundle.Refresh}" title="#{bundle.CheckUpdates}"
-                                                 onclick="doSend('#{checkReleaseBean.licence.licenceNumber}')"/>
+                                <p:outputLabel value="#{bundle.ActualRelease}" />
+                                <p:separator/>
                             </h:panelGroup>
 
-                            <p:outputLabel value="#{bundle.Date}:" />
-                            <p:inputText value="#{checkReleaseBean.dateRelease}" readonly="true">
-                                <f:convertDateTime pattern="dd.MM.yyyy" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                            </p:inputText>
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
+                                <h:outputLabel value="#{bundle.Version}:" />
+                                <p:inputText value="#{checkReleaseBean.versionRelease}" readonly="true"/>
 
-                            <p:outputLabel value="#{bundle.Page}:" />
-                            <h:panelGroup>
-                                <p:inputText value="#{checkReleaseBean.pageRelease}" readonly="true"/>
+                                <h:outputLabel value="#{bundle.Number}:" />
+                                <p:inputText value="#{checkReleaseBean.releaseNumber}" readonly="true"/>                                    
+
+                                <h:outputLabel value="#{bundle.Date}:" />
+                                <p:inputText value="#{checkReleaseBean.dateRelease}" readonly="true">
+                                    <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                </p:inputText>
+
                                 <p:spacer/>
                                 <p:commandLink value="#{bundle.GoToSupport}"
-                                               actionListener="#{checkReleaseBean.onGotoSupportPage}" target="_blank"/>
-                            </h:panelGroup>
+                                                   actionListener="#{checkReleaseBean.onGotoSupportPage}" target="_blank"/>                                
+                                
+                                <p:spacer/>
+                                <p:separator />
+                                
+                                <p:spacer/>
+                                <p:commandButton icon="ui-icon-arrowrefresh-1-w" value="#{bundle.Refresh}" title="#{bundle.CheckUpdates}"
+                                                     onclick="doSend('#{checkReleaseBean.licence.licenceNumber}')"/>
+                            </p:panelGrid>
                         </p:panelGrid>
-
-                        <h:panelGroup>
-                            <h:outputLabel value="#{bundle.CurrentRelease}" /> 
-                            <p:separator/>
-                        </h:panelGroup>
                         
-                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12">
-                            <p:outputLabel value="#{bundle.Version}:" />
-                            <p:inputText value="#{checkReleaseBean.licence.versionNumber}" readonly="true" />
-                            
-                            <p:outputLabel value="#{bundle.Number}:" />
-                            <p:inputText value="#{checkReleaseBean.licence.releaseNumber}" readonly="true" />
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ">                            
+                            <h:panelGroup>
+                                <p:outputLabel value="#{bundle.CurrentRelease}" /> 
+                                <p:separator/>
+                            </h:panelGroup>
 
-                            <p:outputLabel value="#{bundle.Date}:" />
-                            <p:inputText value="#{checkReleaseBean.licence.releaseDate}" readonly="true" >
-                                <f:convertDateTime pattern="dd.MM.yyyy" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
-                            </p:inputText>
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12">
+                                <h:outputLabel value="#{bundle.Version}:" />
+                                <p:inputText value="#{checkReleaseBean.licence.versionNumber}" readonly="true" />
+
+                                <h:outputLabel value="#{bundle.Number}:" />
+                                <p:inputText value="#{checkReleaseBean.licence.releaseNumber}" readonly="true" />
+
+                                <h:outputLabel value="#{bundle.Date}:" />
+                                <p:inputText value="#{checkReleaseBean.licence.releaseDate}" readonly="true" >
+                                    <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                </p:inputText>
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:panelGrid>
-
-                    <p:toolbar styleClass="ui-grid-col-12"> 
-                        <f:facet name="right">
-                            <p:commandButton value="#{bundle.Close}" style="float:right;"
-                                             title="#{bundle.Close}"
-                                             action="#{checkReleaseBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
-                    </p:toolbar>
                 </h:form>
             </pe:layoutPane>
         </pe:layout>

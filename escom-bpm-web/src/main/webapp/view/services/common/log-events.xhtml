@@ -43,12 +43,12 @@
 
         <p:column headerText="#{bundle.DateStart}" sortBy="#{item.dateStart}">
             <h:outputLabel value="#{item.dateStart}" >
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
         <p:column headerText="#{bundle.DateFinish}" sortBy="#{item.dateFinish}">
             <h:outputLabel value="#{item.dateFinish}">
-                <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
         <p:column headerText="#{bundle.Duration}" >

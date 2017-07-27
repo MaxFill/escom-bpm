@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,7 @@ public class UsersServiceImpl implements UsersService {
     @Asynchronous
     @Override
     public void addUserInRealm(String user, String pwl) {
-        String separator = conf.getSeparator();
+        String separator = File.separator;
         StringBuilder command = new StringBuilder(conf.getServerPath());
         command.append("bin").append(separator);
         try {

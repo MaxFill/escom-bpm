@@ -38,7 +38,7 @@
     <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocSelector')}"/>
     <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsExplorer')}"/>
 
-    <ui:param name="_showAuthor"      value="#{false}"/>
+    <ui:param name="_showAuthor"      value="#{true}"/>
     <ui:param name="_showDateCreate"  value="#{false}"/>
     <ui:param name="_showDateChange"  value="#{true}"/>    
     <ui:param name="_showUploadPanel" value="#{true}"/>
@@ -67,7 +67,7 @@
     </ui:define>    
     
     <ui:define name="addItemMenu">
-        <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditDoc}" 
+        <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
                     actionListener="#{explorerBean.onSetCurrentItem(item)}"
                     disabled="#{item.attache == null}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"

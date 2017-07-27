@@ -49,7 +49,7 @@
                 <p:cellEditor>
                     <f:facet name="output">
                         <h:outputLabel value="#{item.dateStatus}">
-                            <f:convertDateTime pattern="dd.MM.yyyy HH:mm" locale="RU" timeZone="#{TimeZone.getDefault()}"/>
+                            <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                         </h:outputLabel>
                     </f:facet>
                     <f:facet name="input">
@@ -57,7 +57,8 @@
                                     required="#{param['isRequired'] == 'true'}" 
                                     showButtonPanel="true"
                                     disabled="#{ _bean.isReadOnly()}"
-                                    pattern="dd.MM.yyyy" mask="99.99.9999"
+                                    locale="#{sessionBean.locale}"
+                                    mask="99.99.9999"
                                     navigator="true" yearRange="c-120:c+20"                                    
                                     requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" listener="#{_bean.onChangeDocStatus(item)}" update="docStatusTbl" />

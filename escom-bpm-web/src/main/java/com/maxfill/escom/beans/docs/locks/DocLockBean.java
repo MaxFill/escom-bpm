@@ -8,6 +8,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.services.webDav.WebDavRemainder;
 import com.maxfill.utils.DateUtils;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -36,9 +37,9 @@ public class DocLockBean extends BaseDialogBean{
     @Override
     protected void initBean() {
         Date maxDate = DateUtils.addDays(new Date(), 10); 
-        maxLockDate = DateUtils.dateToString(maxDate, "");
+        maxLockDate = DateUtils.dateToString(maxDate, DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale());
         Date minDate = DateUtils.addMinute(new Date(), 10);
-        minLockDate = DateUtils.dateToString(minDate, ""); 
+        minLockDate = DateUtils.dateToString(minDate, DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale()); 
     }
 
     @Override

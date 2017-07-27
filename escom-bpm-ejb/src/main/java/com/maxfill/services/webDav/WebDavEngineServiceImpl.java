@@ -28,6 +28,8 @@ import javax.jcr.security.Privilege;
 
 @Stateless
 public class WebDavEngineServiceImpl implements WebDavService{    
+    private static final String WEBDAV_STORAGE = "other";
+    private static final Logger LOGGER = Logger.getLogger(WebDavEngineServiceImpl.class.getName());
     
     @EJB
     private Configuration conf;
@@ -56,7 +58,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
             // TODO установить права !
             session.save();
         } catch (RepositoryException | FileNotFoundException ex) {
-            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -89,7 +91,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
             
             session.save();
         } catch (RepositoryException ex) {
-            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -98,9 +100,9 @@ public class WebDavEngineServiceImpl implements WebDavService{
         try {            
             Repository repository = conf.getRepository();
             Credentials credentals = new SimpleCredentials("admin", "admin".toCharArray());        
-            session = repository.login(credentals, "other");            
+            session = repository.login(credentals,  WEBDAV_STORAGE);            
         } catch (RepositoryException ex) {
-            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return session;
     }
@@ -137,7 +139,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
             acm.setPolicy(path, acl);
             session.save();
         } catch (RepositoryException ex) {
-            Logger.getLogger(WebDavEngineServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     

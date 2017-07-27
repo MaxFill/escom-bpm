@@ -95,7 +95,8 @@
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
                                         styleClass="ui-grid-col-12" 
                                         required="true" navigator="true" showButtonPanel="true"
-                                        showHour="true" pattern="dd.MM.yyyy HH:mm" mask="true"                               
+                                        showHour="true" mask="true" 
+                                        locale="#{sessionBean.locale}"
                                         mindate="#{docLockBean.minLockDate}" maxdate="#{docLockBean.maxLockDate}"                              
                                         requiredMessage="#{bundle.Field} [#{bundle.DatePlanUnlock}] #{bundle.MustBeFilled}">
                                 <p:ajax event="dateSelect" listener="#{docLockBean.onChangeDateLock}" />

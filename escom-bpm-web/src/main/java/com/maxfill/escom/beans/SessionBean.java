@@ -292,10 +292,10 @@ public class SessionBean implements Serializable{
     
     /* Является ли текущий пользователь администратором  */
     public boolean isUserAdmin(){
-        if (currentUser.getId() == 1){
+        if (SysParams.ADMIN_ID.equals(currentUser.getId())){
             return true;
         }
-        UserGroups groupAdmin =  currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
+        UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
         return groupAdmin != null;
     }
     
@@ -350,6 +350,12 @@ public class SessionBean implements Serializable{
     public void openScaningForm(){
         Map<String, List<String>> paramMap = new HashMap<>();
         openDialogFrm(DictDlgFrmName.FRM_SCANING, paramMap);
+    }
+    
+    /* Открытие окна просмотра лицензии */
+    public void openLicenseForm(){
+        Map<String, List<String>> paramMap = new HashMap<>();
+        openDialogFrm(DictDlgFrmName.FRM_AGREE_LICENSE, paramMap);
     }
     
     /* Открытие формы нового почтового сообщения  */

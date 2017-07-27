@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -15,6 +16,7 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
 /* Базовый бин для служебных диалогов  */
 public abstract class BaseDialogBean implements Serializable{    
     private static final long serialVersionUID = 3712139345846276454L;
+    protected static final Logger LOGGER = Logger.getLogger(BaseDialogBean.class.getName());
     
     @Inject
     protected SessionBean sessionBean;

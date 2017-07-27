@@ -392,7 +392,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 }
             }
         } else {
-            Object[] msgParams = new Object[]{item.getName()};
+            Object[] msgParams = new Object[]{getMetadatesObj().getName(), item.getName()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), msgParams);
             errors.add(error);
         }

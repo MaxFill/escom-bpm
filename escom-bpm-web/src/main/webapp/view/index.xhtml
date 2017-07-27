@@ -84,8 +84,8 @@
             
             <p:toolbar style="">
                 <f:facet name="left">
-                    <p:commandButton value="testSample" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/sample/default/');" />
-                    <p:commandButton value="testArtifacts" onclick="OpenFolder('https://fil-pc:8443/modeshape-webdav/artifacts/other/');" />
+                    <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
+                    <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
@@ -237,7 +237,7 @@
 
                             <p:outputLabel value="#{bundle.DateRelease}"/>
                             <p:inputText value="#{applicationBean.licence.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
-                                <f:convertDateTime pattern="dd.MM.yyyy" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                             </p:inputText>
                         </p:panelGrid>
 
@@ -252,14 +252,22 @@
                             <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.TermLicense}"/>
-                            <p:inputText value="#{applicationBean.licence.termLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{applicationBean.licence.dateTermLicence}" readonly="true" styleClass="ui-grid-col-12">
+                                <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                            </p:inputText>
                         </p:panelGrid>
                     </p:panelGrid>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/> 
+                            <h:panelGroup styleClass="ui-grid-col-12">
+                                <p:outputLabel value="#{bundle.Licensor}: "/>
+                                <h:outputLabel value="#{applicationBean.licence.licensor}" />
+                            </h:panelGroup>
+                            <h:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/> 
+                            <p:separator />
                             <h:panelGrid columns="2" styleClass="ui-grid-col-12">
-                                <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"/>
+                                <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"
+                                                 actionListener="#{sessionBean.openLicenseForm()}"/>
                                 <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
                             </h:panelGrid>
                         </p:panelGrid>

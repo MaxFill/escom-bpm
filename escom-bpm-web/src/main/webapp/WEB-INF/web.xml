@@ -16,6 +16,18 @@
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>VersionNumber</param-name>
+        <param-value>1.02</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ReleaseNumber</param-name>
+        <param-value>001</param-value>
+    </context-param>
+    <context-param>
+        <param-name>ReleaseDate</param-name>
+        <param-value>2017-07-30</param-value>
+    </context-param>
     <filter>
         <filter-name>RedirectFilter</filter-name>
         <filter-class>com.maxfill.escom.system.RedirectFilter</filter-class>
@@ -57,18 +69,6 @@
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/faces/view/errors/expire.xhtml</location>
-    </error-page>
-    <error-page>
-        <exception-type>javax.ejb.EJBException</exception-type>
-        <location>/faces/view/errors/505.xhtml</location>
-    </error-page>
-    <error-page>
-        <exception-type>org.primefaces.expression.ComponentNotFoundException</exception-type>
-        <location>/faces/view/errors/505.xhtml</location>
-    </error-page>
-    <error-page>
-        <exception-type>java.lang.NullPointerException</exception-type>
-        <location>/faces/view/errors/505.xhtml</location>
     </error-page>
     <error-page>
         <error-code>404</error-code>

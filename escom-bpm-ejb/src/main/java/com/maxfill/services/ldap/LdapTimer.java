@@ -8,6 +8,7 @@ import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         LOG.log(Level.INFO, "Executing LDAP task!");
         StringBuilder detailInfo = new StringBuilder("");        
         Date startDate = new Date();
-        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, ""));
+        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
 
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setServiceId(service);
@@ -49,7 +50,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
             Date finishDate = new Date();
-            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, ""));
+            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale() ));
             selectedEvent.setDetails(detailInfo.toString());
             selectedEvent.setDateFinish(finishDate);
             servicesEventsFacade.create(selectedEvent);

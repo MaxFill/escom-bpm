@@ -34,6 +34,16 @@ public class UserSettings implements Serializable{
     @XmlElement(name = "ReportsSettings")
     private ConcurrentHashMap<String, UserReportsSettings> reportSetting = new ConcurrentHashMap<>();
     
+    @XmlElement(name = "AgreeLicens")
+    private boolean agreeLicense = false;
+
+    public boolean isAgreeLicense() {
+        return agreeLicense;
+    }
+    public void setAgreeLicense(boolean agreeLicense) {
+        this.agreeLicense = agreeLicense;
+    }
+        
     public String getTheme() {
         return theme;
     }

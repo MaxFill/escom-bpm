@@ -14,6 +14,7 @@ import javax.mail.Authenticator;
 import javax.mail.Session;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
         LOG.log(Level.INFO, "Executing MAIL task!");
         StringBuilder detailInfo = new StringBuilder("");        
         Date startDate = new Date();
-        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, ""));
+        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
 
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setServiceId(service);
@@ -75,7 +76,7 @@ public class MailTimer extends BaseTimer<MailSettings>{
             detailInfoAddRow(detailInfo, e.getMessage());
         } finally{
             Date finishDate = new Date();
-            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, ""));
+            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
             selectedEvent.setDetails(detailInfo.toString());
             selectedEvent.setDateFinish(finishDate);
             servicesEventsFacade.create(selectedEvent);
