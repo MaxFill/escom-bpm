@@ -38,7 +38,7 @@ public class LicenseBean extends BaseDialogBean{
         if (content != null) return;
         String separator = File.separator;
         Locale locale = sessionBean.getLocale();
-        String localeName = locale.getLanguage();
+        String localeName = locale.getLanguage().toLowerCase();
         StringBuilder sb = new StringBuilder(conf.getServerPath());
         sb.append("standalone")
                 .append(separator)
