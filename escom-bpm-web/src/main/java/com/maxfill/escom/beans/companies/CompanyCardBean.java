@@ -34,11 +34,7 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     @Override
     public CompanyFacade getItemFacade() {
         return itemsFacade;
-    }
-
-    @Override
-    protected void afterCreateItem(Company item){
-    }        
+    }    
 
     @Override
     public Class<Company> getItemClass() {
