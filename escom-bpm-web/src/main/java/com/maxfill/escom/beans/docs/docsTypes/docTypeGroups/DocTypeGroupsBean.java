@@ -58,7 +58,8 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     } 
     
     @Override
-    public void preparePasteItem(DocTypeGroups pasteItem, BaseDict target){
+    public void preparePasteItem(DocTypeGroups pasteItem, DocTypeGroups sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((DocTypeGroups)target);
     }
     
