@@ -41,10 +41,6 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
     }
 
     @Override
-    protected void afterCreateItem(DocType item) {        
-    }
-
-    @Override
     public Class<DocType> getItemClass() {
         return DocType.class;
     }
