@@ -74,7 +74,8 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }
     
     @Override
-    public void preparePasteItem(Partner pasteItem, BaseDict recipient){        
+    public void preparePasteItem(Partner pasteItem, Partner sourceItem, BaseDict recipient){
+        super.preparePasteItem(pasteItem, sourceItem, recipient);
         if (!isNeedCopyOnPaste(pasteItem, recipient)){
             addItemToGroup(pasteItem, recipient);
         }
