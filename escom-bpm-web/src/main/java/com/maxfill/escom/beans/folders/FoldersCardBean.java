@@ -51,11 +51,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     @Override
     public FoldersFacade getItemFacade() {
         return foldersFacade;
-    }
-
-    @Override
-    protected void afterCreateItem(Folder item) {        
-    }    
+    }  
     
     @Override
     public Class<Folder> getItemClass() {
