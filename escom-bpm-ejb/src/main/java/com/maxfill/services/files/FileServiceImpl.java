@@ -2,11 +2,14 @@ package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.utils.EscomUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +26,29 @@ public class FileServiceImpl implements FileService{
     
     @EJB    
     protected Configuration conf;
+    
+    @Override
+    @Asynchronous
+    public void doCopy(Attaches sourceAttache, Attaches targetAttache){
+        String uploadPath = conf.getUploadPath();
+        StringBuilder sb = new StringBuilder();        
+        Path targetPath = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullName()).toString());
+        
+        sb.setLength(0);        
+        Path targetPathPDF = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullNamePDF()).toString());
+        
+        sb.setLength(0);        
+        Path sourcePath = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullName()).toString());
+        
+        sb.setLength(0);
+        Path sourcePathPDF = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullNamePDF()).toString());
+        try  {
+            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(sourcePathPDF, targetPathPDF, StandardCopyOption.REPLACE_EXISTING);
+        } catch(IOException e){
+            LOG.log(Level.SEVERE, null, e);
+        }
+    }
     
     @Override
     @Asynchronous
