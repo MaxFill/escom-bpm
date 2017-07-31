@@ -98,10 +98,6 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     }
 
     @Override
-    protected void afterCreateItem(Staff item) {        
-    }
-
-    @Override
     public Class<Staff> getItemClass() {
         return Staff.class;
     }
