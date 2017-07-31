@@ -133,7 +133,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     }  
     
     @Override
-    public void preparePasteItem(Folder pasteItem, BaseDict target){        
+    public void preparePasteItem(Folder pasteItem, Folder sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((Folder)target);
     } 
     
