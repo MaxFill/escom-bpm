@@ -59,7 +59,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         this.logClass = logClass;
         this.stateClass = stateClass;
     } 
-        
+    
     /* СОЗДАНИЕ: cоздание объекта */
     public T createItem(User author) {
         try {
