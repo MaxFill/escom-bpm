@@ -97,7 +97,7 @@
         </navigation-case>
         <navigation-case>
             <from-outcome>statusesdoc-card</from-outcome>
-            <to-view-id>/view/docs/docStatus/statusesdoc-сard.xhtml</to-view-id>
+            <to-view-id>/view/docs/docStatus/statusesdoc-card.xhtml</to-view-id>
         </navigation-case>
             
         <navigation-case>
@@ -155,7 +155,7 @@
         
         <navigation-case>
             <from-outcome>numeratorpattern-card</from-outcome>
-            <to-view-id>/view/admin/numPattern/num-pattern-сard.xhtml</to-view-id>
+            <to-view-id>/view/admin/numPattern/num-pattern-card.xhtml</to-view-id>
         </navigation-case>
          
         <navigation-case>
@@ -194,7 +194,7 @@
         
         <navigation-case>
             <from-outcome>user-card</from-outcome>
-            <to-view-id>/view/users/user-сard.xhtml</to-view-id>
+            <to-view-id>/view/users/user-card.xhtml</to-view-id>
         </navigation-case>  
         
         <navigation-case>
@@ -242,7 +242,7 @@
    
         <navigation-case>
             <from-outcome>partnertypes-card</from-outcome>
-            <to-view-id>/view/partners/types/partnertype-сard.xhtml</to-view-id>
+            <to-view-id>/view/partners/types/partnertype-card.xhtml</to-view-id>
             <redirect />
         </navigation-case>
              
@@ -272,12 +272,12 @@
         
         <navigation-case>
             <from-outcome>partner-card</from-outcome>
-            <to-view-id>/view/partners/partner-сard.xhtml</to-view-id>
+            <to-view-id>/view/partners/partner-card.xhtml</to-view-id>
         </navigation-case>
 
         <navigation-case>
             <from-outcome>post-card</from-outcome>
-            <to-view-id>/view/staffs/posts/post-сard.xhtml</to-view-id>
+            <to-view-id>/view/staffs/posts/post-card.xhtml</to-view-id>
             <redirect />
         </navigation-case>
                 
@@ -300,7 +300,7 @@
 
         <navigation-case>
             <from-outcome>folder-card</from-outcome>
-            <to-view-id>/view/folders/folder-сard.xhtml</to-view-id>
+            <to-view-id>/view/folders/folder-card.xhtml</to-view-id>
         </navigation-case>
     
        <navigation-case>
