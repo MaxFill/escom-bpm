@@ -83,7 +83,8 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     }
                 
     @Override
-    public void preparePasteItem(PartnerGroups pasteItem, BaseDict target){        
+    public void preparePasteItem(PartnerGroups pasteItem, PartnerGroups sourceItem, BaseDict target){ 
+        super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((PartnerGroups)target);
     }
     
