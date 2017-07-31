@@ -9,7 +9,7 @@
         <p:fileUpload id="file" disabled="#{explorerBean.treeSelectedNode == null}"
                       rendered="#{!explorerBean.isTrashSelected()}"
                       styleClass="ui-grid-col-12"
-                      allowTypes="/(\.|\/)(pdf|docx|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/"
+                      allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
                       sizeLimit="#{docsBean.maxFileSize}"
                       invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
                       invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
