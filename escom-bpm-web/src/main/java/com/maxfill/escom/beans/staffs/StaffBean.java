@@ -89,7 +89,8 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
     
     @Override
-    public void preparePasteItem(Staff pasteItem, BaseDict target){
+    public void preparePasteItem(Staff pasteItem, Staff sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
         detectParentOwner(pasteItem, target);
     }
     
