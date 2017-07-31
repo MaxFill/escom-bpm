@@ -85,7 +85,8 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     }
     
     @Override
-    public void preparePasteItem(UserGroups pasteItem, BaseDict target){
+    public void preparePasteItem(UserGroups pasteItem, UserGroups sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((UserGroups)target);    
     }
     
