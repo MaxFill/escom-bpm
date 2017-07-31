@@ -111,12 +111,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                         getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
                     });
         }        
-    } 
-    
-    @Override
-    protected void afterCreateItem(Doc doc) {
-        addDocStatusFromType(doc, doc.getDocType());
-    }
+    }     
         
     /* Запрос на формирование ссылки URL для просмотра документа  */
     public void onGetDocViewURL(Doc doc){
@@ -263,12 +258,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
         DocType item = items.get(0);
         getEditedItem().setDocType(item);
         onItemChange();
-        addDocStatusFromType(getEditedItem(),item);
+        docsBean.addDocStatusFromDocType(getEditedItem(),item);
     }
     public void onDocTypeSelected(ValueChangeEvent event){        
         DocType docType = (DocType) event.getNewValue();
         getEditedItem().setDocType(docType);
-        addDocStatusFromType(getEditedItem(), docType);
+        docsBean.addDocStatusFromDocType(getEditedItem(), docType);
     }      
   
     /* Возвращает true если у документа есть заблокированные вложения */
@@ -283,29 +278,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     /* СТАТУСЫ ДОКУМЕНТА */
-    
-    /* СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа   */
-    private int addDocStatusFromType(Doc doc, DocType docType){
-        int loadCounter = 0;
-        if (docType != null && !docType.getStatusDocList().isEmpty()){               
-            List<StatusesDoc> statuses = docType.getStatusDocList();           
-            loadCounter = addStatusesInDoc(doc, statuses);            
-        }
-        return loadCounter;
-    } 
-    
-    /* СТАТУСЫ ДОКУМЕНТА: добавление статусов в документ */
-    private int addStatusesInDoc(Doc doc, List<StatusesDoc> statusesForAdd){
-        List<DocStatuses> docsStatuses = doc.getDocsStatusList();
-        List<StatusesDoc> statusesFromDoc = docsStatuses.stream().map(docsStatus -> docsStatus.getStatus()).collect(Collectors.toList());
-            
-        statusesForAdd.removeAll(statusesFromDoc);      // удалить уже имеющиеся статусы
-        statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
-                .forEach(docsStatus -> docsStatuses.add(docsStatus));        
-        onItemChange();
-        return statusesForAdd.size();
-    }       
-    
+              
     /* Изменение значения статуса документа в таблице статусов на карточке документа */   
     public void onChangeDocStatus(DocStatuses docsStatus){
         docsStatus.setAuthor(currentUser);
@@ -335,16 +308,21 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Загрузка статусов в редактируемый документ из шаблона документа - вызов с формы  */
     public void onLoadDocStatusFromDocType(){
-        int loadCounter = addDocStatusFromType(getEditedItem(), getEditedItem().getDocType());
-        Object[] params = new Object[]{loadCounter};
-        EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+        int loadCounter = docsBean.addDocStatusFromDocType(getEditedItem(), getEditedItem().getDocType());
+        if (loadCounter > 0){
+            onItemChange();
+            Object[] params = new Object[]{loadCounter};
+            EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+        } else {
+            EscomBeanUtils.WarnMsgAdd("Warning", "StatusesNotFound");
+        }    
     }                 
     
     /* Добавление в документ статусов из селектора */
     public void onAddStatusesFromSelector(SelectEvent event){
         if (event.getObject() != null){
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
-            int loadCounter = addStatusesInDoc(getEditedItem(), statuses);
+            int loadCounter = docsBean.addStatusesInDoc(getEditedItem(), statuses);
             Object[] params = new Object[]{loadCounter};
             EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
         }    
