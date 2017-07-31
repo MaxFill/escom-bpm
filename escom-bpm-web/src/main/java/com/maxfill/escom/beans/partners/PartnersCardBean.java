@@ -85,10 +85,6 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     }
 
     @Override
-    protected void afterCreateItem(Partner item) {        
-    }
-
-    @Override
     public Class<Partner> getItemClass() {
         return Partner.class;
     }
