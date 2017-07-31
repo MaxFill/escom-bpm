@@ -28,10 +28,6 @@ public class PartnerTypesCardBean extends BaseCardBean<PartnerTypes>{
     }
 
     @Override
-    protected void afterCreateItem(PartnerTypes item) {        
-    }
-
-    @Override
     public Class<PartnerTypes> getItemClass() {
         return PartnerTypes.class;
     }
