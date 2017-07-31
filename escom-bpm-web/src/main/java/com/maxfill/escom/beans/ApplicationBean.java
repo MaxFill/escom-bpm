@@ -33,7 +33,8 @@ import javax.servlet.http.HttpSession;
 @ApplicationScoped
 public class ApplicationBean implements Serializable{
     private static final long serialVersionUID = 2445940557149889740L;
-    
+    private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/";
+        
     private Boolean needUpadateSystem = false;
     private Licence licence;    
     
@@ -204,4 +205,9 @@ public class ApplicationBean implements Serializable{
     public ConcurrentHashMap<String, UsersSessions> getUserSessions() {
         return userSessions;
     }
+    
+    public String getALLOW_FILE_TYPES() {
+        return ALLOW_FILE_TYPES;
+    }
+      
 }
