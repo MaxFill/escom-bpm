@@ -69,6 +69,7 @@ public class DocStatuses implements Serializable {
     public DocStatuses(Doc doc, StatusesDoc status) {
         this.doc = doc;
         this.status = status;
+        this.dateStatus = new Date();
     }
     
     public Integer getId() {
