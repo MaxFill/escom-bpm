@@ -3,8 +3,6 @@ package com.maxfill.escom.beans.filters;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
 import com.maxfill.escom.beans.BaseCardBean;
-import com.maxfill.dictionary.DictObjectName;
-
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -27,10 +25,6 @@ public class FiltersCardBean extends BaseCardBean<Filter> {
     @Override
     public FiltersFacade getItemFacade() {
         return itemsFacade;
-    }
-
-    @Override
-    protected void afterCreateItem(Filter item) {        
     }
 
     @Override
