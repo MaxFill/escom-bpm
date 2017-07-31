@@ -7,7 +7,10 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.services.files.FileService;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -16,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 /* Версии вложений, работа с прикреплёнными файлами  */
 @Named
@@ -24,12 +28,51 @@ public class AttacheBean extends BaseDialogBean{
     private static final long serialVersionUID = -5107683464380454618L;
     
     @EJB
+    protected FileService fileService;
+    @EJB
     private DocFacade docFacade;
     @Inject
     private DocBean docBean;
             
     private StreamedContent content;     
+       
+    /* Копирует вложение */
+    public Attaches copyAttache(Attaches sourceAttache){
+        Attaches newAttache = new Attaches();        
+        newAttache.setName(sourceAttache.getName());
+        newAttache.setExtension(sourceAttache.getExtension());
+        newAttache.setType(sourceAttache.getType());
+        newAttache.setSize(sourceAttache.getSize());
+        newAttache.setAuthor(sessionBean.getCurrentUser());
+        newAttache.setDateCreate(new Date());
         
+        fileService.doCopy(sourceAttache, newAttache);
+        
+        return newAttache;
+    }
+    
+     /* Вложения */ 
+    public Attaches uploadAtache(UploadedFile uploadFile) throws IOException{
+        if (uploadFile == null) return null;                
+
+        int length = uploadFile.getContents().length;
+
+        String fileName = uploadFile.getFileName();
+        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+
+        Attaches attache = new Attaches();
+        attache.setName(fileName);
+        attache.setExtension(fileExt);
+        attache.setType(uploadFile.getContentType());
+        attache.setSize(length);
+        attache.setAuthor(sessionBean.getCurrentUser());
+        attache.setDateCreate(new Date());
+
+        fileService.doUpload(attache, uploadFile.getInputstream());            
+
+        return attache;
+    }
+    
     @Override
     protected void initBean(){
     }
@@ -78,5 +121,5 @@ public class AttacheBean extends BaseDialogBean{
     protected String getFormName(){
         return DictDlgFrmName.FRM_DOC_VIEWER;
     }
-      
+
 }
