@@ -43,8 +43,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     private User owner;
     private State itemCurrentState;
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
-    
-    protected abstract void afterCreateItem(T item);
 
     @Override
     public void onInitBean(){
@@ -85,7 +83,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             //если создание!
             if (getTypeEdit().equals(DictEditMode.INSERT_MODE)){
                 addOwnerInGroups(item); //owner_а нужно добавить в группу
-                afterCreateItem(item);
                 Set<String> errors = new LinkedHashSet<>();
                 checkCorrectItemRight(item, errors);
                 item.setDateCreate(new Date());
