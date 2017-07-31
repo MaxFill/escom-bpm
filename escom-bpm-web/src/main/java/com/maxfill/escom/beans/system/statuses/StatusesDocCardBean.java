@@ -47,10 +47,6 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
     }
 
     @Override
-    protected void afterCreateItem(StatusesDoc item) {        
-    }
-
-    @Override
     public Class<StatusesDoc> getItemClass() {
         return StatusesDoc.class;
     }
