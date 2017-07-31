@@ -214,10 +214,10 @@ public class SessionBean implements Serializable{
     }    
     
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
-        BaseExplBean bean = getItemBean(sourceItem);        
+        BaseExplBean bean = getItemBean(sourceItem);       
+        BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
+        
         if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
-            BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
-            
             List<List<?>> dependency = bean.doGetDependency(sourceItem);
             if (dependency != null){
                 copyPasteDependency(dependency, pasteItem, errors);
@@ -225,7 +225,7 @@ public class SessionBean implements Serializable{
             }
             return pasteItem;
         } else {
-            bean.preparePasteItem(sourceItem, recipient);
+            bean.preparePasteItem(pasteItem, sourceItem, recipient);
             return sourceItem;
         }
     }
@@ -233,7 +233,8 @@ public class SessionBean implements Serializable{
     public BaseDict prepCopyItem(BaseDict copyItem){
         return getItemBean(copyItem).doCopy(copyItem, currentUser);
     }
-        
+    
+    /* копирование дочерних и подчинённых объектов */
     private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
         for (List<?> depend : dependency){
             depend.stream().forEach(detailItem -> prepPasteItem((BaseDict)detailItem, pasteItem, errors));
@@ -475,7 +476,7 @@ public class SessionBean implements Serializable{
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
         } else {
-            rezult = new Tuple(650, 420);
+            rezult = new Tuple(750, 420);
             formsSize.put(formName, rezult);
         }
         return rezult;
@@ -507,28 +508,7 @@ public class SessionBean implements Serializable{
             LOG.log(Level.SEVERE, null, ex);
         } 
     }
-    
-    /* Вложения */ 
-    public Attaches uploadAtache(UploadedFile uploadFile) throws IOException{
-        Attaches attache = new Attaches();
-        if (uploadFile != null) {
-            int length = uploadFile.getContents().length;
-
-            String fileName = uploadFile.getFileName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
-
-            attache.setName(fileName);
-            attache.setExtension(fileExt);
-            attache.setType(uploadFile.getContentType());
-            attache.setSize(length);
-            attache.setAuthor(currentUser);
-            attache.setDateCreate(new Date());
-
-            fileService.doUpload(attache, uploadFile.getInputstream());            
-        }
-        return attache;
-    }
-    
+       
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     
     public void changeLocale(String lang){
