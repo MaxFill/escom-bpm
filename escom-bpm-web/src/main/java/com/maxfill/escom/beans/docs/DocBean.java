@@ -65,9 +65,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict target) {
         super.preparePasteItem(pasteItem, sourceItem, target);
-        pasteItem.getAttachesList().clear();
-        pasteItem.getDocsStatusList().clear();
-        pasteItem.setOwner((Folder) target);                 
+        pasteItem.setAttachesList(new ArrayList<>());
+        pasteItem.setDocsStatusList(new ArrayList<>());
+        pasteItem.setOwner((Folder) target);        
     }    
     
     @Override
@@ -96,7 +96,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         List<DocStatuses> docsStatuses = doc.getDocsStatusList();
         List<StatusesDoc> statusesFromDoc = docsStatuses.stream().map(docsStatus -> docsStatus.getStatus()).collect(Collectors.toList());
             
-        statusesForAdd.removeAll(statusesFromDoc);      // удалить уже имеющиеся статусы
+        statusesForAdd.removeAll(statusesFromDoc);      //из списка добавляемых удалить уже имеющиеся в документе статусы
         statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
                 .forEach(docsStatus -> docsStatuses.add(docsStatus));
         return statusesForAdd.size();
@@ -124,7 +124,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         DocType docType = doc.getDocType();
         if (docType == null && folder != null && folder.getDocTypeDefault() != null) {
             docType = folder.getDocTypeDefault();
-            doc.setDocType(docType);            
+            doc.setDocType(docType); 
         }
         addDocStatusFromDocType(doc, docType);
         doc.setDateDoc(new Date());

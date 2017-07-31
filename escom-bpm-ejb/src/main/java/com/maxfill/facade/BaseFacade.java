@@ -2,7 +2,9 @@ package com.maxfill.facade;
 
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -12,6 +14,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /* Абстрактный фасад  */
 public abstract class BaseFacade<T> {
@@ -49,7 +55,7 @@ public abstract class BaseFacade<T> {
                 ConstraintViolation<T> cv = iterator.next();
                 System.err.println("ESCOM_ERR:"+cv.getRootBeanClass().getName()+"."+cv.getPropertyPath() + " " +cv.getMessage());
             }
-        }else{
+        } else {
             getEntityManager().persist(entity);
         }
 */
