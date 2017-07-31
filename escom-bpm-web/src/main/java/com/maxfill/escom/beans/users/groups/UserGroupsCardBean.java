@@ -25,10 +25,6 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     }
     
     @Override
-    protected void afterCreateItem(UserGroups item) {        
-    }
-
-    @Override
     public Class<UserGroups> getItemClass() {
         return UserGroups.class;
     }
