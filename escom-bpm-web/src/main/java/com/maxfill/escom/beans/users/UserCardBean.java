@@ -4,12 +4,10 @@ import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 
-import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +18,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
-import org.primefaces.context.RequestContext;
 
 /* Карточка пользователя */
 @Named
@@ -89,10 +86,6 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     @Override
     public List<UserGroups> getGroups(User item) {
         return item.getUsersGroupsList();
-    }
-
-    @Override
-    protected void afterCreateItem(User item) {        
     }
 
     @Override
