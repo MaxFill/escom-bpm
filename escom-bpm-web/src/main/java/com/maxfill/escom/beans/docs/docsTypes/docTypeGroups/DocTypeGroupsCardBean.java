@@ -37,10 +37,6 @@ public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     }
 
     @Override
-    protected void afterCreateItem(DocTypeGroups item) {        
-    }
-
-    @Override
     public Class<DocTypeGroups> getItemClass() {
         return DocTypeGroups.class;
     }
