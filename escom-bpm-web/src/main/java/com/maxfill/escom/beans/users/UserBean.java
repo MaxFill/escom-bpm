@@ -47,9 +47,10 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     }
         
     @Override
-    public void preparePasteItem(User pasteItem, BaseDict recipient){
-        if (!isNeedCopyOnPaste(pasteItem, recipient)){
-            addItemToGroup(pasteItem, recipient);        
+    public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
+        if (!isNeedCopyOnPaste(pasteItem, target)){
+            addItemToGroup(pasteItem, target);        
         }
     }  
     
