@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
@@ -11,6 +12,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Rights;
 import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
@@ -21,6 +23,7 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,9 +105,38 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     
     /* Вставка скопированного объекта */
     @Override
-    public void preparePasteItem(Department pasteItem, BaseDict target){
+    public void preparePasteItem(Department pasteItem, Department sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
         detectParentOwner(pasteItem, target);    
     }   
+    
+    @Override
+    public void setSpecAtrForNewItem(Department department, Map<String, Object> params) {
+        makeCode(department);
+    }
+    
+    /* Формирование кода подразделения  */
+    public void makeCode(Department department){
+        Company company = findCompany(department);
+        String counterName = getItemFacade().getFRM_NAME();
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(department, counterName, numeratorPattern, null, new Date());
+        StringBuilder sb = new StringBuilder();
+        sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
+        department.setCode(sb.toString());
+    } 
+    
+    /* Возвращает компанию, в которой находится подразделение */
+    public Company findCompany(Department item){        
+        Company company = null;
+        if (item.getParent() != null){
+            company = findCompany(item.getParent());
+        }
+        if (company == null){
+            company = item.getOwner();
+        }    
+        return company;
+    }
     
     /* Формирование контента подразделения  */     
     @Override
