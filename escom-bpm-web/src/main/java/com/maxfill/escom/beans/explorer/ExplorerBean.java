@@ -19,6 +19,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.utils.Tuple;
@@ -76,6 +77,8 @@ public class ExplorerBean implements Serializable {
     private SessionBean sessionBean;
     @Inject
     private DocBean docBean;
+    @Inject
+    private AttacheBean attacheBean; 
     
     @EJB
     private FiltersFacade filtersFacade;
@@ -1511,7 +1514,7 @@ public class ExplorerBean implements Serializable {
     public void onUploadFile(FileUploadEvent event) throws IOException{        
         if (checkCanCreateDetailItem(new HashSet<>())){
             UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event); 
-            Attaches attache = sessionBean.uploadAtache(uploadFile);
+            Attaches attache = attacheBean.uploadAtache(uploadFile);
             createParams.put("attache", attache);
         }
     }    
