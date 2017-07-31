@@ -31,8 +31,7 @@
                                 <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces">
                                     #{bundle.With}
                                     <p:calendar value="#{docReportBean.dateStart}" id="dateStart" 
-                                                showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
-                                                mask="99.99.9999"
+                                                showButtonPanel="true" navigator="true" yearRange="c-120:c+20"                                                 
                                                 locale="#{sessionBean.locale}"
                                                 required="#{param['isRequired'] == 'true'}"
                                                 requiredMessage="#{bundle.Field} [#{bundle.DateBegin}: #{bundle.With}] #{bundle.MustBeFilled}">
@@ -43,7 +42,6 @@
                                     #{bundle.At}
                                     <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" 
                                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
-                                                mask="99.99.9999" 
                                                 locale="#{sessionBean.locale}"
                                                 required="#{param['isRequired'] == 'true'}"
                                                 requiredMessage="#{bundle.Field} [#{bundle.DateEnd}: #{bundle.At}] #{bundle.MustBeFilled}">

@@ -57,7 +57,7 @@
 
                     <p:outputLabel value="#{bundle.MobilePhone}" />
                     <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
-                                 disabled="#{_bean.isReadOnly()}"
+                                 disabled="#{_bean.isReadOnly()}" styleClass="ui-grid-col-12"
                                  mask="(999) 999-99-99"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  onchange="return itemChange = 1;"/>

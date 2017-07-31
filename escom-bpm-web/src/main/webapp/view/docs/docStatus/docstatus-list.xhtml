@@ -35,6 +35,10 @@
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      editMode="cell" widgetVar="docsStatus">
 
+            <p:column width="16" sortBy="#{item.state.currentState.name}">
+                <h:graphicImage value="/resources/icon/info.png" title="#{bundle.DocStatus}"/>   
+            </p:column>
+            
             <p:column headerText="#{bundle.Value}" width="60">
                 <p:selectBooleanCheckbox value="#{item.value}">
                     <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
@@ -57,8 +61,7 @@
                                     required="#{param['isRequired'] == 'true'}" 
                                     showButtonPanel="true"
                                     disabled="#{ _bean.isReadOnly()}"
-                                    locale="#{sessionBean.locale}"
-                                    mask="99.99.9999"
+                                    locale="#{sessionBean.locale}"                                    
                                     navigator="true" yearRange="c-120:c+20"                                    
                                     requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" listener="#{_bean.onChangeDocStatus(item)}" update="docStatusTbl" />
