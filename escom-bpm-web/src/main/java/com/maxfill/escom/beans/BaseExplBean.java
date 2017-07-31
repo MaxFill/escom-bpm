@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictLogEvents;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
@@ -149,23 +150,31 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Вставка объекта */
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
-        T pasteItem = doCopy(sourceItem, currentUser);
-        pasteItem.setChildItems(null);
-        pasteItem.setId(null);                    //нужно сбросить скопированный id!
-        pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
-        preparePasteItem(pasteItem, recipient);
-        prepCreate(pasteItem, pasteItem.getParent(), errors, null);            
+        T pasteItem = doCopy(sourceItem, currentUser);        
+        preparePasteItem(pasteItem, sourceItem, recipient);
+        prepCreate(pasteItem, pasteItem.getParent(), errors, null); 
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return null;
         }
-        changeNamePasteItem(sourceItem, pasteItem);
+        doPasteMakeSpecActions(sourceItem, pasteItem);
         getItemFacade().create(pasteItem);
         return pasteItem;
     }
-     
+    
+    protected void doPasteMakeSpecActions(T sourceItem, T pasteItem){
+        changeNamePasteItem(sourceItem, pasteItem);
+    }
+    
     /* Специфичные действия перед вставкой скопированного объекта */
-    public void preparePasteItem(T item, BaseDict recipient){};  
+    public void preparePasteItem(T pasteItem, T sourceItem, BaseDict recipient){
+        pasteItem.setChildItems(null);
+        pasteItem.setState(null);
+        pasteItem.setId(null);                    //нужно сбросить скопированный id!
+        pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
+        pasteItem.doSetSingleRole(DictRoles.ROLE_OWNER, currentUser);
+        getItemFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
+    };  
     
     /* Определяется, нужно ли копировать объект при вставке */
     public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
@@ -186,7 +195,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Копирование объекта */
     public T doCopy(T sourceItem, User author){
-        T newItem = createItem(author);
+        T newItem = createItem(sourceItem.getOwner());
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
