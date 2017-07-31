@@ -7,6 +7,7 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -15,9 +16,11 @@ import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.users.User;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -30,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -51,15 +55,53 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     @Inject
     private FoldersBean ownerBean;
-
+    @Inject
+    private AttacheBean attacheBean; 
+    
     @EJB
     private DocFacade docsFacade;
 
+    /* перед вставкой скопированного документа */
     @Override
-    public void preparePasteItem(Doc pasteItem, BaseDict target) {
-        pasteItem.setOwner((Folder) target);
+    public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict target) {
+        super.preparePasteItem(pasteItem, sourceItem, target);
+        pasteItem.getAttachesList().clear();
+        pasteItem.getDocsStatusList().clear();
+        pasteItem.setOwner((Folder) target);                 
+    }    
+    
+    @Override
+    protected void doPasteMakeSpecActions(Doc sourceItem, Doc pasteItem){
+        super.doPasteMakeSpecActions(sourceItem, pasteItem);
+        copyMainAttacheFromDoc(pasteItem, sourceItem);
     }
-
+        
+    private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
+        Attaches sourceAttache = sourceItem.getAttache();
+        if (sourceAttache != null){
+            Attaches attache = attacheBean.copyAttache(sourceAttache);
+            addAttacheInDoc(pasteItem, attache);
+        }
+    }
+    
+    /* СТАТУСЫ ДОКУМЕНТА: Добавление статусов документа из шаблона типа документа   */
+    public int addDocStatusFromDocType(Doc doc, DocType docType){        
+        if (docType == null || docType.getStatusDocList().isEmpty()) return 0;        
+        List<StatusesDoc> statuses = docType.getStatusDocList();           
+        return addStatusesInDoc(doc, statuses);               
+    } 
+    
+    /* СТАТУСЫ ДОКУМЕНТА: добавление статусов в документ */
+    public int addStatusesInDoc(Doc doc, List<StatusesDoc> statusesForAdd){
+        List<DocStatuses> docsStatuses = doc.getDocsStatusList();
+        List<StatusesDoc> statusesFromDoc = docsStatuses.stream().map(docsStatus -> docsStatus.getStatus()).collect(Collectors.toList());
+            
+        statusesForAdd.removeAll(statusesFromDoc);      // удалить уже имеющиеся статусы
+        statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
+                .forEach(docsStatus -> docsStatuses.add(docsStatus));
+        return statusesForAdd.size();
+    } 
+    
     @Override
     public Rights getRightItem(BaseDict item) {
         if (item == null) return null;        
@@ -79,14 +121,16 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
         Folder folder = doc.getOwner();
-        if (folder != null) {
-            DocType docType = folder.getDocTypeDefault();
-            doc.setDocType(docType);
+        DocType docType = doc.getDocType();
+        if (docType == null && folder != null && folder.getDocTypeDefault() != null) {
+            docType = folder.getDocTypeDefault();
+            doc.setDocType(docType);            
         }
+        addDocStatusFromDocType(doc, docType);
         doc.setDateDoc(new Date());
         if (doc.getOwner().getId() == null) { 
             doc.setOwner(null);
-        }        
+        }
         if (params != null && !params.isEmpty()) {
             Attaches attache = (Attaches) params.get("attache");
             if (attache != null) {
@@ -171,9 +215,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     public Attaches addAttacheFromFile(Doc doc, FileUploadEvent event) throws IOException {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
-        Attaches attache = sessionBean.uploadAtache(uploadedFile);
+        Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
-        addAttacheInDoc(doc, attache);        
+        addAttacheInDoc(doc, attache);
+        EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
         return attache;
     }
             
@@ -186,8 +231,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         attaches.stream()
                 .filter(attacheVersion -> attacheVersion.getCurrent())
                 .forEach(attacheVersion -> attacheVersion.setCurrent(false));
-        doc.getAttachesList().add(attache);        
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
+        doc.getAttachesList().add(attache);                
     }
     
     public void onOpenFormLockMainAttache(Doc doc) {
