@@ -22,10 +22,6 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
     public PartnersGroupsFacade getItemFacade() {
         return itemsFacade;
     }
-    
-    @Override
-    protected void afterCreateItem(PartnerGroups item) {        
-    }
 
     @Override
     public Class<PartnerGroups> getItemClass() {
