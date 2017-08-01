@@ -5,8 +5,6 @@ import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.groups.PartnerGroups;
-import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.context.RequestContext;
@@ -17,7 +15,7 @@ import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import javax.inject.Inject;
 
 /* Контрагенты */
 @Named
@@ -28,6 +26,9 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     @EJB 
     private PartnersFacade itemsFacade;
 
+    @Inject
+    private PartnersBean partnersBean;
+            
     @Override
     public PartnersFacade getItemFacade() {
         return itemsFacade;
@@ -47,12 +48,16 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         
         existPartner = getItemFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
         if (!existPartner.isEmpty()) {
-            Object[] params = new Object[]{partner.getTitleName()};
+            Object[] params = new Object[]{getTitleName()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerIsExsist"), params);
             errors.add(error);
         }
     }
     
+    public String getTitleName(){
+        return partnersBean.getTitleName(getEditedItem());
+    }
+        
     /* Формирование полного наименования контрагента */
     public void makeFullName(){
         Partner partner = getEditedItem();

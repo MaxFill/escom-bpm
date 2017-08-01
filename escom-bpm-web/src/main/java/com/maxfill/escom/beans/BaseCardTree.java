@@ -58,7 +58,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                     childRights.getRights().add(right);
                 }
                 getEditedItem().setRightForChild(childRights);
-                rightFacade.prepareRightsForView(childRights.getRights());                
+                rightsBean.prepareRightsForView(childRights.getRights());                
                 EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
@@ -101,7 +101,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     protected void prepareRightsForView(T item){
         super.prepareRightsForView(item);
         getTreeBean().makeRightForChilds(item); 
-        rightFacade.prepareRightsForView(item.getRightForChild().getRights());
+        rightsBean.prepareRightsForView(item.getRightForChild().getRights());
     }
     
     /* Добавление права для объекта в заданном состоянии */

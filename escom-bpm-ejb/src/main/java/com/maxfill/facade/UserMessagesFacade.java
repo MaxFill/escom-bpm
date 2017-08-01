@@ -54,8 +54,8 @@ public class UserMessagesFacade extends BaseFacade<UserMessages> {
         return q.getResultList();
     }
     
-    public void createSystemMessage(User addressee, String subject, String content, Doc doc){
-        String senderName = ItemUtils.getBandleLabel("System");
+    public void createSystemMessage(User addressee, String subject, String content, Doc doc){        
+        String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
         createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, doc);
     }
     

@@ -20,7 +20,7 @@
                            disabled="#{_bean.isReadOnly()}"
                            required="#{param['isRequired'] == 'true'}" 
                            requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-                <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{state.bundleName}" itemValue="#{state}" />                
+                <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
                 <p:ajax event="change" listener="#{_bean.onStateChange()}" oncomplete="return itemChange = 1;"/>
             </p:selectOneMenu>
             

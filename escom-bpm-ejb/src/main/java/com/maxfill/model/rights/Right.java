@@ -1,9 +1,7 @@
 package com.maxfill.model.rights;
 
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.states.State;
 import com.maxfill.model.metadates.Metadates;
-import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.io.StringWriter;
 import javax.persistence.Basic;
@@ -11,12 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXB;
@@ -133,23 +129,6 @@ public class Right implements Serializable{
         this.objLink = objLink;
         this.state = state;
     }
-
-    @XmlTransient
-    //формирование имени типа для отображения на карточке
-    public String getTypeName(){         
-        switch (objType){
-            case (DictRights.TYPE_GROUP):{  
-                return ItemUtils.getBandleLabel("RightForGroup");                
-            }
-            case (DictRights.TYPE_USER): {
-                return ItemUtils.getBandleLabel("RightForUser"); 
-            }
-            case (DictRights.TYPE_ROLE): {
-                return ItemUtils.getBandleLabel("RightForRole"); 
-            }
-        }   
-        return "";
-    } 
 
     public String getIcon() {
         return icon;

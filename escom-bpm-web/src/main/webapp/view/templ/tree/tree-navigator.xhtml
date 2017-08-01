@@ -1,9 +1,10 @@
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:pe="http://primefaces.org/ui/extensions"
     xmlns:p="http://primefaces.org/ui">
 
-    <p:panel rendered="#{_treeBean != null and explorerBean.isShowTree()}" styleClass="without-spaces">
+    <p:panel id="NavigatorBar" rendered="#{_treeBean != null and explorerBean.isShowTree()}" styleClass="without-spaces">
         <ui:repeat id="navigator" var="navigator" value="#{explorerBean.navigator}">
             <p:commandButton icon="ui-icon-folder-open" value="#{navigator.name}" title="#{navigator.label}"
                              process="@this" styleClass="btnNavigator"
@@ -14,5 +15,6 @@
             </p:commandButton>
         </ui:repeat>
     </p:panel>
+    <pe:tooltip for="NavigatorBar" value="#{bundle.NavigatorBar}"/>
 </ui:composition>
 

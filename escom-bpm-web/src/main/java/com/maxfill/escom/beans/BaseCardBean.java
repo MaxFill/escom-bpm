@@ -104,7 +104,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* Подготовка прав доступа к визуализации */
     protected void prepareRightsForView(T item){
         List<Right> itemRights = item.getRightItem().getRights();
-        rightFacade.prepareRightsForView(itemRights);
+        rightsBean.prepareRightsForView(itemRights);
     }
     
     /* Специфические действия перед открытием карточки */
@@ -413,6 +413,23 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return isHaveRightEdit(editedItem);                
     }        
     
+    /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
+    public String getInheritsAccessChildName(){
+        if (editedItem.isInheritsAccessChilds()){
+            return EscomBeanUtils.getMessageLabel("RightsInheritedForChilds");
+        } else {
+            return EscomBeanUtils.getMessageLabel("RightsNotInheritedForChilds");
+        }
+    }
+    
+    public String getInheritsRightName(){
+        String inheritsRightName = EscomBeanUtils.getMessageLabel("RightIsInherits");
+        if (!editedItem.isInherits()){
+            inheritsRightName = EscomBeanUtils.getMessageLabel("RightNotInherits"); 
+        }
+        return inheritsRightName;
+    }
+        
     /* ПРОЧИЕ МЕТОДЫ */
 
     /* При изменении в карточке объекта опции "Наследование прав"  */
@@ -429,7 +446,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 }
                 editedItem.setInherits(Boolean.FALSE);
                 editedItem.setRightItem(newRight);
-                rightFacade.prepareRightsForView(newRight.getRights());                
+                rightsBean.prepareRightsForView(newRight.getRights());                
                 EscomBeanUtils.SuccesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);

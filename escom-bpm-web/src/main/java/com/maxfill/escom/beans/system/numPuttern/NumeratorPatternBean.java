@@ -6,7 +6,6 @@ import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -34,8 +33,8 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
     @Override
     public void onInitBean() {
         super.onInitBean(); 
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, ItemUtils.getBandleLabel("Auto")));
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, ItemUtils.getBandleLabel("ManualInput")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomBeanUtils.getBandleLabel("Auto")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomBeanUtils.getBandleLabel("ManualInput")));
     }
             
     public String getLabel(String typeCode){

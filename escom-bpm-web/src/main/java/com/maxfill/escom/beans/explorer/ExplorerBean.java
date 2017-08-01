@@ -248,15 +248,13 @@ public class ExplorerBean implements Serializable {
                     break;
                 }
                 case DictEditMode.INSERT_MODE:{
-                    if (isItemTreeType(editItem) || isItemRootType(editItem)){
-                        TreeNode newNode;                    
-                        if (editItem.getParent() == null){
-                            newNode = addNewItemInTree(editItem, tree);
-                        } else {
-                            newNode = addNewItemInTree(editItem, treeSelectedNode);
-                        }
-                        onSelectInTree(newNode);
+                    TreeNode newNode;
+                    if (isItemRootType(editItem)){
+                        newNode = addNewItemInTree(editItem, tree);
+                    } else {                        
+                        newNode = addNewItemInTree(editItem, treeSelectedNode);
                     }
+                    onSelectInTree(newNode);
                     break;
                 }
             }

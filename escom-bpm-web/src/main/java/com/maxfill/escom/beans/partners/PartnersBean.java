@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import org.apache.commons.lang3.StringUtils;
 
 /* Сервисный бин "Контрагенты" */
 @Named
@@ -150,6 +151,20 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         return null;
     }
     
+    public String getTitleName(Partner partner){
+        StringBuilder builder = new StringBuilder();        
+        if (partner.getType() != null){
+           builder.append(partner.getType().getName()).append(" ");
+        }
+        if (StringUtils.isNotBlank(partner.getName())){
+            builder.append(partner);
+        }
+        if (builder.length() == 0){
+            builder.append(EscomBeanUtils.getBandleLabel("NewPartner"));
+        }
+        return builder.toString();
+    }
+        
     @FacesConverter("partnersConvertors")
     public static class partnersConvertors implements Converter {
     

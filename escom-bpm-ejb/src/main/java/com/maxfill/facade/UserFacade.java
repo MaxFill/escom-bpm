@@ -2,7 +2,6 @@ package com.maxfill.facade;
 
 import com.maxfill.model.users.UserLog;
 import com.maxfill.model.users.User;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.staffs.Staff;
@@ -15,14 +14,10 @@ import com.maxfill.model.users.UserStates;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -179,7 +174,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     } 
     
     public User getAdmin(){
-        return find(SysParams.ADMIN_ID);
+        return find(SysParams.ADMIN_USER_ID);
     }
     
     /* Формирование значений для Фамилии Имени Отчества посредством разбивки строки на части  */

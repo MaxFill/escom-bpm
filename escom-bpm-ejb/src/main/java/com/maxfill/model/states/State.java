@@ -1,6 +1,5 @@
 package com.maxfill.model.states;
 
-import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -63,10 +62,6 @@ public class State implements Serializable{
     }
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getBundleName(){
-        return ItemUtils.getBandleLabel(getName());
     }
     
     public String getName() {

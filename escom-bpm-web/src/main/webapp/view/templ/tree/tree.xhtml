@@ -59,7 +59,7 @@
                             rendered="#{explorerBean.selectorViewMode}"
                             action="#{explorerBean.onSelectTreeItem()}"/>
                 <p:separator rendered="#{explorerBean.selectorViewMode}"/>
-                <p:menuitem icon="ui-icon-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
+                <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
                             oncomplete="document.getElementById('#{_frmTree}:createRootCardBtn').click();"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
                             oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>

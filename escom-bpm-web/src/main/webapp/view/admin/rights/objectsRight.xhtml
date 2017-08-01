@@ -8,7 +8,7 @@
                 emptyMessage="#{bundle.EmptyTable}"
                 paginator="true" paginatorPosition="bottom" rows="7" style="font-size: 80%" >
         <p:accordionPanel>
-            <p:tab title="#{bundle.State}: #{state.bundleName}" rendered="#{metadatesBean.selectedObject != null}">
+            <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{metadatesBean.selectedObject != null}">
 
                 <h:panelGrid columns="2" styleClass="ui-panelgrid-blank" >                
                     <p:commandButton id="btnRight" value="#{bundle.Add}" title="#{bundle.Add}" style="float: top;"

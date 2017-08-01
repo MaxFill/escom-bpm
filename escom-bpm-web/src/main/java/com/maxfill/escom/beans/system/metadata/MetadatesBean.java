@@ -7,8 +7,8 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /* Бин для метаданных */
 @ViewScoped
@@ -40,7 +41,10 @@ public class MetadatesBean implements Serializable{
     
     @Inject
     private SessionBean sessionBean;
-            
+    
+    @Inject
+    private RightsBean rightsBean;
+    
     @EJB
     private MetadatesFacade metadatesFacade;
     @EJB
@@ -94,7 +98,7 @@ public class MetadatesBean implements Serializable{
     public List<Right> getRightsInState(State state) {
         if (selectedObject != null){
             List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);
-            rightFacade.prepareRightsForView(rights);
+            rightsBean.prepareRightsForView(rights);
             return rights;
         }
         return null;
@@ -153,7 +157,12 @@ public class MetadatesBean implements Serializable{
         if (event.getObject() == null){ return;}
         selectedObject = ((Metadates) event.getObject());        
     } 
-        
+      
+    public String getBundleName(Metadates metadate){
+        if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
+        return EscomBeanUtils.getBandleLabel(metadate.getBundleName());
+    }
+     
     /* *** GET & SET *** */
     
     public Metadates getSelectedObject() {

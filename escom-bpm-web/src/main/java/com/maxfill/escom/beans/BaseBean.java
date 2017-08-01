@@ -3,6 +3,7 @@ package com.maxfill.escom.beans;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.BaseDict;
@@ -49,6 +50,8 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     protected ApplicationBean appBean;
     @Inject
     protected SessionBean sessionBean;
+    @Inject
+    protected RightsBean rightsBean;
     @EJB
     protected Configuration conf;
     @EJB

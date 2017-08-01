@@ -4,6 +4,7 @@ import com.maxfill.facade.StateFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 
 import javax.ejb.EJB;
@@ -16,6 +17,7 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.List;
 import javax.enterprise.context.SessionScoped;
+import static org.jgroups.blocks.RpcDispatcher.getName;
 
 /* Сервисный бин "Состояния документа" */
 @SessionScoped
@@ -34,6 +36,11 @@ public class StateBean implements Serializable{
         return stateFacade;
     }
 
+    public String getBundleName(State state){
+        if (state == null) return null;
+        return EscomBeanUtils.getBandleLabel(state.getName());
+    }
+        
     @FacesConverter("stateConvertor")
     public static class stateConvertor implements Converter {
     

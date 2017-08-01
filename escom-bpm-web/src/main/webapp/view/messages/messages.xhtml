@@ -16,33 +16,75 @@
         #{bundle.Messages}
     </ui:define>
 
+    <ui:param name="_frm" value="msgForm" />
+    
     <ui:define name="body">
+        <script type="text/javascript">
+            var isClose = 0;            
+            
+            window.onbeforeunload = function (evt) {
+
+                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
+                if (typeof evt == "undefined") {
+                    evt = window.event;
+                }
+
+                if (isClose == 0) {
+                    if (evt) {
+                        evt.returnValue = message;
+
+                    }
+                    ;
+                    return message;
+                }
+            };
+
+        </script>
+        
         <pe:layout fullPage="true" options="#{userMsgBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{userMsgBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="msgForm" style="font-size: 90%;"> 
+                <h:form id="#{_frm}" style="font-size: 90%;"> 
                     <p:commandButton id="openDocBtn" style="display: none;"                                           
                                      actionListener="#{userMsgBean.onGoToDocument()}"> 
                         <p:ajax event="dialogReturn" update="messageTBL"/>
                     </p:commandButton> 
-
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-
-                        <p:toolbar styleClass="ui-grid-col-12">
-                            <f:facet name="left">
-                                <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"                                 
-                                                         itemLabel="#{bundle.ShowOnlyUnReadMessage}">
-                                    <p:ajax update="messageTBL" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/> 
-                                </p:selectBooleanCheckbox>
-                            </f:facet>
-                            <f:facet name="right">
-                                <p:commandButton value="#{bundle.MarkAsRead}" style="float:right;"
-                                               update="messageTBL"
-                                               actionListener="#{userMsgBean.markAsRead()}"> 
-                                </p:commandButton>
-                            </f:facet>
-                        </p:toolbar>                    
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
+                                        update="#{_frm}" actionListener="#{userMsgBean.refresh()}"> 
+                            </p:menuitem>
+                            <p:separator />
+                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
+                                                    itemLabel="#{bundle.ShowOnlyUnReadMessage}">
+                                    <p:ajax update="#{_frm}" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/> 
+                            </p:selectBooleanCheckbox>
+                            <p:spacer width="5"/>
+                            <p:commandButton value="#{bundle.MarkAllAsRead}"
+                                             disabled="#{userMsgBean.messages.isEmpty()}"
+                                             update="#{_frm}"
+                                             actionListener="#{userMsgBean.markAsRead()}"> 
+                            </p:commandButton>
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true" onclick="return isClose = 1;"
+                                             action="#{userMsgBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">                                           
 
                         <p:dataTable id="messageTBL" value="#{userMsgBean.messages}" 
                                      emptyMessage="#{bundle.EmptyTable}"
@@ -79,7 +121,7 @@
                                 <p:commandLink  value="#{bundle.GoToDocument}"
                                                 rendered="#{item.document != null}"
                                                 actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                                oncomplete="document.getElementById('msgForm:openDocBtn').click();"/>
+                                                oncomplete="document.getElementById('#{_frm}:openDocBtn').click();"/>
                             </p:column>
                             <p:column >                    
                                 <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
@@ -88,15 +130,7 @@
                                                 actionListener="#{userMsgBean.markAsRead(item)}">                                    
                                 </p:commandButton>
                             </p:column>
-                        </p:dataTable> 
-                        <p:toolbar styleClass="ui-grid-col-12">
-                            <f:facet name="right">
-                                <p:commandButton value="#{bundle.Close}" style="float:right;"
-                                                 title="#{bundle.Close}"
-                                                 action="#{userMsgBean.onCloseCard()}">                                                                         
-                                </p:commandButton> 
-                            </f:facet>
-                        </p:toolbar>
+                        </p:dataTable>                         
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

@@ -243,7 +243,7 @@
 
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:outputLabel value="#{bundle.LicenceTypeName}"/>
-                            <p:inputText value="#{applicationBean.licence.licenceName}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{sessionBean.licenseLocalName}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.LicenceTotal}"/>
                             <p:inputText value="#{applicationBean.licence.totalLicence}" readonly="true" styleClass="ui-grid-col-12"/>

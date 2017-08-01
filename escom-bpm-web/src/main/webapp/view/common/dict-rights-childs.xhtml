@@ -6,14 +6,14 @@
 
     <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsAccessChilds}" id="inheritsAccessChilds"
                              disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
-                             itemLabel="#{_bean.editedItem.inheritsAccessChildName}"
+                             itemLabel="#{_bean.inheritsAccessChildName}"
                              valueChangeListener="#{_bean.onInheritsChildsRightChange}">
         <p:ajax update="docRightsGrid inheritsAccessChilds"/>
     </p:selectBooleanCheckbox>
     <h:panelGroup id="docRightsGrid" style="font-size: 80%;">        
         <ui:repeat var="state" value="#{_bean.stateForChild}">
             <p:accordionPanel activeIndex="null">
-                <p:tab title="#{bundle.State}: #{state.bundleName}" rendered="#{_bean.editedItem != null}" > 
+                <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{_bean.editedItem != null}" > 
                     <p:dataTable id="tblRight" value="#{_bean.getRightChildsForState(_bean.editedItem, state)}" var="right" 
                                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                                  emptyMessage="#{bundle.EmptyTable}">

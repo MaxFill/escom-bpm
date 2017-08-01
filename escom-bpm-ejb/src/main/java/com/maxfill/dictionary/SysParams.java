@@ -6,9 +6,8 @@ public final class SysParams {
     }
     
     public static final int MAX_FILE_SIZE = 1000000;
-    
+      
     public static final String ALL = "*";
-    public static final Integer ADMIN_ID = 0;
     public static final String CODE_SEPARATOR = "_";
     public static final int LENGHT_NAME_ELIPSE = 60;   
         
@@ -30,6 +29,9 @@ public final class SysParams {
     
     public static final String OS_UNIX = "UNIX";
     public static final String OS_WIN = "WIN";
+    
+    public static final Integer ADMIN_USER_ID = 0;
+    public static final Integer ADMIN_GROP_ID = 2;
     
     public static final int DEFAULT_DOC_TYPE_ID = 1;
 }

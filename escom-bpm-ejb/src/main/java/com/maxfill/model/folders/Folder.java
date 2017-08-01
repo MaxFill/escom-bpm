@@ -121,17 +121,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
           stateIcon = "ui-icon-person";
         }
         return stateIcon;
-    }       
-    
-    /* Возвращает название для заголовка наследования прав к документам  */
-    @Override
-    public String getInheritsAccessChildName(){
-        if (isInheritsAccessChilds()){
-            return ItemUtils.getMessageLabel("RightsInheritedForChildDocs");
-        } else{
-            return ItemUtils.getMessageLabel("DocumentsHaveSpecRights");
-        }
-    }
+    }    
                
     @Override
     public String getIconName() {
@@ -160,11 +150,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     }
     public void setDocTypeDefault(DocType docTypeDefault) {
         this.docTypeDefault = docTypeDefault;
-    }        
-    
-    public String getTypeName(){
-        return ItemUtils.getBandleLabel("FolderType");
-    }
+    }     
     
     @Override
     public Integer getId() {

@@ -133,13 +133,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             if (isHaveRightCreate(newItem)) {
                 setSpecAtrForNewItem(newItem, params);                
             } else {
-                String objName = ItemUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
-                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+                String objName = EscomBeanUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
+                String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
                 errors.add(error);
             }
         } else {
             if (owner != null){
-                String error = MessageFormat.format(ItemUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
+                String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
                 errors.add(error);
             }
         }
@@ -401,7 +401,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 }
             }
         } else {
-            Object[] msgParams = new Object[]{getMetadatesObj().getName(), item.getName()};
+            String metadateName = EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleName());
+            Object[] msgParams = new Object[]{metadateName, item.getName()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), msgParams);
             errors.add(error);
         }

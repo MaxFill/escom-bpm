@@ -1,13 +1,11 @@
 package com.maxfill.facade;
 
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.utils.ItemUtils;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -56,41 +54,7 @@ public class RightFacade extends BaseFacade<Right> {
     public Rights getObjectDefaultRights(Metadates objLink){
         List<Right> right = findDefaultRight(objLink);
         return new Rights(right);
-    }
-    
-    /* Подготовка прав для визуализации на форме */
-    public void prepareRightsForView(List<Right> sourceRights){
-        String accessorName;
-        for (Right rg: sourceRights){
-            switch (rg.getObjType()){
-                case (DictRights.TYPE_GROUP):{
-                    rg.setIcon("folder_open20");
-                    break;
-                }
-                case (DictRights.TYPE_ROLE):{
-                    rg.setIcon("roles20");
-                    break;
-                }
-                case (DictRights.TYPE_USER):{
-                    rg.setIcon("user20");
-                    break;
-                }
-            }
-            //хардкодные проверки
-            if (rg.getObjId() == 0 && rg.getObjType() == DictRights.TYPE_GROUP){
-               accessorName = ItemUtils.getBandleLabel("All"); //ToDo в bundle!
-            } else
-                if (rg.getObjId() == 2 && rg.getObjType() == DictRights.TYPE_GROUP){
-                  accessorName = ItemUtils.getBandleLabel("Administrators"); 
-                } else
-                    if (rg.getObjId() == 1 && rg.getObjType() == DictRights.TYPE_USER){
-                        accessorName = ItemUtils.getBandleLabel("Administrator"); 
-                      } else{ //тогда ищем названия в базе
-                            accessorName = getAccessName(rg);
-                        }
-            rg.setName(accessorName);
-        }
-    }
+    }       
     
     /* Получение прав по id группы пользователей */
     public List<Rights> findRightsByGroupId(Integer groupId){
@@ -116,18 +80,7 @@ public class RightFacade extends BaseFacade<Right> {
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
-    }
-    
-    /* Возвращает название пользователя или группы для которого назначаются права */ 
-    private String getAccessName(Right rg) {
-        String accessorName = "";
-        if (rg.getObjType() == 1 ){
-            accessorName = findUserById(rg.getObjId()).getShortFIO();          
-        } else {
-            accessorName = findGroupUserById(rg.getObjId()).getName();
-        }
-        return accessorName;
-    } 
+    }    
     
     /* Получение пользователя по ID для прав доступа */
     public User findUserById(Integer userId){

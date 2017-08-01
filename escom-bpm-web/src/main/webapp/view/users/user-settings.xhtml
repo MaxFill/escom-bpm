@@ -17,18 +17,30 @@
             <p:ajax event="resize" listener="#{userSettingsBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
                 <h:form id="#{_frm}" styleClass="formLayoute">  
-                     <p:hotkey bind="esc" id="hotskey"
+                    <p:hotkey bind="esc" id="hotskey"
                               immediate="true"                             
                               onstart="document.getElementById('#{_frm}:btnClose').click();"> 
                     </p:hotkey>
+                    <p:commandButton id="btnSave"
+                         style="float: right; display: none;"
+                         actionListener="#{userSettingsBean.saveSettings()}"/>
+                    
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
+                                        onclick="document.getElementById('#{_frm}:btnMake').click();"> 
+                            </p:menuitem>
+                            <p:separator />
                             <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
                                         onclick="document.getElementById('#{_frm}:btnClose').click();"> 
                             </p:menuitem>
                         </p:submenu>
                         <f:facet name="options">
-                            <p:commandButton icon="ui-icon-circle-close" style="float:right;"
+                            <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}" 
+                                         update="#{_frm}" 
+                                         actionListener="#{userSettingsBean.onChangePassword()}"/>
+                            <p:spacer width="5" />
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              immediate="true"
                                              title="#{bundle.Close}"
                                              action="#{userSettingsBean.onCloseCard()}"> 
@@ -43,32 +55,22 @@
                         <h3>#{msg.UsedLDAPauth}</h3>
                     </p:outputPanel>
 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding"
-                                 rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}">
+                    <p:panelGrid columns="1" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" style="ui-panelgrid-blank">
                         <p:outputLabel value="#{bundle.CurrentPassword}:"/>
                         <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
-                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"
-                                    styleClass="ui-grid-col-12"/>
+                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
 
                         <p:outputLabel value="#{bundle.NewPassword}:"/>                        
                         <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
                                     feedback="true"
                                     maxlength="20" 
-                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"
-                                    styleClass="ui-grid-col-12"/>
+                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
 
                         <p:outputLabel value="#{bundle.RepeatPassword}:"/>                        
                         <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
                                     maxlength="20"
-                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"
-                                    styleClass="ui-grid-col-12"/>
-                        <p:spacer />
-                        <p:commandButton icon="ui-icon-circle-check" value="#{bundle.Make}" 
-                                         update="#{_frm}" style="float: right;"
-                                         actionListener="#{userSettingsBean.onChangePassword()}"/>
-                        <p:commandButton icon="ui-icon-disk" value="#{bundle.SaveSettings}" 
-                                         style="float: right; display: none;"
-                                         actionListener="#{userSettingsBean.saveSettings()}"/>
+                                    required="true" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
+
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

@@ -86,7 +86,7 @@
             <p:selectManyMenu id="stateChecks" value="#{explorerBean.model.stateSearche}" showCheckbox="true"
                                 label="#{bundle.Select}" converter="stateConvertor"
                                 styleClass="ui-grid-col-12">
-                <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{state.bundleName}" itemValue="#{state}"/>
+                <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}"/>
             </p:selectManyMenu>
 
             <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" 

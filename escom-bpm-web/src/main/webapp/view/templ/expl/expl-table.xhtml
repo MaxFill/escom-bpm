@@ -26,7 +26,7 @@
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
 
         <p:column width="16" sortBy="#{item.state.currentState.name}">
-            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{item.state.currentState.bundleName}"/>            
+            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
         </p:column>
         
         <p:column width="16" sortBy="#{item.iconName}" id="colIcon">
@@ -52,7 +52,7 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column headerText="#{bundle.DateChange}" priority="3"
+        <p:column headerText="#{bundle.DateChange}" width="90" priority="3"
                   rendered="#{_showDateChange != false}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">

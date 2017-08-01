@@ -22,6 +22,7 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.ejb.EJB;
@@ -42,6 +43,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
@@ -90,6 +92,21 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         List<DocStatuses> pasteStatuses = pasteItem.getDocsStatusList();
         for (DocStatuses docStatus : sourceStatuses){            
             pasteStatuses.add(new DocStatuses(pasteItem, docStatus.getStatus()));
+        }
+    }
+    
+    /* Возвращает полное регистрационное имя документа */
+    public String getFullRegistrName(Doc doc){
+        if (StringUtils.isNotBlank(doc.getRegNumber())){
+            StringBuilder builder = new StringBuilder();
+            if (doc.getDocType() != null && StringUtils.isNotBlank(doc.getDocType().getName())){
+                builder.append(doc.getDocType().getName()).append(" ");
+            }
+            builder.append(doc.getRegNumber()).append(" ");
+            builder.append(doc.getNameEndElipse());
+            return builder.toString();
+        } else {
+            return EscomBeanUtils.getBandleLabel("DocIsNotRegistred");
         }
     }
     
@@ -208,7 +225,12 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public boolean docIsLock(Doc doc) {
         return DictStates.STATE_EDITED.equals(doc.getState().getCurrentState().getId());
     }
-       
+      
+    public String getTypeName(Doc doc){
+        if (doc.getDocType() == null) return EscomBeanUtils.getBandleLabel("NotSpecified");
+        return doc.getDocType().getNameEndElipse();
+    }
+        
     /* ВЛОЖЕНИЯ */
     
     public Integer getMaxFileSize(){

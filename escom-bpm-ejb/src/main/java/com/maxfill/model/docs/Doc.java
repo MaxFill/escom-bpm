@@ -8,14 +8,9 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -34,7 +29,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -137,12 +131,8 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     }
 
     @Override
-    public String getPath(){
-        StringBuilder path = new StringBuilder(ItemUtils.getBandleLabel("Archive"));
-        if (getOwner() != null){
-            path.append("->").append(getOwner().getPath());
-        }
-        return path.toString();
+    public String getPath(){        
+        return getOwner().getPath();
     }
         
     /* Возвращает текущую версию вложения  */
@@ -183,21 +173,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         if (getAttache() == null) return null; 
         return getAttache().getNumber();        
     }
-
-    /* Возвращает полное регистрационное имя документа */
-    public String getFullRegistrName(){
-        if (StringUtils.isNotBlank(regNumber)){
-            StringBuilder builder = new StringBuilder();
-            if (docType != null && StringUtils.isNotBlank(docType.getName())){
-                builder.append(docType.getName()).append(" ");
-            }
-            builder.append(regNumber).append(" ");
-            builder.append(getNameEndElipse());
-            return builder.toString();
-        } else {
-            return ItemUtils.getBandleLabel("DocIsNotRegistred");
-        }
-    }
     
     /* Возвращает полное имя документа */
     public String getFullName(){        
@@ -210,12 +185,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         }    
         builder.append(getNameEndElipse());
         return builder.toString();
-    }
-    
-    public String getTypeName(){        
-        if (docType == null) return ItemUtils.getBandleLabel("NotSpecified");
-        return docType.getNameEndElipse();
-    }
+    }    
      
     public Partner getPartner() {
         return partner;

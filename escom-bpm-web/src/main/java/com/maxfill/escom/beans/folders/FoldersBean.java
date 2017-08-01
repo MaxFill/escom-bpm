@@ -11,6 +11,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -138,6 +139,10 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         pasteItem.setParent((Folder)target);
     } 
     
+    public String getTypeName(){
+        return EscomBeanUtils.getBandleLabel("FolderType");
+    }
+        
     /* GETS & SETS */    
 
     @Override

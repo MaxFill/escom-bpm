@@ -62,7 +62,7 @@ public class ApplicationBean implements Serializable{
         licence = configuration.getLicence();
         licence.setVersionNumber(ec.getInitParameter("VersionNumber"));
         licence.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
-        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
+        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));        
         loadDefaultRights();
     }
     

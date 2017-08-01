@@ -5,6 +5,7 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.states.State;
 import org.primefaces.event.SelectEvent;
@@ -43,6 +44,20 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
         getEditedItem().setDocTypeDefault(docType);
     }
     
+    /* Возвращает название для заголовка наследования прав к документам  */
+    @Override
+    public String getInheritsAccessChildName(){
+        if (getEditedItem().isInheritsAccessChilds()){
+            return EscomBeanUtils.getMessageLabel("RightsInheritedForChildDocs");
+        } else {
+            return EscomBeanUtils.getMessageLabel("DocumentsHaveSpecRights");
+        }
+    }
+    
+    public String getTypeName(){
+        return foldersBean.getTypeName();
+    }
+        
     @Override
     public List<State> getStateForChild(){
         return docBean.getMetadatesObj().getStatesList();

@@ -114,11 +114,7 @@ public class Metadates implements Serializable{
     }
     public void setMetadatesStates(List<MetadatesStates> metadatesStates) {
         this.metadatesStates = metadatesStates;
-    }
-    
-    public String getName(){
-        return ItemUtils.getBandleLabel(bundleName);
-    }
+    }    
     
     public String getObjectName() {
         return objectName;

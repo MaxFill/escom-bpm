@@ -9,7 +9,7 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Explorer}">             
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12" >
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 ui-panelgrid-blank" >
                 <p:outputLabel value="#{bundle.Name}:"/>
                 <p:inputText id="name" value="#{_bean.editedItem.name}"
                             styleClass="ui-grid-col-12"

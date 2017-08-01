@@ -9,18 +9,18 @@ public final class ItemUtils {
     private ItemUtils() {
     }
     
-    public static String getBandleLabel(String key){
-        ResourceBundle bundle = ResourceBundle.getBundle("locale.Bundle");
+    public static String getBandleLabel(String key, Locale locale){
+        ResourceBundle bundle = ResourceBundle.getBundle("locale.Bundle", locale);
         return bundle.getString(key);
     }
     
-    public static String getMessageLabel(String key){
-        ResourceBundle bundle = ResourceBundle.getBundle("locale.messages");
+    public static String getMessageLabel(String key, Locale locale){
+        ResourceBundle bundle = ResourceBundle.getBundle("locale.messages", locale);
         return bundle.getString(key);
     }
     
-    public static String getFormatMessage(String msgKey, Object[] messageParameters ){
-        return MessageFormat.format(getMessageLabel(msgKey), messageParameters);    
+    public static String getFormatMessage(String msgKey, Locale locale, Object[] messageParameters ){
+        return MessageFormat.format(getMessageLabel(msgKey, locale), messageParameters);    
     }
     
     /* Поиск объекта в списке объектов по его позиции (поиска в таблице обозревателя)  */ 

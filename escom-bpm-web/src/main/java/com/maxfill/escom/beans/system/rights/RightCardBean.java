@@ -9,9 +9,11 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.system.states.StateBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.metadates.Metadates;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;
 import javax.ejb.EJB;
@@ -25,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
 
 /* Карточка настройки прав доступа */
 @Named
@@ -36,7 +39,11 @@ public class RightCardBean extends BaseDialogBean{
     private UserBean userBean;
     @Inject
     private UserGroupsBean userGroupBean;    
-
+    @Inject
+    private RightsBean rightsBean;    
+    @Inject
+    private StateBean stateBean;
+    
     @EJB
     private StateFacade stateFacade;
     
@@ -213,6 +220,18 @@ public class RightCardBean extends BaseDialogBean{
         return DictDlgFrmName.FRM_RIGHT_CARD;
     }
     
+    public String getTypeName(){
+        return rightsBean.getTypeName(selRight.getObjType());
+    }
+    
+    public String getStateName(){
+        return stateBean.getBundleName(selRight.getState());
+    }
+    
+    public String getObjName(Metadates metadate){
+        if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
+        return EscomBeanUtils.getBandleLabel(metadate.getBundleName());
+    }
     /* GET & SET */
 
     public List<User> getUsers() {

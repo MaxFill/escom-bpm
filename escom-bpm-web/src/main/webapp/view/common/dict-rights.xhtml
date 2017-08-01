@@ -7,7 +7,7 @@
 
         <p:selectBooleanCheckbox value="#{_bean.editedItem.inherits}" id="inherits"                                 
                                  disabled="#{_bean.isReadOnly() || !_bean.isHaveRightChangeRight()}"
-                                 itemLabel="#{_bean.editedItem.inheritsRightName}"
+                                 itemLabel="#{_bean.inheritsRightName}"
                                  valueChangeListener="#{_bean.onInheritsChange}">
             <p:ajax update="groupRight inherits" process="@this" oncomplete="itemChange = 1;"/> 
         </p:selectBooleanCheckbox>
@@ -16,7 +16,7 @@
             <ui:repeat var="state" value="#{_bean.metadatesObj.statesList}" > 
                 <p:accordionPanel activeIndex="#{_bean.rightPageIndex}">
                     <p:ajax event="tabChange" listener="#{_bean.onRightTabChange}"/>
-                    <p:tab title="#{bundle.State}: #{state.bundleName}" rendered="#{_bean.editedItem != null}" >                       
+                    <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{_bean.editedItem != null}" >                       
                         <p:dataTable id="tblRight" value="#{_bean.getRightItemForState(_bean.editedItem, state)}" var="right" 
                                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 colCenter" style="width: 100%;"
                                      sortField="#{right.name}"

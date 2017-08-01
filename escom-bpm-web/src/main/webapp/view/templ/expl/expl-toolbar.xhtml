@@ -79,7 +79,8 @@
 
                 <ui:insert name="addMenuActions" />
 
-                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"                                  
+                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
+                            disabled="#{explorerBean.copiedItems.isEmpty()}"
                             actionListener="#{explorerBean.onPasteItemToTable()}">
                 </p:menuitem>
             </p:splitButton>

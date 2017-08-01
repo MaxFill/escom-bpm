@@ -30,13 +30,11 @@ public class UserMsgBean extends BaseDialogBean{
     private UserMessagesFacade messagesFacade;
             
     @Override
-    protected void initBean() {
-        
+    protected void initBean() {       
     }
 
     @Override
-    public void onOpenCard(){
-       
+    public void onOpenCard(){       
     }
     
     @Override
@@ -47,6 +45,10 @@ public class UserMsgBean extends BaseDialogBean{
     @Override
     protected String getFormName() {
         return DictDlgFrmName.FRM_USER_MESSAGES;
+    }
+    
+    public void refresh(){
+        messages = null;
     }
     
     public void markAsRead(){

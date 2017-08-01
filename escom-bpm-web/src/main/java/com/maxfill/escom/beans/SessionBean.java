@@ -12,6 +12,7 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.beans.users.settings.Theme;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
@@ -34,7 +35,6 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
-import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
 import com.maxfill.utils.EscomUtils;
@@ -59,7 +59,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
@@ -70,7 +69,6 @@ import javax.inject.Named;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.primefaces.extensions.model.layout.LayoutOptions;
-import org.primefaces.model.UploadedFile;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -293,7 +291,7 @@ public class SessionBean implements Serializable{
     
     /* Является ли текущий пользователь администратором  */
     public boolean isUserAdmin(){
-        if (SysParams.ADMIN_ID.equals(currentUser.getId())){
+        if (SysParams.ADMIN_USER_ID.equals(currentUser.getId())){
             return true;
         }
         UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
@@ -387,6 +385,7 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
     }
     
+    /* Открытие формы почтовой службы */
     public void openMailService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -394,7 +393,7 @@ public class SessionBean implements Serializable{
         options.put("width", 1300);
         options.put("height", 600);
         options.put("maximizable", true);
-        options.put("closable", true);
+        options.put("closable", false);
         options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
@@ -408,7 +407,7 @@ public class SessionBean implements Serializable{
         options.put("width", 1300);
         options.put("height", 600);
         options.put("maximizable", true);
-        options.put("closable", true);
+        options.put("closable", false);
         options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
@@ -508,7 +507,7 @@ public class SessionBean implements Serializable{
             LOG.log(Level.SEVERE, null, ex);
         } 
     }
-       
+    
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     
     public void changeLocale(String lang){
@@ -531,6 +530,10 @@ public class SessionBean implements Serializable{
     }
     
     /* GETS & SETS */
+    
+    public String getLicenseLocalName(){
+        return EscomBeanUtils.getBandleLabel(appBean.getLicence().getLicenceName());
+    }
     
     private BaseExplBean getItemBean(BaseDict item){
         return getItemBeanByClassName(item.getClass().getSimpleName());

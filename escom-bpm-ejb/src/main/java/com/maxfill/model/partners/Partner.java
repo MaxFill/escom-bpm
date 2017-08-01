@@ -6,7 +6,6 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -124,21 +123,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
            builder.append(" ").append(type.getName());
         }
         return builder.toString();
-    }
-    
-    public String getTitleName(){
-        StringBuilder builder = new StringBuilder();        
-        if (type != null){
-           builder.append(type.getName()).append(" ");
-        }
-        if (StringUtils.isNotBlank(getName())){
-            builder.append(getName());
-        }
-        if (builder.length() == 0){
-            builder.append(ItemUtils.getBandleLabel("NewPartner"));
-        }
-        return builder.toString();
-    }
+    }    
         
     public List<PartnerGroups> getPartnersGroupsList() {
         return partnersGroupsList;

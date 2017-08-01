@@ -44,10 +44,9 @@
                     <p:outputLabel value="#{bundle.StartInDate}" />
                     <p:calendar value="#{_bean.scheduler.startDate}" 
                                 disabled="#{_bean.service.started}"
-                                showButtonPanel="true" showHour="true" showMinute="true"
-                                mask="99.99.9999 99:99"
+                                showButtonPanel="true" showHour="true" showMinute="true"                                
                                 locale="#{sessionBean.locale}"
-                                navigator="true" locale="#{sessionBean.locale}" yearRange="1900:+0" mindate="#{currentDate}"                  
+                                navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
                                 required="true" 
                                 requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
                     </p:calendar>

@@ -71,13 +71,15 @@
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                    
 
                         <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 col-padding">
-                            <h:outputLabel value="#{bundle.Object}:" rendered="#{rightCardBean.selRight.objLink != null}"/>
-                            <p:outputLabel value="#{rightCardBean.selRight.objLink.name}" rendered="#{rightCardBean.selRight.objLink != null}"/>
+                            <h:panelGroup rendered="#{rightCardBean.selRight.objLink != null}">
+                                <h:outputLabel value="#{bundle.Object}:" />
+                                <p:outputLabel value="#{rightCardBean.getObjName(selRight.objLink)}"/>
+                            </h:panelGroup>
                             
                             <h:outputLabel value="#{bundle.ForState}:"/>
-                            <p:outputLabel value="#{rightCardBean.selRight.state.bundleName}"/>
+                            <p:outputLabel value="#{rightCardBean.stateName}"/>
                            
-                            <h:outputLabel value="#{rightCardBean.selRight.typeName}:" />
+                            <h:outputLabel value="#{rightCardBean.typeName}:" />
                             <p:outputLabel value="#{rightCardBean.selRight.name}" id="lbRightName"/> 
 
                         </p:panelGrid>

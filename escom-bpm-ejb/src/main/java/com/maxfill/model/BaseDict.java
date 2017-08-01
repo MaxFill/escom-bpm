@@ -101,7 +101,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @NotNull
     @Basic(optional = false)
     @Column(name = "IsInheritsAccessChilds")
-    private boolean inheritsAccessChilds;   
+    private boolean inheritsAccessChilds = true;   
    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -137,14 +137,14 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @NotNull
     @Basic(optional = false)
     @Column(name = "IsDeleted")
-    private boolean deleted;
+    private boolean deleted = false;
         
     /* Признак того, что запись актуальная */
     @XmlTransient
     @NotNull
     @Basic(optional = false)
     @Column(name = "IsActual")
-    private boolean actual;        
+    private boolean actual = true;        
     
     @XmlTransient
     @Column(name = "Number")
@@ -187,15 +187,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     private Map<String, Set<Integer>> roles = new HashMap<>();
         
     public BaseDict(){}
-        
-    /* Возвращает название для заголовка наследования дефолтных прав  дочерних объектов */
-    public String getInheritsAccessChildName(){
-        if (inheritsAccessChilds){
-            return ItemUtils.getMessageLabel("RightsInheritedForChilds");
-        } else {
-            return ItemUtils.getMessageLabel("RightsNotInheritedForChilds");
-        }
-    }   
+           
     
     public List<D> getDetailItems() {
         return detailItems;
@@ -262,14 +254,6 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setName(String name) {
         this.name = name;
-    }
-    
-    public String getInheritsRightName(){
-        inheritsRightName = ItemUtils.getMessageLabel("RightIsInherits");
-        if (!isInherits()){
-            inheritsRightName = ItemUtils.getMessageLabel("RightNotInherits"); 
-        }
-        return inheritsRightName;
     }
     
     public boolean isInherits() {

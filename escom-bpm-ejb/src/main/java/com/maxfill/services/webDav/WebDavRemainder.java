@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.TimeZone;
@@ -185,19 +184,19 @@ public class WebDavRemainder {
         docUrl.append("&openMode=0");
         
         StringBuilder content = new StringBuilder();
-        content.append(ItemUtils.getBandleLabel("Document")).append(": ");
+        content.append(ItemUtils.getBandleLabel("Document", conf.getServerLocale())).append(": ");
         content.append("<a href=").append(docUrl).append(">").append(doc.getFullName()).append("</a>").append("<br />");        
         
         if (countRemainingCycles == 0){
             cancelTimer(attache);
-            String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked");
+            String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked", conf.getServerLocale() );
             messagesFacade.createSystemMessage(adressee, subject, content.toString(), doc);
         } else {
             String dateUnlock = DateUtils.dateToString(attache.getPlanUnlockDate(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale());
-            String msgError = ItemUtils.getFormatMessage("DocumentWilBeAutomaticallyUnlocked", new Object[]{dateUnlock});
+            String msgError = ItemUtils.getFormatMessage("DocumentWilBeAutomaticallyUnlocked", conf.getServerLocale(), new Object[]{dateUnlock});
             
             StringBuilder subject = new StringBuilder();
-            subject.append(ItemUtils.getMessageLabel("YouNeedUnlockDocument")).append(" ").append(msgError);  
+            subject.append(ItemUtils.getMessageLabel("YouNeedUnlockDocument", conf.getServerLocale())).append(" ").append(msgError);  
             messagesFacade.createSystemMessage(adressee, subject.toString(), content.toString(), doc);
             countRemainingCycles--;
             attache.setCountRemainingCycles(countRemainingCycles);
