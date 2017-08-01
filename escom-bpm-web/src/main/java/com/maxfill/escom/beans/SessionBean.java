@@ -476,7 +476,7 @@ public class SessionBean implements Serializable{
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
         } else {
-            rezult = new Tuple(750, 420);
+            rezult = new Tuple(780, 420);
             formsSize.put(formName, rezult);
         }
         return rezult;

@@ -26,6 +26,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -281,6 +282,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
               
     /* Изменение значения статуса документа в таблице статусов на карточке документа */   
     public void onChangeDocStatus(DocStatuses docsStatus){
+        docsStatus.setDateStatus(new Date());
         docsStatus.setAuthor(currentUser);
         getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), docsStatus.toString(), currentUser);
         onItemChange();

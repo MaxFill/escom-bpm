@@ -74,6 +74,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     protected void doPasteMakeSpecActions(Doc sourceItem, Doc pasteItem){
         super.doPasteMakeSpecActions(sourceItem, pasteItem);
         copyMainAttacheFromDoc(pasteItem, sourceItem);
+        copyDocStatuses(pasteItem, sourceItem);
     }
         
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
@@ -81,6 +82,14 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (sourceAttache != null){
             Attaches attache = attacheBean.copyAttache(sourceAttache);
             addAttacheInDoc(pasteItem, attache);
+        }
+    }
+    
+    private void copyDocStatuses(Doc pasteItem, Doc sourceItem){
+        List<DocStatuses> sourceStatuses = sourceItem.getDocsStatusList();
+        List<DocStatuses> pasteStatuses = pasteItem.getDocsStatusList();
+        for (DocStatuses docStatus : sourceStatuses){            
+            pasteStatuses.add(new DocStatuses(pasteItem, docStatus.getStatus()));
         }
     }
     
@@ -126,7 +135,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             docType = folder.getDocTypeDefault();
             doc.setDocType(docType); 
         }
-        addDocStatusFromDocType(doc, docType);
+        //addDocStatusFromDocType(doc, docType);
         doc.setDateDoc(new Date());
         if (doc.getOwner().getId() == null) { 
             doc.setOwner(null);

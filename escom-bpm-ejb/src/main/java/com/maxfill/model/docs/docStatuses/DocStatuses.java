@@ -43,7 +43,6 @@ public class DocStatuses implements Serializable {
     private Integer id;
         
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Value")
     private Boolean value;
     
@@ -70,6 +69,7 @@ public class DocStatuses implements Serializable {
         this.doc = doc;
         this.status = status;
         this.dateStatus = new Date();
+        this.value = false;
     }
     
     public Integer getId() {
