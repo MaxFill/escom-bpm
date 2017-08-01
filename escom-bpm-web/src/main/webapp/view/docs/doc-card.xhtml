@@ -10,6 +10,8 @@
     <ui:param name="_item" value="#{_bean.editedItem}"/>
   
     <ui:define name="specActionMenu">
+        <p:menuitem icon="ui-icon-extlink" value="#{bundle.SaveAndPublish}"     
+                    oncomplete="document.getElementById('#{_frm}:mainTabView:btnSaveCloseAndPublic').click();"/>
         <p:separator rendered="#{_item.id != null}"/> 
         <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
                     rendered="#{_item.id != null}"
@@ -70,7 +72,7 @@
         <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Organization}:" for="company"/>
-                <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
+                <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12 col-padding">
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
                                      disabled="#{_bean.isReadOnly() or _item.number != null}"
@@ -101,9 +103,8 @@
                 <p:outputLabel value="#{bundle.Name}:" />
                 <p:inputTextarea id="nameDoc" value="#{_bean.editedItem.name}"
                                  title="#{bundle.BriefDescriptionDocument}"
-                                 autoResize="false" 
                                  styleClass="ui-grid-col-12"
-                                 rows="1"
+                                 rows="1" autoResize="true" 
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  disabled="#{_bean.isReadOnly()}"
                                  onchange="return itemChange = 1;"
@@ -113,7 +114,7 @@
                 </p:inputTextarea>
 
                 <p:outputLabel value="#{bundle.DateDoc}:" /> 
-                <h:panelGroup id="datePanel">
+                <h:panelGroup id="datePanel" styleClass="ui-grid-col-12 col-padding">
                     <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
                                 styleClass="ui-grid-col-12"
                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -127,7 +128,7 @@
                 </h:panelGroup>
 
                 <p:outputLabel value="#{bundle.Number}:" />  
-                <h:panelGroup id="regNumberPanel">
+                <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 col-padding">
                     <h:panelGrid columns="3" style="border-collapse: collapse; border:0px;">
                         <p:inputText value="#{_item.regNumber}" id="number"
                                      title="#{bundle.RegistredDocNumber}"

@@ -31,33 +31,12 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="body">         
-        <script type="text/javascript">
-            var isClose = 0;            
-            
-            window.onbeforeunload = function (evt) {
-
-                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
-                if (typeof evt == "undefined") {
-                    evt = window.event;
-                }
-
-                if (isClose == 0) {
-                    if (evt) {
-                        evt.returnValue = message;
-
-                    }
-                    ;
-                    return message;
-                }
-            };
-
-        </script>
-
+    <ui:define name="body">
         <p:focus for="#{_frmTree}" context="nameSearche"/>
 
         <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
-            <h:outputScript library="js" name="drag-drop.js" />                        
+            <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!explorerBean.selectorViewMode}" /> 
+            <h:outputScript library="js" name="drag-drop.js" />  
             
             <pe:layoutPane position="west" resizable="true">
                 <f:facet name="header">

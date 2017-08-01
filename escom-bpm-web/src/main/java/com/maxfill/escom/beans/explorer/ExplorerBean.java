@@ -249,6 +249,7 @@ public class ExplorerBean implements Serializable {
                 }
                 case DictEditMode.INSERT_MODE:{
                     TreeNode newNode;
+                    if (isItemDetailType(editItem)) break;
                     if (isItemRootType(editItem)){
                         newNode = addNewItemInTree(editItem, tree);
                     } else {                        

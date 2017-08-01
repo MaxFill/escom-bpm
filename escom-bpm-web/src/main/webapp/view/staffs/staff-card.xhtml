@@ -48,12 +48,13 @@
                 <p:outputLabel value="#{bundle.Name}" />
                 <h:panelGroup id="staffGroup" layout="grid" styleClass="ui-grid-col-12">
                     <p:inputTextarea id="name" value="#{_bean.editedItem.name}" 
-                                         rows="3" styleClass="ui-grid-col-12"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                         onchange="return itemChange = 1;"
-                                         required="#{param['isRequired'] == 'true'}"                                         
-                                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                                    styleClass="ui-grid-col-12"
+                                    rows="1" autoResize="true"
+                                    disabled="#{_bean.isReadOnly()}"
+                                    onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                    onchange="return itemChange = 1;"
+                                    required="#{param['isRequired'] == 'true'}"                                         
+                                    requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>
 
                     <p:commandButton value="#{bundle.ToForm}" title="#{bundle.MakeName}"

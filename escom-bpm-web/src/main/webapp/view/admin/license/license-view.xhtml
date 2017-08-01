@@ -57,10 +57,11 @@
                     <p:panelGrid layout="grid" columns="1" rendered="#{licenseBean.content != null}" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                         <pe:documentViewer value="#{licenseBean.content}" height="750" style="width: 100%;"/>                        
                         
-                        <h:panelGroup>
+                        <h:panelGroup id="groupConfirm">
                             <p:selectBooleanCheckbox value="#{sessionBean.userSettings.agreeLicense}"
                                                      itemLabel="#{bundle.AgreeLicenseConfirm}" 
-                                                     disabled="#{sessionBean.userSettings.agreeLicense}">
+                                                     rendered="#{sessionBean.userSettings.agreeLicense}" 
+                                                     disabled="true">                             
                             </p:selectBooleanCheckbox>
                             <p:spacer width="5" />
                             <p:commandButton id="btnConfirm" icon="ui-icon-circle-check"
@@ -76,4 +77,3 @@
     </ui:define>
 
 </ui:composition>
-

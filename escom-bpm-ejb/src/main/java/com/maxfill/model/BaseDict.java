@@ -169,7 +169,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     /* Название для установленного признака наследования  */
     @Transient
     @XmlTransient
-    private String inheritsRightName;
+    private String fullName;
 
     /* Возврашает путь в дереве к объекту */
     @Transient
@@ -187,7 +187,10 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     private Map<String, Set<Integer>> roles = new HashMap<>();
         
     public BaseDict(){}
-           
+
+    public String getFullName() {
+        return name;
+    }
     
     public List<D> getDetailItems() {
         return detailItems;

@@ -73,6 +73,7 @@ public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTy
         this.itemLogs = itemLogs;
     }
 
+    @Override
     public String getFullName() {
         return fullName;
     }

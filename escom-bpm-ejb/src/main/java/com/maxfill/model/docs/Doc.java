@@ -64,7 +64,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     private DocType docType;
     
     @JoinColumn(name = "Company", referencedColumnName = "Id")
-    @NotNull
     @ManyToOne(optional = false)
     private Company company;
         
@@ -175,6 +174,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     }
     
     /* Возвращает полное имя документа */
+    @Override
     public String getFullName(){        
         StringBuilder builder = new StringBuilder();
         if (docType != null && StringUtils.isNotBlank(docType.getName())){

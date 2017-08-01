@@ -4,7 +4,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     
-    <h:panelGroup  styleClass="ui-grid-col-12 col-padding">
+    <h:panelGroup styleClass="ui-grid-col-12 col-padding">
         <p:commandButton id="#{_itemPanel}_btn" 
                          process="#{_itemPanel}_btn"
                          actionListener="#{_selectorBean.onOneSelectItem()}" style="display: none;">
@@ -26,7 +26,7 @@
                              requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
                              filter="true" filterMatchMode="startsWith">
                 <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
-                <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.name}"/>
+                <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
                 <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                 <f:converter converterId="#{_converter}" />
             </p:selectOneMenu>

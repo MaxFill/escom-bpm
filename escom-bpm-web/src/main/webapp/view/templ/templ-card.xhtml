@@ -70,9 +70,10 @@
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
-                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
                             <ui:insert name="specActionMenu" />
+                            <p:separator />
+                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
+                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
                             <p:separator />
                             <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}" 
                                     rendered="#{!_bean.isReadOnly()}" 

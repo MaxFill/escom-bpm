@@ -48,12 +48,12 @@
                 <p:outputLabel value="#{bundle.FullName}" />
                 <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"
                                  disabled="#{_bean.isReadOnly()}"
-                                 rows="3" maxlength="512"
+                                 rows="1" autoResize="true"
                                  styleClass="ui-grid-col-12"                                      
                                  onchange="return itemChange = 1;">
                 </p:inputTextarea>
                 <p:commandButton value="#{bundle.ToForm}" title="#{bundle.MakeName}"
-                                 update="fullName #{_frm}:btnSave"
+                                 update="fullName"
                                  actionListener="#{partnersCardBean.makeFullName()}"/>
 
                 <p:outputLabel value="#{bundle.EMail}" />

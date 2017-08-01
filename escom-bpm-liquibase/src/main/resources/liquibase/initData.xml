@@ -503,48 +503,11 @@
         
         <!-- Должности -->
         <sql>
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(2, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(10, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(11, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(12, 7, 5); 
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(13, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(14, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(15, 7, 5); 
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(16, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(17, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(18, 7, 5);
-            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(19, 7, 5);
+            INSERT postsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
         </sql>
         
         <sql>
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, NULL, N'Директор', NULL, NULL, 1, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, NULL, NULL, N'Главный бухгалтер', NULL, NULL, 1, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, NULL, NULL, N'Главный инженер', NULL, NULL, 2, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, NULL, NULL, N'Юрист', NULL, NULL, 3, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (6, NULL, NULL, N'Менеджер', NULL, NULL, 4, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (7, NULL, NULL, N'Системный администратор', NULL, NULL, 5, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (8, NULL, NULL, N'Водитель', NULL, NULL, 6, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (9, NULL, NULL, N'Финансовый директор', NULL, NULL, 7, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (10, NULL, NULL, N'Старший юрист', NULL, NULL, 8, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (11, NULL, NULL, N'Программист старший', NULL, NULL, 9, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (13, NULL, NULL, N'Специалист', NULL, NULL, 10, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (14, NULL, NULL, N'Бухгалтер-кассир', NULL, NULL, 11, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (15, NULL, NULL, N'Бухгалтер', NULL, NULL, 12, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (16, NULL, NULL, N'Инженер-технолог', NULL, NULL, 13, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (17, NULL, NULL, N'Инженер', NULL, NULL, 14, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (18, NULL, NULL, N'Аудитор', NULL, NULL, 15, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (19, NULL, NULL, N'1-й Заместитель Генерального директора', NULL, NULL, 16, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (20, NULL, NULL, N'Секретарь-делопроизводитель', NULL, NULL, 17, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (22, NULL, NULL, N'Экспедитор', NULL, NULL, 18, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (23, NULL, NULL, N'Менеджер по снабжению', NULL, NULL, 19, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'Системный администратор', NULL, NULL, 1, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>        
         
         <!-- Компании -->
@@ -568,7 +531,7 @@
             INSERT staffsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
         </sql>
         <sql>
-            INSERT staffs (Id, Parent, Owner, Company, Name, Employee, IsFired, Post, Number, State, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, NULL, 1, N'Администратор', 0, 0, 7, NULL, 1, NULL, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
+            INSERT staffs (Id, Parent, Owner, Company, Name, Employee, IsFired, Post, Number, State, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, NULL, 1, N'Системный Администратор', 0, 0, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
         </sql>        
         
         <!-- Статусы документов -->

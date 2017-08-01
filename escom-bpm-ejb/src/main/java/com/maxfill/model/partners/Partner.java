@@ -139,6 +139,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         this.code = code;
     }
 
+    @Override
     public String getFullName() {
         return fullName;
     }

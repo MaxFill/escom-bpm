@@ -30,6 +30,7 @@
             <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-document" id="createItemBtn"
                              disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
                              rendered="#{!explorerBean.isTrashSelected()}"
+                             style="#{explorerBean.selectorViewMode ? 'display: none;' : ''}"
                              actionListener="#{explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
                         update="#{_frmExpl}"
@@ -42,6 +43,14 @@
                              actionListener="#{explorerBean.onCreateTreeItem()}">
                 <p:ajax event="dialogReturn" 
                         update="#{_frmTree} #{_frmExpl}" 
+                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+            </p:commandButton>
+            <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-plus" 
+                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
+                             rendered="#{!explorerBean.isTrashSelected() and explorerBean.selectorViewMode}"
+                             actionListener="#{explorerBean.onCreateDetailItem()}">
+                <p:ajax event="dialogReturn"
+                        update="#{_frmExpl}"
                         listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
             <ui:insert name="addMenuCreates" />
