@@ -75,7 +75,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
-    }    
+    }     
     
     /* установка состояния объекта */     
     public void doSetState(T item, State currentState){

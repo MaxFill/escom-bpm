@@ -15,17 +15,16 @@
                 <p:inputText id="name" value="#{_bean.editedItem.name}" 
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  onchange="return itemChange = 1;"
-                                 styleClass="ui-grid-col-4"
-                                 maxlength="50"
+                                 styleClass="ui-grid-col-12"
                                  disabled="#{_bean.isReadOnly()}"
                                  required="#{param['isRequired'] == 'true'}" 
                                  requiredMessage="#{bundle.Field} [#{bundle.ShortName}] #{bundle.MustBeFilled}"/>
                 <p:message for="name"/>
                 
                 <p:outputLabel value="#{bundle.FullName}" />
-                <p:inputText id="fullName" value="#{_bean.editedItem.fullName}" 
+                <p:inputTextarea id="fullName" value="#{_bean.editedItem.fullName}" 
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 maxlength="256"
+                                 rows="1" autoResize="true"
                                  disabled="#{_bean.isReadOnly()}"
                                  onchange="return itemChange = 1;"
                                  styleClass="ui-grid-col-12"/>

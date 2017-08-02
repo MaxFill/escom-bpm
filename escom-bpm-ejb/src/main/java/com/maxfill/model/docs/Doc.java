@@ -93,7 +93,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
 
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocStates state;
         
     /* Список статусов документа  */

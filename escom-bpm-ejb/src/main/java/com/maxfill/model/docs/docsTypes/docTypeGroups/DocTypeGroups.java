@@ -1,4 +1,3 @@
-
 package com.maxfill.model.docs.docsTypes.docTypeGroups;
 
 import com.maxfill.model.BaseDict;
@@ -16,12 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
-/* Группы видов документов */
+/* Сущность "Группы видов документов" */
 @Entity
 @Table(name = "docTypeGroups")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -53,7 +53,7 @@ private static final long serialVersionUID = -2116686297842684933L;
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocTypeGroupsStates state;
         
     public DocTypeGroups() {

@@ -41,7 +41,8 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         Integer partnerId = partner.getId();
         List<Partner> existPartner = getItemFacade().findByCodeExclId(code, partnerId);
         if (!existPartner.isEmpty()) {
-            Object[] params = new Object[]{code};
+            String partnerName = existPartner.get(0).getName();
+            Object[] params = new Object[]{partnerName, code};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerCodeIsExsist"), params);
             errors.add(error);
         }

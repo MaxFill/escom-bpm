@@ -375,84 +375,13 @@
         
         <!-- Группы видов документов -->
         <sql>
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(2, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(10, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(11, 7, 5);
-            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(12, 7, 5);            
+            INSERT docTypeGroupsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
         </sql>
         
         <sql>
             INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'Группы видов документов',   NULL, 1, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, 0, N'Договоры',                     NULL, 2, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (2, NULL, 0, N'Корреспонденция',              NULL, 3, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (3, NULL, 0, N'Доверенности',                 NULL, 4, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (4, NULL, 0, N'Системные',                    NULL, 5, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (5, NULL, 0, N'Прочие',                       NULL, 6, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (6, NULL, 0, N'Первичные документы',          NULL, 7, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (7, NULL, 0, N'Протоколы',                    NULL, 8, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (8, NULL, 0, N'Служебные записки, докладные', NULL, 9, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (9, NULL, 0, N'Заявки на оплату',             NULL, 10, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (10, NULL, 6, N'Акты',                        NULL, 11, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange) VALUES (11, NULL, 1, N'Лицензионные',                NULL, 12, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
-        
-        <!-- Виды документов -->
-        <sql>
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(2, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(10, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(11, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(12, 7, 5); 
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(13, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(14, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(15, 7, 5); 
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(16, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(17, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(18, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(19, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(20, 7, 5);
-            INSERT docsTypesStates (Id, CurrentState,  PreviousState) VALUES(21, 7, 5);            
-        </sql>
-        
-        <sql>
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, 4, NULL,  N'Произвольный документ',                                            1, N'', NULL,   N'1cb2eb2a-46f7-4933-b2cb-8242a75b34be', NULL, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, 1, NULL,  N'Приказ',                                                           4, N'П', NULL,  N'03f1a80f-1d54-4e6a-8984-cf9b694132d1', NULL, 2, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, 1, NULL,  N'Распоряжение',                                                     1, NULL, NULL,  N'1dd643ab-2d3d-4b4d-b2eb-1bd5e1e266ff', NULL, 3, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, 1, NULL,  N'Приложение к договору',                                            1, NULL, NULL,  N'193794fc-d391-4df8-8275-d58d790f7058', NULL, 4, 0, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (6, 1, NULL,  N'Служебная записка',                                                1, NULL, NULL,  N'ddf832d6-c6fe-4e24-ad97-da3373073eee', NULL, 5, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (9, 1, NULL,  N'Накладная',                                                        1, N'', NULL,   N'bce4949f-49e3-4b28-ad24-e027f1ae13f6', NULL, 6, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (10, 1, NULL,  N'Протокол совещания',                                              1, N'', NULL,   N'8caa864c-0012-4d6b-8674-61b1a5211de3', NULL, 7, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (11, 1, NULL,  N'Лист согласования',                                               2, N'', NULL,   N'bf39703c-e929-47b9-89bc-1bcf6a8ab627', NULL, 8, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (12, 1, NULL,  N'Соглашение о договорной цене',                                    1, NULL, NULL,  N'054e7e31-adc6-42f4-92d4-2256c55ba774', NULL, 9, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (13, 1, NULL,  N'Письмо официальное',                                              5, N'', NULL,   N'1d32ecdd-29c3-4b0f-ad03-78be458b0115', NULL, 10, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (14, 2, NULL,  N'Письмо информационное',                                           1, NULL, NULL,  N'c8fab290-5cfb-4bbe-a30f-56ba480a7540', NULL, 11, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (15, 1, NULL,  N'Протокол разногласий',                                            1, NULL, NULL,  N'4918e330-a3c6-4c86-8314-4db41296fe7a', NULL, 12, 0, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (16, 2, NULL,  N'Письмо заказное',                                                 2, NULL, NULL,  N'ff773ff3-7255-438e-9c48-afaa77d41b90', NULL, 13, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (17, 3, NULL,  N'Доверенность типовая',                                            2, N'Д', NULL,  N'5a36a672-89f2-4382-b478-65f53b6bf9fd', NULL, 14, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (18, 2, NULL,  N'Уведомление',                                                  NULL, N'', NULL,   N'adedcb56-bea0-41de-9ee9-8daf8aac1e58', NULL, 15, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (19, 1, NULL,  N'Договор уступки',                                              NULL, N'', NULL,   N'313cf476-8196-43d7-bf92-fb7f22adc60f', NULL, 16, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (20, 1, NULL,  N'Договор займа',                                                   2, N'', NULL,   N'f8e4a0da-ca18-4d7a-807c-dc9a68734f39', NULL, 17, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (21, 1, NULL,  N'Договор ответственного хранения',                              NULL, N'', NULL,   N'b1dae565-86b2-4ce2-8938-29049759b9b7', NULL, 18, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (22, 10, NULL,  N'Акт приёмки оказанных услуг',                                    4, N'АКТ', NULL, N'2e93bab9-2700-4ed8-a7d2-5e721b7c8f6f', NULL, 19, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (23, 11, NULL,  N'Договор передачи неисключительных прав (Лицензионный договор)',  1, N'ЛД', NULL,  N'e62df7af-2bed-46ae-b268-da422fcf28fe', NULL, 20, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT docsTypes (Id, Owner, Parent,  Name, Numerator, Code, Number, Guide, Access, State, IsDeleted, IsInherits, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (24, 11, NULL,  N'Договор передачи неисключительных прав срочный',                 5, N'', NULL,    N'ae89aa1b-1571-40d2-a1ea-f3e4e3752ea4', NULL, 21, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-        </sql>        
-        
+              
         <!-- Группы контрагентов -->
         <sql>
             INSERT partnersGroupsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
@@ -477,20 +406,6 @@
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'ИП', N'Индивидуальный предприниматель', NULL, NULL, NULL, NULL, 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'ЗАО', N'Закрытое акционерное общество', NULL, NULL, NULL, NULL, 4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'ПАО', N'Публичное акционерное общество', NULL, NULL, NULL, NULL, 5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-        </sql>        
-        
-        <!-- Контрагенты -->
-        <sql>
-            INSERT partnersStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
-         </sql>
-         
-        <sql>
-            INSERT partners (ID, Owner, Parent, Code, Type, Number, FullName, Name, State, IsInherits, IsDeleted, IsActual, Email, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, NULL, NULL, N'000001', 3, NULL, N'ИП Ромашка', N'Ромашка', 1, 1, 0, 1, N'', NULL, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
-        </sql>                 
-         
-        <!-- Контрагенты в группах -->
-        <sql>
-            INSERT partnersInGroup (PartnerId, GroupId) VALUES (3, 0);           
         </sql>
         
         <!-- Папки -->

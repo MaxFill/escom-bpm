@@ -9,7 +9,6 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.partners.groups.PartnerGroupsStates;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.Stateless;
 
 /* Группы контрагентов */
@@ -27,7 +26,7 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
          
     @Override
     public void create(PartnerGroups group) {
-        getEntityManager().persist(group);
+        super.create(group);
         List<Partner> partners = group.getPartnersList();
         for (Partner partner : partners) {
             partner.getPartnersGroupsList().add(group);

@@ -18,8 +18,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -106,7 +106,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private UserStates state;
 
     @Transient

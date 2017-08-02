@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
@@ -67,7 +68,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
        
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DepartmentStates state;
         
     public Department() {

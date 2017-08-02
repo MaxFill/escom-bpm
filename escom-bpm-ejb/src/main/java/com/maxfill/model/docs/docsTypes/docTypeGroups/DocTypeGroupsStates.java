@@ -18,15 +18,15 @@ public class DocTypeGroupsStates extends BaseStateItem{
     private static final long serialVersionUID = -6894158426000303748L;
  
     @TableGenerator(
-        name="DocTypeGroupsStatesGen", 
+        name="DocTypeGroupStateGen", 
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
         valueColumnName="GEN_VALUE", 
-        pkColumnValue="DocTypeGroupsStates_ID", allocationSize = 1)
+        pkColumnValue="DocTypeGroupStateID", allocationSize = 1)
         
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=TABLE, generator="DocTypeGroupsStatesGen")
+    @GeneratedValue(strategy=TABLE, generator="DocTypeGroupStateGen")
     @Column(name = "Id")
     private Integer id;
 

@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
@@ -53,8 +54,8 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     private User moderator;
     
     @XmlTransient
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private FolderStates state;
         
     @Basic(optional = false)

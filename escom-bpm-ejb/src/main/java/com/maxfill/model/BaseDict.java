@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 
 /* Базовый класс справочников
  * @param <O> Класс владельца
@@ -58,7 +59,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     @XmlTransient
     @JoinColumn(name = "Parent", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     private P parent;
     
     @XmlTransient
@@ -105,7 +106,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false)
     private T state;   
     
     /* Журнал истории объекта  */
@@ -166,11 +167,6 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @XmlTransient
     private Rights rightItem; //права доступа в виде объекта    
         
-    /* Название для установленного признака наследования  */
-    @Transient
-    @XmlTransient
-    private String fullName;
-
     /* Возврашает путь в дереве к объекту */
     @Transient
     @XmlTransient

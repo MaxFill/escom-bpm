@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -90,7 +89,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     
     @Override
     public void create(UserGroups usersGroups) {
-        getEntityManager().persist(usersGroups);
+        super.create(usersGroups);        
         List<User> usersListNew = usersGroups.getUsersList();
         for (User usersListNewUsers : usersListNew) {
             usersListNewUsers.getUsersGroupsList().add(usersGroups);

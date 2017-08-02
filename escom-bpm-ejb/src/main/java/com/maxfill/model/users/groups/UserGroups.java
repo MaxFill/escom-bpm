@@ -15,12 +15,13 @@ import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import org.eclipse.persistence.jpa.config.Cascade;
 
 /* Группы пользователей  */
 @Entity
@@ -57,7 +58,7 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private UserGroupsStates state;
         
     public UserGroups() {

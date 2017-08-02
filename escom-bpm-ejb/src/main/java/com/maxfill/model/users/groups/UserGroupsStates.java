@@ -22,11 +22,11 @@ public class UserGroupsStates extends BaseStateItem{
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
         valueColumnName="GEN_VALUE", 
-        pkColumnValue="UserGroupsStates_ID", allocationSize = 1)
+        pkColumnValue="UserGroupStateID", allocationSize = 1)
         
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=TABLE, generator="UserGroupsStates")
+    @GeneratedValue(strategy=TABLE, generator="UserGroupsStatesGen")
     @Column(name = "Id")
     private Integer id; 
 
