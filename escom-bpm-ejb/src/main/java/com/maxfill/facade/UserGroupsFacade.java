@@ -3,11 +3,13 @@ package com.maxfill.facade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.model.users.groups.UserGroupsLog;
 import com.maxfill.model.users.groups.UserGroupsStates;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import javax.ejb.EJB;
@@ -39,7 +41,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return q.getResultList();  
     }
   
-    /* Получение списка групп root уровня без групп, являющихся ролями */
+    /* Получение списка групп root уровня нужного типа, например, групп, являющихся ролями */
     @Override
     public List<UserGroups> findChilds(UserGroups parent){
         getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
@@ -81,6 +83,12 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
+
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
+        predicates.add(builder.equal(root.get("typeActualize"), DictRights.ACTUALISE_IN_GROUP)); 
+        predicates.add(builder.notEqual(root.get("id"), 0));
+    }    
     
     @Override
     public String getFRM_NAME() {

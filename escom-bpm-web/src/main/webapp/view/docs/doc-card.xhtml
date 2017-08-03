@@ -124,7 +124,8 @@
                                 showButtonPanel="true" locale="#{sessionBean.locale}"                                
                                 navigator="true" yearRange="c-120:c+20"                                
                                 requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
-                    </p:calendar>              
+                        <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                    </p:calendar>
                 </h:panelGroup>
 
                 <p:outputLabel value="#{bundle.Number}:" />  

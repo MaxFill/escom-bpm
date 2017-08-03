@@ -27,8 +27,10 @@
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
 
-            <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-document" id="createItemBtn"
-                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
+            <p:commandButton value="#{_CreateItemLabel}"
+                             title="#{explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
+                             icon="ui-icon-document" id="createItemBtn"
+                             disabled="#{explorerBean.canCreateItem}"
                              rendered="#{!explorerBean.isTrashSelected()}"
                              style="#{explorerBean.selectorViewMode ? 'display: none;' : ''}"
                              actionListener="#{explorerBean.onCreateDetailItem()}">

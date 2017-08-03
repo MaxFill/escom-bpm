@@ -36,9 +36,7 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
     /* Добавление контрагента в группу контрагентов */
     @Override
     protected void addItemInGroup(PartnerGroups partnerGroups, Partner partner) {
-        if (partner == null){
-            return;
-        }
+        if (partner == null || partnerGroups == null || partnerGroups.getId().equals(0)) return; 
         List<Partner> groups = getGroups(partnerGroups);
         if (!groups.contains(partner)){
             groups.add(partner);

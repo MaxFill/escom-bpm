@@ -5,6 +5,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.BaseDict;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -50,6 +51,12 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         if (!Objects.equals(newPwl, oldPwl)){
             onItemChange();
         }
+    }
+    
+    @Override
+    protected void addItemInGroup(User item, UserGroups group) {
+        if (group == null || group.getId() == 0) return;
+        super.addItemInGroup(item, group);
     }
     
     @Override

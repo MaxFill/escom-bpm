@@ -12,27 +12,31 @@
                      readonly="true" styleClass="ui-grid-col-12"/>
 
         <p:dataTable id="groupsTbl" value="#{_groups}" var="item"
-                     emptyMessage="#{bundle.EmptyTable}" rowKey="#{item.id}"
-                     paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     emptyMessage="#{bundle.EmptyTable}" rowKey="#{item.tempId}"
                      selection="#{_bean.checkedGroups}"
+                     paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                     
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
-                     rowsPerPageTemplate="10,25,50" rows="10">   
+                     rowsPerPageTemplate="10,15,25,50" rows="10">   
 
             <p:ajax event="rowSelectCheckbox" update="checkDelBtn" />
             <p:ajax event="rowSelect" update="checkDelBtn" />
             <p:ajax event="rowUnselectCheckbox" update="checkDelBtn"  />
             <p:ajax event="toggleSelect" update="checkDelBtn" />
 
+            <p:column width="15">
+                <h:graphicImage value="/resources/icon/folder_open20.png" styleClass="img-required" title="#{bundle.Group}"/>
+            </p:column>
+            
             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
             <p:column width="15" rendered="#{_showOwner}">
                 <h:graphicImage value="/resources/icon/done.png" styleClass="img-required"
                                 rendered="#{item == _bean.editedItem.owner}" />
             </p:column>
-
+            
             <p:column headerText="#{bundle.Name}">
-                <h:outputLabel value="#{item.path}" />                    
+                <h:outputLabel value="#{item.path}" />
             </p:column> 
 
             <p:column headerText="#{bundle.Commands}" style="text-align: center;" >                    

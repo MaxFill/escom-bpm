@@ -19,10 +19,13 @@ public class SearcheModel implements Serializable {
     private List<State> stateSearche;     //поиск по состояниям
     private boolean onlyActualItem = true;  //признак поиска только актуальных объектов
     private boolean searcheInGroups;        //признак поиска с учётом групп
+    
     private Date dateCreateStart;
     private Date dateCreateEnd;
+    
     private boolean dateCreateSearche = false;
-    private boolean dateChangeSearche = false;    
+    private boolean dateChangeSearche = false;
+    
     private Date dateChangeStart;
     private Date dateChangeEnd;
     
@@ -128,7 +131,7 @@ public class SearcheModel implements Serializable {
     public void setAuthorSearche(User authorSearche) {
         this.authorSearche = authorSearche;
     }
-
+    
     public List<State> getStateSearche() {
         return stateSearche;
     }

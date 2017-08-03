@@ -57,7 +57,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
             throw new NullPointerException("EscomERR: Selected object in selector is null!");
         }
         List<O> items = (List<O>) event.getObject();
-        if (items.isEmpty()){return;}
+        if (items.isEmpty()) return;
         onItemChange();
         items.stream().forEach(group -> addItemInGroup(getEditedItem(), group));
     }
@@ -88,12 +88,12 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     /* Возвращает группу верхнего уровня и добавляет промежуточные группы в список групп объекта  */
     public O getOwnerAndAddGroups(T item, O group) {                      
         List<O> groups = getGroups(item);
-        if (!groups.contains(group)){
+        if (!group.getId().equals(0) && !groups.contains(group)){
             groups.add(group);
-        } 
-        if(!addGroups.contains(group)){
-            addGroups.add(group);
-        }            
+            if(!addGroups.contains(group)){
+                addGroups.add(group);
+            }            
+        }
         if (group.getParent() != null){
             group = getOwnerAndAddGroups(item, (O) group.getParent());
         }

@@ -22,7 +22,6 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.ejb.EJB;
@@ -224,13 +223,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     public boolean docIsLock(Doc doc) {
         return DictStates.STATE_EDITED.equals(doc.getState().getCurrentState().getId());
-    }
-      
-    public String getTypeName(Doc doc){
-        if (doc.getDocType() == null) return EscomBeanUtils.getBandleLabel("NotSpecified");
-        return doc.getDocType().getNameEndElipse();
-    }
-        
+    }      
+             
     /* ВЛОЖЕНИЯ */
     
     public Integer getMaxFileSize(){

@@ -84,9 +84,8 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     
     @Override
     public boolean addItemToGroup(Partner partner, BaseDict targetGroup){
-        if (partner == null || targetGroup == null){
-            return false;
-        }
+        if (partner == null || targetGroup == null || targetGroup.getId().equals(0)) return false;
+        
         PartnerGroups group = (PartnerGroups)targetGroup;
         if (!partner.getPartnersGroupsList().contains(group)){
             partner.getPartnersGroupsList().add(group);
@@ -101,6 +100,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     protected void detectParentOwner(Partner partner, BaseDict owner){
         partner.setOwner(null);
         partner.setParent(null);
+        if (owner == null || owner.getId().equals(0)) return;
         if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
             partner.getPartnersGroupsList().add((PartnerGroups)owner);            
         } 

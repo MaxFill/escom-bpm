@@ -252,19 +252,25 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         
     /* РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу  */
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
-        actualizeRightItem(dropItem);
-
-        if (!isHaveRightEdit(dropItem)){
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
-            errors.add(error);
-            return false;
-        }
         actualizeRightItem(dragItem);
         if (!isHaveRightEdit(dragItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
+        
+        if (getOwnerBean() != null){
+            getOwnerBean().actualizeRightItem(dropItem);
+        } else {
+            actualizeRightItem(dropItem);
+        }
+
+        if (!isHaveRightAddChild(dropItem)){
+            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
+            errors.add(error);
+            return false;
+        }
+
         return true;
     }
 
@@ -296,7 +302,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().edit(dragItem);
     }
 
-    /* РЕДАКТИРОВАНИЕ: Обработка перемещения объекта в группу */
+    /* РЕДАКТИРОВАНИЕ: Обработка перемещения объекта в группу при drag & drop*/
     public void moveItemToGroup(BaseDict dropItem, T dragItem, TreeNode sourceNode) {
         O ownerDragItem = (O) dragItem.getOwner();    
         if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
@@ -528,6 +534,11 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
+    /* Определяет доступность кнопки "Создать" на панели обозревателя */
+    public boolean canCreateItem(TreeNode treeSelectedNode){
+        return getOwnerBean() != null && treeSelectedNode == null;
+    }
+        
     public void replaceItem(BaseDict oldItem, BaseDict newItem){
         getItemFacade().replaceItem(oldItem, newItem);
     }        

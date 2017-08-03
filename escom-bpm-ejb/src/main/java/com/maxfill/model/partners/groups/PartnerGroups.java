@@ -4,6 +4,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -56,10 +58,24 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private PartnerGroupsStates state;
+     
+    @Transient
+    @XmlTransient
+    private Integer tempId;
         
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
+    
     public PartnerGroups() {
+        tempId = COUNT.incrementAndGet();
     }
 
+    public Integer getTempId() {
+        return tempId;
+    }
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
+    }
+    
     @Override
     public PartnerGroupsStates getState() {
         return state;

@@ -11,29 +11,7 @@
     </ui:define>
     
     <ui:define name="body">
-        <h:outputScript library="js" name="ITHitWebDAVClient.js" />          
-        
-        <script type="text/javascript">
-            var isClose = 0;
-
-            window.onbeforeunload = function (evt) {
-
-                var message = #{bundle.Confirm}+"Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
-                if (typeof evt == "undefined") {
-                    evt = window.event;
-                }
-
-                if (isClose == 0) {
-                    if (evt) {
-                        evt.returnValue = message;
-
-                    }
-                    ;
-                    return message;
-                }
-            };
-
-        </script>        
+        <h:outputScript library="js" name="ITHitWebDAVClient.js" />               
         
         <script type="text/javascript">
             function OpenFolder(sFolderUrl) {
@@ -61,7 +39,7 @@
                     margin: 5px !important;
                 }
             </style>
-
+            <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
             <ui:include src="/view/common/error-dlg.xhtml"/>
                         
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="bar">               

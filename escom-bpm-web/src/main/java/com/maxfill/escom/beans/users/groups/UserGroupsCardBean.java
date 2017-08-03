@@ -32,9 +32,8 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     /* Добавление пользователя в группу пользователей */
     @Override
     protected void addItemInGroup(UserGroups userGroups, User user) {
-        if (user == null){
-            return;
-        }
+        if (user == null || userGroups == null || userGroups.getId().equals(0)) return;
+        
         List<User> groups = getGroups(userGroups);
         if (!groups.contains(user)){
             groups.add(user);

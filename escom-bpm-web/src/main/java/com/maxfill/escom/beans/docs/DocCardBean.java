@@ -347,10 +347,6 @@ public class DocCardBean extends BaseCardBean<Doc>{
         attaches.add(selectedAttache);
     }
     
-    public String getTypeName(){        
-        return docsBean.getTypeName(getEditedItem());
-    }
-        
     /* GETS & SETS */
     
     public String getDocURL() {

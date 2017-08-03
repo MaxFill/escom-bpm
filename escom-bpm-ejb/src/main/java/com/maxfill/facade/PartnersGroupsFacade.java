@@ -9,7 +9,11 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.partners.groups.PartnerGroupsStates;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.Stateless;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /* Группы контрагентов */
 @Stateless
@@ -71,4 +75,8 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }        
 
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
+        predicates.add(builder.notEqual(root.get("id"), 0));
+    } 
 }

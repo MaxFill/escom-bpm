@@ -311,7 +311,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         for (Map.Entry<String, Date[]> parameter : paramDATE.entrySet()) {            
             Date dateStart = parameter.getValue()[0];
             Date dateEnd = parameter.getValue()[1];
-            criteries.add(builder.between(root.get(parameter.getKey()), dateStart, DateUtils.addDays(dateEnd, 1)));
+            criteries.add(builder.between(root.get(parameter.getKey()), dateStart, dateEnd));
         }
         
         addJoinPredicatesAndOrders(root, criteries, builder, addParams);

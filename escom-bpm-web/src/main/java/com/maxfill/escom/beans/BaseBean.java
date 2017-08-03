@@ -213,7 +213,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
                         break;
                     }
                 }
-                if (accessMask == 248) {
+                if (accessMask == 504) { 
                     break; //дальше проверять права не нужно, т.к. установлены максимальные права
                 }
             }

@@ -55,6 +55,12 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         }
     }
     
+    @Override
+    protected void addItemInGroup(Partner item, PartnerGroups group) {
+        if (group == null || group.getId() == 0) return;
+        super.addItemInGroup(item, group);
+    }
+    
     public String getTitleName(){
         return partnersBean.getTitleName(getEditedItem());
     }

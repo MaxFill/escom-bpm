@@ -1046,8 +1046,11 @@ public class ExplorerBean implements Serializable {
                 }
             }
         }
+    }    
+
+    public void dateDocStartChange() {
     }
-    
+        
     public void dateCreateStartChange() {
         Date dateCreateEnd = getModel().getDateCreateEnd();
         if (dateCreateEnd == null) {
@@ -1285,7 +1288,9 @@ public class ExplorerBean implements Serializable {
                         || // если тянем datailItem и бросаем в rootItem
                         (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors))
                     ).collect(Collectors.toList());
-                onShowMovedDlg("MoveTblDlg");
+                if (errors.isEmpty() && !checkedItems.isEmpty()){
+                    onShowMovedDlg("MoveTblDlg");
+                }
                 break;
             }
             case DictDetailSource.SEARCHE_SOURCE:{ //если источник для detail поиск, то будем добавлять в группу
@@ -1296,7 +1301,9 @@ public class ExplorerBean implements Serializable {
                         || // если тянем datailItem и бросаем в treeItem
                         (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.prepareAddItemToGroup(dropItem, dragItem, errors))                  
                     ).collect(Collectors.toList()); 
-                onShowMovedDlg("AddTblDlg");
+                if (errors.isEmpty() && !checkedItems.isEmpty()){
+                    onShowMovedDlg("AddTblDlg");
+                }
                 break;
             }
         }
@@ -1570,6 +1577,11 @@ public class ExplorerBean implements Serializable {
     }
     
     /* ПРОЧИЕ МЕТОДЫ */
+    
+    /* Определяет доступность кнопки "Создать" на панели обозревателя */
+    public boolean getCanCreateItem(){
+        return tableBean.canCreateItem(treeSelectedNode);                
+    }
     
     /* Открытие формы администрирования объекта */  
     public void onOpenAdmCardForm() {

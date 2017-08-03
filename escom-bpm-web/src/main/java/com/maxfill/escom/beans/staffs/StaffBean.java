@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Штатные единицы" */
  
@@ -106,6 +107,17 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         getItemFacade().edit(staff);
     }
         
+    @Override
+    public void moveItemToGroup(BaseDict dropItem, Staff dragItem, TreeNode sourceNode) {    
+        if (dropItem instanceof Department){            
+            dragItem.setOwner((Department)dropItem);
+        } else if (dropItem instanceof Company){
+            dragItem.setOwner(null);
+            dragItem.setCompany((Company)dropItem);
+        }                
+        getItemFacade().edit(dragItem);
+    }
+    
     @Override
     public void detectParentOwner(Staff staff, BaseDict target){
         if (target instanceof Company){

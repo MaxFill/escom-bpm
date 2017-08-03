@@ -41,6 +41,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     protected void detectParentOwner(User user, BaseDict owner){
         user.setOwner(null);
         user.setParent(null);
+        if (owner == null || owner.getId().equals(0)) return;
         if (!user.getUsersGroupsList().contains((UserGroups)owner)){
             user.getUsersGroupsList().add((UserGroups)owner);            
         } 
@@ -54,9 +55,10 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         }
     }  
     
+    /* при перемещении пользователя drag&drop */
     @Override
     public boolean addItemToGroup(User user, BaseDict group){
-        if (group == null){ return false;}
+        if (group == null || group.getId().equals(0)) return false;
         
         if (!user.getUsersGroupsList().contains((UserGroups)group)){
             user.getUsersGroupsList().add((UserGroups)group);
