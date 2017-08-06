@@ -36,7 +36,7 @@ public final class EscomBeanUtils {
     }
     
     public static String rusToEngTranlit (String text){
-        String[] abcCyr = {"a","б","в","г","д","е","ё", "ж", "з","и","й","к","л","м","н","о","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
+        String[] abcCyr = {"а","б","в","г","д","е","ё", "ж", "з","и","й","к","л","м","н","о","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
         String[] abcLat = {"a","b","v","g","d","e","jo","zh","z","i","j","k","l","m","n","o","p","r","s","t","u","ch","f","h","ts","sh","sch","","e","ju","ja"};
         return StringUtils.replaceEach(text, abcCyr, abcLat);
     }

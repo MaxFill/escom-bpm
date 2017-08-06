@@ -259,11 +259,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             return false;
         }
         
-        if (getOwnerBean() != null){
-            getOwnerBean().actualizeRightItem(dropItem);
-        } else {
-            actualizeRightItem(dropItem);
-        }
+        actualizeRightForDropItem(dropItem);
 
         if (!isHaveRightAddChild(dropItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
@@ -274,6 +270,14 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return true;
     }
 
+    protected void actualizeRightForDropItem(BaseDict dropItem){
+        if (getOwnerBean() != null){
+            getOwnerBean().actualizeRightItem(dropItem);
+        } else {
+            actualizeRightItem(dropItem);
+        }        
+    }
+            
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {        
         actualizeRightItem(dragItem);

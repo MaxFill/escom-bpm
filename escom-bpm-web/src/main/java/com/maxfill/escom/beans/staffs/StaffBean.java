@@ -106,7 +106,16 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         detectParentOwner(staff, group);
         getItemFacade().edit(staff);
     }
-        
+      
+    @Override
+    protected void actualizeRightForDropItem(BaseDict dropItem){
+        if (dropItem instanceof Department){
+            getOwnerBean().actualizeRightItem(dropItem);
+        } else {
+            companyBean.actualizeRightItem(dropItem);
+        }
+    }
+    
     @Override
     public void moveItemToGroup(BaseDict dropItem, Staff dragItem, TreeNode sourceNode) {    
         if (dropItem instanceof Department){            

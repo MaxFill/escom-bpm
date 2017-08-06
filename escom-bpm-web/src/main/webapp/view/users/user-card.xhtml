@@ -97,12 +97,12 @@
                     <p:spacer/>
                     
                     <p:outputLabel value="#{bundle.password}" />
-                    <p:password id="pwl" value="#{_bean.editedItem.password}" 
-                                feedback="true"
+                    <p:inputText id="pwl" value="#{_bean.password}" 
                                 disabled="#{_bean.isReadOnly()}"
-                                onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                valueChangeListener="#{_bean.onChangePassword}">
-                    </p:password>
+                                onchange="return itemChange = 1;"
+                                valueChangeListener="#{_bean.onChangePassword}"
+                                onkeypress="checkEsc(#{_bean.cancelBtnName});">
+                    </p:inputText>
                 </p:panelGrid>
             </p:panelGrid>
         </p:tab>    

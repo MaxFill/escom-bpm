@@ -94,6 +94,15 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         getItemFacade().edit(dragItem);
     }
     
+    @Override
+    protected void actualizeRightForDropItem(BaseDict dropItem){
+        if (dropItem instanceof Company){
+            getOwnerBean().actualizeRightItem(dropItem);
+        } else {
+            actualizeRightItem(dropItem);
+        }
+    }
+    
     /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
     public List<List<?>> doGetDependency(Department department){

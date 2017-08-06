@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.users;
 
+import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -26,11 +27,21 @@ import org.apache.commons.lang.WordUtils;
 public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = 2031203859450836271L;
 
+    private String password;
+
+    @Override
+    public void onOpenCard() {
+        super.onOpenCard(); 
+        if (getTypeEdit().equals(DictEditMode.EDIT_MODE)){
+            password = "**********";
+        }
+    }
+      
     /* Формирование отображаемого имени пользователя */    
     public void makeName(){
         getEditedItem().setName(getEditedItem().getShortFIO());
     }
-            
+
     /* Формирование логина для пользователя */
     public void makeLogin(){ 
         String name = getEditedItem().getName();
@@ -45,10 +56,11 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     
     public void onChangePassword(ValueChangeEvent event) throws NoSuchAlgorithmException{
         String newValue = (String) event.getNewValue();
-        getEditedItem().setPwl(newValue);
         String newPwl = EscomUtils.encryptPassword(newValue);
         String oldPwl = (String) event.getOldValue();
         if (!Objects.equals(newPwl, oldPwl)){
+            getEditedItem().setPassword(newPwl);
+            getEditedItem().setPwl(newValue);
             onItemChange();
         }
     }
@@ -82,11 +94,6 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         if (StringUtils.isBlank(user.getName())){
             user.setName(user.getShortFIO());
         }
-        try {
-            user.setPassword(EscomUtils.encryptPassword(user.getPassword()));
-        } catch (NoSuchAlgorithmException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
         super.onBeforeSaveItem(user);
     }
 
@@ -99,4 +106,12 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     public Class<User> getItemClass() {
         return User.class;
     }
+
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 }

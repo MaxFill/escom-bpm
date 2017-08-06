@@ -108,7 +108,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private UserStates state;
-
+    
     @Transient
     private String pwl; 
     
@@ -153,7 +153,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public String getIconName() {
         return "user";
     }
-
+        
     public String getPwl() {
         return pwl;
     }

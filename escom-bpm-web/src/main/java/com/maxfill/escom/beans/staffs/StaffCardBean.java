@@ -85,6 +85,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
             staffName.append(EscomBeanUtils.getBandleLabel("Vacant"));
         }
         getEditedItem().setName(staffName.toString());
+        onItemChange();
     } 
 
     @Override
