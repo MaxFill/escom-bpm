@@ -139,7 +139,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         pasteItem.setParent((Folder)target);
     } 
     
-    public String getTypeName(){
+    public String getTypeName(Folder folder){
         return EscomBeanUtils.getBandleLabel("FolderType");
     }
         

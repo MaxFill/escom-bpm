@@ -98,12 +98,12 @@ public class FileServiceImpl implements FileService{
             String uploadPath = conf.getUploadPath();
             StringBuilder sb = new StringBuilder();
             String fileName = attache.getName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
             File outputFile = new File(basePath);
             outputStream = new FileOutputStream(outputFile);
             outputStream.write(data, 0, data.length);
-            if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
+            if (!Objects.equals(fileExt.toLowerCase(), "pdf")){                                   
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
         } catch (IOException e) {

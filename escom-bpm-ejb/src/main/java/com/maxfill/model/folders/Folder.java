@@ -4,10 +4,12 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.DepartmentStates;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -75,6 +77,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @ManyToOne(optional = false)
     private DocType docTypeDefault;
     
+    @JoinColumn(name = "PartnerDefault", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Partner partnerDefault;
+        
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<FolderLog> itemLogs = new ArrayList<>();
 
@@ -89,7 +95,14 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public void setState(FolderStates state) {
         this.state = state;
     }
-    
+
+    public Partner getPartnerDefault() {
+        return partnerDefault;
+    }
+    public void setPartnerDefault(Partner partnerDefault) {
+        this.partnerDefault = partnerDefault;
+    }
+        
     @Override
     public List<Doc> getDetailItems() {
         return docsList;

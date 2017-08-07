@@ -82,7 +82,7 @@
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
         <p:column headerText="#{bundle.Type}" sortBy="#{item.docType.name}" >
-            <h:outputText value="#{item.docType.name}"/>
+            <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.docType.name : bundle.Folder}"/>
         </p:column>
 
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
@@ -90,7 +90,7 @@
         </p:column>
         <p:column headerText="#{bundle.DateDoc}" width="90" priority="2"
                   sortBy="#{item.dateDoc}">
-            <h:outputLabel value="#{item.dateDoc}">
+            <h:outputLabel value="#{item.getClass().getSimpleName() == 'Doc' ? item.dateDoc : ''}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>

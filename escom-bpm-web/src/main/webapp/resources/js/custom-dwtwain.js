@@ -23,7 +23,7 @@ var console = window['console']?window['console']:{'log':function(){}};
 			/*перед сохранением получаем изображение в виде base64 и сохраняем их на специальном hidden input-е*/
 			prepareScannedImageToSave: function () {
 			    var imageHidden = document.getElementById('scanform:image');
-			    console.log('Подготовка к сканированию');
+			    console.log('Подготовка к сохранению образа...');
 				if (Neoflex.dwThumb.selectAllImages()) {
 				    console.log(Math.ceil(Neoflex.dwThumb.GetSelectedImagesSize(EnumDWT_ImageType[Neoflex.imageType])/1024/1024) + " size of selected images");
 				    var imagedata = Neoflex.dwThumb.SaveSelectedImagesToBase64Binary();

@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -72,11 +73,7 @@ public class AttacheBean extends BaseDialogBean{
 
         return attache;
     }
-    
-    @Override
-    protected void initBean(){
-    }
-    
+       
     @Override
     public void onOpenCard(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -97,11 +94,16 @@ public class AttacheBean extends BaseDialogBean{
             path = params.get("path");
         }
         
-        if (path == null) return;
+        if (path == null) {
+            LOGGER.log(Level.SEVERE, null, "ESCOM_BPM ERROR: file path is null!");
+            return;            
+        }
+        
         try {
             //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
             content = new DefaultStreamedContent(new FileInputStream(path), "application/pdf");                
-        } catch (Exception e) {
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -120,6 +122,10 @@ public class AttacheBean extends BaseDialogBean{
     @Override
     protected String getFormName(){
         return DictDlgFrmName.FRM_DOC_VIEWER;
+    }
+
+    @Override
+    protected void initBean() {       
     }
 
 }

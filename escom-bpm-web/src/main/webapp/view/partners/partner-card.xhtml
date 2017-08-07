@@ -25,8 +25,7 @@
                                  disabled="#{_bean.isReadOnly()}"
                                  styleClass="ui-grid-col-12" 
                                  filter="true" 
-                                 onchange="return itemChange = 1;"
-                                 required="#{param['isRequired'] == 'true'}"                                  
+                                 onchange="return itemChange = 1;"                                 
                                  requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
                     <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
                     <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         

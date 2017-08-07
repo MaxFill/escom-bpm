@@ -13,12 +13,12 @@
         <p:menuitem icon="ui-icon-extlink" value="#{bundle.SaveAndPublish}"     
                     oncomplete="document.getElementById('#{_frm}:mainTabView:btnSaveCloseAndPublic').click();"/>
         <p:separator rendered="#{_item.id != null}"/> 
-        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
+        <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
                     rendered="#{_item.id != null}"
                     update="dlgDocUrl:urlPanel"
                     actionListener="#{_bean.onGetDocViewURL(_item)}"
                     oncomplete="PF('urlDlg').show();"/> 
-        <p:menuitem icon="ui-icon-extlink" value="#{bundle.GetURLforOpenCard}" title="#{bundle.URLforOpenCardDoc}"
+        <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforOpenCard}" title="#{bundle.URLforOpenCardDoc}"
                     rendered="#{_item.id != null}"
                     actionListener="#{_bean.onGetDocOpenURL(_item)}"
                     update="dlgDocUrl:urlPanel"
@@ -115,7 +115,7 @@
                     </p:inputTextarea>
                 </p:panelGrid>
                 
-                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-4 without-spaces" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5 without-spaces" styleClass="without-spaces ui-grid-col-12">
                     <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 " styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 col-padding">

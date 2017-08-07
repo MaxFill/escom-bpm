@@ -53,6 +53,7 @@ public class ScanViewModel implements Serializable {
     public String getFullFileName() {
         return getFileName() + "." + fileExtensionValue.replace(DWTwainHelper.DWTWAIN_IMAGETYPE_PREFIX, "");
     }
+            
     
     public byte[] getData() {
         return data;

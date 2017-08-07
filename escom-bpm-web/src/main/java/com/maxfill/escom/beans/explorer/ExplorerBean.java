@@ -249,7 +249,10 @@ public class ExplorerBean implements Serializable {
                 }
                 case DictEditMode.INSERT_MODE:{
                     TreeNode newNode;
-                    if (isItemDetailType(editItem)) break;
+                    if (isItemDetailType(editItem)) {
+                        getDetailItems().add(editItem);
+                        break;
+                    }
                     if (isItemRootType(editItem)){
                         newNode = addNewItemInTree(editItem, tree);
                     } else {                        
@@ -262,7 +265,6 @@ public class ExplorerBean implements Serializable {
             EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
         }
         createParams.clear();
-        reloadDetailsItems(); 
         onSetCurrentItem(editItem);
     }
     
@@ -670,6 +672,10 @@ public class ExplorerBean implements Serializable {
                 }
                 case DictDetailSource.SEARCHE_SOURCE:{
                     onSearcheItem();
+                    break;
+                }
+                default:{
+                    detailItems = new ArrayList<>();
                     break;
                 }
             }

@@ -146,10 +146,13 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
         Folder folder = doc.getOwner();
-        DocType docType = doc.getDocType();
-        if (docType == null && folder != null && folder.getDocTypeDefault() != null) {
-            docType = folder.getDocTypeDefault();
-            doc.setDocType(docType); 
+        if (folder != null ){
+            if (doc.getDocType() == null && folder.getDocTypeDefault() != null) {
+                doc.setDocType(folder.getDocTypeDefault()); 
+            }
+            if (doc.getPartner() == null && folder.getPartnerDefault() != null){
+                doc.setPartner(folder.getPartnerDefault());
+            }
         }
         //addDocStatusFromDocType(doc, docType);
         doc.setDateDoc(new Date());
@@ -307,9 +310,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     /* Просмотр файла вложения основной версии документа как PDF */
     public void onViewMainAttache(Doc doc) {
-        if (doc == null) {
-            return;
-        }
+        if (doc == null) return;
+        
         actualizeRightItem(doc);
         if (isHaveRightView(doc)) {
             Attaches attache = doc.getAttache();

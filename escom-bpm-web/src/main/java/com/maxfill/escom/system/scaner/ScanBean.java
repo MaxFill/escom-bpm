@@ -4,22 +4,17 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.services.files.FileService;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import org.primefaces.context.RequestContext;
 
 @Named
 @ViewScoped
 public class ScanBean extends BaseDialogBean {
     private static final long serialVersionUID = 2945123427931425280L;
     private static final int JNDI_MAX_FILE_SIZE_DEFAULT = 10 * 1024 * 1024;
-    private static final Logger LOGGER = Logger.getLogger(ScanBean.class.getName());
 
     private ScanViewModel viewModel;
     private final DWTwainHelper dwTwainHelper = new DWTwainHelper(JNDI_MAX_FILE_SIZE_DEFAULT);
@@ -34,7 +29,7 @@ public class ScanBean extends BaseDialogBean {
         int length = data.length;
 
         attache.setName(viewModel.getFullFileName());
-        attache.setExtension(viewModel.getFileExtensionValue());
+        attache.setExtension(viewModel.getFileExtensionValue().replace(DWTwainHelper.DWTWAIN_IMAGETYPE_PREFIX, "").toLowerCase());
         attache.setType("image/jpeg");
         attache.setSize(length);
         attache.setAuthor(sessionBean.getCurrentUser());
@@ -44,7 +39,7 @@ public class ScanBean extends BaseDialogBean {
     }
     
     @Override
-    public void onOpenCard(){        
+    public void onOpenCard(){
     }
     
     protected Logger getLogger() {

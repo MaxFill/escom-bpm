@@ -28,19 +28,34 @@
                 <p:spacer/>
                 
                 <p:outputLabel value="#{bundle.DocTypesForNewDocs}:"/>
-                    <ui:include src="/view/common/item-select-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
-                        <ui:param name="_required" value="#{false}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="docsTypesConvertor" />
-                        <ui:param name="_itemPanel" value="docTypePanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
-                        <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                        <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setDocTypeDefault"/>
-                        <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
-                        <ui:param name="_update" value=""/>
-                    </ui:include>
+                <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
+                    <ui:param name="_required" value="#{false}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="docsTypesConvertor" />
+                    <ui:param name="_itemPanel" value="docTypePanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
+                    <ui:param name="_selectorBean" value="#{docTypeBean}"/>
+                    <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setDocTypeDefault"/>
+                    <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+                
+                <p:outputLabel value="#{bundle.PartnerForNewDocs}:" />
+                <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{foldersCardBean.editedItem.partnerDefault}"/>
+                    <ui:param name="_required" value="#{false}" />
+                    <ui:param name="_disabled" value="#{foldersCardBean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="partnersConvertors" />
+                    <ui:param name="_itemPanel" value="partnerPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Partner}"/>
+                    <ui:param name="_selectorBean" value="#{partnersBean}"/>
+                    <ui:param name="_items" value="#{partnersBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setPartnerDefault"/>
+                    <ui:param name="_actionSelect" value="onPartnerSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
             </p:panelGrid>
         </p:tab>
 

@@ -22,7 +22,7 @@
     </context-param>
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>003</param-value>
+        <param-value>004</param-value>
     </context-param>
     <context-param>
         <param-name>ReleaseDate</param-name>
