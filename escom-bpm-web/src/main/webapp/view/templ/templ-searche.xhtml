@@ -12,6 +12,14 @@
                 return;
             }
         }
+        function clearSearche(){
+            PF('cbDateCreate').uncheck();
+            PF('cbDateChange').uncheck();
+            var dateDoc = PF('cbDateDoc');
+            if (dateDoc){
+                PF('cbDateDoc').uncheck();
+            }
+        }
     </script> 
 
     <p:focus for="nameSearche"/>
@@ -89,10 +97,10 @@
                 <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}"/>
             </p:selectManyMenu>
 
-            <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" 
-                                     title="#{bundle.SearcheDateCreate}" 
+            <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" id="cbDateCreate" widgetVar="cbDateCreate"
+                                     title="#{bundle.SearcheDateCreate}"  
                                      value="#{explorerBean.model.dateCreateSearche}">
-                <p:ajax event="change" partialSubmit="true" update="pnDateCreateSearche"/>
+                <p:ajax event="change" update="pnDateCreateSearche"/>
             </p:selectBooleanCheckbox>   
 
             <h:panelGroup id="pnDateCreateSearche"> 
@@ -102,10 +110,9 @@
                     <p:calendar value="#{explorerBean.model.dateCreateStart}" id="dateCreateStart" 
                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                                 locale="#{sessionBean.locale}"
-                                required="#{explorerBean.model.dateCreateSearche}"
+                                required="#{explorerBean.model.dateCreateSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.With}] #{bundle.MustBeFilled}"
                                 disabled="#{!explorerBean.model.dateCreateSearche}">
-                        <p:ajax event="dateSelect" update="dateCreateEnd" listener="#{explorerBean.dateCreateStartChange()}"/>
                     </p:calendar>
                 </p:panelGrid>
                 <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
@@ -114,16 +121,17 @@
                     <p:calendar value="#{explorerBean.model.dateCreateEnd}" id="dateCreateEnd" 
                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                                 locale="#{sessionBean.locale}"
-                                required="#{explorerBean.model.dateCreateSearche}"
+                                required="#{explorerBean.model.dateCreateSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateCreate}: #{bundle.At}] #{bundle.MustBeFilled}"
                                 disabled="#{!explorerBean.model.dateCreateSearche}">
                     </p:calendar>
                 </p:panelGrid>
             </h:panelGroup>
-            <p:selectBooleanCheckbox itemLabel="#{bundle.DateChange}" 
+            
+            <p:selectBooleanCheckbox itemLabel="#{bundle.DateChange}" id="cbDateChange" widgetVar="cbDateChange"
                                      title="#{bundle.SearcheDateChange}" 
                                      value="#{explorerBean.model.dateChangeSearche}">
-                <p:ajax event="change" partialSubmit="true" update="pnDateChangeSearche"/>
+                <p:ajax event="change" update="pnDateChangeSearche"/>
             </p:selectBooleanCheckbox> 
 
             <h:panelGroup id="pnDateChangeSearche">          
@@ -132,10 +140,9 @@
                     <p:calendar value="#{explorerBean.model.dateChangeStart}" id="dateChangeStart" 
                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
                                 locale="#{sessionBean.locale}"
-                                required="#{explorerBean.model.dateChangeSearche}"
+                                required="#{explorerBean.model.dateChangeSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.With}] #{bundle.MustBeFilled}"
                                 disabled="#{!explorerBean.model.dateChangeSearche}">
-                        <p:ajax event="dateSelect" update="dateChangeEnd" listener="#{explorerBean.dateChangeStartChange()}"/>
                     </p:calendar>
                 </p:panelGrid>
                 <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{explorerBean.model.dateChangeSearche}">
@@ -143,7 +150,7 @@
                     <p:calendar value="#{explorerBean.model.dateChangeEnd}" id="dateChangeEnd"
                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                                 locale="#{sessionBean.locale}"
-                                required="#{explorerBean.model.dateChangeSearche}"
+                                required="#{explorerBean.model.dateChangeSearche and param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.DateChange}: #{bundle.At}] #{bundle.MustBeFilled}"
                                 disabled="#{!explorerBean.model.dateChangeSearche}">
                     </p:calendar>
@@ -158,10 +165,11 @@
                                  action="#{explorerBean.onSearcheItem}"
                                  update="#{_tblUpdate}"
                                  oncomplete="initDND()">
+                    <f:param name="isRequired" value="true"/>
                 </p:commandButton>
                 <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"
                                  title="#{bundle.ResetSearcheCriteria}">
-                    <p:ajax update="#{_frmExpl}_east" resetValues="true" />
+                    <p:ajax update="#{_frmExpl}_east" resetValues="true" oncomplete="clearSearche();"/>
                 </p:commandButton>
             </h:panelGroup>
 

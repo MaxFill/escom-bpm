@@ -724,12 +724,7 @@ public class ExplorerBean implements Serializable {
         treeSelectedNode = null;
         reloadDetailsItems();
         setSource(DictDetailSource.TREE_SOURCE);        
-    }
-    
-    /* ДЕРЕВО: свернуть ветви */
-    public void collapseTree() {
-        getTree().getChildren().stream().forEach(node -> node.setExpanded(false));
-    } 
+    }    
 
     /* ДЕРЕВО: сбросить в дереве установки развёртывания и выделения */  
     private void clearTree(TreeNode root){
@@ -888,9 +883,7 @@ public class ExplorerBean implements Serializable {
    
     /* ДЕРЕВО: Cворачивает ветку  */
     private void doCollapseNode(TreeNode node){
-        if (node == null){
-            return;
-        }
+        if (node == null) return;
         node.setExpanded(false);
         node.getChildren().stream().forEach(childNode -> doCollapseNode(childNode));
     }
@@ -898,9 +891,7 @@ public class ExplorerBean implements Serializable {
     /* ДЕРЕВО: Обработка события развёртывания node  */
     public void onNodeExpand(NodeExpandEvent event){
         TreeNode node = event.getTreeNode();
-        if (node == null){
-            return;
-        }
+        if (node == null)  return;
         node.setExpanded(true);
     }
     
@@ -1061,24 +1052,7 @@ public class ExplorerBean implements Serializable {
             }
         }
     }    
-
-    public void dateDocStartChange() {
-    }
-        
-    public void dateCreateStartChange() {
-        Date dateCreateEnd = getModel().getDateCreateEnd();
-        if (dateCreateEnd == null) {
-            getModel().setDateCreateEnd(getModel().getDateCreateStart());
-        }
-    }
-
-    public void dateChangeStartChange() {
-        Date dateChangeEnd = getModel().getDateChangeEnd();
-        if (dateChangeEnd == null) {
-            getModel().setDateChangeEnd(getModel().getDateChangeStart());
-        }
-    }
-    
+            
     /* Выполняет поиск объектов с учётом критериев поиска  */
     public void doSearcheItems() {
         List<BaseDict> searcheGroups = new ArrayList<>();
@@ -1551,6 +1525,7 @@ public class ExplorerBean implements Serializable {
         node.setSelected(true); 
         setTreeSelectedNode(node);
         setSelectedDocId(null);
+        expandUp(node);
         if (!DictExplForm.TAB_TREE.equals(currentTab)){
             RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
         }

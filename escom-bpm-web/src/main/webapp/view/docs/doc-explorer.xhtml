@@ -23,11 +23,13 @@
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
         </p:inputText>
-        <p:selectBooleanCheckbox itemLabel="#{bundle.DateDoc}" 
+        
+        <p:selectBooleanCheckbox itemLabel="#{bundle.DateDoc}" widgetVar="cbDateDoc"
                                  title="#{bundle.SearcheDateDoc}" 
                                  value="#{explorerBean.model.dateDocSearche}">
-            <p:ajax event="change" partialSubmit="true" update="pnDateDocSearche"/>
+            <p:ajax event="change" update="pnDateDocSearche"/>
         </p:selectBooleanCheckbox>   
+        
         <h:panelGroup id="pnDateDocSearche"> 
             <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
                          rendered="#{explorerBean.model.dateDocSearche}">
@@ -35,10 +37,9 @@
                 <p:calendar value="#{explorerBean.model.dateDocStart}" id="dateDocStart" 
                             showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                             locale="#{sessionBean.locale}"
-                            required="#{explorerBean.model.dateDocSearche}"
+                            required="#{explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.With}] #{bundle.MustBeFilled}"
                             disabled="#{!explorerBean.model.dateDocSearche}">
-                    <p:ajax event="dateSelect" update="dateDocEnd" listener="#{explorerBean.dateDocStartChange()}"/>
                 </p:calendar>
             </p:panelGrid>
             <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
@@ -47,7 +48,7 @@
                 <p:calendar value="#{explorerBean.model.dateDocEnd}" id="dateDocEnd" 
                             showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                             locale="#{sessionBean.locale}"
-                            required="#{explorerBean.model.dateDocSearche}"
+                            required="#{explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.At}] #{bundle.MustBeFilled}"
                             disabled="#{!explorerBean.model.dateDocSearche}">
                 </p:calendar>
@@ -134,7 +135,8 @@
         <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}" 
                     update="#{_frmTree} #{_frmExpl}"
-                    actionListener="#{explorerBean.onShowDocInFolder(item)}"/>
+                    actionListener="#{explorerBean.onShowDocInFolder(item)}"
+                    oncomplete="initDND()"/>
     </ui:define>
 
     <ui:define name="addMenuCreates" >        

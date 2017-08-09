@@ -35,7 +35,7 @@ public class DocsSearche extends SearcheModel{
             paramIN.put("docType", docTypes);
         }
     }        
-
+        
     public List<DocType> getDocTypes() {
         return docTypes;
     }

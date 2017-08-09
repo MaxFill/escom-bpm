@@ -9,7 +9,7 @@
         <h:form style="font-size: 85%;" id="explorer_south">
             <h:panelGrid columns="3" columnClasses="ui-grid-col-4 without-spaces, ui-grid-col-4 without-spaces, ui-grid-col-4 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
-                    <p:commandButton value="#{bundle.GotoIndex}"
+                    <p:commandButton value="#{bundle.GotoIndex}" icon="ui-icon-circle-arrow-w"
                                      id="btnCancel" ajax="false"
                                      styleClass="without-spaces"
                                      action="#{sessionBean.goToIndex() }"
@@ -30,7 +30,7 @@
                 </h:panelGroup>
                 
                 <h:panelGroup styleClass="pull-right" style="padding-top: 0px;">
-                    <p:clock mode="server" id="serverTime" pattern="HH:mm:ss dd.MM.yy">                        
+                    <p:clock mode="server" id="serverTime" pattern="dd.MM.yy HH:mm:ss">
                     </p:clock>
                     <pe:tooltip for="serverTime" value="#{bundle.ServerTime}"/>
                     <p:spacer width="7" />
