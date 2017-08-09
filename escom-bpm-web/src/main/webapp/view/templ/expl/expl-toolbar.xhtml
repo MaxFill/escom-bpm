@@ -128,11 +128,6 @@
             
             <ui:insert name="addToolButtons" />
             
-            <p:commandButton value="#{bundle.Exit}" title="#{bundle.ExitProgramm}" 
-                             rendered="#{explorerBean.explorerViewMode}"
-                             ajax="false" icon="ui-icon-extlink"
-                             onclick="return isClose = 1;"
-                             action="#{sessionBean.onSessionExit()}"/>
         </f:facet>
 
     </p:toolbar>  

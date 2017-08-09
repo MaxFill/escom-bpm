@@ -16,7 +16,7 @@ public class SearcheModel implements Serializable {
         
     private String nameSearche;             //поиск в поле name
     private User authorSearche;             //поиск в поле автор
-    private List<State> stateSearche;     //поиск по состояниям
+    private List<State> stateSearche;       //поиск по состояниям
     private boolean onlyActualItem = true;  //признак поиска только актуальных объектов
     private boolean searcheInGroups;        //признак поиска с учётом групп
     

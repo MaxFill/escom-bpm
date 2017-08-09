@@ -146,14 +146,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
         Folder folder = doc.getOwner();
-        if (folder != null ){
-            if (doc.getDocType() == null && folder.getDocTypeDefault() != null) {
-                doc.setDocType(folder.getDocTypeDefault()); 
-            }
-            if (doc.getPartner() == null && folder.getPartnerDefault() != null){
-                doc.setPartner(folder.getPartnerDefault());
-            }
-        }
+        doSetDefaultDocType(doc, folder);
+        doSetDefaultCompany(doc, folder);
+        doSetDefaultPartner(doc, folder);           
+    
         //addDocStatusFromDocType(doc, docType);
         doc.setDateDoc(new Date());
         if (doc.getOwner().getId() == null) { 
@@ -172,6 +168,36 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         }
     }
 
+    private void doSetDefaultPartner(Doc doc, Folder folder){
+        if (folder != null){
+            if (folder.isInheritPartner()){
+                doSetDefaultPartner(doc, folder.getParent());
+            } else {
+                doc.setPartner(folder.getPartnerDefault());
+            }             
+        }
+    }
+
+    private void doSetDefaultCompany(Doc doc, Folder folder){
+        if (folder != null){
+            if (folder.isInheritCompany()){
+                doSetDefaultCompany(doc, folder.getParent());
+            } else {
+                doc.setCompany(folder.getCompanyDefault());
+            }
+        }
+    }
+    
+    private void doSetDefaultDocType(Doc doc, Folder folder){
+        if (folder != null){
+            if (folder.isInheritDocType()){
+                doSetDefaultDocType(doc, folder.getParent());
+            } else {
+                doc.setDocType(folder.getDocTypeDefault()); 
+            }
+        }
+    }
+    
     @Override
     public SearcheModel initSearcheModel() {
         return new DocsSearche();
@@ -279,10 +305,26 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             onOpenFormLockAttache(attache);
         } else {
             EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
-        }
-        
+        }        
     }
 
+    /* Открытие формы добавления версии */
+    public void openAttacheAddForm(Doc doc){
+        if (doc == null) return;
+        Set<String> errors = new HashSet<>();
+        makeRightItem(doc);
+        if (!isHaveRightEdit(doc)){              
+            String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
+            String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
+            errors.add(error);
+        }
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        sessionBean.openAttacheAddForm(doc);
+    }
+    
     public void onOpenFormLockAttache(Attaches attache) {
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> paramList = new ArrayList<>();

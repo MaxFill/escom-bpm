@@ -5,9 +5,18 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
-    <changeSet id="folders_add_link_to_partner" author="filatov" context="initdata" runOnChange="true">  
+    <changeSet id="folders_add_link_to_partner" author="filatov" context="updatedata" runOnChange="true">  
         <addColumn tableName="folders">
-            <column name="PartnerDefault" type="INT" >
+            <column name="CompanyDefault" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="IsInheritCompany" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="IsInheritDocType" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="IsInheritPartner" type="BOOLEAN" >
                 <constraints nullable="true"/>
             </column>
         </addColumn>

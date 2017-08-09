@@ -23,10 +23,12 @@
             <p:ajax event="resize" listener="#{admObjectBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%;">
+                    
                     <p:hotkey bind="esc" id="hotskey"
                               immediate="true"                             
                               onstart="document.getElementById('#{_frm}:btnClose').click();"> 
                     </p:hotkey>
+                    
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
                             <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
@@ -41,47 +43,48 @@
                             </p:commandButton> 
                         </f:facet>
                     </p:menubar>
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
-                        
+                    
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">                        
                         <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
-                        <p:tab title="#{bundle.Replace}">
-                            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                                <h:panelGroup styleClass="ui-grid-col-12">
-                                    <p:outputLabel value="#{bundle.Object}:" />
-                                    <p:spacer width="3"/>
-                                    <h:outputText value="#{admObjectBean.sourceItem.name}"/>
-                                </h:panelGroup>
+                            <p:tab title="#{bundle.Replace}">
+                                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                                    <h:panelGroup styleClass="ui-grid-col-12">
+                                        <p:outputLabel value="#{bundle.Object}:" />
+                                        <p:spacer width="3"/>
+                                        <h:outputText value="#{admObjectBean.sourceItem.name}"/>
+                                    </h:panelGroup>
 
-                                <p:outputLabel value="#{bundle.UsesIn}:"/>
-                                <p:dataGrid var="usesIn" value="#{admObjectBean.countUsesItem()}" columns="1" layout="grid">
-                                    <p:outputPanel>
-                                        <h:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-2" styleClass="ui-grid-col-12">
-                                            <h:outputText value="#{admObjectBean.getLabelFromBundle(usesIn.getKey()) }"/>
-                                            <p:outputLabel value="#{usesIn.getValue()}" style="color: red;"/>
-                                        </h:panelGrid>
-                                    </p:outputPanel>
-                                </p:dataGrid>
+                                    <p:outputLabel value="#{bundle.UsesIn}:"/>
+                                    <p:dataGrid var="usesIn" value="#{admObjectBean.countUsesItem()}" columns="1" layout="grid">
+                                        <p:outputPanel>
+                                            <h:panelGrid columns="2" columnClasses="ui-grid-col-4, ui-grid-col-2" styleClass="ui-grid-col-12">
+                                                <h:outputText value="#{admObjectBean.getLabelFromBundle(usesIn.getKey()) }"/>
+                                                <p:outputLabel value="#{usesIn.getValue()}" style="color: red;"/>
+                                            </h:panelGrid>
+                                        </p:outputPanel>
+                                    </p:dataGrid>
 
-                                <p:outputLabel value="#{bundle.ReplaceItemInObjects}"/> 
-                                <p:inputText value="#{admObjectBean.replaceItem.name}" title="#{bundle.ValueReplace}" 
-                                             id="itemInputPanel"
-                                             styleClass="ui-grid-col-12"
-                                             readonly="true"/>
-                                <h:panelGroup>
-                                    <p:commandButton value="#{bundle.Select}" 
-                                                     process="@this" 
-                                                     actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
-                                        <p:ajax event="dialogReturn" update="#{_frm}:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
-                                    </p:commandButton>
+                                    <p:outputLabel value="#{bundle.ReplaceItemInObjects}"/> 
+                                    <p:inputText value="#{admObjectBean.replaceItem.name}" title="#{bundle.ValueReplace}" 
+                                                 id="itemInputPanel"
+                                                 styleClass="ui-grid-col-12"
+                                                 readonly="true"/>
+                                    <h:panelGroup>
+                                        <p:commandButton value="#{bundle.Select}" 
+                                                         process="@this" 
+                                                         actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
+                                            <p:ajax event="dialogReturn" update="#{_frm}:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
+                                        </p:commandButton>
 
-                                    <p:commandButton value="#{bundle.Execute}" update="#{_frm}"                                        
-                                                     disabled="#{admObjectBean.replaceItem == null}"
-                                                     action="#{admObjectBean.onReplaceItem()}"/>
-                                </h:panelGroup>
-                            </p:panelGrid>
-                        </p:tab>
-                    </p:tabView> 
+                                        <p:commandButton value="#{bundle.Execute}" update="#{_frm}"                                        
+                                                         disabled="#{admObjectBean.replaceItem == null}"
+                                                         action="#{admObjectBean.onReplaceItem()}"/>
+                                    </h:panelGroup>
+                                </p:panelGrid>
+                            </p:tab>
+                        </p:tabView> 
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

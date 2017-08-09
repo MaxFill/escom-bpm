@@ -2,6 +2,7 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
 import com.sun.security.auth.UserPrincipal;
 import java.io.BufferedInputStream;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jcr.Binary;
@@ -63,6 +65,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
     }
     
     /* Извлечение файла из хранилища */
+    @Asynchronous
     @Override
     public void downloadFile(Attaches attache){ 
         try {
@@ -99,7 +102,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
         Session session = null;
         try {            
             Repository repository = conf.getRepository();
-            Credentials credentals = new SimpleCredentials("admin", "admin".toCharArray());        
+            Credentials credentals = new SimpleCredentials("WebDavAdmin", "admin".toCharArray());        
             session = repository.login(credentals,  WEBDAV_STORAGE);            
         } catch (RepositoryException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

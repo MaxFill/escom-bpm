@@ -12,6 +12,7 @@ import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
+import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
@@ -26,6 +27,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -276,6 +278,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public String prepSaveItemAndPublic(){
         getItemFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
         return super.prepSaveItemAndClose(); 
+    }
+    
+    /* Печать карточки документа */
+    @Override
+    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
+        super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_DOC_CARD);
     }
     
     /* СТАТУСЫ ДОКУМЕНТА */

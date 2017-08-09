@@ -1,6 +1,7 @@
 package com.maxfill.model.folders;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.DepartmentStates;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -80,6 +81,28 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @JoinColumn(name = "PartnerDefault", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Partner partnerDefault;
+          
+    @JoinColumn(name = "CompanyDefault", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Company companyDefault;
+      
+    @XmlTransient
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "IsInheritCompany")
+    private boolean inheritCompany = true;  
+    
+    @XmlTransient
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "IsInheritDocType")
+    private boolean inheritDocType = true;
+    
+    @XmlTransient
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "IsInheritPartner")
+    private boolean inheritPartner = true;
         
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<FolderLog> itemLogs = new ArrayList<>();
@@ -87,6 +110,34 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public Folder(){
     }
 
+    public Company getCompanyDefault() {
+        return companyDefault;
+    }
+    public void setCompanyDefault(Company companyDefault) {
+        this.companyDefault = companyDefault;
+    }
+
+    public boolean isInheritCompany() {
+        return inheritCompany;
+    }
+    public void setInheritCompany(boolean inheritCompany) {
+        this.inheritCompany = inheritCompany;
+    }
+
+    public boolean isInheritDocType() {
+        return inheritDocType;
+    }
+    public void setInheritDocType(boolean inheritDocType) {
+        this.inheritDocType = inheritDocType;
+    }
+
+    public boolean isInheritPartner() {
+        return inheritPartner;
+    }
+    public void setInheritPartner(boolean inheritPartner) {
+        this.inheritPartner = inheritPartner;
+    }
+        
     @Override
     public FolderStates getState() {
         return state;

@@ -48,8 +48,12 @@ public class DocReportBean extends BaseReportBean{
             UserReportsSettings userReportsSettings = settings.get(getFormName());
             XMLGregorianCalendar dateBegin = (XMLGregorianCalendar) userReportsSettings.getSetting().get("dateStart");
             XMLGregorianCalendar dateEnd = (XMLGregorianCalendar) userReportsSettings.getSetting().get("dateEnd");
-            setDateStart(dateBegin.toGregorianCalendar().getTime());
-            setDateEnd(dateEnd.toGregorianCalendar().getTime());
+            if (dateBegin != null){
+                setDateStart(dateBegin.toGregorianCalendar().getTime());
+            }
+            if (dateEnd != null){
+                setDateEnd(dateEnd.toGregorianCalendar().getTime());
+            }
         } else {
             settings.put(getFormName(), new UserReportsSettings());
         }

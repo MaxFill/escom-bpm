@@ -851,16 +851,19 @@ public class ExplorerBean implements Serializable {
         return treeSelectedNode.getParent().equals(tree);
     }
     
+    /* ДЕРЕВО: разворачивает всё дерево */
+    public void onExpandTree(){
+        expandDown(tree);
+    }
+    
     /* ДЕРЕВО: разворачивает текущую ветку от текущего элемента вглубь */
     public void onExpandNode(){
         expandDown(treeSelectedNode);
-    };
+    }
     
     /* ДЕРЕВО: разворачивает ветку вглубь */
     private void expandDown(TreeNode node){
-        if (node == null){
-            return;
-        }
+        if (node == null) return;
         node.setExpanded(true);
         node.getChildren().stream().forEach(childNode -> expandDown(childNode));
     }
@@ -871,6 +874,11 @@ public class ExplorerBean implements Serializable {
         if (node.getParent() != null){
             expandUp(node.getParent());
         }
+    }
+    
+    /* ДЕРЕВО: Cворачивает всё дерево  */
+    public void onCollapseTree() {
+        doCollapseNode(tree);
     }
     
     /* ДЕРЕВО: Cворачивает текущую ветку от текущего элемента вглубь  */
@@ -1533,17 +1541,17 @@ public class ExplorerBean implements Serializable {
         
     /* Показать документ в папке */
     public void onShowDocInFolder(Doc doc){
-        if (doc != null){
-            Folder owner = (Folder) doc.getOwner();
-            TreeNode node = null;
-            if (owner != null){
-                node = EscomBeanUtils.findTreeNode(getTree(), owner);
-            }
-            if (getTreeSelectedNode() != null) {
-                getTreeSelectedNode().setSelected(false);
-            }
-            setTreeSelectedNode(node);
-            setSelectedDocId(null);
+        if (doc == null) return;
+        
+        Folder owner = (Folder) doc.getOwner();
+        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), owner);     
+        if (getTreeSelectedNode() != null) {
+            getTreeSelectedNode().setSelected(false);
+        }
+        node.setSelected(true); 
+        setTreeSelectedNode(node);
+        setSelectedDocId(null);
+        if (!DictExplForm.TAB_TREE.equals(currentTab)){
             RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
         }
     }

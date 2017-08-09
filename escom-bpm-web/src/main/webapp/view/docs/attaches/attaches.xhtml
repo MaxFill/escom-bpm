@@ -96,7 +96,7 @@
                                         oncomplete="document.getElementById('#{_frm}:setLockBtn').click();"/>
                             <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
                                         ajax="false"
-                                        disabled="#{_bean.isReadOnly()}"                           
+                                        disabled="#{_bean.isReadOnly() or _bean.docIsLock}"
                                         action="#{_bean.attacheDownLoad(attache)}"/>
                             <p:separator />
                             <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}" title="#{bundle.MakeMainVersion}"
@@ -109,7 +109,7 @@
                             <p:separator />
                             <p:menuitem icon="ui-icon-trash" value="#{bundle.Delete}"
                                         process="versionsTBL"
-                                        disabled="#{_bean.isReadOnly()}"
+                                        disabled="#{_bean.isReadOnly() or _bean.docIsLock}"
                                         update="versionsTBL"
                                         actionListener="#{_bean.deleteAttache(attache)}">
                                 <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="fa-exclamation-circle" />

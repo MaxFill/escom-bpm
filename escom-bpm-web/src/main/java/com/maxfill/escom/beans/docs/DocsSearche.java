@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.docs.docsTypes.DocType;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,8 @@ public class DocsSearche extends SearcheModel{
     private Date dateDocStart;
     private Date dateDocEnd;
     private boolean dateDocSearche = false;
-        
+    private List<DocType> docTypes;
+    
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
         if (StringUtils.isNotBlank(numberSearche)){
@@ -29,9 +31,18 @@ public class DocsSearche extends SearcheModel{
             dateArray[1] = dateDocEnd;
             paramDATE.put("dateDoc", dateArray);
         }
-    }    
-    
-    
+        if (!docTypes.isEmpty()){
+            paramIN.put("docType", docTypes);
+        }
+    }        
+
+    public List<DocType> getDocTypes() {
+        return docTypes;
+    }
+    public void setDocTypes(List<DocType> docTypes) {
+        this.docTypes = docTypes;
+    }
+        
     public Date getDateDocStart() {
         return dateDocStart;
     }

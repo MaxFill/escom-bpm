@@ -408,12 +408,20 @@
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'ПАО', N'Публичное акционерное общество', NULL, NULL, NULL, NULL, 5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
         
+        <!-- Компании -->
+        <sql>
+            INSERT companiesStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
+        </sql>        
+        <sql>
+            INSERT companies (Id, Owner, Parent, Name, Code, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, NULL, N'Альфа', N'A', 1, NULL, NULL, 0, 1, 1, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
+        </sql>  
+        
         <!-- Папки -->
         <sql>
             INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
         </sql>
         <sql>
-            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate) VALUES (0, NULL, NULL, N'Архив', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner) VALUES (0, NULL, NULL, N'Архив', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);            
         </sql>        
         
         <!-- Должности -->
@@ -423,15 +431,7 @@
         
         <sql>
             INSERT posts (Id, Owner, Parent, Name, Number, Access, State, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'Системный администратор', NULL, NULL, 1, 1, 1, 0, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-        </sql>        
-        
-        <!-- Компании -->
-        <sql>
-            INSERT companiesStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
-        </sql>        
-        <sql>
-            INSERT companies (Id, Owner, Parent, Name, Code, State, Number, Access, IsDeleted, IsActual, IsInherits, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, NULL, NULL, N'Альфа', N'A', 1, NULL, NULL, 0, 1, 1, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));            
-        </sql>        
+        </sql>                      
         
         <!-- Подразделения -->
         <sql>

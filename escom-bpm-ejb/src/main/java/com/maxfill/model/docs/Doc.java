@@ -1,5 +1,7 @@
 package com.maxfill.model.docs;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
@@ -8,9 +10,16 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -199,6 +208,22 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     }
     public void setRoleJson(String roleJson) {
         this.roleJson = roleJson;
+    }
+    
+    @Override
+    public Map<String, Set<Integer>> getRoles() {
+        if (roles == null){
+            roles = new HashMap<>();
+            if (StringUtils.isBlank(getRoleJson())) return roles;
+            try {
+                ObjectMapper mapper = new ObjectMapper();            
+                roles = mapper.readValue(roleJson, new TypeReference<HashMap<String, HashSet<Integer>>>() {});
+                setRoles(roles);
+            } catch (IOException ex) {
+                Logger.getLogger(Doc.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return roles;
     }
     
     @Override

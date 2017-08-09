@@ -90,8 +90,10 @@
                         </p:submenu>
                         <p:submenu label="#{bundle.Print}" icon="ui-icon-print" styleClass="submenu">
                             <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
+                                        disabled="#{_bean.editedItem.id == null}"
                                         actionListener="#{_bean.onPreViewItemCard()}"/>
                             <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}" 
+                                        disabled="#{_bean.editedItem.id == null}"
                                         actionListener="#{_bean.onPreViewBarcode()}"/>                        
                         </p:submenu>
                         <ui:insert name="specSubMenu" />

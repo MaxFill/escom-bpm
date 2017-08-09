@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners;
 
+import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -13,7 +14,9 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 
@@ -91,6 +94,12 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         }
     }
 
+    /* Печать карточки контрагента */
+    @Override
+    protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
+        super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_PARTNER_CARD);
+    }
+    
     @Override
     public List<PartnerGroups> getGroups(Partner partner) {
         return partner.getPartnersGroupsList();

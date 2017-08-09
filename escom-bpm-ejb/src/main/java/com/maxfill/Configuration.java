@@ -41,8 +41,10 @@ public class Configuration {
     private String tempFolder;
     private String jasperReports;
     private String convertorPDF;
+    private String pdfEncoding;
+    private String pdfFont;
     private Licence licence;
-    private Integer serverId;        
+    private Integer serverId;
     
     @PostConstruct
     private void init() {
@@ -65,6 +67,8 @@ public class Configuration {
             tempFolder = (String) properties.get("TEMP_FOLDER");
             jasperReports = (String) properties.get("JASPER_REPORTS");
             convertorPDF = (String) properties.get("CONVERTOR_PDF");
+            pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
+            pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
         } catch (IOException ex) {
@@ -72,6 +76,12 @@ public class Configuration {
         }
     }
 
+    public String getPdfFont() {
+        return pdfFont;
+    }    
+    public String getPdfEncoding() {
+        return pdfEncoding;
+    }    
     public Locale getServerLocale() {
         return serverLocale;
     }    

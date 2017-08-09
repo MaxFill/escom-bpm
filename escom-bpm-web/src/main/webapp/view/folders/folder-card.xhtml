@@ -2,7 +2,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"                
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml">
+                template="/view/templ/templ-card.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{foldersCardBean}"/>  
 
@@ -25,16 +26,37 @@
                                         disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;"/> 
                 </p:selectBooleanCheckbox>
-                <p:spacer/>
                 
-                <p:outputLabel value="#{bundle.DocTypesForNewDocs}:"/>
+                <p:outputLabel value="#{bundle.InheritParams}" />
+                <p:separator/>
+                
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritCompany}" itemLabel="#{bundle.InheritCompany}:"
+                        disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="сompanyPanel"/> 
+                </p:selectBooleanCheckbox>
+                <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
+                    <p:selectOneMenu value="#{_bean.editedItem.companyDefault}" id="company" converter="companyConvertor"                                     
+                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritCompany}"
+                                     title="#{bundle.CompanyForNewDoc}"
+                                     styleClass="ui-grid-col-12" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                        <p:ajax event="change" oncomplete="return itemChange = 1;"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+                
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritDocType}" itemLabel="#{bundle.InheritDocType}:"
+                                        disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="docTypePanel"/> 
+                </p:selectBooleanCheckbox>                
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
                     <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritDocType}"/>
                     <ui:param name="_converter" value="docsTypesConvertor" />
                     <ui:param name="_itemPanel" value="docTypePanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
+                    <ui:param name="_titleItem" value="#{bundle.DocTypesForNewDocs}"/>
                     <ui:param name="_selectorBean" value="#{docTypeBean}"/>
                     <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setDocTypeDefault"/>
@@ -42,20 +64,24 @@
                     <ui:param name="_update" value=""/>
                 </ui:include>
                 
-                <p:outputLabel value="#{bundle.PartnerForNewDocs}:" />
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritPartner}" itemLabel="#{bundle.InheritPartner}:"
+                                        disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="partnerPanel"/> 
+                </p:selectBooleanCheckbox>
                 <ui:include src="/view/common/item-select-btn.xhtml" >
-                    <ui:param name="_itemValue" value="#{foldersCardBean.editedItem.partnerDefault}"/>
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>
                     <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{foldersCardBean.isReadOnly()}"/>
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritPartner}"/>
                     <ui:param name="_converter" value="partnersConvertors" />
                     <ui:param name="_itemPanel" value="partnerPanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.Partner}"/>
+                    <ui:param name="_titleItem" value="#{bundle.PartnerForNewDocs}"/>
                     <ui:param name="_selectorBean" value="#{partnersBean}"/>
                     <ui:param name="_items" value="#{partnersBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setPartnerDefault"/>
                     <ui:param name="_actionSelect" value="onPartnerSelected"/>
                     <ui:param name="_update" value=""/>
                 </ui:include>
+                                
             </p:panelGrid>
         </p:tab>
 

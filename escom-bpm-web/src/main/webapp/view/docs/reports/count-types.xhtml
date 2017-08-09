@@ -16,19 +16,47 @@
         #{bundle.Report}
     </ui:define>
 
+    <ui:param name="_frm" value="reportForm" />
+    
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{docReportBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{docReportBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="reportForm" style="font-size: 90%;"> 
+                <h:form id="#{_frm}" style="font-size: 90%;">                     
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"                             
+                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                    </p:hotkey>
+                    
                     <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
-                        <p:panelGrid columns="3" layout="grid" styleClass="ui-grid-col-12 without-spaces"
-                                     columnClasses="ui-grid-col-3 without-spaces, ui-grid-col-6 without-spaces, ui-grid-col-3 without-spaces" >
+                    
+                    <p:menubar styleClass="without-spaces">
+                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                            </p:menuitem>
+                        </p:submenu>
+                        <f:facet name="options">
+                            <p:commandButton value="#{bundle.ToForm}"
+                                             actionListener="#{docReportBean.makeReport()}"
+                                             update="#{_frm}">
+                                <f:param name="isRequired" value="true"/>
+                            </p:commandButton>
+                            <p:spacer width="5" />
+                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                             title="#{bundle.Close}"
+                                             immediate="true"
+                                             action="#{docReportBean.onCloseCard()}"> 
+                            </p:commandButton> 
+                        </f:facet>
+                    </p:menubar>
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                        <p:panelGrid columns="3" layout="grid" styleClass="ui-grid-col-12"
+                                     columnClasses="ui-grid-col-3, ui-grid-col-6, ui-grid-col-3" >
                             <h:panelGroup>
                                 <p:outputLabel value="#{bundle.PeriodSelected}"/>
-                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces">
+                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12">
                                     #{bundle.With}
                                     <p:calendar value="#{docReportBean.dateStart}" id="dateStart" 
                                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20"                                                 
@@ -38,7 +66,7 @@
                                         <p:ajax event="dateSelect" listener="#{docReportBean.dateStartChange()}"/>
                                     </p:calendar>
                                 </p:panelGrid>
-                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces">
+                                <p:panelGrid columns="2" layout="grid" columnClasses="col10r, ui-grid-col-1" styleClass="ui-grid-col-12">
                                     #{bundle.At}
                                     <p:calendar value="#{docReportBean.dateEnd}" id="dateEnd" 
                                                 showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
@@ -59,20 +87,11 @@
                                 </p:treeNode>
                             </p:tree>
                             
-                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                                <p:commandButton value="#{bundle.ToForm}" styleClass="ui-grid-col-12 without-spaces"
-                                                 actionListener="#{docReportBean.makeReport()}"
-                                                 update="reportForm">
-                                    <f:param name="isRequired" value="true"/>
-                                </p:commandButton>
+                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                                 <p:commandButton value="#{bundle.Print}" styleClass="ui-grid-col-12 without-spaces"
                                                  rendered="#{docReportBean.pieModel != null}"
                                                  actionListener="#{docReportBean.onPreViewReport()}">
                                 </p:commandButton>
-                                <p:commandButton value="#{bundle.Close}" styleClass="ui-grid-col-12 without-spaces" 
-                                                 immediate="true"
-                                                 action="#{docReportBean.onCloseCard()}"> 
-                                </p:commandButton> 
                             </p:panelGrid>
                             
                         </p:panelGrid>    

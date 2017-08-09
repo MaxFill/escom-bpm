@@ -11,7 +11,12 @@
     </ui:define>
     
     <!-- специфичные поля поиска -->
-    <ui:define name="searche">        
+    <ui:define name="searche"> 
+        <p:selectCheckboxMenu value="#{explorerBean.model.docTypes}" label="#{bundle.DocTypeSelector}" converter="docsTypesConvertor"
+                              filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
+            <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getName()}" itemValue="#{item}"/>
+        </p:selectCheckboxMenu>
+
         <p:outputLabel value="#{bundle.Number}"/>
         <p:inputText title="#{bundle.HelpSearcheContext}"
                      value="#{explorerBean.model.numberSearche}"
@@ -23,7 +28,6 @@
                                  value="#{explorerBean.model.dateDocSearche}">
             <p:ajax event="change" partialSubmit="true" update="pnDateDocSearche"/>
         </p:selectBooleanCheckbox>   
-
         <h:panelGroup id="pnDateDocSearche"> 
             <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
                          rendered="#{explorerBean.model.dateDocSearche}">
@@ -121,14 +125,15 @@
         <p:separator />
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                    actionListener="#{sessionBean.openAttacheAddForm(item)}"/>
+                    actionListener="#{docsBean.openAttacheAddForm(item)}"/>
         <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     actionListener="#{explorerBean.onSetCurrentItem(item)}"
                     oncomplete="document.getElementById('#{_frmExpl}:btnScan').click();"/> 
         <p:separator />
         <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" 
-                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"                    
+                    rendered="#{item.getClass().getSimpleName() == 'Doc'}" 
+                    update="#{_frmTree} #{_frmExpl}"
                     actionListener="#{explorerBean.onShowDocInFolder(item)}"/>
     </ui:define>
 

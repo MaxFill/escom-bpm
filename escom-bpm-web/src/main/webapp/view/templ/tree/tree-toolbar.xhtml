@@ -6,37 +6,44 @@
     
     <p:defaultCommand target="#{_frmTree}:accord:btnTreeSearche" />
     
-    <p:toolbar id="toolbarTree" >                                       
-        <f:facet name="left">
-            <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
-                             style="font-size: 90%;"
-                             actionListener="#{explorerBean.onReloadTreeItems()}"
-                             update="#{_frmTree} #{_frmExpl}"
-                             oncomplete="initDND()"/>                       
+    <p:toolbar id="toolbarTree" styleClass="without-spaces ui-grid-col-12">  
+        <p:toolbarGroup styleClass="without-spaces ui-grid-col-12" rendered="#{explorerBean.tree != null}">
             
-            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-            <h:panelGroup rendered="#{explorerBean.tree != null}">                
-                <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}"                             
-                             disabled="#{!explorerBean.isShowTree()}"
-                             style="font-size: 90%;">
-                </p:inputText>
-                <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
+                    <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
+                                     style="font-size: 90%;"
+                                     actionListener="#{explorerBean.onReloadTreeItems()}"
+                                     update="#{_frmTree} #{_frmExpl}"
+                                     oncomplete="initDND()"/>                       
+                    <p:commandButton icon="ui-icon-folder-open" title="#{bundle.Expand}"
+                                     update="#{_frmTree}"
+                                     style="font-size: 90%;"
+                                     actionListener="#{explorerBean.onExpandTree()}"/>
+                    <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.Collapse}"
+                                     update="#{_frmTree}"
+                                     style="font-size: 90%;"
+                                     actionListener="#{explorerBean.onCollapseTree()}"/>
+
+                    <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}"                             
                                  disabled="#{!explorerBean.isShowTree()}"
-                                 update="#{_frmTree} centerHeaderLabel #{_frmExpl} #{_updates}"
-                                 actionListener="#{explorerBean.onSearcheInTree()}" style="font-size: 90%;" 
-                                 oncomplete="initDND()">
-                </p:commandButton>
-            </h:panelGroup>
-                         
-            <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
-                            rendered="#{false}">
-                <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateChildGroup}"                            
-                            oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>                
-                <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateInNullLevel}"
-                            oncomplete="document.getElementById('#{_frmTree}:createRootTreeCardBtn').click();"/>
-            </p:splitButton>
-                                
-        </f:facet>
+                                 style="font-size: 90%;">
+                    </p:inputText>
+                    <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
+                                     disabled="#{!explorerBean.isShowTree()}"
+                                     update="#{_frmTree} centerHeaderLabel #{_frmExpl} #{_updates}"
+                                     actionListener="#{explorerBean.onSearcheInTree()}" style="font-size: 90%;" 
+                                     oncomplete="initDND()">
+                    </p:commandButton>
+
+            
+        </p:toolbarGroup>
     </p:toolbar>
+    
+    <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
+                    rendered="#{false}">
+        <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateChildGroup}"                            
+                    oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>                
+        <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateInNullLevel}"
+                    oncomplete="document.getElementById('#{_frmTree}:createRootTreeCardBtn').click();"/>
+    </p:splitButton>    
 
 </ui:composition>

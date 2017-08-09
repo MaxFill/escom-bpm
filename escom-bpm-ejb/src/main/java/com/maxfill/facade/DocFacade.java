@@ -1,7 +1,5 @@
 package com.maxfill.facade;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
@@ -19,15 +17,11 @@ import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -40,7 +34,6 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang.StringUtils;
 
 @Stateless
 public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
@@ -56,7 +49,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     @Override
     public String getFRM_NAME() {
         return Doc.class.getSimpleName().toLowerCase();
-    }    
+    }
     
     /* Возвращает документы, заблокированные пользователем */
     @Override
@@ -212,17 +205,17 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     @Override
     public boolean checkUserInRole(Doc doc, String roleName, User user){        
         roleName = roleName.toLowerCase();
-        Map<String, Set<Integer>> roles = getRoleMap(doc);
+        Map<String, Set<Integer>> roles = doc.getRoles();
         if (roles.isEmpty() || !roles.containsKey(roleName)) return false; 
         HashSet<Integer> usersId = (HashSet<Integer>)roles.get(roleName);
         if (usersId.isEmpty()) return false;        
         return usersId.contains(user.getId());             
     }
     
-    /* Возвращает имя испольнителя роли */
+    /* Возвращает имя исполнителя роли */
     @Override
     public String getActorName(Doc doc, String roleName){
-        Map<String, Set<Integer>> roles = getRoleMap(doc);
+        Map<String, Set<Integer>> roles = doc.getRoles();
         if (roles.isEmpty() || !roles.containsKey(roleName)) return null;
         Set<Integer> usersId = roles.get(roleName);
         if (usersId == null || usersId.isEmpty()) return null;
@@ -234,23 +227,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
             names.append(user.getName());
         }); 
         return names.toString();        
-    }
-    
-    private Map<String, Set<Integer>> getRoleMap(Doc doc){
-        Map<String, Set<Integer>> roles = doc.getRoles();
-        if (roles.isEmpty()){
-            String roleJson = doc.getRoleJson();
-            if (StringUtils.isBlank(roleJson)) return roles;
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                roles = mapper.readValue(roleJson, new TypeReference<HashMap<String, HashSet<Integer>>>() {});
-                doc.setRoles(roles);
-            } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            }
-        }
-        return roles;
-    }
+    }       
     
     /* Удаление документа  */
     @Override

@@ -7,8 +7,7 @@
     
     <pe:layoutPane position="south" >
         <h:form style="font-size: 85%;" id="explorer_south">
-            <ui:include src="/view/common/error-dlg.xhtml"/>
-            <h:panelGrid columns="3" columnClasses="ui-grid-col-3 without-spaces, ui-grid-col-7, ui-grid-col-2" styleClass="ui-grid-col-12 without-spaces">
+            <h:panelGrid columns="3" columnClasses="ui-grid-col-4 without-spaces, ui-grid-col-4 without-spaces, ui-grid-col-4 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
                     <p:commandButton value="#{bundle.GotoIndex}"
                                      id="btnCancel" ajax="false"
@@ -27,12 +26,19 @@
                 <h:panelGroup styleClass="pull-right" style="padding-top: 3px;">                    
                     <p:outputLabel value="#{sessionBean.getCurrentUserPost().name}" />
                     <p:outputLabel value="#{' '}" styleClass="without-spaces"/>
-                    <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/>               
+                    <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                 </h:panelGroup>
                 
-                <h:panelGroup styleClass="pull-right" style="padding-top: 4px;">
-                    <p:clock pattern="HH:mm:ss dd.MM.yyyy" mode="server" id="serverTime"/>
+                <h:panelGroup styleClass="pull-right" style="padding-top: 0px;">
+                    <p:clock mode="server" id="serverTime" pattern="HH:mm:ss dd.MM.yy">                        
+                    </p:clock>
                     <pe:tooltip for="serverTime" value="#{bundle.ServerTime}"/>
+                    <p:spacer width="7" />
+                    <p:commandButton value="#{bundle.Exit}" title="#{bundle.ExitProgramm}" 
+                             rendered="#{explorerBean.explorerViewMode}"
+                             ajax="false" icon="ui-icon-extlink"
+                             onclick="return isClose = 1;"
+                             action="#{sessionBean.onSessionExit()}"/>
                 </h:panelGroup>
             </h:panelGrid>
         </h:form>

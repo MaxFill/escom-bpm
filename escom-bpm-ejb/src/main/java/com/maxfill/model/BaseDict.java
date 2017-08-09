@@ -180,7 +180,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     /* Роли объекта */
     @Transient
     @XmlTransient 
-    private Map<String, Set<Integer>> roles = new HashMap<>();
+    protected Map<String, Set<Integer>> roles;
         
     public BaseDict(){}
 
@@ -380,6 +380,9 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }     
     
     public Map<String, Set<Integer>> getRoles() {
+        if (roles == null){
+            roles = new HashMap<>();
+        }
         return roles;
     }
     public void setRoles(Map<String, Set<Integer>> roles) {
@@ -395,20 +398,20 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         doSetMultyRole(roleName, usersId);
     }
     
-    /* установка (перезапись) списоковой роли */
+    /* установка (перезапись) списковой роли */
     public void doSetMultyRole(String roleName, Set<Integer> usersId){
-        roles.put(roleName, usersId);
+        getRoles().put(roleName, usersId);
     }
     /* добавление исполнителя в роль */
     public void doAddInRole(String roleName, Integer userId){
-        Set<Integer> usersId;
-        if (roles.containsKey(roleName)){
-            usersId = roles.get(roleName);
+        Set<Integer> usersIds;
+        if (getRoles().containsKey(roleName)){
+            usersIds = getRoles().get(roleName);
         } else {
-            usersId = new HashSet<>();
+            usersIds = new HashSet<>();
         }
-        usersId.add(userId);
-        roles.put(roleName, usersId);
+        usersIds.add(userId);
+        getRoles().put(roleName, usersIds);
     }
     
     /* Установка даты создания */  

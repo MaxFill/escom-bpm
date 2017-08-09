@@ -32,6 +32,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <p:focus for="#{_frmTree}" context="nameSearche"/>
 
         <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
@@ -43,7 +44,6 @@
                     <p:outputLabel value="#{bundle.Sections}" />
                 </f:facet>
                 <h:form id="#{_frmTree}" style="font-size: 90%;"> 
-                    <ui:include src="/view/common/error-dlg.xhtml"/>
                     <style>
                         .ui-accordion .ui-accordion-content {
                             padding: 0px !important;
@@ -61,7 +61,6 @@
                     </f:facet>
 
                     <h:form id="#{_frmExpl}" style="font-size: 80%;">
-                        <ui:include src="/view/common/error-dlg.xhtml"/>
                         <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
@@ -109,7 +108,6 @@
                     <p:outputLabel value="#{bundle.Searche}" />
                 </f:facet> 
                 <h:form style="font-size: 80%;" id="#{_frmExpl}_east"> 
-                    <ui:include src="/view/common/error-dlg.xhtml"/>
                     <ui:include src="/view/templ/templ-searche.xhtml">
                         <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
                     </ui:include>

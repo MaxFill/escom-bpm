@@ -77,8 +77,7 @@
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                          title="#{bundle.CompanyDocRegistred}"
                                          disabled="#{_bean.isReadOnly() or _item.number != null}"
-                                         styleClass="ui-grid-col-12" 
-                                         required="#{param['isRequired'] == 'true'}" 
+                                         styleClass="ui-grid-col-12"                                          
                                          requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
