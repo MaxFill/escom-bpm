@@ -121,8 +121,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         
     /* Подчинённые detail объекты, полученные или через ссылку на owner или через связь многие-ко-многим  */
     @XmlTransient
-    @OneToMany
-    @JoinColumn(name = "owner")
+    @Transient
     private List<D> detailItems;
         
     /* Признак наследования прав объекта. 

@@ -28,9 +28,10 @@
                              title="#{bundle.StringArbitrary}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
-                             onchange="return itemChange = 1;">
-                    <f:validateLength for="docTypeCode" maximum="10"/>
+                             onchange="return itemChange = 1;">                    
+                    <f:validateLength for="docTypeCode" maximum="3"/>
                 </p:inputText>
+                <p:watermark for="docTypeCode" value="#{bundle.MaxLenght3}" />
 
                 <p:outputLabel value="#{bundle.Numerator}" />
                 <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 

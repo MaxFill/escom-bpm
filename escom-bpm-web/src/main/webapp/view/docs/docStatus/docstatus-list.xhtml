@@ -39,16 +39,16 @@
                 <h:graphicImage value="/resources/icon/info.png" title="#{bundle.DocStatus}"/>   
             </p:column>
             
-            <p:column headerText="#{bundle.Value}" width="60">
-                <p:selectBooleanCheckbox value="#{item.value}">
-                    <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
-                </p:selectBooleanCheckbox>
-            </p:column>
-
             <p:column headerText="#{bundle.DocStatus}">                                    
                 <h:outputLabel value="#{item.status.nameEndElipse}"/>
             </p:column>
 
+            <p:column headerText="#{bundle.Value}" width="60">
+                <p:inputSwitch value="#{item.value}" offLabel="#{bundle.No}" onLabel="#{bundle.Yes}" onchange="itemChange = 1;" >
+                    <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
+                </p:inputSwitch>
+            </p:column>
+            
             <p:column headerText="#{bundle.DateStatus}" width="90">
                 <p:cellEditor>
                     <f:facet name="output">

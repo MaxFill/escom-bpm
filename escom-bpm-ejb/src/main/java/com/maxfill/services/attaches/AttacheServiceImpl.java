@@ -57,7 +57,7 @@ public class AttacheServiceImpl implements AttacheService{
     
     @Override
     public void deleteAttacheByFolder(Folder folder){
-        folder.getDocsList().stream().forEach(doc -> deleteAttaches(doc.getAttachesList()));
+        folder.getDetailItems().stream().forEach(doc -> deleteAttaches(doc.getAttachesList()));
     }
     
     @Override

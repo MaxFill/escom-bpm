@@ -52,7 +52,7 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column headerText="#{bundle.DateChange}" width="90" priority="3"
+        <p:column headerText="#{bundle.DateChange}" width="80" priority="3"
                   rendered="#{_showDateChange != false}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
@@ -60,7 +60,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.DateCreate}" width="90" priority="3"
+        <p:column headerText="#{bundle.DateCreate}" width="80" priority="3"
                   rendered="#{_showDateCreate != false}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">

@@ -398,14 +398,16 @@
             INSERT partnersTypesStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
             INSERT partnersTypesStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
             INSERT partnersTypesStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
+            INSERT partnersTypesStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
         </sql>
         
         <sql>
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, N'ООО', N'Общество с ограниченной ответственностью', NULL, NULL, NULL, NULL, 1, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, N'ОАО', N'Открытое акционерное общестово', NULL, NULL, NULL, NULL, 2, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'ИП', N'Индивидуальный предприниматель', NULL, NULL, NULL, NULL, 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'ЗАО', N'Закрытое акционерное общество', NULL, NULL, NULL, NULL, 4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'ИП',  N'Индивидуальный предприниматель', NULL, NULL, NULL, NULL, 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'ЗАО', N'Закрытое акционерное общество',  NULL, NULL, NULL, NULL, 4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'ПАО', N'Публичное акционерное общество', NULL, NULL, NULL, NULL, 5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT partnerTypes (Id, Name, FullName, Number, Parent, Owner, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (6, N'АО',  N'Акционерное общество',           NULL, NULL, NULL, NULL, 6, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
         
         <!-- Компании -->

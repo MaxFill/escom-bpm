@@ -9,7 +9,10 @@
     <p:ajaxExceptionHandler type="java.lang.NullPointerException"
                             update="exceptionDialog"
                             onexception="isClose = 1; PF('exceptionDialog').show();" />
-
+    <p:ajaxExceptionHandler type="javax.el.PropertyNotFoundException"
+                            update="exceptionDialog"
+                            onexception="isClose = 1; PF('exceptionDialog').show();" />
+                            
     <p:dialog id="expireDialog" header="#{msg.SessionExpired}" resizable="false" modal="true" widgetVar="expireDialog" height="240px" width="550px">       
         <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
             <p:graphicImage name="/images/session_expired.jpg"/> 

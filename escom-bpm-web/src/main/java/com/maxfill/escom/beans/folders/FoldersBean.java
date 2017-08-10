@@ -12,13 +12,10 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.xml.bind.JAXB;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +120,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     /* Формирует число ссылок на folder в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){
-        rezult.put("Documents", folder.getDocsList().size());
+        rezult.put("Documents", folder.getDetailItems().size());
         rezult.put("Folders", folder.getFoldersList().size());
     }    
     
@@ -136,6 +133,9 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public void preparePasteItem(Folder pasteItem, Folder sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
+        if (target == null){
+            target = sourceItem.getParent();
+        }
         pasteItem.setParent((Folder)target);
     } 
     

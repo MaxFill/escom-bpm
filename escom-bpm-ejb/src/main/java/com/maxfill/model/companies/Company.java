@@ -52,12 +52,13 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private CompanyStates state;
-        
-    @OneToMany(mappedBy = "owner")
-    private List<Department> departmentsList = new ArrayList<>();
-    
+           
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<CompanyLog> itemLogs = new ArrayList<>();
+    
+    @OneToMany
+    @JoinColumn(name = "owner")
+    private List<Department> detailItems = new ArrayList<>();
     
     public Company() {
     }
@@ -83,14 +84,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     @Override
     public String getIconName(){
         return "home";
-    }        
-    
-    public List<Department> getDepartmentsList() {
-        return departmentsList;
-    }
-    public void setDepartmentsList(List<Department> departmentsList) {
-        this.departmentsList = departmentsList;
-    }
+    }    
 
     public String getCode() {
         return code;
@@ -101,11 +95,11 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     
     @Override
     public List<Department> getDetailItems() {
-        return departmentsList;
+        return detailItems;
     }
     @Override
     public void setDetailItems(List<Department> detailItems) {
-        this.departmentsList = detailItems;
+        this.detailItems = detailItems;
     }
     
     @Override

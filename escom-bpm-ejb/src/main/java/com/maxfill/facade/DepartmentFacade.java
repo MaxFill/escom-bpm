@@ -46,7 +46,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         if (StringUtils.isBlank(departName) || company == null){        
             return null;
         } else {
-            for(Department department : company.getDepartmentsList()){
+            for(Department department : company.getDetailItems()){
                 if (Objects.equals(department.getName(), departName)){
                     return department;
                 }
@@ -55,7 +55,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
             department.setName(departName);
             department.setOwner(company);
             create(department);
-            company.getDepartmentsList().add(department);
+            company.getDetailItems().add(department);
             LOG.log(Level.INFO, "Create department = {0}", departName);
             return department;
         }

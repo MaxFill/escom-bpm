@@ -119,7 +119,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Формирует число ссылок на company в связанных объектах   */
     @Override
     public void doGetCountUsesItem(Company company,  Map<String, Integer> rezult){
-        rezult.put("Departaments", company.getDepartmentsList().size() - 1);
+        rezult.put("Departaments", company.getDetailItems().size() - 1);
     }
     
     /* Проверка возможности удаления company */

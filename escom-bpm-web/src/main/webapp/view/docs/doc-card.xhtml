@@ -51,13 +51,13 @@
 
     <ui:define name="specMenuButtons">
         <p:commandButton id="btnSaveCloseAndPublic" value="#{bundle.SaveAndPublish}" 
-                        rendered="#{!_bean.isReadOnly() and _bean.editedItem.state.currentState.id == 5}"
-                        icon="ui-icon-extlink"
-                        update="#{_frm}"
-                        action="#{_bean.prepSaveItemAndPublic()}"
-                        onclick="if (itemChange == 1) {
-                                    onChangeItem();
-                                }">
+                    rendered="#{!_bean.isReadOnly() and _bean.editedItem.state.currentState.id == 5}"
+                    icon="ui-icon-extlink"
+                    update="#{_frm}"
+                    action="#{_bean.prepSaveItemAndPublic()}"
+                    onclick="if (itemChange == 1) {
+                                onChangeItem();
+                            }">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
     </ui:define>
@@ -76,7 +76,7 @@
                     <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                          title="#{bundle.CompanyDocRegistred}"
-                                         disabled="#{_bean.isReadOnly() or _item.number != null}"
+                                         disabled="#{_bean.isReadOnly()}"
                                          styleClass="ui-grid-col-12"                                          
                                          requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
@@ -89,7 +89,7 @@
                     <ui:include src="/view/common/item-select-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
                         <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly() or _item.number != null}"/>
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                         <ui:param name="_converter" value="docsTypesConvertor" />
                         <ui:param name="_itemPanel" value="docTypePanel"/>
                         <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
@@ -118,16 +118,25 @@
                     <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 " styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 col-padding">
-                            <h:panelGrid columns="3" style="border-collapse: collapse; border:0px;">
+                            <h:panelGrid columns="3"> 
                                 <p:inputText value="#{_item.regNumber}" id="number"
-                                             title="#{bundle.RegistredDocNumber}"
-                                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                             disabled="#{_bean.isReadOnly() or _item.number != null}"
-                                             onchange="return itemChange = 1;"
-                                             requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"> 
+                                            title="#{bundle.RegistredDocNumber}"
+                                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                            rendered="#{_item.docType == null or _item.docType.numerator == null}"
+                                            disabled="#{_bean.isReadOnly()}"
+                                            onchange="return itemChange = 1;"
+                                            requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"> 
                                 </p:inputText>
+
+                                <p:inputMask mask="#{_bean.numberMask}" title="#{_item.docType.numerator.name}"
+                                             rendered="#{_item.docType != null and _item.docType.numerator != null}"
+                                             disabled="#{_bean.isReadOnly()}"
+                                             onchange="return itemChange = 1;"
+                                             requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"
+                                             value="#{_item.regNumber}"/>
+
                                 <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                                 disabled="#{_bean.isReadOnly() or _item.docType.numerator.typeCode == null 
+                                                 disabled="#{_bean.isReadOnly() 
                                                              or _item.docType.numerator.typeCode eq 'type.manual'
                                                              or _item.number != null}"
                                                  action="#{_bean.onGenerateRegNumber(_item)}"
@@ -137,17 +146,18 @@
                                                  update="docTypePanel datePanel сompanyPanel regNumberPanel"
                                                  immediate="true"
                                                  actionListener="#{_bean.onClearRegNumber(_item)}"
-                                                 disabled="#{_bean.isReadOnly() or _item.regNumber == null}"/>
+                                                 disabled="#{_bean.isReadOnly() or _item.regNumber == null or _item.regNumber.isEmpty()}"/>
                             </h:panelGrid>
                         </h:panelGroup>
                     </p:panelGrid>
+
                     <p:panelGrid  layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.DateDoc}:" /> 
                         <h:panelGroup id="datePanel" styleClass="ui-grid-col-12 col-padding">
                             <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
                                         styleClass="ui-grid-col-12"
                                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                        disabled="#{_bean.isReadOnly() or _item.number != null}"
+                                        disabled="#{_bean.isReadOnly()}"
                                         onselect="return itemChange = 1;"
                                         required="#{param['isRequired'] == 'true'}" 
                                         showButtonPanel="true" locale="#{sessionBean.locale}"                                

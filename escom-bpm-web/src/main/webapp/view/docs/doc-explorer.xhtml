@@ -29,7 +29,9 @@
     
     <!-- специфичные поля поиска -->
     <ui:define name="searche"> 
-        <p:selectCheckboxMenu value="#{explorerBean.model.docTypes}" label="#{bundle.DocTypeSelector}" converter="docsTypesConvertor"
+        <p:selectCheckboxMenu value="#{explorerBean.model.docTypes}" label="#{bundle.DocTypeSelector}"
+                              widgetVar="cbmDocType"
+                              converter="docsTypesConvertor"
                               filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
             <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getName()}" itemValue="#{item}"/>
         </p:selectCheckboxMenu>
@@ -93,7 +95,7 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2"
+        <p:column headerText="#{bundle.DateDoc}" width="80" priority="2"
                   sortBy="#{item.dateDoc}">
             <h:outputLabel value="#{item.getClass().getSimpleName() == 'Doc' ? item.dateDoc : ''}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>

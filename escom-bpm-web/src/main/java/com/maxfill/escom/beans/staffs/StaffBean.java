@@ -92,6 +92,13 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     public void preparePasteItem(Staff pasteItem, Staff sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
+        if (target == null){
+            if (sourceItem.getCompany() != null){
+                target = sourceItem.getCompany();
+            } else {
+                target = sourceItem.getOwner();
+            }
+        }
         detectParentOwner(pasteItem, target);
     }
     

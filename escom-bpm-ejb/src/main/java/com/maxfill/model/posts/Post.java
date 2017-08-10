@@ -75,6 +75,16 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
     }
 
     @Override
+    public List<Post> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<Post> getChildItems() {
+        return null;
+    }
+    
+    @Override
     public Integer getId() {
         return id;
     }

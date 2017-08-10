@@ -139,7 +139,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         
         return String.format("%s %s.%s.", f,s,l); 
     }
-    
+
     @Override
     public List<UserLog> getItemLogs() {
         return itemLogs;
@@ -153,14 +153,14 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public String getIconName() {
         return "user";
     }
-        
+
     public String getPwl() {
         return pwl;
     }
     public void setPwl(String pwl) {
         this.pwl = pwl;
     }
-        
+
     public String getLogin() {
         return login;
     }
@@ -251,7 +251,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public void setEmailSign(String emailSign) {
         this.emailSign = emailSign;
     }
-    
+
     public List<FavoriteObj> getFavoriteObjList() {
         return favoriteObjList;
     }
@@ -265,12 +265,21 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public void setDuplicateMessagesEmail(boolean duplicateMessagesEmail) {
         this.duplicateMessagesEmail = duplicateMessagesEmail;
     }
-        
+
+    @Override
+    public List<User> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<User> getChildItems() {
+        return null;
+    }
+    
     @Override
     public Integer getId() {
         return id;
     }
-
     @Override
     public void setId(Integer id) {
         this.id = id;

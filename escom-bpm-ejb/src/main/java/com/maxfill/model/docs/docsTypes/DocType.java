@@ -149,6 +149,16 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     }
     
     @Override
+    public List<DocType> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<DocType> getChildItems() {
+        return null;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);

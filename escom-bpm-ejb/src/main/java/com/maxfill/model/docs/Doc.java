@@ -94,12 +94,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDoc;
 
-    @JoinTable(name = "favoriteDocs", joinColumns = {
-        @JoinColumn(name = "DocId", referencedColumnName = "Id")}, inverseJoinColumns = {
-        @JoinColumn(name = "UserId", referencedColumnName = "Id")})
-    @ManyToMany
-    private List<User> userList;
-
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -115,8 +109,8 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<DocLog> itemLogs = new ArrayList<>();
-       
+    private List<DocLog> itemLogs = new ArrayList<>();     
+        
     public Doc() {
     }
 
@@ -138,6 +132,16 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         this.owner = owner;
     }
 
+    @Override
+    public List<Doc> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<Doc> getChildItems() {
+        return null;
+    }
+        
     @Override
     public String getPath(){        
         return getOwner().getPath();
@@ -282,13 +286,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         this.company = company;
     }
        
-    public List<User> getUserList() {
-        return userList;
-    }
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
-    }
-
     public List<DocStatuses> getDocsStatusList() {
         return docsStatusList;
     }

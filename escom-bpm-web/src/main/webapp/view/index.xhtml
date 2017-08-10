@@ -11,6 +11,7 @@
     </ui:define>
     
     <ui:define name="body">
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />               
         
         <script type="text/javascript">
@@ -40,7 +41,6 @@
                 }
             </style>
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
-            <ui:include src="/view/common/error-dlg.xhtml"/>
                         
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="bar">               
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"

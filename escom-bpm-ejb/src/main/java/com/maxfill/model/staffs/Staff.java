@@ -168,6 +168,16 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     }
 
     @Override
+    public List<Staff> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<Staff> getChildItems() {
+        return null;
+    }
+    
+    @Override
     public List<StaffLog> getItemLogs() {
         return itemLogs;
     }

@@ -208,6 +208,16 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     }
     
     @Override
+    public List<Partner> getDetailItems() {
+        return null;
+    }
+    
+    @Override
+    public List<Partner> getChildItems() {
+        return null;
+    }
+    
+    @Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);

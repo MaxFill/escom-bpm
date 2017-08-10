@@ -22,7 +22,7 @@
     </ui:define>
 
     <ui:define name="body">
-
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <script type="text/javascript" >
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
@@ -54,7 +54,6 @@
 
             <pe:layoutPane position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">
-                    <ui:include src="/view/common/error-dlg.xhtml"/>
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
                                      oncomplete="return itemChange = 0;">            

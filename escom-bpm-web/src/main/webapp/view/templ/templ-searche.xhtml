@@ -19,7 +19,13 @@
             if (dateDoc){
                 PF('cbDateDoc').uncheck();
             }
-        }
+            var docType = PF('cbmDocType');
+            if (docType){
+                PF('cbmDocType').show();            
+                PF('cbmDocType').uncheckAll();
+                PF('cbmDocType').hide();
+            }
+        }    
     </script> 
 
     <p:focus for="nameSearche"/>

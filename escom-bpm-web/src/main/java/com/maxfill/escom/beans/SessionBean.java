@@ -638,7 +638,7 @@ public class SessionBean implements Serializable{
 
     public String getPrimefacesTheme() {
         if (StringUtils.isBlank(primefacesTheme)){
-            primefacesTheme = "flick";
+            primefacesTheme = "aristo";
         }
         return primefacesTheme;
     }

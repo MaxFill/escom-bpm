@@ -116,6 +116,13 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public void preparePasteItem(Department pasteItem, Department sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
+        if (target == null){
+            if (sourceItem.getOwner() != null){
+                target = sourceItem.getOwner();
+            } else {
+                target = sourceItem.getParent();
+            }
+        }
         detectParentOwner(pasteItem, target);    
     }   
     

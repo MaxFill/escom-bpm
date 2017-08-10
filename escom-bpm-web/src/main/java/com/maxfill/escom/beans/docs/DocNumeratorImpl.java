@@ -47,7 +47,7 @@ public class DocNumeratorImpl extends NumeratorServiceAbst implements DocNumerat
                     params.put("O", doc.getCompany().getCode());
                     String number = doRegistrNumber(doc, "", numPattern, params, dateReg);
                     doc.setRegNumber(number);
-                    EscomBeanUtils.SuccesMsgAdd("DocIsRegistred", "DocIsRegAndLock");
+                    EscomBeanUtils.SuccesMsgAdd("Successfully", "DocIsRegistred");
                 } else{
                     EscomBeanUtils.ErrorMsgAdd("RegistrationError", "NUMERATOR_NO_SET", "");
                 }

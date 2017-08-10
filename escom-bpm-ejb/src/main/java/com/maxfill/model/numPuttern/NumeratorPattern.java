@@ -42,9 +42,7 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     @GeneratedValue(strategy=TABLE, generator="numeratorPatternIdGen")
     private Integer id;
     
-    /**
-     * Шаблон формирования рег. номера
-     */
+    /* Шаблон автоматического формирования рег. номера  */
     @Basic(optional = false)
     @NotNull
     @Size(max=100)
@@ -104,7 +102,7 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     public void setItemLogs(List<NumeratorPatternLog> itemLogs) {
         this.itemLogs = itemLogs;
     }
-
+    
     public String getPattern() {
         return pattern;
     }

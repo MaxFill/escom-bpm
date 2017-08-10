@@ -65,6 +65,10 @@ public class DocStatuses implements Serializable {
     public DocStatuses() { 
     }
 
+    public String getValueBundleKey(){
+        return value ? "Yes" : "No";
+    }
+    
     public DocStatuses(Doc doc, StatusesDoc status) {
         this.doc = doc;
         this.status = status;

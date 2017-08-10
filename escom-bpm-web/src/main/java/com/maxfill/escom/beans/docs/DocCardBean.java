@@ -17,9 +17,8 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
-import com.maxfill.model.folders.Folder;
+import com.maxfill.model.companies.Company;
 import com.maxfill.services.numerator.DocNumerator;
-import com.maxfill.utils.Tuple;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -94,7 +93,62 @@ public class DocCardBean extends BaseCardBean<Doc>{
         onSaveChangeDocStatus();
         onSaveChangeAttaches();
     }
+
+    public String getNumberMask() {
+        DocType docType = getEditedItem().getDocType();
+        if (docType == null) return null;
         
+        NumeratorPattern numerator = docType.getNumerator();
+        if (numerator == null) return null;
+        
+        String pattern = numerator.getPattern();
+        if (StringUtils.isBlank(pattern)) {
+            EscomBeanUtils.ErrorMsgAdd("Error", "PatternIsEmpty", "");
+            return null;
+        }
+        
+        Integer lenNumber = numerator.getLeadingZeros();
+        StringBuilder mask = new StringBuilder();
+        int index = 0;
+        int l = pattern.length();
+        while (index < l){
+            String part = "";            
+            switch (pattern.charAt(index)){
+                case 'T':{              
+                    part = docType.getCode();                    
+                    break;
+                }
+                case 'N':{                    
+                    part = StringUtils.repeat("9", lenNumber);                    
+                    break;
+                }
+                case 'O':{
+                    Company company = getEditedItem().getCompany();
+                    if (company != null){
+                        part = company.getCode();
+                    }
+                    break;
+                }
+                case 'Y':{
+                    part = StringUtils.repeat("9", 2);
+                    break;
+                }
+                case 'y':{
+                    part = StringUtils.repeat("9", 4);
+                    break;
+                }
+                default:{
+                    part = StringUtils.repeat(pattern.charAt(index), 1);
+                }
+            }
+            if (part != null){
+                mask.append(part);
+            }
+            index++;
+        }
+        return mask.toString();
+    }
+     
     private void onSaveChangeAttaches(){
         if (!forDelAttaches.isEmpty()){
             forDelAttaches.stream()
@@ -138,7 +192,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
         doc.setRegNumber(null);
         onItemChange();
-        EscomBeanUtils.WarnMsgAdd("DocRegCanceled", "DocIsEnableEditing");
+        EscomBeanUtils.WarnMsgAdd("Successfully", "DocRegCanceled");
     }
 
     /* Формирование регистрационного номера документа. Вызов с экранной формы */
@@ -295,7 +349,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void onChangeDocStatus(DocStatuses docsStatus){
         docsStatus.setDateStatus(new Date());
         docsStatus.setAuthor(currentUser);
-        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), docsStatus.toString(), currentUser);
+        String statusName = docsStatus.getStatus().getName() + " = " + EscomBeanUtils.getBandleLabel(docsStatus.getValueBundleKey());
+        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, currentUser);
         onItemChange();
     }
     

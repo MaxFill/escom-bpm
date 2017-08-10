@@ -63,6 +63,15 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         return getDefaultRights(item);
     }   
     
+    /* Специфичные действия перед вставкой скопированного объекта */
+    @Override
+    public void preparePasteItem(DocType pasteItem, DocType sourceItem, BaseDict owner){
+        if (owner == null){
+            owner = sourceItem.getOwner();
+        }
+        pasteItem.setOwner((DocTypeGroups) owner);
+    }
+    
     @Override
     public DocTypeFacade getItemFacade() {
         return itemsFacade;

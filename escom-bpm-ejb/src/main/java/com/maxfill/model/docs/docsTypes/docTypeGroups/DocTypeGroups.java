@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -41,13 +40,11 @@ private static final long serialVersionUID = -2116686297842684933L;
     @NotNull
     @Column(name = "Id")
     private Integer id;
-
-    /**
-     * Связь с подчинёнными объектами (Виды документов)
-    */
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
-    private List<DocType> docTypes = new ArrayList<>();
-       
+    
+    @OneToMany
+    @JoinColumn(name = "owner")
+    private List<DocType> detailItems = new ArrayList<>();
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DocTypeGroupsLog> itemLogs = new ArrayList<>();
     
@@ -77,20 +74,13 @@ private static final long serialVersionUID = -2116686297842684933L;
         this.itemLogs = itemLogs;
     }
         
-    public List<DocType> getDocTypes() {
-        return docTypes;
-    }
-    public void setDocTypes(List<DocType> docTypes) {
-        this.docTypes = docTypes;
-    }
-
     @Override
     public List<DocType> getDetailItems() {
-        return docTypes;
+        return detailItems;
     }
     @Override
     public void setDetailItems(List<DocType> detailItems){
-        this.docTypes = detailItems;
+        this.detailItems = detailItems;
     }
     
     @Override

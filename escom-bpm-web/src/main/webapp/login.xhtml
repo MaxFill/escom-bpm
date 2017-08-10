@@ -11,6 +11,7 @@
     </ui:define> 
 
     <ui:define name="body">
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <f:metadata>
             <f:viewParam name="from" value="#{loginBean.targetPage}" />
         </f:metadata>
@@ -85,6 +86,5 @@
             </p:panel>
 
         </h:form>
-        <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 </ui:composition>

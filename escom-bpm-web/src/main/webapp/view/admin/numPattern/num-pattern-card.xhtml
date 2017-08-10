@@ -7,69 +7,47 @@
 
     <ui:param name="_bean" value="#{numeratorPatternCardBean}"/>
 
-    <ui:define name="page_body">
-
+    <ui:define name="page_body"> 
         <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
-                         columnClasses="ui-grid-col-12 col-padding" >
+                         columnClasses="ui-grid-col-12 col-padding" >                
 
-                <p:outputLabel value="#{bundle.Type}" />
-                <p:selectOneRadio value="#{_bean.editedItem.typeCode}" layout="pageDirection" 
-                                  onchange="return itemChange = 1;"
-                                  disabled="#{!_bean.isHaveRightEdit()}">
-                    <f:selectItems value="#{_bean.numPatternTypes}"/>
-                    <p:ajax event="change" update="#{_frm}:mainTabView:patternGrid" />
-                </p:selectOneRadio>
+                <p:outputLabel value="#{bundle.NamePattern}" />
+                <p:inputText id="name" value="#{_bean.editedItem.name}" 
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onchange="return itemChange = 1;"
+                             disabled="#{!_bean.isHaveRightEdit()}"
+                             styleClass="ui-grid-col-12"
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                <p:watermark for="name" value="#{bundle.InputNameNumerator}" />             
 
-                <p:outputLabel value="#{bundle.Name}" />
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12">
-                    <p:inputText id="name" value="#{_bean.editedItem.name}" 
-                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 onchange="return itemChange = 1;"
-                                 disabled="#{!_bean.isHaveRightEdit()}"
-                                 styleClass="ui-grid-col-12"
-                                 required="#{param['isRequired'] == 'true'}"
-                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                    <p:watermark for="name" value="#{bundle.InputNameNumerator}" />
-                </h:panelGrid>
-            </p:panelGrid>
-
-            <h:panelGroup id="patternGrid">
-                <p:panelGrid columns="1" layout="grid" rendered="#{_bean.editedItem.typeCode == 'type.auto'}"
-                             columnClasses="ui-grid-col-8 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-                    <p:outputLabel value="#{bundle.Pattern}"/>
-                    <h:panelGrid columns="2" styleClass="ui-grid-col-12">
-                        <p:inputText id="pattern" value="#{_bean.editedItem.pattern}"
-                                     title="#{bundle.PatternAutoGenerate}"
-                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                     onchange="return itemChange = 1;"
-                                     disabled="#{!_bean.isHaveRightEdit()}"
-                                     styleClass="ui-grid-col-12"
-                                     required="#{param['isRequired'] == 'true'}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Pattern}] #{bundle.MustBeFilled}">
-                            <p:keyFilter regEx="/[CODEMPGRTYNy//-]/i" />
-                        </p:inputText>    
-                        <p:watermark for="pattern" value="#{bundle.InputPattern}"/>
-                    </h:panelGrid>
-
-                    <p:outputLabel value="#{bundle.LeadingZeros}" />
-
-                    <p:spinner id="leadingZeros" value="#{_bean.editedItem.leadingZeros}" 
-                               onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                               onchange="return itemChange = 1;"
-                               disabled="#{!_bean.isHaveRightEdit()}"
-                               required="#{param['isRequired'] == 'true'}"
-                               min="0" max="10"
-                               requiredMessage="#{bundle.Field} [#{bundle.LeadingZeros}] #{bundle.MustBeFilled}">
-                    </p:spinner>
-
-                    <p:selectBooleanCheckbox value="#{_bean.editedItem.resetNewYear}" 
-                                             itemLabel="#{bundle.ResetNewYear}"
-                                             disabled="#{!_bean.isHaveRightEdit()}"
-                                             onchange="return itemChange = 1;"/>
-                </p:panelGrid>
-            </h:panelGroup>
-        </p:tab>    
-
+                <p:outputLabel value="#{bundle.PatternAutoGenerate}"/>
+                <p:inputText id="patternAuto" value="#{_bean.editedItem.pattern}"
+                             title="#{bundle.PatternAutoGenerate}"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onchange="return itemChange = 1;"
+                             disabled="#{!_bean.isHaveRightEdit()}"
+                             styleClass="ui-grid-col-12"
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.PatternAutoGenerate}] #{bundle.MustBeFilled}">
+                    <p:keyFilter regEx="/[CODEMPGRTYNy//-]/i" />
+                </p:inputText>    
+                <p:watermark for="patternAuto" value="#{bundle.InputPattern}"/> 
+                <p:outputLabel value="#{bundle.LeadingZeros}" />                
+                <p:spinner id="leadingZeros" value="#{_bean.editedItem.leadingZeros}" 
+                           onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                           onchange="return itemChange = 1;"
+                           disabled="#{!_bean.isHaveRightEdit()}"
+                           required="#{param['isRequired'] == 'true'}"
+                           min="0" max="10" size="6"
+                           requiredMessage="#{bundle.Field} [#{bundle.LeadingZeros}] #{bundle.MustBeFilled}">
+                </p:spinner>
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.resetNewYear}" 
+                                         itemLabel="#{bundle.ResetNewYear}"
+                                         disabled="#{!_bean.isHaveRightEdit()}"
+                                         onchange="return itemChange = 1;"/>
+            </p:panelGrid>   
+        </p:tab> 
     </ui:define>
 </ui:composition>

@@ -124,7 +124,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         Expression<Integer> docId = docs.get(Doc_.id);
         Expression<String> typeName = docs.get(Doc_.docType).get("name");
         criteriaQuery.multiselect(typeName, builder.count(docId));
-        criteriaQuery.groupBy(docs.get("id"));
+        criteriaQuery.groupBy(docs.get(Doc_.docType));
         Predicate crit1 = builder.equal(docs.get("deleted"), false);
         Predicate crit2 = builder.greaterThanOrEqualTo(docs.get("dateDoc"), startPeriod);
         Predicate crit3 = builder.lessThanOrEqualTo(docs.get("dateDoc"), endPeriod);
@@ -203,7 +203,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         doSaveRoleToJson(doc);
         super.create(doc); 
     }
-    
+
     private void doSaveRoleToJson(Doc doc){
         Gson gson = new Gson();
         String attacheJson = gson.toJson(doc.getRoles());        

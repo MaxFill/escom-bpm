@@ -92,7 +92,7 @@ public class DocReportBean extends BaseReportBean{
         List<Tuple> docTypes = docFacade.countDocByDocTypeGroups(docTypeGroups, getDateStart(), getDateEnd(), docTypeGroups);
         if (docTypes.isEmpty()){
             EscomBeanUtils.WarnMsgAdd("Warning", "NO_SEARCHE_FIND");        
-            if (pieModel != null) pieModel = null;
+            pieModel = null;
             return;
         }
         

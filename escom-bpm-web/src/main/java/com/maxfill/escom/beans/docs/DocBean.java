@@ -64,11 +64,14 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     /* перед вставкой скопированного документа */
     @Override
-    public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict target) {
-        super.preparePasteItem(pasteItem, sourceItem, target);
+    public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict owner) {
+        super.preparePasteItem(pasteItem, sourceItem, owner);
         pasteItem.setAttachesList(new ArrayList<>());
         pasteItem.setDocsStatusList(new ArrayList<>());
-        pasteItem.setOwner((Folder) target);        
+        if (owner == null){
+            owner = sourceItem.getOwner();
+        }
+        pasteItem.setOwner((Folder) owner);        
     }    
     
     @Override
@@ -169,7 +172,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     private void doSetDefaultPartner(Doc doc, Folder folder){
-        if (folder != null){
+        if (doc.getPartner() == null && folder != null){
             if (folder.isInheritPartner()){
                 doSetDefaultPartner(doc, folder.getParent());
             } else {
@@ -179,7 +182,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     private void doSetDefaultCompany(Doc doc, Folder folder){
-        if (folder != null){
+        if (doc.getCompany() == null && folder != null){
             if (folder.isInheritCompany()){
                 doSetDefaultCompany(doc, folder.getParent());
             } else {
@@ -189,7 +192,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
     
     private void doSetDefaultDocType(Doc doc, Folder folder){
-        if (folder != null){
+        if (doc.getDocType() == null && folder != null){
             if (folder.isInheritDocType()){
                 doSetDefaultDocType(doc, folder.getParent());
             } else {

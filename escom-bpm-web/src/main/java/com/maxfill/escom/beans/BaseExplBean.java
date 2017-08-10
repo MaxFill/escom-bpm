@@ -156,14 +156,15 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return null;
-        }
-        doPasteMakeSpecActions(sourceItem, pasteItem);
+        }        
+        changeNamePasteItem(sourceItem, pasteItem);
         getItemFacade().create(pasteItem);
+        doPasteMakeSpecActions(sourceItem, pasteItem);
+        getItemFacade().edit(pasteItem);
         return pasteItem;
     }
     
-    protected void doPasteMakeSpecActions(T sourceItem, T pasteItem){
-        changeNamePasteItem(sourceItem, pasteItem);
+    protected void doPasteMakeSpecActions(T sourceItem, T pasteItem){        
     }
     
     /* Специфичные действия перед вставкой скопированного объекта */
@@ -210,12 +211,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }   
     
     /* Изменение имени вставляемого объекта */
-    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
-        if (Objects.equals(sourceItem.getParent(), pasteItem.getParent()) 
-            && Objects.equals(sourceItem.getOwner(), pasteItem.getOwner()) ){            
-            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-            pasteItem.setName(name);
-        }
+    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){          
+        String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
+        pasteItem.setName(name);        
     } 
     
     /* Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта */

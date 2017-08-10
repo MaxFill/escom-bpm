@@ -54,10 +54,11 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     @JoinColumn(name = "Parent", referencedColumnName = "Id")
     @ManyToOne
     private Department parent;
-    
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "owner")
-    private List<Staff> staffList = new ArrayList<>();
-    
+        
+    @OneToMany
+    @JoinColumn(name = "owner")
+    private List<Staff> detailItems = new ArrayList<>();
+        
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<DepartamentLog> itemLogs = new ArrayList<>();
         
@@ -131,23 +132,16 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     }
     public void setDepartmentList(List<Department> departmentList) {
         this.departmentList = departmentList;
-    }
-
-    public List<Staff> getStaffList() {
-        return staffList;
-    }
-    public void setStaffList(List<Staff> staffList) {
-        this.staffList = staffList;
-    }    
+    }  
     
     @Override
     public List<Staff> getDetailItems() {
-        return staffList;
+        return detailItems;
     }
 
     @Override
     public void setDetailItems(List<Staff> detailItems) {
-        this.staffList = detailItems;
+        this.detailItems = detailItems;
     }
     
     @Override

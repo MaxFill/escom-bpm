@@ -21,7 +21,7 @@
                            required="#{param['isRequired'] == 'true'}" 
                            requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
                 <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
-                <p:ajax event="change" listener="#{_bean.onStateChange()}" oncomplete="return itemChange = 1;"/>
+                <p:ajax event="change" listener="#{_bean.onStateChange()}" update="#{_frm}" oncomplete="return itemChange = 1;"/>
             </p:selectOneMenu>
             
             <p:outputLabel value="#{bundle.DateCreate}" />                            

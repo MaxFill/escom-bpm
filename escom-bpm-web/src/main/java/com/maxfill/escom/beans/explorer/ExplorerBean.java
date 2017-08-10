@@ -999,7 +999,7 @@ public class ExplorerBean implements Serializable {
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
     Реальный parent будет установлен в бине объекта */
     private List<BaseDict> pasteItem(BaseDict parent, Set<String> errors) {
-        if (copiedItems == null){return null;}
+        if (copiedItems == null) return null;
         List<BaseDict> rezults = new ArrayList<>();
         copiedItems.stream().forEach(item -> {
             BaseDict pasteItem = sessionBean.prepPasteItem(item, parent, errors);
@@ -1116,6 +1116,7 @@ public class ExplorerBean implements Serializable {
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();
         makeJurnalHeader(EscomBeanUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
+        navigator = null;
     }
     
     /* Выполняет поиск в дереве объектов */
@@ -1137,7 +1138,7 @@ public class ExplorerBean implements Serializable {
     /* DRAG & DROP */          
     
     /*  Формирование списка объектов для перетаскивания.  В список включается перетаскиваемый объект и уже отмеченные объекты  */
-    private void makeDragList(BaseDict dragItem){
+    private void makeCheckedItemList(BaseDict dragItem){
         if (dragItem == null){
             checkedItems.clear();
             return;
@@ -1176,7 +1177,7 @@ public class ExplorerBean implements Serializable {
                 dragNode = EscomBeanUtils.findUiTreeNode(getTree(), rkNode);
                 BaseDict dragItem = (BaseDict) dragNode.getData();                
                 checkedItems.clear();
-                makeDragList(dragItem);
+                makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     Set<String> errors = new HashSet<>();
                     //проверяем, что тянем, так как может быть тянем root, а это пока не допустимо!
@@ -1186,7 +1187,7 @@ public class ExplorerBean implements Serializable {
                             onShowMovedDlg("MoveTreeDlg");
                         }                       
                     } else {
-                        String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName()});
+                        String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
                         errors.add(error);
                     }
                     if (!errors.isEmpty()) {
@@ -1202,7 +1203,7 @@ public class ExplorerBean implements Serializable {
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
                 BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, getDetailItems());
-                makeDragList(dragItem);
+                makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево
                         case DictExplForm.TAB_TREE:{
@@ -1312,27 +1313,38 @@ public class ExplorerBean implements Serializable {
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
             rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
             tbKey = Integer.parseInt(rwKey);
-            BaseDict dragItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
-            makeDragList(dragItem);
+            BaseDict dragItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);            
+            makeCheckedItemList(dragItem);
             if (!checkedItems.isEmpty()) { 
                 Set<String> errors = new HashSet<>();
-                if (isItemDetailType(dragItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
-                   onShowMovedDlg("MoveTblDlg");
-                } else{
-                    dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
-                    dropNode = EscomBeanUtils.findTreeNode(tree, dropItem);
-                    if (isItemTreeType(dragItem) && isItemTreeType(dropItem) && treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
-                        onShowMovedDlg("MoveTreeDlg");
+                if (checkPossibilityMoving(dropItem, dragItem, errors)){ 
+                    if (isItemDetailType(dragItem) && tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
+                       onShowMovedDlg("MoveTblDlg");
+                    } else{
+                        dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
+                        dropNode = EscomBeanUtils.findTreeNode(tree, dropItem);
+                        if (isItemTreeType(dragItem) && isItemTreeType(dropItem) && treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors)){
+                            onShowMovedDlg("MoveTreeDlg");
+                        }
                     }
-                }
+                }    
                 if (!errors.isEmpty()) {
                     EscomBeanUtils.showErrorsMsg(errors);
-                }    
+                } 
             }
         } else {
             EscomBeanUtils.ErrorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
         } 
     } 
+    
+    private boolean checkPossibilityMoving(BaseDict dropItem, BaseDict dragItem, Set<String> errors){
+        if (isItemDetailType(dropItem)){
+            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
+            errors.add(error);
+            return false;
+        }
+        return true;
+    }
     
     /* DRAG & DROP: обработка drop в навигаторе */ 
     public void dropToNavig() {

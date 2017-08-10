@@ -25,10 +25,10 @@
                 <p:inputText id="companyCode" value="#{_bean.editedItem.code}" 
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              disabled="#{_bean.isReadOnly()}"
-                             size="10"
                              onchange="return itemChange = 1;">
-                    <f:validateLength for="companyCode" maximum="10"/>
+                    <f:validateLength for="companyCode" maximum="2"/>
                 </p:inputText>
+                <p:watermark for="companyCode" value="#{bundle.MaxLenght2}" />
                 <p:message for="companyCode" />
                 
             </p:panelGrid>
