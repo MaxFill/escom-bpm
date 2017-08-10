@@ -22,7 +22,7 @@
     </context-param>
     <context-param>
         <param-name>liquibase.contexts</param-name>
-        <param-value>initdata</param-value>
+        <param-value>updatedata</param-value>
     </context-param>
     <listener>
         <listener-class>liquibase.integration.servlet.LiquibaseServletListener</listener-class>

@@ -62,7 +62,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Подготовка к редактированию объекта на карточке  */      
-    public T prepEditItem(T item){
+    public T prepEditItem(T item){        
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для редактирования 

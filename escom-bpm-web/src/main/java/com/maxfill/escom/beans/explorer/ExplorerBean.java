@@ -156,7 +156,7 @@ public class ExplorerBean implements Serializable {
                 viewMode = DictExplForm.SELECTOR_MODE;
             } else {
                 viewMode = DictExplForm.EXPLORER_MODE;
-            }
+            }            
         }    
     }
 
@@ -173,11 +173,6 @@ public class ExplorerBean implements Serializable {
     public void onEditContentItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.EDIT_MODE);
-        /*
-        if (!isItemDetailType(item)){
-            makeSelectedGroup(item);
-        }
-        */
         editItem = sessionBean.prepEditItem(item);
     }
 

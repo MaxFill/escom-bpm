@@ -17,6 +17,7 @@ import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -47,10 +48,18 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     }          
     
     @Override
+    protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Doc> root, List<Predicate> criteries, Doc doc){
+        if (doc.getDocType() != null){
+            criteries.add(builder.equal(root.get("docType"), doc.getDocType()));
+        }
+        super.dublicateCheckAddCriteria(builder, root, criteries, doc);
+    }
+
+    @Override
     public String getFRM_NAME() {
         return Doc.class.getSimpleName().toLowerCase();
     }
-    
+
     /* Возвращает документы, заблокированные пользователем */
     @Override
     public List<Doc> loadLockDocuments(User editor){

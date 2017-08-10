@@ -31,7 +31,9 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
 
     @Inject
     private PartnersBean partnersBean;
-            
+       
+    private Doc selectedDoc;
+    
     @Override
     public PartnersFacade getItemFacade() {
         return itemsFacade;
@@ -109,4 +111,12 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     public Class<Partner> getItemClass() {
         return Partner.class;
     }
+
+    public Doc getSelectedDoc() {
+        return selectedDoc;
+    }
+    public void setSelectedDoc(Doc selectedDoc) {
+        this.selectedDoc = selectedDoc;
+    }
+
 }

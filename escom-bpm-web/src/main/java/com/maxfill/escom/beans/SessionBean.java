@@ -461,12 +461,7 @@ public class SessionBean implements Serializable{
         themes.add(new Theme(35, "UI-Darkness", "ui-darkness"));
         themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
         themes.add(new Theme(37, "Vader", "vader"));
-    }        
-    
-    /* Возвращает url по которому автоматически происходит переход на новую страницу  */
-    public String onShowDocInFolder(BaseDict doc){
-        return EscomBeanUtils.doGetItemURL(doc, "docs/doc-explorer");
-    } 
+    }    
     
     /* Возврашает размеры формы карточки */
     public Tuple<Integer, Integer> getFormSize(String formName){

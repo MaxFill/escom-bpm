@@ -1,23 +1,14 @@
 package com.maxfill.facade;
 
-import com.maxfill.utils.Tuple;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 /* Абстрактный фасад  */
 public abstract class BaseFacade<T> {
@@ -104,34 +95,7 @@ public abstract class BaseFacade<T> {
         cq.select(getEntityManager().getCriteriaBuilder().count(rt));
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
-    }
-    
-    public Tuple findByNameExcludeId(Integer itemId, T parent, String itemName){
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass); 
-        List<Predicate> criteries = new ArrayList<>();
-        criteries.add(builder.equal(c.get("name"), itemName));
-        if (itemId != null){
-            criteries.add(builder.notEqual(c.get("id"), itemId));
-        }
-        if (parent != null){
-            criteries.add(builder.equal(c.get("parent"), parent));
-        } else {
-            criteries.add(builder.isNull(c.get("parent")));
-        }
-        Predicate[] predicates = new Predicate[criteries.size()];
-        predicates = criteries.toArray(predicates);
-        cq.select(c).where(builder.and(predicates));        
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
-        List<T> rezult = query.getResultList();
-        if (rezult.isEmpty()){
-            return new Tuple(false, null);
-        } else {        
-            return new Tuple(true, rezult.get(0));
-        }
-    }
+    }    
     
     public List<T> findChilds(T parent){
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);

@@ -61,7 +61,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     @EJB
     private DocFacade docsFacade;
-
+    
     /* перед вставкой скопированного документа */
     @Override
     public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict target) {

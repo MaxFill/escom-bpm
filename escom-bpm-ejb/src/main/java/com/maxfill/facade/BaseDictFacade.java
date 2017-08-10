@@ -4,12 +4,14 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.services.numerator.NumeratorService;
 import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.Tuple;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +61,43 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         this.logClass = logClass;
         this.stateClass = stateClass;
     } 
+    
+    public Tuple findDublicateExcludeItem(T item){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass); 
+        List<Predicate> criteries = new ArrayList<>();
+        
+        dublicateCheckAddCriteria(builder, c, criteries, item);
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(c).where(builder.and(predicates));        
+        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        List<T> rezult = query.getResultList();
+        if (rezult.isEmpty()){
+            return new Tuple(false, null);
+        } else {        
+            return new Tuple(true, rezult.get(0));
+        }
+    }
+    
+    protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<T> root, List<Predicate> criteries, T item){
+        criteries.add(builder.equal(root.get("name"), item.getName()));
+        if (item.getId() != null){
+            criteries.add(builder.notEqual(root.get("id"), item.getId()));
+        }
+        if (item.getParent() != null){
+            criteries.add(builder.equal(root.get("parent"), item.getParent()));
+        } else {
+            criteries.add(builder.isNull(root.get("parent")));
+        }
+        if (item.getOwner() != null){
+            criteries.add(builder.equal(root.get("owner"), item.getOwner()));
+        } else {
+            criteries.add(builder.isNull(root.get("owner")));
+        }
+    }
     
     /* СОЗДАНИЕ: cоздание объекта */
     public T createItem(User author) {

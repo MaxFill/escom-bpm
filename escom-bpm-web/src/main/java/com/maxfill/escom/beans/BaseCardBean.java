@@ -173,22 +173,19 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* Проверка корректности полей объекта перед сохранением  */
     protected void checkItemBeforeSave(T item, Set<String> errors) {
-        checkCorrectItemRight(item, errors);
+        checkCorrectItemRight(item, errors);                
         
-        T parent = (T) item.getParent();
-        Integer itemId = item.getId();
-        String itemName = item.getName();
         //Проверка на дубль
-        Tuple<Boolean, T> tuple = getItemFacade().findByNameExcludeId(itemId, parent, itemName);
+        Tuple<Boolean, T> tuple = getItemFacade().findDublicateExcludeItem(item);
         Boolean isFind = tuple.a;
         if (isFind) {
-            T findItem = tuple.b;
-            Object[] messageParameters = new Object[]{itemName, findItem.getId()};
+            T findItem = tuple.b;            
+            Object[] messageParameters = new Object[]{item.getName(), findItem.getId()};
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
         }                           
     }
-
+            
     /* Отмена изменений в объекте  */
     public String onCancelItemSave() {
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {

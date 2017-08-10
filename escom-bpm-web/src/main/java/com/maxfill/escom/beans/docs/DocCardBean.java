@@ -17,7 +17,9 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.services.numerator.DocNumerator;
+import com.maxfill.utils.Tuple;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -80,8 +82,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     protected void checkItemBeforeSave(Doc doc, Set<String> errors){        
         checkRegNumber(doc, errors);
         super.checkItemBeforeSave(doc, errors);
-    }        
-    
+    }
+        
     @Override
     public DocFacade getItemFacade() {
         return itemFacade;
@@ -277,6 +279,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     @Override
     public String prepSaveItemAndPublic(){
         getItemFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
+        onItemChange();
         return super.prepSaveItemAndClose(); 
     }
     
