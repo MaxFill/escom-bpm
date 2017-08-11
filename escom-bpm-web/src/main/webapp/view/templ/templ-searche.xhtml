@@ -170,7 +170,8 @@
                                  icon="ui-icon-search" value="#{bundle.Find}"
                                  action="#{explorerBean.onSearcheItem}"
                                  update="#{_tblUpdate}"
-                                 oncomplete="initDND()">
+                                 onstart="PF('statusDialog').show()"
+                                 oncomplete="PF('statusDialog').hide(); initDND();">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
                 <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"

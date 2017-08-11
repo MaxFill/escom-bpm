@@ -42,6 +42,10 @@ private static final long serialVersionUID = -2116686297842684933L;
     private Integer id;
     
     @OneToMany
+    @JoinColumn(name = "parent")
+    private List<DocTypeGroups> childItems;
+        
+    @OneToMany
     @JoinColumn(name = "owner")
     private List<DocType> detailItems = new ArrayList<>();
     
@@ -52,7 +56,7 @@ private static final long serialVersionUID = -2116686297842684933L;
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocTypeGroupsStates state;
-        
+    
     public DocTypeGroups() {
     } 
 
@@ -81,6 +85,15 @@ private static final long serialVersionUID = -2116686297842684933L;
     @Override
     public void setDetailItems(List<DocType> detailItems){
         this.detailItems = detailItems;
+    }
+
+    @Override
+    public List<DocTypeGroups> getChildItems() {
+        return childItems;
+    }
+    @Override
+    public void setChildItems(List<DocTypeGroups> childItems) {
+        this.childItems = childItems;
     }
     
     @Override

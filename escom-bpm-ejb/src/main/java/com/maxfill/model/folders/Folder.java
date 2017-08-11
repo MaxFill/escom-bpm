@@ -46,8 +46,9 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @GeneratedValue(strategy=TABLE, generator="idGen")
     private Integer id;
             
-    @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "parent")
-    private List<Folder> foldersList;
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<Folder> childItems;
     
     @JoinColumn(name = "Moderator", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -199,9 +200,15 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     
     public User getModerator() { return moderator;    }
     public void setModerator(User moderator) {        this.moderator = moderator;    }
-    
-    public List<Folder> getFoldersList() {        return foldersList;    }
-    public void setFoldersList(List<Folder> foldersList) {     this.foldersList = foldersList;   }        
+
+    @Override
+    public List<Folder> getChildItems() {
+        return childItems;
+    }
+    @Override
+    public void setChildItems(List<Folder> childItems) {
+        this.childItems = childItems;
+    }   
 
     public DocType getDocTypeDefault() {
         return docTypeDefault;

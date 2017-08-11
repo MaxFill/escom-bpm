@@ -43,6 +43,10 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     @Column(name = "Id")
     private Integer id;    
     
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<Filter> childItems;
+        
     @Column(name = "Icon")
     private String icon;
     
@@ -88,6 +92,15 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
         this.id = id;
     }
 
+    @Override
+    public List<Filter> getChildItems() {
+        return childItems;
+    }
+    @Override
+    public void setChildItems(List<Filter> childItems) {
+        this.childItems = childItems;
+    }
+    
     public String getIcon() {
         return icon;
     }

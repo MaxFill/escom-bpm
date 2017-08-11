@@ -115,8 +115,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
       
     /* Дочерние child объекты, полученные по ссылке на parent */
     @XmlTransient
-    @OneToMany
-    @JoinColumn(name = "parent")
+    @Transient    
     private List<P> childItems;    
         
     /* Подчинённые detail объекты, полученные или через ссылку на owner или через связь многие-ко-многим  */

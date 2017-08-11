@@ -46,6 +46,10 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     @Column(name = "Id")
     private Integer id;
     
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<UserGroups> childItems;
+        
     @ManyToMany(mappedBy = "usersGroupsList", fetch = FetchType.EAGER)
     private List<User> usersList = new ArrayList<>();
     
@@ -73,6 +77,15 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
         tempId = COUNT.incrementAndGet();
     }
 
+    @Override
+    public List<UserGroups> getChildItems() {
+        return childItems;
+    }
+    @Override
+    public void setChildItems(List<UserGroups> childItems) {
+        this.childItems = childItems;
+    }
+    
     public Integer getTempId() {
         return tempId;
     }

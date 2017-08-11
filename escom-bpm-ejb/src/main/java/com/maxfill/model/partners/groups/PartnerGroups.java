@@ -45,6 +45,10 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     @Column(name = "Id")
     private Integer id;
 
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<PartnerGroups> childItems;
+        
     @Column(name = "Code")
     private String code;
         
@@ -69,6 +73,13 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
         tempId = COUNT.incrementAndGet();
     }
 
+    public List<PartnerGroups> getChildItems() {
+        return childItems;
+    }
+    public void setChildItems(List<PartnerGroups> childItems) {
+        this.childItems = childItems;
+    }
+    
     public Integer getTempId() {
         return tempId;
     }

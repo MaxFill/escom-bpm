@@ -46,15 +46,16 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
      
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Company owner;    
-        
-    @OneToMany(mappedBy = "parent")
-    private List<Department> departmentList;
+    private Company owner;            
     
     @JoinColumn(name = "Parent", referencedColumnName = "Id")
     @ManyToOne
     private Department parent;
-        
+      
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<Department> childItems;
+    
     @OneToMany
     @JoinColumn(name = "owner")
     private List<Staff> detailItems = new ArrayList<>();
@@ -127,12 +128,14 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
         this.code = code;
     }
 
-    public List<Department> getDepartmentList() {
-        return departmentList;
+    @Override
+    public List<Department> getChildItems() {
+        return childItems;
     }
-    public void setDepartmentList(List<Department> departmentList) {
-        this.departmentList = departmentList;
-    }  
+    @Override
+    public void setChildItems(List<Department> childItems) {
+        this.childItems = childItems;
+    }
     
     @Override
     public List<Staff> getDetailItems() {

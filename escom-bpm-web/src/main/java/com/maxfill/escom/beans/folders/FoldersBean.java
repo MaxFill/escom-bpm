@@ -121,7 +121,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){
         rezult.put("Documents", folder.getDetailItems().size());
-        rezult.put("Folders", folder.getFoldersList().size());
+        rezult.put("Folders", folder.getChildItems().size());
     }    
     
     /* Проверка возможности удаления Папки */
