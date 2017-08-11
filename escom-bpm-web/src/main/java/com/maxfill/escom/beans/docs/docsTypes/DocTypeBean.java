@@ -66,6 +66,7 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     /* Специфичные действия перед вставкой скопированного объекта */
     @Override
     public void preparePasteItem(DocType pasteItem, DocType sourceItem, BaseDict owner){
+        super.preparePasteItem(pasteItem, sourceItem, owner);
         if (owner == null){
             owner = sourceItem.getOwner();
         }

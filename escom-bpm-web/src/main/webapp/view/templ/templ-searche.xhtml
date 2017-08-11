@@ -37,21 +37,24 @@
             <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btABC"
                              actionListener="#{explorerBean.onAbcSearche}"
                              update="#{_tblUpdate}"
-                             oncomplete="initDND()">
+                             onstart="PF('statusDialog').show()"
+                             oncomplete="PF('statusDialog').hide(); initDND();">
                 <f:attribute name="action" value="#{'*'}" />
             </p:commandButton>
             <p:commandButton value="0-9" title="#{bundle.StartDigital}" style="width: 30px; font-size: 90%;"
                              actionListener="#{explorerBean.onAbcSearche}"
                              update="#{_tblUpdate}"
-                             oncomplete="initDND()">
+                             onstart="PF('statusDialog').show()"
+                             oncomplete="PF('statusDialog').hide(); initDND();">
                 <f:attribute name="action" value="#{'[0-9]'}" />
             </p:commandButton>
 
             <ui:repeat var="abcEngl" value="#{explorerBean.model.abcEnglSearche}">
                 <p:commandButton value="#{abcEngl}" styleClass="btABC"                       
-                                 actionListener="#{explorerBean.onAbcSearche}"
-                                 update="#{_tblUpdate}"
-                                 oncomplete="initDND()">
+                                actionListener="#{explorerBean.onAbcSearche}"
+                                update="#{_tblUpdate}"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND();">
                     <f:attribute name="action" value="#{abcEngl}" />
                 </p:commandButton>
             </ui:repeat>
@@ -60,7 +63,8 @@
                 <p:commandButton value="#{abcLocal}" styleClass="btABC"
                                  actionListener="#{explorerBean.onAbcSearche}"
                                  update="#{_tblUpdate}"
-                                 oncomplete="initDND()">                                
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND();">                               
                     <f:attribute name="action" value="#{abcLocal}" />
                 </p:commandButton>
             </ui:repeat>
