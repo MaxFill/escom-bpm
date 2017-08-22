@@ -61,6 +61,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -208,7 +209,7 @@ public class SessionBean implements Serializable{
     
     public BaseDict prepViewItem(BaseDict item){
         BaseExplBean bean = getItemBean(item);
-        return bean.prepViewItem(item);
+        return bean.prepViewItem(item, new HashSet<>());
     }    
     
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){

@@ -5,22 +5,33 @@
 
     <ui:include src="/view/templ/tree/tree-confirm-dlg.xhtml"/>
 
-    <p:commandButton id="createTreeCardBtn" action="#{explorerBean.onCreateTreeItem()}" style="display: none;"> 
+    <p:commandButton id="createTreeCardBtn" action="#{explorerBean.onCreateTreeItem()}" 
+                     onstart="PF('statusDialog').show()"
+                      oncomplete="PF('statusDialog').hide();"
+                     style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="createRootCardBtn" action="#{explorerBean.onCreateRootItem()}" style="display: none;"> 
+    <p:commandButton id="createRootCardBtn" action="#{explorerBean.onCreateRootItem()}" 
+                     onstart="PF('statusDialog').show()"
+                     oncomplete="PF('statusDialog').hide();"
+                     style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="openTreeCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;"> 
+    <p:commandButton id="openTreeCardBtn" actionListener="#{explorerBean.onEditContentItem()}" 
+                     onstart="PF('statusDialog').show()"
+                     oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="viewTreeCardBtn" actionListener="#{explorerBean.onViewContentItem()}" style="display: none;"> 
+    <p:commandButton id="viewTreeCardBtn" actionListener="#{explorerBean.onViewContentItem()}" 
+                     onstart="PF('statusDialog').show()"
+                     oncomplete="PF('statusDialog').hide();"
+                     style="display: none;"> 
         <p:ajax event="dialogReturn" oncomplete="initDND()"/>
     </p:commandButton>
 
@@ -78,13 +89,19 @@
                 <p:separator />
 
                 <p:menuitem value="#{bundle.Copy}" icon="ui-icon-copy"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide();"
                             actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
                 <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide();"
                             actionListener="#{explorerBean.onPasteItemToTree()}"
                             update="#{_frmTree}:accord:tree #{_frmExpl}"/>
                 <p:separator/>
                 
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide();"
                             update="#{_frmTree}:accord:tree #{_frmExpl} centerHeaderLabel #{_updates}"
                             actionListener="#{explorerBean.onMoveTreeItemToTrash()}">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
@@ -96,6 +113,8 @@
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide();"
                             rendered="#{sessionBean.userAdmin}"
                             actionListener="#{explorerBean.onOpenAdmCardForm()}"/>
             </p:contextMenu>

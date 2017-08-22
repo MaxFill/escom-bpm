@@ -25,61 +25,63 @@
                 </p:commandButton>
             </f:facet>
         </p:toolbar>
-        
-        <p:dataTable id="docStatusTbl" var="item" value="#{_bean.editedItem.docsStatusList}" 
-                     editable="#{_bean.isHaveRightEdit()}"
-                     emptyMessage="#{bundle.EmptyTable}"
-                     rows="10" paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100" 
-                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                     editMode="cell" widgetVar="docsStatus">
 
-            <p:column width="16" sortBy="#{item.state.currentState.name}">
-                <h:graphicImage value="/resources/icon/info.png" title="#{bundle.DocStatus}"/>   
-            </p:column>
-            
-            <p:column headerText="#{bundle.DocStatus}">                                    
-                <h:outputLabel value="#{item.status.nameEndElipse}"/>
-            </p:column>
+        <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+            <p:dataTable id="docStatusTbl" var="item" value="#{_bean.editedItem.docsStatusList}" 
+                         editable="#{_bean.isHaveRightEdit()}"
+                         emptyMessage="#{bundle.EmptyTable}"
+                         rows="10" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5, 10, 20, 35, 50, 75, 100" 
+                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                         editMode="cell" widgetVar="docsStatus">
 
-            <p:column headerText="#{bundle.Value}" width="60">
-                <p:inputSwitch value="#{item.value}" offLabel="#{bundle.No}" onLabel="#{bundle.Yes}" onchange="itemChange = 1;" >
-                    <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
-                </p:inputSwitch>
-            </p:column>
-            
-            <p:column headerText="#{bundle.DateStatus}" width="90">
-                <p:cellEditor>
-                    <f:facet name="output">
-                        <h:outputLabel value="#{item.dateStatus}">
-                            <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                        </h:outputLabel>
-                    </f:facet>
-                    <f:facet name="input">
-                        <p:calendar value="#{item.dateStatus}"                                     
-                                    required="#{param['isRequired'] == 'true'}" 
-                                    showButtonPanel="true"
-                                    disabled="#{ _bean.isReadOnly()}"
-                                    locale="#{sessionBean.locale}"                                    
-                                    navigator="true" yearRange="c-120:c+20"                                    
-                                    requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
-                            <p:ajax event="dateSelect" listener="#{_bean.onChangeDocStatus(item)}" update="docStatusTbl" />
-                        </p:calendar> 
-                    </f:facet>
-                </p:cellEditor>
-            </p:column>
+                <p:column width="16" sortBy="#{item.state.currentState.name}">
+                    <h:graphicImage value="/resources/icon/info.png" title="#{bundle.DocStatus}"/>   
+                </p:column>
 
-            <p:column headerText="#{bundle.CreatorInfo}">
-                #{item.author.shortFIO}
-            </p:column>
+                <p:column headerText="#{bundle.DocStatus}">                                    
+                    <h:outputLabel value="#{item.status.nameEndElipse}"/>
+                </p:column>
 
-            <p:column style="text-align: center;" width="50">
-                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"  
-                            disabled="#{ _bean.isReadOnly()}"
-                            update="docStatusTbl" action="#{_bean.onDeleteStatus(item)}"/>
-            </p:column>
+                <p:column headerText="#{bundle.Value}" width="60">
+                    <p:inputSwitch value="#{item.value}" offLabel="#{bundle.No}" onLabel="#{bundle.Yes}" onchange="itemChange = 1;" >
+                        <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
+                    </p:inputSwitch>
+                </p:column>
 
-        </p:dataTable>
+                <p:column headerText="#{bundle.DateStatus}" width="90">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputLabel value="#{item.dateStatus}">
+                                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                            </h:outputLabel>
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:calendar value="#{item.dateStatus}"                                     
+                                        required="#{param['isRequired'] == 'true'}" 
+                                        showButtonPanel="true"
+                                        disabled="#{ _bean.isReadOnly()}"
+                                        locale="#{sessionBean.locale}"                                    
+                                        navigator="true" yearRange="c-120:c+20"                                    
+                                        requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
+                                <p:ajax event="dateSelect" listener="#{_bean.onChangeDocStatus(item)}" update="docStatusTbl" />
+                            </p:calendar> 
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="#{bundle.CreatorInfo}">
+                    #{item.author.shortFIO}
+                </p:column>
+
+                <p:column style="text-align: center;" width="50">
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"  
+                                     disabled="#{ _bean.isReadOnly()}"
+                                     update="docStatusTbl" action="#{_bean.onDeleteStatus(item)}"/>
+                </p:column>
+
+            </p:dataTable>
+        </h:panelGrid>
     </p:tab>
 </ui:composition>

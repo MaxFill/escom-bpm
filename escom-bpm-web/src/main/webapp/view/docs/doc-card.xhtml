@@ -69,9 +69,9 @@
     </ui:define>
     
     <ui:define name="page_body">       
-        <p:tab title="#{bundle.CardDoc}" id="tabDocCard" >
+        <p:tab title="#{bundle.Document}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                     <p:outputLabel value="#{bundle.Organization}:" for="company"/>
                     <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
@@ -86,7 +86,7 @@
                     </h:panelGroup>
 
                     <p:outputLabel value="#{bundle.DocTypes}:"/>
-                    <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
                         <ui:param name="_required" value="#{true}" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
@@ -101,21 +101,23 @@
                     </ui:include>
 
                     <p:outputLabel value="#{bundle.Name}:" />
-                    <p:inputTextarea id="nameDoc" value="#{_bean.editedItem.name}"
-                                     title="#{bundle.BriefDescriptionDocument}"
-                                     styleClass="ui-grid-col-12"
-                                     rows="1" autoResize="true" 
-                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     onchange="return itemChange = 1;"
-                                     required="#{param['isRequired'] == 'true'}" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                        <f:validateLength maximum="250"  />                        
-                    </p:inputTextarea>
+                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+                        <p:inputTextarea id="nameDoc" value="#{_bean.editedItem.name}"
+                                         title="#{bundle.BriefDescriptionDocument}"
+                                         styleClass="ui-grid-col-12"
+                                         rows="1" autoResize="true" 
+                                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onchange="return itemChange = 1;"
+                                         required="#{param['isRequired'] == 'true'}" 
+                                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
+                            <f:validateLength maximum="250"  />                        
+                        </p:inputTextarea>
+                    </h:panelGrid>
                 </p:panelGrid>
                 
                 <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 " styleClass="without-spaces ui-grid-col-12">
+                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 col-padding">
                             <h:panelGrid columns="3"> 
@@ -151,7 +153,7 @@
                         </h:panelGroup>
                     </p:panelGrid>
 
-                    <p:panelGrid  layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                    <p:panelGrid  layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.DateDoc}:" /> 
                         <h:panelGroup id="datePanel" styleClass="ui-grid-col-12 col-padding">
                             <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
@@ -170,13 +172,14 @@
                     
                 </p:panelGrid>    
 
-                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
+                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                     <p:outputLabel value="#{bundle.Partner}:" />
-                    <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
                         <ui:param name="_required" value="#{false}" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="partnersConvertors" />
+                        <ui:param name="_converter" value="partnersConvertor" />
                         <ui:param name="_itemPanel" value="partnerPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.Partner}"/>
                         <ui:param name="_selectorBean" value="#{partnersBean}"/>
@@ -185,10 +188,12 @@
                         <ui:param name="_actionSelect" value="onPartnerSelected"/>
                         <ui:param name="_update" value=""/>
                     </ui:include>
+                    </p:panelGrid>
                 </p:panelGrid>
             </p:panelGrid>
         </p:tab> 
-
+        
+        <ui:include src="/view/docs/doc-links.xhtml"/>                
         <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>
         <ui:include src="/view/docs/doc-places.xhtml"/>

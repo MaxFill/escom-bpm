@@ -65,20 +65,27 @@
                         <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
 
-                        <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onEditContentItem()}" style="display: none;">
+                        <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onEditContentItem()}" 
+                                         onstart="PF('statusDialog').show()"
+                                         oncomplete="PF('statusDialog').hide();"
+                                         style="display: none;">
                             <p:ajax event="dialogReturn" listener="#{explorerBean.onUpdateAfterCloseForm}"
                                     update="#{_frmExpl} #{_frmTree}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onViewContentItem()}" 
+                        <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onViewContentItem()}"
+                                         onstart="PF('statusDialog').show()"
+                                         oncomplete="PF('statusDialog').hide();"
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}"                                         
+                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}"
+                                         onstart="PF('statusDialog').show()"
+                                         oncomplete="PF('statusDialog').hide();"
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}" listener="#{explorerBean.onUpdateAfterChangeItem}"
@@ -93,7 +100,7 @@
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
                         <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
-                        <ui:include src="/view/templ/expl/expl-table.xhtml"/>                        
+                        <ui:include src="/view/templ/expl/expl-table.xhtml"/>
                         
                     </h:form>
                 </pe:layoutPane>

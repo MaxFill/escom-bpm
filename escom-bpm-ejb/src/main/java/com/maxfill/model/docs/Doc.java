@@ -80,6 +80,10 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     @ManyToOne(optional = false)
     private Partner partner;
 
+    @JoinColumn(name = "MainDoc", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Doc mainDoc;
+     
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs")
     private DocDou docsDou;
 
@@ -98,7 +102,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocStates state;
-        
+     
+    /* Список ссылающихся документов  */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mainDoc")
+    private List<Doc> docsLinks = new ArrayList<>();
+    
     /* Список статусов документа  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
     private List<DocStatuses> docsStatusList = new ArrayList<>();
@@ -122,7 +130,21 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     public void setState(DocStates state) {
         this.state = state;
     }
-    
+
+    public Doc getMainDoc() {
+        return mainDoc;
+    }
+    public void setMainDoc(Doc mainDoc) {
+        this.mainDoc = mainDoc;
+    }
+
+    public List<Doc> getDocsLinks() {
+        return docsLinks;
+    }
+    public void setDocsLinks(List<Doc> docsLinks) {
+        this.docsLinks = docsLinks;
+    }
+         
     @Override
     public Folder getOwner() {
         return owner;

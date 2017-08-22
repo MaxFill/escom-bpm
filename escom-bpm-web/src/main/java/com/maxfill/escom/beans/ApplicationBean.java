@@ -124,8 +124,8 @@ public class ApplicationBean implements Serializable{
     
     /* Удаляет все блокировки пользователя  */
     public void clearUserLock(User user){
-        itemsLock.values().removeIf(value -> value.equals(user.getId()));        
-    }        
+        itemsLock.values().removeIf(value -> value.equals(user));        
+    }
     
     /* ЛИЦЕНЗИРОВАНИЕ */
     

@@ -4,6 +4,7 @@ package com.maxfill.escom.beans.docs;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.partners.Partner;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,12 @@ public class DocsSearche extends SearcheModel{
     private Date dateDocEnd;
     private boolean dateDocSearche = false;
     private List<DocType> docTypes;
+    private Partner partnerSearche;
     
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
         if (StringUtils.isNotBlank(numberSearche)){
-            paramLIKE.put("numberSearche", numberSearche);
+            paramLIKE.put("regNumber", numberSearche);
         }
         if (dateDocSearche){
             Date[] dateArray = new Date[2];
@@ -33,6 +35,9 @@ public class DocsSearche extends SearcheModel{
         }
         if (!docTypes.isEmpty()){
             paramIN.put("docType", docTypes);
+        }
+        if (partnerSearche != null){
+           paramEQ.put("partner", partnerSearche); 
         }
     }        
         
@@ -63,11 +68,19 @@ public class DocsSearche extends SearcheModel{
     public void setDateDocSearche(boolean dateDocSearche) {
         this.dateDocSearche = dateDocSearche;
     }
+    
     public String getNumberSearche() {
         return numberSearche;
     }
     public void setNumberSearche(String numberSearche) {
         this.numberSearche = numberSearche;
     }
+
+    public Partner getPartnerSearche() {
+        return partnerSearche;
+    }
+    public void setPartnerSearche(Partner partnerSearche) {
+        this.partnerSearche = partnerSearche;
+    }    
     
 }

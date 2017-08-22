@@ -838,7 +838,7 @@ public class ExplorerBean implements Serializable {
         if (treeSelectedNode == null){
             return true; //так надо
         }
-        return treeSelectedNode.getParent().equals(tree);
+        return Objects.equals(treeSelectedNode.getParent(), tree);
     }
     
     /* ДЕРЕВО: разворачивает всё дерево */
@@ -1061,10 +1061,7 @@ public class ExplorerBean implements Serializable {
             TreeNode ownerNode = getTreeSelectedNode();
             if (ownerNode != null) {
                 BaseDict owner = (BaseDict) ownerNode.getData();
-                searcheGroups.addAll(owner.getChildItems());
-                if (!searcheGroups.contains(owner)) {
-                    searcheGroups.add(owner);
-                }
+                searcheGroups.addAll(ItemUtils.getChildsItems(owner));                
             }
         }
 

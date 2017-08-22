@@ -21,11 +21,6 @@
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
-        
-                <p:selectBooleanCheckbox value="#{_bean.editedItem.isModeration}" itemLabel="#{bundle.Moderation}:"
-                                        disabled="#{_bean.isReadOnly()}">
-                    <p:ajax oncomplete="itemChange = 1;"/> 
-                </p:selectBooleanCheckbox>
                 
                 <p:outputLabel value="#{bundle.InheritParams}" />
                 <p:separator/>
@@ -50,7 +45,7 @@
                                         disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="docTypePanel"/> 
                 </p:selectBooleanCheckbox>                
-                <ui:include src="/view/common/item-select-btn.xhtml" >
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritDocType}"/>
@@ -68,11 +63,11 @@
                                         disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="partnerPanel"/> 
                 </p:selectBooleanCheckbox>
-                <ui:include src="/view/common/item-select-btn.xhtml" >
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritPartner}"/>
-                    <ui:param name="_converter" value="partnersConvertors" />
+                    <ui:param name="_converter" value="partnersConvertor" />
                     <ui:param name="_itemPanel" value="partnerPanel"/>
                     <ui:param name="_titleItem" value="#{bundle.PartnerForNewDocs}"/>
                     <ui:param name="_selectorBean" value="#{partnersBean}"/>

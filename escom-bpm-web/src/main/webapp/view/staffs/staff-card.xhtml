@@ -16,7 +16,7 @@
                 <p:inputText value="#{staffCardBean.editedItem.orgUnit}" disabled="true" styleClass="ui-grid-col-12" />                
 
                 <p:outputLabel value="#{bundle.Post}"/>
-                <ui:include src="/view/common/item-select-btn.xhtml" >
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.post}"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
@@ -31,7 +31,7 @@
                 </ui:include>
 
                 <p:outputLabel value="#{bundle.Employee}"/>
-                <ui:include src="/view/common/item-select-btn.xhtml" >
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.employee}"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>

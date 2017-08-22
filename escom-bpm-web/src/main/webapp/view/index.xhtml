@@ -185,6 +185,7 @@
                                            ajax="false"
                                            action="partner-explorer"/>
                             <p:commandLink value="#{bundle.PartnerTypes}"
+                                           disabled="#{!sessionBean.userAdmin}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="partnertype-explorer"/>

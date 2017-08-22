@@ -388,7 +388,7 @@
         </sql>
         
         <sql>
-            INSERT partnersGroups (Id, Owner, Parent, Code, Name, Number, State, IsDeleted, IsInherits, IsActual, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'', N'Все группы', NULL, 1, 0, 1, 1, NULL, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT partnersGroups (Id, Owner, Parent, Code, Name, Number, State, IsDeleted, IsInherits, IsActual, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'', N'Группы контрагентов', NULL, 1, 0, 1, 1, NULL, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>        
         
         <!-- Виды контрагентов -->

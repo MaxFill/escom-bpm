@@ -3,7 +3,7 @@
                 xmlns:f="http://java.sun.com/jsf/core"    
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
-
+   
     <p:dataTable id="tblDetail" value="#{explorerBean.detailItems}" var="item"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{explorerBean.currentPage}"
@@ -17,7 +17,7 @@
 
         <p:ajax event="rowDblselect" 
                 listener="#{explorerBean.onRowDblClckOpen}"
-                oncomplete="document.getElementById('#{_frmExpl}:vedCardBtn').click();"/>
+                oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
@@ -35,7 +35,7 @@
 
         <ui:insert name="specDetailColumns"/>
         
-        <p:column headerText="#{bundle.ShortName}" sortBy="#{item.nameEndElipse}" id="shortName">
+        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{explorerBean.isItemTreeType(item)}"
                            actionListener="#{explorerBean.onLoadGroupContent(item)}"
@@ -52,7 +52,7 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column headerText="#{bundle.DateChange}" width="80" priority="3"
+        <p:column headerText="#{bundle.DateChange}" width="90" priority="3"
                   rendered="#{_showDateChange != false}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
@@ -60,7 +60,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.DateCreate}" width="80" priority="3"
+        <p:column headerText="#{bundle.DateCreate}" width="90" priority="3"
                   rendered="#{_showDateCreate != false}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
@@ -146,8 +146,12 @@
     
     <p:contextMenu id="menuTbl" for="tblDetail" >
         <p:menuitem value="#{bundle.CopySelected}" icon="ui-icon-copy"
+                    onstart="PF('statusDialog').show()"
+                    oncomplete="PF('statusDialog').hide();"
                     actionListener="#{explorerBean.onCopySelectedItem()}"/>
         <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
+                    onstart="PF('statusDialog').show()"
+                    oncomplete="PF('statusDialog').hide();"
                     actionListener="#{explorerBean.onPasteItemToTable()}"
                     update="#{_frmExpl} #{_frmTree}"/>
     </p:contextMenu>

@@ -44,10 +44,6 @@
                     <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
 
                     <p:column style="font-size: 80%;">
-                        #{numeratorPatternBean.getLabel(pattern.typeCode)}
-                    </p:column>
-
-                    <p:column style="font-size: 80%;">
                         <h:outputLabel value="#{pattern.name}" />
                     </p:column>
 

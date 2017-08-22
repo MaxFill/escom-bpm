@@ -115,6 +115,11 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         return q.getResultList();   
     }
     
+    /* Возвращает список связанных документов */
+    public List<Doc> findLinkedDocs(Doc doc){
+        return find(doc.getId()).getDocsLinks();
+    }
+    
     /* Подсчёт кол-ва документов по типам */
     public List<Tuple> countDocByDocTypeGroups(List<DocTypeGroups> docTypeGroups, Date startPeriod, Date endPeriod, List<DocTypeGroups> groups){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);

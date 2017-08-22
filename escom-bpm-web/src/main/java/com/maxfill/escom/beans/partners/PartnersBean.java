@@ -165,7 +165,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         return builder.toString();
     }
         
-    @FacesConverter("partnersConvertors")
+    @FacesConverter("partnersConvertor")
     public static class partnersConvertors implements Converter {
     
         @Override

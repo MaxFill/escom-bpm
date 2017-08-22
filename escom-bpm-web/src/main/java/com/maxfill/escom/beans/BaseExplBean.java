@@ -47,8 +47,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
     /* Подготовка к просмотру объекта на карточке */
-    public T prepViewItem(T item){
-        Set<String> errors = new HashSet<>();
+    public T prepViewItem(T item, Set<String> errors){
         BaseDictFacade facade = getItemFacade();        
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
         makeRightItem(editItem);        
@@ -71,6 +70,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
+            return prepViewItem(item, errors);
         }
         openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
         return editItem;
@@ -516,7 +516,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 boolean include = false;
 
                 List<O> itemGroups = getGroups((T)item);
-                if (!searcheGroups.isEmpty() && itemGroups != null) {
+                if (itemGroups != null) {
                     for (O group : searcheGroups) {
                         if (itemGroups.contains(group)) {
                             include = true;

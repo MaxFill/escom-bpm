@@ -49,6 +49,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     private String docURL;  
     private Attaches selectedAttache;
+    private Doc linkedDoc;
     
     @Inject
     private DocBean docsBean;
@@ -94,6 +95,10 @@ public class DocCardBean extends BaseCardBean<Doc>{
         onSaveChangeAttaches();
     }
 
+    public void onRowDblClckOpen(SelectEvent event){
+        linkedDoc = (Doc) event.getObject();
+    }
+        
     public String getNumberMask() {
         DocType docType = getEditedItem().getDocType();
         if (docType == null) return null;
@@ -297,10 +302,10 @@ public class DocCardBean extends BaseCardBean<Doc>{
         docsBean.onOpenFormLockAttache(attache);
     }
     
-    /* Событие изменения контрагента на форме документа */
+    /* Событие изменения контрагента на карточке */
     public void onPartnerSelected(SelectEvent event){
         List<Partner> items = (List<Partner>) event.getObject();
-        if (items.isEmpty()){return;}
+        if (items.isEmpty()) return;
         Partner item = items.get(0);
         onItemChange();
         getEditedItem().setPartner(item);
@@ -310,7 +315,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         getEditedItem().setPartner(partner);
     }     
     
-    /* Событие изменения типа документа на форме документа  */
+    /* Событие изменения типа документа на карточке  */
     public void onDocTypeSelected(SelectEvent event){
         List<DocType> items = (List<DocType>) event.getObject();
         if (items.isEmpty()){return;}
@@ -325,6 +330,15 @@ public class DocCardBean extends BaseCardBean<Doc>{
         docsBean.addDocStatusFromDocType(getEditedItem(), docType);
     }      
   
+    /* Событие обработки выбора главного документа на карточке */
+    public void onMainDocSelected(SelectEvent event){
+        List<Doc> items = (List<Doc>) event.getObject();
+        if (items.isEmpty()) return;
+        Doc item = items.get(0);
+        onItemChange();
+        getEditedItem().setMainDoc(item);
+    }
+    
     /* Возвращает true если у документа есть заблокированные вложения */
     public boolean getDocIsLock(){
         return docsBean.docIsLock(getEditedItem());
@@ -413,7 +427,19 @@ public class DocCardBean extends BaseCardBean<Doc>{
         attaches.add(selectedAttache);
     }
     
+    public void onUpdateLinkedDocs(){
+        List<Doc> linkedDocs = getItemFacade().findLinkedDocs(getEditedItem());
+        getEditedItem().setDocsLinks(linkedDocs);
+    }
+    
     /* GETS & SETS */
+    
+    public Doc getLinkedDoc() {
+        return linkedDoc;
+    }
+    public void setLinkedDoc(Doc selectedDoc) {
+        this.linkedDoc = selectedDoc;
+    }
     
     public String getDocURL() {
         return docURL;

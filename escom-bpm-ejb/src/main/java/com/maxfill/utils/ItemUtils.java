@@ -68,4 +68,18 @@ public final class ItemUtils {
                     .forEach(details -> details.add(item));        
     }
     
+    /* Возвращает список Id всех дочерних объектов в структуре начиная от заданного объекта */ 
+    public static List<BaseDict> getChildsItems(BaseDict item){
+        List<BaseDict> childItems = new ArrayList<>();
+        addChildInList(item, childItems);
+        return childItems;
+    }
+    
+    private static void addChildInList(BaseDict item, List<BaseDict> childItems){
+        childItems.add(item);
+        if (item.getChildItems() != null ){
+            Integer s = item.getChildItems().size();
+            item.getChildItems().stream().forEach(child -> addChildInList((BaseDict) child, childItems));
+        }
+    }
 }

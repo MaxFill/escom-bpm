@@ -66,6 +66,10 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         super.addItemInGroup(item, group);
     }
     
+    public void onRowDblClckOpen(SelectEvent event){
+        selectedDoc = (Doc) event.getObject();      
+    }
+        
     public String getTitleName(){
         return partnersBean.getTitleName(getEditedItem());
     }

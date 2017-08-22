@@ -371,6 +371,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     protected abstract Integer getMetadatesObjId();
     public abstract String getFRM_NAME();
     
+    /* возвращает список изменённых пользователем документов */
     public List<T> findLastChangedItemsByUser(User user){    
         Date lastDate = DateUtils.addMounth(new Date(), -1);
 

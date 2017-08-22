@@ -20,7 +20,7 @@
     <ui:param name="_showAuthor"      value="#{true}"/>
     <ui:param name="_showDateCreate"  value="#{false}"/>
     <ui:param name="_showDateChange"  value="#{true}"/>    
-    <ui:param name="_showUploadPanel" value="#{true}"/>
+    <ui:param name="_showUploadPanel" value="#{explorerBean.selectorViewMode ? false : true}"/>
     <ui:param name="_showCompany"     value="#{true}"/>
 
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
@@ -37,8 +37,8 @@
         </p:selectCheckboxMenu>
 
         <p:outputLabel value="#{bundle.Number}"/>
-        <p:inputText title="#{bundle.HelpSearcheContext}"
-                     value="#{explorerBean.model.numberSearche}"
+        <p:inputText title="#{bundle.HelpSearcheContext}" value="#{explorerBean.model.numberSearche}"
+                     widgetVar="docNumberSearche"
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
         </p:inputText>
@@ -54,6 +54,7 @@
                          rendered="#{explorerBean.model.dateDocSearche}">
                 #{bundle.With}
                 <p:calendar value="#{explorerBean.model.dateDocStart}" id="dateDocStart" 
+                            widgetVar="dateDocStartSearche"
                             showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                             locale="#{sessionBean.locale}"
                             required="#{explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
@@ -64,7 +65,8 @@
             <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
                          rendered="#{explorerBean.model.dateDocSearche}">
                 #{bundle.At}
-                <p:calendar value="#{explorerBean.model.dateDocEnd}" id="dateDocEnd" 
+                <p:calendar value="#{explorerBean.model.dateDocEnd}" id="dateDocEnd"
+                            widgetVar="dateDocEndSearche"
                             showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
                             locale="#{sessionBean.locale}"
                             required="#{explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
@@ -73,6 +75,14 @@
                 </p:calendar>
             </p:panelGrid>
         </h:panelGroup>
+        
+        <p:outputLabel value="#{bundle.Partner}"/>
+        <p:selectOneMenu value="#{explorerBean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
+                        widgetVar="partnerSearche"
+                        styleClass="ui-grid-col-12">
+                <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
+                <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+            </p:selectOneMenu>  
     </ui:define>
     
     <!-- специфичные пункты в меню тулбара обозревателя -->
@@ -95,7 +105,7 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="80" priority="2"
+        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2"
                   sortBy="#{item.dateDoc}">
             <h:outputLabel value="#{item.getClass().getSimpleName() == 'Doc' ? item.dateDoc : ''}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
