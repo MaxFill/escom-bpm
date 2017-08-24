@@ -170,6 +170,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Специфичные действия перед вставкой скопированного объекта */
     public void preparePasteItem(T pasteItem, T sourceItem, BaseDict recipient){
         pasteItem.setChildItems(null);
+        pasteItem.setDetailItems(null);
         pasteItem.setState(null);
         pasteItem.setId(null);                    //нужно сбросить скопированный id!
         pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
@@ -346,9 +347,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     /* УДАЛЕНИЕ: удаление дочерних child объектов */
     private void deleteChilds(T parent) {
-        if (parent.getChildItems() != null){
-            parent.getChildItems().stream().forEach(child -> deleteItem((T) child));
-        }
+        getItemFacade().findAllChilds(parent).stream().forEach(child -> deleteItem((T) child));        
     }
 
     /* Удаление подчинённых (связанных) объектов */
@@ -375,14 +374,12 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     /* КОРЗИНА: восстановление дочерних childs объектов из корзины */
     private void restoreChilds(T parentItem) {
-        parentItem.getChildItems().stream().forEach(item -> doRestoreItemFromTrash((T) item));
+        getItemFacade().findAllChilds(parentItem).stream().forEach(item -> doRestoreItemFromTrash((T) item));
     }
     
     /* КОРЗНА: перемещение дочерних элементов в корзину */
     private void moveChildItemToTrash(BaseDict parent, Set<String> errors) {
-        if (parent.getChildItems() != null){
-            parent.getChildItems().stream().forEach(child -> moveToTrash((T) child, errors));
-        }
+        getItemFacade().findAllChilds(parent).stream().forEach(child -> moveToTrash((T) child, errors));        
     }
 
     /* КОРЗИНА: перемещение в корзину подчинённых объектов Владельца (ownerItem) */

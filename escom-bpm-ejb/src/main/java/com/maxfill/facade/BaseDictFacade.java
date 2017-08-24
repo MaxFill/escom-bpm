@@ -147,8 +147,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
             
-    /* Возвращает подчинённые объекты для владельца  */
-    public List<T> findDetailItems(O owner){
+    /* Возвращает актуальные подчинённые объекты для владельца  */
+    public List<T> findActualDetailItems(O owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -163,6 +163,25 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         } else {
             criteries.add(builder.equal(c.get("owner"), owner));
         }
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(c).where(builder.and(predicates));               
+        cq.orderBy(builder.asc(c.get("name")));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
+    /* Возвращает все подчинённые объекты для владельца  */
+    public List<T> findAllDetailItems(O owner){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.equal(c.get("owner"), owner));
 
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
@@ -209,7 +228,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return q.getResultList();
     }
     
-    /* Отбор объектов по их владельцу  */
+    /* Отбор актуальных объектов по их владельцу  */
     public List<BaseDict> findItemByOwner(O owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

@@ -97,7 +97,8 @@ public abstract class BaseFacade<T> {
         return ((Long) q.getSingleResult()).intValue();
     }    
     
-    public List<T> findChilds(T parent){
+    /* Возвращает только актуальные дочерние элементы для parent */
+    public List<T> findActualChilds(T parent){
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(entityClass);
@@ -111,4 +112,16 @@ public abstract class BaseFacade<T> {
         return q.getResultList();
     }      
     
+    /* Возвращает все дочерние элементы для parent */
+    public List<T> findAllChilds(T parent){
+        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(entityClass);
+        Root<T> c = cq.from(entityClass);
+        Predicate crit1 = builder.equal(c.get("parent"), parent);
+        cq.select(c).where(builder.and(crit1));
+        cq.orderBy(builder.asc(c.get("name")));
+        Query q = getEntityManager().createQuery(cq);
+        return q.getResultList();
+    } 
 }

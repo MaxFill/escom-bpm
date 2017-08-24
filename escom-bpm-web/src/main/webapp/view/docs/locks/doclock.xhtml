@@ -76,11 +76,7 @@
                             <p:commandButton id="btnSetLock" value="#{bundle.SetLock}" title="#{bundle.SetLockAndEdit}"
                                              rendered="#{!docLockBean.attacheLock}"
                                              update="#{_frm}"
-                                             action="#{docLockBean.makeLock()}"/>
-                            <p:commandButton id="btnSetUnLock" value="#{bundle.SetUnLock}" 
-                                             rendered="#{docLockBean.attacheLock}"
-                                             update="#{_frm}"
-                                             action="#{docLockBean.makeUnLock()}"/> 
+                                             action="#{docLockBean.makeLock()}"/>                            
                             <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                              title="#{bundle.Close}"
                                              immediate="true"
@@ -90,7 +86,7 @@
                     </p:menubar>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">                             
+                        <p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-6" styleClass="ui-grid-col-12">                             
                             <p:outputLabel value="#{bundle.LockPeriod}"/>
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
                                         styleClass="ui-grid-col-12" 
@@ -101,6 +97,17 @@
                                         requiredMessage="#{bundle.Field} [#{bundle.DatePlanUnlock}] #{bundle.MustBeFilled}">
                                 <p:ajax event="dateSelect" listener="#{docLockBean.onChangeDateLock}" />
                             </p:calendar>
+                            <h:panelGrid columns="2" rendered="#{docLockBean.attacheLock}">
+                                <p:outputLabel value="#{bundle.SetUnLock}" />
+                                <p:selectOneRadio value="#{docLockBean.modeUnLock}" layout="grid" columns="1">
+                                    <f:selectItem itemLabel="#{bundle.CreateNewVersion}" itemValue="#{0}"/>
+                                    <f:selectItem itemLabel="#{bundle.SaveWithOutCreateVersion}" itemValue="#{1}"/>
+                                    <f:selectItem itemLabel="#{bundle.DoNotSaveChanges}" itemValue="#{2}"/>
+                                </p:selectOneRadio>
+                                <p:commandButton id="btnSetUnLock" value="#{bundle.Make}" title="#{bundle.SetUnLock}" 
+                                            update="#{_frm}"
+                                            action="#{docLockBean.makeUnLock()}"/> 
+                            </h:panelGrid>
                         </p:panelGrid> 
                         <p:separator />
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">

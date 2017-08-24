@@ -88,7 +88,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
             TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
 
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
-            getItemFacade().findChilds((Folder)folder)
+            getItemFacade().findActualChilds((Folder)folder)
                     .stream()
                     .forEach(folderChild -> addNode(newNode, folderChild));
             
@@ -102,7 +102,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
-        List<Folder> folders = getItemFacade().findChilds((Folder)folder);        
+        List<Folder> folders = getItemFacade().findActualChilds((Folder)folder);        
         folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
         //загружаем в контент документы
         List<Doc> docs = getDetailBean().getItemFacade().findItemByOwner(folder);
@@ -127,8 +127,17 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     /* Проверка возможности удаления Папки */
     @Override
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
-        super.checkAllowedDeleteItem(folder, errors);
+        //super.checkAllowedDeleteItem(folder, errors);
     }  
+    
+    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(Folder folder){
+        List<List<?>> dependency = new ArrayList<>();
+        dependency.add(docFacade.findAllDetailItems(folder));
+        dependency.add(foldersFacade.findAllChilds(folder));
+        return dependency;
+    }
     
     @Override
     public void preparePasteItem(Folder pasteItem, Folder sourceItem, BaseDict target){

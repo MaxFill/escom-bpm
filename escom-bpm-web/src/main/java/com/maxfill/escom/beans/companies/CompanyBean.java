@@ -70,12 +70,12 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
             switch (item.getClass().getSimpleName()){
                 case DictObjectName.DEPARTAMENT:{
                     typeNode = "tree";
-                    childs = departmentFacade.findChilds((Department)item);
+                    childs = departmentFacade.findActualChilds((Department)item);
                     break;
                 }
                 case DictObjectName.COMPANY:{
                     typeNode = DictObjectName.COMPANY;
-                    childs = departmentFacade.findDetailItems((Company)item);
+                    childs = departmentFacade.findActualDetailItems((Company)item);
                     break;
                 }
             }
@@ -101,7 +101,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Department> departments = departmentFacade.findDetailItems((Company)company);        
+        List<Department> departments = departmentFacade.findActualDetailItems((Company)company);        
         departments.stream().forEach(department -> addDetailItemInContent(department, cnt));        
         //загружаем в контент штатные единицы
         List<Staff> staffs = staffFacade.findStaffByCompany((Company)company, null);

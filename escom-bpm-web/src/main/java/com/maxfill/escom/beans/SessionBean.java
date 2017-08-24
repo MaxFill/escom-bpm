@@ -37,6 +37,7 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
+import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
@@ -102,6 +103,8 @@ public class SessionBean implements Serializable{
     private UserMessagesFacade messagesFacade;
     @EJB
     protected FileService fileService;
+    @EJB
+    protected PrintService printService;
     
     @Inject
     private ApplicationBean appBean;    
@@ -311,6 +314,21 @@ public class SessionBean implements Serializable{
         return messagesFacade.getCountUnReadMessage(currentUser);        
     }
     
+    public void preViewReport(List<Object> dataReport, Map<String, Object> parameters, String reportName){
+        printService.doPrint(dataReport, parameters, reportName);
+        String pdfFile = new StringBuilder()
+                    .append(configuration.getTempFolder())
+                    .append(reportName)
+                    .append("_")
+                    .append(getCurrentUser().getLogin())
+                    .append(".pdf").toString();
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> pathList = new ArrayList<>();
+        pathList.add(pdfFile);
+        paramMap.put("path", pathList);
+        openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+    }
+        
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
     }

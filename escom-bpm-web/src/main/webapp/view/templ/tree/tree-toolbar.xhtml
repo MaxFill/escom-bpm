@@ -13,16 +13,45 @@
                                      style="font-size: 90%;"
                                      actionListener="#{explorerBean.onReloadTreeItems()}"
                                      update="#{_frmTree} #{_frmExpl}"
-                                     oncomplete="initDND()"/>                       
-                    <p:commandButton icon="ui-icon-folder-open" title="#{bundle.Expand}"
-                                     update="#{_frmTree}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND()"/>
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                    <p:commandButton icon="ui-icon-folder-open" title="#{bundle.ExpandTree}"
+                                     update="#{_frmTree}" oncomplete="initDND()"
                                      style="font-size: 90%;"
                                      actionListener="#{explorerBean.onExpandTree()}"/>
-                    <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.Collapse}"
-                                     update="#{_frmTree}"
+                    <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.CollapseTree}"
+                                     update="#{_frmTree}" oncomplete="initDND()"
                                      style="font-size: 90%;"
                                      actionListener="#{explorerBean.onCollapseTree()}"/>
-
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
+                                     disabled="#{explorerBean.selectRootItem}"
+                                     style="font-size: 90%;"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND();"
+                                     update="#{_frmTree}:accord:tree #{_frmTree}:accord:toolbarTree #{_frmExpl} centerHeaderLabel #{_updates}"
+                                     actionListener="#{explorerBean.onMoveTreeItemToTrash()}">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                    </p:commandButton> 
+                    <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
+                                     style="font-size: 90%;"
+                                     disabled="#{explorerBean.selectRootItem}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND()"
+                                     update="#{_frmTree}:accord:toolbarTree"
+                                     actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
+                    <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
+                                     style="font-size: 90%;"
+                                     disabled="#{explorerBean.canPasteItem}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND()"
+                                     actionListener="#{explorerBean.onPasteItemToTree()}"
+                                     update="#{_frmTree}:accord:tree #{_frmExpl}"/>
                     <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}"                             
                                  disabled="#{!explorerBean.isShowTree()}"
                                  style="font-size: 90%;">

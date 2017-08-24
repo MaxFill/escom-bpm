@@ -132,13 +132,15 @@
                             disabled="#{!sessionBean.userAdmin}"
                             update="#{_frmExpl} #{_frmTree}"
                             actionListener="#{explorerBean.onDeleteContentFromTrash(item)}"
-                            oncomplete="initDND()">
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND()">
                 <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 <p:menuitem value="#{bundle.Restore}"
                             icon="ui-icon-arrowreturnthick-1-w"
                             update="#{_frmExpl} #{_frmTree}"
                             actionListener="#{explorerBean.onRestoreContentFromTrash(item)}"
-                            oncomplete="initDND()">
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND()">
                 </p:menuitem>                
             </p:splitButton>
         </p:column>

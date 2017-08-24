@@ -1,8 +1,7 @@
 package com.maxfill.services.print;
 
 import com.maxfill.Configuration;
-import com.maxfill.model.BaseDict;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +25,7 @@ public class PrintServiceImpl implements PrintService{
     }
             
     @Override
-    public void doPrint(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){    
+    public void doPrint(List<Object> dataReport, Map<String, Object> parameters, String reportName){    
         JRBeanCollectionDataSource beanColDataSource = new JRBeanCollectionDataSource(dataReport);
         //ClassLoader classLoader = getClass().getClassLoader();
         //String fileName = classLoader.getResource(reportName).getFile();

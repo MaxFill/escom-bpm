@@ -20,5 +20,6 @@ public final class DictDlgFrmName {
     public static final String FRM_SCANING = "scanning";
     public static final String FRM_AGREE_LICENSE = "license-view";
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
+    public static final String REP_DOC_JOURNAL = "doc-journal";
 
 }

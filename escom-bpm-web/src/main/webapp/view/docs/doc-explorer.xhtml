@@ -161,7 +161,14 @@
         <p:menuButton value="#{bundle.Reports}" >
             <p:menuitem value="#{bundle.DocReportCountTypes}" 
                         icon="ui-icon-note"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
                         actionListener="#{docsBean.openDocCountTypesReport()}"/>
+            <p:menuitem value="#{bundle.DocJournal}" 
+                        icon="ui-icon-note"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
+                        actionListener="#{explorerBean.openDocJournalReport()}"/>
         </p:menuButton>        
     </ui:define>
 </ui:composition>

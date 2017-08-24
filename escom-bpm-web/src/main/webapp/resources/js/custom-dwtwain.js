@@ -35,22 +35,23 @@ var console = window['console']?window['console']:{'log':function(){}};
 			/* Валидация изображений, их количества и устанавливаем доступность кнопок */
 			validateScanControls: function () {
                                 console.log('Установка контролов');
+                                PrimeFaces.widgets.saveBtnWidget.disable();
+                                PrimeFaces.widgets.deleteBtnWidget.disable();
+                                PrimeFaces.widgets.deleteAllBtnWidget.disable();
+                                PrimeFaces.widgets.rotateLeftBtnWidget.disable();
+                                PrimeFaces.widgets.rotateRightBtnWidget.disable();
+                                PrimeFaces.widgets.rotate180BtnWidget.disable();
+                                PrimeFaces.widgets.editorBtnWidget.disable();
+                                PrimeFaces.widgets.scanBtnWidget.disable();
+                                
 				if (this.dwThumb.SourceCount == 0) {
-                                    alert("Ошибка подключения сканера. Проверьте настройки и повторите попытку!");
+                                    alert("Ошибка подключения сканера. Проверьте подключение сканера и повторите попытку!");
                                     return;
 				} else {
                                     PrimeFaces.widgets.scanBtnWidget.enable();
 				}
 				
-				if (this.dwThumb.HowManyImagesInBuffer == 0) {
-                                    PrimeFaces.widgets.saveBtnWidget.disable();
-                                    PrimeFaces.widgets.deleteBtnWidget.disable();
-                                    PrimeFaces.widgets.deleteAllBtnWidget.disable();
-                                    PrimeFaces.widgets.rotateLeftBtnWidget.disable();
-                                    PrimeFaces.widgets.rotateRightBtnWidget.disable();
-                                    PrimeFaces.widgets.rotate180BtnWidget.disable();
-                                    PrimeFaces.widgets.editorBtnWidget.disable();
-				} else {
+				if (this.dwThumb.HowManyImagesInBuffer > 0) {                                
                                     PrimeFaces.widgets.editorBtnWidget.enable();
                                     PrimeFaces.widgets.deleteBtnWidget.enable();
                                     PrimeFaces.widgets.deleteAllBtnWidget.enable();

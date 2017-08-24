@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -139,7 +141,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     }
 
     public List<Doc> getDocsLinks() {
-        return docsLinks;
+        return docsLinks.stream().filter(doc -> !doc.isDeleted()).collect(Collectors.toList());
     }
     public void setDocsLinks(List<Doc> docsLinks) {
         this.docsLinks = docsLinks;

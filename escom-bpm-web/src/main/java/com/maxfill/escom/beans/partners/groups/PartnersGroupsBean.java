@@ -62,11 +62,11 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент группы контрагента
-        List<PartnerGroups> groups = itemsFacade.findChilds((PartnerGroups)partnerGroup);
+        List<PartnerGroups> groups = itemsFacade.findActualChilds((PartnerGroups)partnerGroup);
         groups.stream().forEach(group -> addChildItemInContent(group, cnt));
         if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
             //загружаем в контент контрагентов 
-            List<Partner> partners = partnersFacade.findDetailItems((PartnerGroups)partnerGroup);
+            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup);
             partners.stream().forEach(partner -> addDetailItemInContent(partner, cnt));
         }
         return cnt;

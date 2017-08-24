@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.docs.locks;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
@@ -33,6 +34,7 @@ public class DocLockBean extends BaseDialogBean{
     private String minLockDate;
     private String maxLockDate;
     private Attaches attache;
+    private Integer modeUnLock = SysParams.MODE_UNLOCK_CREATE_VERSION;
     
     @Override
     protected void initBean() {
@@ -73,10 +75,10 @@ public class DocLockBean extends BaseDialogBean{
     }
     
     public String makeUnLock(){
-        remainder.cancelTimer(attache);        
+        remainder.cancelTimer(attache, modeUnLock);        
         return onCloseCard();
-    }
-     
+    }     
+    
     public void changeDatePlanLock(){
         remainder.changeTimer(attache, sessionBean.getCurrentUser(), lockDate);                       
         EscomBeanUtils.SuccesMsgAdd("Successfully", "TimerRestarted");
@@ -126,7 +128,7 @@ public class DocLockBean extends BaseDialogBean{
     }               
         
     public boolean isAttacheLock(){
-        return attache.getLockAuthor() != null;
+        return !Objects.equals(attache.getLockAuthor(), null);
     }    
 
     public boolean isUserIsEditor(){
@@ -139,7 +141,14 @@ public class DocLockBean extends BaseDialogBean{
     }
     
     /* GETS & SETS */
-        
+
+    public Integer getModeUnLock() {
+        return modeUnLock;
+    }
+    public void setModeUnLock(Integer modeUnLock) {
+        this.modeUnLock = modeUnLock;
+    }
+            
     public Date getLockDate() {
         return lockDate;
     }

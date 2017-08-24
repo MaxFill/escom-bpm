@@ -7,7 +7,7 @@
 
     <p:commandButton id="createTreeCardBtn" action="#{explorerBean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
-                      oncomplete="PF('statusDialog').hide();"
+                     oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
@@ -56,10 +56,10 @@
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{explorerBean.onTreeNodeSelect}"
-                        update="centerHeaderLabel #{_frmTree}:accord:menuTree #{_frmExpl} #{_updates}"
+                        update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmTree}:accord:menuTree #{_frmExpl} #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="contextMenu" listener="#{explorerBean.onTreeNodeSelect}"
-                        update="centerHeaderLabel #{_frmExpl} #{_updates}"
+                        update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmExpl} #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="expand"  listener="#{explorerBean.onNodeExpand}" />
                 <p:ajax event="collapse" listener="#{explorerBean.onNodeCollapse}" />
@@ -76,38 +76,18 @@
                             oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>
                 <p:separator />
                 <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
-                            update="#{_frmTree}"
+                            update="#{_frmTree}" oncomplete="initDND()"
                             actionListener="#{explorerBean.onExpandNode()}"/>
                 <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
-                            update="#{_frmTree}"
+                            update="#{_frmTree}" oncomplete="initDND()"
                             actionListener="#{explorerBean.onCollapseNode()}"/>                
                 <p:separator />
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
                             oncomplete="document.getElementById('#{_frmTree}:viewTreeCardBtn').click();"/>
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
                             oncomplete="document.getElementById('#{_frmTree}:openTreeCardBtn').click();"/>
-                <p:separator />
+                <p:separator />                
 
-                <p:menuitem value="#{bundle.Copy}" icon="ui-icon-copy"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide();"
-                            actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
-                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide();"
-                            actionListener="#{explorerBean.onPasteItemToTree()}"
-                            update="#{_frmTree}:accord:tree #{_frmExpl}"/>
-                <p:separator/>
-                
-                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide();"
-                            update="#{_frmTree}:accord:tree #{_frmExpl} centerHeaderLabel #{_updates}"
-                            actionListener="#{explorerBean.onMoveTreeItemToTrash()}">
-                    <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                </p:menuitem> 
-                
-                <p:separator/>
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                             actionListener="#{explorerBean.onAddContentInFavorites()}"/>
                 <p:separator/>

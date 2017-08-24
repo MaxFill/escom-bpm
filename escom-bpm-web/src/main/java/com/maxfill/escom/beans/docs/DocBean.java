@@ -14,6 +14,7 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
@@ -58,7 +59,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     private FoldersBean ownerBean;
     @Inject
     private AttacheBean attacheBean; 
-    
+    @EJB
+    private AttacheFacade attacheFacade;
     @EJB
     private DocFacade docsFacade;
     
@@ -68,6 +70,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         super.preparePasteItem(pasteItem, sourceItem, owner);
         pasteItem.setAttachesList(new ArrayList<>());
         pasteItem.setDocsStatusList(new ArrayList<>());
+        pasteItem.setDocsLinks(new ArrayList<>());
         if (owner == null){
             owner = sourceItem.getOwner();
         }
@@ -85,7 +88,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches sourceAttache = sourceItem.getAttache();
         if (sourceAttache != null){
             Attaches attache = attacheBean.copyAttache(sourceAttache);
-            addAttacheInDoc(pasteItem, attache);
+            attacheFacade.addAttacheInDoc(pasteItem, attache);
         }
     }
     
@@ -249,10 +252,11 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         super.checkLockItem(item, errors);
     }
     
+    /* ПЕЧАТЬ: Открытие формы предввода отчёта по видам документов */
     public void openDocCountTypesReport() {
         sessionBean.openDialogFrm(DictDlgFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
-    }
-
+    }    
+        
     public boolean docIsLock(Doc doc) {
         return DictStates.STATE_EDITED.equals(doc.getState().getCurrentState().getId());
     }      
@@ -266,7 +270,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public Attaches addAttacheFromScan(Doc doc, SelectEvent event){
         if (event.getObject() == null) return null;
         Attaches attache = (Attaches) event.getObject();
-        addAttacheInDoc(doc, attache);
+        attacheFacade.addAttacheInDoc(doc, attache);
         return attache;
     }
     
@@ -274,22 +278,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         UploadedFile uploadedFile = EscomFileUtils.handleUploadFile(event);
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
-        addAttacheInDoc(doc, attache);
+        attacheFacade.addAttacheInDoc(doc, attache);
         EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
         return attache;
-    }
-            
-    private void addAttacheInDoc(Doc doc, Attaches attache){
-        Integer version = doc.getNextVersionNumber();
-        attache.setNumber(version);
-        attache.setDoc(doc);
-        attache.setCurrent(Boolean.TRUE);
-        List<Attaches> attaches = doc.getAttachesList();
-        attaches.stream()
-                .filter(attacheVersion -> attacheVersion.getCurrent())
-                .forEach(attacheVersion -> attacheVersion.setCurrent(false));
-        doc.getAttachesList().add(attache);                
-    }
+    }            
     
     public void onOpenFormLockMainAttache(Doc doc) {
         Attaches attache = doc.getAttache();

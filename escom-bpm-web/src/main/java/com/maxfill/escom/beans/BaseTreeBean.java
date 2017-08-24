@@ -74,7 +74,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Базовый метод формирования детального списка для группы  */
     public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode){   
         List<BaseDict> cnt = new ArrayList();
-        List<BaseDict> details = getDetailBean().getItemFacade().findDetailItems(group);
+        List<BaseDict> details = getDetailBean().getItemFacade().findActualDetailItems(group);
         details.stream().forEach(item -> addDetailItemInContent(item, cnt));
         return cnt;
     }
@@ -105,7 +105,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Формирует список объектов нулевого уровня (parent = 0)  */
     protected List<T> getRootItems() {
-        List<T> rootItems = prepareItems(getItemFacade().findDetailItems(null));
+        List<T> rootItems = prepareItems(getItemFacade().findActualDetailItems(null));
         return rootItems;
     }
     
@@ -115,7 +115,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         if (preloadCheckRightView(item)) {
             TreeNode newNode = new DefaultTreeNode("tree", item, parentNode);
 
-            List<T> childs = getItemFacade().findChilds(item);
+            List<T> childs = getItemFacade().findActualChilds(item);
             childs.stream()
                     .forEach(itemChild -> addItemInTree(newNode, itemChild)
             );
@@ -127,40 +127,42 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Удаление подчинённых (связанных) объектов */
     @Override
     protected void deleteDetails(T item) {
-        if (item.getDetailItems() != null) {
-            item.getDetailItems().stream().forEach(child -> getDetailBean().deleteItem((T) child));
+        List<BaseDict> details = getItemFacade().findAllDetailItems(item);
+        if (details != null) {
+            details.stream().forEach(child -> getDetailBean().deleteItem((T) child));
         }
     }
     
     /* Восстановление подчинённых detail объектов из корзины */
     @Override
     protected void restoreDetails(T ownerItem) {
-        if (ownerItem.getDetailItems() != null){
-            ownerItem.getDetailItems().stream()
-                    .forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item)
+        List<BaseDict> details = getItemFacade().findAllDetailItems(ownerItem);
+        if (details != null){
+            details.stream().forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item)
             );
         }
     }
     
     /* Перемещение в корзину подчинённых объектов Владельца (ownerItem) */
     @Override
-    protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {                
-        if (ownerItem.getDetailItems() != null){
-            ownerItem.getDetailItems().stream()
-                    .forEach(detail -> getDetailBean().moveToTrash((T) detail, errors)
+    protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {        
+        List<BaseDict> details = getItemFacade().findAllDetailItems(ownerItem);
+        if (details != null){
+            details.stream().forEach(detail -> getDetailBean().moveToTrash((T) detail, errors)
             );
         }
     }
     
     @Override
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
-        if (CollectionUtils.isNotEmpty(item.getDetailItems()) || CollectionUtils.isNotEmpty(item.getChildItems())) {
+        List<BaseDict> details = getItemFacade().findAllDetailItems(item);        
+        if (CollectionUtils.isNotEmpty(details) || CollectionUtils.isNotEmpty(item.getChildItems())) {
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
             errors.add(error);
         }
     }
-        
+
     @Override
     public abstract BaseExplBean getDetailBean();
 

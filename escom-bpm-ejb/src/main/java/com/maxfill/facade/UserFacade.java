@@ -88,7 +88,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
-    public List<User> findDetailItems(UserGroups group){
+    public List<User> findActualDetailItems(UserGroups group){
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         List<User> detailItems = freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).collect(Collectors.toList());
         return detailItems;

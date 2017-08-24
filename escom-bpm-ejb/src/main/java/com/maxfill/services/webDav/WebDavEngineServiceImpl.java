@@ -68,6 +68,12 @@ public class WebDavEngineServiceImpl implements WebDavService{
     @Asynchronous
     @Override
     public void downloadFile(Attaches attache){ 
+        downloadFile(attache, attache);
+    }
+    
+    @Asynchronous
+    @Override
+    public void downloadFile(Attaches attache, Attaches targetAttache){ 
         try {
             Session session = getSession();
             
@@ -86,7 +92,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
             //String id = contentNode.getIdentifier();
                         
             Binary content = contentNode.getProperty("jcr:data").getBinary();
-            fileService.doUpload(attache, content.getStream());
+            fileService.doUpload(targetAttache, content.getStream());
             
             contentNode.remove();
             fileNode.remove();

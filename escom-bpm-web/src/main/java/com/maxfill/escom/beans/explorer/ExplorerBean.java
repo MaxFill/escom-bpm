@@ -9,6 +9,7 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictDetailSource;
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
@@ -45,6 +46,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -423,8 +425,12 @@ public class ExplorerBean implements Serializable {
         } else
             if (isItemTreeType(item)){
                 treeBean.moveToTrash(item, errors); 
-                TreeNode node = EscomBeanUtils.findTreeNode(tree, item); 
-                node.getParent().getChildren().remove(node); 
+                /*
+                if (errors.isEmpty()) {
+                    TreeNode node = EscomBeanUtils.findTreeNode(tree, item); 
+                    node.getParent().getChildren().remove(node); 
+                }
+                */
             } else
                 if (isItemRootType(item)){
                     rootBean.moveToTrash(item, errors);
@@ -433,9 +439,8 @@ public class ExplorerBean implements Serializable {
     
     /* КОРЗИНА: перемещение записи из дерева в корзину  */
     public void onMoveTreeItemToTrash(){
-        if (treeSelectedNode == null){
-            return;
-        }
+        if (treeSelectedNode == null) return;
+        
         Set<String> errors = new HashSet<>();
         onMoveContentToTrash(currentItem, errors);
         if (!errors.isEmpty()) {
@@ -748,9 +753,8 @@ public class ExplorerBean implements Serializable {
     
     /* ДЕРЕВО: Установка текущего элемента в дереве по заданному узлу node */
     public void onSelectInTree(TreeNode node) {        
-        if (node == null) {
-            return;
-        }
+        if (node == null) return;
+        
         if (treeSelectedNode != null) {
             treeSelectedNode.setSelected(false);
         }
@@ -804,7 +808,7 @@ public class ExplorerBean implements Serializable {
     
     /* ДЕРЕВО: добавление нового объекта в дерево  */
     public TreeNode addNewItemInTree(BaseDict item, TreeNode parentNode){        
-        if (item == null){return null;}        
+        if (item == null) return null;       
         if (parentNode == null){
             parentNode = tree;
         }
@@ -814,15 +818,17 @@ public class ExplorerBean implements Serializable {
             type = typeRoot;
         }
         TreeNode newNode = new DefaultTreeNode(type, item, parentNode);
-        item.getChildItems().stream().forEach(child -> addNewItemInTree((BaseDict)child, newNode));
+        List<BaseDict> childs = item.getChildItems();
+        if (childs != null){
+            childs.stream().forEach(child -> addNewItemInTree((BaseDict)child, newNode));
+        }
         return newNode;
-    }    
+    }
          
     /* ДЕРЕВО: удаление узла в дереве  */
     public void removeNodeFromTree(TreeNode node){
-        if (node == null){
-            return;
-        }
+        if (node == null) return; 
+        
         TreeNode parent = node.getParent();
         parent.getChildren().remove(node);        
         if (!parent.equals(tree)){ //если удалён элемент не верхнего уровня, то делаем выделение его родителя
@@ -967,8 +973,14 @@ public class ExplorerBean implements Serializable {
         copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
     }
 
+    public boolean isCanPasteItem(){
+        return copiedItems == null || copiedItems.isEmpty();
+    }
+    
     /* ВСТАВКА: вставка объекта в дерево */
     public void onPasteItemToTree(){
+        if (copiedItems == null) return;
+        
         Set<String> errors = new HashSet<>();
         List<BaseDict> rezults = pasteItem(currentItem, errors);
         if (!errors.isEmpty()){
@@ -998,8 +1010,7 @@ public class ExplorerBean implements Serializable {
     
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
     Реальный parent будет установлен в бине объекта */
-    private List<BaseDict> pasteItem(BaseDict parent, Set<String> errors) {
-        if (copiedItems == null) return null;
+    private List<BaseDict> pasteItem(BaseDict parent, Set<String> errors) {        
         List<BaseDict> rezults = new ArrayList<>();
         copiedItems.stream().forEach(item -> {
             BaseDict pasteItem = sessionBean.prepPasteItem(item, parent, errors);
@@ -1567,6 +1578,58 @@ public class ExplorerBean implements Serializable {
     public void onViewDocument(BaseDict item){
         onSetCurrentItem(item);
         docBean.onViewMainAttache((Doc) currentItem);
+    }
+    
+    /* ПЕЧАТЬ */
+    
+    /* ПЕЧАТЬ : Открытие на предпросмотр журнала документов */
+    public void openDocJournalReport() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("USER_LOGIN", sessionBean.getCurrentUser().getLogin());
+        params.put("REPORT_TITLE", EscomBeanUtils.getBandleLabel("DocJournal"));
+        List<Doc> docs = new ArrayList<>();
+        detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
+
+        Collator collator = Collator.getInstance(sessionBean.getLocale());
+        
+        Comparator<Doc> comparator = (Doc doc1, Doc doc2) -> {
+            int rezult;
+            String companyName1 = "";
+            String companyName2 = "";
+            if (doc1.getCompany() != null && StringUtils.isNotBlank(doc1.getCompany().getName())){
+                companyName1 = doc1.getCompany().getName();
+            }
+            if (doc2.getCompany() != null && StringUtils.isNotBlank(doc2.getCompany().getName())){
+                companyName2 = doc2.getCompany().getName();
+            }
+            rezult = collator.compare(companyName1, companyName2);
+            if (rezult == 0){
+                String docTypeName1 = "";
+                String docTypeName2 = "";
+                if (doc1.getDocType() != null && StringUtils.isNotBlank(doc1.getDocType().getName())){
+                    docTypeName1 = doc1.getDocType().getName();
+                }
+                if (doc2.getDocType() != null && StringUtils.isNotBlank(doc2.getDocType().getName())){
+                    docTypeName2 = doc2.getDocType().getName();
+                }
+                rezult = collator.compare(docTypeName1, docTypeName2);
+            }
+            if (rezult == 0){
+                String docNumber1 = "";
+                String docNumber2 = "";
+                if (doc1.getRegNumber() != null && StringUtils.isNotBlank(doc1.getRegNumber())){
+                    docNumber1 = doc1.getRegNumber();
+                }
+                if (doc2.getRegNumber() != null && StringUtils.isNotBlank(doc2.getRegNumber())){
+                    docNumber2 = doc2.getRegNumber();
+                }
+                rezult = collator.compare(docNumber1, docNumber2);
+            }
+            return rezult;
+        };       
+        
+        List<Object> dataReport = docs.stream().sorted(comparator).collect(Collectors.toList());
+        sessionBean.preViewReport(dataReport, params, DictDlgFrmName.REP_DOC_JOURNAL);
     }
     
     /* ПРОЧИЕ МЕТОДЫ */

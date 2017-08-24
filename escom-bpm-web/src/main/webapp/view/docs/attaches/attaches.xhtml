@@ -50,7 +50,7 @@
                                         styleClass="without-spaces"/>                
                     </p:column>
 
-                    <p:column headerText="#{bundle.Number}" sortBy="#{attache.number}" >
+                    <p:column width="20" headerText="№" sortBy="#{attache.number}" >
                         <h:graphicImage value="/resources/icon/doc_lock.png" title="#{bundle.Locked}"
                                         rendered="#{attache.lockDate != null}"/>
                         <h:outputLabel value="#{attache.number}" />

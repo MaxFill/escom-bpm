@@ -1,6 +1,7 @@
 package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.UserMessagesFacade;
@@ -34,7 +35,7 @@ import javax.ejb.TimerService;
 @Stateless
 public class WebDavRemainder {
     private static final Logger LOG = Logger.getLogger(WebDavRemainder.class.getName());
-    private static final Integer COUNT_REMAINING_CYCLES = 3;
+    private static final Integer COUNT_REMAINING_CYCLES = 3;    
     
     @Resource
     TimerService timerService;
@@ -69,8 +70,24 @@ public class WebDavRemainder {
         LOG.log(Level.INFO, "Successfully change remainder timer : {0}", attache.getName());
     }
     
-    public void cancelTimer(Attaches attache){
+    public void cancelTimer(Attaches attache, Integer modeUnLock){
         stopTimer(attache);
+        switch (modeUnLock){
+            case SysParams.MODE_UNLOCK_CREATE_VERSION :{
+                Attaches newAttache = attacheFacade.copyAttache(attache);
+                attacheFacade.addAttacheInDoc(attache.getDoc(), newAttache);
+                attacheFacade.create(newAttache);
+                webDavService.downloadFile(attache, newAttache);  //забрать копию файла из хранилища
+                break;
+            }
+            case SysParams.MODE_UNLOCK_DONT_CREATE_VERSION :{
+                webDavService.downloadFile(attache);    // забрать и перезаписать файл из хранилища
+                break;
+            }
+            case SysParams.MODE_UNLOCK_DONT_SAVE_CHANGE :{
+                break;
+            }
+        }
         attache.setLockAuthor(null);
         attache.setLockDate(null);
         attache.setPlanUnlockDate(null);
@@ -78,9 +95,8 @@ public class WebDavRemainder {
         attache.setCountRemainingCycles(null);
         attacheFacade.edit(attache);
         docFacade.doRemoveEditState(attache.getDoc());
-        webDavService.downloadFile(attache);    // забрать файл из хранилища 
         LOG.log(Level.INFO, "Remainder for attache {0} is cancelled!", attache.getName()); 
-    }
+    }    
     
     private Timer startTimer(Attaches attache, Date lockDate){      
         TimerConfig config = new TimerConfig(attache, true);
@@ -188,7 +204,7 @@ public class WebDavRemainder {
         content.append("<a href=").append(docUrl).append(">").append(doc.getFullName()).append("</a>").append("<br />");        
         
         if (countRemainingCycles == 0){
-            cancelTimer(attache);
+            cancelTimer(attache, SysParams.MODE_UNLOCK_CREATE_VERSION);
             String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked", conf.getServerLocale() );
             messagesFacade.createSystemMessage(adressee, subject, content.toString(), doc);
         } else {

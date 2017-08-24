@@ -43,7 +43,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
   
     /* Получение списка групп root уровня нужного типа, например, групп, являющихся ролями */
     @Override
-    public List<UserGroups> findChilds(UserGroups parent){
+    public List<UserGroups> findActualChilds(UserGroups parent){
         getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);

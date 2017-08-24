@@ -108,7 +108,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     
     /* Возвращает подразделения, относящиеся к компании и находящиеся на верхнем уровне  */
     @Override
-    public List<Department> findDetailItems(Company owner){
+    public List<Department> findActualDetailItems(Company owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);

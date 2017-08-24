@@ -85,6 +85,7 @@
                             disabled="#{explorerBean.checkedItems.isEmpty()}"
                             rendered="#{explorerBean.isFavoriteSelected()}"
                             update="#{_frmExpl}"
+                            oncomplete="initDND()"
                             actionListener="#{explorerBean.onDelCheckedFromFavorites()}"/>
                 <p:separator />
 

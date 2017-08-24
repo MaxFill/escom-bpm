@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -32,6 +33,8 @@ public class AttacheBean extends BaseDialogBean{
     protected FileService fileService;
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private AttacheFacade attacheFacade;
     @Inject
     private DocBean docBean;
             
@@ -39,27 +42,21 @@ public class AttacheBean extends BaseDialogBean{
        
     /* Копирует вложение */
     public Attaches copyAttache(Attaches sourceAttache){
-        Attaches newAttache = new Attaches();        
-        newAttache.setName(sourceAttache.getName());
-        newAttache.setExtension(sourceAttache.getExtension());
-        newAttache.setType(sourceAttache.getType());
-        newAttache.setSize(sourceAttache.getSize());
-        newAttache.setAuthor(sessionBean.getCurrentUser());
-        newAttache.setDateCreate(new Date());
-        
+        Attaches newAttache = attacheFacade.copyAttache(sourceAttache);        
+        newAttache.setAuthor(sessionBean.getCurrentUser());                
         fileService.doCopy(sourceAttache, newAttache);
         
         return newAttache;
     }
     
-     /* Вложения */ 
+     /* Загрузка файла вложения */ 
     public Attaches uploadAtache(UploadedFile uploadFile) throws IOException{
         if (uploadFile == null) return null;                
 
         int length = uploadFile.getContents().length;
 
         String fileName = uploadFile.getFileName();
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
         Attaches attache = new Attaches();
         attache.setName(fileName);

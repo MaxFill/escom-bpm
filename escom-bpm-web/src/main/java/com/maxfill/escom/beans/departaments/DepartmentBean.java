@@ -159,7 +159,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Department> departments = itemFacade.findChilds((Department)department);
+        List<Department> departments = itemFacade.findActualChilds((Department)department);
         departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));        
         //загружаем в контент штатные единицы
         List<BaseDict> staffs = staffFacade.findItemByOwner((Department)department);

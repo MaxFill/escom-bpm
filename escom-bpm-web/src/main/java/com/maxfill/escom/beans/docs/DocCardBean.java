@@ -420,6 +420,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
     }
 
+    /* Обновляет текущую запись в таблице версий на карточке документа */
     public void onUpdateSelectedAttache(){
         List<Attaches> attaches = getEditedItem().getAttachesList();
         attaches.remove(selectedAttache);

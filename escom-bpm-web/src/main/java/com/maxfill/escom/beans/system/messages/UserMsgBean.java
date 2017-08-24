@@ -51,6 +51,7 @@ public class UserMsgBean extends BaseDialogBean{
         messages = null;
     }
     
+    /* установка отметки о прочтении на выделенных сообщениях */
     public void markAsRead(){
         if (checkedMessages == null || checkedMessages.isEmpty()) return;
         checkedMessages.stream().forEach(message -> markAsRead(message));

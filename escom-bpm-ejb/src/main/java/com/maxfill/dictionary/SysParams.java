@@ -34,4 +34,8 @@ public final class SysParams {
     public static final Integer ADMIN_GROP_ID = 2;
     
     public static final int DEFAULT_DOC_TYPE_ID = 1;
+    
+    public static final int MODE_UNLOCK_CREATE_VERSION = 0;
+    public static final int MODE_UNLOCK_DONT_CREATE_VERSION = 1;
+    public static final int MODE_UNLOCK_DONT_SAVE_CHANGE = 2;
 }

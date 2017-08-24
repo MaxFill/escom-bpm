@@ -73,7 +73,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
-    public List<Partner> findDetailItems(PartnerGroups group){
+    public List<Partner> findActualDetailItems(PartnerGroups group){
         PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
         List<Partner> detailItems = freshGroup.getPartnersList().stream()
                 .filter(partner -> !partner.isDeleted() && partner.isActual())

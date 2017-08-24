@@ -16,8 +16,8 @@
         #{bundle.Messages}
     </ui:define>
 
-    <ui:param name="_frm" value="msgForm" />
-    
+    <ui:param name="_frm" value="msgForm" />    
+        
     <ui:define name="body">
         <script type="text/javascript">
             var isClose = 0;            
@@ -55,6 +55,10 @@
                     </p:hotkey>
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                            <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
+                                        disabled="#{userMsgBean.messages.isEmpty()}"                                        
+                                        onclick="document.getElementById('#{_frm}:btnMarkAllAsRead').click();"> 
+                            </p:menuitem>
                             <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
                                         update="#{_frm}" actionListener="#{userMsgBean.refresh()}"> 
                             </p:menuitem>
@@ -63,13 +67,8 @@
                                         onclick="document.getElementById('#{_frm}:btnClose').click();"> 
                             </p:menuitem>
                         </p:submenu>
-                        <f:facet name="options">
-                            <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
-                                                    itemLabel="#{bundle.ShowOnlyUnReadMessage}">
-                                    <p:ajax update="#{_frm}" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/> 
-                            </p:selectBooleanCheckbox>
-                            <p:spacer width="5"/>
-                            <p:commandButton value="#{bundle.MarkAllAsRead}"
+                        <f:facet name="options">                                                        
+                            <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
                                              disabled="#{userMsgBean.messages.isEmpty()}"
                                              update="#{_frm}"
                                              actionListener="#{userMsgBean.markAsRead()}"> 
@@ -80,12 +79,14 @@
                                              action="#{userMsgBean.onCloseCard()}"> 
                             </p:commandButton> 
                         </f:facet>
-                    </p:menubar>
+                    </p:menubar>                                                            
                     
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
-                    
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">                                           
-
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
+                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
+                                                itemLabel="#{bundle.ShowOnlyUnReadMessage}">
+                                <p:ajax update="#{_frm}" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/> 
+                        </p:selectBooleanCheckbox>
                         <p:dataTable id="messageTBL" value="#{userMsgBean.messages}" 
                                      emptyMessage="#{bundle.EmptyTable}"
                                      paginator="true" paginatorPosition="bottom"                       
