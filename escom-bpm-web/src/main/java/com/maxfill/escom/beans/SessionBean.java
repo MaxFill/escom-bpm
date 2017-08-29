@@ -12,7 +12,6 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.beans.users.settings.Theme;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;

@@ -15,7 +15,7 @@
                          columnClasses="ui-grid-col-12 col-padding" >
 
                 <p:outputLabel value="#{bundle.Name}" />
-                <p:inputText id="docTypeName" value="#{_bean.editedItem.name}" 
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"

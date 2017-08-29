@@ -52,7 +52,7 @@
                                      oncomplete="PF('statusDialog').hide(); initDND()"
                                      actionListener="#{explorerBean.onPasteItemToTree()}"
                                      update="#{_frmTree}:accord:tree #{_frmExpl}"/>
-                    <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}"                             
+                    <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"                            
                                  disabled="#{!explorerBean.isShowTree()}"
                                  style="font-size: 90%;">
                     </p:inputText>

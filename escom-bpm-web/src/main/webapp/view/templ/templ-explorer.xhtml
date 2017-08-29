@@ -31,11 +31,9 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="body">
-        <ui:include src="/view/common/error-dlg.xhtml"/>
-        <p:focus for="#{_frmTree}" context="nameSearche"/>
-
+    <ui:define name="body">        
         <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
+            
             <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!explorerBean.selectorViewMode}" /> 
             <h:outputScript library="js" name="drag-drop.js" />  
             
@@ -49,8 +47,8 @@
                             padding: 0px !important;
                         }
                     </style>
-                    <ui:include src="/view/templ/tree/tree.xhtml" />
-                    
+                    <p:focus context="#{_frmTree}" for="#{_frmTree}:accord:nameSearche"/>
+                    <ui:include src="/view/templ/tree/tree.xhtml" />                    
                 </h:form>
             </pe:layoutPane>
 
@@ -123,5 +121,6 @@
 
             <ui:include src="/view/templ/expl/expl-southpane.xhtml"/>
         </pe:layout> 
+        <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 </ui:composition>

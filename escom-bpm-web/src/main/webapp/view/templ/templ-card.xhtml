@@ -60,11 +60,8 @@
                     </p:remoteCommand>
 
                     <ui:insert name="card_scripts"/>
-
-                    <p:hotkey bind="esc" id="hotskey"
-                              immediate="true"                             
-                              onstart="document.getElementById('#{_frm}:btnCancel').click();"> 
-                    </p:hotkey>
+                    
+                    <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">

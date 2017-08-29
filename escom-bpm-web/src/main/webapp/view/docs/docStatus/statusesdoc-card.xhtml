@@ -11,7 +11,7 @@
           <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
                 <p:outputLabel value="#{bundle.Name}" />
-                <p:inputText id="name" value="#{_bean.editedItem.name}"
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12 col-padding"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
