@@ -188,7 +188,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }   
             
     /* Сброс регистрационного номера */
-    public void onClearRegNumber(Doc doc){
+    public void onClearRegNumber(){
+        Doc doc = getEditedItem();
         if (doc.getDocType() != null){
             NumeratorPattern numerator = doc.getDocType().getNumerator();
             if (numerator != null && DictNumerator.TYPE_AUTO.equals(numerator.getTypeCode())){
@@ -361,10 +362,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
               
     /* Изменение значения статуса документа в таблице статусов на карточке документа */   
     public void onChangeDocStatus(DocStatuses docsStatus){
-        docsStatus.setDateStatus(new Date());
+        if (docsStatus.getDateStatus() == null){
+            docsStatus.setDateStatus(new Date());
+        }
         docsStatus.setAuthor(currentUser);
-        String statusName = docsStatus.getStatus().getName() + " = " + EscomBeanUtils.getBandleLabel(docsStatus.getValueBundleKey());
-        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, currentUser);
+        //String statusName = docsStatus.getStatus().getName() + " = " + EscomBeanUtils.getBandleLabel(docsStatus.getValueBundleKey());
+        //getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, currentUser);
         onItemChange();
     }
     

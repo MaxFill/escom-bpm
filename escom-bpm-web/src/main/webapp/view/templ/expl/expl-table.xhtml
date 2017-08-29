@@ -15,6 +15,7 @@
                  selection="#{explorerBean.checkedItems}"
                  rowKey="#{item.itemKey}">
 
+        <p:ajax event="rowSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" 
                 listener="#{explorerBean.onRowDblClckOpen}"
                 oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
@@ -102,7 +103,7 @@
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
-                            update="#{_frmExpl}:menuTbl"
+                            update="#{_frmExpl}:explToolBar"
                             actionListener="#{explorerBean.onCopyItem(item)}"/>
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                             disabled="#{item.id == 0}"
@@ -144,19 +145,7 @@
                 </p:menuitem>                
             </p:splitButton>
         </p:column>
-    </p:dataTable>
-    
-    <p:contextMenu id="menuTbl" for="tblDetail" >
-        <p:menuitem value="#{bundle.CopySelected}" icon="ui-icon-copy"
-                    onstart="PF('statusDialog').show()"
-                    oncomplete="PF('statusDialog').hide();"
-                    actionListener="#{explorerBean.onCopySelectedItem()}"/>
-        <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
-                    onstart="PF('statusDialog').show()"
-                    oncomplete="PF('statusDialog').hide();"
-                    actionListener="#{explorerBean.onPasteItemToTable()}"
-                    update="#{_frmExpl} #{_frmTree}"/>
-    </p:contextMenu>
+    </p:dataTable>        
 
     <ui:include src="/view/common/confirm-dlg.xhtml"/>
 </ui:composition>

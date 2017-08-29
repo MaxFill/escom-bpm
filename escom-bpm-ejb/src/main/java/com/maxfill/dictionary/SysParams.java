@@ -3,9 +3,7 @@ package com.maxfill.dictionary;
 public final class SysParams {
 
     private SysParams() {
-    }
-    
-    public static final int MAX_FILE_SIZE = 1000000;
+    }    
       
     public static final String ALL = "*";
     public static final String CODE_SEPARATOR = "_";

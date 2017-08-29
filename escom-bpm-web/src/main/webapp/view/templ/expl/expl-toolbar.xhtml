@@ -27,6 +27,23 @@
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
 
+            <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
+                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            update="#{_frmExpl}:explToolBar"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND();"
+                            actionListener="#{explorerBean.onCopySelectedItem()}"/>
+            <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
+                            disabled="#{explorerBean.canPasteItem}"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide();"
+                            actionListener="#{explorerBean.onPasteItemToTable()}"
+                            update="#{_frmExpl} #{_frmTree}"/>
+
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
+                
             <p:commandButton value="#{_CreateItemLabel}"
                              title="#{explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
                              icon="ui-icon-document" id="createItemBtn"
@@ -77,6 +94,7 @@
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                 </p:menuitem>
                 <p:separator />
+                <ui:insert name="addMenuActions" />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddCheckedToFavorites}" title="#{bundle.AddToFavorites}"
                             disabled="#{explorerBean.checkedItems.isEmpty()}"
                             rendered="#{!explorerBean.isFavoriteSelected()}"
@@ -88,13 +106,8 @@
                             oncomplete="initDND()"
                             actionListener="#{explorerBean.onDelCheckedFromFavorites()}"/>
                 <p:separator />
-
-                <ui:insert name="addMenuActions" />
-
-                <p:menuitem value="#{bundle.Paste}" icon="ui-icon-clipboard"
-                            disabled="#{explorerBean.copiedItems.isEmpty()}"
-                            actionListener="#{explorerBean.onPasteItemToTable()}">
-                </p:menuitem>
+                <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
+                                actionListener="#{sessionBean.onViewHelp()}"/>
             </p:splitButton>
 
             <!-- Кнопка для Корзины -->

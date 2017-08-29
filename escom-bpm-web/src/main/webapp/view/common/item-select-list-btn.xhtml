@@ -20,8 +20,8 @@
             <p:ajax event="dialogReturn" update="#{_itemPanel}"/>
         </p:commandButton>
         
-        <h:panelGrid id="#{_itemPanel}" columns="2" columnClasses="ui-grid-col-10 col-padding, ui-grid-col-2 col-padding pull-right"
-                     styleClass="ui-grid-col-12 col-padding" style="border-collapse: collapse; border:0px;">
+        <h:panelGrid id="#{_itemPanel}" columns="2" columnClasses="ui-grid-col-10 without-spaces, ui-grid-col-2 without-spaces pull-right"
+                     styleClass="ui-grid-col-12 without-spaces" style="border-collapse: collapse; border:0px;">
             
             <p:selectOneMenu value="#{_itemValue}" title="#{_titleItem}" styleClass="ui-grid-col-12"
                              disabled="#{_disabled}" style="color: blue;"

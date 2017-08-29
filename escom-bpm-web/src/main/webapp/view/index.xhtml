@@ -67,7 +67,8 @@
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
-                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"/>
+                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
+                                    actionListener="#{sessionBean.onViewHelp()}"/>
                         <p:separator />
                         <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench" url="http://support.escom-bpm.com" target="blank"/>
                         <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"

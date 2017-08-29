@@ -543,8 +543,13 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_CHECK_RELEASE, null);
     }
     
+    /* Отображение справки */
+    public void onViewHelp(){
+       openDialogFrm(DictDlgFrmName.FRM_HELP, null); 
+    }
+            
     /* GETS & SETS */
-    
+            
     public String getLicenseLocalName(){
         return EscomBeanUtils.getBandleLabel(appBean.getLicence().getLicenceName());
     }

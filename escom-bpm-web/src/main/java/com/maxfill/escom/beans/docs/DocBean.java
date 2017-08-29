@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictStates;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -71,6 +70,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         pasteItem.setAttachesList(new ArrayList<>());
         pasteItem.setDocsStatusList(new ArrayList<>());
         pasteItem.setDocsLinks(new ArrayList<>());
+        pasteItem.setRegNumber(null);        
         if (owner == null){
             owner = sourceItem.getOwner();
         }
@@ -263,8 +263,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
              
     /* ВЛОЖЕНИЯ */
     
+    /* Возвращает максимальный размер загружаемого файла */    
     public Integer getMaxFileSize(){
-        return SysParams.MAX_FILE_SIZE;
+        return conf.getMaxFileSize();
     }
     
     public Attaches addAttacheFromScan(Doc doc, SelectEvent event){

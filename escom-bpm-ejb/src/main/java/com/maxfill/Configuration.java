@@ -45,6 +45,7 @@ public class Configuration {
     private String pdfFont;
     private Licence licence;
     private Integer serverId;
+    private Integer maxFileSize;
     
     @PostConstruct
     private void init() {
@@ -69,6 +70,7 @@ public class Configuration {
             convertorPDF = (String) properties.get("CONVERTOR_PDF");
             pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
             pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
+            maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
         } catch (IOException ex) {
@@ -76,6 +78,9 @@ public class Configuration {
         }
     }
 
+    public Integer getMaxFileSize() {
+        return maxFileSize;
+    }    
     public String getPdfFont() {
         return pdfFont;
     }    

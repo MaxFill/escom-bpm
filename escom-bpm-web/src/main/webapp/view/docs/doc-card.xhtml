@@ -11,18 +11,7 @@
   
     <ui:define name="specActionMenu">
         <p:menuitem icon="ui-icon-extlink" value="#{bundle.SaveAndPublish}"     
-                    oncomplete="document.getElementById('#{_frm}:mainTabView:btnSaveCloseAndPublic').click();"/>
-        <p:separator rendered="#{_item.id != null}"/> 
-        <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
-                    rendered="#{_item.id != null}"
-                    update="dlgDocUrl:urlPanel"
-                    actionListener="#{_bean.onGetDocViewURL(_item)}"
-                    oncomplete="PF('urlDlg').show();"/> 
-        <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforOpenCard}" title="#{bundle.URLforOpenCardDoc}"
-                    rendered="#{_item.id != null}"
-                    actionListener="#{_bean.onGetDocOpenURL(_item)}"
-                    update="dlgDocUrl:urlPanel"
-                    oncomplete="PF('urlDlg').show();"/>                
+                    oncomplete="document.getElementById('#{_frm}:mainTabView:btnSaveCloseAndPublic').click();"/>                
     </ui:define>
     
     <ui:define name="specSubMenu"> 
@@ -33,6 +22,17 @@
             <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.DownloadCurrentVersion}"
                         disabled="#{_bean.editedItem.attache == null}" ajax="false"
                         action="#{_bean.downloadCurrentVersion()}"/>
+            <p:separator rendered="#{_item.id != null}"/> 
+            <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"
+                        rendered="#{_item.id != null}"
+                        update="dlgDocUrl:urlPanel"
+                        actionListener="#{_bean.onGetDocViewURL(_item)}"
+                        oncomplete="PF('urlDlg').show();"/> 
+            <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforOpenCard}" title="#{bundle.URLforOpenCardDoc}"
+                        rendered="#{_item.id != null}"
+                        actionListener="#{_bean.onGetDocOpenURL(_item)}"
+                        update="dlgDocUrl:urlPanel"
+                        oncomplete="PF('urlDlg').show();"/>
             <p:separator rendered="#{_bean.editedItem.id != null}"/> 
             <p:menuitem icon="ui-icon-link" value="#{bundle.SendToEmailAsLinkPDF}"
                         rendered="#{_bean.editedItem.id != null}"
@@ -72,8 +72,8 @@
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                 <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                    <p:outputLabel value="#{bundle.Organization}:" for="company"/>
-                    <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
+                    <h:panelGrid columns="1" id="сompanyPanel" styleClass="ui-grid-col-12 without-spaces">
+                        <p:outputLabel value="#{bundle.Organization}:" for="company"/>                    
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                          title="#{bundle.CompanyDocRegistred}"
                                          disabled="#{_bean.isReadOnly()}"
@@ -83,25 +83,27 @@
                             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
                             <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
                         </p:selectOneMenu>
-                    </h:panelGroup>
+                    </h:panelGrid>
 
-                    <p:outputLabel value="#{bundle.DocTypes}:"/>
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
-                        <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="docsTypesConvertor" />
-                        <ui:param name="_itemPanel" value="docTypePanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
-                        <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                        <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setDocType"/>
-                        <ui:param name="_actionSelect" value="onDocTypeSelected"/>
-                        <ui:param name="_update" value="#{_frm}:mainTabView:regNumberPanel #{_frm}:mainTabView:docStatusTbl #{_frm}:mainTabView:explToolBar"/>
-                    </ui:include>
+                    <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
+                        <p:outputLabel value="#{bundle.DocTypes}:"/>
+                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                            <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
+                            <ui:param name="_required" value="#{true}" />
+                            <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                            <ui:param name="_converter" value="docsTypesConvertor" />
+                            <ui:param name="_itemPanel" value="docTypePanel"/>
+                            <ui:param name="_titleItem" value="#{bundle.DocTypes}"/>
+                            <ui:param name="_selectorBean" value="#{docTypeBean}"/>
+                            <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
+                            <ui:param name="_actionClear" value="setDocType"/>
+                            <ui:param name="_actionSelect" value="onDocTypeSelected"/>
+                            <ui:param name="_update" value="#{_frm}:mainTabView:regNumberPanel #{_frm}:mainTabView:docStatusTbl #{_frm}:mainTabView:explToolBar"/>
+                        </ui:include>
+                    </h:panelGrid>
 
-                    <p:outputLabel value="#{bundle.Name}:" />
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+                        <p:outputLabel value="#{bundle.Name}:" />                    
                         <p:inputTextarea id="nameDoc" value="#{_bean.editedItem.name}"
                                          title="#{bundle.BriefDescriptionDocument}"
                                          styleClass="ui-grid-col-12"
@@ -116,80 +118,75 @@
                     </h:panelGrid>
                 </p:panelGrid>
                 
-                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-5 without-spaces, ui-grid-col-7 without-spaces" styleClass="without-spaces ui-grid-col-12">
+                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
-                        <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 col-padding">
-                            <h:panelGrid columns="3"> 
-                                <p:inputText value="#{_item.regNumber}" id="number"
-                                            title="#{bundle.RegistredDocNumber}"
-                                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                            rendered="#{_item.docType == null or _item.docType.numerator == null}"
-                                            disabled="#{_bean.isReadOnly()}"
-                                            onchange="return itemChange = 1;"
-                                            requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"> 
-                                </p:inputText>
-
-                                <p:inputMask mask="#{_bean.numberMask}" title="#{_item.docType.numerator.name}"
-                                             rendered="#{_item.docType != null and _item.docType.numerator != null}"
-                                             disabled="#{_bean.isReadOnly()}"
-                                             onchange="return itemChange = 1;"
-                                             requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"
-                                             value="#{_item.regNumber}"/>
-
-                                <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                                 disabled="#{_bean.isReadOnly() 
-                                                             or _item.docType.numerator.typeCode eq 'type.manual'
-                                                             or _item.number != null}"
-                                                 action="#{_bean.onGenerateRegNumber(_item)}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
-                                <p:commandButton id="clearNumberBtn"
-                                                 icon="ui-icon-close" title="#{bundle.UnRegistred}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"
-                                                 immediate="true"
-                                                 actionListener="#{_bean.onClearRegNumber(_item)}"
-                                                 disabled="#{_bean.isReadOnly() or _item.regNumber == null or _item.regNumber.isEmpty()}"/>
-                            </h:panelGrid>
-                        </h:panelGroup>
-                    </p:panelGrid>
-
-                    <p:panelGrid  layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.DateDoc}:" /> 
-                        <h:panelGroup id="datePanel" styleClass="ui-grid-col-12 col-padding">
-                            <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
-                                        styleClass="ui-grid-col-12"
+                        <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 without-spaces">
+                            <p:inputText value="#{_item.regNumber}" id="number"
+                                        title="#{bundle.RegistredDocNumber}"
                                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                        rendered="#{_item.docType == null or _item.docType.numerator == null}"
                                         disabled="#{_bean.isReadOnly()}"
-                                        onselect="return itemChange = 1;"
-                                        required="#{param['isRequired'] == 'true'}" 
-                                        showButtonPanel="true" locale="#{sessionBean.locale}"                                
-                                        navigator="true" yearRange="c-120:c+20"                                
-                                        requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
-                                <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                            </p:calendar>
+                                        onchange="return itemChange = 1;"
+                                        requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"> 
+                            </p:inputText>
+
+                            <p:inputMask mask="#{_bean.numberMask}" title="#{_item.docType.numerator.name}"
+                                         rendered="#{_item.docType != null and _item.docType.numerator != null}"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onchange="return itemChange = 1;"
+                                         requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"
+                                         value="#{_item.regNumber}"/>
+
+                            <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
+                                             disabled="#{_bean.isReadOnly() 
+                                                         or _item.docType.numerator.typeCode eq 'type.manual'
+                                                         or _item.number != null}"
+                                             action="#{_bean.onGenerateRegNumber(_item)}"
+                                             update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
+                            <p:commandButton id="clearNumberBtn"
+                                             icon="ui-icon-close" title="#{bundle.UnRegistred}"
+                                             update="docTypePanel datePanel сompanyPanel regNumberPanel"
+                                             actionListener="#{_bean.onClearRegNumber()}"
+                                             disabled="#{_bean.isReadOnly() or _item.regNumber == null or _item.regNumber.isEmpty()}"/>
                         </h:panelGroup>
-                    </p:panelGrid>
-                    
+                    </h:panelGrid>
+
+                    <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
+                        <p:outputLabel value="#{bundle.DateDoc}:" />                                                 
+                        <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
+                                    styleClass="ui-grid-col-12"
+                                    onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                    disabled="#{_bean.isReadOnly()}"
+                                    onselect="return itemChange = 1;"
+                                    required="#{param['isRequired'] == 'true'}" 
+                                    showButtonPanel="true" locale="#{sessionBean.locale}"                                
+                                    navigator="true" yearRange="c-120:c+20"                                
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                        </p:calendar>                        
+                    </h:panelGrid>                    
                 </p:panelGrid>    
 
                 <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
-                    <p:outputLabel value="#{bundle.Partner}:" />
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
-                        <ui:param name="_required" value="#{false}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="partnersConvertor" />
-                        <ui:param name="_itemPanel" value="partnerPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.Partner}"/>
-                        <ui:param name="_selectorBean" value="#{partnersBean}"/>
-                        <ui:param name="_items" value="#{partnersBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setPartner"/>
-                        <ui:param name="_actionSelect" value="onPartnerSelected"/>
-                        <ui:param name="_update" value=""/>
-                    </ui:include>
-                    </p:panelGrid>
+                    <h:panelGrid columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
+                        <p:outputLabel value="#{bundle.Partner}:" />
+                        <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                            <ui:param name="_itemValue" value="#{_bean.editedItem.partner}"/>
+                            <ui:param name="_required" value="#{false}" />
+                            <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                            <ui:param name="_converter" value="partnersConvertor" />
+                            <ui:param name="_itemPanel" value="partnerPanel"/>
+                            <ui:param name="_titleItem" value="#{bundle.Partner}"/>
+                            <ui:param name="_selectorBean" value="#{partnersBean}"/>
+                            <ui:param name="_items" value="#{partnersBean.findAll()}"/>
+                            <ui:param name="_actionClear" value="setPartner"/>
+                            <ui:param name="_actionSelect" value="onPartnerSelected"/>
+                            <ui:param name="_update" value=""/>
+                        </ui:include>
+                    </h:panelGrid>
                 </p:panelGrid>
+                
             </p:panelGrid>
         </p:tab> 
         

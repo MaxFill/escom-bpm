@@ -461,12 +461,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         sb.append(": ");
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
-                sb.append(getEditedItem().getName());                
+                sb.append(getEditedItem().getNameEndElipse());                
                 sb.append(" <").append(EscomBeanUtils.getBandleLabel("ReadOnly")).append(">");;
                 break;
             }
             case DictEditMode.EDIT_MODE:{
-                sb.append(getEditedItem().getName());                
+                sb.append(getEditedItem().getNameEndElipse());                
                 sb.append(" <").append(EscomBeanUtils.getBandleLabel("Correction")).append(">");
                 break;
             }

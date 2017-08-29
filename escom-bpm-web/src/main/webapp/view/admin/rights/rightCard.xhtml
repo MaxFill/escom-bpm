@@ -71,10 +71,8 @@
                         <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>                    
 
                         <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 col-padding">
-                            <h:panelGroup rendered="#{rightCardBean.selRight.objLink != null}">
-                                <h:outputLabel value="#{bundle.Object}:" />
-                                <p:outputLabel value="#{rightCardBean.getObjName(selRight.objLink)}"/>
-                            </h:panelGroup>
+                            <h:outputLabel value="#{bundle.Object}:" rendered="#{rightCardBean.selRight.objLink != null}"/>
+                            <p:outputLabel value="#{rightCardBean.getObjName(rightCardBean.selRight.objLink)}" rendered="#{rightCardBean.selRight.objLink != null}"/>
                             
                             <h:outputLabel value="#{bundle.ForState}:"/>
                             <p:outputLabel value="#{rightCardBean.stateName}"/>
@@ -84,7 +82,7 @@
 
                         </p:panelGrid>
 
-                        <p:selectOneRadio id="rbRightType" value="#{rightCardBean.selRight.objType}" layout="custom" 
+                        <p:selectOneRadio id="rbRightType" value="#{rightCardBean.selRight.objType}" layout="custom" style="float: right;"
                                           valueChangeListener="#{rightCardBean.onTypeChangeRight}">
                             <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="0" />
                             <f:selectItem itemLabel="#{bundle.ForUser}"  itemValue="1" />

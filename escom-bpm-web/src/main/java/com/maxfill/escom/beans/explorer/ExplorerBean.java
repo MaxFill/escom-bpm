@@ -774,8 +774,12 @@ public class ExplorerBean implements Serializable {
         makeNavigator(currentItem);         
         setCurrentViewModeMixed();
        
-        BaseDict rootItem = (BaseDict) tree.getChildren().get(0).getData();            
-        makeJurnalHeader(rootItem.getName(), currentItem.getName());
+        BaseDict rootItem = (BaseDict) tree.getChildren().get(0).getData();
+        String journalName = "";
+        if (!rootItem.equals(currentItem)){
+            journalName = currentItem.getName();
+        }
+        makeJurnalHeader(rootItem.getName(), journalName);
     }
     
     /* ДЕРЕВО: установка текущего элемента в дереве по заданному объекту item */
