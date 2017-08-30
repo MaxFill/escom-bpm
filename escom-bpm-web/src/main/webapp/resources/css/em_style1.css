@@ -74,6 +74,10 @@ body{
   text-align: center !important;  
 }
 
+.colTop{
+    vertical-align: top !important;
+}
+
 .ui-outputlabel{ 
     text-align: left;
     vertical-align: central;

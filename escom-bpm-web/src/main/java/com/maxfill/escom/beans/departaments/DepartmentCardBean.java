@@ -41,7 +41,7 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
         if (getEditedItem() == null){
             return "";
         }
-        Company company = departmentBean.findCompany(getEditedItem());
+        Company company = itemsFacade.findCompany(getEditedItem());
         return company.getName();
     }         
     

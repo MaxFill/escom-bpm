@@ -7,8 +7,11 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.StateFacade;
 import com.maxfill.utils.Tuple;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -24,7 +27,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 /* Бин для метаданных */
@@ -38,6 +44,8 @@ public class MetadatesBean implements Serializable{
     private LayoutOptions layoutOptions;
     private Right selRight;
     private Integer editMode;
+    private State stateAdd;
+    private State startState;
     
     @Inject
     private SessionBean sessionBean;
@@ -49,6 +57,8 @@ public class MetadatesBean implements Serializable{
     private MetadatesFacade metadatesFacade;
     @EJB
     private RightFacade rightFacade;
+    @EJB
+    private StateFacade stateFacade;
 
     @PostConstruct
     public void init() {
@@ -60,6 +70,7 @@ public class MetadatesBean implements Serializable{
     /* Открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         editMode = DictEditMode.INSERT_MODE;
+        selRight = new Right();
         sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "");
     }
     
@@ -108,6 +119,55 @@ public class MetadatesBean implements Serializable{
     public void onDeleteRight(Right right){        
         rightFacade.remove(right);  
     }            
+    
+    public List<State> onGetAvailableStates(){        
+        if (selectedObject == null) return null;
+        List<State> states = stateFacade.findAll();
+        states.removeAll(selectedObject.getStatesList());
+        return states;
+    }
+    
+    public void onAddState(){
+        if (selectedObject == null) return;
+        selectedObject.getStatesList().add(stateAdd);
+        metadatesFacade.edit(selectedObject);
+        Right right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ADMIN_ID, selectedObject, "", stateAdd);
+        rightFacade.create(right);
+        right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ALL_USER_ID, selectedObject, "", stateAdd);
+        right.setAddChild(false);
+        right.setChangeRight(false);
+        right.setExecute(false);
+        right.setDelete(false);
+        rightFacade.create(right);
+        EscomBeanUtils.SuccesMsgAdd("Successfully", "StateIsAdd");
+    }
+    
+    public void onDeleteState(State state){
+        Set<String> errors = new HashSet<>();
+        if (Objects.equals(state, startState)){
+            errors.add("CantDeleteStartState");
+        }
+        BaseExplBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
+        if (bean != null && bean.getItemFacade().countItemsByState(state) > 0){
+            errors.add("CantRemoveUsedState");
+        }
+        if (!errors.isEmpty()){
+            EscomBeanUtils.showErrorsMsg(errors);
+            return;
+        }
+        selectedObject.getStatesList().remove(state);        
+        metadatesFacade.edit(selectedObject);
+        List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);
+        rights.stream().forEach(right -> rightFacade.remove(right));
+    }
+    
+    /* Установка начального состояния объекта */
+    public void onSetStartState(){
+        if (selectedObject == null) return;
+        selectedObject.setStateForNewObj(startState);
+        metadatesFacade.edit(selectedObject);
+        EscomBeanUtils.SuccesMsgAdd("Successfully", "StartSateIsChange");
+    }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
@@ -162,9 +222,25 @@ public class MetadatesBean implements Serializable{
         if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
         return EscomBeanUtils.getBandleLabel(metadate.getBundleName());
     }
-     
+
     /* *** GET & SET *** */
     
+    public State getStartState() {         
+        if (selectedObject == null) return null;
+        startState = selectedObject.getStateForNewObj();
+        return startState;
+    }
+    public void setStartState(State startState) {
+        this.startState = startState;
+    }
+
+    public void setStateAdd(State stateAdd) {
+        this.stateAdd = stateAdd;
+    }
+    public State getStateAdd() {
+        return stateAdd;
+    }
+  
     public Metadates getSelectedObject() {
         return selectedObject;
     }

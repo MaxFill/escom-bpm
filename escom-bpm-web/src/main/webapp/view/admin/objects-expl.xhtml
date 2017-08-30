@@ -28,7 +28,7 @@
                 <h:form style="font-size: 80%;">
                     <p:dataTable value="#{metadatesBean.allItems}" rowKey="#{item.id}" selectionMode="single"
                                  selection="#{metadatesBean.selectedObject}" var="item">
-                        <p:ajax event="rowSelect" update=":frmFldDefRight:mainTab:dataGrid" listener="#{metadatesBean.onSelectedItem}"  />                
+                        <p:ajax event="rowSelect" update="frmFldDefRight:mainGrid" listener="#{metadatesBean.onSelectedItem}"  />                
 
                         <p:column headerText="ID" width="15">
                             #{item.id}
@@ -43,11 +43,9 @@
 
             <pe:layoutPane id="luFrmDocs" position="center" resizable="true">                 
                 <h:form id="frmFldDefRight" style="font-size: 90%;">
-                    <p:tabView id="mainTab" orientation="left">
-                        <p:tab title="#{bundle.Rights}" > 
-                            <ui:include src="/view/admin/rights/objectsRight.xhtml"/>
-                        </p:tab>
-                    </p:tabView>
+                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    <ui:include src="/view/admin/objects-right.xhtml"/>
+                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>
             </pe:layoutPane>
 

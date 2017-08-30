@@ -1,0 +1,101 @@
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" 
+    xmlns:h="http://xmlns.jcp.org/jsf/html">       
+
+    <p:panelGrid id="mainGrid" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
+        <h:panelGrid columns="3">
+            <p:outputLabel value="#{bundle.State}"/>
+            <p:selectOneMenu value="#{metadatesBean.stateAdd}" converter="stateConvertor" styleClass="ui-grid-col-12" >
+                <f:selectItems value="#{metadatesBean.onGetAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+            </p:selectOneMenu>
+            <p:commandButton value="#{bundle.AddState}"
+                             disabled="#{metadatesBean.onGetAvailableStates() == null or metadatesBean.onGetAvailableStates().isEmpty()}"
+                             styleClass="ui-grid-col-12"
+                             update="mainGrid"
+                             actionListener="#{metadatesBean.onAddState()}">    
+            </p:commandButton>
+            <p:outputLabel value="#{bundle.StartState}"/>
+            <p:selectOneMenu value="#{metadatesBean.startState}" converter="stateConvertor" styleClass="ui-grid-col-12">
+                <f:selectItems value="#{metadatesBean.selectedObject.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+            </p:selectOneMenu>
+            <p:commandButton value="#{bundle.MakeAsStartState}"
+                             disabled="#{metadatesBean.selectedObject.statesList == null or metadatesBean.selectedObject.statesList.isEmpty()}"
+                             styleClass="ui-grid-col-12"
+                             update="frmFldDefRight"
+                             actionListener="#{metadatesBean.onSetStartState()}">    
+            </p:commandButton> 
+        </h:panelGrid>
+
+        <p:dataGrid id="dataGrid" var="state" value="#{metadatesBean.selectedObject.statesList}" columns="1" layout="grid" 
+                    emptyMessage="#{bundle.EmptyTable}" styleClass="ui-grid-col-12 without-spaces"
+                    paginator="true" paginatorPosition="bottom" rows="7" style="font-size: 90%" >
+            <p:accordionPanel>
+                <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{metadatesBean.selectedObject != null}">
+
+                    <h:panelGrid columns="2" columnClasses="ui-grid-col-11, ui-grid-col-1 colTop" styleClass="ui-panelgrid-blank" >                
+                        <p:dataTable id="tblRightDoc" value="#{metadatesBean.getRightsInState(state)}" 
+                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
+                                     selection="#{metadatesBean.selRight}" emptyMessage="#{bundle.EmptyTable}"
+                                     var="right">
+                            <p:column headerText="#{bundle.RightOwner}" width="170">
+                                <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
+                                <h:outputText value="#{right.name}"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.Read}" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{right.read}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.Change}" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{right.update}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.Creating}" style="text-align: center;">                                    
+                                <p:selectBooleanCheckbox value="#{right.create}" disabled="true"/>
+                            </p:column>                        
+                            <p:column headerText="#{bundle.Remove}" style="text-align: center;">
+                                <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
+                            </p:column> 
+                            <p:column headerText="#{bundle.AddChildsRight}" width="100" style="text-align: center;">                                    
+                                <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
+                            </p:column>
+                            <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
+                                <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
+                            </p:column>                         
+                            <p:column headerText="#{bundle.Commands}" style="text-align: center;" >
+                                <h:panelGroup styleClass="ui-grid-col-12 without-spaces">
+                                    <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
+                                                     actionListener="#{metadatesBean.onEditRight(right)}" >
+                                        <p:ajax event="dialogReturn" update="tblRightDoc"
+                                                listener="#{metadatesBean.onCloseRightCard}"/>
+                                    </p:commandButton>
+                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                                     update="tblRightDoc"
+                                                     actionListener="#{metadatesBean.onDeleteRight(right)}" >
+                                        <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </h:panelGroup>
+                            </p:column>                        
+                        </p:dataTable>
+
+                        <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                            <p:commandButton value="#{bundle.DeleteState}" 
+                                             styleClass="ui-grid-col-12"
+                                             update="frmFldDefRight:mainGrid"
+                                             actionListener="#{metadatesBean.onDeleteState(state)}">  
+                                <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                            </p:commandButton>
+                            <p:separator />
+                            <p:commandButton id="btnRight" value="#{bundle.AddRight}" 
+                                             styleClass="ui-grid-col-12"
+                                             actionListener="#{metadatesBean.onAddRight(state)}">
+                                <p:ajax event="dialogReturn" update="frmFldDefRight:mainGrid"
+                                        listener="#{metadatesBean.onCloseRightCard}"/>
+                            </p:commandButton>
+                        </h:panelGrid>
+                    </h:panelGrid>  
+                </p:tab>
+            </p:accordionPanel>
+        </p:dataGrid>
+    </p:panelGrid>
+</ui:composition>

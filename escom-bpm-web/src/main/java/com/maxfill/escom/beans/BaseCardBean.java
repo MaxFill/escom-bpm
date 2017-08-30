@@ -199,7 +199,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* Отмена изменений в объекте, завершающие действия  */
     protected String doFinalCancelSave() {
         if (Boolean.TRUE.equals(isItemRegisted)) {
-            numeratorService.doRollBackRegistred(getEditedItem(), getItemFacade().getFRM_NAME());
+            numeratorService.doRollBackRegistred(getEditedItem());
             isItemRegisted = false;
         }
         return closeItemForm(false);  //закрыть форму объекта

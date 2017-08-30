@@ -341,7 +341,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         deleteChilds(item);
         deleteDetails(item);
         preDeleteItem(item);
-        numeratorService.doRollBackRegistred(item, getItemFacade().getFRM_NAME());
+        numeratorService.doRollBackRegistred(item);
         getItemFacade().remove(item);
     }
 

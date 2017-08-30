@@ -27,10 +27,7 @@ public final class SysParams {
     
     public static final String OS_UNIX = "UNIX";
     public static final String OS_WIN = "WIN";
-    
-    public static final Integer ADMIN_USER_ID = 0;
-    public static final Integer ADMIN_GROP_ID = 2;
-    
+        
     public static final int DEFAULT_DOC_TYPE_ID = 1;
     
     public static final int MODE_UNLOCK_CREATE_VERSION = 0;

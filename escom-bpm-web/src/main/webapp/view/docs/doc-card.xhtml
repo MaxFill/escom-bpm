@@ -139,16 +139,14 @@
                                          value="#{_item.regNumber}"/>
 
                             <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                             disabled="#{_bean.isReadOnly() 
-                                                         or _item.docType.numerator.typeCode eq 'type.manual'
-                                                         or _item.number != null}"
+                                             disabled="#{_bean.isReadOnly() or !_bean.canRegistred}"
                                              action="#{_bean.onGenerateRegNumber(_item)}"
                                              update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
                             <p:commandButton id="clearNumberBtn"
                                              icon="ui-icon-close" title="#{bundle.UnRegistred}"
                                              update="docTypePanel datePanel сompanyPanel regNumberPanel"
                                              actionListener="#{_bean.onClearRegNumber()}"
-                                             disabled="#{_bean.isReadOnly() or _item.regNumber == null or _item.regNumber.isEmpty()}"/>
+                                             disabled="#{_bean.isReadOnly() or _bean.canRegistred}"/>
                         </h:panelGroup>
                     </h:panelGrid>
 

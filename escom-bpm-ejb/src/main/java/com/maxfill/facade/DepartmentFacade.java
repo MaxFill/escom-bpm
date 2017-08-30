@@ -130,4 +130,16 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
+    
+    /* Возвращает компанию, в которой находится подразделение */
+    public Company findCompany(Department item){        
+        Company company = null;
+        if (item.getParent() != null){
+            company = findCompany(item.getParent());
+        }
+        if (company == null){
+            company = item.getOwner();
+        }    
+        return company;
+    }
 }

@@ -108,10 +108,12 @@
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="user-explorer"/>
-                            <p:commandLink value="#{bundle.Numerators}" title="#{bundle.NumeratorsPatterns}"
+                            <p:commandLink value="#{bundle.Numerators}" 
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="numPatternsExpl"/>
+                            <p:commandLink value="#{bundle.CountersNumbers}" 
+                                           actionListener="#{sessionBean.openContersExpl()}"/>
                             <p:commandLink value="#{bundle.Statuses}"
                                            onstart="return isClose = 1;"
                                            ajax="false"

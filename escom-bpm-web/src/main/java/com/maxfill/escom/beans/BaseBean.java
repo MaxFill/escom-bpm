@@ -11,7 +11,7 @@ import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.metadates.Metadates;
-import com.maxfill.services.numerator.NumeratorService;
+import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.services.print.PrintService;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;

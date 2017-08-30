@@ -12,6 +12,7 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.beans.users.settings.Theme;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
@@ -294,7 +295,7 @@ public class SessionBean implements Serializable{
     
     /* Является ли текущий пользователь администратором  */
     public boolean isUserAdmin(){
-        if (SysParams.ADMIN_USER_ID.equals(currentUser.getId())){
+        if (DictRights.USER_ADMIN_ID.equals(currentUser.getId())){
             return true;
         }
         UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
@@ -432,8 +433,14 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
     }    
 
+    /* Открытие окна списка сообщений пользователя */
     public void openUserMessagesForm(){        
         openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, new HashMap<>());
+    }
+    
+    /* Открытие окна счётчиков нумераторов */
+    public void openContersExpl(){        
+        openDialogFrm(DictDlgFrmName.FRM_COUNTERS, new HashMap<>());
     }
     
     /* Переход на начальную страницу программы */

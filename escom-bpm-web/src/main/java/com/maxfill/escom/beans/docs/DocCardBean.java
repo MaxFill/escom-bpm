@@ -18,7 +18,7 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocStatusFacade;
 import com.maxfill.model.companies.Company;
-import com.maxfill.services.numerator.DocNumerator;
+import com.maxfill.services.numerators.doc.DocNumeratorService;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -55,7 +56,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private DocBean docsBean;
             
     @EJB
-    private DocNumerator docNumeratorService;
+    private DocNumeratorService docNumeratorService;
     @EJB
     private DocFacade itemFacade;
     @EJB
@@ -193,7 +194,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (doc.getDocType() != null){
             NumeratorPattern numerator = doc.getDocType().getNumerator();
             if (numerator != null && DictNumerator.TYPE_AUTO.equals(numerator.getTypeCode())){
-                docNumeratorService.doRollBackRegistred(doc, "");
+                docNumeratorService.doRollBackRegistred(doc);
             }
         }
         doc.setRegNumber(null);
@@ -203,8 +204,13 @@ public class DocCardBean extends BaseCardBean<Doc>{
 
     /* Формирование регистрационного номера документа. Вызов с экранной формы */
     public void onGenerateRegNumber(Doc doc){
-        docNumeratorService.doRegistDoc(doc);
-        onItemChange();
+        Set<String> errors = new HashSet<>();
+        docNumeratorService.registratedDoc(doc, errors);
+        if (errors.isEmpty()){
+            onItemChange();
+        } else {
+            EscomBeanUtils.showErrorsMsg(errors);
+        }    
     }       
     
     /* Подготовка к отправке текущего документа на e-mail  */
@@ -434,6 +440,14 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void onUpdateLinkedDocs(){
         List<Doc> linkedDocs = getItemFacade().findLinkedDocs(getEditedItem());
         getEditedItem().setDocsLinks(linkedDocs);
+    }
+    
+    /* ПРИЗНАКИ */
+    
+    /* Определяет доступность кнопки регистрации документа */
+    public boolean isCanRegistred(){
+       Doc doc = getEditedItem();
+       return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }
     
     /* GETS & SETS */

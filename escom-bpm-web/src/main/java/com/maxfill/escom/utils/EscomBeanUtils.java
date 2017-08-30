@@ -240,7 +240,7 @@ public final class EscomBeanUtils {
     }
     
     public static void showErrorsMsg(Set<String> errors) {
-        errors.stream().limit(10).forEach((String error) -> ErrorMsgAdd("Error", "", error));
+        errors.stream().limit(10).forEach((String error) -> ErrorMsgAdd("Error", error, ""));
     }
 
     public static void SuccesMsgAdd(String key1, String key2) {

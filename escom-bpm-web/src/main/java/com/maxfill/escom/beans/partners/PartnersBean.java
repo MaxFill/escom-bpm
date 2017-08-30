@@ -37,7 +37,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     private PartnersFacade itemsFacade;    
     @EJB 
     private DocFacade docFacade;     
-
+    
     @Override
     public SearcheModel initSearcheModel() {
         return new PartnersSearche();
@@ -56,11 +56,10 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     /* Установка специфичных атрибутов контрагента при его создании */
     @Override
     public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
-        String counterName = getItemFacade().getFRM_NAME();
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(item, counterName, numeratorPattern, null, new Date());
+        String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, new Date());
         item.setCode(number);
-    }  
+    }
     
     /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
     @Override

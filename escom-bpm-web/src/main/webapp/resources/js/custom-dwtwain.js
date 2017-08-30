@@ -66,7 +66,7 @@ var console = window['console']?window['console']:{'log':function(){}};
                                     } else { 
                                             PrimeFaces.widgets.saveBtnWidget.enable();
                                     }
-				}                                
+				}
 			},
 			getProductKey: function () {
                                 console.log('Получение ключа продукта');

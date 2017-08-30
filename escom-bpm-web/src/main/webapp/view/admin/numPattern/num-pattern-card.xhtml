@@ -13,14 +13,14 @@
                          columnClasses="ui-grid-col-12 col-padding" >                
 
                 <p:outputLabel value="#{bundle.NamePattern}" />
-                <p:inputText id="name" value="#{_bean.editedItem.name}" 
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
                              disabled="#{!_bean.isHaveRightEdit()}"
                              styleClass="ui-grid-col-12"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:watermark for="name" value="#{bundle.InputNameNumerator}" />             
+                <p:watermark for="nameItem" value="#{bundle.InputNameNumerator}" />             
 
                 <p:outputLabel value="#{bundle.PatternAutoGenerate}"/>
                 <p:inputText id="patternAuto" value="#{_bean.editedItem.pattern}"

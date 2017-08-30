@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
+import com.maxfill.services.numerators.department.DepartmentNumeratorImpl;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
@@ -47,6 +48,8 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private DepartmentFacade itemFacade;
     @EJB
     private StaffFacade staffFacade;
+    @EJB
+    private DepartmentNumeratorImpl departmentNumeratorService;
     
     @Override
     public Rights getRightItem(BaseDict item) {
@@ -132,27 +135,15 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }
     
     /* Формирование кода подразделения  */
-    public void makeCode(Department department){
-        Company company = findCompany(department);
-        String counterName = getItemFacade().getFRM_NAME();
+    public void makeCode(Department department){        
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(department, counterName, numeratorPattern, null, new Date());
+        String number = departmentNumeratorService.doRegistrNumber(department, numeratorPattern, null, new Date());
+        Company company = getItemFacade().findCompany(department);
         StringBuilder sb = new StringBuilder();
         sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
         department.setCode(sb.toString());
     } 
     
-    /* Возвращает компанию, в которой находится подразделение */
-    public Company findCompany(Department item){        
-        Company company = null;
-        if (item.getParent() != null){
-            company = findCompany(item.getParent());
-        }
-        if (company == null){
-            company = item.getOwner();
-        }    
-        return company;
-    }
     
     /* Формирование контента подразделения  */     
     @Override

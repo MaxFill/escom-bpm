@@ -37,7 +37,7 @@ function DCP_DWT_onclickInstallButton(el)
 function _show_install_dialog(ProductName, objInstallerUrl, bHTML5, iPlatform, bIE, bSafari, bSSL, strIEVersion){
 	
 	var _height = 220, ObjString = [
-			'<div class="dwt-box-title">',
+			'<div class="dynamsoft-dwt-box-title">',
 			ProductName,
 			' is not installed</div>'];
 	
@@ -55,7 +55,7 @@ function _show_install_dialog(ProductName, objInstallerUrl, bHTML5, iPlatform, b
 	ObjString.push('<div style="margin:0 20px 20px 20px;text-align:center">');
 	ObjString.push('<a id="dwt-btn-install" target="_blank" href="');
 	ObjString.push(objInstallerUrl['default']);
-	ObjString.push('" onclick="DCP_DWT_onclickInstallButton(this)"><div class="dwt-button"></div></a>');
+	ObjString.push('" onclick="DCP_DWT_onclickInstallButton(this)"><div class="dynamsoft-dwt-button"></div></a>');
 	ObjString.push('<i>* Please manually install it</i></div>');
 
 	if(bHTML5){
@@ -78,14 +78,14 @@ function _show_install_dialog(ProductName, objInstallerUrl, bHTML5, iPlatform, b
 			} else {
 			    ObjString.push('<div>');
 			    ObjString.push('If you still see the dialog after the installation,<br />');
-			    ObjString.push('please check <a href="http://developer.dynamsoft.com/why-am-i-prompted-to-install-the-dynamsoft-service">this article</a> for troubleshooting.');
+			    ObjString.push('please check <a href="http://developer.dynamsoft.com/why-am-i-prompted-to-install-the-dynamsoft-service" target="_blank">this article</a> for troubleshooting.');
 			    ObjString.push('</div>');
 			}
 			
 			if (iPlatform == EnumDWT_PlatformType.enumLinux 
 				|| navigator.userAgent.toLowerCase().indexOf("firefox") > -1) 
 			{
-			    ObjString.push('<div class="dwt-red" style="padding-top: 10px;">After installation, please RESTART your browser.</div>');
+			    ObjString.push('<div class="dynamsoft-dwt-red" style="padding-top: 10px;">After installation, please RESTART your browser.</div>');
             } 
             else
 			{
@@ -102,7 +102,7 @@ function _show_install_dialog(ProductName, objInstallerUrl, bHTML5, iPlatform, b
 			ObjString.push('</div>');
 			_height = 260;
 		} else {
-			ObjString.push('<p class="dwt-red" style="padding-top: 10px;">After installation, please REFRESH your browser.</p>');
+			ObjString.push('<p class="dynamsoft-dwt-red" style="padding-top: 10px;">After installation, please REFRESH your browser.</p>');
 		}
 	}
 	
@@ -111,20 +111,20 @@ function _show_install_dialog(ProductName, objInstallerUrl, bHTML5, iPlatform, b
 
 function OnWebTwainOldPluginNotAllowedCallback(ProductName) {
     var ObjString = [
-		'<div class="dwt-box-title">',
+		'<div class="dynamsoft-dwt-box-title">',
 		ProductName,
 		' plugin is not allowed to run on this site.</div>',
 		'<ul>',
 		'<li>Please click "<b>Always run on this site</b>" for the prompt "',
 		ProductName,
-		' Plugin needs your permission to run", then <a href="javascript:void(0);" style="color:blue" class="ClosetblCanNotScan">close</a> this dialog OR refresh/restart the browser and try again.</li>',
+		' Plugin needs your permission to run", then <a href="javascript:void(0);" style="color:blue" class="dynamsoft-ClosetblCanNotScan">close</a> this dialog OR refresh/restart the browser and try again.</li>',
 		'</ul>'];
 
 	Dynamsoft.WebTwainEnv.ShowDialog(392, 227, ObjString.join(''));
 }
 
 function OnWebTwainNeedUpgradeCallback(ProductName, objInstallerUrl, bHTML5, iPlatform, bIE, bSafari, bSSL, strIEVersion, bForceUpgrade){
-	var ObjString = ['<div class="dwt-box-title"></div>',
+	var ObjString = ['<div class="dynamsoft-dwt-box-title"></div>',
 		'<div style="font-size: 15px;">',
 		'This page is using a newer version of Dynamic Web TWAIN than your local copy. Please download and upgrade now.',
 		'</div>'], _height = 220;
@@ -142,23 +142,23 @@ function OnWebTwainNeedUpgradeCallback(ProductName, objInstallerUrl, bHTML5, iPl
 		
 	ObjString.push('<a id="dwt-btn-install" target="_blank" href="');
 	ObjString.push(objInstallerUrl['default']);
-	ObjString.push('" onclick="DCP_DWT_onclickInstallButton(this)"><div class="dwt-button"></div></a>');
+	ObjString.push('" onclick="DCP_DWT_onclickInstallButton(this)"><div class="dynamsoft-dwt-button"></div></a>');
 	ObjString.push('<div style="text-align:center"><i>* Please manually install it</i></div>');
 	ObjString.push('<p></p>');
 	
 	if(bHTML5){
-		ObjString.push('<div class="dwt-red">Please REFRESH your browser after the upgrade.</div>');	
+		ObjString.push('<div class="dynamsoft-dwt-red">Please REFRESH your browser after the upgrade.</div>');	
 	} else {
 		
 		if(bIE){
 			_height = 240;
-			ObjString.push('<div class="dwt-red">');
+			ObjString.push('<div class="dynamsoft-dwt-red">');
 			ObjString.push('Please EXIT Internet Explorer before you install the new version.');
 			ObjString.push('</div>');
 		}
 		else
 		{
-		    ObjString.push('<div class="dwt-red">Please RESTART your browser after the upgrade.</div>');	
+		    ObjString.push('<div class="dynamsoft-dwt-red">Please RESTART your browser after the upgrade.</div>');	
 		}
 	}
 
@@ -176,7 +176,7 @@ function OnWebTwainPostExecuteCallback(){
 function OnRemoteWebTwainNotFoundCallback(ProductName, ip, port, bSSL)
 {
 	var ObjString = [
-		'<div class="dwt-box-title">',
+		'<div class="dynamsoft-dwt-box-title">',
 		ProductName,
 		'</div>',
 		'<div style="margin-top:10px">',
@@ -190,7 +190,7 @@ function OnRemoteWebTwainNotFoundCallback(ProductName, ip, port, bSSL)
 function OnRemoteWebTwainNeedUpgradeCallback(ProductName, ip, port, bSSL)
 {
 	var ObjString = [
-		'<div class="dwt-box-title">',
+		'<div class="dynamsoft-dwt-box-title">',
 		ProductName,
 		'</div>',
 		'<div style="margin-top:10px">',
@@ -210,7 +210,7 @@ function OnWebTWAINDllDownloadFailure(ProductName, errorCode, errorString)
 	if(errorCode == EnumDWT_Error.ModuleNotExists)
 	{
 		var ObjString = [
-			'<div class="dwt-box-title">',
+			'<div class="dynamsoft-dwt-box-title">',
 			ProductName,
 			'</div>',
 			'<div style="margin-top:10px">',

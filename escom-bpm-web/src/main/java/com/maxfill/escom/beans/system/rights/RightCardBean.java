@@ -73,7 +73,7 @@ public class RightCardBean extends BaseDialogBean{
                 case DictEditMode.INSERT_MODE:{
                     Integer stateId = Integer.valueOf(params.get("stateId"));
                     State state = (State) stateFacade.find(stateId);
-                    selRight = new Right(0, 0, null, "<Не указано!>", state);
+                    selRight = new Right(DictRights.TYPE_GROUP, null, null, "<Не указано!>", state);
                     break;
                 }
                 case DictEditMode.EDIT_MODE:{
@@ -93,11 +93,15 @@ public class RightCardBean extends BaseDialogBean{
                 case DictRights.TYPE_GROUP: {  
                     selUser = null;
                     selUsRole = null;
-                    selUsGroup = userGroupBean.findItem(selRight.getObjId());
+                    if (selRight.getObjId() != null){
+                        selUsGroup = userGroupBean.findItem(selRight.getObjId());
+                    }
                     break;
                 }
                 case DictRights.TYPE_USER: {
-                    selUser = userBean.findItem(selRight.getObjId());
+                    if (selRight.getObjId() != null){
+                        selUser = userBean.findItem(selRight.getObjId());
+                    }    
                     selUsGroup = null;
                     selUsRole = null;
                     break;
@@ -105,7 +109,9 @@ public class RightCardBean extends BaseDialogBean{
                 case DictRights.TYPE_ROLE: {
                     selUser = null;
                     selUsGroup = null;
-                    selUsRole = userGroupBean.findItem(selRight.getObjId());
+                    if (selRight.getObjId() != null){
+                        selUsRole = userGroupBean.findItem(selRight.getObjId());
+                    }    
                     break;
                 }
             }

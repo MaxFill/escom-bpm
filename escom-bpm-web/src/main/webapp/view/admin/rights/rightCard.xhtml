@@ -126,6 +126,7 @@
                                              requiredMessage="#{bundle.Field} [#{bundle.ForRole}] #{bundle.MustBeFilled}"
                                              disabled="#{rightCardBean.selRight.objType != 2}" >
                                 <f:selectItems value="#{rightCardBean.roles}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
+                                <f:selectItem itemValue="#{rightCardBean.selUsRole}" itemLabel="#{rightCardBean.selUsRole.name}" />
                                 <p:ajax event="change" update="#{_frm}:lbRightName" oncomplete="itemChange = 1;"/>
                             </p:selectOneMenu>
                         </p:panelGrid>

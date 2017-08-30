@@ -31,7 +31,6 @@ public class Right implements Serializable{
       
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "Id")
     @XmlElement(name = "Id")
@@ -41,43 +40,43 @@ public class Right implements Serializable{
     @NotNull
     @Column(name = "IsRead")
     @XmlElement(name = "Read")
-    private boolean read;
+    private boolean read = true;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsUpdate")
     @XmlElement(name = "Update")
-    private boolean update ;
+    private boolean update = true;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsCreate")
     @XmlElement(name = "Create")
-    private boolean create;
+    private boolean create = true;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsDelete")
     @XmlElement(name = "Delete")
-    private boolean delete;
+    private boolean delete = true;
         
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsExecute")
     @XmlElement(name = "Execute")
-    private boolean execute;
+    private boolean execute = true;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsChangeRight")
     @XmlElement(name = "ChangeRight")
-    private boolean changeRight;
+    private boolean changeRight = true;
     
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsAddChild")
     @XmlElement(name = "IsAddChild")
-    private boolean addChild = false;
+    private boolean addChild = true;
         
     @Basic(optional = false)
     @NotNull

@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.rights.Right;
@@ -41,10 +40,10 @@ public class RightsBean implements Serializable{
             if (rg.getObjId() == 0 && rg.getObjType() == DictRights.TYPE_GROUP){
                accessorName = EscomBeanUtils.getBandleLabel("All"); 
             } else
-                if (SysParams.ADMIN_GROP_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_GROUP)){
+                if (DictRights.GROUP_ADMIN_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_GROUP)){
                   accessorName = EscomBeanUtils.getBandleLabel("Administrators"); 
                 } else
-                    if (SysParams.ADMIN_USER_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_USER)){
+                    if (DictRights.USER_ADMIN_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_USER)){
                         accessorName = EscomBeanUtils.getBandleLabel("Administrator"); 
                       } else{ //тогда ищем названия в базе
                             accessorName = getAccessName(rg);

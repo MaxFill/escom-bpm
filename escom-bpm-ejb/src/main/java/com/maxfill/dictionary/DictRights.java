@@ -27,4 +27,8 @@ public final class DictRights {
     
     public static final int ACTUALISE_IN_GROUP = 0;
     public static final int ACTUALISE_IN_CARD = 1;
+    
+    public static final Integer USER_ADMIN_ID = 0;
+    public static final Integer GROUP_ADMIN_ID = 2;
+    public static final Integer GROUP_ALL_USER_ID = 0;
 }

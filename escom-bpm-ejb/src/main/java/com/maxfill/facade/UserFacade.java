@@ -9,6 +9,7 @@ import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.users.UserStates;
 import com.maxfill.services.ldap.LdapUsers;
@@ -174,7 +175,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     } 
     
     public User getAdmin(){
-        return find(SysParams.ADMIN_USER_ID);
+        return find(DictRights.USER_ADMIN_ID);
     }
     
     /* Формирование значений для Фамилии Имени Отчества посредством разбивки строки на части  */

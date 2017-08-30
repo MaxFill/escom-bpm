@@ -1,7 +1,5 @@
-
 package com.maxfill.facade;
 
-import com.maxfill.facade.BaseFacade;
 import com.maxfill.model.numPuttern.counter.Counter;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -11,10 +9,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- * Генератор порядковых номеров для нумераторов
- * @author mfilatov
- */
 @Stateless
 public class CounterFacade extends BaseFacade<Counter> {
 
@@ -37,5 +31,23 @@ public class CounterFacade extends BaseFacade<Counter> {
         cq.select(c);
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
+    }
+    
+    @Override
+    public List<Counter> findAll() {
+        getEntityManager().getEntityManagerFactory().getCache().evict(Counter.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Counter> cq = builder.createQuery(Counter.class);
+        Root<Counter> c = cq.from(Counter.class);        
+        Predicate crit1 = builder.isNotNull(c.get("docType"));
+        cq.select(c).where(builder.and(crit1));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList(); 
+    }
+    
+    @Override
+    public void remove(Counter entity){
+        entity = getEntityManager().getReference(entity.getClass(), entity.getId());
+        getEntityManager().remove(entity);
     }
 }

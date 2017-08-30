@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.states.State;

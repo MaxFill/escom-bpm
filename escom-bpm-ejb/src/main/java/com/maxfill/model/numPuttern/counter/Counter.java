@@ -1,5 +1,7 @@
 package com.maxfill.model.numPuttern.counter;
 
+import com.maxfill.model.companies.Company;
+import com.maxfill.model.docs.docsTypes.DocType;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -7,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
@@ -41,10 +45,44 @@ public class Counter implements Serializable {
     @NotNull
     @Column(name = "Number")
     private int number;                   
-        
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "Year")
+    private int year; 
+    
+    @JoinColumn(name = "Company", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Company company;
+    
+    @JoinColumn(name = "DocType", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private DocType docType;    
+    
     public Counter() {
     }
 
+    public int getYear() {
+        return year;
+    }
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public DocType getDocType() {
+        return docType;
+    }
+    public void setDocType(DocType docType) {
+        this.docType = docType;
+    }
+    
     public Counter(Integer id) {
         this.id = id;
     }

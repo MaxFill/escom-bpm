@@ -18,29 +18,7 @@
 
     <ui:param name="_frm" value="msgForm" />    
         
-    <ui:define name="body">
-        <script type="text/javascript">
-            var isClose = 0;            
-            
-            window.onbeforeunload = function (evt) {
-
-                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
-                if (typeof evt == "undefined") {
-                    evt = window.event;
-                }
-
-                if (isClose == 0) {
-                    if (evt) {
-                        evt.returnValue = message;
-
-                    }
-                    ;
-                    return message;
-                }
-            };
-
-        </script>
-        
+    <ui:define name="body">      
         <pe:layout fullPage="true" options="#{userMsgBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{userMsgBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">

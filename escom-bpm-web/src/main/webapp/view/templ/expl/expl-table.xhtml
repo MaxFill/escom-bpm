@@ -27,7 +27,7 @@
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
 
         <p:column width="16" sortBy="#{item.state.currentState.name}">
-            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
+            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
         
         <p:column width="16" sortBy="#{item.iconName}" id="colIcon">

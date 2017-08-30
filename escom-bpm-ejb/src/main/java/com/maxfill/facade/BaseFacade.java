@@ -19,8 +19,8 @@ public abstract class BaseFacade<T> {
     private EntityManager entityManager;
     
     /*
-    @Resource (lookup = "java:jboss/ee/concurrency/executor/default")
-    private ManagedExecutorService executorService;
+     @Resource (lookup = "java:jboss/ee/concurrency/executor/default")
+     private ManagedExecutorService executorService;
     */    
         
     public BaseFacade(Class<T> entityClass) {
