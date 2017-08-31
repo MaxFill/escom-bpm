@@ -8,6 +8,7 @@ import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.SysParams;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -94,10 +95,24 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private PartnerStates state;
-        
+    
+    @Transient
+    @XmlTransient
+    private Integer tempId;
+    
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
+    
     public Partner() {
+        tempId = COUNT.incrementAndGet();
     }
-
+    
+    public Integer getTempId() {
+        return tempId;
+    }
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
+    }
+    
     @Override
     public PartnerStates getState() {
         return state;

@@ -225,6 +225,11 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public BaseExplBean getOwnerBean() {
         return ownerBean;
     }
+    
+    @Override
+    public BaseExplBean getGroupBean() {
+        return ownerBean;
+    }
 
     @Override
     public BaseExplBean getDetailBean() {

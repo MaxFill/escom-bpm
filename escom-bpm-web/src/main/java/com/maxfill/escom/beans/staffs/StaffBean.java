@@ -85,6 +85,11 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
     
     @Override
+    public BaseExplBean getGroupBean() {
+        return ownerBean;
+    }
+    
+    @Override
     public StaffFacade getItemFacade() {
         return itemsFacade;
     }
@@ -192,7 +197,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     public SearcheModel initSearcheModel() {
         return new StaffsSearche();
     }
-
     
     /* GETS & SETS */
     

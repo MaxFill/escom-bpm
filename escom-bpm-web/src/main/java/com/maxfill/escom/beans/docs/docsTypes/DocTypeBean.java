@@ -126,6 +126,11 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     public BaseExplBean getOwnerBean() {
         return ownerBean;
     }
+
+    @Override
+    public BaseExplBean getGroupBean() {
+        return ownerBean;
+    }
     
     @FacesConverter("docsTypesConvertor")
     public static class docsTypesConvertor implements Converter {

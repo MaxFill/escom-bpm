@@ -17,7 +17,6 @@
                              maxlength="50"
                              requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
                              onchange="return itemChange = 1;"/>
-                <p:message for="code"/>
                     
                 <p:outputLabel value="#{bundle.Name}" />
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
@@ -28,7 +27,6 @@
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
-                <p:message for="name"/>
             </p:panelGrid>
         </p:tab> 
         

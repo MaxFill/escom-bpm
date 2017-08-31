@@ -222,10 +222,10 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return null;
     }           
     
-    /* Обработка перед добавлением объекта в группу  */
-    public boolean prepareAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
+    /* Проверка прав перед добавлением объекта в группу  */
+    public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getOwnerBean().actualizeRightItem(dropItem);
-        if (!isHaveRightEdit(dropItem)) {
+        if (!isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
             errors.add(error);
             return false;

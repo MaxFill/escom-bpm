@@ -4,6 +4,7 @@ import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.users.groups.UserGroups;
@@ -21,6 +22,7 @@ import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.*;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /* Сервисный бин "Пользователи" */
 @Named
@@ -28,6 +30,9 @@ import javax.enterprise.context.SessionScoped;
 public class UserBean extends BaseExplBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = -523024840800823503L;    
 
+    @Inject
+    private UserGroupsBean groupsBean;
+    
     @EJB 
     private StaffFacade staffFacade;        
     
@@ -41,7 +46,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     protected void detectParentOwner(User user, BaseDict owner){
         user.setOwner(null);
         user.setParent(null);
-        if (owner == null || owner.getId().equals(0)) return;
+        if (owner == null) return;
         if (!user.getUsersGroupsList().contains((UserGroups)owner)){
             user.getUsersGroupsList().add((UserGroups)owner);            
         } 
@@ -57,11 +62,13 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     
     /* при перемещении пользователя drag&drop */
     @Override
-    public boolean addItemToGroup(User user, BaseDict group){
-        if (group == null || group.getId().equals(0)) return false;
+    public boolean addItemToGroup(User user, BaseDict targetGroup){
+        if (user == null || targetGroup == null) return false;
         
-        if (!user.getUsersGroupsList().contains((UserGroups)group)){
-            user.getUsersGroupsList().add((UserGroups)group);
+        UserGroups group = (UserGroups)targetGroup;
+        if (!user.getUsersGroupsList().contains((UserGroups)targetGroup)){
+            user.getUsersGroupsList().add((UserGroups)targetGroup);
+            group.getUsersList().add(user);
             getItemFacade().edit(user);
         }
         return true;
@@ -139,6 +146,11 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     @Override
     public BaseExplBean getOwnerBean() {
         return null;
+    }
+    
+    @Override
+    public BaseExplBean getGroupBean() {
+        return groupsBean;
     }
     
     @FacesConverter("usersConvertor")

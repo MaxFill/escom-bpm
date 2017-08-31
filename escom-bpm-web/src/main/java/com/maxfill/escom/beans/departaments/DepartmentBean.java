@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.departaments;
 
-import com.maxfill.services.numerators.department.DepartmentNumeratorImpl;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
@@ -15,6 +14,7 @@ import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -49,7 +49,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @EJB
     private StaffFacade staffFacade;
     @EJB
-    private DepartmentNumeratorImpl departmentNumeratorService;
+    private DepartmentNumeratorService departmentNumeratorService;
     
     @Override
     public Rights getRightItem(BaseDict item) {

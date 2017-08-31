@@ -73,9 +73,11 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
         tempId = COUNT.incrementAndGet();
     }
 
+    @Override
     public List<PartnerGroups> getChildItems() {
         return childItems;
     }
+    @Override
     public void setChildItems(List<PartnerGroups> childItems) {
         this.childItems = childItems;
     }

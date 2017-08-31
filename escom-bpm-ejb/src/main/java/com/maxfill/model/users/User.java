@@ -6,6 +6,7 @@ import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.users.groups.UserGroups;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -112,6 +113,16 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @Transient
     private String pwl; 
     
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
+    
+    @Transient
+    @XmlTransient
+    private Integer tempId;
+
+    public User() {
+        tempId = COUNT.incrementAndGet();
+    }
+        
     @Override
     public UserStates getState() {
         return state;
@@ -139,7 +150,14 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         
         return String.format("%s %s.%s.", f,s,l); 
     }
-
+        
+    public Integer getTempId() {
+        return tempId;
+    }
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
+    }
+    
     @Override
     public List<UserLog> getItemLogs() {
         return itemLogs;

@@ -994,6 +994,7 @@ public class ExplorerBean implements Serializable {
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
                 .forEach(item -> addNewItemInTree(item, treeSelectedNode));
             reloadDetailsItems();
+            EscomBeanUtils.SuccesMsgAdd("Successfully", "PasteCopiedObjectDone");
         }
     }
 
@@ -1004,12 +1005,15 @@ public class ExplorerBean implements Serializable {
         if (treeSelectedNode != null){
             parent = (BaseDict)treeSelectedNode.getData();
         }
-        pasteItem(parent, errors);
+        List<BaseDict> rezults = pasteItem(parent, errors);
         if (!errors.isEmpty()){            
             EscomBeanUtils.showErrorsMsg(errors);
             return;
         }
-        reloadDetailsItems();
+        if (!rezults.isEmpty()){
+            EscomBeanUtils.SuccesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            reloadDetailsItems();
+        }
     }
     
     /* ВСТАВКА: обработка списка объектов для их вставки. Parent в данном контексте обозначает, куда(во что) помещается объект.
@@ -1293,9 +1297,9 @@ public class ExplorerBean implements Serializable {
                 checkedItems =
                     dragItems.stream().filter(dragItem -> 
                         // если тянем datailItem и бросаем в treeItem
-                        (isItemDetailType(dragItem) && isItemTreeType(dropItem) && tableBean.prepareAddItemToGroup(dropItem, dragItem, errors))
+                        (isItemDetailType(dragItem) && isItemTreeType(dropItem) && tableBean.checkRightBeforeAddItemToGroup(dropItem, dragItem, errors))
                         || // если тянем datailItem и бросаем в treeItem
-                        (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.prepareAddItemToGroup(dropItem, dragItem, errors))                  
+                        (isItemDetailType(dragItem) && isItemRootType(dropItem) && tableBean.checkRightBeforeAddItemToGroup(dropItem, dragItem, errors))                  
                     ).collect(Collectors.toList()); 
                 if (errors.isEmpty() && !checkedItems.isEmpty()){
                     onShowMovedDlg("AddTblDlg");

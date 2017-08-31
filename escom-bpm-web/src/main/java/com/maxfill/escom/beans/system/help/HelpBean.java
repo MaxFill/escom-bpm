@@ -1,11 +1,9 @@
 package com.maxfill.escom.beans.system.help;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseDialogBean;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Locale;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -28,8 +26,8 @@ public class HelpBean extends BaseDialogBean{
         String separator = File.separator;
         StringBuilder sb = new StringBuilder(conf.getServerPath());
         sb.append("standalone")
-                .append(separator)
-                .append("configuration")
+                .append(separator)                
+                .append("help")
                 .append(separator)
                 .append(HELP_FILE);
         try {

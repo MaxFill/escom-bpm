@@ -5,6 +5,7 @@ import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
+import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 /* Сервисный бин "Контрагенты" */
@@ -33,6 +35,9 @@ import org.apache.commons.lang3.StringUtils;
 public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     private static final long serialVersionUID = -6099934518557372507L;
     
+    @Inject
+    private PartnersGroupsBean groupsBean;
+            
     @EJB 
     private PartnersFacade itemsFacade;    
     @EJB 
@@ -83,13 +88,13 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     
     @Override
     public boolean addItemToGroup(Partner partner, BaseDict targetGroup){
-        if (partner == null || targetGroup == null || targetGroup.getId().equals(0)) return false;
+        if (partner == null || targetGroup == null) return false;
         
         PartnerGroups group = (PartnerGroups)targetGroup;
         if (!partner.getPartnersGroupsList().contains(group)){
-            partner.getPartnersGroupsList().add(group);
-            getItemFacade().edit(partner);            
+            partner.getPartnersGroupsList().add(group);          
             group.getPartnersList().add(partner);
+            getItemFacade().edit(partner);  
             return true;
         }
         return false;
@@ -99,7 +104,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     protected void detectParentOwner(Partner partner, BaseDict owner){
         partner.setOwner(null);
         partner.setParent(null);
-        if (owner == null || owner.getId().equals(0)) return;
+        if (owner == null) return;
         if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
             partner.getPartnersGroupsList().add((PartnerGroups)owner);            
         } 
@@ -148,6 +153,11 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     @Override
     public BaseExplBean getOwnerBean() {
         return null;
+    }
+    
+    @Override
+    public BaseExplBean getGroupBean() {
+        return groupsBean;
     }
     
     public String getTitleName(Partner partner){
