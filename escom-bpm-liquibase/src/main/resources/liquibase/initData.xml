@@ -5,7 +5,11 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
-    <changeSet id="init_data" author="filatov" context="initdata" runOnChange="true">          
+    <changeSet id="init_data" author="filatov" context="initdata" runOnChange="true"> 
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">select count(*) from states</sqlCheck>
+        </preConditions>
+                 
         <!-- Состояния объектов -->
         <sql>
             INSERT states (ID, Name, IsActual, Icon) VALUES (5, N'Draft',   1, N'/resources/icon/doc_draft20.png');

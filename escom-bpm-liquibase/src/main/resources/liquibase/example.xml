@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
-    <changeSet id="attache-lock-01072017" author="filatov" context="initdata" runOnChange="true">  
+    <changeSet id="attache-lock-01072017" author="filatov" context="updatedata" runOnChange="true">  
         <addColumn tableName="attaches">
             <column name="LockAuthor" type="INT" remarks="lock author">
                 <constraints nullable="true"/>
@@ -25,13 +25,13 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="attache-lock-01072017_add_index" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="attache-lock-01072017_add_index" author="filatov" context="updatedata" runOnChange="true">
         <createIndex tableName="attaches" indexName="FK_attaches_LockAuthor">
             <column name="LockAuthor" />
         </createIndex>
     </changeSet>
     
-     <changeSet id="user-change-04072017" author="filatov" context="initdata" runOnChange="true">  
+    <changeSet id="user-change-04072017" author="filatov" context="updatedata" runOnChange="true">  
         <addColumn tableName="users">
             <column name="DuplicateMessagesEmail" type="BOOLEAN" remarks="Duplicate messages e-mail">
                 <constraints nullable="true"/>
@@ -39,4 +39,13 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="user-change-04072017" author="filatov" context="updatedata" runOnChange="true">  
+        <addForeignKeyConstraint baseColumnNames="DocType"
+            baseTableName="numerator"
+            constraintName="FK_numerator_DocType"
+            referencedColumnNames="Id"
+            onUpdate="NO ACTION"
+            onDelete="NO ACTION"
+            referencedTableName="docstypes"/>
+    </changeSet>
 </databaseChangeLog> 
