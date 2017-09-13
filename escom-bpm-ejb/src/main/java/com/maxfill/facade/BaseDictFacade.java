@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -343,6 +344,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         getEntityManager().remove(entity);
     }
 
+    /* Поиск */
     public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
         CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);
@@ -366,7 +368,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
         
         for (Map.Entry<String, Object> param : paramIN.entrySet()) { 
-            Predicate predicate = root.get(param.getKey()).in((List<Integer>)param.getValue());
+            Predicate predicate = root.get(param.getKey()).in((Set<Integer>)param.getValue());
             criteries.add(predicate);
         }                
         

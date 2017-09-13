@@ -21,7 +21,8 @@
                       cancelLabel="#{bundle.Cancel}"
                       uploadLabel="#{bundle.SaveFiles}"
                       fileUploadListener="#{explorerBean.onUploadFile}" 
-                      oncomplete="document.getElementById('#{_frmExpl}:createItemBtn').click();">
+                      onstart="PF('statusDialog').show()"
+                      oncomplete="PF('statusDialog').hide(); document.getElementById('#{_frmExpl}:createItemBtn').click();">
         </p:fileUpload>
         <pe:tooltip for="file" value="#{bundle.DragAndDropFile}"/>
 

@@ -43,7 +43,8 @@
                 if (dateDocEndSearche){
                     PF('dateDocEndSearche').setDate();
                 }
-                PF('cbDateDoc').uncheck();    
+                PF('cbDateDoc').uncheck(); 
+                PF('cbFullSearche').uncheck();
                 PF('cbmDocType').show();            
                 PF('cbmDocType').uncheckAll();
                 PF('cbmDocType').hide();
@@ -103,10 +104,10 @@
                                      title="#{bundle.SearcheOnlyActualItemsComments}" 
                                      value="#{explorerBean.model.onlyActualItem}">
             </p:selectBooleanCheckbox> 
-
-            <p:outputLabel value="#{bundle.Name}"/>
+            
+            <p:outputLabel value="#{bundle.KeyWord}"/>
             <h:panelGroup styleClass="ui-grid-col-12">
-                <p:inputText id="nameSearche" widgetVar="nameSearche"
+                <p:inputText id="nameSearche" widgetVar="nameSearche" title="#{bundle.KeyWordSearche}"
                              value="#{explorerBean.model.nameSearche}"
                              styleClass="ui-grid-col-12"
                              onkeypress="keyPress();">

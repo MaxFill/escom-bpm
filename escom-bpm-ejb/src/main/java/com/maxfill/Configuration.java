@@ -1,12 +1,9 @@
 package com.maxfill;
 
 import com.maxfill.model.licence.Licence;
-import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.ItemUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -27,7 +24,7 @@ public class Configuration {
     
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
-    
+       
     private String serverOS;
     private Locale serverLocale;
     private String serverURL;
@@ -77,7 +74,7 @@ public class Configuration {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public Integer getMaxFileSize() {
         return maxFileSize;
     }    

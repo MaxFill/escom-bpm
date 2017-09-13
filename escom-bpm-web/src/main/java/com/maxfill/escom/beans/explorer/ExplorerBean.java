@@ -23,6 +23,7 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.metadates.Metadates;
+import com.maxfill.services.searche.SearcheService;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -84,7 +85,10 @@ public class ExplorerBean implements Serializable {
     
     @EJB
     private FiltersFacade filtersFacade;
-        
+    
+    @EJB
+    private SearcheService searcheService;
+    
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
     protected BaseExplBean tableBean;
@@ -1099,7 +1103,13 @@ public class ExplorerBean implements Serializable {
         } else {
             name = name + "%";
         }
-        if (StringUtils.isNotEmpty(name) && !SysParams.ALL.equals(name.trim())) {
+                
+        if (model.isFullTextSearche() && name.length() >= 3 && Objects.equals(tableBean.getItemClass().getSimpleName(), "Doc")){ //если поиск выполняется в документах
+            Set<Integer> docIds = searcheService.fullSearche(name);
+            if (!docIds.isEmpty()){
+                paramIN.put("id", docIds);
+            }
+        } else {
             paramLIKE.put("name", name);
         }
         

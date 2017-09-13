@@ -70,7 +70,7 @@ public class AttacheServiceImpl implements AttacheService{
                             try {
                                 Files.deleteIfExists(file);
                             } catch (IOException ex) {
-                                Logger.getLogger(AttacheServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                                LOGGER.log(Level.SEVERE, null, ex);
                             }
                     });
         } catch (IOException ex) {

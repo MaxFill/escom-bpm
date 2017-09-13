@@ -74,6 +74,9 @@ public class Attaches implements Serializable {
     @Column(name = "Guide")
     private String guid;
     
+    @Column(name = "Content")
+    private String content;
+    
     @JoinColumn(name = "Author", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private User author;  
@@ -127,7 +130,14 @@ public class Attaches implements Serializable {
         StringBuilder sb = new StringBuilder();
         return sb.append(getGuid()).append(".pdf").toString();
     }
-    
+
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+        
     public String getNamePDF(){
         return FilenameUtils.removeExtension(name)+".pdf";
     }

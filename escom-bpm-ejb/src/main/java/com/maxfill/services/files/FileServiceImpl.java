@@ -1,11 +1,14 @@
 package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
+import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,14 +21,17 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class FileServiceImpl implements FileService{
-    protected static final Logger LOG = Logger.getLogger(FileServiceImpl.class.getName());
+    protected static final Logger LOGGER = Logger.getLogger(FileServiceImpl.class.getName());
     
     @EJB    
     protected Configuration conf;
+    @EJB
+    private AttacheFacade attacheFacade;
     
     @Override
     @Asynchronous
@@ -46,7 +52,7 @@ public class FileServiceImpl implements FileService{
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
             Files.copy(sourcePathPDF, targetPathPDF, StandardCopyOption.REPLACE_EXISTING);
         } catch(IOException e){
-            LOG.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
     
@@ -70,26 +76,52 @@ public class FileServiceImpl implements FileService{
             if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
+            loadContentFromPDF(attache, basePath);
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
         }
     }
 
+    /* Загрузка в attache текстового контента из pdf */
+    @Asynchronous
+    private void loadContentFromPDF(Attaches attache, String basePath){        
+        String pdfFileName = FilenameUtils.removeExtension(basePath)+".pdf";
+        try {            
+            CommandLine commandLine = CommandLine.parse("pdftotxt.cmd");            
+            commandLine.addArgument(pdfFileName);
+            DefaultExecutor executor = new DefaultExecutor();
+            executor.setExitValue(0);
+            executor.execute(commandLine);    
+            String txtFileName = FilenameUtils.removeExtension(basePath)+".txt";
+            File txtFile = new File(txtFileName);
+            if (txtFile.exists()){
+                byte[] encoded = Files.readAllBytes(Paths.get(txtFileName));
+                Charset encoding = StandardCharsets.UTF_8;
+                String content = new String(encoded, encoding);
+                attache.setContent(content);
+                txtFile.delete();
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
     @Override
     @Asynchronous
     public void uploadScan(Attaches attache, byte[] data){
@@ -107,16 +139,16 @@ public class FileServiceImpl implements FileService{
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, null, e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException ex) {
-                    LOG.log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
-        }    
+        }
     }
     
     private void makeCopyToPDF(String file, String pdfConvertor) {       
@@ -131,7 +163,7 @@ public class FileServiceImpl implements FileService{
             executor.setExitValue(0);
             executor.execute(commandLine);
         } catch (IOException ex) {
-            Logger.getLogger(FileServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     

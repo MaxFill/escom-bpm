@@ -23,8 +23,10 @@ public class SearcheModel implements Serializable {
     private Date dateCreateStart;
     private Date dateCreateEnd;
     
-    private boolean dateCreateSearche = false;
-    private boolean dateChangeSearche = false;
+    private boolean dateCreateSearche;
+    private boolean dateChangeSearche;
+    
+    private boolean fullTextSearche = true;
     
     private Date dateChangeStart;
     private Date dateChangeEnd;
@@ -95,7 +97,14 @@ public class SearcheModel implements Serializable {
     
     /* Добавление в параметры поискового запроса специфичных полей и условий */
     protected void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){};
-    
+
+    public boolean isFullTextSearche() {
+        return fullTextSearche;
+    }
+    public void setFullTextSearche(boolean fullTextSearche) {
+        this.fullTextSearche = fullTextSearche;
+    }
+          
     public List<String> getAbcEnglSearche() {
         return abcEnglSearche;
     }

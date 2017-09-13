@@ -28,7 +28,12 @@
     <ui:param name="_updates" value="fileUploadFRM" />
     
     <!-- специфичные поля поиска -->
-    <ui:define name="searche"> 
+    <ui:define name="searche">         
+        <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche"
+                                 title="#{bundle.FullTextSearcheMode}"
+                                 value="#{explorerBean.model.fullTextSearche}">
+        </p:selectBooleanCheckbox>
+        
         <p:selectCheckboxMenu value="#{explorerBean.model.docTypes}" label="#{bundle.DocTypeSelector}"
                               widgetVar="cbmDocType"
                               converter="docsTypesConvertor"
