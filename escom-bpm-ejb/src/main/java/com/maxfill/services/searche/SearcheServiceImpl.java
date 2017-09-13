@@ -24,7 +24,7 @@ public class SearcheServiceImpl implements SearcheService {
     @SuppressWarnings("empty-statement")
     public Set<Integer> fullSearche(String keyword){
         Set<Integer> result = new HashSet<>();
-        keyword = keyword.replace("%", "");
+        keyword = keyword.replace("%", "*");
         Connection connection = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");

@@ -1106,9 +1106,10 @@ public class ExplorerBean implements Serializable {
                 
         if (model.isFullTextSearche() && name.length() >= 3 && Objects.equals(tableBean.getItemClass().getSimpleName(), "Doc")){ //если поиск выполняется в документах
             Set<Integer> docIds = searcheService.fullSearche(name);
-            if (!docIds.isEmpty()){
-                paramIN.put("id", docIds);
-            }
+            if (docIds.isEmpty()){
+              docIds.add(0);
+            } 
+            paramIN.put("id", docIds);
         } else {
             paramLIKE.put("name", name);
         }
