@@ -242,7 +242,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Attaches version =  null;
         Doc doc = getEditedItem();
   
-        for (Integer number = doc.getAttache().getNumber(); number >= 1; --number){
+        for (Integer number = doc.getMainAttache().getNumber(); number >= 1; --number){
             for(Attaches attache : doc.getAttachesList()){
                 if (Objects.equals(number, attache.getNumber())){
                     version = attache;
@@ -278,7 +278,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             Doc doc = getEditedItem();
             forDelAttaches.add(attache);
             doc.getAttachesList().remove(attache);
-            if (attache.equals(doc.getAttache())){
+            if (attache.equals(doc.getMainAttache())){
                 removeCurrentVersion();
             }
             onItemChange();

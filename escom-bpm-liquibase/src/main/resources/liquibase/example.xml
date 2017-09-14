@@ -5,6 +5,28 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
+     <changeSet id="attache-add-content" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="attaches" columnName="Content" />
+            </not>
+        </preConditions>
+        <addColumn tableName="attaches">
+            <column name="Content" type="varchar(255)" remarks="for full text searche">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+     </changeSet>
+
+    <changeSet id="attache-change-content-type" author="filatov" context="initdata" runOnChange="true">  
+        <preConditions onFail="MARK_RAN">
+            <dbms type="mysql" />
+        </preConditions>
+        <sql>
+            ALTER TABLE attaches CHANGE COLUMN `Content` `Content` LONGTEXT NULL DEFAULT NULL ;
+        </sql>
+    </changeSet>   
+    
     <changeSet id="attache-lock-01072017" author="filatov" context="updatedata" runOnChange="true">  
         <addColumn tableName="attaches">
             <column name="LockAuthor" type="INT" remarks="lock author">

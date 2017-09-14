@@ -99,7 +99,7 @@ public class MailMessageBean extends BaseDialogBean{
             
             switch(modeSentAttache){
                 case MODE_SEND_ATTACHE : {
-                    prepareAttaches(doc.getAttache());
+                    prepareAttaches(doc.getMainAttache());
                     break;
                 }
                 case MODE_SEND_LINK_PDF : {
@@ -111,7 +111,7 @@ public class MailMessageBean extends BaseDialogBean{
                     break;
                 }
                 case MODE_SEND_ATTACHE_PDF : {
-                    prepareAttachesAsPDF(doc.getAttache());
+                    prepareAttachesAsPDF(doc.getMainAttache());
                     break;
                 }
             }

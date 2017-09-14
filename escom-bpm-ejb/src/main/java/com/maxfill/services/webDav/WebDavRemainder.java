@@ -50,7 +50,7 @@ public class WebDavRemainder {
     private Configuration conf;
     @EJB
     private DocFacade docFacade;
-                
+            
     public void createTimer(Attaches attache, User editor, Date lockDate){
         Timer timer = startTimer(attache, lockDate); 
         attache.setLockAuthor(editor);

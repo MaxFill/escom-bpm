@@ -20,7 +20,7 @@
                         oncomplete="document.getElementById('#{_frm}:mainTabView:btnScan').click();"/>                             
             <p:separator/>
             <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.DownloadCurrentVersion}"
-                        disabled="#{_bean.editedItem.attache == null}" ajax="false"
+                        disabled="#{_bean.editedItem.mainAttache == null}" ajax="false"
                         action="#{_bean.downloadCurrentVersion()}"/>
             <p:separator rendered="#{_item.id != null}"/> 
             <p:menuitem icon="ui-icon-link" value="#{bundle.GetURLforView}" title="#{bundle.URLforViewDoc}"

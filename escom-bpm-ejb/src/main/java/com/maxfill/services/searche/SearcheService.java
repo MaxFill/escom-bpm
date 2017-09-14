@@ -5,6 +5,7 @@
  */
 package com.maxfill.services.searche;
 
+import com.maxfill.model.docs.Doc;
 import java.util.Set;
 
 /**
@@ -14,5 +15,7 @@ import java.util.Set;
 public interface SearcheService {
 
     Set<Integer> fullSearche(String keyword);
-    
+    public void deleteFullTextIndex(Doc doc);
+    public void addFullTextIndex(Doc doc);
+    public void updateFullTextIndex(Doc doc);
 }

@@ -1,14 +1,11 @@
 package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
-import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +18,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -30,8 +26,6 @@ public class FileServiceImpl implements FileService{
     
     @EJB    
     protected Configuration conf;
-    @EJB
-    private AttacheFacade attacheFacade;
     
     @Override
     @Asynchronous
@@ -76,7 +70,6 @@ public class FileServiceImpl implements FileService{
             if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
-            loadContentFromPDF(attache, basePath);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
         } finally {
@@ -95,32 +88,7 @@ public class FileServiceImpl implements FileService{
                 }
             }
         }
-    }
-
-    /* Загрузка в attache текстового контента из pdf */
-    @Asynchronous
-    private void loadContentFromPDF(Attaches attache, String basePath){        
-        String pdfFileName = FilenameUtils.removeExtension(basePath)+".pdf";
-        try {            
-            CommandLine commandLine = CommandLine.parse("pdftotxt.cmd");            
-            commandLine.addArgument(pdfFileName);
-            DefaultExecutor executor = new DefaultExecutor();
-            executor.setExitValue(0);
-            executor.execute(commandLine);    
-            String txtFileName = FilenameUtils.removeExtension(basePath)+".txt";
-            File txtFile = new File(txtFileName);
-            if (txtFile.exists()){
-                byte[] encoded = Files.readAllBytes(Paths.get(txtFileName));
-                Charset encoding = StandardCharsets.UTF_8;
-                String content = new String(encoded, encoding);
-                attache.setContent(content);
-                txtFile.delete();
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
-    
+    }       
     
     @Override
     @Asynchronous

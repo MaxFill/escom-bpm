@@ -106,7 +106,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     private DocStates state;
      
     /* Список ссылающихся документов  */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "mainDoc")
+    @OneToMany(mappedBy = "mainDoc")
     private List<Doc> docsLinks = new ArrayList<>();
     
     /* Список статусов документа  */
@@ -172,7 +172,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     }
         
     /* Возвращает текущую версию вложения  */
-    public Attaches getAttache() {
+    public Attaches getMainAttache() {
         Attaches rezult = null;
         for (Attaches attache : attachesList){
             if (Boolean.TRUE.equals(attache.getCurrent())){
@@ -206,8 +206,8 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
 
     /* Возвращает номер текущей версии документа */
     public Integer getCurrentVersionNumber() {
-        if (getAttache() == null) return null; 
-        return getAttache().getNumber();        
+        if (getMainAttache() == null) return null; 
+        return getMainAttache().getNumber();        
     }
     
     /* Возвращает полное имя документа */

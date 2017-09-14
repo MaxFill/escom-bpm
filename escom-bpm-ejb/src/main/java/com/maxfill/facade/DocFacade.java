@@ -17,6 +17,7 @@ import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
+import com.maxfill.services.searche.SearcheService;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -42,6 +43,8 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     private AttacheService attacheService;
     @EJB
     private UserFacade userFacade;
+    @EJB
+    private SearcheService searcheService;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
@@ -201,12 +204,14 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     public void edit(Doc doc) {
         doSaveRoleToJson(doc);
         super.edit(doc);
+        searcheService.updateFullTextIndex(doc);
     }
 
     @Override
     public void create(Doc doc) {
         doSaveRoleToJson(doc);
-        super.create(doc); 
+        super.create(doc);
+        searcheService.addFullTextIndex(doc);
     }
 
     private void doSaveRoleToJson(Doc doc){
@@ -246,8 +251,9 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     /* Удаление документа  */
     @Override
     public void remove(Doc doc){
-       attacheService.deleteAttaches(doc.getAttachesList());
-       super.remove(doc);
+        searcheService.deleteFullTextIndex(doc);
+        attacheService.deleteAttaches(doc.getAttachesList());
+        super.remove(doc);
     }           
 
     @Override

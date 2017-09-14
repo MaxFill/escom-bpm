@@ -26,7 +26,7 @@ public class AttacheServiceImpl implements AttacheService{
     private AttacheFacade attacheFacade;    
     @EJB
     private Configuration configuration;
-    
+
     @Override
     public Attaches findAttacheByDoc(Doc doc){
         return attacheFacade.findCurrentAttacheByDoc(doc);         

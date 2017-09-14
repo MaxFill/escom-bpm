@@ -81,7 +81,7 @@ public class AttacheBean extends BaseDialogBean{
             if (doc == null) return;
             docBean.actualizeRightItem(doc);
             if (docBean.isHaveRightView(doc)) {
-                Attaches attache = doc.getAttache();
+                Attaches attache = doc.getMainAttache();
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();
             } else {

@@ -85,7 +85,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
         
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
-        Attaches sourceAttache = sourceItem.getAttache();
+        Attaches sourceAttache = sourceItem.getMainAttache();
         if (sourceAttache != null){
             Attaches attache = attacheBean.copyAttache(sourceAttache);
             attacheFacade.addAttacheInDoc(pasteItem, attache);
@@ -290,7 +290,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }            
     
     public void onOpenFormLockMainAttache(Doc doc) {
-        Attaches attache = doc.getAttache();
+        Attaches attache = doc.getMainAttache();
         if (attache != null) {
             Set<String> errors = new HashSet<>();
             makeRightItem(doc);
@@ -340,7 +340,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (doc == null) return;
         actualizeRightItem(doc);
         if (isHaveRightView(doc)) {
-            Attaches attache = doc.getAttache();
+            Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 attacheDownLoadPDF(attache);
             } else {
@@ -357,7 +357,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         
         actualizeRightItem(doc);
         if (isHaveRightView(doc)) {
-            Attaches attache = doc.getAttache();
+            Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 onViewAttache(attache);
             } else {

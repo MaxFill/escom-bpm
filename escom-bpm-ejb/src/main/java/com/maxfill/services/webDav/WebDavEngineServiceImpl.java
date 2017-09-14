@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
+import com.maxfill.services.searche.SearcheService;
 import com.sun.security.auth.UserPrincipal;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -37,7 +38,9 @@ public class WebDavEngineServiceImpl implements WebDavService{
     private Configuration conf;
     @EJB 
     private FileService fileService;
-    
+    @EJB
+    private SearcheService searcheService;
+        
     /* Загрузка файла в хранилище */
     @Override
     public void uploadFile(Attaches attache){
@@ -96,9 +99,11 @@ public class WebDavEngineServiceImpl implements WebDavService{
             
             contentNode.remove();
             fileNode.remove();
-            folder.remove();
-            
+            folder.remove();            
             session.save();
+            if (attache.getCurrent()){
+                searcheService.updateFullTextIndex(attache.getDoc());
+            }
         } catch (RepositoryException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

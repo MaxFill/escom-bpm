@@ -1536,7 +1536,7 @@ public class ExplorerBean implements Serializable {
             return false;
         }
         Doc doc = (Doc) item;
-        return doc.getAttache() != null;
+        return doc.getMainAttache() != null;
     }   
        
     public void onUploadFile(FileUploadEvent event) throws IOException{        

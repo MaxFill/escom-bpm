@@ -101,7 +101,7 @@
                             <p:separator />
                             <p:menuitem icon="ui-icon-check" value="#{bundle.MakeMain}" title="#{bundle.MakeMainVersion}"
                                         process="versionsTBL"
-                                        disabled="#{_bean.isReadOnly() or _bean.editedItem.attache.equals(attache)}"
+                                        disabled="#{_bean.isReadOnly() or _bean.editedItem.mainAttache.equals(attache)}"
                                         update="versionsTBL"
                                         actionListener="#{_bean.makeCurrentVersion(attache)}">
                                 <p:confirm header="#{bundle.ChangeVersion}" message="#{bundle.ChangeCurrentVersion}" icon="fa-question-circle" />

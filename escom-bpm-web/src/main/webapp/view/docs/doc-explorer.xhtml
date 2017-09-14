@@ -128,12 +128,12 @@
     <ui:define name="addItemMenu">
         <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
                     actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                    disabled="#{item.attache == null}"
+                    disabled="#{item.mainAttache == null}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     oncomplete="document.getElementById('#{_frmExpl}:editDocument').click();"/>
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                    disabled="#{item.attache == null}"
+                    disabled="#{item.mainAttache == null}"
                     actionListener="#{docsBean.onViewAttache(item.getAttache())}"/>
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"

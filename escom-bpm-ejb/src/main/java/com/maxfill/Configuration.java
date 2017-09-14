@@ -4,6 +4,9 @@ import com.maxfill.model.licence.Licence;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -43,6 +46,7 @@ public class Configuration {
     private Licence licence;
     private Integer serverId;
     private Integer maxFileSize;
+    private Connection fullTextSearcheConnection;
     
     @PostConstruct
     private void init() {
@@ -51,6 +55,7 @@ public class Configuration {
         Properties properties = new Properties();
 
         try {
+            fullTextSearcheConnection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000","", "");
             properties.load(new FileInputStream(file));
             serverOS = (String) properties.get("SERVER_OS");
             serverURL = (String) properties.get("SERVER_URL");
@@ -70,11 +75,14 @@ public class Configuration {
             maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
-        } catch (IOException ex) {
+        } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    public Connection getFullTextSearcheConnection() {
+        return fullTextSearcheConnection;
+    }        
     public Integer getMaxFileSize() {
         return maxFileSize;
     }    
