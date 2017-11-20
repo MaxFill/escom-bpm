@@ -94,4 +94,5 @@ public class UsersServiceImpl implements UsersService {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+    
 }

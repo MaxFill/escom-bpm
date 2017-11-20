@@ -101,7 +101,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
     
     /* СОЗДАНИЕ: cоздание объекта */
-    public T createItem(User author) {
+    public T createItem(User author, O owner, Map<String, Object> params) {
         try {
             T item = itemClass.newInstance();
             item.setAuthor(author);
@@ -110,12 +110,24 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setInherits(true);
             item.doSetSingleRole(DictRoles.ROLE_OWNER, author);
             doSetState(item, getMetadatesObj().getStateForNewObj());
+            detectParentOwner(item, owner);
+            setSpecAtrForNewItem(item, params);
             return item;
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
     }     
+    
+    protected void detectParentOwner(T item, BaseDict owner){
+        item.setOwner(owner);
+    } 
+    
+    protected void setSpecAtrForNewItem(T item, Map<String, Object> params) {
+        if (params.containsKey("name")){
+            item.setName((String) params.get("name"));
+        }
+    }
     
     /* установка состояния объекта */     
     public void doSetState(T item, State currentState){

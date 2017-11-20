@@ -11,13 +11,12 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.StaffStates;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -31,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, StaffStates> {
-    protected static final Logger LOG = Logger.getLogger(StaffFacade.class.getName());
     
     @EJB
     private UserFacade userFacade;
@@ -70,14 +68,25 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
             return null;
         }
         String name = post.getName() + " " + user.getName();
-        Staff staff = createItem(userFacade.getAdmin());
-        staff.setOwner(department);
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name);
+        Staff staff = createItem(userFacade.getAdmin(), department, params);
         staff.setPost(post);
-        staff.setEmployee(user);
-        staff.setName(name);
+        staff.setEmployee(user);        
         create(staff);
-        LOG.log(Level.INFO, "Create staff = {0}", name);
         return staff; 
+    }
+    
+    @Override
+    public void detectParentOwner(Staff staff, BaseDict target){
+        if (target instanceof Company){
+            staff.setCompany((Company)target);
+            staff.setOwner(null); //теперь нет связи с подразделением
+        } else
+            if (target instanceof Department){
+                staff.setOwner((Department)target);
+                staff.setCompany(null);
+            }
     }
     
     /* Обновление штатной единицы */

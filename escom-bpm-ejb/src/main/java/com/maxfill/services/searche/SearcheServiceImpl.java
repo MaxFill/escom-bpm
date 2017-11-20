@@ -75,7 +75,7 @@ public class SearcheServiceImpl implements SearcheService {
     @Asynchronous
     @Override
     public void addFullTextIndex(Doc doc){
-        String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ? )";
+        String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
         Connection connection = conf.getFullTextSearcheConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){ 
             preparedStatement.setInt(1, doc.getId());
@@ -91,7 +91,7 @@ public class SearcheServiceImpl implements SearcheService {
     @Asynchronous
     @Override
     public void updateFullTextIndex(Doc doc){
-        String sql = "REPLACE INTO escom_docs_index VALUES (?, ?, ? )";
+        String sql = "REPLACE INTO escom_docs_index VALUES (?, ?, ?, ?)";
         Connection connection = conf.getFullTextSearcheConnection();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){ 
             preparedStatement.setInt(1, doc.getId());

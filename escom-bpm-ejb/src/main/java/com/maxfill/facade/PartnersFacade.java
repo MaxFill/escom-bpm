@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.partners.Partner;
@@ -7,8 +6,12 @@ import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.partners.PartnerStates;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -69,6 +72,24 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         cq.select(c).where(builder.and(crit1)); 
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
+    }
+    
+    @Override
+    protected void detectParentOwner(Partner partner, BaseDict owner){
+        partner.setOwner(null);
+        partner.setParent(null);
+        if (owner == null) return;
+        if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
+            partner.getPartnersGroupsList().add((PartnerGroups)owner);            
+        } 
+    }
+    
+    /* Установка специфичных атрибутов контрагента при его создании */
+    @Override
+    public void setSpecAtrForNewItem(Partner partner, Map<String, Object> params){
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(partner, numeratorPattern, null, new Date());
+        partner.setCode(number);
     }
     
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */

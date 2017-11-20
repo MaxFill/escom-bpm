@@ -8,10 +8,10 @@ import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.model.users.groups.UserGroupsLog;
 import com.maxfill.model.users.groups.UserGroupsStates;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -147,10 +147,10 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
                 return group;
             }
         }
-        UserGroups group = createItem(userFacade.getAdmin());        
-        group.setName(groupName);                
-        create(group);        
-        LOGGER.log(Level.INFO, "Create userGroups = {0}", groupName);
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", groupName);
+        UserGroups group = createItem(userFacade.getAdmin(), null, params);               
+        create(group);
         return group;
     }
 

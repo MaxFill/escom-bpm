@@ -2,14 +2,19 @@ package com.maxfill.facade;
 
 import com.maxfill.model.companies.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentStates;
+import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -22,11 +27,12 @@ import org.apache.commons.lang.StringUtils;
 
 @Stateless
 public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog, DepartmentStates> {
-    protected static final Logger LOG = Logger.getLogger(DepartmentFacade.class.getName());
 
     @EJB
     private UserFacade userFacade;
-    
+    @EJB
+    private DepartmentNumeratorService departmentNumeratorService;
+        
     public DepartmentFacade() {
         super(Department.class, DepartamentLog.class, DepartmentStates.class);
     }
@@ -51,16 +57,28 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
                     return department;
                 }
             }
-            Department department = createItem(userFacade.getAdmin());
-            department.setName(departName);
-            department.setOwner(company);
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", departName);
+            Department department = createItem(userFacade.getAdmin(), company, params);            
             create(department);
             company.getDetailItems().add(department);
-            LOG.log(Level.INFO, "Create department = {0}", departName);
             return department;
         }
     }
 
+    /* Определяет owner и parent для объекта  */
+    @Override
+    public void detectParentOwner(Department item, BaseDict target){
+        if (target instanceof Company){
+            item.setOwner((Company)target);
+            item.setParent(null);
+        } else
+        if (target instanceof Department){
+            item.setOwner(null);
+            item.setParent((Department)target);
+        }
+    }
+    
     @Override
     public void replaceItem(Department oldItem, Department newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -141,5 +159,20 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
             company = item.getOwner();
         }    
         return company;
+    }
+    
+    @Override
+    public void setSpecAtrForNewItem(Department department, Map<String, Object> params) {
+        makeCode(department);
+    }
+    
+    /* Формирование кода подразделения  */
+    public void makeCode(Department department){        
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = departmentNumeratorService.doRegistrNumber(department, numeratorPattern, null, new Date());
+        Company company = findCompany(department);
+        StringBuilder sb = new StringBuilder();
+        sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
+        department.setCode(sb.toString());
     }
 }

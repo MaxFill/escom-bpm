@@ -74,6 +74,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
         downloadFile(attache, attache);
     }
     
+    /* Возврат файла из webdav хранилища в хранилище системы */
     @Asynchronous
     @Override
     public void downloadFile(Attaches attache, Attaches targetAttache){ 

@@ -18,8 +18,8 @@ import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
 import com.maxfill.services.searche.SearcheService;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +45,8 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     private UserFacade userFacade;
     @EJB
     private SearcheService searcheService;
+    @EJB
+    private FoldersFacade folderFacade;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
@@ -214,6 +216,70 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         searcheService.addFullTextIndex(doc);
     }
 
+    @Override
+    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
+        Folder folder = doc.getOwner();
+        doSetDefaultDocType(doc, folder);
+        doSetDefaultCompany(doc, folder);
+        doSetDefaultPartner(doc, folder);           
+    
+        doc.setDateDoc(new Date());
+        /*
+        if (doc.getOwner().getId() == null) { 
+            doc.setOwner(null);
+        }
+        */
+        if (params != null && !params.isEmpty()) {
+            Attaches attache = (Attaches) params.get("attache");
+            if (attache != null) {
+                Integer version = doc.getNextVersionNumber();
+                attache.setNumber(version);
+                attache.setDoc(doc);
+                String fileName = attache.getName();
+                doc.setName(fileName);
+                doc.getAttachesList().add(attache);
+            }
+        }
+    }
+
+    private void doSetDefaultPartner(Doc doc, Folder folder){
+        if (doc.getPartner() == null && folder != null){
+            if (folder.isInheritPartner()){
+                doSetDefaultPartner(doc, folder.getParent());
+            } else {
+                doc.setPartner(folder.getPartnerDefault());
+            }             
+        }
+    }
+
+    private void doSetDefaultCompany(Doc doc, Folder folder){
+        if (doc.getCompany() == null && folder != null){
+            if (folder.isInheritCompany()){
+                doSetDefaultCompany(doc, folder.getParent());
+            } else {
+                doc.setCompany(folder.getCompanyDefault());
+            }
+        }
+    }
+    
+    private void doSetDefaultDocType(Doc doc, Folder folder){
+        if (doc.getDocType() == null && folder != null){
+            if (folder.isInheritDocType()){
+                doSetDefaultDocType(doc, folder.getParent());
+            } else {
+                doc.setDocType(folder.getDocTypeDefault()); 
+            }
+        }
+    }
+    
+    /* создание документа в папке пользователя из сервлета */
+    public void createDocInUserFolder(String name, User author, Folder userFolder, Attaches attache){
+        Map<String, Object> params = new HashMap<>();
+        params.put("attache", attache);
+        params.put("name", name);
+        createItem(author, userFolder, params);        
+    }
+    
     private void doSaveRoleToJson(Doc doc){
         Gson gson = new Gson();
         String attacheJson = gson.toJson(doc.getRoles());        

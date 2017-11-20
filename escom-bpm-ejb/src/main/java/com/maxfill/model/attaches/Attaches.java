@@ -56,7 +56,7 @@ public class Attaches implements Serializable {
     
     @Basic(optional = false)
     @Column(name = "Size")
-    private Integer size;
+    private Long size;
     
     @Column(name = "DateCreate")
     @Temporal(TemporalType.TIMESTAMP)
@@ -153,10 +153,10 @@ public class Attaches implements Serializable {
         this.name = name;
     }
 
-    public int getSize() {
+    public Long getSize() {
         return size;
     }
-    public void setSize(int size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 

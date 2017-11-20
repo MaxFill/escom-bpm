@@ -6,12 +6,17 @@ import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.users.User;
+import com.maxfill.services.files.FileService;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -26,7 +31,32 @@ public class AttacheServiceImpl implements AttacheService{
     private AttacheFacade attacheFacade;    
     @EJB
     private Configuration configuration;
+    @EJB
+    private FileService fileService;
+            
+    @Override
+    public Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException{
+        if (params.isEmpty()) return null;        
 
+        String fileName = (String) params.get("fileName");
+        String contType = (String) params.get("contentType");
+        Long size = (Long) params.get("size");
+        User author = (User) params.get("author");
+        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+        Attaches attache = new Attaches();
+        attache.setName(fileName);
+        attache.setExtension(fileExt);
+        attache.setType(contType);
+        attache.setSize(size);
+        attache.setAuthor(author);
+        attache.setDateCreate(new Date());
+
+        fileService.doUpload(attache, inputStream);            
+
+        return attache;
+    }
+    
     @Override
     public Attaches findAttacheByDoc(Doc doc){
         return attacheFacade.findCurrentAttacheByDoc(doc);         

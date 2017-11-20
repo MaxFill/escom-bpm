@@ -1,9 +1,11 @@
 package com.maxfill;
 
 import com.maxfill.model.licence.Licence;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.Key;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -47,6 +49,7 @@ public class Configuration {
     private Integer serverId;
     private Integer maxFileSize;
     private Connection fullTextSearcheConnection;
+    private Key signKey;
     
     @PostConstruct
     private void init() {
@@ -75,6 +78,7 @@ public class Configuration {
             maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
+            signKey = MacProvider.generateKey();
         } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -140,6 +144,9 @@ public class Configuration {
     public String getRepositoryName(){
         return REPO_FULL_NAME;
     }
+    public Key getSignKey() {
+        return signKey;
+    }    
     
     public Repository getRepository() {
         return repository;

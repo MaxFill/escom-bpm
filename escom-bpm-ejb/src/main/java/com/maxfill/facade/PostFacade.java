@@ -6,8 +6,9 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.posts.PostStates;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -55,10 +56,10 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> 
                 return post;
             }
         }
-        Post post = createItem(userFacade.getAdmin());
-        post.setName(postName);
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", postName);
+        Post post = createItem(userFacade.getAdmin(), null, params);
         create(post);
-        LOGGER.log(Level.INFO, "Create post = {0}", postName);
         return post;
     }
 

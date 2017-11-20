@@ -18,12 +18,15 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public final class EscomUtils {
-             
+    private static final Logger LOGGER = Logger.getLogger(EscomUtils.class.getName());             
+    
     /* Получение номера актуального релиза */
     public static String getReleaseInfo(String licenceNumber){
         String result= "";
@@ -32,6 +35,7 @@ public final class EscomUtils {
             ReleaseInfo port = service.getReleaseInfoPort();
             result = port.getReleaseInfo(licenceNumber);
         } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, null, ex);	
         }
         return result;
     }
@@ -44,7 +48,7 @@ public final class EscomUtils {
     /* Разбивает строку на части */
     public static ArrayList<String> SplitString(String subject, String delimiters) {
         StringTokenizer strTkn = new StringTokenizer(subject, delimiters);
-        ArrayList<String> arrLis = new ArrayList<String>(subject.length());
+        ArrayList<String> arrLis = new ArrayList<>(subject.length());
 
         while(strTkn.hasMoreTokens())
            arrLis.add(strTkn.nextToken());
@@ -53,20 +57,26 @@ public final class EscomUtils {
     }    
     
     /* Преобразование строки в MD5 */
-    public static String encryptPassword(String password) throws NoSuchAlgorithmException {
-    	MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-    	byte[] bs;
-    	messageDigest.reset();
-    	bs = messageDigest.digest(password.getBytes());
-    	StringBuilder stringBuilder = new StringBuilder();
-    	for (int i = 0; i < bs.length; i++){
-            String hexVal = Integer.toHexString(0xFF & bs[i]);
-            if (hexVal.length() == 1){
-                stringBuilder.append("0");
+    public static String encryptPassword(String password) {
+        String rezult = null;
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            byte[] bs;
+            messageDigest.reset();
+            bs = messageDigest.digest(password.getBytes()); 
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < bs.length; i++){
+                String hexVal = Integer.toHexString(0xFF & bs[i]);
+                if (hexVal.length() == 1){
+                    stringBuilder.append("0");
+                }
+                stringBuilder.append(hexVal);
             }
-            stringBuilder.append(hexVal);
-    	}
-    	return stringBuilder.toString();	
+            rezult = stringBuilder.toString();
+        } catch (NoSuchAlgorithmException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);	
+        }
+        return rezult;
     }
     
     /* Выполняет преобразование unixTime в дату-строку */

@@ -1,12 +1,15 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.folders.FolderLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.folders.FolderStates;
+import com.maxfill.model.users.User;
 import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,6 +20,8 @@ import javax.persistence.criteria.Root;
 /* Папки  */
 @Stateless
 public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, FolderStates> {
+    @EJB
+    private DocTypeFacade docTypeFacade;
     
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
@@ -27,6 +32,12 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         return Folder.class.getSimpleName().toLowerCase();
     }      
        
+    @Override
+    public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
+        folder.setModerator(folder.getAuthor());
+        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
+    }
+    
     /* Возвращает все папки */
     public List<Folder> findAllFolders(){ 
         getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);

@@ -4,12 +4,13 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.companies.CompanyLog;
 import com.maxfill.model.companies.CompanyStates;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, CompanyStates> {
@@ -42,10 +43,10 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
                 return company;
             }
         }
-        Company company = createItem(userFacade.getAdmin());
-        company.setName(companyName);
-        create(company);        
-        LOG.log(Level.INFO, "Create company = {0}", companyName);
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", companyName);
+        Company company = createItem(userFacade.getAdmin(), null, params);
+        create(company);
         return company;
     }
 
