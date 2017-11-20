@@ -16,7 +16,10 @@ public class ScanViewModel implements Serializable {
     private List<SelectItem> fileExtensions = new ArrayList<>();
     private byte[] data;
     private String fileName = "scan";
-    
+
+    public ScanViewModel() {
+    }
+        
     public ScanViewModel(Map<String, String> scanFileTypesLabel) {
         for (String value : scanFileTypesLabel.keySet()) {
             fileExtensions.add(new SelectItem(value, scanFileTypesLabel.get(value)));
@@ -51,9 +54,8 @@ public class ScanViewModel implements Serializable {
     }
 
     public String getFullFileName() {
-        return getFileName() + "." + fileExtensionValue.replace(DWTwainHelper.DWTWAIN_IMAGETYPE_PREFIX, "");
-    }
-            
+        return getFileName() + "." + fileExtensionValue;
+    }            
     
     public byte[] getData() {
         return data;

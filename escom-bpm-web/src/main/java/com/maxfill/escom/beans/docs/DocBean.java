@@ -27,7 +27,6 @@ import java.text.MessageFormat;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +82,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         copyMainAttacheFromDoc(pasteItem, sourceItem);
         copyDocStatuses(pasteItem, sourceItem);
     }
-        
+
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
         Attaches sourceAttache = sourceItem.getMainAttache();
         if (sourceAttache != null){
@@ -147,62 +146,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             }
         }
         return getDefaultRights(item);
-    }
-
-    @Override
-    public void setSpecAtrForNewItem(Doc doc, Map<String, Object> params) {
-        Folder folder = doc.getOwner();
-        doSetDefaultDocType(doc, folder);
-        doSetDefaultCompany(doc, folder);
-        doSetDefaultPartner(doc, folder);           
-    
-        //addDocStatusFromDocType(doc, docType);
-        doc.setDateDoc(new Date());
-        if (doc.getOwner().getId() == null) { 
-            doc.setOwner(null);
-        }
-        if (params != null && !params.isEmpty()) {
-            Attaches attache = (Attaches) params.get("attache");
-            if (attache != null) {
-                Integer version = doc.getNextVersionNumber();
-                attache.setNumber(version);
-                attache.setDoc(doc);
-                String fileName = attache.getName();
-                doc.setName(fileName);
-                doc.getAttachesList().add(attache);
-            }
-        }
-    }
-
-    private void doSetDefaultPartner(Doc doc, Folder folder){
-        if (doc.getPartner() == null && folder != null){
-            if (folder.isInheritPartner()){
-                doSetDefaultPartner(doc, folder.getParent());
-            } else {
-                doc.setPartner(folder.getPartnerDefault());
-            }             
-        }
-    }
-
-    private void doSetDefaultCompany(Doc doc, Folder folder){
-        if (doc.getCompany() == null && folder != null){
-            if (folder.isInheritCompany()){
-                doSetDefaultCompany(doc, folder.getParent());
-            } else {
-                doc.setCompany(folder.getCompanyDefault());
-            }
-        }
-    }
-    
-    private void doSetDefaultDocType(Doc doc, Folder folder){
-        if (doc.getDocType() == null && folder != null){
-            if (folder.isInheritDocType()){
-                doSetDefaultDocType(doc, folder.getParent());
-            } else {
-                doc.setDocType(folder.getDocTypeDefault()); 
-            }
-        }
-    }
+    }   
     
     @Override
     public SearcheModel initSearcheModel() {

@@ -3,9 +3,7 @@ package com.maxfill.escom.beans;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictRoles;
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
@@ -15,7 +13,6 @@ import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.ItemUtils;
 import java.lang.reflect.InvocationTargetException;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.TreeNode;
@@ -86,8 +83,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     /* Проверка возможности создание объекта с открытием карточки */
     public T checkCanCreateItem(BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
-        T newItem = createItem(owner, currentUser);
-        prepCreate(newItem, parent, errors, params);
+        T newItem = createItem(owner, currentUser, params);
+        prepCreate(newItem, parent, errors);
         return newItem;
     }
     
@@ -115,7 +112,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }  
     
     /* Действия перед созданием объекта */
-    private void prepCreate(T newItem, BaseDict parent, Set<String> errors, Map<String, Object> params){
+    private void prepCreate(T newItem, BaseDict parent, Set<String> errors){
         boolean isAllowedEditOwner = true;
         boolean isAllowedEditParent = true;
         BaseDict owner = newItem.getOwner();
@@ -131,7 +128,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             newItem.setParent(parent);            
             makeRightItem(newItem);
             if (isHaveRightCreate(newItem)) {
-                setSpecAtrForNewItem(newItem, params);                
+                setSpecAtrForNewItem(newItem);                
             } else {
                 String objName = EscomBeanUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
                 String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
@@ -146,13 +143,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Установка специфичных атрибутов при создании объекта  */ 
-    public void setSpecAtrForNewItem(T item, Map<String, Object> params) {}
+    public void setSpecAtrForNewItem(T item) {}
     
     /* Вставка объекта */
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
         T pasteItem = doCopy(sourceItem, currentUser);        
         preparePasteItem(pasteItem, sourceItem, recipient);
-        prepCreate(pasteItem, pasteItem.getParent(), errors, null); 
+        prepCreate(pasteItem, pasteItem.getParent(), errors); 
         if (!errors.isEmpty()){
             EscomBeanUtils.showErrorsMsg(errors);
             return null;

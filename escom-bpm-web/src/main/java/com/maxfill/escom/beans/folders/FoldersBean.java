@@ -6,11 +6,9 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
-import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -38,9 +36,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private FoldersFacade foldersFacade;
     @EJB
     private DocFacade docFacade;
-    @EJB
-    private DocTypeFacade docTypeFacade;
-
+    
     @Override
     public Rights getRightItem(BaseDict item) {
         if (item == null) return null;
@@ -55,15 +51,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         
         return getDefaultRights(item);
     }
-    
-    /* Установка специфичных атрибутов при создании новой папки  */
-    @Override
-    public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
-        folder.setModerator(folder.getAuthor());
-        folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
-        super.setSpecAtrForNewItem(folder, params);
-    }
-    
+        
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);

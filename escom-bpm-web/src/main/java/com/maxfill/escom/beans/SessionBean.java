@@ -67,17 +67,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.inject.Named;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.inject.Named;
 import org.primefaces.extensions.model.layout.LayoutOptions;
+
 
 /* Cессионный бин приложения */
 @SessionScoped
 @Named
 public class SessionBean implements Serializable{  
     private static final long serialVersionUID = -5356932297321623340L;
-    protected static final Logger LOG = Logger.getLogger(SessionBean.class.getName());
+    protected static final Logger LOGGER = Logger.getLogger(SessionBean.class.getName());
     
     //служебное поле для передачи ссылки на вызвавший бин
     private final HashMap<String, BaseBean> sourceBeansMap = new HashMap<>(); 
@@ -247,7 +248,7 @@ public class SessionBean implements Serializable{
         return getItemBean(item).addItemToGroup(item, targetGroup);
     }                  
     
-    /* ПРОЧИЕ МЕТОДЫ */
+    /* ПРОЧИЕ МЕТОДЫ */    
     
     /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
     public void showNotification(){
@@ -283,7 +284,7 @@ public class SessionBean implements Serializable{
             currentUser.setUserSettings(compressXML);
             userFacade.edit(currentUser);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -522,9 +523,9 @@ public class SessionBean implements Serializable{
             }
             ectx.redirect(sb.toString()); 
         } catch (MalformedURLException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
         } 
     }
     

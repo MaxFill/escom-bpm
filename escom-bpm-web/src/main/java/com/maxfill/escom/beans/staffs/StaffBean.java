@@ -104,7 +104,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
                 target = sourceItem.getOwner();
             }
         }
-        detectParentOwner(pasteItem, target);
+        itemsFacade.detectParentOwner(pasteItem, target);
     }
     
     @Override
@@ -115,7 +115,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     public void moveItemToGroup(BaseDict group, Staff staff){
-        detectParentOwner(staff, group);
+        itemsFacade.detectParentOwner(staff, group);
         getItemFacade().edit(staff);
     }
       
@@ -138,19 +138,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         }                
         getItemFacade().edit(dragItem);
     }
-    
-    @Override
-    public void detectParentOwner(Staff staff, BaseDict target){
-        if (target instanceof Company){
-            staff.setCompany((Company)target);
-            staff.setOwner(null); //теперь нет связи с подразделением
-        } else
-            if (target instanceof Department){
-                staff.setOwner((Department)target);
-                staff.setCompany(null);
-            }
-    }
-    
+        
     @Override
     protected void checkAllowedDeleteItem(Staff staff, Set<String> errors){
         if (!docFacade.findDocsByManager(staff).isEmpty()){

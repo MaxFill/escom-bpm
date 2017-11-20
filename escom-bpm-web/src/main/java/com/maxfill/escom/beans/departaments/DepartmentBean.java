@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.departaments;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
@@ -12,9 +11,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -24,7 +21,6 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,8 +44,6 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private DepartmentFacade itemFacade;
     @EJB
     private StaffFacade staffFacade;
-    @EJB
-    private DepartmentNumeratorService departmentNumeratorService;
     
     @Override
     public Rights getRightItem(BaseDict item) {
@@ -77,23 +71,10 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     public DepartmentFacade getItemFacade() {
         return itemFacade;
     }
-
-    /* Определяет owner и parent для объекта  */
-    @Override
-    public void detectParentOwner(Department item, BaseDict target){
-        if (target instanceof Company){
-            item.setOwner((Company)target);
-            item.setParent(null);
-        } else
-        if (target instanceof Department){
-            item.setOwner(null);
-            item.setParent((Department)target);
-        }
-    }
     
     @Override
     public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
-        detectParentOwner(dragItem, dropItem);
+        itemFacade.detectParentOwner(dragItem, dropItem);
         getItemFacade().edit(dragItem);
     }
     
@@ -126,25 +107,14 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
                 target = sourceItem.getParent();
             }
         }
-        detectParentOwner(pasteItem, target);    
-    }   
-    
-    @Override
-    public void setSpecAtrForNewItem(Department department, Map<String, Object> params) {
-        makeCode(department);
-    }
+        itemFacade.detectParentOwner(pasteItem, target);    
+    }       
     
     /* Формирование кода подразделения  */
-    public void makeCode(Department department){        
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = departmentNumeratorService.doRegistrNumber(department, numeratorPattern, null, new Date());
-        Company company = getItemFacade().findCompany(department);
-        StringBuilder sb = new StringBuilder();
-        sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
-        department.setCode(sb.toString());
+    public void makeCode(Department department){  
+        itemFacade.makeCode(department);        
     } 
-    
-    
+        
     /* Формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode) {

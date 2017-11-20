@@ -7,11 +7,7 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:define name="initBeans">
-        <script type="text/javascript" src="Resources/dynamsoft.webtwain.initiate.js"/>
-        <script type="text/javascript" src="Resources/dynamsoft.webtwain.config.js"/>
-        <script type="text/javascript" src="Resources/dynamsoft.webtwain.install.js"/>
-        <link type="text/css" rel="stylesheet" href="Resources/reference/hint.css" />
-        <link type="text/css" rel="stylesheet" href="Resources/reference/html5_editor.css"/>  
+
     </ui:define>
 
     <ui:define name="title">
@@ -27,7 +23,6 @@
     </ui:define>
 
     <ui:define name="body">
-        <h:outputScript library="js" name="custom-dwtwain.js" />
         <pe:layout fullPage="true" options="#{scanBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{scanBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">

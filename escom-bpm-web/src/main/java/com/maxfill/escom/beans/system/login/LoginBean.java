@@ -1,13 +1,11 @@
 package com.maxfill.escom.beans.system.login;
 
-import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
-import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
@@ -37,7 +35,6 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.naming.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXB;
@@ -49,7 +46,7 @@ import org.primefaces.context.RequestContext;
 @ViewScoped
 public class LoginBean implements Serializable{    
     private static final long serialVersionUID = 4390983938416752289L;
-    protected static final Logger LOG = Logger.getLogger(LoginBean.class.getName());
+    protected static final Logger LOGGER = Logger.getLogger(LoginBean.class.getName());
     
     private String userName;
     private String password;
@@ -64,8 +61,7 @@ public class LoginBean implements Serializable{
     private SessionBean sessionBean;
     @EJB 
     private UserFacade userFacade;
-    @EJB 
-    private Configuration configuration;
+
     
     @PostConstruct
     public void init(){
@@ -83,9 +79,9 @@ public class LoginBean implements Serializable{
     }
     
     public void login() throws NoSuchAlgorithmException{
-        RequestContext context = RequestContext.getCurrentInstance();
         Set<FacesMessage> errors = new HashSet<>(); 
-        
+        RequestContext context = RequestContext.getCurrentInstance();
+                
         if (appBean.getLicence().isExpired()){
             Date termLicense = appBean.getLicence().getDateTermLicence();            
             String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
@@ -96,24 +92,14 @@ public class LoginBean implements Serializable{
             errors.add(EscomBeanUtils.prepErrorMsg("ErrorCountLogin"));
         }
         
-        User user = null;
-        List<User> users = userFacade.findByLogin(userName);
-        if (users.isEmpty()){
-            errors.add(EscomBeanUtils.prepErrorMsg("ERR_USER_NOT_REGISTRED"));
-            makeCountErrLogin(context, errors);
-        } else {
-            user = users.get(0);        
-            if (StringUtils.isNotBlank(user.getLDAPname())){
-                checkLdapUser(errors, context);                                        
-            } else {
-                if (isIncorrectPassword(user)){
-                    makeCountErrLogin(context, errors);
-                    errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
-                }
-            }
-        }    
+        User user = userFacade.checkUserLogin(userName, password.toCharArray());
+        
+        if (user == null){
+            errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
+        }
         
         if (!errors.isEmpty()){
+            makeCountErrLogin(context, errors);
             EscomBeanUtils.showFacesMessages(errors);
             return;
         }
@@ -133,8 +119,8 @@ public class LoginBean implements Serializable{
             targetPage = SysParams.AGREE_LICENSE;
         }
         sessionBean.redirectToPage(targetPage, Boolean.FALSE);
-    }
-    
+    }               
+        
     /* Инициализация текущего пользователя */
     private boolean initCurrentUser(User user){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();      
@@ -150,7 +136,7 @@ public class LoginBean implements Serializable{
                 String settingsXML = EscomUtils.decompress(compressXML);
                 userSettings = (UserSettings) JAXB.unmarshal(new StringReader(settingsXML), UserSettings.class);
             } catch (IOException ex) {
-                LOG.log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
             }
         }
         userSettings.setLanguage(selectedLang.getName());
@@ -158,27 +144,7 @@ public class LoginBean implements Serializable{
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
         appBean.addBusyLicence(user, httpSession);
         return userSettings.isAgreeLicense();
-    }
-    
-    /* Проверка подключения к LDAP серверу  */
-    private void checkLdapUser(Set<FacesMessage> errors, RequestContext context){
-        try {      
-            LdapUtils.initLDAP(userName, password, configuration.getLdapServer());
-        } catch (AuthenticationException e){
-            errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
-            makeCountErrLogin(context, errors);
-        } catch (Exception ex){
-            errors.add(EscomBeanUtils.prepErrorMsg("ConnectLDAPFailed"));
-            EscomBeanUtils.ErrorMessage(ex.getLocalizedMessage());
-            LOG.log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    /* Проверка корректности пароля */
-    private boolean isIncorrectPassword(User user) throws NoSuchAlgorithmException{
-        password = EscomUtils.encryptPassword(password.trim());
-        return !Objects.equals(password, user.getPassword());
-    }
+    }             
     
     /* Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок  */
     private void makeCountErrLogin(RequestContext context, Set<FacesMessage> errors){

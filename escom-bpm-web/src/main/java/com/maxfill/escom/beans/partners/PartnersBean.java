@@ -10,7 +10,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -21,7 +20,6 @@ import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,15 +54,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     @Override
     public BaseExplBean getDetailBean(){
         return null;
-    }      
-    
-    /* Установка специфичных атрибутов контрагента при его создании */
-    @Override
-    public void setSpecAtrForNewItem(Partner item, Map<String, Object> params){
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, new Date());
-        item.setCode(number);
-    }
+    }          
     
     /* Контрагента нужно копировать в случае если он вставляется не в группу или если в ту же группу. В других случаях только добавление ссылки */
     @Override
@@ -98,17 +88,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
             return true;
         }
         return false;
-    }    
-
-    @Override
-    protected void detectParentOwner(Partner partner, BaseDict owner){
-        partner.setOwner(null);
-        partner.setParent(null);
-        if (owner == null) return;
-        if (!partner.getPartnersGroupsList().contains((PartnerGroups)owner)){
-            partner.getPartnersGroupsList().add((PartnerGroups)owner);            
-        } 
-    }
+    }       
     
     @Override
     public List<PartnerGroups> getGroups(Partner partner){

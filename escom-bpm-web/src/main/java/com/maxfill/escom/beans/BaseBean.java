@@ -95,19 +95,13 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     /* СОЗДАНИЕ: создание нового объекта   */
     public T createItem(BaseDict owner) {
-        return createItem(owner, currentUser);
+        return createItem(owner, currentUser, new HashMap<>());
     }
     
     /* СОЗДАНИЕ: cоздание объекта */
-    public T createItem(BaseDict owner, User author) {
-        T item = (T) getItemFacade().createItem(author);
-        detectParentOwner(item, owner);
-        return item;
-    }
-    
-    protected void detectParentOwner(T item, BaseDict owner){
-        item.setOwner(owner);
-    } 
+    public T createItem(BaseDict owner, User author, Map<String, Object> params) {
+        return (T) getItemFacade().createItem(author, owner, params);        
+    }    
     
     /* ПРАВА ДОСТУПА  */    
     

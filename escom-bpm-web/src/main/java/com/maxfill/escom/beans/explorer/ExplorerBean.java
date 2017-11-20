@@ -18,7 +18,6 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -1539,6 +1538,7 @@ public class ExplorerBean implements Serializable {
         return doc.getMainAttache() != null;
     }   
        
+    /* Загрузка файла через контрол на форме обозревателя документов */
     public void onUploadFile(FileUploadEvent event) throws IOException{        
         if (checkCanCreateDetailItem(new HashSet<>())){
             UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event); 

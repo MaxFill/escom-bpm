@@ -16,9 +16,9 @@
     
     <ui:define name="specSubMenu"> 
         <p:submenu label="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
-            <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"     
+            <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" rendered="false"    
                         oncomplete="document.getElementById('#{_frm}:mainTabView:btnScan').click();"/>                             
-            <p:separator/>
+            <p:separator rendered="false"  />
             <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.DownloadCurrentVersion}"
                         disabled="#{_bean.editedItem.mainAttache == null}" ajax="false"
                         action="#{_bean.downloadCurrentVersion()}"/>

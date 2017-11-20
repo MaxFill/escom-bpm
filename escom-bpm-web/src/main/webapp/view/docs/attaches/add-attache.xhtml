@@ -31,7 +31,7 @@
                     
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                                <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}"
+                                <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Scaning}" rendered="false"  
                                             onclick="document.getElementById('#{_frm}:btnScan').click();">
                                 </p:menuitem>
                                 <p:separator />
@@ -41,7 +41,7 @@
                         </p:submenu>
 
                         <f:facet name="options">
-                            <p:commandButton id="btnScan" icon="ui-icon-clipboard" value="#{bundle.Scaning}"     
+                            <p:commandButton id="btnScan" icon="ui-icon-clipboard" value="#{bundle.Scaning}"  rendered="false"     
                                 actionListener="#{sessionBean.openScaningForm()}"> 
                                 <p:ajax event="dialogReturn" listener="#{addAttacheBean.addAttacheFromScan}"/>
                             </p:commandButton>

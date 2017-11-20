@@ -66,7 +66,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Установка специфичных атрибутов при создании объекта  */ 
     @Override
-    public void setSpecAtrForNewItem(T item, Map<String, Object> params) {
+    public void setSpecAtrForNewItem(T item) {
         item.setInheritsAccessChilds(true);
         makeRightForChilds(item);
     }

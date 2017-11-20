@@ -1,0 +1,175 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.maxfill.escom.system;
+
+import com.maxfill.Configuration;
+import com.maxfill.facade.DocFacade;
+import com.maxfill.facade.FoldersFacade;
+import com.maxfill.facade.UserFacade;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.folders.Folder;
+import com.maxfill.model.users.User;
+import com.maxfill.services.attaches.AttacheService;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+/**
+ *
+ * @author Maxim
+ */
+public class FileUploadServlet extends HttpServlet {
+    private static final long serialVersionUID = 1224672188334273288L;
+    protected static final Logger LOGGER = Logger.getLogger(FileUploadServlet.class.getName());
+    
+    @EJB 
+    private UserFacade userFacade;
+    @EJB
+    private Configuration conf;
+    @EJB
+    private AttacheService attacheService;
+    @EJB
+    private DocFacade docFacade;
+    @EJB
+    private FoldersFacade folderFacade;
+    
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        if (!isMultipart) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        factory.setSizeThreshold(conf.getMaxFileSize()/10);
+        File tempDir = (File)getServletContext().getAttribute("javax.servlet.context.tempdir");
+        factory.setRepository(tempDir);
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setSizeMax(conf.getMaxFileSize()); // 1024 * 1024 * 10
+        try {
+            List items = upload.parseRequest(request);
+            Iterator iter = items.iterator();
+            String token = "";
+            Folder folder = null;
+            while (iter.hasNext()) {
+                FileItem item = (FileItem) iter.next();
+
+                if (item.isFormField()) {                    
+                    if (Objects.equals("token", item.getFieldName())){
+                        token = item.getString();
+                    }
+                    if (Objects.equals("folder", item.getFieldName())){
+                        Integer folderId = Integer.valueOf(item.getString());
+                        folder = folderFacade.find(folderId);
+                    }
+                } else {
+                    if (folder == null){
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        return;
+                    }
+                    User author = userFacade.tokenCorrect(token);
+                    if (author != null){
+                        processMakeDocument(item, folder, author);
+                        //todo создать документ и прикрепить к нему загруженный файл
+                        //нужна папка для документа!
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        return;
+                    }                            
+                }
+            }	                        
+        } catch (FileUploadException | IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }	
+    }        
+    
+    /* создание документа и загрузка файла */
+    private void processMakeDocument(FileItem item, Folder folder, User author) throws IOException{
+        Map<String, Object> params = new HashMap<>();
+        params.put("contentType", item.getContentType());
+        params.put("fileName", item.getName());
+        params.put("size", item.getSize());
+        params.put("author", author);
+        Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
+        docFacade.createDocInUserFolder(item.getName(), author, folder, attache);    
+    }        
+    
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet FileUploadServlet</title>");            
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet FileUploadServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("doGet!");
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

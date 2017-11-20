@@ -40,17 +40,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     @Override
     public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target){
         return !(target instanceof UserGroups);
-    }
-    
-    @Override
-    protected void detectParentOwner(User user, BaseDict owner){
-        user.setOwner(null);
-        user.setParent(null);
-        if (owner == null) return;
-        if (!user.getUsersGroupsList().contains((UserGroups)owner)){
-            user.getUsersGroupsList().add((UserGroups)owner);            
-        } 
-    }
+    }   
         
     @Override
     public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target){

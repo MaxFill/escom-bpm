@@ -31,7 +31,7 @@ public class RedirectFilter implements Filter {
       // ServletContext servletContext = filterConfig.getServletContext();
       // serverURL = servletContext.getInitParameter("ServerURL");
     }
-
+    
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
@@ -90,7 +90,7 @@ public class RedirectFilter implements Filter {
                 response.sendRedirect(loginURL.toString());                
                 return;
             }
-        }
+        }        
         
         try {
             chain.doFilter(request, response);

@@ -8,10 +8,11 @@ import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.files.FileService;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.EJB;
@@ -35,6 +36,8 @@ public class AttacheBean extends BaseDialogBean{
     private DocFacade docFacade;
     @EJB
     private AttacheFacade attacheFacade;
+    @EJB
+    private AttacheService attacheService;
     @Inject
     private DocBean docBean;
             
@@ -49,28 +52,20 @@ public class AttacheBean extends BaseDialogBean{
         return newAttache;
     }
     
-     /* Загрузка файла вложения */ 
+    /* Загрузка файла вложения */ 
     public Attaches uploadAtache(UploadedFile uploadFile) throws IOException{
         if (uploadFile == null) return null;                
 
-        int length = uploadFile.getContents().length;
-
         String fileName = uploadFile.getFileName();
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
 
-        Attaches attache = new Attaches();
-        attache.setName(fileName);
-        attache.setExtension(fileExt);
-        attache.setType(uploadFile.getContentType());
-        attache.setSize(length);
-        attache.setAuthor(sessionBean.getCurrentUser());
-        attache.setDateCreate(new Date());
-
-        fileService.doUpload(attache, uploadFile.getInputstream());            
-
-        return attache;
-    }
-       
+        Map<String, Object> params = new HashMap<>();
+        params.put("contentType", uploadFile.getContentType());
+        params.put("fileName", fileName);
+        params.put("size", uploadFile.getSize());
+        params.put("author", sessionBean.getCurrentUser());
+        return attacheService.uploadAtache(params, uploadFile.getInputstream());
+    }        
+    
     @Override
     public void onOpenCard(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();

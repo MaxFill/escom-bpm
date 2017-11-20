@@ -14,10 +14,8 @@ import javax.inject.Named;
 @ViewScoped
 public class ScanBean extends BaseDialogBean {
     private static final long serialVersionUID = 2945123427931425280L;
-    private static final int JNDI_MAX_FILE_SIZE_DEFAULT = 10 * 1024 * 1024;
 
     private ScanViewModel viewModel;
-    private final DWTwainHelper dwTwainHelper = new DWTwainHelper(JNDI_MAX_FILE_SIZE_DEFAULT);
     
     @EJB
     private FileService fileService;
@@ -29,9 +27,9 @@ public class ScanBean extends BaseDialogBean {
         int length = data.length;
 
         attache.setName(viewModel.getFullFileName());
-        attache.setExtension(viewModel.getFileExtensionValue().replace(DWTwainHelper.DWTWAIN_IMAGETYPE_PREFIX, "").toLowerCase());
+        attache.setExtension(viewModel.getFileExtensionValue().toLowerCase());
         attache.setType("image/jpeg");
-        attache.setSize(length);
+        attache.setSize(Integer.toUnsignedLong(length));
         attache.setAuthor(sessionBean.getCurrentUser());
         attache.setDateCreate(new Date());
         fileService.uploadScan(attache, data);
@@ -50,13 +48,9 @@ public class ScanBean extends BaseDialogBean {
         return viewModel;
     }
 
-    public DWTwainHelper getScanHelper() {
-        return dwTwainHelper;
-    }
-
     @Override
     protected void initBean(){
-        viewModel = new ScanViewModel(dwTwainHelper.getScanFileTypesLabels());
+        viewModel = new ScanViewModel();
     }
 
     @Override
