@@ -3,7 +3,6 @@ package com.maxfill.model.roles;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Set;
-import static javafx.scene.input.KeyCode.T;
 
 public abstract class Roles implements Serializable{
     private static final long serialVersionUID = 5076062464471540016L;

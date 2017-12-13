@@ -20,6 +20,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>prime-repo</id>
+            <name>PrimeFaces Maven Repository</name>
+            <url>http://repository.primefaces.org</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+
     <dependencies> 
 
         <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
@@ -66,9 +75,8 @@
             </exclusions>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.primefaces.themes/all-themes -->
         <dependency>
-            <groupId>org.primefaces.extensions</groupId>
+            <groupId>org.primefaces.themes</groupId>
             <artifactId>all-themes</artifactId>
             <version>1.0.10</version>
         </dependency>
