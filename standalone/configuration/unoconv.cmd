@@ -1,0 +1,1 @@
+call python.exe C:\unoconv\unoconv %*
