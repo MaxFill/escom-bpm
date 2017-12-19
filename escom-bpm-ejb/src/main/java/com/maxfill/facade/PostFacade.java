@@ -19,7 +19,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 
 /**
- *
+ * Фасад для сущности "Должности"
  * @author Maxim
  */
 @Stateless
@@ -30,6 +30,11 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> 
 
     public PostFacade() {
         super(Post.class, PostLog.class, PostStates.class);
+    }
+
+    @Override
+    public Class<Post> getItemClass() {
+        return Post.class;
     }
 
     @Override

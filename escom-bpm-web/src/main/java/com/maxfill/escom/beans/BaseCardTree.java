@@ -51,7 +51,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
             try {
                 Rights childRights = new Rights();
-                Rights childDef = getTreeBean().getRightForChild(getEditedItem());
+                Rights childDef = getTreeBean().getItemFacade().getRightForChild(getEditedItem());
                 for(Right rightDef : childDef.getRights()){
                     Right right = new Right();
                     BeanUtils.copyProperties(right, rightDef); 
@@ -100,7 +100,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     @Override
     protected void prepareRightsForView(T item){
         super.prepareRightsForView(item);
-        getTreeBean().makeRightForChilds(item); 
+        getTreeBean().getItemFacade().makeRightForChilds(item);
         rightsBean.prepareRightsForView(item.getRightForChild().getRights());
     }
     
@@ -145,9 +145,9 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     protected void onBeforeSaveItem(T item) {
         Rights newChildsRight = item.getRightForChild();
         if (item.isInheritsAccessChilds()) { //если галочка установлена, значит права наследуются                         
-            saveAccessChild(getEditedItem(), "");                        
+            getItemFacade().saveAccessChild(getEditedItem(), "");
         } else {
-            saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
+            getItemFacade().saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
         }
         super.onBeforeSaveItem(item);
     }    

@@ -24,6 +24,11 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     @Override
+    public Class<Company> getItemClass() {
+        return Company.class;
+    }
+
+    @Override
     public String getFRM_NAME() {
         return Company.class.getSimpleName().toLowerCase();
     }            

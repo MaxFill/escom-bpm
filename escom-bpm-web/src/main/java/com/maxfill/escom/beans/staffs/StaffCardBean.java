@@ -99,8 +99,4 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
         return groups;
     }
 
-    @Override
-    public Class<Staff> getItemClass() {
-        return Staff.class;
-    }
 }

@@ -68,6 +68,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
 
     @Override
+    public Class<User> getItemClass() {
+        return User.class;
+    }
+
+    @Override
     public void create(User user) {
         updateUserInfoInRealm(user);
         super.create(user);
@@ -301,19 +306,19 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         String login = loginMap.get("login");
         String password = loginMap.get("pwl");
         User user = checkUserLogin(login, password.toCharArray());
-        if (user != null){            
-            Date expirationDate = DateUtils.addMounth(new Date(), 1);
-            Key key = configuration.getSignKey();
-            String jwt = Jwts.builder()
-                    .setId(user.getId().toString())
-                    .setIssuer("http://localhost/")
-                    .setSubject(login + "/" + EscomUtils.encryptPassword(password))
-                    .setExpiration(expirationDate)
-                    .signWith(SignatureAlgorithm.HS256, key)                    
-                    .compact();
-            tokenMap.put("token", jwt);
-        }
+        if (user == null) return null;
+
+        Date expirationDate = DateUtils.addMounth(new Date(), 1);
+        Key key = configuration.getSignKey();
+        String jwt = Jwts.builder()
+                .setId(user.getId().toString())
+                .setIssuer("http://localhost/")
+                .setSubject(login + "/" + EscomUtils.encryptPassword(password))
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+        tokenMap.put("token", jwt);
         Gson gson = new Gson();
-        return gson.toJson(tokenMap, Map.class);        
+        return gson.toJson(tokenMap, Map.class);
     }
 }

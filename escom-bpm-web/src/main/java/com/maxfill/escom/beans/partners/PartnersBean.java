@@ -118,11 +118,6 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         }                             
         partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
         getItemFacade().edit(partner);
-    }        
-
-    @Override
-    public Class<Partner> getItemClass() {
-        return Partner.class;
     }
 
     @Override

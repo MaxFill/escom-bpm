@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
-/* Сервисный бин "Группы видов документов" */
+/* Бин для сущности "Группы видов документов" */
 @Named
 @SessionScoped
 public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups>{
@@ -41,21 +41,6 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     public DocTypeGroupsFacade getItemFacade() {
         return itemsFacade;
     }
-
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        }
-        
-        if (item.getParent() != null) {
-            return getRightItem(item.getParent()); //получаем права от родительской группы
-        }                     
-        
-        return getDefaultRights(item);
-    } 
     
     @Override
     public void preparePasteItem(DocTypeGroups pasteItem, DocTypeGroups sourceItem, BaseDict target){
@@ -76,11 +61,6 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     @Override
     protected void checkAllowedDeleteItem(DocTypeGroups docTypeGroups, Set<String> errors){
         super.checkAllowedDeleteItem(docTypeGroups, errors);       
-    }
-    
-    @Override
-    public Class<DocTypeGroups> getItemClass() {
-        return DocTypeGroups.class;
     }
 
     @Override

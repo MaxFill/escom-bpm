@@ -64,7 +64,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         TreeNode rezNode = null;
         String typeNode = "tree";
         
-        if (preloadCheckRightView(item)){
+        if (itemsFacade.preloadCheckRightView(item, currentUser)){
             List<Department> childs = new ArrayList<>();
             
             switch (item.getClass().getSimpleName()){
@@ -111,7 +111,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
 
     /* Добавляет штатную единицу в контент  */ 
     public void addStaffInCnt(Staff staff, List<BaseDict> cnts) {
-        if (staffBean.preloadCheckRightView(staff)){
+        if (staffBean.getItemFacade().preloadCheckRightView(staff, currentUser)){
             cnts.add(staff);
         }
     }           
@@ -130,11 +130,6 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("CompanyUsedInDepartaments"), messageParameters);
             errors.add(error);
         }
-    }
-
-    @Override
-    public Class<Company> getItemClass() {
-        return Company.class;
     }
 
     @Override

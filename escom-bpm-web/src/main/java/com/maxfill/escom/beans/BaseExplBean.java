@@ -37,7 +37,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Формирование списка детальных данных в таблице обозревателя  */
     public List<T> prepareSetDetails(List<T> sourceItems) {
         return sourceItems.stream()
-                    .filter(item -> preloadCheckRightView(item))
+                    .filter(item -> getItemFacade().preloadCheckRightView(item, currentUser))
                     .collect(Collectors.toList());
     }
     
@@ -47,8 +47,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public T prepViewItem(T item, Set<String> errors){
         BaseDictFacade facade = getItemFacade();        
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
-        makeRightItem(editItem);        
-        if (!isHaveRightView(editItem)){ 
+        getItemFacade().makeRightItem(editItem, currentUser);
+        if (!facade.isHaveRightView(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
             errors.add(error);
@@ -62,8 +62,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getItemFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для редактирования 
-        makeRightItem(editItem);
-        if (!isHaveRightEdit(editItem)){            
+        getItemFacade().makeRightItem(editItem, currentUser);
+        if (!facade.isHaveRightEdit(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
@@ -117,17 +117,17 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         boolean isAllowedEditParent = true;
         BaseDict owner = newItem.getOwner();
         if (owner != null) {
-            getOwnerBean().actualizeRightItem(owner);
-            isAllowedEditOwner = isHaveRightAddChild(owner); //можно ли создавать дочерние объекты?
+            getOwnerBean().getItemFacade().actualizeRightItem(owner, currentUser);
+            isAllowedEditOwner = getItemFacade().isHaveRightAddChild(owner); //можно ли создавать дочерние объекты?
         }
         if (parent != null){
-            actualizeRightItem(parent);
-            isAllowedEditParent = isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
+            getItemFacade().actualizeRightItem(parent, currentUser);
+            isAllowedEditParent = getItemFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
         }
         if (isAllowedEditOwner && isAllowedEditParent) {
-            newItem.setParent(parent);            
-            makeRightItem(newItem);
-            if (isHaveRightCreate(newItem)) {
+            newItem.setParent(parent);
+            getItemFacade().makeRightItem(newItem, currentUser);
+            if (getItemFacade().isHaveRightCreate(newItem)) {
                 setSpecAtrForNewItem(newItem);                
             } else {
                 String objName = EscomBeanUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
@@ -188,7 +188,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Возвращает список актуальных объектов, доступных для просмотра текущему пользователю */
     public List<T> findAll(){        
         return (List<T>) getItemFacade().findAll().stream()
-                    .filter(item -> preloadCheckRightView((T)item))
+                    .filter(item -> getItemFacade().preloadCheckRightView((T)item, currentUser))
                     .collect(Collectors.toList());             
     }
     
@@ -221,14 +221,14 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Проверка прав перед добавлением объекта в группу  */
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
-        getOwnerBean().actualizeRightItem(dropItem);
-        if (!isHaveRightAddChild(dropItem)) {
+        getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
+        if (!getItemFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
             errors.add(error);
             return false;
         }
-        actualizeRightItem(dragItem);
-        if (!isHaveRightEdit(dragItem)) {
+        getItemFacade().actualizeRightItem(dragItem, currentUser);
+        if (!getItemFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -248,8 +248,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         
     /* РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу  */
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
-        actualizeRightItem(dragItem);
-        if (!isHaveRightEdit(dragItem)){
+        getItemFacade().actualizeRightItem(dragItem, currentUser);
+        if (!getItemFacade().isHaveRightEdit(dragItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -257,7 +257,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         
         actualizeRightForDropItem(dropItem);
 
-        if (!isHaveRightAddChild(dropItem)){
+        if (!getItemFacade().isHaveRightAddChild(dropItem)){
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
@@ -268,16 +268,16 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
 
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (getOwnerBean() != null){
-            getOwnerBean().actualizeRightItem(dropItem);
+            getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
         } else {
-            actualizeRightItem(dropItem);
-        }        
+            getItemFacade().actualizeRightItem(dropItem, currentUser);
+        }
     }
             
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
-    public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {        
-        actualizeRightItem(dragItem);
-        if (!isHaveRightDelete(dragItem)) {
+    public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {
+        getItemFacade().actualizeRightItem(dragItem, currentUser);
+        if (!getItemFacade().isHaveRightDelete(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -287,8 +287,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в не актуальные  */
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
-        actualizeRightItem(dragItem);
-        if (!isHaveRightEdit(dragItem)) {
+        getItemFacade().actualizeRightItem(dragItem, currentUser);
+        if (!getItemFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;
@@ -384,9 +384,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }
 
     /* КОРЗИНА: перемещение объекта в корзину */
-    public void moveToTrash(T item, Set<String> errors) {        
-        actualizeRightItem(item);
-        if (isHaveRightDelete(item)) {
+    public void moveToTrash(T item, Set<String> errors) {
+        getItemFacade().actualizeRightItem(item, currentUser);
+        if (getItemFacade().isHaveRightDelete(item)) {
             checkAllowedDeleteItem(item, errors);
             checkLockItem(item, errors);
             if (errors.isEmpty()) {

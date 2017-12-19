@@ -31,11 +31,6 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     public NumeratorPatternFacade getItemFacade() {
         return numeratorFacade;
     }
-
-    @Override
-    public Class<NumeratorPattern> getItemClass() {
-        return NumeratorPattern.class;
-    }
     
     public List<SelectItem> getNumPatternTypes() {
         return numPatternTypes;

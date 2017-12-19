@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
@@ -14,14 +13,19 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/* Фильтры */
+/* Фасад для сущности "Фильтры" */
 @Stateless
 public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, FiltersStates> {
 
     public FiltersFacade() {
         super(Filter.class, FilterLog.class, FiltersStates.class);
     }
-    
+
+    @Override
+    public Class<Filter> getItemClass() {
+        return Filter.class;
+    }
+
     @Override
     public String getFRM_NAME() {
         return Filter.class.getSimpleName().toLowerCase();

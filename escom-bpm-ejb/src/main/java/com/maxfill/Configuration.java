@@ -58,7 +58,6 @@ public class Configuration {
         Properties properties = new Properties();
 
         try {
-            fullTextSearcheConnection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000","", "");
             properties.load(new FileInputStream(file));
             serverOS = (String) properties.get("SERVER_OS");
             serverURL = (String) properties.get("SERVER_URL");
@@ -79,6 +78,7 @@ public class Configuration {
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
+            fullTextSearcheConnection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000","", "");
         } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

@@ -102,11 +102,6 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         return item.getUsersGroupsList();
     }
 
-    @Override
-    public Class<User> getItemClass() {
-        return User.class;
-    }
-
     public String getPassword() {
         return password;
     }

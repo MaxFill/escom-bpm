@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.SelectEvent;
 
-/* Карточка статуса документа */
+/* Бин для карточки "Статус документа" */
 @ViewScoped
 @Named
 public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
@@ -46,8 +46,4 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
         return itemFacade;
     }
 
-    @Override
-    public Class<StatusesDoc> getItemClass() {
-        return StatusesDoc.class;
-    }
 }

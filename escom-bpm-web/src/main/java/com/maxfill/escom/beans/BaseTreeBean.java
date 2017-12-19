@@ -20,55 +20,13 @@ import org.apache.commons.collections.CollectionUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T , O > {
-    private static final long serialVersionUID = -2983279513793115056L;                
-        
-    /* Формирование прав дочерних объектов */
-    public Rights makeRightForChilds(T item){
-        Rights childRights = getRightForChild(item);
-        item.setRightForChild(childRights);
-        return childRights;
-    }
-    
-    /* Получение прав для дочерних объектов */
-    public Rights getRightForChild(BaseDict item){
-        if (item == null) return null;
-        
-        if (!item.isInheritsAccessChilds()) {
-            return getActualRightChildItem((T)item);
-        } 
-
-        if (item.getParent() != null) {
-            return getRightForChild(item.getParent()); //получаем права от родителя
-        }
-                    
-        if (item.getOwner() != null) {
-            return getRightForChild(item.getOwner()); //получаем права от владельца
-        }
-
-        return getDetailBean().getDefaultRights();
-    }
-    
-    /* Получение актуальных прав дочерних объектов от объекта */
-    private Rights getActualRightChildItem(T item) {
-        Rights actualRight = null;
-        byte[] compressXML = item.getAccessChild();
-        if (compressXML != null && compressXML.length >0){
-            try {
-                String accessXML = EscomUtils.decompress(compressXML);            
-                StringReader access = new StringReader(accessXML);         
-                actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
-            } catch (IOException ex) {
-                Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } 
-        return actualRight;
-    }
+    private static final long serialVersionUID = -2983279513793115056L;
     
     /* Установка специфичных атрибутов при создании объекта  */ 
     @Override
     public void setSpecAtrForNewItem(T item) {
         item.setInheritsAccessChilds(true);
-        makeRightForChilds(item);
+        getItemFacade().makeRightForChilds(item);
     }
     
     /* Базовый метод формирования детального списка для группы  */
@@ -81,14 +39,14 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     
     /* Добавление подчинённого объекта в контент */
     protected void addDetailItemInContent(BaseDict item, List<BaseDict> cnt){
-        if (getDetailBean().preloadCheckRightView(item)){
+        if (getDetailBean().getItemFacade().preloadCheckRightView(item, currentUser)){
             cnt.add(item);
         }
     }
     
-    /* Добавление  дочернего объекта в контент */
+    /* Добавление дочернего объекта в контент */
     protected void addChildItemInContent(T item, List<BaseDict> cnt){
-        if (preloadCheckRightView(item)){
+        if (getItemFacade().preloadCheckRightView(item, currentUser)){
             cnt.add(item);
         }
     }
@@ -112,7 +70,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Добавление узла в дерево при его формировании  */
     protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
         TreeNode rezNode = null;
-        if (preloadCheckRightView(item)) {
+        if (getItemFacade().preloadCheckRightView(item, currentUser)) {
             TreeNode newNode = new DefaultTreeNode("tree", item, parentNode);
 
             List<T> childs = getItemFacade().findActualChilds(item);

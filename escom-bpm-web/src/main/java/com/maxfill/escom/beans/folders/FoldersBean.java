@@ -36,21 +36,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private FoldersFacade foldersFacade;
     @EJB
     private DocFacade docFacade;
-    
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        }
-        
-        if (item.getParent() != null) {
-            return getRightItem(item.getParent()); //получаем права от родительской группы
-        }                     
-        
-        return getDefaultRights(item);
-    }
         
     @Override
     public TreeNode makeTree() {
@@ -70,7 +55,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
         TreeNode resultNode = null;
 
-        if (preloadCheckRightView(folder)) { //проверяем право на просмотр папки текущему пользователю
+        if (getItemFacade().preloadCheckRightView(folder, currentUser)) { //проверяем право на просмотр папки текущему пользователю
             //актуализируем права документов папки
             
             TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
@@ -150,11 +135,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public List<Folder> getGroups(Folder item) {
         return null;
-    }       
-
-    @Override
-    public Class<Folder> getItemClass() {
-        return Folder.class;
     }
 
     @Override

@@ -12,7 +12,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/* Карточка Группы видов документов */
+/* Бин карточки "Группы видов документов" */
 @Named
 @ViewScoped
 public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
@@ -34,11 +34,6 @@ public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     @Override
     public DocTypeGroupsFacade getItemFacade() {
         return itemsFacade;
-    }
-
-    @Override
-    public Class<DocTypeGroups> getItemClass() {
-        return DocTypeGroups.class;
     }
 
     @Override

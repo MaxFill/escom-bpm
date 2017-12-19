@@ -8,6 +8,8 @@ import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentStates;
 import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.model.rights.Rights;
+import com.maxfill.model.users.User;
 import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,7 +34,9 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     private UserFacade userFacade;
     @EJB
     private DepartmentNumeratorService departmentNumeratorService;
-        
+    @EJB
+    private CompanyFacade companyFacade;
+
     public DepartmentFacade() {
         super(Department.class, DepartamentLog.class, DepartmentStates.class);
     }
@@ -45,8 +49,35 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DEPARTAMENTS;
-    }     
-    
+    }
+
+    @Override
+    public Class<Department> getItemClass() {
+        return Department.class;
+    }
+
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user); //получаем свои права
+        }
+
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent(), user); //получаем права от родительского подразделения
+        }
+
+        if (item.getOwner() != null) {
+            Rights childRight = companyFacade.getRightForChild(item.getOwner()); //получаем права из спец.прав
+            if (childRight != null){
+                return childRight;
+            }
+        }
+
+        return getDefaultRights(item);
+    }
+
     /* Ищет подразделение с указанным названием в заданной компании и если не найдено, то создаёт новое.  */
     public Department onGetDepartamentByName(Company company, String departName){
         if (StringUtils.isBlank(departName) || company == null){        

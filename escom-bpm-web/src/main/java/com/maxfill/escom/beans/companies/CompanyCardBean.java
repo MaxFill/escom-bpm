@@ -12,7 +12,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/* Карточка Компании юр лица  */
+/* Бин карточки "Компания"  */
 @Named
 @ViewScoped
 public class CompanyCardBean extends BaseCardTree<Company> {
@@ -34,11 +34,6 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     @Override
     public CompanyFacade getItemFacade() {
         return itemsFacade;
-    }    
-
-    @Override
-    public Class<Company> getItemClass() {
-        return Company.class;
     }
 
     @Override

@@ -1,12 +1,15 @@
-
 package com.maxfill.facade;
 
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.groups.PartnerGroupsLog;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.partners.groups.PartnerGroupsStates;
+import com.maxfill.model.rights.Rights;
+import com.maxfill.model.users.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +24,12 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
 
     public PartnersGroupsFacade() {
         super(PartnerGroups.class, PartnerGroupsLog.class, PartnerGroupsStates.class);
-    }    
+    }
+
+    @Override
+    public Class<PartnerGroups> getItemClass() {
+        return PartnerGroups.class;
+    }
 
     @Override
     public String getFRM_NAME() {
@@ -36,8 +44,24 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
             partner.getPartnersGroupsList().add(group);
             getEntityManager().merge(partner);
         }
-    }    
-       
+    }
+
+    /* Получение прав доступа для иерархического справочника */
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user); //получаем свои права
+        }
+
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent(), user); //получаем права от родительской группы
+        }
+
+        return getDefaultRights(item);
+    }
+
     @Override
     public void edit(PartnerGroups partnersGroups) { 
         PartnerGroups persistentPartnersGroups = getEntityManager().find(PartnerGroups.class, partnersGroups.getId());

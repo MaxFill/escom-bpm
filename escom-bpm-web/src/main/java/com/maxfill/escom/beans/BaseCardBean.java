@@ -59,7 +59,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             if (params.containsKey("openMode")){ //only if enter from url
                item = (T)getItemFacade().find(Integer.valueOf(itemOpenKey));
                if (item == null) return;
-               makeRightItem(item);
+               getItemFacade().makeRightItem(item, currentUser);
                typeEdit = Integer.valueOf(params.get("openMode"));
                if (typeEdit.equals(DictEditMode.EDIT_MODE)){
                    String itemKey = item.getItemKey();
@@ -158,12 +158,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     
     /* Действия перед сохранением объекта  */
     protected void onBeforeSaveItem(T item) {
-        Rights newRight = makeRightItem(item);
+        Rights newRight = getItemFacade().makeRightItem(item, currentUser);
         if (newRight == null) return;
         if (item.isInherits()) { //если галочка установлена, значит права наследуются                         
-            saveAccess(editedItem, "");                        
+            getItemFacade().saveAccess(editedItem, "");
         } else {
-            saveAccess(editedItem, newRight.toString()); //сохраняем права в XML
+            getItemFacade().saveAccess(editedItem, newRight.toString()); //сохраняем права в XML
         }
     }
 
@@ -402,12 +402,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* ПРАВА ДОСТУПА: */
     public boolean isHaveRightChangeRight() {
-        return isHaveRightChangeRight(editedItem);                
+        return getItemFacade().isHaveRightChangeRight(editedItem);
     }
     
     /* ПРАВА ДОСТУПА: */ 
     public boolean isHaveRightEdit() {
-        return isHaveRightEdit(editedItem);                
+        return getItemFacade().isHaveRightEdit(editedItem);
     }        
     
     /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
@@ -435,7 +435,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         if (Boolean.FALSE.equals((Boolean) event.getNewValue())) { //если галочка снята, значит права не наследуются и нужно скопировать права             
             try {                    
                 Rights newRight = new Rights();
-                Rights rightDefs = getRightItem(editedItem);
+                Rights rightDefs = getItemFacade().getRightItem(editedItem, currentUser);
                 for(Right rightDef : rightDefs.getRights()){
                     Right right = new Right();
                     BeanUtils.copyProperties(right, rightDef); 

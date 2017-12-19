@@ -67,11 +67,6 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
     }
 
     @Override
-    public Class<NumeratorPattern> getItemClass() {
-        return NumeratorPattern.class;
-    }
-    
-    @Override
     public Class<NumeratorPattern> getOwnerClass() {
         return null;
     }

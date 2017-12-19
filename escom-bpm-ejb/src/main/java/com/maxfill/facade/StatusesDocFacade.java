@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.statuses.StatusesDocLog;
@@ -14,6 +13,11 @@ public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, 
 
     public StatusesDocFacade() {
         super(StatusesDoc.class, StatusesDocLog.class, StatusesDocStates.class);
+    }
+
+    @Override
+    public Class<StatusesDoc> getItemClass() {
+        return StatusesDoc.class;
     }
 
     @Override

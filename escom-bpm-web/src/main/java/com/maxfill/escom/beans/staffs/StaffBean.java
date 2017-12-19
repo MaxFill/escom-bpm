@@ -55,29 +55,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         //TODO добавить поиск штатной единицы для текущего пользователя
         currentStaff = itemsFacade.find(1);
     }
-
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        } 
- 
-        //если sataff относиться к подразделению
-        if (item.getOwner() != null) {
-            return ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
-        }
-        
-        //если staff относиться напрямую к компании
-        Staff staff = (Staff)item;
-        Company company = staff.getCompany();
-        if (company != null) {
-            return companyBean.getRightForChild(company); //получаем права из спец.прав компании 
-        } 
-
-        return getDefaultRights(item);
-    } 
     
     @Override
     public BaseExplBean getOwnerBean() {
@@ -122,9 +99,9 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Department){
-            getOwnerBean().actualizeRightItem(dropItem);
+            getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
         } else {
-            companyBean.actualizeRightItem(dropItem);
+            companyBean.getItemFacade().actualizeRightItem(dropItem, currentUser);
         }
     }
     
@@ -169,11 +146,6 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             groups.add(department);
         }
         return groups;
-    }
-
-    @Override
-    public Class<Staff> getItemClass() {
-        return Staff.class;
     }
 
     @Override

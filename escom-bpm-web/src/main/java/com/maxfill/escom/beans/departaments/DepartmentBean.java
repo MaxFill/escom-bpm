@@ -46,28 +46,6 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private StaffFacade staffFacade;
     
     @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        } 
-        
-        if (item.getParent() != null) {
-            return getRightItem(item.getParent()); //получаем права от родительского подразделения
-        } 
-        
-        if (item.getOwner() != null) {
-            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав 
-            if (childRight != null){
-                return childRight;
-            }
-        }
-        
-        return getDefaultRights(item);
-    } 
-    
-    @Override
     public DepartmentFacade getItemFacade() {
         return itemFacade;
     }
@@ -81,9 +59,9 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Company){
-            getOwnerBean().actualizeRightItem(dropItem);
+            getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
         } else {
-            actualizeRightItem(dropItem);
+            getItemFacade().actualizeRightItem(dropItem, currentUser);
         }
     }
     
@@ -156,11 +134,6 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public BaseExplBean getOwnerBean() {
         return ownerBean;
-    }
-    
-    @Override
-    public Class<Department> getItemClass() {
-        return Department.class;
     }
     
     @Override

@@ -130,23 +130,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
                 .forEach(docsStatus -> docsStatuses.add(docsStatus));
         return statusesForAdd.size();
-    } 
-    
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;        
-
-        if (!item.isInherits()) {
-            return getActualRightItem(item);
-        }
-        if (item.getOwner() != null) {
-            Rights childRight = ownerBean.getRightForChild(item.getOwner()); 
-            if (childRight != null) {
-                return childRight;
-            }
-        }
-        return getDefaultRights(item);
-    }   
+    }
     
     @Override
     public SearcheModel initSearcheModel() {
@@ -178,11 +162,6 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     public BaseExplBean getDetailBean() {
         return null;
-    }
-
-    @Override
-    public Class<Doc> getItemClass() {
-        return Doc.class;
     }
 
     @Override
@@ -237,8 +216,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = doc.getMainAttache();
         if (attache != null) {
             Set<String> errors = new HashSet<>();
-            makeRightItem(doc);
-            if (!isHaveRightEdit(doc)){              
+            getItemFacade().makeRightItem(doc, currentUser);
+            if (!getItemFacade().isHaveRightEdit(doc)){
                 String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
                 String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
                 errors.add(error);
@@ -257,8 +236,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void openAttacheAddForm(Doc doc){
         if (doc == null) return;
         Set<String> errors = new HashSet<>();
-        makeRightItem(doc);
-        if (!isHaveRightEdit(doc)){              
+        getItemFacade().makeRightItem(doc, currentUser);
+        if (!getItemFacade().isHaveRightEdit(doc)){
             String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
@@ -282,8 +261,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (documentId == null) return;            
         Doc doc = docsFacade.find(documentId);
         if (doc == null) return;
-        actualizeRightItem(doc);
-        if (isHaveRightView(doc)) {
+        getItemFacade().actualizeRightItem(doc, currentUser);
+        if (getItemFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 attacheDownLoadPDF(attache);
@@ -298,9 +277,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     /* Просмотр файла вложения основной версии документа как PDF */
     public void onViewMainAttache(Doc doc) {
         if (doc == null) return;
-        
-        actualizeRightItem(doc);
-        if (isHaveRightView(doc)) {
+        getItemFacade().actualizeRightItem(doc, currentUser);
+        if (getItemFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 onViewAttache(attache);

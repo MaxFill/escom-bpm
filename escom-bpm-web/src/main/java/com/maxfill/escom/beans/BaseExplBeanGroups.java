@@ -15,14 +15,14 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
     /* Обработка перед добавлением объекта в группу  */
     @Override
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
-        getGroupBean().actualizeRightItem(dropItem);
-        if (!isHaveRightAddChild(dropItem)) {
+        getGroupBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
+        if (!getItemFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
             errors.add(error);
             return false;
         }
-        actualizeRightItem(dragItem);
-        if (!isHaveRightEdit(dragItem)) {
+        getItemFacade().actualizeRightItem(dragItem, currentUser);
+        if (!getItemFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
             errors.add(error);
             return false;

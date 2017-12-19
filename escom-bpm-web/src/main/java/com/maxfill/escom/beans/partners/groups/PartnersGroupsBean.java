@@ -41,22 +41,6 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @EJB
     private PartnersFacade partnersFacade;
     
-    /* Получение прав доступа для иерархического справочника */
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        }
-        
-        if (item.getParent() != null) {
-            return getRightItem(item.getParent()); //получаем права от родительской группы
-        }                     
-        
-        return getDefaultRights(item);
-    }
-    
     /* Формирование контента группы контрагента */     
     @Override
     public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode) {
@@ -119,11 +103,6 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @Override
     protected void deleteDetails(PartnerGroups partnerGroups) {
         // При удалении группы удалять контрагентов не нужно!
-    }
-    
-    @Override
-    public Class<PartnerGroups> getItemClass() {
-        return PartnerGroups.class;
     }
 
     @Override

@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
@@ -37,11 +36,7 @@ public class ApplicationBean implements Serializable{
         
     private Boolean needUpadateSystem = false;
     private Licence licence;    
-    
-    @EJB
-    private RightFacade rightFacade;
-    @EJB
-    private MetadatesFacade metadatesFacade;
+
     @EJB
     private Configuration configuration;
     
@@ -53,8 +48,7 @@ public class ApplicationBean implements Serializable{
     
     //объекты (ItemKey), заблокированные пользователем (UserId) 
     private final ConcurrentHashMap<String, User> itemsLock = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Rights> defRights = new ConcurrentHashMap<>();
-    
+
     @PostConstruct
     public void init() { 
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
@@ -62,26 +56,7 @@ public class ApplicationBean implements Serializable{
         licence = configuration.getLicence();
         licence.setVersionNumber(ec.getInitParameter("VersionNumber"));
         licence.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
-        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));        
-        loadDefaultRights();
-    }
-    
-    /* Получение дефолтных прав доступа объектов */
-    private void loadDefaultRights(){
-        List<Metadates> metadates = metadatesFacade.findAll();
-        metadates.stream().forEach(metadatesObj -> {
-            Rights rights = rightFacade.getObjectDefaultRights(metadatesObj);
-            defRights.put(metadatesObj.getObjectName(), rights);
-        });                
-    }
-            
-    /* Возвращает дефолтные права доступа */
-    public Rights getDefaultRights(String metadateId){
-        Rights rights = defRights.get(metadateId);
-        if (rights == null){
-            throw new NullPointerException("EscomErr: for object " + metadateId + " no have default rights!");
-        }
-        return rights;
+        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
     }
     
     /* БЛОКИРОВКИ ОБЪЕКТОВ  */

@@ -1,11 +1,13 @@
 package com.maxfill.facade;
 
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.FolderLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.folders.FolderStates;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +27,13 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
-    }        
-     
+    }
+
+    @Override
+    public Class<Folder> getItemClass() {
+        return Folder.class;
+    }
+
     @Override
     public String getFRM_NAME() {
         return Folder.class.getSimpleName().toLowerCase();
@@ -37,7 +44,22 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         folder.setModerator(folder.getAuthor());
         folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
     }
-    
+
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user); //получаем свои права
+        }
+
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent(), user); //получаем права от родительской группы
+        }
+
+        return getDefaultRights(item);
+    }
+
     /* Возвращает все папки */
     public List<Folder> findAllFolders(){ 
         getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
@@ -63,12 +85,12 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     }
 
     /*
-     * Проверка возможности создавать дочерние объекты в указанной папке, указанному пользователю
+     * Проверка возможности добавлять документы в указанной папке, указанному пользователю
      * @return true - можно, false - нельзя
      */
-    public boolean checkRightCreateDetail(Folder folder, User user){
-        //ToDo доработать!
-        return true;
+    public boolean checkRightAddDetail(Folder folder, User user){
+        actualizeRightItem(folder, user);
+        return isHaveRightAddChild(folder);
     }
 
     @Override

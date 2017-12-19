@@ -1,4 +1,3 @@
-
 package com.maxfill.escom.beans.partners.types;
 
 import com.maxfill.facade.PartnerTypesFacade;
@@ -11,7 +10,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 /**
- * Бин для видов контрагентов
+ * Бин для карточки "Виды контрагентов"
  * @author mfilatov
  */
 @ViewScoped
@@ -27,8 +26,4 @@ public class PartnerTypesCardBean extends BaseCardBean<PartnerTypes>{
         return partnerTypesFacade;
     }
 
-    @Override
-    public Class<PartnerTypes> getItemClass() {
-        return PartnerTypes.class;
-    }
 }

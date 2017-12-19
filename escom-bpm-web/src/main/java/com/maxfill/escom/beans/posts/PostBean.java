@@ -66,11 +66,6 @@ public class PostBean extends BaseExplBean<Post, Post>{
     }
 
     @Override
-    public Class<Post> getItemClass() {
-        return Post.class;
-    }
-
-    @Override
     public Class<Post> getOwnerClass() {
         return null;
     }

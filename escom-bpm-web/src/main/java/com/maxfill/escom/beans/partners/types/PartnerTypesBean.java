@@ -65,11 +65,6 @@ public class PartnerTypesBean extends BaseExplBean<PartnerTypes, PartnerTypes>{
             String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerTypesUsed"), messageParameters);
             errors.add(error);
         }        
-    } 
-
-    @Override
-    public Class<PartnerTypes> getItemClass() {
-        return PartnerTypes.class;
     }
     
     @Override

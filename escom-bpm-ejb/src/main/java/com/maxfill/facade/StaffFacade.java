@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.staffs.StaffLog;
@@ -33,11 +34,20 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     
     @EJB
     private UserFacade userFacade;
+    @EJB
+    private CompanyFacade companyFacade;
+    @EJB
+    private DepartmentFacade departmentFacade;
 
     public StaffFacade() {
         super(Staff.class, StaffLog.class, StaffStates.class);
     }
-    
+
+    @Override
+    public Class<Staff> getItemClass() {
+        return Staff.class;
+    }
+
     @Override
     public String getFRM_NAME() {
         return DictObjectName.STAFF.toLowerCase();
@@ -55,6 +65,34 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
             Join<Staff, User> userJoin = root.join(Staff_.employee);
             predicates.add(builder.like(userJoin.<String>get(User_.secondName), secondName));
         }
+    }
+
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user); //получаем свои права
+        }
+
+        //если sataff относится к подразделению
+        if (item.getOwner() != null) {
+            Rights rights = departmentFacade.getRightForChild(item.getOwner()); //получаем права из спец.прав подразделения
+            if (rights != null){
+                return rights;
+            }
+        } else {
+            //если staff относится напрямую к компании
+            Staff staff = (Staff) item;
+            Company company = staff.getCompany();
+            if(company != null) {
+                Rights rights = companyFacade.getRightForChild(company); //получаем права из спец.прав компании
+                if (rights != null){
+                    return rights;
+                }
+            }
+        }
+        return getDefaultRights(item);
     }
 
     @Override

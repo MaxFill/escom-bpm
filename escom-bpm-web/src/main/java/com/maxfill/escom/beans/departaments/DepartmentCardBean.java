@@ -48,11 +48,6 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     public void makeCode(){
         departmentBean.makeCode(getEditedItem());
     }
-     
-    @Override
-    public Class<Department> getItemClass() {
-        return Department.class;
-    }
 
     @Override
     protected BaseTreeBean getTreeBean() {

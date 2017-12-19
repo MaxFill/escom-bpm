@@ -26,10 +26,5 @@ public class FiltersCardBean extends BaseCardBean<Filter> {
     public FiltersFacade getItemFacade() {
         return itemsFacade;
     }
-
-    @Override
-    public Class<Filter> getItemClass() {
-        return Filter.class;
-    }
     
 }

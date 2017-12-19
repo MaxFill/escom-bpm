@@ -10,7 +10,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/* Карточка Группы пользователей */
+/* Бин для карточки "Группа пользователей" */
 @Named
 @ViewScoped
 public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
@@ -22,11 +22,6 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     @Override
     public UserGroupsFacade getItemFacade() {
         return usGroupFacade;
-    }
-    
-    @Override
-    public Class<UserGroups> getItemClass() {
-        return UserGroups.class;
     }
 
     /* Добавление пользователя в группу пользователей */

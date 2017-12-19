@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
+import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.system.rights.RightsBean;
@@ -45,15 +46,17 @@ import org.apache.commons.lang.StringUtils;
 public abstract class BaseBean <T extends BaseDict> implements Serializable{
     static final private long serialVersionUID = 3914263308813029722L;
     static final protected Logger LOGGER = Logger.getGlobal();
-    
+
     @Inject
     protected ApplicationBean appBean;
     @Inject
     protected SessionBean sessionBean;
     @Inject
-    protected RightsBean rightsBean;
+    protected RightsBean rightsBean; //используется в CardBean!
     @EJB
     protected Configuration conf;
+    @EJB
+    protected RightsDef rightsDef;
     @EJB
     protected PrintService printService;
     @EJB
@@ -76,8 +79,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     private Metadates metadatesObj;             //объект метаданных
     
     public abstract BaseDictFacade getItemFacade(); //установка фасада объекта    
-    
-        
+
     @PostConstruct
     public void init() {
         //System.out.println("Создан бин =" + this.toString());
@@ -91,7 +93,6 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     }
     
     public abstract void onInitBean();
-    public abstract Class<T> getItemClass();    
     
     /* СОЗДАНИЕ: создание нового объекта   */
     public T createItem(BaseDict owner) {
@@ -101,232 +102,6 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* СОЗДАНИЕ: cоздание объекта */
     public T createItem(BaseDict owner, User author, Map<String, Object> params) {
         return (T) getItemFacade().createItem(author, owner, params);        
-    }    
-    
-    /* ПРАВА ДОСТУПА  */    
-    
-    /* ПРАВА ДОСТУПА: Установка и проверка прав при загрузке объекта */
-    public Boolean preloadCheckRightView(BaseDict item) {
-        Rights rights = getRightItem(item);
-        settingRightItem(item, rights);
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
-    }
-    
-    /* ПРАВА ДОСТУПА: Установка прав объекту для текущего пользователя в текущем состоянии объекта с актуализацией маски доступа  */
-    public void settingRightItem(BaseDict item, Rights newRight) {
-        if (item != null) {
-            item.setRightItem(newRight);
-            Integer mask;            
-            mask = getAccessMask(item, newRight, currentUser);                         
-            item.setRightMask(mask);            
-        }
-    } 
-    
-    /* ПРАВА ДОСТУПА: Получение прав объекта.
-     * Актуально для линейных не подчинённых объектов  */
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item);
-        } 
-
-        return getDefaultRights(item);
-    }
-    
-    /* ПРАВА ДОСТУПА: получение дефолтных прав объекта */
-    public Rights getDefaultRights(BaseDict item){
-        return appBean.getDefaultRights(item.getClass().getSimpleName());
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на просмотр объекта */
-    public boolean isHaveRightView(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);         
-    }     
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание объекта  */
-    public boolean isHaveRightCreate(BaseDict item) {        
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CREATE);
-    }        
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на редактирование объекта  */
-    public Boolean isHaveRightEdit(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EDIT);                 
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание дочерних объектов */
-    public Boolean isHaveRightAddChild(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_ADD_CHILDS);                 
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на удаление объекта  */
-    public Boolean isHaveRightDelete(BaseDict item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
-    }
-
-    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на изменение прав доступа к объекту  */
-    public boolean isHaveRightChangeRight(T item) {
-        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
-    }        
-    
-    /* ПРАВА ДОСТУПА: возвращает дефолтную маску доступа к объекту для текущего пользователя  */
-    /*
-    public Integer getDefaultMaskAccess() {
-        if (defaultMaskAccess == null) {
-            Rights rights = getDefaultRights();
-            State state = getMetadatesObj().getStateForNewObj();
-            defaultMaskAccess = getAccessMask(state, rights, currentUser);
-        }
-        return defaultMaskAccess;
-    }
-      */  
-    /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
-    public Integer getAccessMask(BaseDict item, Rights sourcesRight, User user) {
-        State state = item.getState().getCurrentState();
-        Integer userId = user.getId();
-        Integer accessMask = 0;
-        for (Right right : sourcesRight.getRights()) {  //распарсиваем права 
-            if (right.getState().equals(state)) {
-                switch (right.getObjType()) {
-                    case DictRights.TYPE_USER: {    //права указаны для пользователя
-                        if (right.getObjId().equals(userId)) { //это текущий пользователь, добавляем ему права
-                            accessMask = accessMask | makeAccessMask(right, accessMask);
-                        }
-                        break;
-                    }
-                    case DictRights.TYPE_GROUP: {    //права указаны для группы
-                        if (checkUserInGroup(right.getObjId(), user)) {
-                            accessMask = accessMask | makeAccessMask(right, accessMask);
-                        }
-                        break;
-                    }
-                    case DictRights.TYPE_ROLE: {    //права указаны для роли
-                        if (checkUserInRole(item, right.getObjId(), user)) {
-                            accessMask = accessMask | makeAccessMask(right, accessMask);
-                        }
-                        break;
-                    }
-                }
-                if (accessMask == 504) { 
-                    break; //дальше проверять права не нужно, т.к. установлены максимальные права
-                }
-            }
-        }
-        return accessMask;
-    } 
-    
-    /* ПРАВА ДОСТУПА: формирование битовой маски доступа */
-    private Integer makeAccessMask(Right right, Integer accessMask) {
-        if (right.isRead()) {
-            accessMask = accessMask | DictRights.RIGHT_VIEW;
-        }
-        if (right.isUpdate()) {
-            accessMask = accessMask | DictRights.RIGHT_EDIT;
-        }
-        if (right.isCreate()) {
-            accessMask = accessMask | DictRights.RIGHT_CREATE;
-        }
-        if (right.isDelete()) {
-            accessMask = accessMask | DictRights.RIGHT_DELETE;
-        }
-        if (right.isChangeRight()) {
-            accessMask = accessMask | DictRights.RIGHT_CHANGE_RIGHT;
-        }
-        if (right.isAddChild()) {
-            accessMask = accessMask | DictRights.RIGHT_ADD_CHILDS;
-        }
-        return accessMask;
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в роль */
-    private boolean checkUserInRole(BaseDict item, Integer groupId, User user) {
-        UserGroups group = userGroupsFacade.find(groupId);
-        String roleName = group.getRoleFieldName();
-        if (StringUtils.isBlank(roleName)) return false;
-        return getItemFacade().checkUserInRole(item, roleName, user);
-    }
-    
-    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
-    private boolean checkUserInGroup(Integer groupId, User user) {
-        if (groupId == 0) return true; //группа ВСЕ
-        
-        for (UserGroups userGroup : user.getUsersGroupsList()) {
-            if (userGroup.getId().equals(groupId)) {
-                return true;
-            }
-        }        
-        return false;
-    }
-    
-    /* ПРАВА ДОСТУПА: формирование прав для объекта  */
-    public Rights makeRightItem(BaseDict item) {
-        Rights rights = getRightItem(item);
-        settingRightItem(item, rights); 
-        return rights;
-    }  
-    
-    /* ПРАВА ДОСТУПА: акутализация прав доступа объекта */
-    public void actualizeRightItem(BaseDict item){
-        BaseDict freshItem = (BaseDict)getItemFacade().find(item.getId()); //актуализируем объект, т.к. он может быть удалён!
-        if (freshItem == null){
-            item.setRightItem(null); //обнулим права у объекта так как он скорее всего удалён ...
-            item.setRightMask(null);
-            return;
-        }
-        Rights freshRights = getRightItem(freshItem);
-        settingRightItem(item, freshRights);
-    }
-    
-    /* ПРАВА ДОСТУПА: проверка маски доступа к объекту */
-    public boolean checkMaskAccess(Integer mask, Integer right) {
-        if (mask == null) return false;
-        Integer m = mask & right;
-        return m.equals(right);
-    }
-    
-    /* ПРАВА ДОСТУПА: получение актуальных прав объекта  */
-    protected Rights getActualRightItem(BaseDict item) {        
-        if (item.getRightItem() != null){
-            return item.getRightItem();
-        }
-        Rights actualRight = null;
-        byte[] compressXML = item.getAccess();
-        if (compressXML != null && compressXML.length >0){
-            try {
-                String accessXML = EscomUtils.decompress(compressXML);            
-                StringReader access = new StringReader(accessXML);         
-                actualRight = (Rights) JAXB.unmarshal(access, Rights.class);  
-                settingRightItem(item, actualRight);
-            } catch (IOException ex) {
-                Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            throw new NullPointerException("EscomERR: Object " + item.getName() + " dont have xml right!");
-        } 
-        return actualRight;
-    }
-    
-    /* ПРАВА ДОСТУПА: дефолтные права доступа к объекту */
-    public Rights getDefaultRights(){
-        return appBean.getDefaultRights(getItemClass().getSimpleName());
-    }                 
-    
-    public void saveAccess(T item, String xml){        
-        try {
-            byte[] compressXML = EscomUtils.compress(xml);
-            item.setAccess(compressXML);
-        } catch (IOException ex) {
-            Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void saveAccessChild(T item, String xml){        
-        try {
-            byte[] compressXML = EscomUtils.compress(xml);
-            item.setAccessChild(compressXML);
-        } catch (IOException ex) {
-            Logger.getLogger(BaseBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
     
     /* *** *** *** */
@@ -334,7 +109,7 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* СПИСКИ ОБЪЕКТОВ: предварительная обработка списка объектов  */
     public List<BaseDict> prepareItems(List<T> sourceItems) {
         List<BaseDict> target = sourceItems.stream()
-                .filter(item -> preloadCheckRightView(item))
+                .filter(item -> getItemFacade().preloadCheckRightView(item, currentUser))
                 .collect(Collectors.toList());
         return target;
     }    

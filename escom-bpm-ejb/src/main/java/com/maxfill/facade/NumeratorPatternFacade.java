@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.numPuttern.NumeratorPatternLog;
@@ -17,7 +16,12 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
     public NumeratorPatternFacade() {
         super(NumeratorPattern.class, NumeratorPatternLog.class, NumeratorPatternStates.class);
     }
-    
+
+    @Override
+    public Class<NumeratorPattern> getItemClass() {
+        return NumeratorPattern.class;
+    }
+
     @Override
     public String getFRM_NAME() {
         return NumeratorPattern.class.getSimpleName().toLowerCase();
@@ -32,6 +36,5 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
     public void replaceItem(NumeratorPattern oldItem, NumeratorPattern newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 
 }

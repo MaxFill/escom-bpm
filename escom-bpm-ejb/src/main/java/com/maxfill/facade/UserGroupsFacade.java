@@ -1,5 +1,7 @@
 package com.maxfill.facade;
 
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
@@ -30,7 +32,28 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     public UserGroupsFacade() {
         super(UserGroups.class, UserGroupsLog.class, UserGroupsStates.class);
     }
-    
+
+    @Override
+    public Class<UserGroups> getItemClass() {
+        return UserGroups.class;
+    }
+
+    /* Получение прав доступа для иерархического справочника */
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user); //получаем свои права
+        }
+
+        if (item.getParent() != null) {
+            return getRightItem(item.getParent(), user); //получаем права от родительской группы
+        }
+
+        return getDefaultRights(item);
+    }
+
     /* Получение списка пользователей в группах */ 
     public List<User> findDetail(UserGroups group) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();

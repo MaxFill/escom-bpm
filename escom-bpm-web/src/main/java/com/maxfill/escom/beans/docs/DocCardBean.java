@@ -465,9 +465,5 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void setDocURL(String docURL) {
         this.docURL = docURL;
     }
-    
-    @Override
-    public Class<Doc> getItemClass() {
-        return Doc.class;
-    }
+
 }

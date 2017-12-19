@@ -9,7 +9,7 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-/* Карточка Группы контрагентов */
+/* Бин карточки "Группы контрагентов" */
 @Named
 @ViewScoped
 public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Partner> {
@@ -21,11 +21,6 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
     @Override
     public PartnersGroupsFacade getItemFacade() {
         return itemsFacade;
-    }
-
-    @Override
-    public Class<PartnerGroups> getItemClass() {
-        return PartnerGroups.class;
     }
 
     @Override

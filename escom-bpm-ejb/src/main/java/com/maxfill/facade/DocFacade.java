@@ -1,9 +1,11 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -50,8 +52,13 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
-    }          
-    
+    }
+
+    @Override
+    public Class<Doc> getItemClass() {
+        return Doc.class;
+    }
+
     @Override
     protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Doc> root, List<Predicate> criteries, Doc doc){
         if (doc.getDocType() != null){
@@ -201,7 +208,26 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         doc.doSetSingleRole(DictRoles.ROLE_EDITOR, null);
         edit(doc);
     }
-    
+
+    /**
+     * Получение прав доступа к документу
+     */
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user);
+        }
+        if (item.getOwner() != null) {
+            Rights childRight = folderFacade.getRightForChild(item.getOwner());
+            if (childRight != null) {
+                return childRight;
+            }
+        }
+        return getDefaultRights(item);
+    }
+
     @Override
     public void edit(Doc doc) {
         doSaveRoleToJson(doc);
@@ -286,7 +312,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         doc.setRoleJson(attacheJson);
     }
     
-    /* Проверка вхождения пользователя в роль */
+    /* Проверка вхождения пользователя в роль документа */
     @Override
     public boolean checkUserInRole(Doc doc, String roleName, User user){        
         roleName = roleName.toLowerCase();

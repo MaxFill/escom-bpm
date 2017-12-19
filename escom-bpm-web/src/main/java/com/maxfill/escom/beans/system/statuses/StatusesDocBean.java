@@ -46,11 +46,6 @@ public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
     }
 
     @Override
-    public Class<StatusesDoc> getItemClass() {
-        return StatusesDoc.class;
-    }
-
-    @Override
     public Class<StatusesDoc> getOwnerClass() {
         return null;
     }    

@@ -9,9 +9,8 @@ import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-
 /**
- * Должности
+ * Бин для карточки "Должность"
  * @author Maxim
  */
 @Named
@@ -27,8 +26,4 @@ public class PostCardBean extends BaseCardBean<Post>{
         return itemsFacade;
     }        
 
-    @Override
-    public Class<Post> getItemClass() {
-        return Post.class;
-    }
 }

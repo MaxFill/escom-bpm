@@ -43,25 +43,6 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     private DocFacade docFacade;
     @EJB 
     private FoldersFacade foldersFacade;
-        
-    /* Получение прав доступа для линейного, подчинённого справочника */
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        } 
- 
-        if (item.getOwner() != null) {
-            Rights childRight = ownerBean.getRightForChild(item.getOwner()); //получаем права из спец.прав 
-            if (childRight != null){
-                return childRight;
-            }
-        }
-
-        return getDefaultRights(item);
-    }   
     
     /* Специфичные действия перед вставкой скопированного объекта */
     @Override
@@ -110,11 +91,6 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     @Override
     public void doGetCountUsesItem(DocType docType,  Map<String, Integer> rezult){
         rezult.put("Documents", docFacade.findDocsByDocTyper(docType).size());
-    }
-    
-    @Override
-    public Class<DocType> getItemClass() {
-        return DocType.class;
     }
 
     @Override

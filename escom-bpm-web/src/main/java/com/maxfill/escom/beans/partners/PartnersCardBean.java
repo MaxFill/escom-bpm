@@ -111,11 +111,6 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         return partner.getPartnersGroupsList();
     }
 
-    @Override
-    public Class<Partner> getItemClass() {
-        return Partner.class;
-    }
-
     public Doc getSelectedDoc() {
         return selectedDoc;
     }

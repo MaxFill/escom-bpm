@@ -23,8 +23,7 @@ public class MetadatesFacade extends BaseFacade<Metadates> {
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
-        
+
     @Override
     public void remove(Metadates entity){
         entity = getEntityManager().getReference(entity.getClass(), entity.getId());

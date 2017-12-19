@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.partners.types.PartnerTypes;
@@ -16,6 +15,11 @@ public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerType
     }
 
     @Override
+    public Class<PartnerTypes> getItemClass() {
+        return PartnerTypes.class;
+    }
+
+    @Override
     public String getFRM_NAME() {
         return PartnerTypes.class.getSimpleName().toLowerCase();
     }
@@ -29,6 +33,4 @@ public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerType
     public void replaceItem(PartnerTypes oldItem, PartnerTypes newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    
 }

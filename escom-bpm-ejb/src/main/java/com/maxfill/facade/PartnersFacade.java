@@ -32,7 +32,12 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     public PartnersFacade() {
         super(Partner.class, PartnersLog.class, PartnerStates.class);
     }
-        
+
+    @Override
+    public Class<Partner> getItemClass() {
+        return Partner.class;
+    }
+
     @Override
     public String getFRM_NAME() {
         return Partner.class.getSimpleName().toLowerCase();

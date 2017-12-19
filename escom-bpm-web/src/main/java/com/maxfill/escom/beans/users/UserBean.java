@@ -124,11 +124,6 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     }
 
     @Override
-    public Class<User> getItemClass() {
-        return User.class;
-    }
-
-    @Override
     public Class<UserGroups> getOwnerClass() {
        return null; 
     }

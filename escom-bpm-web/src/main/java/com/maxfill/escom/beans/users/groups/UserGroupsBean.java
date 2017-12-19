@@ -40,30 +40,14 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     
     public List<UserGroups> findOnlyGroups(){
         return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP).stream()
-                    .filter(item -> preloadCheckRightView(item))
+                    .filter(item -> itemFacade.preloadCheckRightView(item, currentUser))
                     .collect(Collectors.toList());
     }
     
     public List<UserGroups> findOnlyRoles(){
         return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD).stream()
-                    .filter(item -> preloadCheckRightView(item))
+                    .filter(item -> itemFacade.preloadCheckRightView(item, currentUser))
                     .collect(Collectors.toList());
-    }
-        
-    /* Получение прав доступа для иерархического справочника */
-    @Override
-    public Rights getRightItem(BaseDict item) {
-        if (item == null) return null;
-        
-        if (!item.isInherits()) {
-            return getActualRightItem(item); //получаем свои права 
-        }
-        
-        if (item.getParent() != null) {
-            return getRightItem(item.getParent()); //получаем права от родительской группы
-        }                     
-        
-        return getDefaultRights(item);
     }
         
     @Override
@@ -119,11 +103,6 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     @Override
     protected void deleteDetails(UserGroups userGroups) {
         // При удалении группы пользователей удалять пользователей не нужно!
-    }    
-    
-    @Override
-    public Class<UserGroups> getItemClass() {
-        return UserGroups.class;
     }
     
     @Override

@@ -13,7 +13,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 /**
- * Виды документов
+ * Фасад для сущности "Виды документов"
  * @author mfilatov
  */
 @Named
@@ -38,10 +38,5 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
             item.setGuide(guid);
         }
         super.onBeforeSaveItem(item);
-    }
-
-    @Override
-    public Class<DocType> getItemClass() {
-        return DocType.class;
     }
 }

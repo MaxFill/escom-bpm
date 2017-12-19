@@ -1103,7 +1103,8 @@ public class ExplorerBean implements Serializable {
             name = name + "%";
         }
                 
-        if (model.isFullTextSearche() && name.length() >= 3 && Objects.equals(tableBean.getItemClass().getSimpleName(), "Doc")){ //если поиск выполняется в документах
+        if (model.isFullTextSearche() && name.length() >= 3 &&
+                Objects.equals("Doc", tableBean.getItemFacade().getItemClass().getSimpleName())){ //если поиск выполняется в документах
             Set<Integer> docIds = searcheService.fullSearche(name);
             if (docIds.isEmpty()){
               docIds.add(0);
@@ -1477,7 +1478,7 @@ public class ExplorerBean implements Serializable {
     
     /* СЕЛЕКТОР: определяет, является ли объект доступным для выбора в селекторе  */
     public boolean isCanSelectedItem(BaseDict item){
-        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemClass().getSimpleName());
+        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemFacade().getItemClass().getSimpleName());
     }
         
     /* CЕЛЕКТОР: выбор объекта по двойному клику  */
@@ -1785,7 +1786,7 @@ public class ExplorerBean implements Serializable {
 
     public void setRootBean(BaseTreeBean rootBean) {
         this.rootBean = rootBean;
-        this.typeRoot = rootBean.getItemClass().getSimpleName();
+        this.typeRoot = rootBean.getItemFacade().getItemClass().getSimpleName();
     }
     public BaseTreeBean getRootBean() {
         return rootBean;
@@ -1796,13 +1797,13 @@ public class ExplorerBean implements Serializable {
     }
     public void setTreeBean(BaseTreeBean treeBean) {
         this.treeBean = treeBean;
-        this.typeTree = treeBean.getItemClass().getSimpleName();
+        this.typeTree = treeBean.getItemFacade().getItemClass().getSimpleName();
         currentTab = DictExplForm.TAB_TREE;
     }
     
     public void setTableBean(BaseExplBean tableBean) {
         this.tableBean = tableBean; 
-        this.typeDetail = tableBean.getItemClass().getSimpleName();
+        this.typeDetail = tableBean.getItemFacade().getItemClass().getSimpleName();
     }
     public BaseExplBean getTableBean() {
         return tableBean;
