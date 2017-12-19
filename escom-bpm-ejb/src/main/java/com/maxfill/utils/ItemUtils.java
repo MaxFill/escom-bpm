@@ -39,15 +39,15 @@ public final class ItemUtils {
         
     /* Формирование пути вложенности для дочерних объектов  */
     public static String makePath(BaseDict item){
-        String name = "";
+        StringBuilder sb = new StringBuilder();
         if (item.getParent() != null){
-            name = makePath(item.getParent());
+            sb.append(makePath(item.getParent()));
         }
-        if (!name.isEmpty()){
-            name = name + "->";
+        if (sb.length() > 0){
+            sb.append("->");
         }
-        name = name + item.getName();        
-        return name;
+        sb.append(item.getName());
+        return sb.toString();
     }    
 
     /* Проверяет нахождение объекта в списке details владельца (owner) для каждой его группы и если находит, то удаляет объект  */

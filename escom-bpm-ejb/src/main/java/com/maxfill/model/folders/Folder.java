@@ -248,7 +248,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.datamodel.Folders[ id=" + id + " ]";
+        return "Folder [ id=" + id + " ]";
     }   
 
 

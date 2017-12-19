@@ -53,6 +53,11 @@
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>com.maxfill.escom.system.LoginServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FoldersServlet</servlet-name>
+        <servlet-class>com.maxfill.escom.system.FoldersServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
@@ -77,6 +82,11 @@
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FoldersServlet</servlet-name>
+        <url-pattern>/folders</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>45</session-timeout>
     </session-config>

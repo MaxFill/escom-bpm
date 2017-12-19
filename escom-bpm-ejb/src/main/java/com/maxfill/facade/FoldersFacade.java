@@ -60,7 +60,16 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
-    }    
+    }
+
+    /*
+     * Проверка возможности создавать дочерние объекты в указанной папке, указанному пользователю
+     * @return true - можно, false - нельзя
+     */
+    public boolean checkRightCreateDetail(Folder folder, User user){
+        //ToDo доработать!
+        return true;
+    }
 
     @Override
     protected Integer getMetadatesObjId() {

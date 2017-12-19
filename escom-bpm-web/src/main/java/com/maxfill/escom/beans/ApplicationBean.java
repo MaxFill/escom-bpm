@@ -79,7 +79,7 @@ public class ApplicationBean implements Serializable{
     public Rights getDefaultRights(String metadateId){
         Rights rights = defRights.get(metadateId);
         if (rights == null){
-            throw new NullPointerException("Escom: for object " + metadateId + " no have default rights!");
+            throw new NullPointerException("EscomErr: for object " + metadateId + " no have default rights!");
         }
         return rights;
     }
