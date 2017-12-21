@@ -94,8 +94,6 @@ public class FileUploadServlet extends HttpServlet {
                     User author = userFacade.tokenCorrect(token);
                     if (author != null){
                         processMakeDocument(item, folder, author);
-                        //todo создать документ и прикрепить к нему загруженный файл
-                        //нужна папка для документа!
                         response.setStatus(HttpServletResponse.SC_OK);
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

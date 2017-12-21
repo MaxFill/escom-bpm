@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.util.Locale;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -48,8 +49,10 @@ public class LicenseBean extends BaseDialogBean{
                 .append(localeName)
                 .append(".pdf");
         try {
-            //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
-            content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");                
+            content = new DefaultStreamedContent(
+                    FacesContext.getCurrentInstance().getExternalContext()
+                            .getResourceAsStream("/resources/License_ru.pdf"));
+            //content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }    

@@ -2,6 +2,7 @@ package com.maxfill;
 
 import com.maxfill.model.licence.Licence;
 import io.jsonwebtoken.impl.crypto.MacProvider;
+import org.apache.commons.lang.StringUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -78,7 +79,13 @@ public class Configuration {
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
-            fullTextSearcheConnection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000","", "");
+
+            /* подключение к полнотекстовой поисковой системе */
+            String fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
+            if (StringUtils.isNotBlank(fullSearcheConnect)) {
+                fullTextSearcheConnection = DriverManager.getConnection(fullSearcheConnect, "", "");
+            }
+            //jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000
         } catch (IOException | SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

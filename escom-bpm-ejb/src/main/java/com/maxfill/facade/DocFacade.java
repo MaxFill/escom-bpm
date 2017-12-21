@@ -298,12 +298,13 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         }
     }
     
-    /* создание документа в папке пользователя из сервлета */
+    /* Cоздание документа в папке пользователя из сервлета */
     public void createDocInUserFolder(String name, User author, Folder userFolder, Attaches attache){
         Map<String, Object> params = new HashMap<>();
         params.put("attache", attache);
         params.put("name", name);
-        createItem(author, userFolder, params);        
+        Doc doc = createItem(author, userFolder, params);
+        create(doc);
     }
     
     private void doSaveRoleToJson(Doc doc){

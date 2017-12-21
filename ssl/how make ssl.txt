@@ -1,4 +1,9 @@
  http://blog.regolit.com/2010/02/16/personal-ca-and-self-signed-certificates
+ https://github.com/chef-cookbooks/openssl/issues/37
+ http://cyber01.ru/manuals/rabota-mysql-s-ssl/
+
+ Установить в нстройках соединения с сервером:
+ ?autoReconnect=true;useSSL=false
 
 ------- Создание сертификата для СА (центар сертификации)-----------
 
@@ -26,3 +31,5 @@ openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12 -name es
 - Установить сертификат pkcs12 в хранилище jks:
 keytool -importkeystore -deststorepass Qwerty -destkeypass Qwerty -destkeystore wildfly.jks -srckeystore server.p12 -srcstoretype PKCS12 -srcstorepass qwerty -alias escom
 
+Посмотреть сертификат:
+openssl req -noout -text -in server.csr

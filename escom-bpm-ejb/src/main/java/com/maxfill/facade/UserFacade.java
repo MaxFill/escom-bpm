@@ -280,6 +280,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     public User tokenCorrect(String token){
         try {
             Key key = configuration.getSignKey();
+            /*
+             info: ключ меняется автоматически при перезапуске сервера,
+             при этом все ранее выданные токены становятся недействительными!
+             */
             Claims claims = Jwts.parser()         
                 .setSigningKey(key)
                 .parseClaimsJws(token).getBody();

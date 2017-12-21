@@ -133,8 +133,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             return item;
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
-        return null;
     }     
     
     protected void detectParentOwner(T item, BaseDict owner){

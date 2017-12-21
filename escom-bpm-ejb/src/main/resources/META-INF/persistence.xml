@@ -5,7 +5,6 @@
     <jta-data-source>java:/EscomJNDI</jta-data-source>
     <class>com.maxfill.model.users.User</class>
     <class>com.maxfill.model.users.UserLog</class>
-    <class>com.maxfill.model.docs.DocStatus</class>
     <class>com.maxfill.model.states.State</class>
     <class>com.maxfill.model.attaches.Attaches</class>
     <class>com.maxfill.model.rights.Right</class>
