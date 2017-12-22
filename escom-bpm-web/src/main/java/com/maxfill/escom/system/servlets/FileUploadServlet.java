@@ -93,8 +93,11 @@ public class FileUploadServlet extends HttpServlet {
                     }
                     User author = userFacade.tokenCorrect(token);
                     if (author != null){
-                        processMakeDocument(item, folder, author);
-                        response.setStatus(HttpServletResponse.SC_OK);
+                        if (processMakeDocument(item, folder, author)) {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        } else{
+                            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                        }
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
@@ -104,19 +107,22 @@ public class FileUploadServlet extends HttpServlet {
         } catch (FileUploadException | IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }	
-    }        
+        }
+    }
     
     /* создание документа и загрузка файла */
-    private void processMakeDocument(FileItem item, Folder folder, User author) throws IOException{
+    private boolean processMakeDocument(FileItem item, Folder folder, User author) throws IOException{
+        if (!folderFacade.checkRightAddDetail(folder, author)) return  false;
+
         Map<String, Object> params = new HashMap<>();
         params.put("contentType", item.getContentType());
         params.put("fileName", item.getName());
         params.put("size", item.getSize());
         params.put("author", author);
         Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
-        docFacade.createDocInUserFolder(item.getName(), author, folder, attache);    
-    }        
+        docFacade.createDocInUserFolder(item.getName(), author, folder, attache);
+        return true;
+    }
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
