@@ -167,8 +167,16 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     /* Признак изменения объекта  */
     public boolean isItemChange() {
         return isItemChange;
-    }    
-    
+    }
+
+    /* Получение ссылки на объект метаданных  */
+    public Metadates getMetadatesObj() {
+        if (metadatesObj == null) {
+            metadatesObj = getItemFacade().getMetadatesObj();
+        }
+        return metadatesObj;
+    }
+
     /* GET & SET */
                 
     public Boolean getIsItemChange() {
@@ -180,13 +188,9 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
-    }  
-    
-    /* Получение ссылки на объект метаданных  */
-    public Metadates getMetadatesObj() {
-        if (metadatesObj == null) {
-            metadatesObj = getItemFacade().getMetadatesObj();
-        }
-        return metadatesObj;
     }
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
 }

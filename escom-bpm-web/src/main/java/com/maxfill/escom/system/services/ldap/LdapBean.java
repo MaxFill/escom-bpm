@@ -36,7 +36,7 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
         StringBuilder detailInfo = new StringBuilder();        
         ldapUsers = ldapTimer.doLoadUsers(detailInfo, Boolean.TRUE, getSettings());
         if (ldapUsers == null){
-            EscomBeanUtils.ErrorMsgAdd("Warning", "ConnectFailed", "");
+            EscomBeanUtils.errorMsgAdd("Warning", "ConnectFailed", "");
         }
     }    
    
@@ -46,7 +46,7 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
     public void onCheckConnect(){     
         try {
             LdapUtils.initLDAP(getSettings().getLdapUsername(), getSettings().getLdapPassword(), getSettings().getLdapAdServer());
-            EscomBeanUtils.SuccesMsgAdd("Successfully", "ConnectionEstablished");
+            EscomBeanUtils.succesMsgAdd("Successfully", "ConnectionEstablished");
 
         } catch (NamingException ex) {
             EscomBeanUtils.WarnMsgAdd("Warning", "ConnectFailed");

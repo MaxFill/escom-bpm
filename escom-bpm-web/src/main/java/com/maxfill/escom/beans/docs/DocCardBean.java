@@ -109,7 +109,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         
         String pattern = numerator.getPattern();
         if (StringUtils.isBlank(pattern)) {
-            EscomBeanUtils.ErrorMsgAdd("Error", "PatternIsEmpty", "");
+            EscomBeanUtils.errorMsgAdd("Error", "PatternIsEmpty", "");
             return null;
         }
         

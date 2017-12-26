@@ -1,10 +1,7 @@
 package com.maxfill.escom.beans;
 
-import static com.maxfill.escom.beans.BaseBean.LOGGER;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
@@ -59,7 +56,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                 }
                 getEditedItem().setRightForChild(childRights);
                 rightsBean.prepareRightsForView(childRights.getRights());                
-                EscomBeanUtils.SuccesMsgAdd("Successfully", "RightIsParentCopy");
+                EscomBeanUtils.succesMsgAdd("Successfully", "RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }                         

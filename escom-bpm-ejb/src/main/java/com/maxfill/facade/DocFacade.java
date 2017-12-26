@@ -20,14 +20,15 @@ import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
 import com.maxfill.services.searche.SearcheService;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
@@ -202,7 +203,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         edit(doc);
     }
     
-    /* Снятие состояния редактировани документа */
+    /* Снятие состояния редактирования документа */
     public void doRemoveEditState(Doc doc){
         returnToPrevState(doc);        
         doc.doSetSingleRole(DictRoles.ROLE_EDITOR, null);
@@ -306,7 +307,58 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         Doc doc = createItem(author, userFolder, params);
         create(doc);
     }
-    
+    public Doc createDocInUserFolder(String name, User author, Folder userFolder){
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", name);
+        Doc doc = createItem(author, userFolder, params);
+        create(doc);
+        return doc;
+    }
+    /**
+     * Создание документа из e-mail сообщения
+     */
+    public void createDocFromEmail(Message message) {
+        try {
+            Address senders[] = message.getFrom();
+            Address sender = senders[0];
+
+            List<User> users = Arrays.stream(message.getFrom())
+                    .map(s -> userFacade.findUserByEmail(s.toString()))
+                    .collect(Collectors.toList());
+
+            if (users.isEmpty()) return;
+
+            User author = users.get(0);
+            Folder folder = author.getInbox();
+
+            if (folder == null) return; //Todo нужно записать в лог что у пользователя нет папки
+
+            String subject = message.getSubject();
+            Doc doc = createDocInUserFolder(subject, author, folder);
+
+            Multipart mp = (Multipart) message.getContent();
+            for(int i = 0; i < mp.getCount(); i++) {
+                BodyPart bp = mp.getBodyPart(i);
+                Map<String, Object> params = new HashMap<>();
+                String filename;
+                if (bp.getFileName() != null){
+                    filename = bp.getFileName();
+                } else {
+                    filename = subject;
+                }
+                params.put("contentType", bp.getContentType());
+                params.put("fileName", filename);
+                params.put("size", bp.getSize());
+                params.put("author", author);
+                Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
+                doc.getAttachesList().add(attache);
+            }
+
+        } catch(IOException | MessagingException ex){
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void doSaveRoleToJson(Doc doc){
         Gson gson = new Gson();
         String attacheJson = gson.toJson(doc.getRoles());        

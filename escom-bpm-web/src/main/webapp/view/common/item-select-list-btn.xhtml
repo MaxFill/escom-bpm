@@ -33,6 +33,7 @@
                 <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
                 <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                 <f:converter converterId="#{_converter}" />
+                <f:validator validatorId="#{_validator}" />
             </p:selectOneMenu>
 
             <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"

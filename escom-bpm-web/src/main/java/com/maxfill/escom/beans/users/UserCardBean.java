@@ -1,15 +1,17 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.facade.FoldersFacade;
 import com.maxfill.facade.UserFacade;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.BaseDict;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 
+import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
@@ -17,17 +19,21 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 
-/* Карточка пользователя */
+/* Бин для формы "Карточка пользователя */
 @Named
 @ViewScoped
 public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
     private static final long serialVersionUID = 2031203859450836271L;
 
     private String password;
+
+    @EJB
+    private FoldersFacade folderFacade;
 
     @Override
     public void onOpenCard() {
@@ -36,7 +42,23 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
             password = "**********";
         }
     }
-      
+
+    /**
+     * Обработка события выбора папки
+     */
+    public void onInboxSelected(SelectEvent event){
+        List<Folder> items = (List<Folder>) event.getObject();
+        if (items.isEmpty()) return;
+        Folder item = items.get(0);
+        onItemChange();
+        getEditedItem().setInbox(item);
+    }
+    public void onInboxSelected(ValueChangeEvent event){
+        Folder folder = (Folder) event.getNewValue();
+        onItemChange();
+        getEditedItem().setInbox(folder);
+    }
+
     /* Формирование отображаемого имени пользователя */    
     public void makeName(){
         getEditedItem().setName(getEditedItem().getShortFIO());

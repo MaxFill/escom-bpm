@@ -38,8 +38,10 @@ public class Configuration {
     private String uploadPath;
     private String encoding;
     private String defaultSenderEmail;
-    private String defaultEmailServer;
+    private String defaultSmtpServer;
+    private String defaultImapServer;
     private String defaultEmailServerPort;
+    private String defaultIMAPPort;
     private String ldapServer;
     private String tempFolder;
     private String jasperReports;
@@ -51,6 +53,7 @@ public class Configuration {
     private Integer maxFileSize;
     private Connection fullTextSearcheConnection;
     private Key signKey;
+    private Boolean useMailSSLConnect;
     
     @PostConstruct
     private void init() {
@@ -66,8 +69,11 @@ public class Configuration {
             uploadPath = (String) properties.get("UPLOAD_PATH");
             encoding = (String) properties.get("ENCODING");
             defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
-            defaultEmailServer = (String) properties.get("DEFAULT_EMAIL_SERVER");
-            defaultEmailServerPort = (String) properties.get("DEFAULT_EMAIL_SERVER_PORT");
+            defaultImapServer = (String) properties.get("DEFAULT_IMAP_SERVER");
+            defaultSmtpServer = (String) properties.get("DEFAULT_SMTP_SERVER");
+            defaultEmailServerPort = (String) properties.get("DEFAULT_SMTP_PORT");
+            defaultIMAPPort = (String) properties.get("DEFAULT_IMAP_PORT");
+            useMailSSLConnect = Boolean.valueOf((String) properties.get("MAIL_SSL_CONNECT"));
             ldapServer = (String) properties.get("LDAP_SERVER");
             serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
             tempFolder = (String) properties.get("TEMP_FOLDER");
@@ -142,8 +148,8 @@ public class Configuration {
     public String getServerURL() {
         return serverURL;
     }
-    public String getDefaultEmailServer() {
-        return defaultEmailServer;
+    public String getDefaultSmtpServer() {
+        return defaultSmtpServer;
     }
     public String getDefaultEmailServerPort() {
         return defaultEmailServerPort;
@@ -153,8 +159,14 @@ public class Configuration {
     }
     public Key getSignKey() {
         return signKey;
-    }    
-    
+    }
+    public Boolean getUseMailSSLConnect() {
+        return useMailSSLConnect;
+    }
+    public String getDefaultIMAPPort() {
+        return defaultIMAPPort;
+    }
+
     public Repository getRepository() {
         return repository;
     }

@@ -1,29 +1,17 @@
 package com.maxfill.model.users;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.users.groups.UserGroups;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.*;
+
 import static javax.persistence.GenerationType.TABLE;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -79,7 +67,11 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     
     @Column(name = "LDAPname")
     private String LDAPname;
-    
+
+    @JoinColumn(name = "Inbox", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Folder inbox;
+
     @Lob
     @Column(name = "Settings", length = 1024)
     private byte[] userSettings; 
@@ -170,6 +162,13 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @Override
     public String getIconName() {
         return "user";
+    }
+
+    public Folder getInbox() {
+        return inbox;
+    }
+    public void setInbox(Folder inbox) {
+        this.inbox = inbox;
     }
 
     public String getPwl() {

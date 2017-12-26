@@ -81,7 +81,7 @@ public class DocLockBean extends BaseDialogBean{
     
     public void changeDatePlanLock(){
         remainder.changeTimer(attache, sessionBean.getCurrentUser(), lockDate);                       
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "TimerRestarted");
+        EscomBeanUtils.succesMsgAdd("Successfully", "TimerRestarted");
     }
     
     public void onChangeDateLock(SelectEvent event){

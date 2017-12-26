@@ -33,7 +33,10 @@ public class AttacheServiceImpl implements AttacheService{
     private Configuration configuration;
     @EJB
     private FileService fileService;
-            
+
+    /**
+     * Загрузка файла на сервер с созданием Attaches
+     */
     @Override
     public Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException{
         if (params.isEmpty()) return null;        
@@ -51,9 +54,7 @@ public class AttacheServiceImpl implements AttacheService{
         attache.setSize(size);
         attache.setAuthor(author);
         attache.setDateCreate(new Date());
-
-        fileService.doUpload(attache, inputStream);            
-
+        fileService.doUpload(attache, inputStream);
         return attache;
     }
     

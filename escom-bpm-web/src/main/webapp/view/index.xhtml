@@ -126,7 +126,9 @@
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
                             <p:commandLink value="#{bundle.MailService}"                                            
-                                           actionListener="#{sessionBean.openMailService()}"/>
+                                           actionListener="#{sessionBean.openMailSenderService()}"/>
+                            <p:commandLink value="#{bundle.ServiceReaderEmail}"
+                                           actionListener="#{sessionBean.openMailReaderService()}"/>
                             <p:commandLink value="#{bundle.LdapService}" 
                                            actionListener="#{sessionBean.openLdapService()}"/>
                         </p:panelGrid>

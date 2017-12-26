@@ -40,6 +40,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.AuthenticationException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -105,8 +106,23 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();
-    }        
-    
+    }
+
+    /**
+     * Ищет пользователя по e-mail
+     */
+    public User findUserByEmail(String email){
+        if (StringUtils.isBlank(email)) return null;
+        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<User> cq = builder.createQuery(User.class);
+        Root<User> c = cq.from(User.class);
+        Predicate crit1 = builder.equal(c.get("email"), email);
+        cq.select(c).where(builder.and(crit1));
+        TypedQuery<User> q = getEntityManager().createQuery(cq);
+        return q.getSingleResult();
+    }
+
     /* Ищет пользователя по login  */
     public List<User> findByLogin(String login){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);

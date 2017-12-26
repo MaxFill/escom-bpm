@@ -33,7 +33,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         LOG.log(Level.INFO, "Executing LDAP task!");
         StringBuilder detailInfo = new StringBuilder("");        
         Date startDate = new Date();
-        detailInfoAddRow(detailInfo, "The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
+        detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
 
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setServiceId(service);
@@ -41,16 +41,16 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         selectedEvent.setResult(RESULT_FAIL);
         try {
             if (settings.getUpdateUsers()){
-                detailInfoAddRow(detailInfo, "The mode is set to: ADD_AND_UPDATE_ALL");
+                detailInfoAddRow("The mode is set to: ADD_AND_UPDATE_ALL");
             } else {
-                detailInfoAddRow(detailInfo, "The mode is set to: ONLY_ADD_NEW_USERS");
+                detailInfoAddRow( "The mode is set to: ONLY_ADD_NEW_USERS");
             }
             List<LdapUsers> ldapUsers = doLoadUsers(detailInfo, Boolean.FALSE, settings);
             doUpdateUser(ldapUsers, detailInfo, settings); 
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
             Date finishDate = new Date();
-            detailInfoAddRow(detailInfo, "The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale() ));
+            detailInfoAddRow("The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale() ));
             selectedEvent.setDetails(detailInfo.toString());
             selectedEvent.setDateFinish(finishDate);
             servicesEventsFacade.create(selectedEvent);
@@ -71,12 +71,12 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         try {
             LdapContext ctx = LdapUtils.initLDAP(settings.getLdapUsername(), settings.getLdapPassword(), settings.getLdapAdServer());
             if (ctx == null){
-                detailInfoAddRow(detailInfo, "Connect LDAP is fail!");
+                detailInfoAddRow("Connect LDAP is fail!");
                 return null;
             }
-            detailInfoAddRow(detailInfo, "Connect LDAP is completed!");
+            detailInfoAddRow("Connect LDAP is completed!");
             List<SearchResult> srLdapUsers = LdapUtils.findAccounts(ctx, settings.getLdapSearchBase(), settings.getLdapSearcheGroup());
-            detailInfoAddRow(detailInfo, "Load users from LDAP is completed!");   
+            detailInfoAddRow("Load users from LDAP is completed!");
             for (SearchResult result : srLdapUsers){
                 String sAMAccountName = (String) result.getAttributes().get("sAMAccountName").get();
                 LOG.log(Level.INFO, "Load from AD sAMAccountName = {0}", sAMAccountName);
@@ -155,11 +155,11 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
         for(LdapUsers ldapUser : ldapUsers){
             User user = isNewUser(ldapUser, users);
             if (user == null){
-                detailInfoAddRow(detailInfo, "Create new user=" + ldapUser.getLogin());
+                detailInfoAddRow("Create new user=" + ldapUser.getLogin());
                 userFacade.createUserFromLDAP(ldapUser);
             } else {
                 if (settings.getUpdateUsers()){
-                    detailInfoAddRow(detailInfo, "Update user=" + ldapUser.getLogin());
+                    detailInfoAddRow("Update user=" + ldapUser.getLogin());
                     userFacade.updateUserFromLDAP(user, ldapUser);
                 }
             }

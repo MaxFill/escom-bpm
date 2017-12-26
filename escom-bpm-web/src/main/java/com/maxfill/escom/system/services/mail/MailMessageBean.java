@@ -195,7 +195,7 @@ public class MailMessageBean extends BaseDialogBean{
             mailBoxFacade.create(selected);
             return onCloseCard();
         } else {
-            EscomBeanUtils.ErrorMsgAdd("Error", "IncorrectMailAdress", "");
+            EscomBeanUtils.errorMsgAdd("Error", "IncorrectMailAdress", "");
             return "";
         }
     }

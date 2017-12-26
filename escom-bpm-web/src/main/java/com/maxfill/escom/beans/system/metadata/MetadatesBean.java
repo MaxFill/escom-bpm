@@ -139,7 +139,7 @@ public class MetadatesBean implements Serializable{
         right.setExecute(false);
         right.setDelete(false);
         rightFacade.create(right);
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "StateIsAdd");
+        EscomBeanUtils.succesMsgAdd("Successfully", "StateIsAdd");
     }
     
     public void onDeleteState(State state){
@@ -166,7 +166,7 @@ public class MetadatesBean implements Serializable{
         if (selectedObject == null) return;
         selectedObject.setStateForNewObj(startState);
         metadatesFacade.edit(selectedObject);
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "StartSateIsChange");
+        EscomBeanUtils.succesMsgAdd("Successfully", "StartSateIsChange");
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

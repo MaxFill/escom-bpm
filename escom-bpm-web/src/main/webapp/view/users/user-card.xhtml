@@ -64,8 +64,7 @@
 
                 </p:panelGrid>
 
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
-                             columnClasses="ui-grid-col-12" >
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12" >
                     <p:outputLabel value="#{bundle.VisibleName}" />
                     <p:inputText id="visbleName" value="#{_bean.editedItem.name}"
                                  disabled="#{_bean.isReadOnly()}"
@@ -113,7 +112,25 @@
                                         itemLabel="#{bundle.DuplicateMessagesEmail}">
                 <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
             </p:selectBooleanCheckbox>
-            
+
+            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >
+                <p:outputLabel value="#{bundle.Folder}" />
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.inbox}"/>
+                    <ui:param name="_required" value="#{false}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="folderConvertor" />
+                    <ui:param name="_validator" value="userFolderValidator" />
+                    <ui:param name="_itemPanel" value="folderPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Folder}"/>
+                    <ui:param name="_selectorBean" value="#{folderBean}"/>
+                    <ui:param name="_items" value="#{folderBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setInbox"/>
+                    <ui:param name="_actionSelect" value="onInboxSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+            </p:panelGrid>
+
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >                               
                 <p:outputLabel value="#{bundle.EmailSign}" />
                 <h:panelGrid columns="1" styleClass="ui-grid-col-12">
@@ -124,6 +141,7 @@
                 </h:panelGrid>         
             </p:panelGrid>
         </p:tab>
+
         <p:tab title="#{bundle.Groups}">
             <ui:include src="/view/common/dict-item-groups.xhtml" >
                 <ui:param name="_groups" value="#{_bean.editedItem.usersGroupsList}" />

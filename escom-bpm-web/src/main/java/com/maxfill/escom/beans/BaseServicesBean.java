@@ -10,7 +10,6 @@ import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.sheduler.Sheduler;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -103,7 +102,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
             service.setDateNextStart(timer.getNextTimeout());
             service.setStarted(Boolean.TRUE);
             servicesFacade.edit(service);
-            EscomBeanUtils.SuccesMsgAdd("Successfully", "ServiceRunSchedule"); 
+            EscomBeanUtils.succesMsgAdd("Successfully", "ServiceRunSchedule");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -130,7 +129,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
                 service.setStarted(Boolean.FALSE);
                 service.setDateNextStart(null);
                 servicesFacade.edit(service);
-                EscomBeanUtils.SuccesMsgAdd("Successfully", "ServiceStopped");
+                EscomBeanUtils.succesMsgAdd("Successfully", "ServiceStopped");
                 LOG.log(Level.INFO, "Timer for service {0} is cancelled!", service.getName()); 
             }  catch (NoSuchObjectLocalException | IOException | ClassNotFoundException exception) {
                 EscomBeanUtils.ErrorMessage(exception.getMessage());

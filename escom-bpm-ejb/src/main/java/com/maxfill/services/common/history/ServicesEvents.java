@@ -61,14 +61,13 @@ public class ServicesEvents implements Serializable {
     public ServicesEvents() {
     }
 
-    public ServicesEvents(Integer id) {
-        this.id = id;
+    public ServicesEvents(Services serviceId) {
+        this.serviceId = serviceId;
     }
 
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -76,7 +75,6 @@ public class ServicesEvents implements Serializable {
     public Date getDateStart() {
         return dateStart;
     }
-
     public void setDateStart(Date dateStart) {
         this.dateStart = dateStart;
     }
@@ -84,7 +82,6 @@ public class ServicesEvents implements Serializable {
     public Date getDateFinish() {
         return dateFinish;
     }
-
     public void setDateFinish(Date dateFinish) {
         this.dateFinish = dateFinish;
     }
@@ -92,7 +89,6 @@ public class ServicesEvents implements Serializable {
     public String getResult() {
         return result;
     }
-
     public void setResult(String result) {
         this.result = result;
     }
@@ -100,7 +96,6 @@ public class ServicesEvents implements Serializable {
     public String getDetails() {
         return details;
     }
-
     public void setDetails(String details) {
         this.details = details;
     }
@@ -108,7 +103,6 @@ public class ServicesEvents implements Serializable {
     public Services getServiceId() {
         return serviceId;
     }
-
     public void setServiceId(Services serviceId) {
         this.serviceId = serviceId;
     }

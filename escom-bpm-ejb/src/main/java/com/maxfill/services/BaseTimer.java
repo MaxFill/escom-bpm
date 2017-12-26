@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import javax.ejb.*;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -19,8 +20,10 @@ import java.util.logging.Logger;
 public abstract class BaseTimer<P> {
     protected static final Logger LOG = Logger.getLogger(BaseTimer.class.getName());
     protected static final String RESULT_FAIL = "Error";
-    protected static final String RESULT_SUCCESSFULLY = "Ok";    
-        
+    protected static final String RESULT_SUCCESSFULLY = "Ok";
+
+    StringBuilder detailInfo = new StringBuilder("");
+
     @EJB
     private ServicesFacade servicesFacade;
     @EJB
@@ -78,10 +81,9 @@ public abstract class BaseTimer<P> {
     
     /**
      * Добавление строки в журнал событий службы
-     * @param detailInfo
      * @param addRow 
      */
-    protected void detailInfoAddRow(StringBuilder detailInfo, String addRow){
+    protected void detailInfoAddRow(String addRow){
         detailInfo.append(addRow).append(SysParams.LINE_SEPARATOR);
     }
     
@@ -100,5 +102,16 @@ public abstract class BaseTimer<P> {
             return interval.longValue();
         }
         return null;
+    }
+
+    /**
+     * Завершающее действие в doExecuteTask
+     */
+    protected void finalAction(ServicesEvents event) {
+        Date finishDate = new Date();
+        detailInfoAddRow("The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
+        event.setDetails(detailInfo.toString());
+        event.setDateFinish(finishDate);
+        servicesEventsFacade.create(event);
     }
 }

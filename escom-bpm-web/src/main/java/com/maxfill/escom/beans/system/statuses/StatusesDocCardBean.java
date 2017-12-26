@@ -38,7 +38,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
                 docTypeBean.getItemFacade().edit(docType);
             }
         });
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "AddStatusInSelectedDocumentTypes");
+        EscomBeanUtils.succesMsgAdd("Successfully", "AddStatusInSelectedDocumentTypes");
     }
     
     @Override

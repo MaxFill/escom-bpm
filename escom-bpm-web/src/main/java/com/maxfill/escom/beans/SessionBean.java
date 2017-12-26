@@ -405,8 +405,9 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
     }
     
-    /* Открытие формы почтовой службы */
-    public void openMailService(){
+    /* Открытие формы почтовой службы отправки e-mail сообщений */
+    //Todo переделать на открытие диалога с сохранением параметров окна
+    public void openMailSenderService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
@@ -417,9 +418,25 @@ public class SessionBean implements Serializable{
         options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_SERVICE, options, null);  
+        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, options, null);
     }
-    
+
+    /* Открытие формы почтовой службы получения e-mail сообщений */
+    //Todo переделать на открытие диалога с сохранением параметров окна
+    public void openMailReaderService(){
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", 1300);
+        options.put("height", 600);
+        options.put("maximizable", true);
+        options.put("closable", false);
+        options.put("closeOnEscape", true);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_READER_SERVICE, options, null);
+    }
+
     public void openLdapService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);

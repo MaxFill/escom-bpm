@@ -22,44 +22,68 @@ public class MailSettings implements Serializable{
     @XmlElement(name = "Password")
     private String password;
     
-    @XmlElement(name = "SmtpPort")
-    private Integer smtpPort;
+    @XmlElement(name = "Port")
+    private Integer port;
     
     @XmlElement(name = "AdressSender")
-    private String adressSender;    
-    
+    private String adressSender;
+
+    @XmlElement(name = "Encoding")
+    private String encoding;
+
+    @XmlElement(name = "UseSSL")
+    private Boolean useSSL;
+
     public String getServerAdress() {
         return serverAdress;
     }
     public void setServerAdress(String serverAdress) {
         this.serverAdress = serverAdress;
     }
+
     public String getUser() {
         return user;
     }
     public void setUser(String user) {
         this.user = user;
     }
+
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
-    public Integer getSmtpPort() {
-        return smtpPort;
+
+    public Integer getPort() {
+        return port;
     }
-    public void setSmtpPort(Integer smtpPort) {
-        this.smtpPort = smtpPort;
+    public void setPort(Integer port) {
+        this.port = port;
     }
+
     public String getAdressSender() {
         return adressSender;
     }
     public void setAdressSender(String adressSender) {
         this.adressSender = adressSender;
     }
-        
-     //трансформирует данные класса в xml строку
+
+    public Boolean getUseSSL() {
+        return useSSL;
+    }
+    public void setUseSSL(Boolean useSSL) {
+        this.useSSL = useSSL;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    //трансформирует данные класса в xml строку
     @Override
     public String toString() {
         StringWriter sw = new StringWriter();

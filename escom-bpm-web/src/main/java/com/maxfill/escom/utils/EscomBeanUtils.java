@@ -240,10 +240,10 @@ public final class EscomBeanUtils {
     }
     
     public static void showErrorsMsg(Set<String> errors) {
-        errors.stream().limit(10).forEach((String error) -> ErrorMsgAdd("Error", error, ""));
+        errors.stream().limit(10).forEach((String error) -> errorMsgAdd("Error", error, ""));
     }
 
-    public static void SuccesMsgAdd(String key1, String key2) {
+    public static void succesMsgAdd(String key1, String key2) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
         String msg1 = bundle.getString(key1);
@@ -251,18 +251,18 @@ public final class EscomBeanUtils {
         ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, msg1, msg2));
     }
 
-    public static void ErrorMsgAdd(String key1, String key2, String extString) {
+    public static void errorMsgAdd(String key1, String key2, String extString) {
         FacesContext ctx = FacesContext.getCurrentInstance();
         ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
         String msg1 = bundle.getString(key1);
-        StringBuilder msg2 = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotBlank(key2)) {
-            msg2.append(bundle.getString(key2)).append(" ");
+            sb.append(bundle.getString(key2)).append(" ");
         }
         if (StringUtils.isNotBlank(extString)) {
-            msg2.append(extString);
+            sb.append(extString);
         }
-        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg1, msg2.toString()));
+        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg1, sb.toString()));
     }   
 
     /* Возвращает значение из msg по ключу  */

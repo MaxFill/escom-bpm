@@ -19,7 +19,6 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.users.User;
 import java.io.IOException;
@@ -208,7 +207,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         attacheFacade.addAttacheInDoc(doc, attache);
-        EscomBeanUtils.SuccesMsgAdd("Successfully", "VersionAdded");
+        EscomBeanUtils.succesMsgAdd("Successfully", "VersionAdded");
         return attache;
     }            
     

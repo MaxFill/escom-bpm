@@ -10,7 +10,8 @@ public final class DictDlgFrmName {
     public static final String FRM_USER_SETTINGS = "user-settings";
     public static final String FRM_OBJECT_ADMIN = "object-admin";
     public static final String FRM_RIGHT_CARD = "rightCard";
-    public static final String FRM_MAIL_SERVICE = "mail-service";
+    public static final String FRM_MAIL_SENDER_SERVICE = "mail-sender-service";
+    public static final String FRM_MAIL_READER_SERVICE = "mail-reader-service";
     public static final String FRM_CHECK_RELEASE = "check-release";
     public static final String FRM_DOC_LOCK = "doclock";  
     public static final String FRM_USER_MESSAGES = "messages";

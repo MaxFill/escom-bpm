@@ -12,7 +12,6 @@ import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;import java.util.Map;
-import java.util.Map.Entry;
 ;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -79,7 +78,7 @@ public class DocReportBean extends BaseReportBean{
     
     public void makeReport(){
         if (selectedNodes == null || selectedNodes.length == 0){
-            EscomBeanUtils.ErrorMsgAdd("Error", "NeedSelectOneGroup", null);
+            EscomBeanUtils.errorMsgAdd("Error", "NeedSelectOneGroup", null);
             return;
         }
                 

@@ -997,7 +997,7 @@ public class ExplorerBean implements Serializable {
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
                 .forEach(item -> addNewItemInTree(item, treeSelectedNode));
             reloadDetailsItems();
-            EscomBeanUtils.SuccesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomBeanUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
         }
     }
 
@@ -1014,7 +1014,7 @@ public class ExplorerBean implements Serializable {
             return;
         }
         if (!rezults.isEmpty()){
-            EscomBeanUtils.SuccesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomBeanUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
             reloadDetailsItems();
         }
     }
@@ -1044,7 +1044,7 @@ public class ExplorerBean implements Serializable {
     /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
-            EscomBeanUtils.ErrorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
+            EscomBeanUtils.errorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
         } else {
             doSearcheItems();
             if (getDetailItems().isEmpty()) {
@@ -1360,7 +1360,7 @@ public class ExplorerBean implements Serializable {
                 } 
             }
         } else {
-            EscomBeanUtils.ErrorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+            EscomBeanUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
         } 
     } 
     
@@ -1405,7 +1405,7 @@ public class ExplorerBean implements Serializable {
                 EscomBeanUtils.showErrorsMsg(errors);
             }    
         }
-        EscomBeanUtils.ErrorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+        EscomBeanUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
     }
     
     /* DRAG & DROP: отработка команды на перемещение в дереве */
