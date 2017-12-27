@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
@@ -227,7 +228,7 @@ public class ExplorerBean implements Serializable {
         }        
         tableBean.checkCanCreateItem(parent, owner, errors, createParams);
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return false;
         }
         return true;
@@ -262,7 +263,7 @@ public class ExplorerBean implements Serializable {
                     break;
                 }
             }
-            EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
+            EscomMsgUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
         }
         createParams.clear();
         onSetCurrentItem(editItem);
@@ -408,7 +409,7 @@ public class ExplorerBean implements Serializable {
                             }
                 });
         if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
         } else {            
             getDetailItems().removeAll(getCheckedItems());
         }
@@ -447,7 +448,7 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         onMoveContentToTrash(currentItem, errors);
         if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);            
+            EscomMsgUtils.showErrorsMsg(errors);
         } else {
             removeNodeFromTree(treeSelectedNode);
             reloadDetailsItems();
@@ -551,7 +552,7 @@ public class ExplorerBean implements Serializable {
             newNode.setExpanded(true);
         }
 
-        String bundleName = EscomBeanUtils.getBandleLabel(nodeName);
+        String bundleName = EscomMsgUtils.getBandleLabel(nodeName);
         item.setName(bundleName);
 
         List<Filter> childs = filtersFacade.findChildsFilters((Filter)item, metadate);
@@ -951,7 +952,7 @@ public class ExplorerBean implements Serializable {
     /* КОПИРОВАНИЕ: вызов копирования отмеченных объектов в таблице */
     public void onCopySelectedItem() {
         if (checkedItems.isEmpty()){
-            EscomBeanUtils.WarnMsgAdd("Warning", "NoCheckedItems");
+            EscomMsgUtils.warnMsgAdd("Warning", "NoCheckedItems");
             return;
         }
         doCopyItems(checkedItems);
@@ -966,7 +967,7 @@ public class ExplorerBean implements Serializable {
     public void onCopyItem(BaseDict item) {
         if (item == null){return;}
         if (item.getId() == 0){
-            EscomBeanUtils.ErrorFormatMessage("Error", "ObjectNotCopied", new Object[]{item.getName()});
+            EscomMsgUtils.ErrorFormatMessage("Error", "ObjectNotCopied", new Object[]{item.getName()});
             return;
         }
         List<BaseDict> sourceItems = new ArrayList<>();
@@ -977,7 +978,7 @@ public class ExplorerBean implements Serializable {
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
         copiedItems = sourceItems.stream().map(copyItem -> sessionBean.prepCopyItem(copyItem)).collect(Collectors.toSet());         
-        copiedItems.stream().forEach(item-> EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
+        copiedItems.stream().forEach(item-> EscomMsgUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
     }
 
     public boolean isCanPasteItem(){
@@ -991,13 +992,13 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         List<BaseDict> rezults = pasteItem(currentItem, errors);
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
         }
         if (!rezults.isEmpty()){
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
                 .forEach(item -> addNewItemInTree(item, treeSelectedNode));
             reloadDetailsItems();
-            EscomBeanUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomMsgUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
         }
     }
 
@@ -1010,11 +1011,11 @@ public class ExplorerBean implements Serializable {
         }
         List<BaseDict> rezults = pasteItem(parent, errors);
         if (!errors.isEmpty()){            
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
         if (!rezults.isEmpty()){
-            EscomBeanUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomMsgUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
             reloadDetailsItems();
         }
     }
@@ -1044,11 +1045,11 @@ public class ExplorerBean implements Serializable {
     /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
-            EscomBeanUtils.errorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
+            EscomMsgUtils.errorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
         } else {
             doSearcheItems();
             if (getDetailItems().isEmpty()) {
-                EscomBeanUtils.WarnMsgAdd("Info", "NO_SEARCHE_FIND");
+                EscomMsgUtils.warnMsgAdd("Info", "NO_SEARCHE_FIND");
                 return;
             }
             switch (currentTab) {
@@ -1142,7 +1143,7 @@ public class ExplorerBean implements Serializable {
         
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();
-        makeJurnalHeader(EscomBeanUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomBeanUtils.getBandleLabel("SearcheResult"));
+        makeJurnalHeader(EscomMsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomMsgUtils.getBandleLabel("SearcheResult"));
         navigator = null;
     }
     
@@ -1153,7 +1154,7 @@ public class ExplorerBean implements Serializable {
             List<TreeNode> rezult = new ArrayList<>();
             doSearcheInTree(tree, rezult);
             if (rezult.isEmpty()){
-                EscomBeanUtils.WarnMsgAdd("Info", "NO_SEARCHE_FIND");
+                EscomMsgUtils.warnMsgAdd("Info", "NO_SEARCHE_FIND");
                 return;
             }
             if (rezult.size() == 1){
@@ -1214,11 +1215,11 @@ public class ExplorerBean implements Serializable {
                             onShowMovedDlg("MoveTreeDlg");
                         }                       
                     } else {
-                        String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
+                        String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
                         errors.add(error);
                     }
                     if (!errors.isEmpty()) {
-                        EscomBeanUtils.showErrorsMsg(errors);
+                        EscomMsgUtils.showErrorsMsg(errors);
                     } 
                 }
                 return;
@@ -1281,7 +1282,7 @@ public class ExplorerBean implements Serializable {
             }
         }
         if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
         }    
     }
     
@@ -1319,7 +1320,7 @@ public class ExplorerBean implements Serializable {
             }
         }
         if (!errors.isEmpty()) {
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
         }
     }
         
@@ -1356,17 +1357,17 @@ public class ExplorerBean implements Serializable {
                     }
                 }    
                 if (!errors.isEmpty()) {
-                    EscomBeanUtils.showErrorsMsg(errors);
+                    EscomMsgUtils.showErrorsMsg(errors);
                 } 
             }
         } else {
-            EscomBeanUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+            EscomMsgUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
         } 
     } 
     
     private boolean checkPossibilityMoving(BaseDict dropItem, BaseDict dragItem, Set<String> errors){
         if (isItemDetailType(dropItem)){
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
             errors.add(error);
             return false;
         }
@@ -1402,10 +1403,10 @@ public class ExplorerBean implements Serializable {
                     treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
                 }                
             if (!errors.isEmpty()) {
-                EscomBeanUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrorsMsg(errors);
             }    
         }
-        EscomBeanUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+        EscomMsgUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
     }
     
     /* DRAG & DROP: отработка команды на перемещение в дереве */
@@ -1441,7 +1442,7 @@ public class ExplorerBean implements Serializable {
                 .filter(dragItem -> !isItemRootType(dragItem))
                 .forEach(dragItem -> {
                     if (sessionBean.prepAddItemToGroup(dragItem, dropItem)){
-                        EscomBeanUtils.SuccesFormatMessage("Successfully", "AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
+                        EscomMsgUtils.SuccesFormatMessage("Successfully", "AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });
     }
@@ -1451,7 +1452,7 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         checkedItems.stream().forEach(dragItem -> onMoveContentToTrash(dragItem, errors));
         if (!errors.isEmpty()){            
-            EscomBeanUtils.showErrorsMsg(errors);         
+            EscomMsgUtils.showErrorsMsg(errors);
         }
     }
     
@@ -1572,7 +1573,7 @@ public class ExplorerBean implements Serializable {
         if (!checked.isEmpty()){
             sessionBean.openMailMsgForm(mode, checked);
         } else {
-            EscomBeanUtils.WarnMsgAdd("Error", "NO_SELECT_DOCS");
+            EscomMsgUtils.warnMsgAdd("Error", "NO_SELECT_DOCS");
         }
     } 
     
@@ -1606,7 +1607,7 @@ public class ExplorerBean implements Serializable {
     public void openDocJournalReport() {
         Map<String, Object> params = new HashMap<>();
         params.put("USER_LOGIN", sessionBean.getCurrentUser().getLogin());
-        params.put("REPORT_TITLE", EscomBeanUtils.getBandleLabel("DocJournal"));
+        params.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel("DocJournal"));
         List<Doc> docs = new ArrayList<>();
         detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
 
@@ -1677,7 +1678,7 @@ public class ExplorerBean implements Serializable {
     }   
     
     public String getLabelFromBundle(String key){
-        return EscomBeanUtils.getBandleLabel(key);
+        return EscomMsgUtils.getBandleLabel(key);
     }
             
     /* Построение объекта для сортировки таблицы обозревателя  */

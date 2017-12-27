@@ -77,34 +77,5 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     public BaseExplBean getDetailBean() {
         return docTypeBean;
     }
-    
-    @FacesConverter("docTypeGroupConvertor")
-    public static class departmentConvertor implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {  
-                 DocTypeGroupsBean bean = EscomBeanUtils.findBean("DocTypeGroupsBean", fc);
-                 Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                 return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((DocTypeGroups)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

@@ -7,6 +7,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.posts.Post;
+import com.maxfill.model.users.User_;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
@@ -102,11 +103,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
             usersService.addUserInRealm(login, pwl);
         }
     }
-    
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.USER.toLowerCase();
-    }
 
     /**
      * Ищет пользователя по e-mail
@@ -123,7 +119,9 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return q.getSingleResult();
     }
 
-    /* Ищет пользователя по login  */
+    /**
+     * Ищет пользователя по login
+     */
     public List<User> findByLogin(String login){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -134,7 +132,24 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
+
+    /**
+     * Проверка e-mail пользователя на дубликат
+     * Возвращает TRUE если в базе уже есть пользователель с указанным e-mail
+     * exclUserId - исключить из проверки id пользователя
+     */
+    public boolean checkEmailDuplicate(Integer exclUserId, String email){
+        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<User> cq = builder.createQuery(User.class);
+        Root<User> c = cq.from(User.class);
+        Predicate crit1 = builder.equal(c.get(User_.email), email);
+        Predicate crit2 = builder.notEqual(c.get("id"), exclUserId);
+        cq.select(c).where(builder.and(crit1, crit2));
+        Query q = getEntityManager().createQuery(cq);
+        return !q.getResultList().isEmpty();
+    }
+
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
     public List<User> findActualDetailItems(UserGroups group){
@@ -292,7 +307,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return loginCorrect;
     }
     
-    /* Проверка token */
+    /* Проверка JWT token */
     public User tokenCorrect(String token){
         try {
             Key key = configuration.getSignKey();
@@ -319,14 +334,18 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         } 
         return null;
     }
-    
-    public String makeJsonToken(Map<String, String> loginMap) throws UnsupportedEncodingException{        
-        Map<String,String> tokenMap = new HashMap<>();
-        tokenMap.put("token", "");
+
+    /**
+     * Создание токена JWT для пользователя
+     */
+    public String makeJsonToken(Map<String, String> loginMap) throws UnsupportedEncodingException{
         String login = loginMap.get("login");
         String password = loginMap.get("pwl");
         User user = checkUserLogin(login, password.toCharArray());
         if (user == null) return null;
+
+        Map<String,String> tokenMap = new HashMap<>();
+        tokenMap.put("token", "");
 
         Date expirationDate = DateUtils.addMounth(new Date(), 1);
         Key key = configuration.getSignKey();
@@ -340,5 +359,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         tokenMap.put("token", jwt);
         Gson gson = new Gson();
         return gson.toJson(tokenMap, Map.class);
+    }
+
+    @Override
+    public String getFRM_NAME() {
+        return DictObjectName.USER.toLowerCase();
     }
 }

@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.posts;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -50,7 +51,7 @@ public class PostBean extends BaseExplBean<Post, Post>{
         super.checkAllowedDeleteItem(item, errors);
         if (!staffFacade.findStaffByPost(item).isEmpty()){
             Object[] messageParameters = new Object[]{item.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PostUsedInStaffs"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PostUsedInStaffs"), messageParameters);
             errors.add(error);
         }
     }    
@@ -69,34 +70,5 @@ public class PostBean extends BaseExplBean<Post, Post>{
     public Class<Post> getOwnerClass() {
         return null;
     }
-    
-    @FacesConverter("postConverter")
-    public static class PostConverter implements Converter {   
-        
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {  
-                PostBean bean = EscomBeanUtils.findBean("postBean", fc);
-                Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((Post)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

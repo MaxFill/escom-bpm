@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.docs.attaches;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
@@ -80,7 +80,7 @@ public class AttacheBean extends BaseDialogBean{
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();
             } else {
-                EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
+                EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
             }    
         } else {
             path = params.get("path");

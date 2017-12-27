@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
@@ -8,11 +9,15 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /* Фасад для сущности "Группы видов документов" */
 @Stateless
 public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGroups, DocTypeGroupsLog, DocTypeGroupsStates> {
+
+    @EJB
+    private DocTypeFacade docTypeFacade;
 
     public DocTypeGroupsFacade() {
         super(DocTypeGroups.class, DocTypeGroupsLog.class, DocTypeGroupsStates.class);
@@ -40,6 +45,21 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
             return getRightItem(item.getParent(), user); //получаем права от родительской группы
         }
         return getDefaultRights(item);
+    }
+
+    @Override
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((DocTypeGroups) item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        return docTypeFacade.getDefaultRights();
     }
 
     @Override

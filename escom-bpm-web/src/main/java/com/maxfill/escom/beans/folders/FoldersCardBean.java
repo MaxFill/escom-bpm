@@ -1,11 +1,11 @@
 package com.maxfill.escom.beans.folders;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.states.State;
@@ -64,9 +64,9 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     @Override
     public String getInheritsAccessChildName(){
         if (getEditedItem().isInheritsAccessChilds()){
-            return EscomBeanUtils.getMessageLabel("RightsInheritedForChildDocs");
+            return EscomMsgUtils.getMessageLabel("RightsInheritedForChildDocs");
         } else {
-            return EscomBeanUtils.getMessageLabel("DocumentsHaveSpecRights");
+            return EscomMsgUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
     }
     

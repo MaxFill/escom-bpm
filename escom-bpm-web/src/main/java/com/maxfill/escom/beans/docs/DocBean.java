@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictStates;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -10,8 +11,8 @@ import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
@@ -109,7 +110,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             builder.append(doc.getNameEndElipse());
             return builder.toString();
         } else {
-            return EscomBeanUtils.getBandleLabel("DocIsNotRegistred");
+            return EscomMsgUtils.getBandleLabel("DocIsNotRegistred");
         }
     }
     
@@ -207,7 +208,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         attacheFacade.addAttacheInDoc(doc, attache);
-        EscomBeanUtils.succesMsgAdd("Successfully", "VersionAdded");
+        EscomMsgUtils.succesMsgAdd("Successfully", "VersionAdded");
         return attache;
     }            
     
@@ -222,12 +223,12 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
                 errors.add(error);
             }
             if (!errors.isEmpty()){
-                EscomBeanUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrorsMsg(errors);
                 return;
             }
             onOpenFormLockAttache(attache);
         } else {
-            EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+            EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
         }        
     }
 
@@ -242,7 +243,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             errors.add(error);
         }
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
         sessionBean.openAttacheAddForm(doc);
@@ -266,10 +267,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 attacheDownLoadPDF(attache);
             } else {
-                EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+                EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
+            EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
         }
     }
 
@@ -282,10 +283,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 onViewAttache(attache);
             } else {
-                EscomBeanUtils.WarnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+                EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomBeanUtils.WarnMsgAdd("AccessDenied", "RightViewNo");
+            EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
         }
     }
 
@@ -303,30 +304,4 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         this.documentId = documentId;
     }
 
-    @FacesConverter("docsConvertor")
-    public static class docsConvertors implements Converter {
-
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-            if (value != null && value.trim().length() > 0) {
-                try {
-                    DocBean bean = EscomBeanUtils.findBean("docsBean", fc);
-                    return bean.getItemFacade().find(Integer.parseInt(value));
-                } catch (NumberFormatException e) {
-                    throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-                }
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if (object != null) {
-                return String.valueOf(((User) object).getId());
-            } else {
-                return "";
-            }
-        }
-    }
 }

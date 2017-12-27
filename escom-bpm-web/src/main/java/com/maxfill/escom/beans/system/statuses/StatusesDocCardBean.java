@@ -1,10 +1,10 @@
 package com.maxfill.escom.beans.system.statuses;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.docs.docsTypes.DocType;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
                 docTypeBean.getItemFacade().edit(docType);
             }
         });
-        EscomBeanUtils.succesMsgAdd("Successfully", "AddStatusInSelectedDocumentTypes");
+        EscomMsgUtils.succesMsgAdd("Successfully", "AddStatusInSelectedDocumentTypes");
     }
     
     @Override

@@ -3,7 +3,7 @@ package com.maxfill.escom.system.services.update;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.licence.Licence;
 import com.maxfill.utils.DateUtils;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     
     public void updateReleaseInfo(){      
         if (StringUtils.isBlank(strDateRelease)){
-            EscomBeanUtils.errorMsgAdd("Error", "NoGetRealiseInfo", "");
+            EscomMsgUtils.errorMsgAdd("Error", "NoGetRealiseInfo", "");
             return;
         }
         dateRelease = DateUtils.convertStrToDate(strDateRelease, sessionBean.getLocale());
@@ -48,12 +48,12 @@ public class CheckReleaseBean extends BaseDialogBean{
             return;
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) > 0){
-            EscomBeanUtils.WarnMsgAdd("NewVersionAvailable", "NeedUpdateProgram");
+            EscomMsgUtils.warnMsgAdd("NewVersionAvailable", "NeedUpdateProgram");
             appBean.setNeedUpadateSystem(Boolean.TRUE);
             sessionBean.setCanShowNotifBar(Boolean.TRUE);
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) == 0){
-            EscomBeanUtils.succesMsgAdd("Successfully", "UsedActualVersion");
+            EscomMsgUtils.succesMsgAdd("Successfully", "UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
         RequestContext.getCurrentInstance().update("checkFRM");

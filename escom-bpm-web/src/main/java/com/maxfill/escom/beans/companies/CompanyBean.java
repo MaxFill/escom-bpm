@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.companies;
 
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.CompanyFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -127,7 +128,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     protected void checkAllowedDeleteItem(Company company, Set<String> errors){       
         if (departmentFacade.findDepartmentByCompany(company).size() >1){ //одно подразделение служебное и его не надо учитывать!
             Object[] messageParameters = new Object[]{company.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("CompanyUsedInDepartaments"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("CompanyUsedInDepartaments"), messageParameters);
             errors.add(error);
         }
     }
@@ -146,32 +147,5 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     public BaseExplBean getDetailBean() {
         return departmentBean;
     }
-    
-    @FacesConverter("companyConvertor")
-    public static class companyConvertor implements Converter {
 
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-            if (value != null && value.trim().length() > 0) {
-                try {
-                    CompanyBean bean = EscomBeanUtils.findBean("companyBean", fc);
-                    Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                    return searcheObj;
-                } catch (NumberFormatException e) {
-                    throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-                }
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if (object != null) {
-                return String.valueOf(((Company) object).getId());
-            } else {
-                return "";
-            }
-        }
-    }
 }

@@ -2,6 +2,7 @@
 package com.maxfill.escom.beans.system.numPuttern;
 
 import com.maxfill.dictionary.DictNumerator;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -33,8 +34,8 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
     @Override
     public void onInitBean() {
         super.onInitBean(); 
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomBeanUtils.getBandleLabel("Auto")));
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomBeanUtils.getBandleLabel("ManualInput")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomMsgUtils.getBandleLabel("Auto")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomMsgUtils.getBandleLabel("ManualInput")));
     }
             
     public String getLabel(String typeCode){
@@ -70,35 +71,5 @@ public class NumeratorPatternBean extends BaseExplBean<NumeratorPattern, Numerat
     public Class<NumeratorPattern> getOwnerClass() {
         return null;
     }
-            
-    @FacesConverter("numPatternConvertor")
-    public static class numPatternConvertor implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {          
-                 NumeratorPatternBean bean = EscomBeanUtils.findBean("numeratorPatternBean", fc);
-                 Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                 return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                Integer id = ((NumeratorPattern)object).getId();
-                return String.valueOf(id);
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

@@ -1,10 +1,11 @@
 package com.maxfill.escom.beans.system.numPuttern;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.escom.beans.BaseCardBean;
 import com.maxfill.dictionary.DictNumerator;
-import com.maxfill.escom.utils.EscomBeanUtils;
+
 import javax.ejb.EJB;
 import javax.faces.model.SelectItem;
 import javax.faces.view.ViewScoped;
@@ -20,8 +21,8 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     private List<SelectItem> numPatternTypes = new ArrayList<>();
     
     public NumeratorPatternCardBean() {
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomBeanUtils.getBandleLabel("Auto")));
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomBeanUtils.getBandleLabel("ManualInput")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomMsgUtils.getBandleLabel("Auto")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomMsgUtils.getBandleLabel("ManualInput")));
     }       
     
     @EJB

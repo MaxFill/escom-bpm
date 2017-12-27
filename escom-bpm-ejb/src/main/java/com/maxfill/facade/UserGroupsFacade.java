@@ -54,6 +54,21 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return getDefaultRights(item);
     }
 
+    @Override
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((UserGroups) item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        return userFacade.getDefaultRights();
+    }
+
     /* Получение списка пользователей в группах */ 
     public List<User> findDetail(UserGroups group) {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();

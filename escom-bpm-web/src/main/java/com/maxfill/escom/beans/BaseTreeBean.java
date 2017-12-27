@@ -1,21 +1,15 @@
 package com.maxfill.escom.beans;
 
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.Rights;
-import com.maxfill.utils.EscomUtils;
-import java.io.IOException;
-import java.io.StringReader;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.bind.JAXB;
+
 import org.apache.commons.collections.CollectionUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */

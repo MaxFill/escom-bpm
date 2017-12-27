@@ -5,12 +5,13 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.escom.beans.explorer.SearcheModel;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.users.User;
 import java.lang.reflect.InvocationTargetException;
@@ -91,7 +92,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     /* Открытие карточки объекта*/
     public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
         
@@ -101,7 +102,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
             if (user != null){
                 String objName = user.getName();
-                EscomBeanUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
+                EscomMsgUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
                 return;
             }
         }
@@ -130,13 +131,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             if (getItemFacade().isHaveRightCreate(newItem)) {
                 setSpecAtrForNewItem(newItem);                
             } else {
-                String objName = EscomBeanUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
-                String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+                String objName = EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
                 errors.add(error);
             }
         } else {
             if (owner != null){
-                String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
                 errors.add(error);
             }
         }
@@ -151,7 +152,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         preparePasteItem(pasteItem, sourceItem, recipient);
         prepCreate(pasteItem, pasteItem.getParent(), errors); 
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return null;
         }        
         changeNamePasteItem(sourceItem, pasteItem);
@@ -223,13 +224,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
         if (!getItemFacade().isHaveRightAddChild(dropItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
         getItemFacade().actualizeRightItem(dragItem, currentUser);
         if (!getItemFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -250,7 +251,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
         getItemFacade().actualizeRightItem(dragItem, currentUser);
         if (!getItemFacade().isHaveRightEdit(dragItem)){
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -258,7 +259,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         actualizeRightForDropItem(dropItem);
 
         if (!getItemFacade().isHaveRightAddChild(dropItem)){
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
@@ -278,7 +279,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {
         getItemFacade().actualizeRightItem(dragItem, currentUser);
         if (!getItemFacade().isHaveRightDelete(dragItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -289,7 +290,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
         getItemFacade().actualizeRightItem(dragItem, currentUser);
         if (!getItemFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()}); 
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -403,9 +404,9 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
                 }
             }
         } else {
-            String metadateName = EscomBeanUtils.getBandleLabel(getMetadatesObj().getBundleName());
+            String metadateName = EscomMsgUtils.getBandleLabel(getMetadatesObj().getBundleName());
             Object[] msgParams = new Object[]{metadateName, item.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("RightDeleteNo"), msgParams);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightDeleteNo"), msgParams);
             errors.add(error);
         }
     } 

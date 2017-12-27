@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.rights.Right;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.model.states.State;
@@ -12,7 +13,6 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.system.states.StateBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.beanutils.BeanUtils;
@@ -191,7 +191,7 @@ public class RightCardBean extends BaseDialogBean{
     /* Событие изменения типа права в карточке права  */ 
     public void onTypeChangeRight(ValueChangeEvent event){
         selRight.setObjType((Integer) event.getNewValue());
-        String name = EscomBeanUtils.getBandleLabel("EmptySelData");
+        String name = EscomMsgUtils.getBandleLabel("EmptySelData");
         switch (selRight.getObjType()){
             case DictRights.TYPE_GROUP: {
                 if (selUsGroup != null){
@@ -236,7 +236,7 @@ public class RightCardBean extends BaseDialogBean{
     
     public String getObjName(Metadates metadate){
         if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
-        return EscomBeanUtils.getBandleLabel(metadate.getBundleName());
+        return EscomMsgUtils.getBandleLabel(metadate.getBundleName());
     }
     /* GET & SET */
 

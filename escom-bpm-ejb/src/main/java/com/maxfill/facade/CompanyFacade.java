@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.companies.CompanyLog;
 import com.maxfill.model.companies.CompanyStates;
@@ -10,6 +11,8 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+
+import com.maxfill.model.rights.Rights;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -18,6 +21,8 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     
     @EJB
     private UserFacade userFacade;
+    @EJB
+    private DepartmentFacade departmentFacade;
     
     public CompanyFacade() {
         super(Company.class, CompanyLog.class, CompanyStates.class);
@@ -56,9 +61,23 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     @Override
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((Company)item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        return departmentFacade.getDefaultRights(); //если иного не найдено, то берём дефолтные права справочника
+    }
+
+    @Override
     public void replaceItem(Company oldItem, Company newItem) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
      
 }

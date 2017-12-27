@@ -1,5 +1,6 @@
 package com.maxfill.escom.system.services.mail;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.mail.Mailbox;
 import com.google.gson.Gson;
@@ -153,7 +154,7 @@ public class MailMessageBean extends BaseDialogBean{
             String fileName = sendDocs.get(0).getName();
             sb.append(fileName);
         } else {
-            sb.append(EscomBeanUtils.getBandleLabel("Newsletter"));
+            sb.append(EscomMsgUtils.getBandleLabel("Newsletter"));
         }        
         return sb.toString();
     }
@@ -161,11 +162,11 @@ public class MailMessageBean extends BaseDialogBean{
     private StringBuilder prepareDocLinks(Doc doc){        
         StringBuilder links = new StringBuilder();
         String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/document");
-        links.append(EscomBeanUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
+        links.append(EscomMsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         String urlViewDoc = EscomBeanUtils.doGetItemURL(doc, "docs/doc-viewer");
-        links.append(EscomBeanUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
+        links.append(EscomMsgUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
         links.append("<a href=").append(urlViewDoc).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
@@ -174,7 +175,7 @@ public class MailMessageBean extends BaseDialogBean{
     private StringBuilder prepareDocCardLinks(Doc doc){
         StringBuilder links = new StringBuilder();
         String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/doc-card");
-        links.append(EscomBeanUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
+        links.append(EscomMsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append("&openMode=0").append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
@@ -195,7 +196,7 @@ public class MailMessageBean extends BaseDialogBean{
             mailBoxFacade.create(selected);
             return onCloseCard();
         } else {
-            EscomBeanUtils.errorMsgAdd("Error", "IncorrectMailAdress", "");
+            EscomMsgUtils.errorMsgAdd("Error", "IncorrectMailAdress", "");
             return "";
         }
     }

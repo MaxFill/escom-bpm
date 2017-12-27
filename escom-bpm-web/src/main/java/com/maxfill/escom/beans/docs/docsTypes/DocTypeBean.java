@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.docs.docsTypes;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -10,7 +11,6 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.Rights;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -78,12 +78,12 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         super.checkAllowedDeleteItem(docType, errors);
         if (!docFacade.findDocsByDocTyper(docType).isEmpty()){
             Object[] messageParameters = new Object[]{docType.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("DocTypeUsedInDocs"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("DocTypeUsedInDocs"), messageParameters);
             errors.add(error);
         }
         if (!foldersFacade.findFoldersByDocTyper(docType).isEmpty()){
             Object[] messageParameters = new Object[]{docType.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("DocTypeUsedInFolders"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("DocTypeUsedInFolders"), messageParameters);
             errors.add(error);
         }
     }
@@ -107,34 +107,5 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     public BaseExplBean getGroupBean() {
         return ownerBean;
     }
-    
-    @FacesConverter("docsTypesConvertor")
-    public static class docsTypesConvertor implements Converter {
-   
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {  
-                 DocTypeBean bean = EscomBeanUtils.findBean("docTypeBean", fc);
-                 Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                 return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((DocType)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

@@ -1,12 +1,12 @@
 package com.maxfill.escom.beans.partners;
 
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.groups.PartnerGroups;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.utils.Tuple;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
@@ -48,14 +48,14 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         if (!existPartner.isEmpty()) {
             String partnerName = existPartner.get(0).getName();
             Object[] params = new Object[]{partnerName, code};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerCodeIsExsist"), params);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerCodeIsExsist"), params);
             errors.add(error);
         }
         
         existPartner = getItemFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
         if (!existPartner.isEmpty()) {
             Object[] params = new Object[]{getTitleName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerIsExsist"), params);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerIsExsist"), params);
             errors.add(error);
         }
     }
@@ -96,7 +96,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
             RequestContext context = RequestContext.getCurrentInstance();
             context.update("itemCard:mainTabView:tblDocs");
             Doc item = tuple.b;
-            EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{item.getName()});
+            EscomMsgUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{item.getName()});
         }
     }
 

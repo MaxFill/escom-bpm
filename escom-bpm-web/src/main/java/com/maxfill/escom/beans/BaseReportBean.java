@@ -1,10 +1,11 @@
 package com.maxfill.escom.beans;
 
-import com.maxfill.escom.utils.EscomBeanUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.maxfill.escom.utils.EscomMsgUtils;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -48,7 +49,7 @@ public abstract class BaseReportBean extends BaseDialogBean{
     protected Map<String, Object> prepareReportParams(Map<String, Object> parameters){     
         parameters.put("USER_LOGIN", getCurrentUser().getLogin());
         String key = getReportBandleKey();
-        parameters.put("REPORT_TITLE", EscomBeanUtils.getBandleLabel(key));
+        parameters.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel(key));
         return parameters;
     }
     

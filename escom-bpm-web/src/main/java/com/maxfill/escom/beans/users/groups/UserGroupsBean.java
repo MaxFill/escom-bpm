@@ -2,13 +2,14 @@ package com.maxfill.escom.beans.users.groups;
 
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.facade.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.rights.Rights;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import javax.ejb.EJB;
@@ -87,7 +88,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     protected void checkAllowedDeleteItem(UserGroups userGroups, Set<String> errors){
         if (!rightFacade.findRightsByGroupId(userGroups.getId()).isEmpty()){
             Object[] messageParameters = new Object[]{userGroups.getName()};
-            String message = EscomBeanUtils.getMessageLabel("UserGroupsUsedInRights");
+            String message = EscomMsgUtils.getMessageLabel("UserGroupsUsedInRights");
             String error = MessageFormat.format(message, messageParameters);
             errors.add(error);
         }       
@@ -119,33 +120,5 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     public BaseExplBean getDetailBean() {
         return userBean;
     }
-    
-    @FacesConverter("groupsUserConvertor")
-    public static class groupsUserConvertors implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {     
-                 UserGroupsBean bean = EscomBeanUtils.findBean("userGroupsBean", fc);
-                 return bean.getItemFacade().find(Integer.parseInt(value));
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((UserGroups)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.folders.Folder;
@@ -12,6 +13,8 @@ import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.validator.ValidatorException;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
@@ -21,7 +24,6 @@ import java.util.Objects;
 import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /* Бин для формы "Карточка пользователя */
@@ -49,9 +51,9 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     public void onInboxSelected(SelectEvent event){
         List<Folder> items = (List<Folder>) event.getObject();
         if (items.isEmpty()) return;
-        Folder item = items.get(0);
+        Folder folder = items.get(0);
         onItemChange();
-        getEditedItem().setInbox(item);
+        getEditedItem().setInbox(folder);
     }
     public void onInboxSelected(ValueChangeEvent event){
         Folder folder = (Folder) event.getNewValue();
@@ -106,7 +108,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         List<User> existUsers = getItemFacade().findByLoginExcludeId(login, userId);
         if (!existUsers.isEmpty()) {
             Object[] params = new Object[]{login};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("UserLoginIsExsist"), params);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserLoginIsExsist"), params);
             errors.add(error);
         }
     }

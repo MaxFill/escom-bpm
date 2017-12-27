@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.users;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -118,7 +119,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         super.checkAllowedDeleteItem(user, errors);
         if (!staffFacade.findStaffsByUser(user).isEmpty()){
             Object[] messageParameters = new Object[]{user.getShortFIO()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
             errors.add(error);
         }
     }
@@ -137,34 +138,5 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     public BaseExplBean getGroupBean() {
         return groupsBean;
     }
-    
-    @FacesConverter("usersConvertor")
-    public static class usersConvertors implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {       
-                 UserBean bean = EscomBeanUtils.findBean("userBean", fc);
-                 return bean.getItemFacade().find(Integer.parseInt(value));
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((User)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
-    
 }

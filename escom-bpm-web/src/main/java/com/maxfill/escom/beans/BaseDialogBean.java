@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.users.User;
 import org.primefaces.context.RequestContext;
 import javax.faces.context.FacesContext;
@@ -124,7 +124,7 @@ public abstract class BaseDialogBean implements Serializable{
     }
 
     public String getLabelFromBundle(String key){
-        return EscomBeanUtils.getBandleLabel(key);
+        return EscomMsgUtils.getBandleLabel(key);
     }
             
     public BaseBean getSourceBean() {

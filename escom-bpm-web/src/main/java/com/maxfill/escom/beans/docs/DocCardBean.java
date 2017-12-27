@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.docs;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.BaseCardBean;
@@ -109,7 +110,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         
         String pattern = numerator.getPattern();
         if (StringUtils.isBlank(pattern)) {
-            EscomBeanUtils.errorMsgAdd("Error", "PatternIsEmpty", "");
+            EscomMsgUtils.errorMsgAdd("Error", "PatternIsEmpty", "");
             return null;
         }
         
@@ -173,7 +174,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
                         docStatusFacade.remove(docsStatus);
-                        getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
+                        getItemFacade().addLogEvent(getEditedItem(), EscomMsgUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
                     });
         }        
     }     
@@ -199,7 +200,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
         doc.setRegNumber(null);
         onItemChange();
-        EscomBeanUtils.WarnMsgAdd("Successfully", "DocRegCanceled");
+        EscomMsgUtils.warnMsgAdd("Successfully", "DocRegCanceled");
     }
 
     /* Формирование регистрационного номера документа. Вызов с экранной формы */
@@ -209,7 +210,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (errors.isEmpty()){
             onItemChange();
         } else {
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
         }    
     }       
     
@@ -284,7 +285,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             onItemChange();
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, null, exception);
-            EscomBeanUtils.ErrorMessage(exception.getMessage());
+            EscomMsgUtils.ErrorMessage(exception.getMessage());
         }
     }
     
@@ -296,7 +297,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (attache != null){
             attacheDownLoad(attache);               
         } else {
-            EscomBeanUtils.WarnMsgAdd("Error", "FileNotFound");
+            EscomMsgUtils.warnMsgAdd("Error", "FileNotFound");
         }
     }        
     
@@ -403,9 +404,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (loadCounter > 0){
             onItemChange();
             Object[] params = new Object[]{loadCounter};
-            EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+            EscomMsgUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
         } else {
-            EscomBeanUtils.WarnMsgAdd("Warning", "StatusesNotFound");
+            EscomMsgUtils.warnMsgAdd("Warning", "StatusesNotFound");
         }    
     }                 
     
@@ -415,7 +416,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
             int loadCounter = docsBean.addStatusesInDoc(getEditedItem(), statuses);
             Object[] params = new Object[]{loadCounter};
-            EscomBeanUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+            EscomMsgUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
         }    
     }
     

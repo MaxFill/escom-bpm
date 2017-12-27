@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans;
 
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import java.text.MessageFormat;
 import java.util.List;
@@ -17,13 +17,13 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getGroupBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
         if (!getItemFacade().isHaveRightAddChild(dropItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()}); 
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
         getItemFacade().actualizeRightItem(dragItem, currentUser);
         if (!getItemFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()}); 
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }

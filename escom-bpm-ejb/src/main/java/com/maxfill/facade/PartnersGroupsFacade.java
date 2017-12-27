@@ -13,6 +13,7 @@ import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -21,6 +22,9 @@ import javax.persistence.criteria.Root;
 /* Группы контрагентов */
 @Stateless
 public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerGroups, PartnerGroupsLog, PartnerGroupsStates> {
+
+    @EJB
+    private PartnersFacade partnersFacade;
 
     public PartnersGroupsFacade() {
         super(PartnerGroups.class, PartnerGroupsLog.class, PartnerGroupsStates.class);
@@ -60,6 +64,20 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
         }
 
         return getDefaultRights(item);
+    }
+
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((PartnerGroups) item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        return partnersFacade.getDefaultRights();
     }
 
     @Override

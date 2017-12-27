@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseExplBean;
@@ -105,7 +106,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         super.checkAllowedDeleteItem(partner, errors);
         if (!docFacade.findDocsByPartner(partner).isEmpty()){
             Object[] messageParameters = new Object[]{partner.getName()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("PartnerUsedInDocs"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerUsedInDocs"), messageParameters);
             errors.add(error);
         }
     }           
@@ -144,38 +145,9 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
             builder.append(partner);
         }
         if (builder.length() == 0){
-            builder.append(EscomBeanUtils.getBandleLabel("NewPartner"));
+            builder.append(EscomMsgUtils.getBandleLabel("NewPartner"));
         }
         return builder.toString();
     }
-        
-    @FacesConverter("partnersConvertor")
-    public static class partnersConvertors implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {
-                 PartnersBean bean = EscomBeanUtils.findBean("partnersBean", fc);
-                 Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                 return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((Partner)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

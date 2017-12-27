@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.system.metadata;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
@@ -139,7 +140,7 @@ public class MetadatesBean implements Serializable{
         right.setExecute(false);
         right.setDelete(false);
         rightFacade.create(right);
-        EscomBeanUtils.succesMsgAdd("Successfully", "StateIsAdd");
+        EscomMsgUtils.succesMsgAdd("Successfully", "StateIsAdd");
     }
     
     public void onDeleteState(State state){
@@ -152,7 +153,7 @@ public class MetadatesBean implements Serializable{
             errors.add("CantRemoveUsedState");
         }
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
         selectedObject.getStatesList().remove(state);        
@@ -166,7 +167,7 @@ public class MetadatesBean implements Serializable{
         if (selectedObject == null) return;
         selectedObject.setStateForNewObj(startState);
         metadatesFacade.edit(selectedObject);
-        EscomBeanUtils.succesMsgAdd("Successfully", "StartSateIsChange");
+        EscomMsgUtils.succesMsgAdd("Successfully", "StartSateIsChange");
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
@@ -220,7 +221,7 @@ public class MetadatesBean implements Serializable{
       
     public String getBundleName(Metadates metadate){
         if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
-        return EscomBeanUtils.getBandleLabel(metadate.getBundleName());
+        return EscomMsgUtils.getBandleLabel(metadate.getBundleName());
     }
 
     /* *** GET & SET *** */
@@ -268,37 +269,6 @@ public class MetadatesBean implements Serializable{
 
     public LayoutOptions getLayoutOptions() {
         return layoutOptions;
-    }
-    
-    @FacesConverter("metadatesConvertor")
-    public static class metadatesConvertor implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {          
-                MetadatesBean bean = EscomBeanUtils.findBean("metadatesBean", fc);
-                Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
-
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                Integer id = ((Metadates)object).getId();
-                return String.valueOf(id);
-            }
-            else {
-                return "";
-            }
-        }      
     }
      
 }

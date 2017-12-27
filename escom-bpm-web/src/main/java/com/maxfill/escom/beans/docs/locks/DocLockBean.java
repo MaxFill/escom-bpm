@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.docs.locks;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
@@ -20,6 +20,9 @@ import javax.inject.Named;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+/**
+ * Установка и снятие блокировок с документов, файлы которых открываются через WebDav
+ */
 @Named
 @ViewScoped
 public class DocLockBean extends BaseDialogBean{
@@ -81,7 +84,7 @@ public class DocLockBean extends BaseDialogBean{
     
     public void changeDatePlanLock(){
         remainder.changeTimer(attache, sessionBean.getCurrentUser(), lockDate);                       
-        EscomBeanUtils.succesMsgAdd("Successfully", "TimerRestarted");
+        EscomMsgUtils.succesMsgAdd("Successfully", "TimerRestarted");
     }
     
     public void onChangeDateLock(SelectEvent event){

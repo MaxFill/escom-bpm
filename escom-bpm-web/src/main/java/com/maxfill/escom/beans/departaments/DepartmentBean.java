@@ -9,9 +9,9 @@ import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getMessageLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
-import com.maxfill.model.rights.Rights;
+
 import java.text.MessageFormat;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -145,34 +145,5 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     public BaseExplBean getDetailBean() {
         return staffBean;
     }
-    
-    @FacesConverter("departmentConvertor")
-    public static class departmentConvertor implements Converter {
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-         if(value != null && value.trim().length() > 0) {
-             try {  
-                 DepartmentBean bean = EscomBeanUtils.findBean("departmentBean", fc);
-                 Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
-                 return searcheObj;
-             } catch(NumberFormatException e) {
-                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));
-             }
-         }
-         else {
-             return null;
-         }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((Department)object).getId());
-            }
-            else {
-                return "";
-            }
-        }      
-    }
 }

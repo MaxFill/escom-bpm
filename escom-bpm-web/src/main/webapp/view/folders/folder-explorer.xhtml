@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <!-- используется в качестве селектора папок -->
+    
+    <ui:param name="_treeBean" value="#{foldersBean}" />
+    <ui:param name="_detailBean" value="#{docsBean}" />
+    <ui:param name="_searcheBean" value="#{_treeBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('FolderSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('FolderExplorer')}"/>
+    
+    <ui:param name="_showAuthor"     value="#{true}"/>
+    <ui:param name="_showDateCreate" value="#{true}"/>
+    <ui:param name="_showDateChange" value="#{true}"/>
+    
+    <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.CreateDoc}" />
+    
+</ui:composition>

@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.ldap;
 
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.ldap.LdapSettings;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.services.ldap.LdapTimer;
@@ -36,7 +36,7 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
         StringBuilder detailInfo = new StringBuilder();        
         ldapUsers = ldapTimer.doLoadUsers(detailInfo, Boolean.TRUE, getSettings());
         if (ldapUsers == null){
-            EscomBeanUtils.errorMsgAdd("Warning", "ConnectFailed", "");
+            EscomMsgUtils.errorMsgAdd("Warning", "ConnectFailed", "");
         }
     }    
    
@@ -46,11 +46,11 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
     public void onCheckConnect(){     
         try {
             LdapUtils.initLDAP(getSettings().getLdapUsername(), getSettings().getLdapPassword(), getSettings().getLdapAdServer());
-            EscomBeanUtils.succesMsgAdd("Successfully", "ConnectionEstablished");
+            EscomMsgUtils.succesMsgAdd("Successfully", "ConnectionEstablished");
 
         } catch (NamingException ex) {
-            EscomBeanUtils.WarnMsgAdd("Warning", "ConnectFailed");
-            EscomBeanUtils.ErrorMessage(ex.getMessage());
+            EscomMsgUtils.warnMsgAdd("Warning", "ConnectFailed");
+            EscomMsgUtils.ErrorMessage(ex.getMessage());
             LOG.log(Level.SEVERE, null, ex);
         }
     } 

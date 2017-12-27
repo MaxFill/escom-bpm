@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+
+import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
+
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
@@ -102,7 +104,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
             service.setDateNextStart(timer.getNextTimeout());
             service.setStarted(Boolean.TRUE);
             servicesFacade.edit(service);
-            EscomBeanUtils.succesMsgAdd("Successfully", "ServiceRunSchedule");
+            EscomMsgUtils.succesMsgAdd("Successfully", "ServiceRunSchedule");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -129,10 +131,10 @@ public abstract class BaseServicesBean<P> implements Serializable{
                 service.setStarted(Boolean.FALSE);
                 service.setDateNextStart(null);
                 servicesFacade.edit(service);
-                EscomBeanUtils.succesMsgAdd("Successfully", "ServiceStopped");
+                EscomMsgUtils.succesMsgAdd("Successfully", "ServiceStopped");
                 LOG.log(Level.INFO, "Timer for service {0} is cancelled!", service.getName()); 
             }  catch (NoSuchObjectLocalException | IOException | ClassNotFoundException exception) {
-                EscomBeanUtils.ErrorMessage(exception.getMessage());
+                EscomMsgUtils.ErrorMessage(exception.getMessage());
                 throw new RuntimeException(exception);
             }
         }
@@ -143,7 +145,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
      */
     public void onSaveSettings(){
         doSaveSettings();
-        EscomBeanUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{service.getName()});        
+        EscomMsgUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{service.getName()});
     }
     
     /**

@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.rights.Right;
 import java.io.Serializable;
@@ -38,13 +38,13 @@ public class RightsBean implements Serializable{
             }
             //хардкодные проверки
             if (rg.getObjId() == 0 && rg.getObjType() == DictRights.TYPE_GROUP){
-               accessorName = EscomBeanUtils.getBandleLabel("All"); 
+               accessorName = EscomMsgUtils.getBandleLabel("All");
             } else
                 if (DictRights.GROUP_ADMIN_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_GROUP)){
-                  accessorName = EscomBeanUtils.getBandleLabel("Administrators"); 
+                  accessorName = EscomMsgUtils.getBandleLabel("Administrators");
                 } else
                     if (DictRights.USER_ADMIN_ID.equals(rg.getObjId()) && rg.getObjType().equals(DictRights.TYPE_USER)){
-                        accessorName = EscomBeanUtils.getBandleLabel("Administrator"); 
+                        accessorName = EscomMsgUtils.getBandleLabel("Administrator");
                       } else{ //тогда ищем названия в базе
                             accessorName = getAccessName(rg);
                         }
@@ -67,13 +67,13 @@ public class RightsBean implements Serializable{
     public String getTypeName(Integer objType){         
         switch (objType){
             case (DictRights.TYPE_GROUP):{  
-                return EscomBeanUtils.getBandleLabel("RightForGroup");                
+                return EscomMsgUtils.getBandleLabel("RightForGroup");
             }
             case (DictRights.TYPE_USER): {
-                return EscomBeanUtils.getBandleLabel("RightForUser"); 
+                return EscomMsgUtils.getBandleLabel("RightForUser");
             }
             case (DictRights.TYPE_ROLE): {
-                return EscomBeanUtils.getBandleLabel("RightForRole"); 
+                return EscomMsgUtils.getBandleLabel("RightForRole");
             }
         }   
         return "";

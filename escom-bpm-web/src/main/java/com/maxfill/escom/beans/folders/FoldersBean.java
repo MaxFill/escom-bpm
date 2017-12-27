@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -8,11 +9,16 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
+import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +128,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     } 
     
     public String getTypeName(Folder folder){
-        return EscomBeanUtils.getBandleLabel("FolderType");
+        return EscomMsgUtils.getBandleLabel("FolderType");
     }
         
     /* GETS & SETS */    
@@ -151,4 +157,5 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public BaseExplBean getDetailBean() {
         return docBean;
     }
+
 }

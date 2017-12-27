@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans;
 
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -42,7 +42,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         Boolean inherit = (Boolean) event.getNewValue();
         //checkRightsChilds(getEditedItem(), inherit, errors);
         if (!errors.isEmpty()){
-            EscomBeanUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
@@ -56,7 +56,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                 }
                 getEditedItem().setRightForChild(childRights);
                 rightsBean.prepareRightsForView(childRights.getRights());                
-                EscomBeanUtils.succesMsgAdd("Successfully", "RightIsParentCopy");
+                EscomMsgUtils.succesMsgAdd("Successfully", "RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }                         

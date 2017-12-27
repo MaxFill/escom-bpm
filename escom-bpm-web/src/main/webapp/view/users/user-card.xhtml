@@ -44,16 +44,20 @@
                     </p:inputText>
 
                     <p:outputLabel value="#{bundle.EMail}" />
-                    <p:inputText id="email" value="#{_bean.editedItem.email}" 
-                                 styleClass="ui-grid-col-12"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 maxlength="1024"
-                                 validatorMessage="#{bundle.EMail}: #{validator.INVALID_EMAIL}"
-                                 onchange="return itemChange = 1;">
-                        <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
-                        <f:validator validatorId="escom.emailValidator" />
-                    </p:inputText>
+                    <h:panelGroup id="emailGroup">
+                        <p:inputText id="email" value="#{_bean.editedItem.email}"
+                                     styleClass="ui-grid-col-12"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                     maxlength="1024"
+                                     onchange="return itemChange = 1;">
+                            <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
+                            <f:attribute name="userId" value="#{_bean.editedItem.id}"/>
+                            <f:validator validatorId="escom.emailValidator" />
+                            <f:validator validatorId="escom.userEmailValidator" />
+                            <f:ajax event="blur" render="emailGroup" />
+                        </p:inputText>
+                    </h:panelGroup>
 
                     <p:outputLabel value="#{bundle.MobilePhone}" />
                     <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
@@ -72,7 +76,8 @@
                                  required="#{param['isRequired'] == 'true'}"                                         
                                  requiredMessage="#{bundle.Field} [#{bundle.VisibleName}] #{bundle.MustBeFilled}"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 onchange="return itemChange = 1;"/>
+                                 onchange="return itemChange = 1;">
+                    </p:inputText>
                     <p:commandButton value="#{bundle.Generate}" title="#{bundle.MakeName}"
                                      actionListener="#{userCardBean.makeName()}"
                                      update="visbleName"
@@ -107,24 +112,27 @@
         </p:tab>    
 
         <p:tab title="#{bundle.Other}">
-            <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateMessagesEmail}" 
-                                        disabled="#{_bean.isReadOnly()}"
-                                        itemLabel="#{bundle.DuplicateMessagesEmail}">
-                <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
-            </p:selectBooleanCheckbox>
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-12" >
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateMessagesEmail}"
+                                            disabled="#{_bean.isReadOnly()}"
+                                            itemLabel="#{bundle.DuplicateMessagesEmail}">
+                    <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
+                </p:selectBooleanCheckbox>
+            </p:panelGrid>
 
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >
                 <p:outputLabel value="#{bundle.Folder}" />
                 <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.inbox}"/>
+                    <ui:param name="_itemLabel" value="#{_bean.editedItem.inbox.path}"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                     <ui:param name="_converter" value="folderConvertor" />
-                    <ui:param name="_validator" value="userFolderValidator" />
+                    <ui:param name="_validator" value="escom.userFolderValidator" />
                     <ui:param name="_itemPanel" value="folderPanel"/>
                     <ui:param name="_titleItem" value="#{bundle.Folder}"/>
-                    <ui:param name="_selectorBean" value="#{folderBean}"/>
-                    <ui:param name="_items" value="#{folderBean.findAll()}"/>
+                    <ui:param name="_selectorBean" value="#{foldersBean}"/>
+                    <ui:param name="_items" value="#{foldersBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setInbox"/>
                     <ui:param name="_actionSelect" value="onInboxSelected"/>
                     <ui:param name="_update" value=""/>
@@ -133,12 +141,10 @@
 
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >                               
                 <p:outputLabel value="#{bundle.EmailSign}" />
-                <h:panelGrid columns="1" styleClass="ui-grid-col-12">
-                    <p:editor value="#{_bean.editedItem.emailSign}" 
-                              style="width: 100%; height: 200px;"
+                <p:editor value="#{_bean.editedItem.emailSign}"
+                              style="width: 100%;"
                               disabled="#{_bean.isReadOnly()}"
                               onchange="return itemChange = 1;"/>
-                </h:panelGrid>         
             </p:panelGrid>
         </p:tab>
 

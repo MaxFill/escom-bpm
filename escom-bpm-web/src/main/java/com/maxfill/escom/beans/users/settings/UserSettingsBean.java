@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.users.settings;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
@@ -45,13 +45,13 @@ public class UserSettingsBean extends BaseDialogBean{
         String newPwl = getNewPassword().trim();
         String repPwl = getRepeatePassword().trim();
         if (!Objects.equals(newPwl, repPwl)){
-            EscomBeanUtils.errorMsgAdd("Error", "PasswordsNotMatch", "");
+            EscomMsgUtils.errorMsgAdd("Error", "PasswordsNotMatch", "");
             return;
         }
         String oldPwlMD5 = EscomUtils.encryptPassword(getOldPassword().trim());
         String curPwlMD5 = sessionBean.getCurrentUser().getPassword();         
         if (!Objects.equals(curPwlMD5, oldPwlMD5)){
-            EscomBeanUtils.errorMsgAdd("Error", "PasswordIncorrect", "");
+            EscomMsgUtils.errorMsgAdd("Error", "PasswordIncorrect", "");
             return;
         }
         User user = sessionBean.getCurrentUser();
@@ -61,7 +61,7 @@ public class UserSettingsBean extends BaseDialogBean{
         setNewPassword(null);
         setOldPassword(null);
         setRepeatePassword(null);
-        EscomBeanUtils.succesMsgAdd("Successfully", "PasswordIsChange");
+        EscomMsgUtils.succesMsgAdd("Successfully", "PasswordIsChange");
     }  
 
     @Override

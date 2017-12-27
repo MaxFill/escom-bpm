@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.system.login;
 
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
@@ -85,22 +86,22 @@ public class LoginBean implements Serializable{
         if (appBean.getLicence().isExpired()){
             Date termLicense = appBean.getLicence().getDateTermLicence();            
             String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
-            errors.add(EscomBeanUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
         }
         
         if (appBean.isNoAvailableLicence()){
-            errors.add(EscomBeanUtils.prepErrorMsg("ErrorCountLogin"));
+            errors.add(EscomMsgUtils.prepErrorMsg("ErrorCountLogin"));
         }
         
         User user = userFacade.checkUserLogin(userName, password.toCharArray());
         
         if (user == null){
-            errors.add(EscomBeanUtils.prepErrorMsg("BadUserOrPassword"));
+            errors.add(EscomMsgUtils.prepErrorMsg("BadUserOrPassword"));
         }
         
         if (!errors.isEmpty()){
             makeCountErrLogin(context, errors);
-            EscomBeanUtils.showFacesMessages(errors);
+            EscomMsgUtils.showFacesMessages(errors);
             return;
         }
         
@@ -151,7 +152,7 @@ public class LoginBean implements Serializable{
         countErrLogin++;
         if (isLoginLock()){
             context.execute("PF('poll').start();");
-            errors.add(EscomBeanUtils.prepErrorMsg("ErrorCountLogin"));
+            errors.add(EscomMsgUtils.prepErrorMsg("ErrorCountLogin"));
         } 
     }
     
@@ -204,33 +205,5 @@ public class LoginBean implements Serializable{
     public void setTargetPage(String targetPage) {
         this.targetPage = targetPage;
     }
- 
-    @FacesConverter("langConverter")
-    public static class LngConverter implements Converter {    
-    
-        @Override
-        public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
-            if(value != null && value.trim().length() > 0) {
-                try {
-                    LoginBean bean = EscomBeanUtils.findBean("loginBean", fc);
-                    Object searcheObj = bean.getLanguages().get(Integer.parseInt(value));
-                    return searcheObj;
-                } catch(NumberFormatException e) {
-                    throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Некорректное значение."));
-                }
-            } else {
-                return null;
-            }
-        }
 
-        @Override
-        public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-            if(object != null) {
-                return String.valueOf(((CountryFlags) object).getId());
-            }
-            else {
-                return "";
-            }
-        } 
-    }
 }

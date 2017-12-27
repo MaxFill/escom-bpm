@@ -36,6 +36,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     private DepartmentNumeratorService departmentNumeratorService;
     @EJB
     private CompanyFacade companyFacade;
+    @EJB
+    private StaffFacade staffFacade;
 
     public DepartmentFacade() {
         super(Department.class, DepartamentLog.class, DepartmentStates.class);
@@ -76,6 +78,25 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         }
 
         return getDefaultRights(item);
+    }
+
+    @Override
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((Department) item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        if (item.getOwner() != null) {
+            return getRightForChild(item.getOwner()); //получаем права от владельца
+        }
+
+        return staffFacade.getDefaultRights();
     }
 
     /* Ищет подразделение с указанным названием в заданной компании и если не найдено, то создаёт новое.  */

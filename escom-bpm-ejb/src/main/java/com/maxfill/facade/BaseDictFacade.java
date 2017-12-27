@@ -724,25 +724,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* Получение прав для дочерних объектов */
     public Rights getRightForChild(BaseDict item){
-        if (item == null) return null;
-
-        if (!item.isInheritsAccessChilds()) {
-            return getActualRightChildItem((T)item);
-        }
-
-        if (item.getParent() != null) {
-            return getRightForChild(item.getParent()); //получаем права от родителя
-        }
-
-        if (item.getOwner() != null) {
-            return getRightForChild(item.getOwner()); //получаем права от владельца
-        }
-
-        return null;
+        return null; //метод переопределяется в фасадах древовидных сущностей
     }
 
     /* Получение актуальных прав дочерних объектов от объекта */
-    private Rights getActualRightChildItem(T item) {
+    protected Rights getActualRightChildItem(T item) {
         Rights actualRight = null;
         byte[] compressXML = item.getAccessChild();
         if (compressXML != null && compressXML.length >0){

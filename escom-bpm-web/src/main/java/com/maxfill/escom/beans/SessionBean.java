@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.users.User;
@@ -306,7 +307,7 @@ public class SessionBean implements Serializable{
     public void checkUnReadMessages(){
         Integer countUnreadMessage = getCountUnreadMessage();
         if (countUnreadMessage > 0){
-            EscomBeanUtils.SuccesFormatMessage("Info", "YouHaveUnreadMessage", new Object[]{countUnreadMessage});            
+            EscomMsgUtils.SuccesFormatMessage("Info", "YouHaveUnreadMessage", new Object[]{countUnreadMessage});
         }
     }
     
@@ -575,7 +576,7 @@ public class SessionBean implements Serializable{
     /* GETS & SETS */
             
     public String getLicenseLocalName(){
-        return EscomBeanUtils.getBandleLabel(appBean.getLicence().getLicenceName());
+        return EscomMsgUtils.getBandleLabel(appBean.getLicence().getLicenceName());
     }
     
     private BaseExplBean getItemBean(BaseDict item){
@@ -741,11 +742,11 @@ public class SessionBean implements Serializable{
         Integer countMsg = getCountUnreadMessage();
         
         StringBuilder info = new StringBuilder();
-        info.append(EscomBeanUtils.getBandleLabel("Messages")).append(" (");
+        info.append(EscomMsgUtils.getBandleLabel("Messages")).append(" (");
         if (countMsg > 0){
-            info.append(EscomBeanUtils.getBandleLabel("CountNewMessages")).append(" ").append(countMsg);
+            info.append(EscomMsgUtils.getBandleLabel("CountNewMessages")).append(" ").append(countMsg);
         } else {
-            info.append(EscomBeanUtils.getBandleLabel("NoNewMessages"));
+            info.append(EscomMsgUtils.getBandleLabel("NoNewMessages"));
         }
         info.append(")");
         return info.toString();

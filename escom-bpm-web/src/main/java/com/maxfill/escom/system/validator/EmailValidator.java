@@ -7,12 +7,12 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.ValidatorException;
+
+import com.maxfill.escom.utils.EscomMsgUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * Проверка корректности email
- * 
- * @author mfilatov
  */
 @FacesValidator(EmailValidator.VALIDATOR_ID)
 public class EmailValidator extends AbstractValidator {
@@ -36,8 +36,8 @@ public class EmailValidator extends AbstractValidator {
         }
 
         if (!pattern.matcher(value.toString()).matches()) {
-            String invalidEmail = getMessageFromBundle(context, "INVALID_EMAIL");
-            String checkError = getMessageFromBundle(context, "CHECK_ERROR");
+            String invalidEmail = EscomMsgUtils.getValidateLabel("INVALID_EMAIL");
+            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, invalidEmail, checkError));
         }
     }

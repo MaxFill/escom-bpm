@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -10,7 +11,7 @@ import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomBeanUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.users.User;
@@ -87,7 +88,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 checkCorrectItemRight(item, errors);
                 item.setDateCreate(new Date());
                 if (!errors.isEmpty()) {
-                   EscomBeanUtils.showErrorsMsg(errors);
+                   EscomMsgUtils.showErrorsMsg(errors);
                 }
                 getItemFacade().addLogEvent(item, getBandleLabel(DictLogEvents.CREATE_EVENT), currentUser);
             }
@@ -134,14 +135,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             Set<String> errors = new LinkedHashSet<>();
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
-                EscomBeanUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrorsMsg(errors);
                 return Boolean.FALSE; 
             }
             onBeforeSaveItem(item);
             owner = item.getAuthor();
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {                    
-                    getItemFacade().addLogEvent(item, EscomBeanUtils.getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);        
+                    getItemFacade().addLogEvent(item, EscomMsgUtils.getBandleLabel(DictLogEvents.SAVE_EVENT), currentUser);
                     getItemFacade().edit(item);
                     break;
                 }
@@ -181,7 +182,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         if (isFind) {
             T findItem = tuple.b;            
             Object[] messageParameters = new Object[]{item.getName(), findItem.getId()};
-            String error = MessageFormat.format(EscomBeanUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
         }                           
     }
@@ -311,7 +312,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         parameters.put("BARCODE", getBarCode(editedItem));
         parameters.put("USER_LOGIN", currentUser.getLogin());
         String key = getMetadatesObj().getBundleName();
-        parameters.put("REPORT_TITLE", EscomBeanUtils.getBandleLabel(key));
+        parameters.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel(key));
         return parameters;
     }
             
@@ -348,7 +349,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             Set<String> errors = new LinkedHashSet<>();
             checkCorrectItemRight(getEditedItem(), errors);
             if (!errors.isEmpty()) {
-                EscomBeanUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrorsMsg(errors);
             }
         }                
     }
@@ -363,7 +364,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
         }        
         StringBuilder sb = new StringBuilder();
-        sb.append(EscomBeanUtils.getMessageLabel("ObjectDontHaveRightEdit")).append(EscomBeanUtils.getMessageLabel("CheckRights"));
+        sb.append(EscomMsgUtils.getMessageLabel("ObjectDontHaveRightEdit")).append(EscomMsgUtils.getMessageLabel("CheckRights"));
         errors.add(sb.toString());
     }    
     
@@ -377,7 +378,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             }
         }        
         StringBuilder sb = new StringBuilder();
-        sb.append(EscomBeanUtils.getMessageLabel("ObjectDontHaveRightView")).append(EscomBeanUtils.getMessageLabel("CheckRights"));
+        sb.append(EscomMsgUtils.getMessageLabel("ObjectDontHaveRightView")).append(EscomMsgUtils.getMessageLabel("CheckRights"));
         errors.add(sb.toString());
     }
     
@@ -413,16 +414,16 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
     public String getInheritsAccessChildName(){
         if (editedItem.isInheritsAccessChilds()){
-            return EscomBeanUtils.getMessageLabel("RightsInheritedForChilds");
+            return EscomMsgUtils.getMessageLabel("RightsInheritedForChilds");
         } else {
-            return EscomBeanUtils.getMessageLabel("RightsNotInheritedForChilds");
+            return EscomMsgUtils.getMessageLabel("RightsNotInheritedForChilds");
         }
     }
     
     public String getInheritsRightName(){
-        String inheritsRightName = EscomBeanUtils.getMessageLabel("RightIsInherits");
+        String inheritsRightName = EscomMsgUtils.getMessageLabel("RightIsInherits");
         if (!editedItem.isInherits()){
-            inheritsRightName = EscomBeanUtils.getMessageLabel("RightNotInherits"); 
+            inheritsRightName = EscomMsgUtils.getMessageLabel("RightNotInherits");
         }
         return inheritsRightName;
     }
@@ -444,7 +445,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 editedItem.setInherits(Boolean.FALSE);
                 editedItem.setRightItem(newRight);
                 rightsBean.prepareRightsForView(newRight.getRights());                
-                EscomBeanUtils.succesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
+                EscomMsgUtils.succesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
@@ -457,22 +458,22 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
 
     /* Формирует строку заголовка карточки объекта. Вызов с экранной формы  */
     public String makeCardHeader() {
-        StringBuilder sb = new StringBuilder(EscomBeanUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName()));
+        StringBuilder sb = new StringBuilder(EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName()));
         sb.append(": ");
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
                 sb.append(getEditedItem().getNameEndElipse());                
-                sb.append(" <").append(EscomBeanUtils.getBandleLabel("ReadOnly")).append(">");;
+                sb.append(" <").append(EscomMsgUtils.getBandleLabel("ReadOnly")).append(">");;
                 break;
             }
             case DictEditMode.EDIT_MODE:{
                 sb.append(getEditedItem().getNameEndElipse());                
-                sb.append(" <").append(EscomBeanUtils.getBandleLabel("Correction")).append(">");
+                sb.append(" <").append(EscomMsgUtils.getBandleLabel("Correction")).append(">");
                 break;
             }
             case DictEditMode.INSERT_MODE:{
-                sb.append(EscomBeanUtils.getBandleLabel("New"));                
-                sb.append(" <").append(EscomBeanUtils.getBandleLabel("Create")).append(">");
+                sb.append(EscomMsgUtils.getBandleLabel("New"));
+                sb.append(" <").append(EscomMsgUtils.getBandleLabel("Create")).append(">");
                 break;
             }
         }
@@ -483,9 +484,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public String getActualInfo() {
         String msg;
         if (getEditedItem().isActual()) {
-            msg = EscomBeanUtils.getBandleLabel("ActualInfo");
+            msg = EscomMsgUtils.getBandleLabel("ActualInfo");
         } else {
-            msg = EscomBeanUtils.getBandleLabel("NoActualInfo");
+            msg = EscomMsgUtils.getBandleLabel("NoActualInfo");
         }
         return msg;
     }

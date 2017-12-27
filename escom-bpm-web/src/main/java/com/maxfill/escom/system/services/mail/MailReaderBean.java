@@ -1,12 +1,10 @@
 package com.maxfill.escom.system.services.mail;
 
 import com.maxfill.escom.beans.BaseServicesBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
-import com.maxfill.utils.EscomUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -14,12 +12,6 @@ import javax.inject.Named;
 import javax.mail.Authenticator;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.xml.bind.JAXB;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
@@ -41,12 +33,12 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
             String adress = getSettings().getAdressSender();
             Folder inbox = MailUtils.sessionReader(getSettings(), auth);
             if (inbox != null) {
-                EscomBeanUtils.SuccesFormatMessage("Successfully", "MessageSent", new Object[]{adress});
+                EscomMsgUtils.SuccesFormatMessage("Successfully", "MessageSent", new Object[]{adress});
             } else {
-                EscomBeanUtils.errorMsgAdd("Error", "ConnectFailed", "");
+                EscomMsgUtils.errorMsgAdd("Error", "ConnectFailed", "");
             }
         } catch (SecurityException | MessagingException ex) {
-            EscomBeanUtils.errorMsgAdd("Error", "ConnectFailed", ex.getMessage());
+            EscomMsgUtils.errorMsgAdd("Error", "ConnectFailed", ex.getMessage());
             LOG.log(Level.SEVERE, null, ex);
         } 
     } 

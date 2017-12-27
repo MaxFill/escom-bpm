@@ -3,10 +3,9 @@ package com.maxfill.escom.beans;
 import com.maxfill.Configuration;
 import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.system.rights.RightsBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomFileUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.services.attaches.AttacheService;
@@ -19,28 +18,20 @@ import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.facade.UserGroupsFacade;
-import com.maxfill.model.rights.Right;
-import com.maxfill.model.rights.Rights;
-import com.maxfill.model.states.State;
-import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.utils.EscomUtils;
-import java.io.IOException;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXB;
+
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 
 /* Базовый бин */
 public abstract class BaseBean <T extends BaseDict> implements Serializable{
@@ -118,9 +109,9 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     public void addInFavorites(BaseDict item){
         Object[] msg = new Object[]{item.getName()};
         if (favoriteService.addInFavorites(item, metadatesObj, currentUser)){
-            EscomBeanUtils.SuccesFormatMessage("Successfully", "ObjectAddedToFavorites", msg);
+            EscomMsgUtils.SuccesFormatMessage("Successfully", "ObjectAddedToFavorites", msg);
         } else {
-            EscomBeanUtils.WarnFormatMessage("NotExecuted", "ObjectAlreadyAddedFavorites", msg);
+            EscomMsgUtils.WarnFormatMessage("NotExecuted", "ObjectAlreadyAddedFavorites", msg);
         }
     }    
 

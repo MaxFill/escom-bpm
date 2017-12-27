@@ -4,7 +4,7 @@ package com.maxfill.escom.beans.system.admObj;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import org.primefaces.event.SelectEvent;
 import javax.faces.view.ViewScoped;
@@ -65,9 +65,9 @@ public class AdmObjectBean extends BaseDialogBean{
     public void onReplaceItem(){ 
         if (replaceItem != null) {
             getSourceBean().replaceItem(sourceItem, replaceItem);            
-            EscomBeanUtils.succesMsgAdd("Successfully", "ReplaceCompleted");
+            EscomMsgUtils.succesMsgAdd("Successfully", "ReplaceCompleted");
         } else {
-            EscomBeanUtils.errorMsgAdd("Error", "DoNotSpecifyValueReplacement", "");
+            EscomMsgUtils.errorMsgAdd("Error", "DoNotSpecifyValueReplacement", "");
         }
     }
 

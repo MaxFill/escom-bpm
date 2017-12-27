@@ -1,11 +1,10 @@
 package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
@@ -83,7 +82,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
                 staffName.append(" ").append(user.getShortFIO());
             }
         } else {
-            staffName.append(EscomBeanUtils.getBandleLabel("Vacant"));
+            staffName.append(EscomMsgUtils.getBandleLabel("Vacant"));
         }
         getEditedItem().setName(staffName.toString());
         onItemChange();

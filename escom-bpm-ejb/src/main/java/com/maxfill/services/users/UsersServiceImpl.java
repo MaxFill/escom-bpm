@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 public class UsersServiceImpl implements UsersService {
     private static final String COMMAND_WIN = "add-user.bat";
-    private static final String COMMAND_UNIX = "add-user.sh";
+    private static final String COMMAND_UNIX = "./add-user.sh";
     private static final Logger LOGGER = Logger.getLogger(UsersServiceImpl.class.getName());
     @EJB
     private Configuration conf;

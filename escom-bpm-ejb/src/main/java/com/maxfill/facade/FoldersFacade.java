@@ -24,7 +24,9 @@ import javax.persistence.criteria.Root;
 public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, FolderStates> {
     @EJB
     private DocTypeFacade docTypeFacade;
-    
+    @EJB
+    private DocFacade docFacade;
+
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
     }
@@ -45,6 +47,9 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
     }
 
+    /**
+     * Формирование прав доступа к папке*
+     */
     @Override
     public Rights getRightItem(BaseDict item, User user) {
         if (item == null) return null;
@@ -58,6 +63,22 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         }
 
         return getDefaultRights(item);
+    }
+
+    /* Получение прав для документов в папке */
+    @Override
+    public Rights getRightForChild(BaseDict item){
+        if (item == null) return null;
+
+        if (!item.isInheritsAccessChilds()) { //если не наследует права
+            return getActualRightChildItem((Folder)item);
+        }
+
+        if (item.getParent() != null) {
+            return getRightForChild(item.getParent()); //получаем права от родителя
+        }
+
+        return docFacade.getDefaultRights(); //если иного не найдено, то берём дефолтные права справочника
     }
 
     /* Возвращает все папки */

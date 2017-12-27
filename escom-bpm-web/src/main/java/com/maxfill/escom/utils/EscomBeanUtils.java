@@ -29,7 +29,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
-/* Утилиты, вызываемые из бинов */
+/* Утилиты, вызываемые из CDI бинов */
 public final class EscomBeanUtils {
 
     private EscomBeanUtils() {
@@ -141,15 +141,6 @@ public final class EscomBeanUtils {
         return (T) context.getApplication().evaluateExpressionGet(context, "#{" + beanName + "}", Object.class);
     }
 
-    public static void WarnMsgDlg(String key1, String key2) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String msg1 = bundle.getString(key1);
-        String msg2 = bundle.getString(key2);
-        FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_WARN, msg1, msg2);
-        RequestContext.getCurrentInstance().showMessageInDialog(msg);
-    }
-
     //поиск позиции в навигационной цепочке папок
     public static BaseDict findUiNavigatorItem(Deque navigator, Integer keyRow) {
         BaseDict rez = null;
@@ -165,120 +156,6 @@ public final class EscomBeanUtils {
         return rez;
     }
 
-    public static void WarnFormatMessage(String key1, String key2, Object[] messageParameters) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String titleError = bundle.getString(key1);
-        String template = bundle.getString(key2);
-        String msgError = MessageFormat.format(template, messageParameters);
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_WARN, titleError, msgError);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    }
-
-    public static void ErrorMessage(String error) {
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", error);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    }
-
-    public static void SuccesFormatMessage(String key1, String key2, Object[] messageParameters) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String titleError = bundle.getString(key1);
-        String template = bundle.getString(key2);
-        String msgError = MessageFormat.format(template, messageParameters);
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, titleError, msgError);
-        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
-    }
-
-    public static void ErrorFormatMessage(String key1, String key2, Object[] messageParameters) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String titleError = bundle.getString(key1);
-        String template = bundle.getString(key2);
-        String msgError = MessageFormat.format(template, messageParameters);
-        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, titleError, msgError));
-    }
-        
-    public static FacesMessage prepFormatErrorMsg(String bundleKey, Object[] messageParameters){
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String titleError = bundle.getString("Error");
-        String template = bundle.getString(bundleKey);
-        String message = MessageFormat.format(template, messageParameters);
-        return new FacesMessage(FacesMessage.SEVERITY_ERROR, titleError, message);
-    }
-    
-    public static FacesMessage prepErrorMsg(String bundleKey){
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String titleError = bundle.getString("Error");
-        String message = bundle.getString(bundleKey);        
-        return new FacesMessage(FacesMessage.SEVERITY_ERROR, titleError, message);
-    }
-        
-    /* Формирование форматированной строки сообщения из ключей локали */
-    public static String makeMessage(Map<String, Object[]> keys){
-        StringBuilder sb = new StringBuilder(); 
-        for (Entry<String, Object[]> entry : keys.entrySet()){           
-            String msg = MessageFormat.format(getMessageLabel(entry.getKey()), entry.getValue());
-            sb.append(msg);
-        }
-        return sb.toString();
-    }
-    
-    public static void WarnMsgAdd(String key1, String key2) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String msg1 = bundle.getString(key1);
-        String msg2 = bundle.getString(key2);
-        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, msg1, msg2));
-    }
-
-    public static void showFacesMessages(Set<FacesMessage> messages){
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        messages.stream().limit(10).forEach(message -> ctx.addMessage(null, message));
-    }
-    
-    public static void showErrorsMsg(Set<String> errors) {
-        errors.stream().limit(10).forEach((String error) -> errorMsgAdd("Error", error, ""));
-    }
-
-    public static void succesMsgAdd(String key1, String key2) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String msg1 = bundle.getString(key1);
-        String msg2 = bundle.getString(key2);
-        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, msg1, msg2));
-    }
-
-    public static void errorMsgAdd(String key1, String key2, String extString) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        String msg1 = bundle.getString(key1);
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(key2)) {
-            sb.append(bundle.getString(key2)).append(" ");
-        }
-        if (StringUtils.isNotBlank(extString)) {
-            sb.append(extString);
-        }
-        ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, msg1, sb.toString()));
-    }   
-
-    /* Возвращает значение из msg по ключу  */
-    public static String getMessageLabel(String key) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "msg");
-        return bundle.getString(key);
-    }
-
-    /* Возвращает значение из bundel по ключу */
-    public static String getBandleLabel(String key) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ResourceBundle bundle = ctx.getApplication().getResourceBundle(ctx, "bundle");
-        return bundle.getString(key);
-    }
-    
     /* Поиск позиции в дереве по значению объекта */
     public static TreeNode findTreeNode(TreeNode root, Object item) {
         TreeNode result = null;

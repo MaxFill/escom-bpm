@@ -5,7 +5,7 @@ import com.maxfill.escom.beans.BaseReportBean;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.escom.beans.system.reports.ReportPieData;
 import com.maxfill.escom.beans.users.settings.UserReportsSettings;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.utils.DateUtils;
@@ -78,7 +78,7 @@ public class DocReportBean extends BaseReportBean{
     
     public void makeReport(){
         if (selectedNodes == null || selectedNodes.length == 0){
-            EscomBeanUtils.errorMsgAdd("Error", "NeedSelectOneGroup", null);
+            EscomMsgUtils.errorMsgAdd("Error", "NeedSelectOneGroup", null);
             return;
         }
                 
@@ -90,7 +90,7 @@ public class DocReportBean extends BaseReportBean{
         
         List<Tuple> docTypes = docFacade.countDocByDocTypeGroups(docTypeGroups, getDateStart(), getDateEnd(), docTypeGroups);
         if (docTypes.isEmpty()){
-            EscomBeanUtils.WarnMsgAdd("Warning", "NO_SEARCHE_FIND");        
+            EscomMsgUtils.warnMsgAdd("Warning", "NO_SEARCHE_FIND");
             pieModel = null;
             return;
         }
@@ -99,7 +99,7 @@ public class DocReportBean extends BaseReportBean{
         
         pieModel = new PieChartModel();
         docTypes.stream().forEach(tuple -> pieModel.set((String)tuple.get(0), (Long)tuple.get(1)));
-        pieModel.setTitle(EscomBeanUtils.getBandleLabel("DocReportCountTypes"));
+        pieModel.setTitle(EscomMsgUtils.getBandleLabel("DocReportCountTypes"));
         pieModel.setLegendPosition("w");
         pieModel.setShowDataLabels(true); 
     }
