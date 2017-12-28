@@ -110,7 +110,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         
         String pattern = numerator.getPattern();
         if (StringUtils.isBlank(pattern)) {
-            EscomMsgUtils.errorMsgAdd("Error", "PatternIsEmpty", "");
+            EscomMsgUtils.errorMsg("PatternIsEmpty");
             return null;
         }
         
@@ -200,7 +200,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
         doc.setRegNumber(null);
         onItemChange();
-        EscomMsgUtils.warnMsgAdd("Successfully", "DocRegCanceled");
+        EscomMsgUtils.warnMsg("DocRegCanceled");
     }
 
     /* Формирование регистрационного номера документа. Вызов с экранной формы */
@@ -285,7 +285,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             onItemChange();
         } catch (Exception exception) {
             LOGGER.log(Level.SEVERE, null, exception);
-            EscomMsgUtils.ErrorMessage(exception.getMessage());
+            EscomMsgUtils.errorMessage(exception.getMessage());
         }
     }
     
@@ -297,7 +297,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (attache != null){
             attacheDownLoad(attache);               
         } else {
-            EscomMsgUtils.warnMsgAdd("Error", "FileNotFound");
+            EscomMsgUtils.warnMsg("FileNotFound");
         }
     }        
     
@@ -404,9 +404,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (loadCounter > 0){
             onItemChange();
             Object[] params = new Object[]{loadCounter};
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+            EscomMsgUtils.succesFormatMsg("StatusesLoadComplete", params);
         } else {
-            EscomMsgUtils.warnMsgAdd("Warning", "StatusesNotFound");
+            EscomMsgUtils.warnMsg("StatusesNotFound");
         }    
     }                 
     
@@ -416,7 +416,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
             int loadCounter = docsBean.addStatusesInDoc(getEditedItem(), statuses);
             Object[] params = new Object[]{loadCounter};
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "StatusesLoadComplete", params);
+            EscomMsgUtils.succesFormatMsg("StatusesLoadComplete", params);
         }    
     }
     

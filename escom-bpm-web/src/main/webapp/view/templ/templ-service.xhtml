@@ -40,21 +40,6 @@
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane position ="south" >
-                <h:form id="southFRM" style="font-size: 80%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
-                                         value="#{bundle.Close}"
-                                         actionListener="#{_bean.onCloseForm()}"/>
-                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
-                                         title="#{bundle.SaveServiceSettings}" style="float: right;"
-                                         onclick="document.getElementById('westFRM:btnWestSaves').click();
-                                                 document.getElementById('eastFRM:btnEastSave').click();"
-                                         actionListener="#{_bean.onSaveSettings()}"/>
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
             <pe:layoutPane position="west" resizable="true" >
                 <f:facet name="header"  >  
                     <p:outputLabel value="#{bundle.ServiceSchedule}"/>
@@ -84,6 +69,21 @@
                         <ui:insert name="serviceParams"/>
                     </p:outputPanel>
                     <p:commandButton id="btnEastSave" update="eastFRM" style="display: none;" />
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position ="south" >
+                <h:form id="southFRM" style="font-size: 80%;">
+                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
+                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
+                                         value="#{bundle.Close}"
+                                         actionListener="#{_bean.onCloseForm()}"/>
+                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
+                                         title="#{bundle.SaveServiceSettings}" style="float: right;"
+                                         onclick="document.getElementById('westFRM:btnWestSaves').click();
+                                                 document.getElementById('eastFRM:btnEastSave').click();"
+                                         actionListener="#{_bean.onSaveSettings()}"/>
+                    </p:outputPanel>
                 </h:form>
             </pe:layoutPane>
 

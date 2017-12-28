@@ -65,9 +65,9 @@ public class AdmObjectBean extends BaseDialogBean{
     public void onReplaceItem(){ 
         if (replaceItem != null) {
             getSourceBean().replaceItem(sourceItem, replaceItem);            
-            EscomMsgUtils.succesMsgAdd("Successfully", "ReplaceCompleted");
+            EscomMsgUtils.succesMsg("ReplaceCompleted");
         } else {
-            EscomMsgUtils.errorMsgAdd("Error", "DoNotSpecifyValueReplacement", "");
+            EscomMsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }
     }
 

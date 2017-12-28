@@ -34,6 +34,12 @@ public class MailSettings implements Serializable{
     @XmlElement(name = "UseSSL")
     private Boolean useSSL;
 
+    @XmlElement(name = "DeleteAfterLoad")
+    private Boolean deleteAfterLoad = true;
+
+    @XmlElement(name = "DeleteIfUnknownSender")
+    private Boolean deleteIfUnknownSender = true;
+
     public String getServerAdress() {
         return serverAdress;
     }
@@ -81,6 +87,20 @@ public class MailSettings implements Serializable{
     }
     public void setEncoding(String encoding) {
         this.encoding = encoding;
+    }
+
+    public Boolean getDeleteAfterLoad() {
+        return deleteAfterLoad;
+    }
+    public void setDeleteAfterLoad(Boolean deleteAfterLoad) {
+        this.deleteAfterLoad = deleteAfterLoad;
+    }
+
+    public Boolean getDeleteIfUnknownSender() {
+        return deleteIfUnknownSender;
+    }
+    public void setDeleteIfUnknownSender(Boolean deleteIfUnknownSender) {
+        this.deleteIfUnknownSender = deleteIfUnknownSender;
     }
 
     //трансформирует данные класса в xml строку

@@ -102,7 +102,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
             if (user != null){
                 String objName = user.getName();
-                EscomMsgUtils.ErrorFormatMessage("AccessDenied", "ObjectAlreadyOpened", new Object[]{objName});
+                EscomMsgUtils.errorFormatMsg("ObjectAlreadyOpened", new Object[]{objName});
                 return;
             }
         }

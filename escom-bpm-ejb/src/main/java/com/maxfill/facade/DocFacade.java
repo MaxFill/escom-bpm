@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
@@ -19,9 +20,11 @@ import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
+import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.searche.SearcheService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -317,46 +320,65 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
     /**
      * Создание документа из e-mail сообщения
      */
-    public void createDocFromEmail(Message message) {
+    public boolean createDocFromEmail(Message message, StringBuilder detailInfo, MailSettings settings) {
         try {
             Address senders[] = message.getFrom();
-            Address sender = senders[0];
+            String sender = ((InternetAddress)senders[0]).getAddress();
 
-            List<User> users = Arrays.stream(message.getFrom())
-                    .map(s -> userFacade.findUserByEmail(s.toString()))
-                    .collect(Collectors.toList());
+            List<User> users = userFacade.findUserByEmail(sender);
 
-            if (users.isEmpty()) return;
+            if (users.isEmpty()) {
+                detailInfo.append("Sender ").append(sender).append(" not found in users!").append(SysParams.LINE_SEPARATOR);
+                return settings.getDeleteIfUnknownSender();
+            }
 
             User author = users.get(0);
             Folder folder = author.getInbox();
 
-            if (folder == null) return; //Todo нужно записать в лог что у пользователя нет папки
+            if (folder == null) {
+                detailInfo.append("User ").append(author.getLogin()).append(" ").append(author.getShortFIO()).append(" not have folder!").append(SysParams.LINE_SEPARATOR);
+                return false;
+            }
 
             String subject = message.getSubject();
             Doc doc = createDocInUserFolder(subject, author, folder);
 
-            Multipart mp = (Multipart) message.getContent();
-            for(int i = 0; i < mp.getCount(); i++) {
-                BodyPart bp = mp.getBodyPart(i);
-                Map<String, Object> params = new HashMap<>();
-                String filename;
-                if (bp.getFileName() != null){
-                    filename = bp.getFileName();
-                } else {
-                    filename = subject;
-                }
-                params.put("contentType", bp.getContentType());
-                params.put("fileName", filename);
-                params.put("size", bp.getSize());
+            Map <String, Object> params = new HashMap <>();
+
+            if (message.isMimeType("text/*")){
+                String s = (String) message.getContent();
+                params.put("contentType", "text/html");
+                params.put("fileName", "e-mail messsage");
+                params.put("size", s.length());
                 params.put("author", author);
-                Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
+                Attaches attache = attacheService.uploadAtache(params, message.getInputStream());
                 doc.getAttachesList().add(attache);
+                return true;
             }
 
+            if (message.isMimeType("multipart/alternative")) {
+                Multipart mp = (Multipart) message.getContent();
+                for(int i = 0; i < mp.getCount(); i++) {
+                    BodyPart bp = mp.getBodyPart(i);
+                    String filename;
+                    if(bp.getFileName() != null) {
+                        filename = bp.getFileName();
+                    } else {
+                        filename = subject;
+                    }
+                    params.put("contentType", bp.getContentType());
+                    params.put("fileName", filename);
+                    params.put("size", bp.getSize());
+                    params.put("author", author);
+                    Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
+                    doc.getAttachesList().add(attache);
+                }
+            }
+            return true;
         } catch(IOException | MessagingException ex){
             LOGGER.log(Level.SEVERE, null, ex);
         }
+        return false;
     }
 
     private void doSaveRoleToJson(Doc doc){

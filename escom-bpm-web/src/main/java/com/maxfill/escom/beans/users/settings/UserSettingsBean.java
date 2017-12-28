@@ -45,13 +45,13 @@ public class UserSettingsBean extends BaseDialogBean{
         String newPwl = getNewPassword().trim();
         String repPwl = getRepeatePassword().trim();
         if (!Objects.equals(newPwl, repPwl)){
-            EscomMsgUtils.errorMsgAdd("Error", "PasswordsNotMatch", "");
+            EscomMsgUtils.errorMsg("PasswordsNotMatch");
             return;
         }
         String oldPwlMD5 = EscomUtils.encryptPassword(getOldPassword().trim());
         String curPwlMD5 = sessionBean.getCurrentUser().getPassword();         
         if (!Objects.equals(curPwlMD5, oldPwlMD5)){
-            EscomMsgUtils.errorMsgAdd("Error", "PasswordIncorrect", "");
+            EscomMsgUtils.errorMsg("PasswordIncorrect");
             return;
         }
         User user = sessionBean.getCurrentUser();
@@ -61,7 +61,7 @@ public class UserSettingsBean extends BaseDialogBean{
         setNewPassword(null);
         setOldPassword(null);
         setRepeatePassword(null);
-        EscomMsgUtils.succesMsgAdd("Successfully", "PasswordIsChange");
+        EscomMsgUtils.succesMsg("PasswordIsChange");
     }  
 
     @Override

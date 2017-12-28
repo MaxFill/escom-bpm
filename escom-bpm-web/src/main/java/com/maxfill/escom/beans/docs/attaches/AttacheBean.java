@@ -80,7 +80,7 @@ public class AttacheBean extends BaseDialogBean{
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();
             } else {
-                EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
+                EscomMsgUtils.warnMsg("RightViewNo");
             }    
         } else {
             path = params.get("path");

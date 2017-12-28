@@ -111,7 +111,21 @@ public class Services implements Serializable {
     public void setSheduler(byte[] sheduler) {
         this.sheduler = sheduler;
     }
-        
+
+    public Date getDateNextStart() {
+        return dateNextStart;
+    }
+    public void setDateNextStart(Date dateNextStart) {
+        this.dateNextStart = dateNextStart;
+    }
+
+    public byte[] getTimeHandle() {
+        return timeHandle;
+    }
+    public void setTimeHandle(byte[] timeHandle) {
+        this.timeHandle = timeHandle;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -135,22 +149,6 @@ public class Services implements Serializable {
     @Override
     public String toString() {
         return "com.maxfill.escombpm2.system.services.Services[ id=" + id + " ]";
-    }
-
-    public Date getDateNextStart() {
-        return dateNextStart;
-    }
-
-    public void setDateNextStart(Date dateNextStart) {
-        this.dateNextStart = dateNextStart;
-    }
-
-    public byte[] getTimeHandle() {
-        return timeHandle;
-    }
-
-    public void setTimeHandle(byte[] timeHandle) {
-        this.timeHandle = timeHandle;
     }
     
 }

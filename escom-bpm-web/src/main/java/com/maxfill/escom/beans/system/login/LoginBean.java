@@ -90,13 +90,13 @@ public class LoginBean implements Serializable{
         }
         
         if (appBean.isNoAvailableLicence()){
-            errors.add(EscomMsgUtils.prepErrorMsg("ErrorCountLogin"));
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Objects[]{}));
         }
         
         User user = userFacade.checkUserLogin(userName, password.toCharArray());
         
         if (user == null){
-            errors.add(EscomMsgUtils.prepErrorMsg("BadUserOrPassword"));
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Objects[]{}));
         }
         
         if (!errors.isEmpty()){
@@ -152,7 +152,7 @@ public class LoginBean implements Serializable{
         countErrLogin++;
         if (isLoginLock()){
             context.execute("PF('poll').start();");
-            errors.add(EscomMsgUtils.prepErrorMsg("ErrorCountLogin"));
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
         } 
     }
     

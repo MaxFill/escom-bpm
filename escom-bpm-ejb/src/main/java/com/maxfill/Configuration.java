@@ -40,7 +40,7 @@ public class Configuration {
     private String defaultSenderEmail;
     private String defaultSmtpServer;
     private String defaultImapServer;
-    private String defaultEmailServerPort;
+    private String defaultSmtpPort;
     private String defaultIMAPPort;
     private String ldapServer;
     private String tempFolder;
@@ -71,7 +71,7 @@ public class Configuration {
             defaultSenderEmail = (String) properties.get("DEFAULT_EMAIL_SENDER");
             defaultImapServer = (String) properties.get("DEFAULT_IMAP_SERVER");
             defaultSmtpServer = (String) properties.get("DEFAULT_SMTP_SERVER");
-            defaultEmailServerPort = (String) properties.get("DEFAULT_SMTP_PORT");
+            defaultSmtpPort = (String) properties.get("DEFAULT_SMTP_PORT");
             defaultIMAPPort = (String) properties.get("DEFAULT_IMAP_PORT");
             useMailSSLConnect = Boolean.valueOf((String) properties.get("MAIL_SSL_CONNECT"));
             ldapServer = (String) properties.get("LDAP_SERVER");
@@ -151,8 +151,8 @@ public class Configuration {
     public String getDefaultSmtpServer() {
         return defaultSmtpServer;
     }
-    public String getDefaultEmailServerPort() {
-        return defaultEmailServerPort;
+    public String getDefaultSmtpPort() {
+        return defaultSmtpPort;
     }
     public String getRepositoryName(){
         return REPO_FULL_NAME;
@@ -165,6 +165,9 @@ public class Configuration {
     }
     public String getDefaultIMAPPort() {
         return defaultIMAPPort;
+    }
+    public String getDefaultImapServer() {
+        return defaultImapServer;
     }
 
     public Repository getRepository() {

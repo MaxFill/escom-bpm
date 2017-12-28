@@ -40,7 +40,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     
     public void updateReleaseInfo(){      
         if (StringUtils.isBlank(strDateRelease)){
-            EscomMsgUtils.errorMsgAdd("Error", "NoGetRealiseInfo", "");
+            EscomMsgUtils.errorMsg("NoGetRealiseInfo");
             return;
         }
         dateRelease = DateUtils.convertStrToDate(strDateRelease, sessionBean.getLocale());
@@ -48,12 +48,12 @@ public class CheckReleaseBean extends BaseDialogBean{
             return;
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) > 0){
-            EscomMsgUtils.warnMsgAdd("NewVersionAvailable", "NeedUpdateProgram");
+            EscomMsgUtils.warnMsg("NeedUpdateProgram");
             appBean.setNeedUpadateSystem(Boolean.TRUE);
             sessionBean.setCanShowNotifBar(Boolean.TRUE);
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) == 0){
-            EscomMsgUtils.succesMsgAdd("Successfully", "UsedActualVersion");
+            EscomMsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
         RequestContext.getCurrentInstance().update("checkFRM");

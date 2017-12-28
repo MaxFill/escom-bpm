@@ -78,7 +78,7 @@ public class DocReportBean extends BaseReportBean{
     
     public void makeReport(){
         if (selectedNodes == null || selectedNodes.length == 0){
-            EscomMsgUtils.errorMsgAdd("Error", "NeedSelectOneGroup", null);
+            EscomMsgUtils.errorMsg("NeedSelectOneGroup");
             return;
         }
                 
@@ -90,7 +90,7 @@ public class DocReportBean extends BaseReportBean{
         
         List<Tuple> docTypes = docFacade.countDocByDocTypeGroups(docTypeGroups, getDateStart(), getDateEnd(), docTypeGroups);
         if (docTypes.isEmpty()){
-            EscomMsgUtils.warnMsgAdd("Warning", "NO_SEARCHE_FIND");
+            EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
             pieModel = null;
             return;
         }

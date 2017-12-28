@@ -10,13 +10,17 @@ import com.maxfill.utils.EscomUtils;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.*;
+import javax.mail.search.FlagTerm;
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
+import java.security.cert.CollectionCertStoreParameters;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Таймер загрузки e-mail сообщений
@@ -27,6 +31,8 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
     private MailBoxFacade mailBoxFacade;
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private MailService mailService;
 
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings) {
@@ -37,17 +43,50 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
         ServicesEvents selectedEvent = new ServicesEvents(service);
         selectedEvent.setDateStart(startDate);
         selectedEvent.setResult(RESULT_FAIL);
+        Session session = null;
+        Folder inbox = null;
         try {
-            Authenticator auth = new MailAuth(settings.getUser(), settings.getPassword());
-            Folder folder = MailUtils.sessionReader(settings, auth);
+            session = mailService.getSessionReader(settings);
+            inbox = mailService.getInbox(session, settings);
             detailInfoAddRow("The connection is established...");
-            if (folder != null) {
-                Arrays.stream(folder.getMessages()).forEach(m -> docFacade.createDocFromEmail(m));
-                selectedEvent.setResult(RESULT_SUCCESSFULLY);
+
+            Flags seen = new Flags(Flags.Flag.SEEN);
+            FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
+            Message[] messages = inbox.search(unseenFlagTerm);  //получаем только непрочитанные сообщения
+
+            detailInfoAddRow("Mailbox contains " + messages.length + " messages");
+
+            if (messages.length > 0) {
+                List <Message> processed = Arrays.stream(messages)
+                        .filter(m -> docFacade.createDocFromEmail(m, getDetailInfo(), settings))
+                        .collect(Collectors.toList());
+
+                detailInfoAddRow("All messages read!");
+
+                if(settings.getDeleteAfterLoad()) {
+                    Flags deleted = new Flags(Flags.Flag.DELETED);
+                    Message[] forDelete = processed.toArray(new Message[processed.size()]);
+                    inbox.setFlags(forDelete, deleted, true);
+                    detailInfoAddRow("Delete " + forDelete.length + " messages.");
+                } else {
+                    detailInfoAddRow("No deleted messages.");
+                }
             }
-        } catch(MessagingException e){
+
+            selectedEvent.setResult(RESULT_SUCCESSFULLY);
+        } catch(RuntimeException | MessagingException e){
             detailInfoAddRow(e.getMessage());
         } finally{
+            if (session != null) {
+                try {
+                    session.getStore().close();
+                    if (inbox != null) {
+                        inbox.close(true);
+                    }
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
             finalAction(selectedEvent);
             service.getServicesEventsList().add(selectedEvent);
             return selectedEvent;

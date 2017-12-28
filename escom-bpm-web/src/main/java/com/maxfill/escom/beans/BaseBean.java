@@ -107,11 +107,11 @@ public abstract class BaseBean <T extends BaseDict> implements Serializable{
     
     /* ИЗБРАННОЕ: добавление объекта в избранное  */
     public void addInFavorites(BaseDict item){
-        Object[] msg = new Object[]{item.getName()};
+        Object[] params = new Object[]{item.getName()};
         if (favoriteService.addInFavorites(item, metadatesObj, currentUser)){
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "ObjectAddedToFavorites", msg);
+            EscomMsgUtils.succesFormatMsg("ObjectAddedToFavorites", params);
         } else {
-            EscomMsgUtils.WarnFormatMessage("NotExecuted", "ObjectAlreadyAddedFavorites", msg);
+            EscomMsgUtils.warnFormatMsg("ObjectAlreadyAddedFavorites", params);
         }
     }    
 

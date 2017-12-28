@@ -445,7 +445,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 editedItem.setInherits(Boolean.FALSE);
                 editedItem.setRightItem(newRight);
                 rightsBean.prepareRightsForView(newRight.getRights());                
-                EscomMsgUtils.succesMsgAdd("RightIsParentCopy", "RightIsParentCopy");
+                EscomMsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }

@@ -263,7 +263,7 @@ public class ExplorerBean implements Serializable {
                     break;
                 }
             }
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{editItem.getName()});
+            EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{editItem.getName()});
         }
         createParams.clear();
         onSetCurrentItem(editItem);
@@ -952,7 +952,7 @@ public class ExplorerBean implements Serializable {
     /* КОПИРОВАНИЕ: вызов копирования отмеченных объектов в таблице */
     public void onCopySelectedItem() {
         if (checkedItems.isEmpty()){
-            EscomMsgUtils.warnMsgAdd("Warning", "NoCheckedItems");
+            EscomMsgUtils.warnMsg("NoCheckedItems");
             return;
         }
         doCopyItems(checkedItems);
@@ -967,7 +967,7 @@ public class ExplorerBean implements Serializable {
     public void onCopyItem(BaseDict item) {
         if (item == null){return;}
         if (item.getId() == 0){
-            EscomMsgUtils.ErrorFormatMessage("Error", "ObjectNotCopied", new Object[]{item.getName()});
+            EscomMsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{item.getName()});
             return;
         }
         List<BaseDict> sourceItems = new ArrayList<>();
@@ -978,7 +978,7 @@ public class ExplorerBean implements Serializable {
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
         copiedItems = sourceItems.stream().map(copyItem -> sessionBean.prepCopyItem(copyItem)).collect(Collectors.toSet());         
-        copiedItems.stream().forEach(item-> EscomMsgUtils.SuccesFormatMessage("Successfully", "ObjectIsCopied", new Object[]{item.getName()}));
+        copiedItems.stream().forEach(item-> EscomMsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{item.getName()}));
     }
 
     public boolean isCanPasteItem(){
@@ -998,7 +998,7 @@ public class ExplorerBean implements Serializable {
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
                 .forEach(item -> addNewItemInTree(item, treeSelectedNode));
             reloadDetailsItems();
-            EscomMsgUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomMsgUtils.succesMsg("PasteCopiedObjectDone");
         }
     }
 
@@ -1015,7 +1015,7 @@ public class ExplorerBean implements Serializable {
             return;
         }
         if (!rezults.isEmpty()){
-            EscomMsgUtils.succesMsgAdd("Successfully", "PasteCopiedObjectDone");
+            EscomMsgUtils.succesMsg("PasteCopiedObjectDone");
             reloadDetailsItems();
         }
     }
@@ -1045,11 +1045,11 @@ public class ExplorerBean implements Serializable {
     /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
-            EscomMsgUtils.errorMsgAdd("Error", "NO_SEARCHE_GROUPS", "");
+            EscomMsgUtils.errorMsg("NO_SEARCHE_GROUPS");
         } else {
             doSearcheItems();
             if (getDetailItems().isEmpty()) {
-                EscomMsgUtils.warnMsgAdd("Info", "NO_SEARCHE_FIND");
+                EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
                 return;
             }
             switch (currentTab) {
@@ -1154,7 +1154,7 @@ public class ExplorerBean implements Serializable {
             List<TreeNode> rezult = new ArrayList<>();
             doSearcheInTree(tree, rezult);
             if (rezult.isEmpty()){
-                EscomMsgUtils.warnMsgAdd("Info", "NO_SEARCHE_FIND");
+                EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
                 return;
             }
             if (rezult.size() == 1){
@@ -1361,7 +1361,7 @@ public class ExplorerBean implements Serializable {
                 } 
             }
         } else {
-            EscomMsgUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+            EscomMsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
         } 
     } 
     
@@ -1406,7 +1406,7 @@ public class ExplorerBean implements Serializable {
                 EscomMsgUtils.showErrorsMsg(errors);
             }    
         }
-        EscomMsgUtils.errorMsgAdd("Error", "ErrUnableDetermineID", ""); //не удалось определить идентификатор получателя операции
+        EscomMsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
     }
     
     /* DRAG & DROP: отработка команды на перемещение в дереве */
@@ -1442,7 +1442,7 @@ public class ExplorerBean implements Serializable {
                 .filter(dragItem -> !isItemRootType(dragItem))
                 .forEach(dragItem -> {
                     if (sessionBean.prepAddItemToGroup(dragItem, dropItem)){
-                        EscomMsgUtils.SuccesFormatMessage("Successfully", "AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
+                        EscomMsgUtils.succesFormatMsg("AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });
     }
@@ -1573,7 +1573,7 @@ public class ExplorerBean implements Serializable {
         if (!checked.isEmpty()){
             sessionBean.openMailMsgForm(mode, checked);
         } else {
-            EscomMsgUtils.warnMsgAdd("Error", "NO_SELECT_DOCS");
+            EscomMsgUtils.warnMsg("NO_SELECT_DOCS");
         }
     } 
     

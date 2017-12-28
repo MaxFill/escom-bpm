@@ -16,6 +16,9 @@ import javax.ejb.Stateless;
 import javax.ejb.Timer;
 import javax.inject.Inject;
 
+/**
+ * Проверка наличия обновлений программы
+ */
 @Stateless
 public class CheckNewVersion {
     protected static final Logger LOGGER = Logger.getLogger(CheckNewVersion.class.getName());
@@ -24,11 +27,11 @@ public class CheckNewVersion {
     
     @Schedule(dayOfWeek = "Mon-Fri", month = "*", hour = "21", dayOfMonth = "*", year = "*", minute = "08", second = "0", persistent = true)               
     protected void init(Timer timer){        
-        LOGGER.log(Level.INFO, "CheckNewVersion service started!");
+        LOGGER.log(Level.INFO, "CheckNewVersion service started.");
         if (checkNewVersionAvailable(appBean.getLicence())) {
             appBean.setNeedUpadateSystem(Boolean.TRUE);
         } 
-        LOGGER.log(Level.INFO, "CheckNewVersion service completed!");
+        LOGGER.log(Level.INFO, "CheckNewVersion service finished.");
         //timer.cancel();
     }
 

@@ -10,7 +10,7 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -21,7 +21,7 @@ import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.statuses.StatusesDoc;
-import com.maxfill.model.users.User;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.ejb.EJB;
@@ -34,12 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -208,7 +202,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         attacheFacade.addAttacheInDoc(doc, attache);
-        EscomMsgUtils.succesMsgAdd("Successfully", "VersionAdded");
+        EscomMsgUtils.succesMsg("VersionAdded");
         return attache;
     }            
     
@@ -228,7 +222,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             }
             onOpenFormLockAttache(attache);
         } else {
-            EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+            EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
         }        
     }
 
@@ -267,10 +261,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 attacheDownLoadPDF(attache);
             } else {
-                EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+                EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
+            EscomMsgUtils.warnMsg("RightViewNo");
         }
     }
 
@@ -283,10 +277,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 onViewAttache(attache);
             } else {
-                EscomMsgUtils.warnMsgAdd("Attention", "DocumentDoNotContainMajorVersion");
+                EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomMsgUtils.warnMsgAdd("AccessDenied", "RightViewNo");
+            EscomMsgUtils.warnMsg("RightViewNo");
         }
     }
 

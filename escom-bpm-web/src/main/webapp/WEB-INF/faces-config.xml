@@ -127,19 +127,19 @@
         
         <navigation-case>
             <from-outcome>mail-message</from-outcome>
-            <to-view-id>/view/services/mail-message.xhtml</to-view-id>
+            <to-view-id>/view/services/mail/message.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         
         <navigation-case>
             <from-outcome>mail-sender-service</from-outcome>
-            <to-view-id>/view/services/mail-sender-service.xhtml</to-view-id>
+            <to-view-id>/view/services/mail/sender-service.xhtml</to-view-id>
             <redirect />
         </navigation-case>
 
         <navigation-case>
             <from-outcome>mail-reader-service</from-outcome>
-            <to-view-id>/view/services/mail-reader-service.xhtml</to-view-id>
+            <to-view-id>/view/services/mail/reader-service.xhtml</to-view-id>
             <redirect />
         </navigation-case>
 

@@ -105,9 +105,9 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
 
     /**
-     * Ищет пользователя по e-mail
+     * Ищет пользователей по e-mail
      */
-    public User findUserByEmail(String email){
+    public List<User> findUserByEmail(String email){
         if (StringUtils.isBlank(email)) return null;
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -116,7 +116,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         Predicate crit1 = builder.equal(c.get("email"), email);
         cq.select(c).where(builder.and(crit1));
         TypedQuery<User> q = getEntityManager().createQuery(cq);
-        return q.getSingleResult();
+        return q.getResultList();
     }
 
     /**

@@ -1,14 +1,11 @@
 package com.maxfill.escom.system.services.mail;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseServicesBean;
+import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
-import com.maxfill.services.mail.MailAuth;
-import com.maxfill.services.mail.MailSettings;
-import com.maxfill.services.mail.MailSenderTimer;
-import com.maxfill.services.mail.MailUtils;
+import com.maxfill.services.mail.*;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -31,8 +28,10 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     
     @EJB
     private MailSenderTimer mailSenderTimer;
+    @EJB
+    private MailService mailService;
 
-    //Todo переделать c учётом ssl!
+
     public void onCheckConnect(){
         String subject = "Mail test from Escom3"; 
         String content = "<h1>Hello!</h1><br/><h2>This is the test message from escom3</h2>";
@@ -41,18 +40,18 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
         
         try {
             String adress = getSettings().getAdressSender();
-            Session session = MailUtils.sessionSender(getSettings(), auth);
-            MailUtils.sendMultiMessage(session, adress, adress, "", content, subject, conf.getEncoding(), new HashMap<>());
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "MessageSent",  new Object[]{adress});
-        } catch (SecurityException | MessagingException | UnsupportedEncodingException ex) {
-            EscomMsgUtils.errorMsgAdd("Error", "ConnectFailed", ex.getMessage());
+            Session session = mailService.getSessionSender(getSettings());
+            mailService.sendMultiMessage(session, adress, adress, "", content, subject, conf.getEncoding(), new HashMap<>());
+            EscomMsgUtils.succesFormatMsg("MessageSent",  new Object[]{adress});
+        } catch (RuntimeException | MessagingException | UnsupportedEncodingException ex) {
+            EscomMsgUtils.errorMessage(ex.getMessage());
             LOG.log(Level.SEVERE, null, ex);
         }
     }
 
     @Override
     protected MailSettings createSettings() {
-        return MailUtils.createSettings(service, conf);
+        return mailService.createSenderSettings(service, conf);
     }
 
     @Override

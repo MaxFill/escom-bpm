@@ -33,7 +33,9 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
     
     @EJB
     private MailBoxFacade mailBoxFacade;
-    
+    @EJB
+    private MailService mailService;
+
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings){
         LOG.log(Level.INFO, "Executing MAIL SENDER task!");
@@ -47,8 +49,7 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
         try {
             List<Mailbox> messages = mailBoxFacade.findAll();
             if (!messages.isEmpty()){
-                Authenticator auth = new MailAuth(settings.getUser(), settings.getPassword());
-                Session session = MailUtils.sessionSender(settings, auth);
+                Session session = mailService.getSessionSender(settings);
                 detailInfoAddRow("The connection is established...");
                 if (session != null){
                     for (Mailbox message : messages){
@@ -63,7 +64,7 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
                         String to = message.getAddresses();
                         String copyes = message.getCopies();
                         String encoding = conf.getEncoding();
-                        MailUtils.sendMultiMessage(session, from, to, copyes, content, subject, encoding, attachments);
+                        mailService.sendMultiMessage(session, from, to, copyes, content, subject, encoding, attachments);
                         detailInfoAddRow("The message id=" + message.getId() + " is sent!");
                         mailBoxFacade.remove(message);
                     }
@@ -74,7 +75,7 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
             } else {
                 detailInfoAddRow("No message to sent!");
             }    
-        } catch(IOException | MessagingException e){
+        } catch(RuntimeException | IOException | MessagingException e){
             detailInfoAddRow(e.getMessage());
         } finally{
             finalAction(selectedEvent);

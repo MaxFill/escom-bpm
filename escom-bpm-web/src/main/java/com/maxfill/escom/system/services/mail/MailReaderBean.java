@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.mail;
 
-import com.maxfill.escom.beans.BaseServicesBean;
+import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
@@ -9,9 +9,9 @@ import com.maxfill.services.mail.*;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.mail.Authenticator;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
+import javax.mail.Session;
 import java.util.logging.Level;
 
 /**
@@ -25,27 +25,39 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
     
     @EJB
     private MailReaderTimer mailReaderTimer;
+    @EJB
+    private MailService mailService;
 
-    //Todo переделать c учётом ssl!
     public void onCheckConnect(){
-        Authenticator auth = new MailAuth(getSettings().getUser(), getSettings().getPassword());
+        Session session = null;
+        Folder inbox = null;
         try {
+            session = mailService.getSessionReader(getSettings());
+            inbox = mailService.getInbox(session, getSettings());
+            int countMsg = inbox.getMessageCount();
+            int countUnread = inbox.getUnreadMessageCount();
             String adress = getSettings().getAdressSender();
-            Folder inbox = MailUtils.sessionReader(getSettings(), auth);
-            if (inbox != null) {
-                EscomMsgUtils.SuccesFormatMessage("Successfully", "MessageSent", new Object[]{adress});
-            } else {
-                EscomMsgUtils.errorMsgAdd("Error", "ConnectFailed", "");
-            }
-        } catch (SecurityException | MessagingException ex) {
-            EscomMsgUtils.errorMsgAdd("Error", "ConnectFailed", ex.getMessage());
+            EscomMsgUtils.succesFormatMsg("TestMailInbox", new Object[]{adress, countMsg, countUnread});
+        } catch (RuntimeException | MessagingException ex) {
+            EscomMsgUtils.errorMessage(ex.getMessage());
             LOG.log(Level.SEVERE, null, ex);
-        } 
+        } finally {
+            if (session != null){
+                try {
+                    session.getStore().close();
+                    if (inbox != null){
+                        inbox.close(true);
+                    }
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     } 
 
     @Override
     protected MailSettings createSettings() {
-        return MailUtils.createSettings(service, conf);
+        return mailService.createReaderSettings(service, conf);
     }
 
     @Override

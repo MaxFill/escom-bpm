@@ -46,7 +46,7 @@ public class ServicesEvents implements Serializable {
     
     @Basic(optional = false)
     @Size(min = 1, max = 2147483647)
-    @Column(name = "Details")
+    @Column(name = "Details", length = 2048)
     private String details;
     
     @JoinColumn(name = "ServiceId", referencedColumnName = "Id")

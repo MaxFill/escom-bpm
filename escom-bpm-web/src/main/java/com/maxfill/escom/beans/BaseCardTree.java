@@ -56,7 +56,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                 }
                 getEditedItem().setRightForChild(childRights);
                 rightsBean.prepareRightsForView(childRights.getRights());                
-                EscomMsgUtils.succesMsgAdd("Successfully", "RightIsParentCopy");
+                EscomMsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }                         

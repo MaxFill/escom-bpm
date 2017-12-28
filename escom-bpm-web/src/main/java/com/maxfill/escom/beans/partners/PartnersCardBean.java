@@ -96,7 +96,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
             RequestContext context = RequestContext.getCurrentInstance();
             context.update("itemCard:mainTabView:tblDocs");
             Doc item = tuple.b;
-            EscomMsgUtils.SuccesFormatMessage("Successfully", "DataIsSaved", new Object[]{item.getName()});
+            EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{item.getName()});
         }
     }
 

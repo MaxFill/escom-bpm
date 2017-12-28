@@ -22,7 +22,7 @@ public abstract class BaseTimer<P> {
     protected static final String RESULT_FAIL = "Error";
     protected static final String RESULT_SUCCESSFULLY = "Ok";
 
-    StringBuilder detailInfo = new StringBuilder("");
+    final StringBuilder detailInfo = new StringBuilder("");
 
     @EJB
     private ServicesFacade servicesFacade;
@@ -110,8 +110,17 @@ public abstract class BaseTimer<P> {
     protected void finalAction(ServicesEvents event) {
         Date finishDate = new Date();
         detailInfoAddRow("The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
-        event.setDetails(detailInfo.toString());
+        String detail = detailInfo.toString();
+        if (detail.length() >2040) {
+            event.setDetails(detail.substring(0, 2040));
+        } else {
+            event.setDetails(detail);
+        }
         event.setDateFinish(finishDate);
         servicesEventsFacade.create(event);
+    }
+
+    public StringBuilder getDetailInfo() {
+        return detailInfo;
     }
 }

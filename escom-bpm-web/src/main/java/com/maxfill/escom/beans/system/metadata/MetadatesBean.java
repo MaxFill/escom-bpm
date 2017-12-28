@@ -11,19 +11,12 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.utils.Tuple;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -140,7 +133,7 @@ public class MetadatesBean implements Serializable{
         right.setExecute(false);
         right.setDelete(false);
         rightFacade.create(right);
-        EscomMsgUtils.succesMsgAdd("Successfully", "StateIsAdd");
+        EscomMsgUtils.succesMsg("StateIsAdd");
     }
     
     public void onDeleteState(State state){
@@ -167,7 +160,7 @@ public class MetadatesBean implements Serializable{
         if (selectedObject == null) return;
         selectedObject.setStateForNewObj(startState);
         metadatesFacade.edit(selectedObject);
-        EscomMsgUtils.succesMsgAdd("Successfully", "StartSateIsChange");
+        EscomMsgUtils.succesMsg("StartSateIsChange");
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

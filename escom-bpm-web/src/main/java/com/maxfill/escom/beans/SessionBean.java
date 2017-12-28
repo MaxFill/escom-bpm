@@ -307,7 +307,7 @@ public class SessionBean implements Serializable{
     public void checkUnReadMessages(){
         Integer countUnreadMessage = getCountUnreadMessage();
         if (countUnreadMessage > 0){
-            EscomMsgUtils.SuccesFormatMessage("Info", "YouHaveUnreadMessage", new Object[]{countUnreadMessage});
+            EscomMsgUtils.succesFormatMsg("YouHaveUnreadMessage", new Object[]{countUnreadMessage});
         }
     }
     

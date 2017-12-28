@@ -33,6 +33,17 @@
                                      itemLabel="#{bundle.UseSSL}">
             </p:selectBooleanCheckbox>
 
+            <p:selectBooleanCheckbox value="#{mailReaderBean.settings.deleteAfterLoad}"
+                                     itemLabel="#{bundle.DeleteAfterLoad}">
+                <p:ajax event="change" update="cbDeleteIfUnknownSender"/>
+            </p:selectBooleanCheckbox>
+
+            <p:selectBooleanCheckbox id="cbDeleteIfUnknownSender"
+                                     value="#{mailReaderBean.settings.deleteIfUnknownSender}"
+                                     disabled="#{!mailReaderBean.settings.deleteAfterLoad}"
+                                     itemLabel="#{bundle.DeleteIfUnknownSender}">
+            </p:selectBooleanCheckbox>
+
             <p:outputLabel value="#{bundle.Login}"/>
             <p:inputText id="login" style="width: 100%;"
                          title="#{bundle.Login}"
