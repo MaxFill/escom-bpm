@@ -1,4 +1,3 @@
-
 package com.maxfill.services.attaches;
 
 import com.maxfill.Configuration;
@@ -45,7 +44,13 @@ public class AttacheServiceImpl implements AttacheService{
         String contType = (String) params.get("contentType");
         Long size = (Long) params.get("size");
         User author = (User) params.get("author");
-        String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+
+        String fileExt;
+        if (params.containsKey("fileExt")) {
+            fileExt = (String) params.get("fileExt");
+        } else{
+            fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        }
 
         Attaches attache = new Attaches();
         attache.setName(fileName);
@@ -54,6 +59,7 @@ public class AttacheServiceImpl implements AttacheService{
         attache.setSize(size);
         attache.setAuthor(author);
         attache.setDateCreate(new Date());
+
         fileService.doUpload(attache, inputStream);
         return attache;
     }

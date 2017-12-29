@@ -14,6 +14,9 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -24,6 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /* Бин для формы "Карточка пользователя */
@@ -54,11 +58,22 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         Folder folder = items.get(0);
         onItemChange();
         getEditedItem().setInbox(folder);
+        checkFolder(folder);
     }
-    public void onInboxSelected(ValueChangeEvent event){
-        Folder folder = (Folder) event.getNewValue();
-        onItemChange();
-        getEditedItem().setInbox(folder);
+
+    /**
+     * Проверка выбранной папки
+     */
+    public void checkFolder(Folder folder){
+        if(!folderFacade.checkRightAddDetail(folder, currentUser)) {
+            String errMsg = EscomMsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
+            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:item");
+            input.setValid(false);
+            context.addMessage(input.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
+            context.validationFailed();
+        }
     }
 
     /* Формирование отображаемого имени пользователя */    

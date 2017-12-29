@@ -349,29 +349,37 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
                 String s = (String) message.getContent();
                 params.put("contentType", "text/html");
                 params.put("fileName", "e-mail messsage");
-                params.put("size", s.length());
+                params.put("fileExt", "txt"); //ToDo сделать правильно!
+                params.put("size", Long.valueOf(s.length()));
                 params.put("author", author);
                 Attaches attache = attacheService.uploadAtache(params, message.getInputStream());
                 doc.getAttachesList().add(attache);
                 return true;
             }
 
+
             if (message.isMimeType("multipart/alternative")) {
                 Multipart mp = (Multipart) message.getContent();
                 for(int i = 0; i < mp.getCount(); i++) {
                     BodyPart bp = mp.getBodyPart(i);
-                    String filename;
-                    if(bp.getFileName() != null) {
-                        filename = bp.getFileName();
-                    } else {
-                        filename = subject;
+                    if (bp.isMimeType("text/html")) {
+                        String filename;
+                        if(bp.getFileName() != null) {
+                            filename = bp.getFileName();
+                        } else {
+                            filename = "e-mail message";
+                        }
+                        Object ct = bp.getContentType();
+                        params.put("contentType", bp.getContentType());
+                        params.put("fileName", filename);
+                        params.put("fileExt", "html"); //ToDo сделать правильно!
+                        params.put("size", Long.valueOf(bp.getSize()));
+                        params.put("author", author);
+                        Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
+                        attache.setDoc(doc);
+                        attache.setNumber(doc.getNextVersionNumber());
+                        doc.getAttachesList().add(attache);
                     }
-                    params.put("contentType", bp.getContentType());
-                    params.put("fileName", filename);
-                    params.put("size", bp.getSize());
-                    params.put("author", author);
-                    Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
-                    doc.getAttachesList().add(attache);
                 }
             }
             return true;

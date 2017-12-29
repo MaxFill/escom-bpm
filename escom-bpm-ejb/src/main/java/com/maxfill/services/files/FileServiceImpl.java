@@ -2,10 +2,13 @@ package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 public class FileServiceImpl implements FileService{
     protected static final Logger LOGGER = Logger.getLogger(FileServiceImpl.class.getName());
     
-    @EJB    
+    @EJB
     protected Configuration conf;
     
     @Override
@@ -58,15 +61,25 @@ public class FileServiceImpl implements FileService{
             String uploadPath = conf.getUploadPath();
             StringBuilder sb = new StringBuilder();
             String fileName = attache.getName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            String fileExt = attache.getExtension(); //fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
             File outputFile = new File(basePath);
-            outputStream = new FileOutputStream(outputFile);
-            int read;
-            final byte[] bytes = new byte[1024];
+
+            //outputStream = new FileOutputStream(outputFile);
+            //int read;
+            //final byte[] bytes = new byte[1024];
+
+            //InputStreamReader isr = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            //BufferedReader br = new BufferedReader(isr);
+
+            Files.copy(inputStream, outputFile.toPath());
+
+            /*
             while ((read = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, read);
             }
+            */
+
             if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
                 makeCopyToPDF(basePath, conf.getConvertorPDF());
             }
@@ -88,8 +101,57 @@ public class FileServiceImpl implements FileService{
                 }
             }
         }
-    }       
-    
+    }
+
+    public Charset detectCharset(File f, String[] charsets) {
+
+        Charset charset = null;
+
+        for (String charsetName : charsets) {
+            charset = detectCharset(f, Charset.forName(charsetName));
+            if (charset != null) {
+                break;
+            }
+        }
+
+        return charset;
+    }
+
+    private Charset detectCharset(File f, Charset charset) {
+        try {
+            BufferedInputStream input = new BufferedInputStream(new FileInputStream(f));
+
+            CharsetDecoder decoder = charset.newDecoder();
+            decoder.reset();
+
+            byte[] buffer = new byte[512];
+            boolean identified = false;
+            while ((input.read(buffer) != -1) && (!identified)) {
+                identified = identify(buffer, decoder);
+            }
+
+            input.close();
+
+            if (identified) {
+                return charset;
+            } else {
+                return null;
+            }
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean identify(byte[] bytes, CharsetDecoder decoder) {
+        try {
+            decoder.decode(ByteBuffer.wrap(bytes));
+        } catch (CharacterCodingException e) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     @Asynchronous
     public void uploadScan(Attaches attache, byte[] data){

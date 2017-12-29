@@ -106,7 +106,79 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<FolderLog> itemLogs = new ArrayList<>();
 
-    public Folder(){
+    public Folder(){}
+
+    public String getRegNumber(){
+        if (getNumber() == null){
+            return "";
+        }
+        return getNumber().toString();
+    }
+
+    /* вычисление значка папки (модерируемая-немодерируемая) */
+    public String getStateIcon(){
+        String stateIcon = "ui-icon-folder-open";
+        if(isModeration == true){
+            stateIcon = "ui-icon-person";
+        }
+        return stateIcon;
+    }
+
+    @Override
+    public String getIconName() {
+        return "folder_open20";
+    }
+
+    @Override
+    public String getFullName() {
+        return super.getPath();
+    }
+
+    /* gets & sets */
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public List<Folder> getChildItems() {
+        return childItems;
+    }
+    @Override
+    public void setChildItems(List<Folder> childItems) {
+        this.childItems = childItems;
+    }
+
+    @Override
+    public FolderStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(FolderStates state) {
+        this.state = state;
+    }
+        
+    @Override
+    public List<Doc> getDetailItems() {
+        return detailItems;
+    }
+    @Override
+    public void setDetailItems(List<Doc> detailItems) {
+        this.detailItems = detailItems;
+    }
+    
+    @Override
+    public List<FolderLog> getItemLogs() {
+        return itemLogs;
+    }
+    @Override
+    public void setItemLogs(List<FolderLog> itemLogs) {
+        this.itemLogs = itemLogs;
     }
 
     public Company getCompanyDefault() {
@@ -136,62 +208,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public void setInheritPartner(boolean inheritPartner) {
         this.inheritPartner = inheritPartner;
     }
-        
-    @Override
-    public FolderStates getState() {
-        return state;
-    }
-    @Override
-    public void setState(FolderStates state) {
-        this.state = state;
-    }
 
-    public Partner getPartnerDefault() {
-        return partnerDefault;
-    }
-    public void setPartnerDefault(Partner partnerDefault) {
-        this.partnerDefault = partnerDefault;
-    }
-        
-    @Override
-    public List<Doc> getDetailItems() {
-        return detailItems;
-    }
-    @Override
-    public void setDetailItems(List<Doc> detailItems) {
-        this.detailItems = detailItems;
-    }
-    
-    @Override
-    public List<FolderLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<FolderLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }       
-    
-    public String getRegNumber(){
-        if (getNumber() == null){
-            return "";
-        }
-        return getNumber().toString();
-    }
-    
-    /* вычисление значка папки (модерируемая-немодерируемая) */
-    public String getStateIcon(){
-        String stateIcon = "ui-icon-folder-open";
-        if(isModeration == true){
-          stateIcon = "ui-icon-person";
-        }
-        return stateIcon;
-    }    
-               
-    @Override
-    public String getIconName() {
-        return "folder_open20";
-    }
-    
     public boolean getIsModeration() {return isModeration;}
     public void setIsModeration(boolean isModeration) {       this.isModeration = isModeration;    }
     
@@ -201,31 +218,20 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public User getModerator() { return moderator;    }
     public void setModerator(User moderator) {        this.moderator = moderator;    }
 
-    @Override
-    public List<Folder> getChildItems() {
-        return childItems;
-    }
-    @Override
-    public void setChildItems(List<Folder> childItems) {
-        this.childItems = childItems;
-    }   
-
     public DocType getDocTypeDefault() {
         return docTypeDefault;
     }
     public void setDocTypeDefault(DocType docTypeDefault) {
         this.docTypeDefault = docTypeDefault;
-    }     
-    
-    @Override
-    public Integer getId() {
-        return id;
     }
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }    
-    
+
+    public Partner getPartnerDefault() {
+        return partnerDefault;
+    }
+    public void setPartnerDefault(Partner partnerDefault) {
+        this.partnerDefault = partnerDefault;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -249,7 +255,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Override
     public String toString() {
         return "Folder [ id=" + id + " ]";
-    }   
-
+    }
 
 }

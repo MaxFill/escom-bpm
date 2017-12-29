@@ -16,5 +16,6 @@ public class EmptyValidator extends AbstractValidator{
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+        System.out.println();
     }
 }

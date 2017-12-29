@@ -181,7 +181,15 @@ public abstract class BaseServicesBean<P> implements Serializable{
         service.getServicesEventsList().clear();
         servicesFacade.edit(service);
     }
-    
+
+    /**
+     * Удаление события
+     */
+    public void deleteLogEvent(ServicesEvents logEvent){
+        service.getServicesEventsList().remove(logEvent);
+        servicesFacade.edit(service);
+    }
+
     /**
      * Обновление журнала событий службы
      */

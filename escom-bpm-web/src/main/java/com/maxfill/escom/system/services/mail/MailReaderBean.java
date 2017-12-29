@@ -28,6 +28,9 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
     @EJB
     private MailService mailService;
 
+    /**
+     * Проверка соединения с почтовым сервером
+     */
     public void onCheckConnect(){
         Session session = null;
         Folder inbox = null;

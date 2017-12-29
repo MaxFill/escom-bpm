@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
 /* Вложения */
 @Entity
@@ -50,8 +51,8 @@ public class Attaches implements Serializable {
     private Integer number;
             
     @Basic(optional = false)
-    @Size(min = 1, max = 256)
-    @Column(name = "Name")
+    @Size(min = 1, max = 1024)
+    @Column(name = "Name", length = 1024)
     private String name;
     
     @Basic(optional = false)
@@ -150,6 +151,9 @@ public class Attaches implements Serializable {
         return name;
     }
     public void setName(String name) {
+        if (StringUtils.isNotBlank(name) && name.length() > 1024){
+            name = name.substring(0, 1023);
+        }
         this.name = name;
     }
 

@@ -76,34 +76,31 @@ public class SearcheServiceImpl implements SearcheService {
     @Override
     public void addFullTextIndex(Doc doc){
         String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
-        Connection connection = conf.getFullTextSearcheConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){ 
-            preparedStatement.setInt(1, doc.getId());
-            preparedStatement.setString(2, doc.getName());
-            preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
-            preparedStatement.setInt(4, doc.getId());
-            preparedStatement.execute();
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);          
-        }
+        executeChangeIndex(doc, sql);
     }
     
     @Asynchronous
     @Override
     public void updateFullTextIndex(Doc doc){
         String sql = "REPLACE INTO escom_docs_index VALUES (?, ?, ?, ?)";
+        executeChangeIndex(doc, sql);
+    }
+
+    private void executeChangeIndex(Doc doc, String sql){
         Connection connection = conf.getFullTextSearcheConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){ 
-            preparedStatement.setInt(1, doc.getId());
-            preparedStatement.setString(2, doc.getName());
-            preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
-            preparedStatement.setInt(4, doc.getId());
-            preparedStatement.execute();
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);          
+        if (connection != null) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setInt(1, doc.getId());
+                preparedStatement.setString(2, doc.getName());
+                preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
+                preparedStatement.setInt(4, doc.getId());
+                preparedStatement.execute();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
         }
     }
-    
+
     /* Получение текстового контента из файла pdf */
     private String loadContentFromPDF(Attaches attache){
         if (attache == null) return "";

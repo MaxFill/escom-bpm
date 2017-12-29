@@ -10,7 +10,7 @@
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"
                          actionListener="#{_selectorBean.onOneSelectItem()}" style="display: none;">
-            <p:ajax event="dialogReturn" listener="#{_bean[_actionSelect]}"                     
+            <p:ajax event="dialogReturn" listener="#{_bean[_actionSelect]}"
                     update="#{_update} #{_itemPanel}"/>
         </p:commandButton>
         <p:commandButton id="#{_itemPanel}_btnOpenCard" actionListener="#{_selectorBean.prepEditItem(_itemValue)}"
@@ -23,12 +23,14 @@
         <h:panelGrid id="#{_itemPanel}" columns="2" columnClasses="ui-grid-col-10 col-padding, ui-grid-col-2 col-padding pull-right"
                      styleClass="ui-grid-col-12 col-padding" style="border-collapse: collapse; border:0px;">
             
-            <p:inputText value="#{_itemValue.fullName}" title="#{_titleItem}" styleClass="ui-grid-col-12"
+            <p:inputText id="item" value="#{_itemValue.fullName}" title="#{_titleItem}" styleClass="ui-grid-col-12"
                          disabled="#{_disabled}" style="color: blue;"
                          readonly="true"
-                         valueChangeListener="#{_bean[_actionSelect]}"  
-                         required="#{param['isRequired'] == _required}" 
+                         validator="#{_bean[_validateAction]}"
+                         required="#{param['isRequired'] == _required}"
                          requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}">
+                <f:ajax event="change" render="#{_itemPanel}" />
+                <f:attribute name="item" value="#{_itemValue}"/>
             </p:inputText>
 
             <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"

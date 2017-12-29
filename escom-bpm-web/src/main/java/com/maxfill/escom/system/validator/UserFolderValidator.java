@@ -24,9 +24,8 @@ public class UserFolderValidator extends AbstractValidator{
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        Folder folder = (Folder) value;
+        Folder folder = (Folder) component.getAttributes().get("item");
         if (folder == null) return;
-
         FoldersBean foldersBean = EscomBeanUtils.findBean("foldersBean", context);
         User currentUser = foldersBean.getCurrentUser();
         FoldersFacade folderFacade = foldersBean.getItemFacade();

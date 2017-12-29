@@ -59,9 +59,12 @@
         </p:column>
         <p:column headerText="">
             <p:commandButton icon="ui-icon-zoomin" title="#{bundle.View}"
-                             update="logFRM:logDetailPanel" 
+                             update="logFRM:logDetailPanel"
                              actionListener="#{_bean.setSelectedEvent(item)}"
                              oncomplete="PF('dlgDetail').show();"/>
+            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                             update="tblLog"
+                             actionListener="#{_bean.deleteLogEvent(item)}"/>
         </p:column>
     </p:dataTable>
 
