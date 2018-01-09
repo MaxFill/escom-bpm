@@ -54,45 +54,27 @@ public class FileServiceImpl implements FileService{
     }
     
     @Override
-    @Asynchronous
+    //@Asynchronous
+    // отключил, потому что при загрузке файлов из почтового сообщения почтовый ящик может закрыться раньше чем отработает upload!
     public void doUpload(Attaches attache, InputStream inputStream) {
-        FileOutputStream outputStream = null;
         try {
             String uploadPath = conf.getUploadPath();
             StringBuilder sb = new StringBuilder();
             String fileName = attache.getName();
-            String fileExt = attache.getExtension(); //fileName.substring(fileName.lastIndexOf(".") + 1).toUpperCase();
+            String fileExt = attache.getExtension();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
-            File outputFile = new File(basePath);
+            Path path = Paths.get(basePath);
+            //File outputFile = new File(basePath);
 
-            //outputStream = new FileOutputStream(outputFile);
-            //int read;
-            //final byte[] bytes = new byte[1024];
+            Files.copy(inputStream, path); //outputFile.toPath());
 
-            //InputStreamReader isr = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-            //BufferedReader br = new BufferedReader(isr);
-
-            Files.copy(inputStream, outputFile.toPath());
-
-            /*
-            while ((read = inputStream.read(bytes)) != -1) {
-                outputStream.write(bytes, 0, read);
-            }
-            */
-
-            if (!Objects.equals(fileExt.toUpperCase(), "PDF")){                                   
-                makeCopyToPDF(basePath, conf.getConvertorPDF());
+            String convPDF = conf.getConvertorPDF();
+            if (StringUtils.isNotBlank(convPDF) && !Objects.equals(fileExt.toUpperCase(), "PDF")){
+                makeCopyToPDF(basePath, convPDF);
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
         } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
-                }
-            }
             if (inputStream != null) {
                 try {
                     inputStream.close();

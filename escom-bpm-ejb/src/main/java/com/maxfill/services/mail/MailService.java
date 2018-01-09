@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface MailService{
 
-    Folder getInbox(Session session, MailSettings settings);
+    Folder getInbox(Session session, MailSettings settings) throws MessagingException;
     Session getSessionReader(MailSettings settings);
     Session getSessionSender(MailSettings settings);
 

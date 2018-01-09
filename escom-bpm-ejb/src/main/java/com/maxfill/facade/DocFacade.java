@@ -22,16 +22,20 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
 import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.searche.SearcheService;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeUtility;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
@@ -45,6 +49,7 @@ import javax.persistence.criteria.Root;
 
 @Stateless
 public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
+    private static final String HTML_HEAD = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"></head>";
     @EJB
     private AttacheService attacheService;
     @EJB
@@ -317,6 +322,7 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         create(doc);
         return doc;
     }
+
     /**
      * Создание документа из e-mail сообщения
      */
@@ -346,47 +352,84 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
             Map <String, Object> params = new HashMap <>();
 
             if (message.isMimeType("text/*")){
-                String s = (String) message.getContent();
+                String content = (String) message.getContent();
                 params.put("contentType", "text/html");
                 params.put("fileName", "e-mail messsage");
-                params.put("fileExt", "txt"); //ToDo сделать правильно!
-                params.put("size", Long.valueOf(s.length()));
+                params.put("fileExt", "txt");
+                params.put("size", Long.valueOf(content.length()));
                 params.put("author", author);
-                Attaches attache = attacheService.uploadAtache(params, message.getInputStream());
+                Attaches attache = attacheService.uploadAtache(params, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8.name())));
                 doc.getAttachesList().add(attache);
                 return true;
             }
 
-
-            if (message.isMimeType("multipart/alternative")) {
+            if (message.isMimeType("multipart/*") || message.isMimeType("multipart/alternative")) {
                 Multipart mp = (Multipart) message.getContent();
                 for(int i = 0; i < mp.getCount(); i++) {
-                    BodyPart bp = mp.getBodyPart(i);
-                    if (bp.isMimeType("text/html")) {
-                        String filename;
-                        if(bp.getFileName() != null) {
-                            filename = bp.getFileName();
-                        } else {
-                            filename = "e-mail message";
-                        }
-                        Object ct = bp.getContentType();
-                        params.put("contentType", bp.getContentType());
-                        params.put("fileName", filename);
-                        params.put("fileExt", "html"); //ToDo сделать правильно!
-                        params.put("size", Long.valueOf(bp.getSize()));
-                        params.put("author", author);
-                        Attaches attache = attacheService.uploadAtache(params, bp.getInputStream());
-                        attache.setDoc(doc);
-                        attache.setNumber(doc.getNextVersionNumber());
-                        doc.getAttachesList().add(attache);
-                    }
+                    readBodyPart(mp.getBodyPart(i), doc, author);
                 }
+                return true;
             }
-            return true;
+
         } catch(IOException | MessagingException ex){
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    /**
+     * Обработка BodyPart сообщения
+     */
+    private void readBodyPart(BodyPart bodyPart, Doc doc, User author) throws MessagingException, IOException{
+        Map <String, Object> params = new HashMap <>();
+        if (bodyPart.getContent() instanceof Multipart) {
+            Multipart mp = (Multipart) bodyPart.getContent();
+            for(int i = 0; i < mp.getCount(); i++) {
+                BodyPart part = mp.getBodyPart(i);
+                if(part.isMimeType("multipart/alternative")) {
+                    readBodyPart(part, doc, author);
+                } else if(part.isMimeType("text/html")) {
+                    loadHtmlMsg(part, doc, author);
+                }
+            }
+        } else
+            if (bodyPart.getContent() instanceof InputStream){
+                if(Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) || StringUtils.isNotBlank(bodyPart.getFileName())) {
+                    String decoded = MimeUtility.decodeText(bodyPart.getFileName());
+                    String filename = Normalizer.normalize(decoded, Normalizer.Form.NFC);
+                    params.put("contentType", bodyPart.getContentType());
+                    params.put("fileName", filename);
+                    params.put("size", Long.valueOf(bodyPart.getSize()));
+                    params.put("author", author);
+                    loadMailAttache(params, bodyPart.getInputStream(), doc);
+                }
+            } else
+                if (bodyPart.getContent() instanceof String){
+                    if(bodyPart.isMimeType("text/html")) {
+                        loadHtmlMsg(bodyPart, doc, author);
+                    }
+                }
+    }
+
+    private void loadMailAttache(Map <String, Object> params, InputStream inputStream, Doc doc) throws MessagingException, IOException{
+        Attaches attache = attacheService.uploadAtache(params, inputStream);
+        if (attache != null) {
+            attache.setDoc(doc);
+            attache.setNumber(doc.getNextVersionNumber());
+            doc.getAttachesList().add(attache);
+        }
+    }
+
+    private void loadHtmlMsg(BodyPart part,  Doc doc, User author) throws MessagingException, IOException{
+        Map <String, Object> params = new HashMap <>();
+        String ct = (String) part.getContent();
+        String html = ct.replace("<HTML>", HTML_HEAD);
+        params.put("contentType", part.getContentType());
+        params.put("fileName", "e-mail message");
+        params.put("fileExt", "html");
+        params.put("size", Long.valueOf(part.getSize()));
+        params.put("author", author);
+        loadMailAttache(params, new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8.name())), doc);
     }
 
     private void doSaveRoleToJson(Doc doc){

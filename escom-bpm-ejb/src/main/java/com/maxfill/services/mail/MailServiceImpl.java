@@ -25,7 +25,7 @@ public class MailServiceImpl implements MailService{
     private static final Logger LOGGER = Logger.getLogger(MailServiceImpl.class.getName());
 
     @Override
-    public Folder getInbox(Session session, MailSettings settings){
+    public Folder getInbox(Session session, MailSettings settings) throws MessagingException{
         return getFolder(session, settings, INBOX);
     }
 
@@ -78,19 +78,15 @@ public class MailServiceImpl implements MailService{
         return session;
     }
 
-    private Folder getFolder(Session session, MailSettings settings, String folderName){
+    private Folder getFolder(Session session, MailSettings settings, String folderName) throws MessagingException{
         Folder folder = null;
-        try {
-            Store store = session.getStore();
-            store.connect(settings.getServerAdress(), settings.getUser(), settings.getPassword());
-            folder = store.getFolder(folderName);
-            if (folder == null) {
-                throw new RuntimeException("Failed to connect to mailbox!");
-            }
-            folder.open(Folder.READ_WRITE);
-        } catch (MessagingException ex){
-            LOGGER.log(Level.SEVERE, null, ex);
+        Store store = session.getStore();
+        store.connect(settings.getServerAdress(), settings.getUser(), settings.getPassword());
+        folder = store.getFolder(folderName);
+        if (folder == null) {
+            throw new RuntimeException("Failed to connect to mailbox!");
         }
+        folder.open(Folder.READ_WRITE);
         return folder;
     }
 
