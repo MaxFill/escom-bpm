@@ -50,9 +50,14 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
             inbox = mailService.getInbox(session, settings);
             detailInfoAddRow("The connection is established...");
 
-            Flags seen = new Flags(Flags.Flag.SEEN);
-            FlagTerm unseenFlagTerm = new FlagTerm(seen, false);
-            Message[] messages = inbox.search(unseenFlagTerm);  //получаем только непрочитанные сообщения
+            Message[] messages;
+
+            if (settings.getReadOnlyNewMessages()) {
+                FlagTerm unseenFlagTerm = new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+                messages = inbox.search(unseenFlagTerm);  //получаем только непрочитанные сообщения
+            } else {
+                messages = inbox.getMessages();
+            }
 
             detailInfoAddRow("Mailbox contains " + messages.length + " messages");
 

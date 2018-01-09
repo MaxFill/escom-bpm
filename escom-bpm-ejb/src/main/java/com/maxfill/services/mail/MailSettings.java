@@ -40,6 +40,18 @@ public class MailSettings implements Serializable{
     @XmlElement(name = "DeleteIfUnknownSender")
     private Boolean deleteIfUnknownSender = true;
 
+    @XmlElement(name = "ReadOnlyNewMessages")
+    private Boolean readOnlyNewMessages = true;
+
+    /* gets & sets */
+
+    public Boolean getReadOnlyNewMessages() {
+        return readOnlyNewMessages;
+    }
+    public void setReadOnlyNewMessages(Boolean readOnlyNewMessages) {
+        this.readOnlyNewMessages = readOnlyNewMessages;
+    }
+
     public String getServerAdress() {
         return serverAdress;
     }
