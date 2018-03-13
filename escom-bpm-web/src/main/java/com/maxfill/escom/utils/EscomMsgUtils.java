@@ -6,7 +6,6 @@ import org.primefaces.context.RequestContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import java.text.MessageFormat;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -42,6 +41,7 @@ public final class EscomMsgUtils{
         addFacesMsg(FacesMessage.SEVERITY_ERROR,  "Error", msg, msgParams);
     }
 
+    /* Формирует и возвращает FacesMessage c текстом ошибки */
     public static FacesMessage prepFormatErrorMsg(String key, Object[] msgParams){
         return makeFacesMsg(FacesMessage.SEVERITY_ERROR, "Error", key, msgParams);
     }
@@ -103,11 +103,12 @@ public final class EscomMsgUtils{
         return new FacesMessage(type, title, message);
     }
 
-    private static String getFromBundle(String key, String bundleName) {
+    public static String getFromBundle(String key, String bundleName) {
         ResourceBundle bundle = getResourceBundle(bundleName);
         return bundle.getString(key);
     }
 
+    /* Возвращает запрощенный ресурс по имени */
     private static ResourceBundle getResourceBundle(String bundleName) {
         FacesContext context = FacesContext.getCurrentInstance();
         return context.getApplication().getResourceBundle(context, bundleName);

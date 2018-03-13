@@ -30,7 +30,7 @@ import org.apache.commons.lang.WordUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
-/* Бин для формы "Карточка пользователя */
+/* Контроллер формы "Карточка пользователя */
 @Named
 @ViewScoped
 public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
@@ -50,7 +50,19 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     }
 
     /**
-     * Обработка события выбора папки
+     * Обработка события изменения телефона
+     * @param event
+     */
+    public void onChangePhone(ValueChangeEvent event){
+        String newValue = (String) event.getNewValue();
+        if (StringUtils.isNotBlank(newValue) && StringUtils.isBlank(getEditedItem().getMobilePhone())){
+            getEditedItem().setMobilePhone(newValue);
+            onItemChange();
+        }
+    }
+
+    /**
+     * Обработка события выбора дефолтной папки
      */
     public void onInboxSelected(SelectEvent event){
         List<Folder> items = (List<Folder>) event.getObject();

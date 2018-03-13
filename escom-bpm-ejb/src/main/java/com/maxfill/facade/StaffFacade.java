@@ -52,7 +52,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     public String getFRM_NAME() {
         return DictObjectName.STAFF.toLowerCase();
     }
-    
+
+    /* Дополнения при выполнении поиска через форму поиска */
     @Override
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
         String postName = (String) addParams.get("postName");

@@ -48,10 +48,19 @@ public class Configuration {
     private String convertorPDF;
     private String pdfEncoding;
     private String pdfFont;
+    private String fullSearcheConnect;
+
+    private String smsHostGate;
+    private String smsHostProtocol;
+    private Integer smsHostPort;
+    private String smsLogin;
+    private String smsPwl;
+    private String smsCommand;
+
     private Licence licence;
     private Integer serverId;
     private Integer maxFileSize;
-    private Connection fullTextSearcheConnection;
+
     private Key signKey;
     private Boolean useMailSSLConnect;
     
@@ -82,24 +91,21 @@ public class Configuration {
             pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
             pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
             maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
+            smsHostGate = (String) properties.get("SMS_HOST_GATE");
+            smsHostProtocol = (String) properties.get("SMS_HOST_PROTOCOL");
+            smsHostPort = Integer.valueOf((String) properties.get("SMS_HOST_PORT"));
+            smsLogin = (String) properties.get("SMS_LOGIN");
+            smsPwl = (String) properties.get("SMS_PWL");
+            smsCommand = (String) properties.get("SMS_COMMAND");
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
-
-            /* подключение к полнотекстовой поисковой системе */
-            String fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
-            if (StringUtils.isNotBlank(fullSearcheConnect)) {
-                fullTextSearcheConnection = DriverManager.getConnection(fullSearcheConnect, "", "");
-            }
-            //jdbc:mysql://127.0.0.1:9306?characterEncoding=utf8&maxAllowedPacket=512000
-        } catch (IOException | SQLException ex) {
+            fullSearcheConnect = (String) properties.get("FULL_SEARCHE_CONNECT_URL");
+        } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
-    public Connection getFullTextSearcheConnection() {
-        return fullTextSearcheConnection;
-    }        
     public Integer getMaxFileSize() {
         return maxFileSize;
     }    
@@ -168,6 +174,27 @@ public class Configuration {
     }
     public String getDefaultImapServer() {
         return defaultImapServer;
+    }
+    public String getFullSearcheConnect() {
+        return fullSearcheConnect;
+    }
+    public String getSmsHostGate() {
+        return smsHostGate;
+    }
+    public String getSmsHostProtocol() {
+        return smsHostProtocol;
+    }
+    public Integer getSmsHostPort() {
+        return smsHostPort;
+    }
+    public String getSmsLogin() {
+        return smsLogin;
+    }
+    public String getSmsPwl() {
+        return smsPwl;
+    }
+    public String getSmsCommand() {
+        return smsCommand;
     }
 
     public Repository getRepository() {

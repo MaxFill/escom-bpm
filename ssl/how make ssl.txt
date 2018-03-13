@@ -26,6 +26,7 @@ openssl req -new -key server.key -config openssl-csr.cnf -reqexts req_ext -out s
 openssl x509 -req -days 365  -CA ca.crt -CAkey ca.key -set_serial 003 -extfile openssl-csr.cnf -extensions req_ext -in server.csr -out server.crt
 
 - Преобразовать подписанный сертификат в pkcs12:
+openssl pkcs12 -export -in escom-demo_ru.crt -inkey 47895.key -out server.p12 -name escom -CAfile ca.crt -caname root
 openssl pkcs12 -export -in server.crt -inkey server.key -out server.p12 -name escom -CAfile ca.crt -caname root
 
 - Установить сертификат pkcs12 в хранилище jks:

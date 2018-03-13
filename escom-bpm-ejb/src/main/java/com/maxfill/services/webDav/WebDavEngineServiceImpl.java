@@ -2,7 +2,6 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.searche.SearcheService;
 import com.sun.security.auth.UserPrincipal;

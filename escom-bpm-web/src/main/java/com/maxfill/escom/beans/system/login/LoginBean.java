@@ -7,7 +7,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.services.sms.SmsService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
@@ -15,24 +15,15 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.text.MessageFormat;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,14 +46,18 @@ public class LoginBean implements Serializable{
     private CountryFlags selectedLang;
     private String targetPage;
     private Integer countErrLogin = 0;
-    
+    private String pinCode;             //код, вводимый пользователем на форме
+    private String generatePinCode;     //код, генерируемый сервисом и отправляемый на мобильник
+    private User user;
+
     @Inject
     private ApplicationBean appBean;
     @Inject
     private SessionBean sessionBean;
     @EJB 
     private UserFacade userFacade;
-
+    @EJB
+    private SmsService smsService;
     
     @PostConstruct
     public void init(){
@@ -80,31 +75,54 @@ public class LoginBean implements Serializable{
     }
     
     public void login() throws NoSuchAlgorithmException{
-        Set<FacesMessage> errors = new HashSet<>(); 
+        Set <FacesMessage> errors = new HashSet <>();
         RequestContext context = RequestContext.getCurrentInstance();
-                
-        if (appBean.getLicence().isExpired()){
-            Date termLicense = appBean.getLicence().getDateTermLicence();            
-            String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
-        }
-        
-        if (appBean.isNoAvailableLicence()){
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Objects[]{}));
-        }
-        
-        User user = userFacade.checkUserLogin(userName, password.toCharArray());
-        
-        if (user == null){
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Objects[]{}));
-        }
-        
-        if (!errors.isEmpty()){
+
+        if (!Objects.equals(pinCode, generatePinCode)){   //оба кода должны быть равны (null если не требуется ввод кода)
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
             makeCountErrLogin(context, errors);
             EscomMsgUtils.showFacesMessages(errors);
             return;
         }
-        
+
+        if(appBean.getLicence().isExpired()) {
+            Date termLicense = appBean.getLicence().getDateTermLicence();
+            String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
+        }
+
+        if(appBean.isNoAvailableLicence()) {
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
+        }
+
+        if (user == null) {
+            user = userFacade.checkUserLogin(userName, password.toCharArray());
+        }
+
+        if(user == null) {
+            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Object[]{}));
+        }
+
+        if(!errors.isEmpty()) {
+            makeCountErrLogin(context, errors);
+            EscomMsgUtils.showFacesMessages(errors);
+            return;
+        }
+
+        if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
+            generatePinCode = smsService.generatePinCode();
+            String message =  MessageFormat.format(EscomMsgUtils.getFromBundle("YourAccessCode", "msg"), new Object[]{generatePinCode});
+            String smsResult = smsService.sendAccessCode(user.getMobilePhone(), message);
+
+            if(!smsResult.contains("error")) {
+                context.update("loginFRM");
+                EscomMsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
+                return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
+            } else {
+                System.out.println("ERROR_SMS: "+smsResult);
+            }
+        }
+
         /*
         if (appBean.isAlreadyLogin(user)){
             errorsKey.add("UserPreviouslyLogged");
@@ -166,6 +184,18 @@ public class LoginBean implements Serializable{
         sessionBean.changeLocale(selectedLang.getName());
     }
     
+    public boolean isLoginLock(){
+        if (countErrLogin > 2){
+            return true;
+        }
+        return false;
+    }
+
+    /* если флаг установлен, то пользователь должен ввести код доступа с мобильника */
+    public boolean isNeedPinCode() {
+        return StringUtils.isNotBlank(generatePinCode);
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -176,14 +206,6 @@ public class LoginBean implements Serializable{
     public String getPassword() {
         return password;
     }
-
-    public boolean isLoginLock(){
-        if (countErrLogin > 2){
-            return true;
-        }
-        return false;
-    }
-    
     public void setPassword(String password) {
         this.password = password;
     }
@@ -206,4 +228,10 @@ public class LoginBean implements Serializable{
         this.targetPage = targetPage;
     }
 
+    public String getPinCode() {
+        return pinCode;
+    }
+    public void setPinCode(String pinCode) {
+        this.pinCode = pinCode;
+    }
 }

@@ -122,8 +122,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return q.getResultList();
     }
 
-    @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
+    protected void addPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
         predicates.add(builder.equal(root.get("typeActualize"), DictRights.ACTUALISE_IN_GROUP)); 
         predicates.add(builder.notEqual(root.get("id"), 0));
     }    

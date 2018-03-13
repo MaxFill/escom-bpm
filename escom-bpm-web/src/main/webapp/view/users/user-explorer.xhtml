@@ -33,6 +33,16 @@
             <p:ajax event="dialogReturn" update="#{_frmExpl}"/>
         </p:commandButton> 
     </ui:define>
+
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche">
+        <p:outputLabel value="#{bundle.Login}"/>
+        <p:inputText title="#{bundle.HelpSearcheContext}"
+                     styleClass="ui-grid-col-12"
+                     value="#{explorerBean.model.searcheLogin}"
+                     onkeypress="keyPress();">
+        </p:inputText>
+    </ui:define>
     
 </ui:composition>
 

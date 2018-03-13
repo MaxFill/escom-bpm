@@ -13,7 +13,7 @@
             }
         }
         function clearSearche(){            
-            PF('nameSearche').jq.val("");            
+            PF('nameSearche').jq.val("");
             PF('authorSearche').selectValue();
             var dateCreateStartSearche = PF('dateCreateStartSearche');
             if (dateCreateStartSearche){
@@ -109,9 +109,10 @@
             <h:panelGroup styleClass="ui-grid-col-12">
                 <p:inputText id="nameSearche" widgetVar="nameSearche" title="#{bundle.KeyWordSearche}"
                              value="#{explorerBean.model.nameSearche}"
-                             styleClass="ui-grid-col-12"
+                             styleClass="ui-grid-col-10"
                              onkeypress="keyPress();">
                 </p:inputText>
+                <p:commandButton value="X" onclick="PF('nameSearche').jq.val('');" />
                 <p:watermark for="nameSearche" value="#{bundle.InputCreteriaForSearche}" />
             </h:panelGroup>
 

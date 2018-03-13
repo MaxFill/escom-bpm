@@ -17,17 +17,17 @@
         </f:metadata>
 
         <h:form id="loginFRM">
-            <p:panel styleClass="panelLogin"> 
+            <p:panel styleClass="panelLogin" >
                 <p:messages id="messages" showDetail="true" closable="true" autoUpdate="true"/> 
 
-                <p:outputPanel id="panelLogin">
+                <p:outputPanel id="panelLogin" styleClass="ui-panelgrid-blank">
                     <p:poll interval="60" listener="#{loginBean.resetLoginLock()}" update="loginFRM" 
                             stop="#{!loginBean.isLoginLock()}" autoStart="false" widgetVar="poll" />
 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" >
-                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" >
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="ui-panelgrid-blank">
                             <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                            <h:panelGroup styleClass="ui-grid-col-12">
+                            <h:panelGroup styleClass="ui-grid-col-12 ui-panelgrid-blank">
                                 <h2>                                    
                                     <h:outputLabel value="#{bundle.welcom}"/> <br/>
                                     <h:outputLabel value="#{bundle.ProgramName}"/> 
@@ -39,9 +39,9 @@
                         
                         <p:separator />
                         
-                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" >
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" styleClass="ui-panelgrid-blank">
                             <p:outputLabel value="#{bundle.changeLanguage}:"/>
-                            <h:panelGroup id="langPanel">
+                            <h:panelGroup id="langPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                                 <p:selectOneMenu var="lng" value="#{loginBean.selectedLang}" converter="langConverter" disabled="#{loginBean.isLoginLock()}">
                                     <f:selectItems value="#{loginBean.languages}" var="items" itemLabel="#{items.displayName}" itemValue="#{items}"/>
                                     <p:ajax event="change" listener="#{loginBean.changeLocale()}" update="@form"/>
@@ -54,22 +54,30 @@
                                 </p:selectOneMenu>
                             </h:panelGroup>
 
-                            <p:outputLabel value="#{bundle.User}:" style="a"/>
-                            <h:panelGroup id="userPanel">
+                            <p:outputLabel value="#{bundle.User}:" />
+                            <h:panelGroup id="userPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                                 <p:inputText id="j_username" value="#{loginBean.userName}" title="#{bundle.welcom2}"
                                              required="true" requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
                                              styleClass="ui-grid-col-9"
-                                             disabled="#{loginBean.isLoginLock()}"/>
+                                             disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"/>
                                 <p:message for="j_username" styleClass="ui-grid-col-9"/>
                             </h:panelGroup>
 
                             <p:outputLabel value="#{bundle.password}:"/>
-                            <h:panelGroup id="passwordPanel">
+                            <h:panelGroup id="passwordPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                                 <p:password id="j_password" value="#{loginBean.password}"
                                             required="true" requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
-                                            disabled="#{loginBean.isLoginLock()}"                                        
+                                            disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"
                                             styleClass="ui-grid-col-9"/>
                                 <p:message for="j_password" styleClass="ui-grid-col-9"/>
+                            </h:panelGroup>
+
+                            <p:outputLabel value="#{bundle.AccessCode}:" rendered="#{loginBean.isNeedPinCode()}" />
+                            <h:panelGroup id="pinCode">
+                                <p:inputMask id="j_code" mask="99999" value="#{loginBean.pinCode}" rendered="#{loginBean.isNeedPinCode()}"
+                                             disabled="#{loginBean.isLoginLock()}"
+                                             required="true" requiredMessage="#{bundle.Field} [#{bundle.AccessCode}] #{bundle.MustBeFilled}"/>
+                                <p:message for="j_code" styleClass="ui-grid-col-9"/>
                             </h:panelGroup>
 
                             <p:spacer/>

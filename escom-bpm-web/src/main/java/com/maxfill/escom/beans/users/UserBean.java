@@ -1,5 +1,7 @@
 package com.maxfill.escom.beans.users;
 
+import com.maxfill.escom.beans.explorer.SearcheModel;
+import com.maxfill.escom.beans.staffs.StaffsSearche;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
@@ -139,4 +141,8 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         return groupsBean;
     }
 
+    @Override
+    public SearcheModel initSearcheModel() {
+        return new UsersSearche();
+    }
 }

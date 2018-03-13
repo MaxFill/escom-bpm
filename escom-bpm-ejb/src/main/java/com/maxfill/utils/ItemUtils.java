@@ -4,6 +4,9 @@ import com.maxfill.model.BaseDict;
 import java.text.MessageFormat;
 import java.util.*;
 
+/**
+ * Утилиты для работа с items
+ */
 public final class ItemUtils {  
 
     private ItemUtils() {

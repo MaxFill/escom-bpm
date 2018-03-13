@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -55,7 +56,19 @@ public final class EscomUtils {
 
         return arrLis;
     }    
-    
+
+    /* Форматирует номер телефона для вывода только его части */
+    public static String makeSecureFormatPhone(String phone){
+        StringBuilder sb = new StringBuilder();
+        sb.append(StringUtils.left(phone, 8)).append("*****").append(StringUtils.right(phone, 3));
+        return sb.toString();
+    }
+
+    /* Убирает из номера телефона всё лишнее */
+    public static String clearPhoneNumber(String phone){
+        return phone.replaceAll("[^\\d]", "");
+    }
+
     /* Преобразование строки в MD5 */
     public static String encryptPassword(String password) {
         String rezult = null;

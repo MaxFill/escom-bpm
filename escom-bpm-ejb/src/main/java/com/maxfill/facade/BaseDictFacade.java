@@ -369,7 +369,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         getEntityManager().remove(entity);
     }
 
-    /* Поиск */
+    /* Поиск из формы поиска */
     public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
         CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);
@@ -401,16 +401,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
            criteries.add(builder.equal(root.get(parameter.getKey()), parameter.getValue()));
         }
         
-        for (Map.Entry<String, Object> parameter : paramLIKE.entrySet()) {            
-            criteries.add(builder.like(root.<String>get(parameter.getKey()), (String) parameter.getValue()));
-        }
-        
         for (Map.Entry<String, Date[]> parameter : paramDATE.entrySet()) {            
             Date dateStart = parameter.getValue()[0];
             Date dateEnd = parameter.getValue()[1];
             criteries.add(builder.between(root.get(parameter.getKey()), dateStart, dateEnd));
         }
-        
+
+        addLikePredicates(root, criteries, builder, paramLIKE);
         addJoinPredicatesAndOrders(root, criteries, builder, addParams);
         
         criteriaQuery.orderBy(builder.asc(root.get("name")));
@@ -420,6 +417,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return criteriaQuery.select(root).where(builder.and(predicates));        
     }
     
+    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> paramLIKE){
+        for (Map.Entry<String, Object> parameter : paramLIKE.entrySet()) {
+            predicates.add(builder.like(root.<String>get(parameter.getKey()), (String) parameter.getValue()));
+        }
+    }
+
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> addParams){};
     
     public Metadates getMetadatesObj() {

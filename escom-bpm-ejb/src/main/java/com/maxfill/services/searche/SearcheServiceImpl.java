@@ -9,11 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -23,9 +19,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.lang.StringUtils;
 
 /**
- * Поиск
+ * Сервис Поиска
  * @author Maxim
  */
 @Stateless
@@ -37,18 +34,20 @@ public class SearcheServiceImpl implements SearcheService {
     private Configuration conf;
     
     @Override
-    @SuppressWarnings("empty-statement")
     public Set<Integer> fullSearche(String keyword){
         Set<Integer> result = new HashSet<>();
         keyword = keyword.replace("%", "*");
-        Connection connection = conf.getFullTextSearcheConnection();
-        try (Statement statement = connection.createStatement()){                                  
-            searcheInDocs(result, keyword, statement);            
-            return result;
-	} catch (SQLException ex) {
+        try (Connection connection = getFullTextSearcheConnection()) {
+            if(connection != null) {
+                try (Statement statement = connection.createStatement()) {
+                    searcheInDocs(result, keyword, statement);
+                    return result;
+                }
+            }
+        }catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-            return result;	
         }
+        return result;
     }
     
     private void searcheInDocs(Set<Integer> result, String keyword, Statement statement) throws SQLException{
@@ -62,13 +61,16 @@ public class SearcheServiceImpl implements SearcheService {
     @Asynchronous
     @Override
     public void deleteFullTextIndex(Doc doc){
-        String sql = "DELETE FROM escom_docs_index WHERE Id= ?";
-        Connection connection = conf.getFullTextSearcheConnection();
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)){ 
-            preparedStatement.setInt(1, doc.getId());
-            preparedStatement.execute();
+        try (Connection connection = getFullTextSearcheConnection()) {
+            if(connection != null) {
+                String sql = "DELETE FROM escom_docs_index WHERE Id= ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setInt(1, doc.getId());
+                    preparedStatement.execute();
+                }
+            }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);          
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -86,18 +88,20 @@ public class SearcheServiceImpl implements SearcheService {
         executeChangeIndex(doc, sql);
     }
 
+    /* Изменение потнотекстового индекса */
     private void executeChangeIndex(Doc doc, String sql){
-        Connection connection = conf.getFullTextSearcheConnection();
-        if (connection != null) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-                preparedStatement.setInt(1, doc.getId());
-                preparedStatement.setString(2, doc.getName());
-                preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
-                preparedStatement.setInt(4, doc.getId());
-                preparedStatement.execute();
-            } catch (SQLException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+        try (Connection connection = getFullTextSearcheConnection()) {
+            if(connection != null) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                    preparedStatement.setInt(1, doc.getId());
+                    preparedStatement.setString(2, doc.getName());
+                    preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
+                    preparedStatement.setInt(4, doc.getId());
+                    preparedStatement.execute();
+                }
             }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -126,5 +130,18 @@ public class SearcheServiceImpl implements SearcheService {
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return content;
+    }
+
+    @Override
+    public Connection getFullTextSearcheConnection() throws SQLException {
+        if (StringUtils.isBlank(conf.getFullSearcheConnect())) return null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            return DriverManager.getConnection(conf.getFullSearcheConnect(), "", "");
+        } catch (ClassNotFoundException e) {
+            System.out.println("JDBC Driver not found!");
+            e.printStackTrace();
+            return null;
+        }
     }
 }

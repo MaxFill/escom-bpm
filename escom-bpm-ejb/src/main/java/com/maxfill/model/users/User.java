@@ -5,6 +5,8 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.users.groups.UserGroups;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,6 +59,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     
     @Column(name = "Phone")
     private String phone;
+
+    @Column(name = "MobilePhone")
+    private String mobilePhone;
     
     @Column(name = "Email")
     @Size(max = 50)
@@ -81,6 +86,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     
     @Column(name = "DuplicateMessagesEmail")
     private boolean duplicateMessagesEmail = true;
+
+    @Column(name = "DoubleFactorAuth")
+    private boolean doubleFactorAuth = false;
             
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
     private List<FavoriteObj> favoriteObjList;        
@@ -142,7 +150,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         
         return String.format("%s %s.%s.", f,s,l); 
     }
-        
+
     public Integer getTempId() {
         return tempId;
     }
@@ -248,6 +256,13 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.phone = phone;
     }
 
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -281,6 +296,13 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     }
     public void setDuplicateMessagesEmail(boolean duplicateMessagesEmail) {
         this.duplicateMessagesEmail = duplicateMessagesEmail;
+    }
+
+    public boolean isDoubleFactorAuth() {
+        return doubleFactorAuth;
+    }
+    public void setDoubleFactorAuth(boolean doubleFactorAuth) {
+        this.doubleFactorAuth = doubleFactorAuth;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
+import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.UserLog;
 import com.maxfill.model.users.User;
 import com.maxfill.model.companies.Company;
@@ -42,10 +43,8 @@ import javax.ejb.Stateless;
 import javax.naming.AuthenticationException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+
 import org.apache.commons.lang.StringUtils;
 
 /* Пользователи */
@@ -359,6 +358,31 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         tokenMap.put("token", jwt);
         Gson gson = new Gson();
         return gson.toJson(tokenMap, Map.class);
+    }
+
+    /* Дополнения при выполнении поиска пользователей через форму поиска */
+    @Override
+    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder cb, Map<String, Object> paramLIKE){
+        String param = (String) paramLIKE.get("name");
+        if (StringUtils.isNotBlank(param)) {
+            predicates.add(
+                    cb.or(
+                            cb.like(root.<String>get("name"), param),
+                            cb.like(root.<String>get("login"), param)
+                    )
+            );
+            paramLIKE.remove("name");
+        }
+        super.addLikePredicates(root, predicates, cb, paramLIKE);
+    }
+
+    /* Дополнения при выполнении поиска через форму поиска */
+    @Override
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
+        String loginName = (String) addParams.get("login");
+        if (StringUtils.isNotBlank(loginName)){
+            predicates.add(builder.like(root.<String>get("login"), loginName));
+        }
     }
 
     @Override

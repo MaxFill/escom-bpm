@@ -11,8 +11,7 @@
         <p:tab id="cardTab" title="#{bundle.User}">  
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
                          columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding" >
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
-                             columnClasses="ui-grid-col-12" >
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12" >
 
                     <p:outputLabel value="#{bundle.SecondName}" />
                     <p:inputText id="nameItem" value="#{_bean.editedItem.secondName}" 
@@ -59,10 +58,11 @@
                         </p:inputText>
                     </h:panelGroup>
 
-                    <p:outputLabel value="#{bundle.MobilePhone}" />
+                    <p:outputLabel value="#{bundle.Phone}" />
                     <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
                                  disabled="#{_bean.isReadOnly()}" styleClass="ui-grid-col-12"
-                                 mask="(999) 999-99-99"
+                                 mask="+9 (999) 999-9999"
+                                 valueChangeListener="#{_bean.onChangePhone}"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  onchange="return itemChange = 1;"/>
 
@@ -84,41 +84,60 @@
                                      disabled="#{_bean.isReadOnly()}"
                                      onclick="return itemChange = 1;">                            
                     </p:commandButton>
-                    <p:spacer/>
-                    
-                    <p:outputLabel value="#{bundle.Login}" />
+
+                </p:panelGrid>
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab id="accountTab" title="#{bundle.UserAccount}">
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12" >
+                <p:outputLabel value="#{bundle.Login}" />
+                <h:panelGroup>
                     <p:inputText id="login" value="#{_bean.editedItem.login}"
                                  disabled="#{_bean.isReadOnly()}"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  onchange="return itemChange = 1;">
                     </p:inputText>
+                    <p:spacer />
                     <p:commandButton value="#{bundle.Generate}" title="#{bundle.MakeName}"
                                      actionListener="#{userCardBean.makeLogin()}"
                                      update="login"
                                      disabled="#{_bean.isReadOnly()}"
-                                     onclick="return itemChange = 1;">  
+                                     onclick="return itemChange = 1;">
                     </p:commandButton>
-                    <p:spacer/>
-                    
-                    <p:outputLabel value="#{bundle.password}" />
-                    <p:inputText id="pwl" value="#{_bean.password}" 
-                                disabled="#{_bean.isReadOnly()}"
-                                onchange="return itemChange = 1;"
-                                valueChangeListener="#{_bean.onChangePassword}"
-                                onkeypress="checkEsc(#{_bean.cancelBtnName});">
-                    </p:inputText>
-                </p:panelGrid>
-            </p:panelGrid>
-        </p:tab>    
+                </h:panelGroup>
 
-        <p:tab title="#{bundle.Other}">
-            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-12" >
+                <p:outputLabel value="#{bundle.password}" />
+                <p:inputText id="pwl" value="#{_bean.password}"
+                             disabled="#{_bean.isReadOnly()}"
+                             onchange="return itemChange = 1;"
+                             valueChangeListener="#{_bean.onChangePassword}"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});">
+                </p:inputText>
+
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateMessagesEmail}"
-                                            disabled="#{_bean.isReadOnly()}"
-                                            itemLabel="#{bundle.DuplicateMessagesEmail}">
+                                         disabled="#{_bean.isReadOnly()}"
+                                         itemLabel="#{bundle.DuplicateMessagesEmail}">
                     <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
+
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.doubleFactorAuth}"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         itemLabel="#{bundle.DoubleFactorAuth}">
+                    <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
+                </p:selectBooleanCheckbox>
+
+                <p:outputLabel value="#{bundle.PhoneForSMS}" />
+                <p:inputMask id="mobile" value="#{_bean.editedItem.mobilePhone}"
+                             disabled="#{_bean.isReadOnly()}"
+                             mask="+9 (999) 999-9999"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onchange="return itemChange = 1;"/>
+
             </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.Other}">
 
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >
                 <p:outputLabel value="#{bundle.Folder}" />

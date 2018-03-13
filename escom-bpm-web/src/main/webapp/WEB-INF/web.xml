@@ -22,11 +22,11 @@
     </context-param>
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>005</param-value>
+        <param-value>006</param-value>
     </context-param>
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2017-07-30</param-value>
+        <param-value>2018-01-15</param-value>
     </context-param>
     <filter>
         <filter-name>RedirectFilter</filter-name>

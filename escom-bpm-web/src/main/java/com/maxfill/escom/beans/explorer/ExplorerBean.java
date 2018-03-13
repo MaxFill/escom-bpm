@@ -1112,7 +1112,9 @@ public class ExplorerBean implements Serializable {
             } 
             paramIN.put("id", docIds);
         } else {
-            paramLIKE.put("name", name);
+            if (name.length() > 1) {
+                paramLIKE.put("name", name);
+            }
         }
         
         //добавление в запрос критериев на вхождение
