@@ -2,16 +2,14 @@ package com.maxfill;
 
 import com.maxfill.model.licence.Licence;
 import io.jsonwebtoken.impl.crypto.MacProvider;
-import org.apache.commons.lang.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.Key;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -27,7 +25,8 @@ public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
     private static final String REPO_NAME = "artifacts";
     private static final String REPO_FULL_NAME = "modeshape-webdav/" + REPO_NAME + "/other/";
-    
+    private static AtomicInteger smsMaxCount;
+
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
        
@@ -55,6 +54,7 @@ public class Configuration {
     private Integer smsHostPort;
     private String smsLogin;
     private String smsPwl;
+    private String smsSender;
     private String smsCommand;
 
     private Licence licence;
@@ -97,6 +97,9 @@ public class Configuration {
             smsLogin = (String) properties.get("SMS_LOGIN");
             smsPwl = (String) properties.get("SMS_PWL");
             smsCommand = (String) properties.get("SMS_COMMAND");
+            smsSender = (String) properties.get("SMS_SENDER");
+            Integer smsCount = Integer.valueOf((String) properties.get("SMS_MAX_COUNT"));
+            smsMaxCount = new AtomicInteger(smsCount);
             initLicense();
             initServerLocale((String) properties.get("SERVER_LOCALE"));
             signKey = MacProvider.generateKey();
@@ -195,6 +198,17 @@ public class Configuration {
     }
     public String getSmsCommand() {
         return smsCommand;
+    }
+    public String getSmsSender() {
+        return smsSender;
+    }
+
+    public Integer changeSmsCount() {
+        return smsMaxCount.decrementAndGet();
+    }
+
+    public Integer getSmsMaxCount() {
+        return smsMaxCount.get();
     }
 
     public Repository getRepository() {

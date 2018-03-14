@@ -13,8 +13,7 @@ import java.util.Set;
  * Утилиты для работы с сообщениями JSF
  */
 public final class EscomMsgUtils{
-    private EscomMsgUtils() {
-    }
+    private EscomMsgUtils() {}
 
     /**
      * Вывод сообщения в диалоге
@@ -24,8 +23,14 @@ public final class EscomMsgUtils{
         RequestContext.getCurrentInstance().showMessageInDialog(message);
     }
 
+    /**
+     * Вывод сообщения об ошибке. Текст ошибки (error) уже ранее должен быть подготовлен!
+     * @param error
+     */
     public static void errorMessage(String error) {
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", error);
+        ResourceBundle bundle = getResourceBundle("msg");
+        String title = bundle.getString("Error");
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, error);
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
@@ -55,7 +60,7 @@ public final class EscomMsgUtils{
      * Отображение 10-ти сообщений об ошибке
      */
     public static void showErrorsMsg(Set<String> errors) {
-        errors.stream().limit(10).forEach(error -> errorMsg(error));
+        errors.stream().limit(10).forEach(error->errorMessage(error));
     }
 
     public static void succesMsg(String msg) {
@@ -86,11 +91,17 @@ public final class EscomMsgUtils{
     }
 
     /**
-     * Вывод FacesMessage сообщения
+     * Формирование и вывод FacesMessage сообщения
      */
     private static void addFacesMsg(FacesMessage.Severity type, String keyTitle, String keyMsg, Object[] msgParams){
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ctx.addMessage(null, makeFacesMsg(type, keyTitle, keyMsg, msgParams));
+        addMessage(makeFacesMsg(type, keyTitle, keyMsg, msgParams));
+    }
+
+    /**
+     * Вывод FacesMessage сообщения
+     */
+    private static void addMessage(FacesMessage message){
+        FacesContext.getCurrentInstance().addMessage(null, message);
     }
 
     /**

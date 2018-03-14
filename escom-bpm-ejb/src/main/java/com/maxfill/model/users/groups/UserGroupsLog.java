@@ -1,7 +1,7 @@
 
 package com.maxfill.model.users.groups;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  * Лог сущности Группы пользователей
@@ -19,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "usersGroupsLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class UserGroupsLog extends BaseLogTable<UserGroups>{
+public class UserGroupsLog extends BaseLogItems<UserGroups>{
     private static final long serialVersionUID = 3919391574098188522L;
 
     @Id

@@ -1,6 +1,6 @@
 package com.maxfill.model.docs.docsTypes;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "docsTypesLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class DocTypeLog extends BaseLogTable<DocType>{
+public class DocTypeLog extends BaseLogItems<DocType>{
     private static final long serialVersionUID = -8626183971542695363L;
 
     @Id

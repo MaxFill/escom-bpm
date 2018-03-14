@@ -5,8 +5,7 @@ import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.BaseLogTable;
-import com.maxfill.model.docs.Doc;
+import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -52,7 +51,7 @@ import javax.xml.bind.JAXB;
  * @param <L>   //класс таблицы лога
  * @param <S>   //класс таблицы состояний
  */
-public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogTable, S extends BaseStateItem> extends BaseFacade<T>{
+public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseFacade<T>{
     private final Class<T> itemClass; 
     private final Class<L> logClass; 
     private final Class<S> stateClass;
@@ -344,7 +343,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Object[] params = new Object[]{parameter};
         Date dateEvent = new Date();        
         String msgEvent = MessageFormat.format(template, params);
-        BaseLogTable itemLog = createLogEvent(item, dateEvent, msgEvent, user);
+        BaseLogItems itemLog = createLogEvent(item, dateEvent, msgEvent, user);
         item.getItemLogs().add(itemLog);
     }
     

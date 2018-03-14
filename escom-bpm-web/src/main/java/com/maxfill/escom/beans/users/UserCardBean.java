@@ -104,7 +104,12 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         login = EscomBeanUtils.rusToEngTranlit(login);        
         getEditedItem().setLogin(WordUtils.capitalize(login));
     }
-    
+
+    /**
+     * Обработка события изменения пароля
+     * @param event
+     * @throws NoSuchAlgorithmException
+     */
     public void onChangePassword(ValueChangeEvent event) throws NoSuchAlgorithmException{
         String newValue = (String) event.getNewValue();
         String newPwl = EscomUtils.encryptPassword(newValue);
@@ -126,17 +131,24 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     public UserFacade getItemFacade() {
         return userFacade;
     }
-         
+
+    /**
+     * Проверка корректности полей перед сохранением
+     * @param user
+     * @param errors
+     */
     @Override
     protected void checkItemBeforeSave(User user, Set<String> errors) {       
         super.checkItemBeforeSave(user, errors);
+
         String login = user.getLogin();
         Integer userId = user.getId();
         List<User> existUsers = getItemFacade().findByLoginExcludeId(login, userId);
         if (!existUsers.isEmpty()) {
-            Object[] params = new Object[]{login};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserLoginIsExsist"), params);
-            errors.add(error);
+            errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("UserLoginIsExsist"), new Object[]{login}));
+        }
+        if (user.isDoubleFactorAuth() && StringUtils.isBlank(user.getMobilePhone())){
+            errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("NeedSetMobilePhone"), new Object[]{}));
         }
     }
     

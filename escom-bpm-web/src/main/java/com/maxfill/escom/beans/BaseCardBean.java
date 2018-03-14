@@ -49,8 +49,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void onInitBean(){
         EscomBeanUtils.initCardLayout(cardLayoutOptions);
     }
-    
-    /* При открытии карточки объекта */
+
+    /**
+     * При открытии карточки объекта
+     */
     public void onOpenCard(){
         if (getEditedItem() == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
@@ -172,7 +174,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     protected void onAfterSaveItem(T item){      
     }
 
-    /* Проверка корректности полей объекта перед сохранением  */
+    /**
+     * Проверка корректности полей объекта перед сохранением
+     * @param item
+     * @param errors
+     */
     protected void checkItemBeforeSave(T item, Set<String> errors) {
         checkCorrectItemRight(item, errors);                
         

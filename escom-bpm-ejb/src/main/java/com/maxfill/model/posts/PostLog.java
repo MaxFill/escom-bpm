@@ -1,6 +1,6 @@
 package com.maxfill.model.posts;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "postsLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PostLog extends BaseLogTable<Post>{
+public class PostLog extends BaseLogItems<Post>{
     private static final long serialVersionUID = 7709134449437875808L;
 
     @Id

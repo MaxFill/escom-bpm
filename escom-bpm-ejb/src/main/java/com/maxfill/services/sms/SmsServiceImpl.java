@@ -48,14 +48,19 @@ public class SmsServiceImpl implements SmsService{
      */
     @Override
     public String sendAccessCode(String phone, String pinCode){
-        String result = sendSms(phone, pinCode, "TEST-SMS");
+        String result = sendSms(phone, pinCode, conf.getSmsSender());
         return result;
     }
 
+    /**
+     * Возвращает статус сервиса отправки SMS
+     * @return
+     */
     @Override
     public boolean isActive() {
-        //TODO check service status!
-        return true;
+        return conf.getSmsMaxCount() > 0
+                && StringUtils.isNotBlank(conf.getSmsLogin())
+                && StringUtils.isNotBlank(conf.getSmsHostGate());
     }
 
     /**
@@ -98,6 +103,9 @@ public class SmsServiceImpl implements SmsService{
                 sb.append(charArray, 0, numCharsRead);
             }
             String result = sb.toString();
+            if (!result.contains("error")){
+                conf.changeSmsCount();  //уменьшить число доступных SMS
+            }
             return result;
 
         } catch (MalformedURLException ex) {

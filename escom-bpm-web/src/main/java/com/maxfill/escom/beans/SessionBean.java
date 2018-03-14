@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.users.User;
@@ -107,7 +108,9 @@ public class SessionBean implements Serializable{
     protected FileService fileService;
     @EJB
     protected PrintService printService;
-    
+    @EJB
+    private AuthLogFacade authLogFacade;
+
     @Inject
     private ApplicationBean appBean;    
     @Inject
@@ -271,6 +274,8 @@ public class SessionBean implements Serializable{
     private void doSessionExit(String page) {
         doSaveUserSettings();
         appBean.clearUserLock(currentUser);
+        HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        authLogFacade.addAuthExit(currentUser.getLogin(), request);
         redirectToPage(page, Boolean.TRUE);
     }
 

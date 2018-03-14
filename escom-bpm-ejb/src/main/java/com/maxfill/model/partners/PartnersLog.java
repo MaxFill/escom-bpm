@@ -1,7 +1,7 @@
 
 package com.maxfill.model.partners;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "partnersLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PartnersLog extends BaseLogTable<Partner>{
+public class PartnersLog extends BaseLogItems<Partner>{
     private static final long serialVersionUID = 66757555582836896L;
 
     @Id

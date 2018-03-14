@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.system.login;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
@@ -13,6 +14,7 @@ import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -58,7 +60,9 @@ public class LoginBean implements Serializable{
     private UserFacade userFacade;
     @EJB
     private SmsService smsService;
-    
+    @EJB
+    private AuthLogFacade authLogFacade;
+
     @PostConstruct
     public void init(){
         languages = new ArrayList<>();        
@@ -111,15 +115,15 @@ public class LoginBean implements Serializable{
 
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
             generatePinCode = smsService.generatePinCode();
-            String message =  MessageFormat.format(EscomMsgUtils.getFromBundle("YourAccessCode", "msg"), new Object[]{generatePinCode});
+            String message = MessageFormat.format(EscomMsgUtils.getFromBundle("YourAccessCode", "msg"), new Object[]{generatePinCode});
             String smsResult = smsService.sendAccessCode(user.getMobilePhone(), message);
 
-            if(!smsResult.contains("error")) {
+            if(StringUtils.isNotBlank(smsResult) && !smsResult.contains("error")) {
                 context.update("loginFRM");
                 EscomMsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
                 return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
             } else {
-                System.out.println("ERROR_SMS: "+smsResult);
+                System.out.println("ERROR_SMS: " + smsResult == null ? "no data." : smsResult);
             }
         }
 
@@ -137,6 +141,7 @@ public class LoginBean implements Serializable{
         } else {
             targetPage = SysParams.AGREE_LICENSE;
         }
+        generatePinCode = null;
         sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }               
         
@@ -146,8 +151,9 @@ public class LoginBean implements Serializable{
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute("UserLogin", userName);
+        authLogFacade.addAuthEnter(userName, request, isNeedPinCode());
         user.getUsersGroupsList().size();
-        sessionBean.setCurrentUser(user);        
+        sessionBean.setCurrentUser(user);
         UserSettings userSettings = new UserSettings();
         byte[] compressXML = user.getUserSettings();
         if (compressXML != null && compressXML.length >0){

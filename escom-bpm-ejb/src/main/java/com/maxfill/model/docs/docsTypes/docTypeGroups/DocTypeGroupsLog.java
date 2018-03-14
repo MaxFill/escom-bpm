@@ -1,7 +1,7 @@
 
 package com.maxfill.model.docs.docsTypes.docTypeGroups;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -19,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "docsTypesGroupsLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class DocTypeGroupsLog extends BaseLogTable<DocTypeGroups>{
+public class DocTypeGroupsLog extends BaseLogItems<DocTypeGroups>{
     private static final long serialVersionUID = -221582775776123555L;
 
     @Id

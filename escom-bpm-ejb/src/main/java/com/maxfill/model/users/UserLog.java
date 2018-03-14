@@ -1,8 +1,7 @@
 
 package com.maxfill.model.users;
 
-import com.maxfill.model.users.User;
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -11,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -20,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "usersLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class UserLog extends BaseLogTable<User>{
+public class UserLog extends BaseLogItems<User>{
     private static final long serialVersionUID = 5313389888941472727L;
 
     @Id

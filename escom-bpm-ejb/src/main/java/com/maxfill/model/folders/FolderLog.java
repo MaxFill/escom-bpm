@@ -1,6 +1,6 @@
 package com.maxfill.model.folders;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -9,12 +9,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "foldersLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class FolderLog extends BaseLogTable<Folder>{
+public class FolderLog extends BaseLogItems<Folder>{
     private static final long serialVersionUID = 3958438152438492100L;
 
     @Id

@@ -1,7 +1,7 @@
 
 package com.maxfill.model.partners.groups;
 
-import com.maxfill.model.BaseLogTable;
+import com.maxfill.model.BaseLogItems;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -19,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "partnerGroupsLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PartnerGroupsLog extends BaseLogTable<PartnerGroups>{
+public class PartnerGroupsLog extends BaseLogItems<PartnerGroups>{
     private static final long serialVersionUID = -4836491065076997521L;
 
     @Id

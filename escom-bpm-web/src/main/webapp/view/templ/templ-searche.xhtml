@@ -5,6 +5,8 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <h:outputScript library="js" name="clear-search.js" target="head"/>
+
     <script type="text/javascript" >
         function keyPress() {
             if (event.keyCode === 13) {
@@ -12,51 +14,11 @@
                 return;
             }
         }
-        function clearSearche(){            
-            PF('nameSearche').jq.val("");
-            PF('authorSearche').selectValue();
-            var dateCreateStartSearche = PF('dateCreateStartSearche');
-            if (dateCreateStartSearche){
-                PF('dateCreateStartSearche').setDate();
-            }
-            var dateCreateEndSearche = PF('dateCreateEndSearche');
-            if (dateCreateEndSearche){
-                PF('dateCreateEndSearche').setDate();
-            }
-            var dateChangeStartSearche = PF('dateChangeStartSearche');
-            if (dateChangeStartSearche){
-                PF('dateChangeStartSearche').setDate();
-            }
-            var dateChangeEndSearche = PF('dateChangeEndSearche');
-            if (dateChangeEndSearche){
-                PF('dateChangeEndSearche').setDate();
-            }
-            PF('cbDateCreate').uncheck();
-            PF('cbDateChange').uncheck(); 
-            var dateDoc = PF('cbDateDoc');
-            if (dateDoc){
-                var dateDocStartSearche = PF('dateDocStartSearche');
-                if (dateDocStartSearche){
-                    PF('dateDocStartSearche').setDate();
-                };
-                var dateDocEndSearche = PF('dateDocEndSearche');
-                if (dateDocEndSearche){
-                    PF('dateDocEndSearche').setDate();
-                }
-                PF('cbDateDoc').uncheck(); 
-                PF('cbFullSearche').uncheck();
-                PF('cbmDocType').show();            
-                PF('cbmDocType').uncheckAll();
-                PF('cbmDocType').hide();
-                PF('docNumberSearche').jq.val("");
-                PF('partnerSearche').selectValue();
-            }            
-        }    
     </script> 
 
     <p:defaultCommand target="#{_frmExpl}_east:searcheBtn" />
         
-    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
+    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
         <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding">
             <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btABC"
                              actionListener="#{explorerBean.onAbcSearche}"
@@ -87,8 +49,8 @@
                 <p:commandButton value="#{abcLocal}" styleClass="btABC"
                                  actionListener="#{explorerBean.onAbcSearche}"
                                  update="#{_tblUpdate}"
-                                onstart="PF('statusDialog').show()"
-                                oncomplete="PF('statusDialog').hide(); initDND();">                               
+                                 onstart="PF('statusDialog').show()"
+                                 oncomplete="PF('statusDialog').hide(); initDND();">
                     <f:attribute name="action" value="#{abcLocal}" />
                 </p:commandButton>
             </ui:repeat>
@@ -107,12 +69,12 @@
             
             <p:outputLabel value="#{bundle.KeyWord}"/>
             <h:panelGroup styleClass="ui-grid-col-12">
-                <p:inputText id="nameSearche" widgetVar="nameSearche" title="#{bundle.KeyWordSearche}"
+                <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
                              value="#{explorerBean.model.nameSearche}"
                              styleClass="ui-grid-col-10"
                              onkeypress="keyPress();">
                 </p:inputText>
-                <p:commandButton value="X" onclick="PF('nameSearche').jq.val('');" />
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchName').jq.val('');"/>
                 <p:watermark for="nameSearche" value="#{bundle.InputCreteriaForSearche}" />
             </h:panelGroup>
 
@@ -128,10 +90,13 @@
 
             <p:outputLabel value="#{bundle.States}"/>
             <p:selectManyMenu id="stateChecks" value="#{explorerBean.model.stateSearche}" showCheckbox="true"
-                              widgetVar="stateSearche"
+                              widgetVar="stateSearche" var="s"
                               label="#{bundle.Select}" converter="stateConvertor"
                               styleClass="ui-grid-col-12">
                 <f:selectItems value="#{_searcheBean.metadatesObj.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}"/>
+                <p:column>
+                    <h:outputText value="#{stateBean.getBundleName(s)}" />
+                </p:column>
             </p:selectManyMenu>
 
             <p:selectBooleanCheckbox itemLabel="#{bundle.DateCreate}" id="cbDateCreate" 
@@ -213,7 +178,7 @@
                 </p:commandButton>
                 <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"
                                  title="#{bundle.ResetSearcheCriteria}">
-                    <p:ajax update="#{_frmExpl}_east" resetValues="true" oncomplete="clearSearche();"/>
+                    <p:ajax update="#{_frmExpl}_east" oncomplete="clearSearche();"/>
                 </p:commandButton>
             </h:panelGroup>
 

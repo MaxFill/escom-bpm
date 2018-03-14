@@ -99,7 +99,11 @@ body{
 }
 
 .bt_command{
-        width: 100% !important;
+     width: 100% !important;
+}
+
+.btnClear{
+    font-size: 90%;
 }
 
 .droppoint{
