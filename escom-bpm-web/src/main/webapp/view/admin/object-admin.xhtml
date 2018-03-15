@@ -44,10 +44,12 @@
                         </f:facet>
                     </p:menubar>
                     
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:autoUpdate />
+                    </p:messages>
                     
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">                        
-                        <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceBean != null}" >
+                        <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.itemBean != null}" >
                             <p:tab title="#{bundle.Replace}">
                                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                                     <h:panelGroup styleClass="ui-grid-col-12">
@@ -74,7 +76,7 @@
                                     <h:panelGroup>
                                         <p:commandButton value="#{bundle.Select}" 
                                                          process="@this" 
-                                                         actionListener="#{admObjectBean.sourceBean.onOneSelectItem()}" >
+                                                         actionListener="#{admObjectBean.itemBean.onOneSelectItem()}" >
                                             <p:ajax event="dialogReturn" update="#{_frm}:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
                                         </p:commandButton>
 

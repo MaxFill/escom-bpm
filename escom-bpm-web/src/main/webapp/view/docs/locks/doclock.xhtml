@@ -85,7 +85,9 @@
                         </f:facet>
                     </p:menubar>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
                         <p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-4, ui-grid-col-6" styleClass="ui-grid-col-12">                             
                             <p:outputLabel value="#{bundle.LockPeriod}"/>
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"

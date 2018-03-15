@@ -96,7 +96,9 @@
                         </p:commandButton>
                         
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
                         <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
                         <ui:include src="/view/templ/expl/expl-table.xhtml"/>
                         

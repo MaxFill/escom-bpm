@@ -21,39 +21,37 @@
             <p:ajax event="dialogReturn" update="#{_itemPanel}"/>
         </p:commandButton>
         
-        <h:panelGrid id="#{_itemPanel}" columns="2" columnClasses="ui-grid-col-10 without-spaces, ui-grid-col-2 without-spaces pull-right"
-                     styleClass="ui-grid-col-12 without-spaces" style="border-collapse: collapse; border:0px;">
-            
-            <p:selectOneMenu value="#{_itemValue}" title="#{_titleItem}" styleClass="ui-grid-col-12"
-                             disabled="#{_disabled}" style="color: blue;"
-                             valueChangeListener="#{_bean[_actionSelect]}"                             
-                             required="#{param['isRequired'] == _required}" 
-                             requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
-                             filter="true"
-                             filterMatchMode="startsWith">
-                <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
-                <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
-                <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
-                <f:converter converterId="#{_converter}" />
-                <f:validator validatorId="#{empty _validator ? 'emptyValidator' : _validator}" />
-                <f:ajax event="change" render="#{_itemPanel}" />
-            </p:selectOneMenu>
+        <h:panelGroup id="#{_itemPanel}">
+            <div class="ui-inputgroup">
+                <p:selectOneMenu value="#{_itemValue}" title="#{_titleItem}" styleClass="ui-grid-col-10"
+                                 disabled="#{_disabled}" style="color: blue;"
+                                 valueChangeListener="#{_bean[_actionSelect]}"
+                                 required="#{param['isRequired'] == _required}"
+                                 requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
+                                 filter="true"
+                                 filterMatchMode="startsWith">
+                    <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
+                    <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
+                    <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                    <f:converter converterId="#{_converter}" />
+                    <f:validator validatorId="#{empty _validator ? 'emptyValidator' : _validator}" />
+                    <f:ajax event="change" render="#{_itemPanel}" />
+                </p:selectOneMenu>
 
-            <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
-                            styleClass="ui-grid-col-12" style="float: right;"
-                            onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">                
-                <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}" 
-                            onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btnOpenCard').click();"
-                            disabled="#{_disabled or _itemValue == null}"/>
-                <p:separator/>
-                <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"
-                            actionListener="#{_bean.editedItem[_actionClear](null)}"
-                            oncomplete="itemChange = 1;"
-                            disabled="#{_disabled or _itemValue == null}"
-                            update="#{_itemPanel}"/>
-            </p:splitButton>
-
-        </h:panelGrid>
+                <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
+                                onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">
+                    <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}"
+                                onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btnOpenCard').click();"
+                                disabled="#{_disabled or _itemValue == null}"/>
+                    <p:separator/>
+                    <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"
+                                actionListener="#{_bean.editedItem[_actionClear](null)}"
+                                oncomplete="itemChange = 1;"
+                                disabled="#{_disabled or _itemValue == null}"
+                                update="#{_itemPanel}"/>
+                </p:splitButton>
+            </div>
+        </h:panelGroup>
     </h:panelGroup>
     
 </ui:composition>

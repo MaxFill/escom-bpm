@@ -7,7 +7,7 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:define name="title">
-        #{bundle.Settings}
+        #{bundle.PersonalSettings}
     </ui:define>
 
     <ui:param name="_frm" value="settingsFRM" />
@@ -48,29 +48,32 @@
                         </f:facet>
                     </p:menubar>
                     
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:autoUpdate />
+                    </p:messages>
 
                     <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
                         <br/>
                         <h3>#{msg.UsedLDAPauth}</h3>
                     </p:outputPanel>
 
-                    <p:panelGrid columns="1" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" style="ui-panelgrid-blank">
+                    <p:panelGrid columns="1" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}">
+                        <p:outputLabel value="#{msg.PasswordSecurityInfo}:"/>
+                        <p:spacer/>
                         <p:outputLabel value="#{bundle.CurrentPassword}:"/>
                         <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
                                     required="true" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
 
                         <p:outputLabel value="#{bundle.NewPassword}:"/>                        
                         <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
-                                    feedback="true"
-                                    maxlength="20" 
+                                    feedback="true" promptLabel="#{bundle.InputNewPassword}"
+                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
                                     required="true" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
 
                         <p:outputLabel value="#{bundle.RepeatPassword}:"/>                        
                         <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
-                                    maxlength="20"
+                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
                                     required="true" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
-
                     </p:panelGrid>
                 </h:form>
             </pe:layoutPane>

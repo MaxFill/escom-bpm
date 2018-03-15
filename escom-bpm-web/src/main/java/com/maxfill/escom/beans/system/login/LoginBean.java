@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXB;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 
 /* Bean формы входа  */
@@ -147,7 +148,7 @@ public class LoginBean implements Serializable{
         
     /* Инициализация текущего пользователя */
     private boolean initCurrentUser(User user){
-        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();      
+        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
         HttpSession httpSession = request.getSession();
         httpSession.setAttribute("UserLogin", userName);

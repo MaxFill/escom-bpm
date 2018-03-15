@@ -24,6 +24,7 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
@@ -124,6 +125,14 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
             errors.add(error);
         }
+    }
+
+    /**
+     * Возвращает список логинов пользователей с учётом прав доступа пользователя, выполняющего запрос
+     * @return
+     */
+    public List<String> findAllLogins(){
+        return findAll().stream().map(user->user.getLogin()).sorted().collect(Collectors.toList());
     }
 
     @Override

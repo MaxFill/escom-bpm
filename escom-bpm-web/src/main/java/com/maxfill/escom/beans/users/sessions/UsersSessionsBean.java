@@ -54,13 +54,6 @@ public class UsersSessionsBean implements Serializable{
     public void onCloseForm(){
        RequestContext.getCurrentInstance().closeDialog(null); 
     }
-
-    public UsersSessions getSelectedSession() {
-        return selectedSession;
-    }
-    public void setSelectedSession(UsersSessions selectedSession) {
-        this.selectedSession = selectedSession;
-    }
     
     private void initLayoutOptions() {
         LayoutOptions panes = new LayoutOptions();
@@ -96,8 +89,17 @@ public class UsersSessionsBean implements Serializable{
         */
      
     }
+
+    /* gets & sets */
+
     public LayoutOptions getLayoutOptions() {
         return layoutOptions;
     }
-    
+
+    public UsersSessions getSelectedSession() {
+        return selectedSession;
+    }
+    public void setSelectedSession(UsersSessions selectedSession) {
+        this.selectedSession = selectedSession;
+    }
 }

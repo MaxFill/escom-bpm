@@ -35,7 +35,9 @@
                     <p:outputLabel value="#{bundle.LogEventHistory}" />
                 </f:facet> 
                 <h:form id="centerFRM" style="font-size: 80%;">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true"/>
+                    <p:messages id="messages" showDetail="true" closable="true">
+                        <p:autoUpdate />
+                    </p:messages>
                     <ui:include src="/view/services/common/log-events.xhtml"/>
                 </h:form>
             </pe:layoutPane>

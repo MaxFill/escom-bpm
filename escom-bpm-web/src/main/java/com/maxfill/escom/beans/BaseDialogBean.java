@@ -3,7 +3,10 @@ package com.maxfill.escom.beans;
 import com.maxfill.Configuration;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.users.User;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
+
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -24,10 +27,8 @@ public abstract class BaseDialogBean implements Serializable{
     @EJB
     protected Configuration conf;
             
-    private BaseBean sourceBean;
-    private boolean itemChange;       //признак изменения записи 
-    private String beanName;
-    
+    private boolean itemChange;       //признак изменения записи
+
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     @PostConstruct
@@ -35,27 +36,28 @@ public abstract class BaseDialogBean implements Serializable{
         initLayotOptions();
         initBean();
     }
-    
+
+    @PreDestroy
+    protected void destroy(){
+        System.out.println("view bean destroy!");
+    }
+
     protected abstract void initBean();
     
     public SessionBean getSessionBean() {
         return sessionBean;
     }
-    
+
+    /**
+     * Метод вызывается автоматически при открытии формы диалога
+     */
     protected void onOpenCard(){
-        if (getSourceBean() == null){
-           Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-           beanName = params.get("beanName");
-           sourceBean = getSessionBean().getSourceBean(getBeanName());
-        }
     }
     
     protected abstract String onCloseCard();
      
     protected String onFinalCloseCard(Object param){
-        getSessionBean().removeSourceBean(beanName);
-        RequestContext.getCurrentInstance().closeDialog(param);
-        return "/view/index?faces-redirect=true";
+        return sessionBean.closeDialog(param);
     }
         
     public void onItemChange() {
@@ -116,18 +118,8 @@ public abstract class BaseDialogBean implements Serializable{
         this.itemChange = itemChange;
     }
 
-    public String getBeanName() {
-        return beanName;
-    }
-    public void setSourceBean(BaseBean sourceBean) {
-        this.sourceBean = sourceBean;
-    }
-
     public String getLabelFromBundle(String key){
         return EscomMsgUtils.getBandleLabel(key);
     }
-            
-    public BaseBean getSourceBean() {
-        return sourceBean;
-    }
+
 }

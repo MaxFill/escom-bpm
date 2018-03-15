@@ -18,7 +18,9 @@
 
         <h:form id="loginFRM">
             <p:panel styleClass="panelLogin" >
-                <p:messages id="messages" showDetail="true" closable="true" autoUpdate="true"/> 
+                <p:messages id="messages" showDetail="true" closable="true" >
+                    <p:autoUpdate />
+                </p:messages>
 
                 <p:outputPanel id="panelLogin" styleClass="ui-panelgrid-blank">
                     <p:poll interval="60" listener="#{loginBean.resetLoginLock()}" update="loginFRM" 

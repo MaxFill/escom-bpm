@@ -43,6 +43,7 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DashboardColumn;
@@ -81,10 +82,8 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
 public class SessionBean implements Serializable{  
     private static final long serialVersionUID = -5356932297321623340L;
     protected static final Logger LOGGER = Logger.getLogger(SessionBean.class.getName());
-    
-    //служебное поле для передачи ссылки на вызвавший бин
-    private final HashMap<String, BaseBean> sourceBeansMap = new HashMap<>(); 
-    //служебное поле для передачи ссылки на право доступа 
+
+    //служебное поле для передачи ссылки на право доступа
     private final HashMap<String, Right> sourceRightMap = new HashMap<>(); 
     
     private User currentUser;
@@ -154,6 +153,7 @@ public class SessionBean implements Serializable{
          
         column4.addWidget("admObjects"); 
         column4.addWidget("services");
+        column4.addWidget("loggers");
         
         column3.addWidget("orgStructure");
          
@@ -169,25 +169,7 @@ public class SessionBean implements Serializable{
 
         temeInit();                
     }    
-        
-    /* БУФЕР ИСТОЧНИКОВ */
-    
-    /* Добавление бина источника в буфер */
-    public void addSourceBean(BaseBean bean){
-        String key = bean.toString();
-        sourceBeansMap.put(key, bean);                
-    }
-    
-    /* Получение из буфера бина по его ключу  */
-    public BaseBean getSourceBean(String key){
-       return sourceBeansMap.get(key);
-    }
-    
-    /* Удаление из буфера бина по его ключу  */
-    public void removeSourceBean(String key){
-        sourceBeansMap.remove(key);
-    }
-    
+
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
         sourceRightMap.put(key, right);
@@ -335,16 +317,19 @@ public class SessionBean implements Serializable{
         paramMap.put("path", pathList);
         openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
     }
-        
+
+    /**
+     * Открытие формы диалога
+     * @param frmName
+     * @param paramMap
+     */
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
     }
     
     /* Открытие карточки администрирования объекта */
-    public void openAdmCardForm(BaseDict item){ 
-        BaseExplBean bean = getItemBean(item);
-        addSourceBean(bean);
-        String beanName = bean.toString();        
+    public void openAdmCardForm(BaseDict item){
+        String beanName = item.getClass().getSimpleName();
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> beanNameList = new ArrayList<>();
         List<String> itemIds = new ArrayList<>();
@@ -410,7 +395,14 @@ public class SessionBean implements Serializable{
     public void openSettingsForm(){
         openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
     }
-    
+
+    /**
+     * Открытие диалога журнала аутентификации
+     */
+    public void openAuthLog(){
+        openDialogFrm(DictDlgFrmName.FRM_AUTH_LOG, new HashMap<>());
+    }
+
     /* Открытие формы почтовой службы отправки e-mail сообщений */
     //Todo переделать на открытие диалога с сохранением параметров окна
     public void openMailSenderService(){
@@ -443,6 +435,7 @@ public class SessionBean implements Serializable{
         RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_READER_SERVICE, options, null);
     }
 
+    //Todo переделать на открытие диалога с сохранением параметров окна
     public void openLdapService(){
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -455,7 +448,7 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
-    }    
+    }
 
     /* Открытие окна списка сообщений пользователя */
     public void openUserMessagesForm(){        
@@ -466,7 +459,13 @@ public class SessionBean implements Serializable{
     public void openContersExpl(){        
         openDialogFrm(DictDlgFrmName.FRM_COUNTERS, new HashMap<>());
     }
-    
+
+    /* Закрытие диалога */
+    public String closeDialog(Object param){
+        PrimeFaces.current().dialog().closeDynamic(param);
+        return goToIndex();
+    }
+
     /* Переход на начальную страницу программы */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";
@@ -510,9 +509,13 @@ public class SessionBean implements Serializable{
         themes.add(new Theme(35, "UI-Darkness", "ui-darkness"));
         themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
         themes.add(new Theme(37, "Vader", "vader"));
-    }    
-    
-    /* Возврашает размеры формы карточки */
+    }
+
+    /**
+     * Возврашает размеры формы диалога, сохранённые в настройках пользователя
+     * @param formName
+     * @return
+     */
     public Tuple<Integer, Integer> getFormSize(String formName){
         Map<String, Tuple<Integer, Integer>> formsSize = userSettings.getFormsSize();
         Tuple<Integer, Integer> rezult;
@@ -524,6 +527,13 @@ public class SessionBean implements Serializable{
         }
         return rezult;
     }
+
+    /**
+     * Сохранение размера формы диалога в настройках пользователя
+     * @param formName
+     * @param width
+     * @param heaght
+     */
     public void saveFormSize(String formName, Integer width, Integer heaght){
         Tuple<Integer, Integer> size = new Tuple(width, heaght);
         userSettings.getFormsSize().put(formName, size);

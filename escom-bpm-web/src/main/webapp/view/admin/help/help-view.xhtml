@@ -23,7 +23,9 @@
             <p:ajax event="resize" listener="#{helpBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
                 <h:form id="#{_frm}">                    
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:messages id="messages" showDetail="true" closable="true" >
+                        <p:autoUpdate />
+                    </p:messages>
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">

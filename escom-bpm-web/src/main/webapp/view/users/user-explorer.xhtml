@@ -39,13 +39,15 @@
     <ui:define name="searche">
         <p:outputLabel value="#{bundle.Login}"/>
         <h:panelGroup styleClass="ui-grid-col-12">
+        <div class="ui-inputgroup">
             <p:inputText title="#{bundle.HelpSearcheContext}" id="searchLogin" widgetVar="searchLogin"
                          styleClass="ui-grid-col-10"
                          value="#{explorerBean.model.searcheLogin}"
+                         placeholder="#{bundle.InputCreteriaForSearche}"
                          onkeypress="keyPress();">
             </p:inputText>
             <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchLogin').jq.val('');"/>
-            <p:watermark for="searchLogin" value="#{bundle.InputCreteriaForSearche}" />
+        </div>
         </h:panelGroup>
     </ui:define>
     

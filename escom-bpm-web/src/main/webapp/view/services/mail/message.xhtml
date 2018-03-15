@@ -46,7 +46,9 @@
                         </f:facet>
                     </p:menubar>
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
 
                         <h:panelGroup id="msgPanel">
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">

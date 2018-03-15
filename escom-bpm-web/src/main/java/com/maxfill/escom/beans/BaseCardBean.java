@@ -18,11 +18,15 @@ import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
+
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
+
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import java.text.MessageFormat;
@@ -48,6 +52,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     @Override
     public void onInitBean(){
         EscomBeanUtils.initCardLayout(cardLayoutOptions);
+    }
+
+    @PreDestroy
+    protected void destroy(){
+        System.out.println("card view bean destroy!");
     }
 
     /**
@@ -222,7 +231,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         attacheService.deleteTmpFiles(currentUser.getLogin());
         clearLockItem();
         if (openInDialog){
-            RequestContext.getCurrentInstance().closeDialog(new Tuple(isNeedUpdate, itemOpenKey));
+            PrimeFaces.current().dialog().closeDynamic(new Tuple(isNeedUpdate, itemOpenKey));
         }
         return "/view/index?faces-redirect=true";
     }

@@ -43,7 +43,9 @@
 
             <pe:layoutPane id="luFrmDocs" position="center" resizable="true">                 
                 <h:form id="frmFldDefRight" style="font-size: 90%;">
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:autoUpdate />
+                    </p:messages>
                     <ui:include src="/view/admin/objects-right.xhtml"/>
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>

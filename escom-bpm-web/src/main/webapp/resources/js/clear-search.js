@@ -3,7 +3,6 @@ function clearSearche() {
     for (var i = 0; i < elements.length; i++) {
         elements[i].click();
     }
-    PF('authorSearche').selectValue();
     var dateCreateStartSearche = PF('dateCreateStartSearche');
     if (dateCreateStartSearche){
         PF('dateCreateStartSearche').setDate();

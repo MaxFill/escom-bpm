@@ -28,7 +28,9 @@
                               onstart="document.getElementById('#{_frm}:btnClose').click();"> 
                     </p:hotkey>
                     
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                    <p:messages id="messages" showDetail="true" closable="true" >
+                        <p:autoUpdate />
+                    </p:messages>
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">                            

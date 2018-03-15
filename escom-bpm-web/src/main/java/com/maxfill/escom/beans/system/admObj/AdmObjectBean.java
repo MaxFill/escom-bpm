@@ -4,10 +4,12 @@ package com.maxfill.escom.beans.system.admObj;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import org.primefaces.event.SelectEvent;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.faces.context.FacesContext;
 
-/*  Диалог администрирования объекта */
- 
+/* Контролер формы администрирования объекта */
 @Named
 @ViewScoped
 public class AdmObjectBean extends BaseDialogBean{    
@@ -25,7 +26,11 @@ public class AdmObjectBean extends BaseDialogBean{
     private BaseDict replaceItem;
     private BaseDict sourceItem;
     private Map<String, Integer> rezultUpdate;
-    
+    private BaseExplBean itemBean;
+
+    @Inject
+    private SessionBean sessionBean;
+
     @Override
     protected void initBean(){        
     }
@@ -33,10 +38,11 @@ public class AdmObjectBean extends BaseDialogBean{
     @Override
     public void onOpenCard(){
         if (sourceItem == null){
-            super.onOpenCard(); 
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            String beanName = params.get("beanName");
+            itemBean = sessionBean.getItemBeanByClassName(beanName);
             Integer itemId = Integer.valueOf(params.get("itemId"));
-            sourceItem = getSourceBean().findItem(itemId);
+            sourceItem = itemBean.findItem(itemId);
         }
     }
     
@@ -48,7 +54,7 @@ public class AdmObjectBean extends BaseDialogBean{
     /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
-        getSourceBean().doGetCountUsesItem(sourceItem, rezult);
+        itemBean.doGetCountUsesItem(sourceItem, rezult);
         return rezult.entrySet();
     }
     
@@ -56,7 +62,7 @@ public class AdmObjectBean extends BaseDialogBean{
     public void onSelectChangeItem(SelectEvent event) {
         if (event.getObject() == null){ return;}
         List<BaseDict> selectedItems = (List<BaseDict>) event.getObject();
-        if (selectedItems != null){
+        if (!selectedItems.isEmpty()){
             replaceItem = selectedItems.get(0);
         }
     }
@@ -64,11 +70,17 @@ public class AdmObjectBean extends BaseDialogBean{
     /* Обработка события замены объекта в связанных объектах  */
     public void onReplaceItem(){ 
         if (replaceItem != null) {
-            getSourceBean().replaceItem(sourceItem, replaceItem);            
+            itemBean.replaceItem(sourceItem, replaceItem);
             EscomMsgUtils.succesMsg("ReplaceCompleted");
         } else {
             EscomMsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }
+    }
+
+    /* gets & sets */
+
+    public BaseExplBean getItemBean() {
+        return itemBean;
     }
 
     public BaseDict getReplaceItem() {
@@ -78,11 +90,6 @@ public class AdmObjectBean extends BaseDialogBean{
     public BaseDict getSourceItem() {
         return sourceItem;
     }
-
-    @Override
-    public BaseExplBean getSourceBean() {
-        return (BaseExplBean) super.getSourceBean(); 
-    }    
 
     @Override
     protected String getFormName() {

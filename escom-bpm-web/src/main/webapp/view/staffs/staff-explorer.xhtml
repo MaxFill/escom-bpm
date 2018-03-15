@@ -54,24 +54,28 @@
     <ui:define name="searche">
         <p:outputLabel value="#{bundle.Post}"/>
         <h:panelGroup styleClass="ui-grid-col-12">
-            <p:inputText title="#{bundle.HelpSearcheContext}" id="searchPost" widgetVar="searchPost"
-                         styleClass="ui-grid-col-10"
-                         value="#{explorerBean.model.postSearche}"
-                         onkeypress="keyPress();">
-            </p:inputText>
-            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchPost').jq.val('');"/>
-            <p:watermark for="searchPost" value="#{bundle.InputCreteriaForSearche}" />
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" id="searchPost" widgetVar="searchPost"
+                             styleClass="ui-grid-col-10"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
+                             value="#{explorerBean.model.postSearche}"
+                             onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchPost').jq.val('');"/>
+            </div>
         </h:panelGroup>
 
         <p:outputLabel value="#{bundle.SecondName}"/>
         <h:panelGroup styleClass="ui-grid-col-12">
-            <p:inputText title="#{bundle.HelpSearcheContext}" id="searchSecondName" widgetVar="searchSecondName"
-                         styleClass="ui-grid-col-10"
-                         value="#{explorerBean.model.secondNameSearche}"
-                         onkeypress="keyPress();">
-            </p:inputText>
-            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchSecondName').jq.val('');"/>
-            <p:watermark for="searchSecondName" value="#{bundle.InputCreteriaForSearche}" />
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" id="searchSecondName" widgetVar="searchSecondName"
+                             styleClass="ui-grid-col-10"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
+                             value="#{explorerBean.model.secondNameSearche}"
+                             onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchSecondName').jq.val('');"/>
+            </div>
         </h:panelGroup>
     </ui:define>
     

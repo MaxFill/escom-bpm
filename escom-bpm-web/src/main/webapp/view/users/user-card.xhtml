@@ -111,7 +111,7 @@
                 <p:inputText id="pwl" value="#{_bean.password}"
                              disabled="#{_bean.isReadOnly()}"
                              onchange="return itemChange = 1;"
-                             valueChangeListener="#{_bean.onChangePassword}"
+                             valueChangeListener="#{userCardBean.onChangePassword}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});">
                 </p:inputText>
 

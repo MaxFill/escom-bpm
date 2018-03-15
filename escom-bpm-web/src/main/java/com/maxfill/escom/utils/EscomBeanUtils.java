@@ -25,6 +25,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
@@ -250,7 +251,7 @@ public final class EscomBeanUtils {
         itemKeyList.add(itemOpenKey);
         paramMap.put("itemId", itemKeyList);
         paramMap.put("openInDialog", openInDialogList);
-        RequestContext.getCurrentInstance().openDialog(formName + "-card", options, paramMap);
+        PrimeFaces.current().dialog().openDynamic(formName + "-card", options, paramMap);
     }    
     
     /* Открытие карточки диалога */
@@ -267,7 +268,7 @@ public final class EscomBeanUtils {
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog(dlgName, options, paramMap);
+        PrimeFaces.current().dialog().openDynamic(dlgName, options, paramMap);
     }    
     
     /* Формирует ссылку URL для объекта  */

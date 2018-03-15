@@ -91,7 +91,9 @@
                 </f:facet>
             </p:toolbar>
 
-            <p:growl id="growl" showDetail="true" autoUpdate="true"/> 
+            <p:growl id="growl" showDetail="true" >
+                <p:autoUpdate />
+            </p:growl>
                             
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >              
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
@@ -121,6 +123,17 @@
                         </p:panelGrid>
                     </p:panel>
 
+                    <p:panel id="loggers" header="#{bundle.Logging}"
+                             rendered="#{sessionBean.userAdmin}"
+                             toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                            <p:commandLink value="#{bundle.Authentication}"
+                                           onstart="return isClose = 1;"
+                                           ajax="false"
+                                           actionListener="#{sessionBean.openAuthLog()}"/>
+                        </p:panelGrid>
+                    </p:panel>
+
                     <p:panel id="services" header="#{bundle.Services}" 
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
@@ -139,7 +152,7 @@
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                                                         
-                            <p:commandLink value="#{bundle.Settings}" 
+                            <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
                             <p:separator />
                             <p:outputLabel value="#{bundle.ChooseTheme}"/>

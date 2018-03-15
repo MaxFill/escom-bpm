@@ -47,7 +47,9 @@
                     </p:menubar>                                                            
                     
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+                        <p:messages id="messages" showDetail="true" closable="true" >
+                            <p:autoUpdate />
+                        </p:messages>
 
                         <p:dataTable id="itemsTbl" value="#{countersExplBean.counters}" 
                                      emptyMessage="#{bundle.EmptyTable}"

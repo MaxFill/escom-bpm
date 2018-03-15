@@ -69,24 +69,31 @@
             
             <p:outputLabel value="#{bundle.KeyWord}"/>
             <h:panelGroup styleClass="ui-grid-col-12">
+                <div class="ui-inputgroup">
                 <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
                              value="#{explorerBean.model.nameSearche}"
                              styleClass="ui-grid-col-10"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchName').jq.val('');"/>
-                <p:watermark for="nameSearche" value="#{bundle.InputCreteriaForSearche}" />
+                </div>
             </h:panelGroup>
 
             <ui:insert name="searche"/>
 
             <p:outputLabel value="#{bundle.Owner}"/>
-            <p:selectOneMenu value="#{explorerBean.model.authorSearche}" filter="true" converter="usersConvertor" 
-                             widgetVar="authorSearche"
-                             styleClass="ui-grid-col-12">
-                <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
-                <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
-            </p:selectOneMenu>        
+            <h:panelGroup styleClass="ui-grid-col-12">
+                <div class="ui-inputgroup">
+                    <p:selectOneMenu value="#{explorerBean.model.authorSearche}" filter="true" converter="usersConvertor"
+                                     widgetVar="authorSearche"
+                                     styleClass="ui-grid-col-10">
+                        <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+                    </p:selectOneMenu>
+                    <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('authorSearche').selectValue();"/>
+                </div>
+            </h:panelGroup>
 
             <p:outputLabel value="#{bundle.States}"/>
             <p:selectManyMenu id="stateChecks" value="#{explorerBean.model.stateSearche}" showCheckbox="true"

@@ -92,7 +92,9 @@
                     <p:inputText id="actualRelease" value="#{checkReleaseBean.releaseNumber}" style="display: none;"/>
                     <p:inputText id="pageRelease" value="#{checkReleaseBean.pageRelease}" style="display: none;"/>
 
-                    <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                    <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:autoUpdate />
+                    </p:messages>
                     
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ">

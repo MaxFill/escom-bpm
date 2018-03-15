@@ -127,7 +127,9 @@
                     </p:menubar>
 
                     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"/>
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true">
                             <ui:insert name="page_body">Body<br /></ui:insert>
                             <ui:include src="/view/common/dict-rights.xhtml"/>

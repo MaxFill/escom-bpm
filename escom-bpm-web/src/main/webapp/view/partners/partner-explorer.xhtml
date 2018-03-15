@@ -32,13 +32,15 @@
     <ui:define name="searche">
         <p:outputLabel value="#{bundle.Code}"/>
         <h:panelGroup styleClass="ui-grid-col-12">
-            <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}" widgetVar="searchCode"
-                         styleClass="ui-grid-col-12"
-                         value="#{explorerBean.model.codeSearche}"
-                         onkeypress="keyPress();">
-            </p:inputText>
-            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchCode').jq.val('');"/>
-            <p:watermark for="codeSearche" value="#{bundle.InputCreteriaForSearche}" />
+            <div class="ui-inputgroup">
+                <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}" widgetVar="searchCode"
+                             styleClass="ui-grid-col-12"
+                             value="#{explorerBean.model.codeSearche}"
+                             placeholder="#{bundle.InputCreteriaForSearche}"
+                             onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchCode').jq.val('');"/>
+            </div>
         </h:panelGroup>
     </ui:define>
         
