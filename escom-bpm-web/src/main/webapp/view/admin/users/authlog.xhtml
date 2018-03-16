@@ -10,18 +10,95 @@
         #{bundle.AuthenticationLog}
     </ui:define>
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{authLogBean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:param name="_bean" value="#{authLogBean}"/>
+
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{authLogBean.layoutOptions}">
-            <pe:layoutPane position="west" resizable="true">
-                <h:form id="westFRM" style="font-size: 80%;">
-                    <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                                     actionListener="#{authLogBean.refreshData()}"
-                                     update="centerFRM"/>
-                </h:form>
-            </pe:layoutPane>
-            <pe:layoutPane position="center" resizable="true">
+            <p:ajax event="resize" listener="#{authLogBean.handleResize}"/>
+
+            <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="centerFRM" style="font-size: 80%;">
                     <p:outputPanel style="width: 100%;" >
+                        <p:hotkey bind="esc" id="hotskey"
+                                  immediate="true"
+                                  onstart="document.getElementById('centerFRM:btnClose').click();">
+                        </p:hotkey>
+
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                    <p:menuitem icon="ui-icon-search" value="#{bundle.Find}"
+                                                onclick="document.getElementById('centerFRM:btnSearche').click();">
+                                    </p:menuitem>
+                                    <p:menuitem icon="ui-icon-trash" value="#{bundle.Clear}"
+                                                onclick="document.getElementById('centerFRM:btnClear').click();">
+                                    </p:menuitem>
+                                    <p:separator />
+                                    <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                                onclick="document.getElementById('centerFRM:btnClose').click();">
+                                    </p:menuitem>
+                                </p:menuButton>
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+                                #{bundle.With}
+                                <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
+                                            widgetVar="dateCreateStartSearche"
+                                            showHour="true" showMinute="true"
+                                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
+                                            locale="#{sessionBean.locale}"
+                                            pattern="dd.MM.yyyy HH:mm:ss"
+                                            required="true"
+                                            requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+                                </p:calendar>
+                                #{bundle.At}
+                                <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
+                                            widgetVar="dateCreateEndSearche"
+                                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
+                                            showHour="true" showMinute="true"
+                                            locale="#{sessionBean.locale}"
+                                            pattern="dd.MM.yyyy HH:mm:ss"
+                                            required="true"
+                                            requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                                </p:calendar>
+                                <p:spacer/>
+                                <p:commandButton value="#{bundle.Find}" id="btnSearche"
+                                                 actionListener="#{authLogBean.refreshData()}"
+                                                 update="centerFRM"/>
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+                                <p:commandButton value="#{bundle.Clear}" id="btnClear"
+                                                 actionListener="#{authLogBean.clearData()}"
+                                                 update="centerFRM">
+                                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                                </p:commandButton>
+
+                            </f:facet>
+
+                            <f:facet name="right">
+                                <h:panelGroup>
+                                    <p:commandButton id="toggler" type="button" value="Columns" icon="ui-icon-calculator" />
+                                    <p:columnToggler datasource="tblLog" trigger="toggler" />
+                                    <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                                     title="#{bundle.Close}"
+                                                     immediate="true"
+                                                     action="#{authLogBean.onCloseCard()}">
+                                    </p:commandButton>
+                                </h:panelGroup>
+                            </f:facet>
+                        </p:toolbar>
+
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
+
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                             <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
@@ -32,10 +109,40 @@
                                      rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
                                      emptyMessage="#{bundle.EmptyTable}"
                                      paginator="true" paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rows="25" rowsPerPageTemplate="15,25,50,100"
-                                     sortMode="multiple"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                     rows="15" rowsPerPageTemplate="15,25,50"
+                                     sortBy="#{item.dateEvent}" sortOrder="descending"
                                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
+
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.AuthenticationLog}" />
+                            </f:facet>
+
+                            <f:facet name="{Exporters}">
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
+                                    <pe:exporter type="xls" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
+                                </h:commandLink>
+
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}"/>
+                                    <pe:exporter type="pdf" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
+                                </h:commandLink>
+
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
+                                    <pe:exporter type="csv" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
+                                </h:commandLink>
+
+                                <h:commandLink>
+                                    <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
+                                    <pe:exporter type="xml" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
+                                </h:commandLink>
+                            </f:facet>
+
+                            <p:column width="16" exportable="false">
+                                <p:graphicImage value="/resources/icon/#{item.eventName == 'UserEnter' ? 'arrow_right' : 'arrow_left'}.png" />
+                            </p:column>
 
                             <p:column headerText="#{bundle.DateEvent}" sortBy="#{item.dateEvent}">
                                 <p:outputLabel value="#{item.dateEvent}">
@@ -46,51 +153,41 @@
                             <p:column headerText="#{bundle.Login}" sortBy="#{item.login}" filterMatchMode="exact" filterBy="#{item.login}">
                                 <f:facet name="filter">
                                     <p:selectOneMenu onchange="PF('tblLog').filter()" >
-                                        <f:selectItem itemLabel="Select One" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="#{bundle.Select}" itemValue="#{null}" noSelectionOption="true" />
                                         <f:selectItems value="#{userBean.findAllLogins()}" />
                                     </p:selectOneMenu>
                                 </f:facet>
-                                #{item.login}
+                                <h:outputText value="#{item.login}" />
                             </p:column>
 
                             <p:column headerText="#{bundle.Event}" sortBy="#{item.eventName}" filterMatchMode="equals" filterBy="#{item.eventName}">
                                 <f:facet name="filter">
                                     <p:selectOneButton onchange="PF('tblLog').filter()">
-                                        <f:selectItem itemLabel="All" itemValue="" />
+                                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
                                         <f:selectItem itemLabel="Enter" itemValue="UserEnter" />
                                         <f:selectItem itemLabel="Exit" itemValue="UserExit" />
                                     </p:selectOneButton>
                                 </f:facet>
-                                #{authLogBean.getBundleName(item.eventName)}
+                                <h:outputText value="#{authLogBean.getBundleName(item.eventName)}"/>
                             </p:column>
 
-                            <p:column headerText="IP" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
-                                #{item.ipAdress}
+                            <p:column headerText="IP" priority="4" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
+                                <h:outputText value="#{item.ipAdress}"/>
                             </p:column>
 
-                            <p:column headerText="#{bundle.SMSisSend}" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
+                            <p:column headerText="#{bundle.SMSisSend}" ariaHeaderText="ariaHeaderText" priority="5" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
                                 <f:facet name="filter">
-                                    <f:converter converterId="javax.faces.Boolean" />
                                     <p:selectOneButton onchange="PF('tblLog').filter()">
-                                        <f:selectItem itemLabel="All" itemValue="" />
+                                        <f:converter converterId="javax.faces.Boolean" />
+                                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
                                         <f:selectItem itemLabel="Yes" itemValue="true" />
                                         <f:selectItem itemLabel="No" itemValue="false" />
                                     </p:selectOneButton>
                                 </f:facet>
-                                #{item.sendSMS ? "Yes":"No"}" disabled="true"/>
+                                <h:outputText value="#{item.sendSMS ? 'Yes':'No'}"/>
                             </p:column>
 
                         </p:dataTable>
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position="south" >
-                <h:form id="southFRM" style="font-size: 80%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
-                                         value="#{bundle.Close}"
-                                         action="#{authLogBean.onCloseCard}"/>
                     </p:outputPanel>
                 </h:form>
             </pe:layoutPane>

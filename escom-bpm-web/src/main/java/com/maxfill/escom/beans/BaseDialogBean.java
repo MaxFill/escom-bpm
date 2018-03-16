@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+
+import org.primefaces.event.CloseEvent;
+import org.primefaces.extensions.component.layout.LayoutPane;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Базовый бин для служебных диалогов  */
@@ -28,6 +31,10 @@ public abstract class BaseDialogBean implements Serializable{
     protected Configuration conf;
             
     private boolean itemChange;       //признак изменения записи
+
+    private Integer centerHight = 0;
+    private Integer northHight = 0;
+    private Integer southHight = 0;
 
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
@@ -51,7 +58,7 @@ public abstract class BaseDialogBean implements Serializable{
     /**
      * Метод вызывается автоматически при открытии формы диалога
      */
-    protected void onOpenCard(){
+    public void onOpenCard(){
     }
     
     protected abstract String onCloseCard();
@@ -64,15 +71,29 @@ public abstract class BaseDialogBean implements Serializable{
         setItemChange(Boolean.TRUE);
     }
 
-    /* Получение и сохранение размеров формы */
+    /* Обработка ajax cобытия изменения размеров формы */
     public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
+        LayoutPane o = (LayoutPane)event.getSource();
         Double width = event.getWidth();
         Double height = event.getHeight();
-        Integer x = width.intValue() + 14;
-        Integer y = height.intValue() + 14;
-        sessionBean.saveFormSize(getFormName(), x, y);
+        switch(o.getId()){
+            case "center":{
+                centerHight = height.intValue();
+                break;
+            }
+            case "north":{
+                northHight = height.intValue();
+                break;
+            }
+            case "south":{
+                southHight = height.intValue();
+                break;
+            }
+        }
+        Integer hight = centerHight + southHight + northHight;
+        sessionBean.saveFormSize(getFormName(), width.intValue(), hight + 50);
     }
-    
+
     protected abstract String getFormName();
     
     protected void initLayotOptions(){        

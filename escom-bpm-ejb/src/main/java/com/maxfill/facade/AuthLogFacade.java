@@ -2,13 +2,11 @@ package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.model.authlog.Authlog;
+import com.maxfill.model.authlog.Authlog_;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -22,16 +20,36 @@ public class AuthLogFacade extends BaseFacade<Authlog>{
         super(Authlog.class);
     }
 
-    @Override
-    public List<Authlog> findAll() {
+    /**
+     * Отбирает события атентификации за определённый период времени
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public List<Authlog> findEventsByPeriod(Date startDate, Date endDate) {
         getEntityManager().getEntityManagerFactory().getCache().evict(Authlog.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Authlog> cq = builder.createQuery(Authlog.class);
-        Root<Authlog> c = cq.from(Authlog.class);
-        //Predicate crit1 = builder.equal(c.get("actual"), true);
-        //cq.select(c).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq.select(c));
+        Root<Authlog> root = cq.from(Authlog.class);
+        Predicate predicate = builder.between(root.get(Authlog_.dateEvent), startDate, endDate);
+        cq.select(root).where(builder.and(predicate));
+        Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
+    }
+
+    /**
+     * Очистка журнала за указанный период времени
+     * @param startDate
+     * @param endDate
+     */
+    public int clearEvents(Date startDate, Date endDate) {
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaDelete<Authlog> cd = builder.createCriteriaDelete(Authlog.class);
+        Root root = cd.from(Authlog.class);
+        Predicate predicate = builder.between(root.get(Authlog_.dateEvent), startDate, endDate);
+        cd.where(predicate);
+        Query query = getEntityManager().createQuery(cd);
+        return query.executeUpdate();
     }
 
     public void addAuthEnter(String login, HttpServletRequest request, boolean isSmsSend){
