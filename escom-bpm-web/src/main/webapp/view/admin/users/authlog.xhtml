@@ -22,6 +22,49 @@
         <pe:layout fullPage="true" options="#{authLogBean.layoutOptions}">
             <p:ajax event="resize" listener="#{authLogBean.handleResize}"/>
 
+            <pe:layoutPane id="west" position="west" >
+                <h:form id="leftFRM" style="font-size: 80%;">
+                    <p:panelGrid columns="1" layout="grid" >
+                        <p:outputLabel value="#{bundle.ExportIn}"/>
+
+                        <h:panelGroup>
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
+                                <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" encoding="utf-8"
+                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}" />
+                                <pe:exporter type="pdf" target="centerFRM:tblLog" fileName="#{_bean.formName}"
+                                                preProcessor="#{authLogBean.preProcessPDF}" fontName="Arial" encoding="CP1251"
+                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
+                                <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
+                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
+                                <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
+                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                            </h:commandLink>
+                        </h:panelGroup>
+
+                        <p:selectBooleanCheckbox value="#{authLogBean.onlyCurPageExp}" itemLabel="#{bundle.OnlyCurrentPage}">
+                            <p:ajax update="leftFRM"/>
+                        </p:selectBooleanCheckbox>
+
+                        <p:selectBooleanButton value="#{authLogBean.orientation}" offLabel="#{bundle.Portret}" onLabel="#{bundle.Landscape}" style="width:70px;" >
+                            <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="leftFRM"/>
+                        </p:selectBooleanButton>
+                    </p:panelGrid>
+                </h:form>
+            </pe:layoutPane>
+
             <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="centerFRM" style="font-size: 80%;">
                     <p:outputPanel style="width: 100%;" >
@@ -80,18 +123,24 @@
                                     <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                                 </p:commandButton>
 
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+
+                                <h:panelGroup>
+                                    <p:commandButton id="toggler" type="button" value="#{bundle.Columns}" icon="ui-icon-calculator" />
+                                    <p:columnToggler datasource="tblLog" trigger="toggler">
+                                        <p:ajax event="toggle" listener="#{authLogBean.onToggle}" update="tblLog" />
+                                    </p:columnToggler>
+                                </h:panelGroup>
                             </f:facet>
 
                             <f:facet name="right">
-                                <h:panelGroup>
-                                    <p:commandButton id="toggler" type="button" value="Columns" icon="ui-icon-calculator" />
-                                    <p:columnToggler datasource="tblLog" trigger="toggler" />
-                                    <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                                     title="#{bundle.Close}"
-                                                     immediate="true"
-                                                     action="#{authLogBean.onCloseCard()}">
-                                    </p:commandButton>
-                                </h:panelGroup>
+                                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                                 title="#{bundle.Close}"
+                                                 immediate="true"
+                                                 action="#{authLogBean.onCloseCard()}">
+                                </p:commandButton>
                             </f:facet>
                         </p:toolbar>
 
@@ -104,53 +153,32 @@
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                         </p:confirmDialog>
 
-                        <p:dataTable id="tblLog" widgetVar="tblLog"
+                        <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true"
                                      value="#{authLogBean.authlogs}" var="item"
                                      rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
                                      emptyMessage="#{bundle.EmptyTable}"
                                      paginator="true" paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rows="15" rowsPerPageTemplate="15,25,50"
                                      sortBy="#{item.dateEvent}" sortOrder="descending"
                                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
+                            <p:ajax event="colReorder" listener="#{authLogBean.onColumnReorder}"/>
 
                             <f:facet name="header">
                                 <h:outputText value="#{bundle.AuthenticationLog}" />
                             </f:facet>
 
-                            <f:facet name="{Exporters}">
-                                <h:commandLink>
-                                    <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
-                                    <pe:exporter type="xls" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
-                                </h:commandLink>
-
-                                <h:commandLink>
-                                    <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}"/>
-                                    <pe:exporter type="pdf" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
-                                </h:commandLink>
-
-                                <h:commandLink>
-                                    <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
-                                    <pe:exporter type="csv" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
-                                </h:commandLink>
-
-                                <h:commandLink>
-                                    <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
-                                    <pe:exporter type="xml" target="tblLog" fileName="#{_bean.formName}" fontName="Arial" datasetPadding="4"/>
-                                </h:commandLink>
-                            </f:facet>
-
-                            <p:column width="16" exportable="false">
+                            <p:column id="colImg" width="16" exportable="false" visible="#{authLogBean.isVisibleColumn('colImg')}">
                                 <p:graphicImage value="/resources/icon/#{item.eventName == 'UserEnter' ? 'arrow_right' : 'arrow_left'}.png" />
                             </p:column>
 
-                            <p:column headerText="#{bundle.DateEvent}" sortBy="#{item.dateEvent}">
+                            <p:column id="colDate" visible="#{authLogBean.isVisibleColumn('colDate')}" headerText="#{bundle.DateEvent}" sortBy="#{item.dateEvent}" exportable="#{authLogBean.isVisibleColumn('colDate')}">
                                 <p:outputLabel value="#{item.dateEvent}">
                                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                                 </p:outputLabel>
                             </p:column>
 
-                            <p:column headerText="#{bundle.Login}" sortBy="#{item.login}" filterMatchMode="exact" filterBy="#{item.login}">
+                            <p:column id="colLogin" visible="#{authLogBean.isVisibleColumn('colLogin')}" exportable="#{authLogBean.isVisibleColumn('colLogin')}" headerText="#{bundle.Login}" sortBy="#{item.login}" filterMatchMode="exact" filterBy="#{item.login}">
                                 <f:facet name="filter">
                                     <p:selectOneMenu onchange="PF('tblLog').filter()" >
                                         <f:selectItem itemLabel="#{bundle.Select}" itemValue="#{null}" noSelectionOption="true" />
@@ -160,7 +188,7 @@
                                 <h:outputText value="#{item.login}" />
                             </p:column>
 
-                            <p:column headerText="#{bundle.Event}" sortBy="#{item.eventName}" filterMatchMode="equals" filterBy="#{item.eventName}">
+                            <p:column id="colEvent" visible="#{authLogBean.isVisibleColumn('colEvent')}" exportable="#{authLogBean.isVisibleColumn('colEvent')}" headerText="#{bundle.Event}" sortBy="#{item.eventName}" filterMatchMode="equals" filterBy="#{item.eventName}">
                                 <f:facet name="filter">
                                     <p:selectOneButton onchange="PF('tblLog').filter()">
                                         <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
@@ -171,11 +199,11 @@
                                 <h:outputText value="#{authLogBean.getBundleName(item.eventName)}"/>
                             </p:column>
 
-                            <p:column headerText="IP" priority="4" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
+                            <p:column id="colIP" visible="#{authLogBean.isVisibleColumn('colIP')}" exportable="#{authLogBean.isVisibleColumn('colIP')}" headerText="IP" priority="4" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
                                 <h:outputText value="#{item.ipAdress}"/>
                             </p:column>
 
-                            <p:column headerText="#{bundle.SMSisSend}" ariaHeaderText="ariaHeaderText" priority="5" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
+                            <p:column id="colSMS" visible="#{authLogBean.isVisibleColumn('colSMS')}" exportable="#{authLogBean.isVisibleColumn('colSMS')}" headerText="#{bundle.SMSisSend}" ariaHeaderText="ariaHeaderText" priority="5" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
                                 <f:facet name="filter">
                                     <p:selectOneButton onchange="PF('tblLog').filter()">
                                         <f:converter converterId="javax.faces.Boolean" />

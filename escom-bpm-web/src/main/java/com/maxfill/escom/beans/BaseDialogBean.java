@@ -36,6 +36,10 @@ public abstract class BaseDialogBean implements Serializable{
     private Integer northHight = 0;
     private Integer southHight = 0;
 
+    private Integer westWidth = 0;
+    private Integer centerWidth = 0;
+    private Integer eastWidth = 0;
+
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     @PostConstruct
@@ -79,6 +83,7 @@ public abstract class BaseDialogBean implements Serializable{
         switch(o.getId()){
             case "center":{
                 centerHight = height.intValue();
+                centerWidth = width.intValue();
                 break;
             }
             case "north":{
@@ -89,9 +94,18 @@ public abstract class BaseDialogBean implements Serializable{
                 southHight = height.intValue();
                 break;
             }
+            case "west":{
+                westWidth = width.intValue();
+                break;
+            }
+            case "east":{
+                eastWidth = width.intValue();
+                break;
+            }
         }
-        Integer hight = centerHight + southHight + northHight;
-        sessionBean.saveFormSize(getFormName(), width.intValue(), hight + 50);
+        Integer heightSum = centerHight + southHight + northHight;
+        Integer widthSum = centerWidth + westWidth + eastWidth;
+        sessionBean.saveFormSize(getFormName(), widthSum + 25, heightSum + 25);
     }
 
     protected abstract String getFormName();
