@@ -15,6 +15,8 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.export.ExporterType;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.Visibility;
 
 import javax.annotation.PreDestroy;
@@ -27,6 +29,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
 
@@ -38,15 +41,17 @@ public class AuthLogBean extends BaseDialogBean{
     private static final long serialVersionUID = -2035201127652612778L;
 
     private Authlog selected;
-    private List<Authlog> authlogs;
-    private Date dateStart;
-    private Date dateEnd;
+    private final LazyDataModel<Authlog> authlogs = new AuthLogLazyModel(null, this);
 
     private String orientationName = "Portret";
     private boolean orientation;
     private boolean onlyCurPageExp;
     private final Map<String, Boolean> visibleColumns = new HashMap <>();
     private final Map<Integer, String> columns = new HashMap <>();
+
+    private Map<String,Object> filters;
+    private Date dateStart;
+    private Date dateEnd;
 
     @EJB
     private Configuration conf;
@@ -83,7 +88,6 @@ public class AuthLogBean extends BaseDialogBean{
         return EscomMsgUtils.getBandleLabel(keyBundle);
     }
 
-
     /**
      * Обработка события перемещения столбцов в таблице
      * @param event
@@ -116,30 +120,46 @@ public class AuthLogBean extends BaseDialogBean{
         return visibleColumns.get(column);
     }
 
-    public void refreshData(){
-        authlogs = null;
-    }
-
-    public void clearData(){
-        Integer countDelete = authLogFacade.clearEvents(dateStart, dateEnd);
-        authlogs = null;
+    /**
+     * Обработка команды очистки журнала
+     */
+    public void onClearData(){
+        Integer countDelete = authLogFacade.clearEvents(dateStart, dateEnd, filters);
         EscomMsgUtils.succesFormatMsg("RemovedEntries", new Object[]{countDelete});
     }
 
-    public List <Authlog> getAuthlogs() {
-        if (authlogs == null){
-            authlogs = authLogFacade.findEventsByPeriod(dateStart, dateEnd);
-        }
-        return authlogs;
+    /**
+     * Формирует сообщение для вывода в диалоге подтверждения очистки журнала
+     * @return
+     */
+    public String clearEventsConfirmMsg(){
+        Object[] params = new Object[]{countEvents(filters)};
+        return MessageFormat.format(EscomMsgUtils.getBandleLabel("WillBeDeleted"), params);
+    }
+
+    public List<Authlog> loadEvents(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
+        this.filters = filters;
+        return authLogFacade.findEventsByPeriod(dateStart, dateEnd, first, pageSize, sortField, sortOrder.name(), filters);
+    }
+
+    public int countEvents(Map<String,Object> filters){
+        this.filters = filters;
+        return authLogFacade.countEvents(dateStart, dateEnd, filters);
     }
 
     public void onChangeOrientation(){
         orientationName = orientation ? "Landscape" : "Portret";
     }
 
+    /**
+     * Установка шрифта для экспорта журнала в PDF
+     * @param document
+     * @throws IOException
+     * @throws BadElementException
+     * @throws DocumentException
+     */
     public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
         String fontUrl = conf.getJasperReports() + conf.getPdfFont();
-        //BaseFont.createFont(fontUrl, "CP1251", BaseFont.EMBEDDED);
         FontFactory.register(fontUrl);
     }
 
@@ -148,7 +168,12 @@ public class AuthLogBean extends BaseDialogBean{
         LayoutOptions west = layoutOptions.getWestOptions();
         west.addOption("initClosed", true);
     }
+
     /* gets & sets */
+
+    public LazyDataModel <Authlog> getAuthlogs() {
+        return authlogs;
+    }
 
     public boolean isOnlyCurPageExp() {
         return onlyCurPageExp;
@@ -188,4 +213,5 @@ public class AuthLogBean extends BaseDialogBean{
     public void setDateEnd(Date dateEnd) {
         this.dateEnd = dateEnd;
     }
+
 }

@@ -111,16 +111,16 @@
                                             requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
                                 </p:calendar>
                                 <p:spacer/>
-                                <p:commandButton value="#{bundle.Find}" id="btnSearche"
-                                                 actionListener="#{authLogBean.refreshData()}"
-                                                 update="centerFRM"/>
+
+                                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM"/>
                                 <span class="ui-separator">
                                     <span class="ui-icon ui-icon-grip-dotted-vertical" />
                                 </span>
+
                                 <p:commandButton value="#{bundle.Clear}" id="btnClear"
-                                                 actionListener="#{authLogBean.clearData()}"
+                                                 actionListener="#{authLogBean.onClearData()}"
                                                  update="centerFRM">
-                                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                                    <p:confirm header="#{bundle.ConfirmAction}" message="#{authLogBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
                                 </p:commandButton>
 
                                 <span class="ui-separator">
@@ -153,11 +153,12 @@
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                         </p:confirmDialog>
 
-                        <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true"
+                        <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true" lazy="true"
                                      value="#{authLogBean.authlogs}" var="item"
                                      rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
                                      emptyMessage="#{bundle.EmptyTable}"
                                      paginator="true" paginatorPosition="bottom"
+                                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                      rows="15" rowsPerPageTemplate="15,25,50"
                                      sortBy="#{item.dateEvent}" sortOrder="descending"
