@@ -1,6 +1,9 @@
 package com.maxfill.utils;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.folders.Folder;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -39,7 +42,7 @@ public final class ItemUtils {
         }
         return rez; 
     }
-        
+
     /* Формирование пути вложенности для дочерних объектов  */
     public static String makePath(BaseDict item){
         StringBuilder sb = new StringBuilder();
@@ -51,7 +54,24 @@ public final class ItemUtils {
         }
         sb.append(item.getName());
         return sb.toString();
-    }    
+    }
+
+    /**
+     * Формирование составного номера папки
+     * @param folder
+     * @return
+     */
+    public static void makeParentNumber(StringBuilder sb, Folder folder){
+        if (folder.getParent() != null){
+            makeParentNumber(sb, folder.getParent());
+        }
+        if (StringUtils.isNotBlank(folder.getFolderNumber())) {
+            sb.append(folder.getFolderNumber());
+        }
+        if (sb.length() > 0){
+            sb.append("-");
+        }
+    }
 
     /* Проверяет нахождение объекта в списке details владельца (owner) для каждой его группы и если находит, то удаляет объект  */
     public static void removeItemFromGroup(BaseDict item, BaseDict owner, List<BaseDict> itemGroups){

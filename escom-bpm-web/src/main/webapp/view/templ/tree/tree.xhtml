@@ -48,11 +48,11 @@
                     selection="#{explorerBean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
 
                 <p:treeNode type="#{explorerBean.typeRoot}" icon="#{treeItem.iconTree}">
-                    <h:outputText value="#{treeItem.name}"/>
+                    <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                 </p:treeNode>
                 
                 <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                    <h:outputText value="#{treeItem.name}"/>
+                    <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{explorerBean.onTreeNodeSelect}"

@@ -42,11 +42,14 @@
         </p:selectCheckboxMenu>
 
         <p:outputLabel value="#{bundle.Number}"/>
-        <p:inputText title="#{bundle.HelpSearcheContext}" value="#{explorerBean.model.numberSearche}"
+        <div class="ui-inputgroup">
+            <p:inputText title="#{bundle.HelpSearcheContext}" value="#{explorerBean.model.numberSearche}"
                      widgetVar="docNumberSearche"
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
-        </p:inputText>
+            </p:inputText>
+            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('docNumberSearche').jq.val('');"/>
+        </div>
         
         <p:selectBooleanCheckbox itemLabel="#{bundle.DateDoc}" widgetVar="cbDateDoc"
                                  title="#{bundle.SearcheDateDoc}" 

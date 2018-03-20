@@ -1,14 +1,12 @@
 package com.maxfill.facade;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 /* Абстрактный фасад  */
 public abstract class BaseFacade<T> {
@@ -75,7 +73,7 @@ public abstract class BaseFacade<T> {
         Predicate crit1 = builder.equal(c.get("actual"), true);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        cq.orderBy(builder.asc(c.get("name")));
+        cq.orderBy(orderBuilder(builder, c));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
@@ -107,7 +105,7 @@ public abstract class BaseFacade<T> {
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         Predicate crit3 = builder.equal(c.get("actual"), true);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
-        cq.orderBy(builder.asc(c.get("name")));
+        cq.orderBy(orderBuilder(builder, c));
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }      
@@ -120,8 +118,20 @@ public abstract class BaseFacade<T> {
         Root<T> c = cq.from(entityClass);
         Predicate crit1 = builder.equal(c.get("parent"), parent);
         cq.select(c).where(builder.and(crit1));
-        cq.orderBy(builder.asc(c.get("name")));
+        cq.orderBy(orderBuilder(builder, c));
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
-    } 
+    }
+
+    /**
+     * Определяет дефолтный порядок сортировки данных
+     * @param builder
+     * @param root
+     * @return
+     */
+    protected List<Order> orderBuilder(CriteriaBuilder builder, Root root){
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(builder.asc(root.get("name")));
+        return orderList;
+    }
 }

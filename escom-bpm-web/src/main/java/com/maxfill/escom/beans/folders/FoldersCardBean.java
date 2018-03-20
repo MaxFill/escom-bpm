@@ -69,7 +69,22 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
             return EscomMsgUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
     }
-    
+
+    /**
+     * Формирует заголовок для карточки папки
+     * @return
+     */
+    @Override
+    public String makeCardHeader() {
+        StringBuilder sb = new StringBuilder();
+        if (getEditedItem().isCase()){
+            sb.append(EscomMsgUtils.getBandleLabel("Case"));
+        } else {
+            sb.append(EscomMsgUtils.getBandleLabel("Folder"));
+        }
+        return makeHeader(sb);
+    }
+
     public String getTypeName(){
         return foldersBean.getTypeName(getEditedItem());
     }

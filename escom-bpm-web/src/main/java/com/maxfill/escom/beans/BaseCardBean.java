@@ -471,18 +471,22 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         return "itemCard:btnCancel";
     }
 
-    /* Формирует строку заголовка карточки объекта. Вызов с экранной формы  */
+    /* Формирует заголовок карточки объекта. Вызов с экранной формы  */
     public String makeCardHeader() {
         StringBuilder sb = new StringBuilder(EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName()));
+        return makeHeader(sb);
+    }
+
+    protected String makeHeader(StringBuilder sb){
         sb.append(": ");
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
-                sb.append(getEditedItem().getNameEndElipse());                
+                sb.append(getEditedItem().getCaption());
                 sb.append(" <").append(EscomMsgUtils.getBandleLabel("ReadOnly")).append(">");;
                 break;
             }
             case DictEditMode.EDIT_MODE:{
-                sb.append(getEditedItem().getNameEndElipse());                
+                sb.append(getEditedItem().getCaption());
                 sb.append(" <").append(EscomMsgUtils.getBandleLabel("Correction")).append(">");
                 break;
             }
@@ -494,7 +498,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         }
         return sb.toString();
     }
-    
+
     /* Формирует текст сообщения о том, что редактируемый объект актуален или не актуален  */
     public String getActualInfo() {
         String msg;

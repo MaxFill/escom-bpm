@@ -24,7 +24,8 @@
         </sql>  
         
         <sql>
-            INSERT users (Id, Parent, Owner, Login, Name, FirstName, SecondName, LastName, Gender, LDAPname, Password, Settings, Email, EmailSign, Phone, Number, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (0, NULL, NULL, N'admin', N'Системный администратор', N'Администратор', N'Администратор', N'Администратор', 1, NULL, N'b59c67bf196a4758191e42f76670ceba', NULL, NULL, N'', N'', NULL, N'', 1, 1, 0, 1, 0, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT users (Id, Parent, Owner, Login, Name, FirstName, SecondName, LastName, Gender, LDAPname, Password, Settings, Email, EmailSign, Phone, Number, Access, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange)
+            VALUES (0, NULL, NULL, N'admin', N'Системный администратор', N'Администратор', N'Администратор', N'Администратор', 1, NULL, N'b59c67bf196a4758191e42f76670ceba', NULL, NULL, N'', N'', NULL, N'', 1, 1, 0, 1, 0, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
                   
         <!-- Шаблоны нумераторов -->
@@ -362,14 +363,20 @@
             INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
         </sql>
         <sql>
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (0, NULL, NULL, N'Все группы',                     NULL, 1, 1, 0, 1, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (2, 0, NULL, N'Администраторы',             NULL, 1, 1, 0, 2, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);           
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (3, 0, NULL, N'Редакторы оргструктуры',     NULL, 1, 1, 0, 3, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (4, 0, NULL, N'Редакторы контрагентов',     NULL, 1, 1, 0, 4, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (5, 0, NULL, N'Редакторы видов документов', NULL, 1, 1, 0, 5, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
-            
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (15, 0, NULL, N'Редактор',                  NULL, 1, 1, 0, 6, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Editor");
-            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName) VALUES (16, 0, NULL, N'Владелец',                  NULL, 1, 1, 0, 7, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Owner");
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (0, NULL, NULL, N'Все группы',              NULL, 1, 1, 0, 1, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (2, 0, NULL, N'Администраторы',             NULL, 1, 1, 0, 2, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (3, 0, NULL, N'Редакторы оргструктуры',     NULL, 1, 1, 0, 3, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (4, 0, NULL, N'Редакторы контрагентов',     NULL, 1, 1, 0, 4, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (5, 0, NULL, N'Редакторы видов документов', NULL, 1, 1, 0, 5, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 0, NULL);
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (15, 0, NULL, N'Редактор',                  NULL, 1, 1, 0, 6, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Editor");
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (16, 0, NULL, N'Владелец',                  NULL, 1, 1, 0, 7, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Owner");
         </sql>        
         
         <!-- Пользователи в группах -->
@@ -424,11 +431,115 @@
         
         <!-- Папки -->
         <sql>
-            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);            
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(2, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(10, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(11, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(12, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(13, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(14, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(15, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(16, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(17, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(18, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(19, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(20, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(21, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(22, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(23, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(24, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(25, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(26, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(27, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(28, 7, 5);
+            INSERT foldersStates (Id, CurrentState,  PreviousState) VALUES(29, 7, 5);
         </sql>
         <sql>
-            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner) VALUES (0, NULL, NULL, N'Архив', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);            
-        </sql>        
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (0, NULL, NULL, N'Архив', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (1, NULL, 0, N'Папки подразделений', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (2, NULL, 0, N'Папки проектов', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (3, NULL, 0, N'Папки пользователей', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (4, NULL, 0, N'Общие папки', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (5, NULL, 4, N'Инструкции', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (6, NULL, 4, N'Регламенты', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (7, NULL, 4, N'Приказы и распоряжения', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (8, NULL, 4, N'Шаблоны документов', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (9, NULL, 0, N'Номенклатура дел 2018', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (10, NULL, 9, N'Канцелярия', N'01', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (11, NULL, 10, N'Учредительные документы и устав общества', N'01', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (12, NULL, 10, N'Положения об органах управления (общем собрании акционеров, совете директоров, правлении)', N'02', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (13, NULL, 10, N'Штатные расписания и изменения к ним', N'03', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (14, NULL, 10, N'Положения о структурных подразделениях', N'04', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (15, NULL, 10, N'Приказы директора по основной деятельности', N'05', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (16, NULL, 10, N'Приказы директора по административно-хозяйственным вопросам', N'06', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (17, NULL, 10, N'Протоколы общих собраний акционеров и документы к ним', N'07', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (18, NULL, 10, N'Инструкция по делопроизводству', N'08', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (19, NULL, 10, N'Номенклатура дел', N'09', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (20, NULL, 10, N'Переписка по вопросам основной деятельности', N'10', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (21, NULL, 10, N'Резервный номер', N'11', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (22, NULL, 10, N'База данных регистрации входящих документов', N'12', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (23, NULL, 10, N'База данных регистрации исходящих документов', N'13', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (24, NULL, 9, N'Отдел кадров', N'02', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (25, NULL, 24, N'Должностные инструкции сотрудников', N'01', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (26, NULL, 24, N'Штатные расписания и изменения к ним. Копии', N'02', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (27, NULL, 24, N'Приказы директора по основной деятельности. Копии', N'03', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (28, NULL, 24, N'Приказы директора по личному составу (о приеме, перемещении, увольнении и др.)', N'04', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+            INSERT folders (Id, Owner, Parent, Name, FolderNumber, IsModeration, Moderator, Number, DocTypeDefault, Access, AccessChilds, State, IsLocked, IsInherits, IsActual, IsDeleted, IsInheritsAccessChilds, Author, DateChange, DateCreate, CompanyDefault, IsInheritCompany, IsInheritDocType, IsInheritPartner)
+            VALUES (29, NULL, 24, N'Приказы директора о предоставлении ежегодных оплачиваемых отпусков', N'05', 1, 0, NULL, NULL, NULL, NULL, 1, 0, 1, 1, 0, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, 0, 0, 0);
+
+        </sql>
         
         <!-- Должности -->
         <sql>

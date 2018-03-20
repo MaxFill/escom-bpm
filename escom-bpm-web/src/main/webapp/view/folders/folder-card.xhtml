@@ -13,7 +13,7 @@
             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
                 <p:outputLabel value="#{bundle.Name}:" />
-                <p:inputText value="#{_bean.editedItem.name}" id="nameItem" style="width: 100%;"
+                <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                  readonly="#{!_bean.isHaveRightEdit()}"
                                  onchange="return itemChange = 1;"
@@ -21,8 +21,8 @@
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
-                
-                <p:outputLabel value="#{bundle.InheritParams}" />
+
+                <p:outputLabel value="#{bundle.InheritParams}" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding"/>
                 <p:separator/>
                 
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritCompany}" itemLabel="#{bundle.InheritCompany}:"
@@ -77,6 +77,35 @@
                     <ui:param name="_update" value=""/>
                 </ui:include>
                                 
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.Case}">
+            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+
+                <p:outputLabel value="#{bundle.Header}"/>
+                <p:inputText value="#{_bean.editedItem.name}" styleClass="ui-grid-col-12"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             readonly="true"
+                             disabled="true">
+                </p:inputText>
+
+                <p:outputLabel value="#{bundle.IndexCase}" />
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <p:inputText value="#{_bean.editedItem.getParentNumber()}" rendered="#{not empty _bean.editedItem.parent}"
+                                 styleClass="ui-grid-col-2"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 readonly="true" disabled="true">
+                    </p:inputText>
+                    <p:inputText value="#{_bean.editedItem.folderNumber}"
+                                 styleClass="ui-grid-col-1"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 readonly="#{!_bean.isHaveRightEdit()}"
+                                 onchange="return itemChange = 1;"
+                                 maxlength="4"
+                                 disabled="#{_bean.isReadOnly()}">
+                    </p:inputText>
+                </h:panelGroup>
             </p:panelGrid>
         </p:tab>
 

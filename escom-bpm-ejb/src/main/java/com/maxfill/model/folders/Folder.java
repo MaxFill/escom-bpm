@@ -6,6 +6,9 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.ItemUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -68,7 +71,12 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @NotNull
     @Column(name = "IsLocked")
     private boolean isLocked = false;
-    
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "FolderNumber")
+    private String folderNumber;
+
     @OneToMany
     @JoinColumn(name = "owner")
     private List<Doc> detailItems = new ArrayList<>();
@@ -108,14 +116,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
 
     public Folder(){}
 
-    public String getRegNumber(){
-        if (getNumber() == null){
-            return "";
-        }
-        return getNumber().toString();
-    }
-
-    /* вычисление значка папки (модерируемая-немодерируемая) */
+    /* Вычисление значка папки (модерируемая-немодерируемая) */
     public String getStateIcon(){
         String stateIcon = "ui-icon-folder-open";
         if(isModeration == true){
@@ -132,6 +133,71 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Override
     public String getFullName() {
         return super.getPath();
+    }
+
+    /**
+     * Возвращает сокращённое по длине имя папки, начинающееся с индекса дела для отображения в дереве папок
+     * @return
+     */
+    @Override
+    public String getNameEndElipse() {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(folderNumber)){
+            sb.append(folderNumber).append(" ");
+        }
+        sb.append(super.getNameEndElipse());
+        return sb.toString();
+    }
+
+    /**
+     * Возвращает полный индекс дела
+     * @return
+     */
+    public String getFolderFullNumber(){
+        if (StringUtils.isBlank(folderNumber)) return null;
+
+        StringBuilder sb = new StringBuilder();
+        String parentNumber = getParentNumber();
+        if (StringUtils.isNotBlank(parentNumber)){
+            sb.append(parentNumber);
+        }
+        sb.append(folderNumber);
+        return sb.toString();
+    }
+
+    /**
+     * Возвращает составной номер родительской папки
+     * @return
+     */
+    public String getParentNumber(){
+        if (getParent() == null) return null;
+
+        StringBuilder sb = new StringBuilder();
+        ItemUtils.makeParentNumber(sb, getParent());
+        return sb.toString();
+    }
+
+    /**
+     * Возвращает заголовок для карточки папки
+     * @return
+     */
+    @Override
+    public String getCaption(){
+        StringBuilder sb = new StringBuilder();
+        String fullNumber = getFolderFullNumber();
+        if (StringUtils.isNotBlank(fullNumber)) {
+            sb.append(fullNumber).append(" ");
+        }
+        sb.append(super.getNameEndElipse());
+        return sb.toString();
+    }
+
+    /**
+     * Возвращает флаг - является ли папка делом
+     * @return
+     */
+    public boolean isCase(){
+        return StringUtils.isNotBlank(folderNumber);
     }
 
     /* gets & sets */
@@ -179,6 +245,13 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Override
     public void setItemLogs(List<FolderLog> itemLogs) {
         this.itemLogs = itemLogs;
+    }
+
+    public String getFolderNumber() {
+        return folderNumber;
+    }
+    public void setFolderNumber(String folderNumber) {
+        this.folderNumber = folderNumber;
     }
 
     public Company getCompanyDefault() {
@@ -241,7 +314,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Folder)) {
             return false;
         }

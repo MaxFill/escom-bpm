@@ -9,15 +9,14 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.folders.FolderStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 /* Папки  */
 @Stateless
@@ -48,7 +47,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     }
 
     /**
-     * Формирование прав доступа к папке*
+     * Формирование прав доступа к папке
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {
@@ -112,6 +111,20 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     public boolean checkRightAddDetail(Folder folder, User user){
         actualizeRightItem(folder, user);
         return isHaveRightAddChild(folder);
+    }
+
+    /**
+     * Определяет специфичный порядок сортировки папок
+     * @param builder
+     * @param root
+     * @return
+     */
+    @Override
+    protected List<Order> orderBuilder(CriteriaBuilder builder, Root root){
+        List<Order> orderList = new ArrayList();
+        orderList.add(builder.asc(root.get("folderNumber")));
+        orderList.add(builder.asc(root.get("name")));
+        return orderList;
     }
 
     @Override
