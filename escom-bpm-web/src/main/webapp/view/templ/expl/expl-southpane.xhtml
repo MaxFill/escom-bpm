@@ -13,12 +13,12 @@
                                      id="btnCancel" ajax="false"
                                      styleClass="without-spaces"
                                      action="#{sessionBean.goToIndex() }"
-                                     rendered="#{!explorerBean.selectorViewMode}"
+                                     rendered="#{!_explorerBean.selectorViewMode}"
                                      onclick="return isClose = 1;"/>
                     <p:commandButton id="btnClose" icon="ui-icon-close" value="#{bundle.Close}"
                                      styleClass="without-spaces"
-                                     rendered="#{explorerBean.selectorViewMode}"
-                                     action="#{explorerBean.onClose()}"
+                                     rendered="#{_explorerBean.selectorViewMode}"
+                                     action="#{_explorerBean.onClose()}"
                                      onclick="return isClose = 1;">
                     </p:commandButton>
                 </h:panelGroup>
@@ -35,7 +35,7 @@
                     <pe:tooltip for="serverTime" value="#{bundle.ServerTime}"/>
                     <p:spacer width="7" />
                     <p:commandButton value="#{bundle.Exit}" title="#{bundle.ExitProgramm}" 
-                             rendered="#{explorerBean.explorerViewMode}"
+                             rendered="#{_explorerBean.explorerViewMode}"
                              ajax="false" icon="ui-icon-extlink"
                              onclick="return isClose = 1;"
                              action="#{sessionBean.onSessionExit()}"/>

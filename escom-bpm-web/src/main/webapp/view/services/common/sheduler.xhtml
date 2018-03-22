@@ -47,7 +47,7 @@
                                 showButtonPanel="true" showHour="true" showMinute="true"                                
                                 locale="#{sessionBean.locale}"
                                 navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
-                                required="true" 
+                                required="#{param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
                     </p:calendar>
                 </h:panelGroup>    
@@ -56,7 +56,7 @@
                 <p:panelGrid columns="2" layout="grid">
                     <p:spinner value="#{_bean.scheduler.interval}" size="2" min="1" max="100"
                                  disabled="#{_bean.service.started}"
-                                 required="true"
+                                 required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}"
                                  title="#{bundle.IntervalRunService}"/>
                     <p:selectOneMenu value="#{_bean.scheduler.repeatEachType}" required="true" title="#{bundle.IntervalTypeRunService}"
@@ -76,12 +76,16 @@
                              disabled="#{_bean.service.started}"
                              actionListener="#{_bean.onStartService()}"
                              update="westFRM"
-                             onclick="document.getElementById('eastFRM:btnEastSaves').click();"/>
+                             onclick="document.getElementById('eastFRM:btnEastSaves').click();">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
                 <p:commandButton icon="ui-icon-squaresmall-close" value="#{bundle.Stop}"
                              title="#{bundle.Stop}"
                              disabled="#{!_bean.service.started}"
                              actionListener="#{_bean.onStopService()}"
-                             update="westFRM, centerFRM"/>
+                             update="westFRM, centerFRM">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
             </h:panelGrid>
         </h:panelGrid>
                 

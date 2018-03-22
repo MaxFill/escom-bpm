@@ -16,7 +16,7 @@
             <p:outputLabel value="#{bundle.LdapAdServer}"/>
             <p:inputText id="ldapAdServer" style="width: 100%;"
                          title="#{bundle.LdapAdServer}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.LdapAdServer}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapAdServer}"/>
             <p:message for="ldapAdServer" display="tooltip"/>
@@ -24,7 +24,7 @@
             <p:outputLabel value="#{bundle.User}"/>
             <p:inputText id="ldapUsername" style="width: 100%;"
                          title="#{bundle.LdapUsername}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapUsername}"/>
             <p:message for="ldapUsername" display="tooltip"/>
@@ -32,7 +32,7 @@
             <p:outputLabel value="#{bundle.password}"/>
             <p:inputText id="ldapPassword" style="width: 100%;"
                          title="#{bundle.LdapPassword}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapPassword}"/> 
             <p:message for="ldapPassword" display="tooltip"/>
@@ -41,12 +41,16 @@
                 <p:commandButton icon="ui-icon-check"
                                  value="#{bundle.Test}" title="#{bundle.CheckConnect}"
                                  actionListener="#{ldapBean.onCheckConnect()}"
-                                 update="eastFRM"/>
+                                 update="eastFRM">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
                 <p:commandButton icon="ui-icon-circle-triangle-e"
                                  value="#{bundle.Get}" title="#{msg.GetRecordsFromLDAP}"
                                  actionListener="#{ldapBean.onTestLoadUsers()}"
                                  update="previewLdapPanel"
-                                 onsuccess="PF('previewLdapDlg').show();"/>
+                                 onsuccess="PF('previewLdapDlg').show();">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
             </h:panelGrid>
             <p:separator />
 
@@ -60,13 +64,13 @@
             <p:inputTextarea id="ldapSearchBase" style="width: 100%;"
                              cols="2"
                              title="#{bundle.LdapSearchBase}"
-                             required="true"
+                             required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.LdapSearchBase}] #{bundle.MustBeFilled}"
                              value="#{ldapBean.settings.ldapSearchBase}"/>
             <p:message for="ldapSearchBase" display="tooltip"/>
             <p:inputText id="ldapSearchGroup" style="width: 100%;"
                          title="#{bundle.LdapSearchGroup}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.LdapSearchGroup}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapSearcheGroup}"/>
             <p:message for="ldapSearchBase" display="tooltip"/>

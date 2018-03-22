@@ -5,15 +5,15 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding" >
-        <h:panelGrid columns="2" styleClass="ui-grid-col-12" >
+        <p:panelGrid columns="2" columnClasses="ui-grid-col-1, ui-grid-col-11" styleClass="ui-grid-col-12" >
             <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsAccessChilds}" 
                                      disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
                                      valueChangeListener="#{_bean.onInheritsChildsRightChange}" >
                 <p:ajax update="docRightsGrid inheritsAccessChilds"/>
             </p:selectBooleanCheckbox>
-            <p:spacer width="5"/>
             <h:outputLabel id="inheritsAccessChilds" value="#{_bean.inheritsAccessChildName}"/>
-        </h:panelGrid>
+        </p:panelGrid>
+
         <h:panelGroup id="docRightsGrid" style="font-size: 80%;">        
             <ui:repeat var="state" value="#{_bean.stateForChild}">
                 <p:accordionPanel activeIndex="null">

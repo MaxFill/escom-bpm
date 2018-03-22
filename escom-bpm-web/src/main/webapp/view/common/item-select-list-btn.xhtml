@@ -3,8 +3,9 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    
-    <h:panelGroup styleClass="ui-grid-col-12 col-padding">
+
+    <ui:param name="_rendered" value="#{_rendered == null ? true : _rendered}" />
+    <h:panelGroup id="#{_itemPanel}" styleClass="ui-grid-col-12 col-padding" rendered="#{_rendered}">
         <p:commandButton id="#{_itemPanel}_btn" 
                          process="#{_itemPanel}_btn"
                          onstart="PF('statusDialog').show()"
@@ -21,7 +22,7 @@
             <p:ajax event="dialogReturn" update="#{_itemPanel}"/>
         </p:commandButton>
         
-        <h:panelGroup id="#{_itemPanel}">
+        <h:panelGroup>
             <div class="ui-inputgroup">
                 <p:selectOneMenu value="#{_itemValue}" title="#{_titleItem}" styleClass="ui-grid-col-10"
                                  disabled="#{_disabled}" style="color: blue;"

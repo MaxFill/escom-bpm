@@ -1,6 +1,8 @@
 package com.maxfill.escom.beans;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.licence.Licence;
 import com.maxfill.model.users.User;
@@ -13,13 +15,16 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -32,10 +37,14 @@ import javax.servlet.http.HttpSession;
 @ApplicationScoped
 public class ApplicationBean implements Serializable{
     private static final long serialVersionUID = 2445940557149889740L;
+
+    private static final Logger LOGGER = Logger.getLogger(ApplicationBean.class.getName());
+
     private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/";
         
     private Boolean needUpadateSystem = false;
-    private Licence licence;    
+    private Licence licence;
+    private String appName;
 
     @EJB
     private Configuration configuration;
@@ -57,6 +66,7 @@ public class ApplicationBean implements Serializable{
         licence.setVersionNumber(ec.getInitParameter("VersionNumber"));
         licence.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
         licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
+        appName = EscomMsgUtils.getBandleLabel(SysParams.APP_NAME);
     }
     
     /* БЛОКИРОВКИ ОБЪЕКТОВ  */
@@ -156,12 +166,78 @@ public class ApplicationBean implements Serializable{
         licence.setActualVersionNumber(releaseVersion);
         licence.setActualReleasePage(releasePage);
     }
-    
-    public String getAPP_NAME() {
-        return SysParams.APP_NAME;
+
+    /* Возвращает дату окончания лицензии */
+    public Date getLicenseExpireDate(){
+        return licence.getDateTermLicence();
     }
-                
-    /* GET & SET */
+
+    /* Определяет что срок лицензии истёк */
+    public boolean isLicenseExpire(){
+        return licence.isExpired();
+    }
+
+    /* Установка признака наличия новой версии */
+    public void checkNewVersionAvailable(){
+        String actualReleasesJSON = EscomUtils.getReleaseInfo(licence.getLicenceNumber());
+
+        if (StringUtils.isBlank(actualReleasesJSON)) {
+            LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");
+            return;
+        }
+
+        Map<String,String> releaseInfoMap = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            releaseInfoMap = objectMapper.readValue(actualReleasesJSON, HashMap.class);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+
+        if (releaseInfoMap.isEmpty()){
+            return;
+        }
+
+        updateActualReleaseData(releaseInfoMap);
+
+        Date dateReleas = licence.getReleaseDate();
+        Date dateActual = licence.getActualReleaseDate();
+
+        if (dateActual == null){
+            dateActual = DateUtils.clearDate(new Date());
+            dateReleas = DateUtils.clearDate(DateUtils.addMounth(dateReleas, 3));
+        }
+
+        if (dateActual.after(dateReleas)){
+            setNeedUpadateSystem(Boolean.TRUE);
+        }
+    }
+
+    /**
+     * Возвращает имя лицензиата
+     * @return
+     */
+    public String getLicensee(){
+        return licence.getLicensor();
+    }
+
+    /**
+     * Возвращает имя лицензии как ключ bundle
+     * @return
+     */
+    public String getLicenseBundleName(){
+        return licence.getLicenceName();
+    }
+
+    /**
+     * Возвращает имя программы по bundle ключу
+     * @return
+     */
+    public String getAppName() {
+        return appName;
+    }
+
+    /* GETS & SETS */
     
     public Boolean getNeedUpadateSystem() {
         return needUpadateSystem;
@@ -172,9 +248,6 @@ public class ApplicationBean implements Serializable{
 
     public Licence getLicence() {
         return licence;
-    }
-    public void setLicence(Licence licence) {
-        this.licence = licence;
     }
 
     public ConcurrentHashMap<String, UsersSessions> getUserSessions() {

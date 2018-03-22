@@ -4,11 +4,11 @@
     xmlns:pe="http://primefaces.org/ui/extensions"
     xmlns:p="http://primefaces.org/ui">
 
-    <p:panel id="NavigatorBar" rendered="#{_treeBean != null and explorerBean.isShowTree()}" styleClass="without-spaces">
-        <ui:repeat id="navigator" var="navigator" value="#{explorerBean.navigator}">
+    <p:panel id="NavigatorBar" rendered="#{_treeBean != null and _explorerBean.isShowTree()}" styleClass="without-spaces">
+        <ui:repeat id="navigator" var="navigator" value="#{_explorerBean.navigator}">
             <p:commandButton icon="ui-icon-folder-open" value="#{navigator.name}" title="#{navigator.label}"
                              process="@this" styleClass="btnNavigator"
-                             actionListener="#{explorerBean.navigationSetSelected(navigator)}"
+                             actionListener="#{_explorerBean.navigationSetSelected(navigator)}"
                              update="#{_frmTree} #{_frmExpl} centerHeaderLabel #{_updates}"
                              oncomplete="initDND()" 
                              style="font-size: 90%;">                  

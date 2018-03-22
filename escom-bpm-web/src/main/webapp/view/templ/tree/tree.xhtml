@@ -5,30 +5,30 @@
 
     <ui:include src="/view/common/drag-drop-dlg.xhtml"/>
 
-    <p:commandButton id="createTreeCardBtn" action="#{explorerBean.onCreateTreeItem()}" 
+    <p:commandButton id="createTreeCardBtn" action="#{_explorerBean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
-                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="createRootCardBtn" action="#{explorerBean.onCreateRootItem()}" 
+    <p:commandButton id="createRootCardBtn" action="#{_explorerBean.onCreateRootItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
-                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="openTreeCardBtn" actionListener="#{explorerBean.onEditContentItem()}" 
+    <p:commandButton id="openTreeCardBtn" actionListener="#{_explorerBean.onEditContentItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
-                listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="viewTreeCardBtn" actionListener="#{explorerBean.onViewContentItem()}" 
+    <p:commandButton id="viewTreeCardBtn" actionListener="#{_explorerBean.onViewContentItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
@@ -36,18 +36,18 @@
     </p:commandButton>
 
     <p:accordionPanel id="accord" widgetVar="accordion">
-        <p:ajax event="tabChange" listener="#{explorerBean.onTreeTabChange}" 
+        <p:ajax event="tabChange" listener="#{_explorerBean.onTreeTabChange}" 
                 update="#{_frmExpl} centerHeaderLabel #{_updates}"
                 oncomplete="initDND()"/>
 
         <p:tab id="tabTree" title="#{bundle.Groups}" rendered="#{_treeBean != null}">
             <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
 
-            <p:tree id="tree" value="#{explorerBean.tree}" var="treeItem"  
+            <p:tree id="tree" value="#{_explorerBean.tree}" var="treeItem"  
                     selectionMode="single" animate="true" 
-                    selection="#{explorerBean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
+                    selection="#{_explorerBean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
 
-                <p:treeNode type="#{explorerBean.typeRoot}" icon="#{treeItem.iconTree}">
+                <p:treeNode type="#{_explorerBean.typeRoot}" icon="#{treeItem.iconTree}">
                     <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                 </p:treeNode>
                 
@@ -55,21 +55,21 @@
                     <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                 </p:treeNode>
 
-                <p:ajax event="select" listener="#{explorerBean.onTreeNodeSelect}"
+                <p:ajax event="select" listener="#{_explorerBean.onTreeNodeSelect}"
                         update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmTree}:accord:menuTree #{_frmExpl} #{_updates}"
                         oncomplete="initDND()"/>
-                <p:ajax event="contextMenu" listener="#{explorerBean.onTreeNodeSelect}"
+                <p:ajax event="contextMenu" listener="#{_explorerBean.onTreeNodeSelect}"
                         update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmExpl} #{_updates}"
                         oncomplete="initDND()"/>
-                <p:ajax event="expand"  listener="#{explorerBean.onNodeExpand}" />
-                <p:ajax event="collapse" listener="#{explorerBean.onNodeCollapse}" />
+                <p:ajax event="expand"  listener="#{_explorerBean.onNodeExpand}" />
+                <p:ajax event="collapse" listener="#{_explorerBean.onNodeCollapse}" />
             </p:tree>
             
             <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
                 <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
-                            rendered="#{explorerBean.selectorViewMode}"
-                            action="#{explorerBean.onSelectTreeItem()}"/>
-                <p:separator rendered="#{explorerBean.selectorViewMode}"/>
+                            rendered="#{_explorerBean.selectorViewMode}"
+                            action="#{_explorerBean.onSelectTreeItem()}"/>
+                <p:separator rendered="#{_explorerBean.selectorViewMode}"/>
                 <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
                             oncomplete="document.getElementById('#{_frmTree}:createRootCardBtn').click();"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
@@ -77,10 +77,10 @@
                 <p:separator />
                 <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
                             update="#{_frmTree}" oncomplete="initDND()"
-                            actionListener="#{explorerBean.onExpandNode()}"/>
+                            actionListener="#{_explorerBean.onExpandNode()}"/>
                 <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
                             update="#{_frmTree}" oncomplete="initDND()"
-                            actionListener="#{explorerBean.onCollapseNode()}"/>                
+                            actionListener="#{_explorerBean.onCollapseNode()}"/>                
                 <p:separator />
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
                             oncomplete="document.getElementById('#{_frmTree}:viewTreeCardBtn').click();"/>
@@ -89,14 +89,14 @@
                 <p:separator />                
 
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
-                            actionListener="#{explorerBean.onAddContentInFavorites()}"/>
+                            actionListener="#{_explorerBean.onAddContentInFavorites()}"/>
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide();"
                             rendered="#{sessionBean.userAdmin}"
-                            actionListener="#{explorerBean.onOpenAdmCardForm()}"/>
+                            actionListener="#{_explorerBean.onOpenAdmCardForm()}"/>
             </p:contextMenu>
         </p:tab>
 

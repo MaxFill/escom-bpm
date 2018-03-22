@@ -4,224 +4,179 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="title">
         #{bundle.AuthenticationLog}
     </ui:define>
 
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{authLogBean.onOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
-
     <ui:param name="_bean" value="#{authLogBean}"/>
 
-    <ui:define name="body">
-        <pe:layout fullPage="true" options="#{authLogBean.layoutOptions}">
-            <p:ajax event="resize" listener="#{authLogBean.handleResize}"/>
+    <ui:define name="leftFormContent" >
+        <p:panelGrid columns="1" layout="grid" >
+            <p:outputLabel value="#{bundle.ExportIn}"/>
 
-            <pe:layoutPane id="west" position="west" >
-                <h:form id="leftFRM" style="font-size: 80%;">
-                    <p:panelGrid columns="1" layout="grid" >
-                        <p:outputLabel value="#{bundle.ExportIn}"/>
+            <h:panelGroup>
+                <h:commandLink>
+                    <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
+                    <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" encoding="utf-8"
+                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                </h:commandLink>
 
-                        <h:panelGroup>
-                            <h:commandLink>
-                                <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
-                                <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" encoding="utf-8"
-                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
-                            </h:commandLink>
+                <h:commandLink>
+                    <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}" />
+                    <pe:exporter type="pdf" target="centerFRM:tblLog" fileName="#{_bean.formName}"
+                                 preProcessor="#{authLogBean.preProcessPDF}" fontName="Arial" encoding="CP1251"
+                                 orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                </h:commandLink>
 
-                            <h:commandLink>
-                                <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}" />
-                                <pe:exporter type="pdf" target="centerFRM:tblLog" fileName="#{_bean.formName}"
-                                                preProcessor="#{authLogBean.preProcessPDF}" fontName="Arial" encoding="CP1251"
-                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
-                            </h:commandLink>
+                <h:commandLink>
+                    <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
+                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
+                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                </h:commandLink>
 
-                            <h:commandLink>
-                                <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
-                                <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
-                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
-                            </h:commandLink>
+                <h:commandLink>
+                    <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
+                    <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
+                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                </h:commandLink>
+            </h:panelGroup>
 
-                            <h:commandLink>
-                                <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
-                                <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
-                                                orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
-                            </h:commandLink>
-                        </h:panelGroup>
+            <p:selectBooleanCheckbox value="#{authLogBean.onlyCurPageExp}" itemLabel="#{bundle.OnlyCurrentPage}">
+                <p:ajax update="leftFRM"/>
+            </p:selectBooleanCheckbox>
 
-                        <p:selectBooleanCheckbox value="#{authLogBean.onlyCurPageExp}" itemLabel="#{bundle.OnlyCurrentPage}">
-                            <p:ajax update="leftFRM"/>
-                        </p:selectBooleanCheckbox>
+            <p:selectBooleanButton value="#{authLogBean.orientation}" offLabel="#{bundle.Portret}" onLabel="#{bundle.Landscape}" style="width:70px;" >
+                <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="leftFRM"/>
+            </p:selectBooleanButton>
+        </p:panelGrid>
+    </ui:define>
 
-                        <p:selectBooleanButton value="#{authLogBean.orientation}" offLabel="#{bundle.Portret}" onLabel="#{bundle.Landscape}" style="width:70px;" >
-                            <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="leftFRM"/>
-                        </p:selectBooleanButton>
-                    </p:panelGrid>
-                </h:form>
-            </pe:layoutPane>
+    <ui:define name="menuActions" >
+        <p:menuitem icon="ui-icon-search" value="#{bundle.Find}"
+                    onclick="document.getElementById('centerFRM:btnSearche').click();">
+        </p:menuitem>
+        <p:menuitem icon="ui-icon-trash" value="#{bundle.Clear}"
+                    onclick="document.getElementById('centerFRM:btnClear').click();">
+        </p:menuitem>
+    </ui:define>
 
-            <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="centerFRM" style="font-size: 80%;">
-                    <p:outputPanel style="width: 100%;" >
-                        <p:hotkey bind="esc" id="hotskey"
-                                  immediate="true"
-                                  onstart="document.getElementById('centerFRM:btnClose').click();">
-                        </p:hotkey>
+    <ui:define name="toolbarComponents" >
+        #{bundle.With}
+        <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
+                    widgetVar="dateCreateStartSearche"
+                    showHour="true" showMinute="true"
+                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
+                    locale="#{sessionBean.locale}"
+                    pattern="dd.MM.yyyy HH:mm:ss"
+                    required="#{param['isRequired'] == 'true'}"
+                    requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+        </p:calendar>
+        #{bundle.At}
+        <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
+                    widgetVar="dateCreateEndSearche"
+                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
+                    showHour="true" showMinute="true"
+                    locale="#{sessionBean.locale}"
+                    pattern="dd.MM.yyyy HH:mm:ss"
+                    required="#{param['isRequired'] == 'true'}"
+                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+        </p:calendar>
+        <p:spacer/>
 
-                        <p:toolbar>
-                            <f:facet name="left">
-                                <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
-                                    <p:menuitem icon="ui-icon-search" value="#{bundle.Find}"
-                                                onclick="document.getElementById('centerFRM:btnSearche').click();">
-                                    </p:menuitem>
-                                    <p:menuitem icon="ui-icon-trash" value="#{bundle.Clear}"
-                                                onclick="document.getElementById('centerFRM:btnClear').click();">
-                                    </p:menuitem>
-                                    <p:separator />
-                                    <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                                onclick="document.getElementById('centerFRM:btnClose').click();">
-                                    </p:menuitem>
-                                </p:menuButton>
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
-                                #{bundle.With}
-                                <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
-                                            widgetVar="dateCreateStartSearche"
-                                            showHour="true" showMinute="true"
-                                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
-                                            locale="#{sessionBean.locale}"
-                                            pattern="dd.MM.yyyy HH:mm:ss"
-                                            required="true"
-                                            requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
-                                </p:calendar>
-                                #{bundle.At}
-                                <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
-                                            widgetVar="dateCreateEndSearche"
-                                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
-                                            showHour="true" showMinute="true"
-                                            locale="#{sessionBean.locale}"
-                                            pattern="dd.MM.yyyy HH:mm:ss"
-                                            required="true"
-                                            requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
-                                </p:calendar>
-                                <p:spacer/>
+        <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM">
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
 
-                                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM"/>
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
 
-                                <p:commandButton value="#{bundle.Clear}" id="btnClear"
-                                                 actionListener="#{authLogBean.onClearData()}"
-                                                 update="centerFRM">
-                                    <p:confirm header="#{bundle.ConfirmAction}" message="#{authLogBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
-                                </p:commandButton>
+        <p:commandButton value="#{bundle.Clear}" id="btnClear"
+                         actionListener="#{authLogBean.onClearData()}"
+                         update="centerFRM">
+            <p:confirm header="#{bundle.ConfirmAction}" message="#{authLogBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
+        </p:commandButton>
 
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
 
-                                <h:panelGroup>
-                                    <p:commandButton id="toggler" type="button" value="#{bundle.Columns}" icon="ui-icon-calculator" />
-                                    <p:columnToggler datasource="tblLog" trigger="toggler">
-                                        <p:ajax event="toggle" listener="#{authLogBean.onToggle}" update="tblLog" />
-                                    </p:columnToggler>
-                                </h:panelGroup>
-                            </f:facet>
+        <h:panelGroup>
+            <p:commandButton id="toggler" type="button" value="#{bundle.Columns}" icon="ui-icon-calculator" />
+            <p:columnToggler datasource="tblLog" trigger="toggler">
+                <p:ajax event="toggle" listener="#{authLogBean.onToggle}" update="tblLog" />
+            </p:columnToggler>
+        </h:panelGroup>
+    </ui:define>
 
-                            <f:facet name="right">
-                                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                                 title="#{bundle.Close}"
-                                                 immediate="true"
-                                                 action="#{authLogBean.onCloseCard()}">
-                                </p:commandButton>
-                            </f:facet>
-                        </p:toolbar>
 
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                            <p:autoUpdate />
-                        </p:messages>
+    <ui:define name="centerFormContent">
+        <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true" lazy="true"
+                     value="#{authLogBean.authlogs}" var="item"
+                     rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
+                     emptyMessage="#{bundle.EmptyTable}"
+                     paginator="true" paginatorPosition="bottom"
+                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rows="15" rowsPerPageTemplate="15,25,50"
+                     sortBy="#{item.dateEvent}" sortOrder="descending"
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
+            <p:ajax event="colReorder" listener="#{authLogBean.onColumnReorder}"/>
 
-                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                        </p:confirmDialog>
+            <f:facet name="header">
+                <h:outputText value="#{bundle.AuthenticationLog}" />
+            </f:facet>
 
-                        <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true" lazy="true"
-                                     value="#{authLogBean.authlogs}" var="item"
-                                     rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
-                                     emptyMessage="#{bundle.EmptyTable}"
-                                     paginator="true" paginatorPosition="bottom"
-                                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rows="15" rowsPerPageTemplate="15,25,50"
-                                     sortBy="#{item.dateEvent}" sortOrder="descending"
-                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
-                            <p:ajax event="colReorder" listener="#{authLogBean.onColumnReorder}"/>
+            <p:column id="colImg" width="16" exportable="false" visible="#{authLogBean.isVisibleColumn('colImg')}">
+                <p:graphicImage value="/resources/icon/#{item.eventName == 'UserEnter' ? 'arrow_right' : 'arrow_left'}.png" />
+            </p:column>
 
-                            <f:facet name="header">
-                                <h:outputText value="#{bundle.AuthenticationLog}" />
-                            </f:facet>
+            <p:column id="colDate" visible="#{authLogBean.isVisibleColumn('colDate')}" headerText="#{bundle.DateEvent}" sortBy="#{item.dateEvent}" exportable="#{authLogBean.isVisibleColumn('colDate')}">
+                <p:outputLabel value="#{item.dateEvent}">
+                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                </p:outputLabel>
+            </p:column>
 
-                            <p:column id="colImg" width="16" exportable="false" visible="#{authLogBean.isVisibleColumn('colImg')}">
-                                <p:graphicImage value="/resources/icon/#{item.eventName == 'UserEnter' ? 'arrow_right' : 'arrow_left'}.png" />
-                            </p:column>
+            <p:column id="colLogin" visible="#{authLogBean.isVisibleColumn('colLogin')}" exportable="#{authLogBean.isVisibleColumn('colLogin')}" headerText="#{bundle.Login}" sortBy="#{item.login}" filterMatchMode="exact" filterBy="#{item.login}">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('tblLog').filter()" >
+                        <f:selectItem itemLabel="#{bundle.Select}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{userBean.findAllLogins()}" />
+                    </p:selectOneMenu>
+                </f:facet>
+                <h:outputText value="#{item.login}" />
+            </p:column>
 
-                            <p:column id="colDate" visible="#{authLogBean.isVisibleColumn('colDate')}" headerText="#{bundle.DateEvent}" sortBy="#{item.dateEvent}" exportable="#{authLogBean.isVisibleColumn('colDate')}">
-                                <p:outputLabel value="#{item.dateEvent}">
-                                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                                </p:outputLabel>
-                            </p:column>
+            <p:column id="colEvent" visible="#{authLogBean.isVisibleColumn('colEvent')}" exportable="#{authLogBean.isVisibleColumn('colEvent')}" headerText="#{bundle.Event}" sortBy="#{item.eventName}" filterMatchMode="equals" filterBy="#{item.eventName}">
+                <f:facet name="filter">
+                    <p:selectOneButton onchange="PF('tblLog').filter()">
+                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
+                        <f:selectItem itemLabel="Enter" itemValue="UserEnter" />
+                        <f:selectItem itemLabel="Exit" itemValue="UserExit" />
+                    </p:selectOneButton>
+                </f:facet>
+                <h:outputText value="#{authLogBean.getBundleName(item.eventName)}"/>
+            </p:column>
 
-                            <p:column id="colLogin" visible="#{authLogBean.isVisibleColumn('colLogin')}" exportable="#{authLogBean.isVisibleColumn('colLogin')}" headerText="#{bundle.Login}" sortBy="#{item.login}" filterMatchMode="exact" filterBy="#{item.login}">
-                                <f:facet name="filter">
-                                    <p:selectOneMenu onchange="PF('tblLog').filter()" >
-                                        <f:selectItem itemLabel="#{bundle.Select}" itemValue="#{null}" noSelectionOption="true" />
-                                        <f:selectItems value="#{userBean.findAllLogins()}" />
-                                    </p:selectOneMenu>
-                                </f:facet>
-                                <h:outputText value="#{item.login}" />
-                            </p:column>
+            <p:column id="colIP" visible="#{authLogBean.isVisibleColumn('colIP')}" exportable="#{authLogBean.isVisibleColumn('colIP')}" headerText="IP" priority="4" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
+                <h:outputText value="#{item.ipAdress}"/>
+            </p:column>
 
-                            <p:column id="colEvent" visible="#{authLogBean.isVisibleColumn('colEvent')}" exportable="#{authLogBean.isVisibleColumn('colEvent')}" headerText="#{bundle.Event}" sortBy="#{item.eventName}" filterMatchMode="equals" filterBy="#{item.eventName}">
-                                <f:facet name="filter">
-                                    <p:selectOneButton onchange="PF('tblLog').filter()">
-                                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
-                                        <f:selectItem itemLabel="Enter" itemValue="UserEnter" />
-                                        <f:selectItem itemLabel="Exit" itemValue="UserExit" />
-                                    </p:selectOneButton>
-                                </f:facet>
-                                <h:outputText value="#{authLogBean.getBundleName(item.eventName)}"/>
-                            </p:column>
+            <p:column id="colSMS" visible="#{authLogBean.isVisibleColumn('colSMS')}" exportable="#{authLogBean.isVisibleColumn('colSMS')}" headerText="#{bundle.SMSisSend}" ariaHeaderText="ariaHeaderText" priority="5" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
+                <f:facet name="filter">
+                    <p:selectOneButton onchange="PF('tblLog').filter()">
+                        <f:converter converterId="javax.faces.Boolean" />
+                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
+                        <f:selectItem itemLabel="Yes" itemValue="true" />
+                        <f:selectItem itemLabel="No" itemValue="false" />
+                    </p:selectOneButton>
+                </f:facet>
+                <h:outputText value="#{item.sendSMS ? 'Yes':'No'}"/>
+            </p:column>
 
-                            <p:column id="colIP" visible="#{authLogBean.isVisibleColumn('colIP')}" exportable="#{authLogBean.isVisibleColumn('colIP')}" headerText="IP" priority="4" sortBy="#{item.ipAdress}" filterBy="#{item.ipAdress}" filterMatchMode="contains">
-                                <h:outputText value="#{item.ipAdress}"/>
-                            </p:column>
-
-                            <p:column id="colSMS" visible="#{authLogBean.isVisibleColumn('colSMS')}" exportable="#{authLogBean.isVisibleColumn('colSMS')}" headerText="#{bundle.SMSisSend}" ariaHeaderText="ariaHeaderText" priority="5" sortBy="#{item.sendSMS}" filterMatchMode="equals" filterBy="#{item.sendSMS}">
-                                <f:facet name="filter">
-                                    <p:selectOneButton onchange="PF('tblLog').filter()">
-                                        <f:converter converterId="javax.faces.Boolean" />
-                                        <f:selectItem itemLabel="#{bundle.All}" itemValue="" />
-                                        <f:selectItem itemLabel="Yes" itemValue="true" />
-                                        <f:selectItem itemLabel="No" itemValue="false" />
-                                    </p:selectOneButton>
-                                </f:facet>
-                                <h:outputText value="#{item.sendSMS ? 'Yes':'No'}"/>
-                            </p:column>
-
-                        </p:dataTable>
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
-        </pe:layout>
+        </p:dataTable>
     </ui:define>
 
 </ui:composition>

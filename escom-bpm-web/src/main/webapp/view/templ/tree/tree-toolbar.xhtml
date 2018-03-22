@@ -6,12 +6,12 @@
     
     <p:defaultCommand target="#{_frmTree}:accord:btnTreeSearche" />
     
-    <p:toolbar id="toolbarTree" styleClass="without-spaces ui-grid-col-12">  
-        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{explorerBean.tree != null}">
+    <p:toolbar id="toolbarTree" styleClass="ui-grid-col-12">
+        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{_explorerBean.tree != null}">
             
                     <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
                                      style="font-size: 90%;"
-                                     actionListener="#{explorerBean.onReloadTreeItems()}"
+                                     actionListener="#{_explorerBean.onReloadTreeItems()}"
                                      update="#{_frmTree} #{_frmExpl}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"/>
@@ -21,45 +21,45 @@
                     <p:commandButton icon="ui-icon-folder-open" title="#{bundle.ExpandTree}"
                                      update="#{_frmTree}" oncomplete="initDND()"
                                      style="font-size: 90%;"
-                                     actionListener="#{explorerBean.onExpandTree()}"/>
+                                     actionListener="#{_explorerBean.onExpandTree()}"/>
                     <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.CollapseTree}"
                                      update="#{_frmTree}" oncomplete="initDND()"
                                      style="font-size: 90%;"
-                                     actionListener="#{explorerBean.onCollapseTree()}"/>
+                                     actionListener="#{_explorerBean.onCollapseTree()}"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
                     <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
-                                     disabled="#{explorerBean.selectRootItem}"
+                                     disabled="#{_explorerBean.selectRootItem}"
                                      style="font-size: 90%;"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND();"
                                      update="#{_frmTree}:accord:tree #{_frmTree}:accord:toolbarTree #{_frmExpl} centerHeaderLabel #{_updates}"
-                                     actionListener="#{explorerBean.onMoveTreeItemToTrash()}">
+                                     actionListener="#{_explorerBean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                     </p:commandButton> 
                     <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
                                      style="font-size: 90%;"
-                                     disabled="#{explorerBean.selectRootItem}"
+                                     disabled="#{_explorerBean.selectRootItem}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
                                      update="#{_frmTree}:accord:toolbarTree"
-                                     actionListener="#{explorerBean.onCopySelectedTreeItem()}"/>
+                                     actionListener="#{_explorerBean.onCopySelectedTreeItem()}"/>
                     <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
                                      style="font-size: 90%;"
-                                     disabled="#{explorerBean.canPasteItem}"
+                                     disabled="#{_explorerBean.canPasteItem}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
-                                     actionListener="#{explorerBean.onPasteItemToTree()}"
+                                     actionListener="#{_explorerBean.onPasteItemToTree()}"
                                      update="#{_frmTree}:accord:tree #{_frmExpl}"/>
-                    <p:inputText value="#{explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"                            
-                                 disabled="#{!explorerBean.isShowTree()}"
+                    <p:inputText value="#{_explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"                            
+                                 disabled="#{!_explorerBean.isShowTree()}"
                                  style="font-size: 90%;">
                     </p:inputText>
                     <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
-                                     disabled="#{!explorerBean.isShowTree()}"
+                                     disabled="#{!_explorerBean.isShowTree()}"
                                      update="#{_frmTree} centerHeaderLabel #{_frmExpl} #{_updates}"
-                                     actionListener="#{explorerBean.onSearcheInTree()}" style="font-size: 90%;" 
+                                     actionListener="#{_explorerBean.onSearcheInTree()}" style="font-size: 90%;" 
                                      oncomplete="initDND()">
                     </p:commandButton>
 

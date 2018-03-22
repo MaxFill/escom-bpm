@@ -6,10 +6,19 @@
     xmlns:p="http://primefaces.org/ui">
     
     <p:toolbar id="explToolBar">
-        <f:facet name="left">            
+        <f:facet name="left">
+            <p:commandButton icon="ui-icon-circle-arrow-w" rendered="#{!_explorerBean.selectorViewMode}"
+                             title="#{bundle.GotoIndex}" ajax="false"
+                             action="#{sessionBean.goToIndex() }"
+                             onclick="return isClose = 1;"/>
+
+            <span class="ui-separator">
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
+
             <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
                              title="#{bundle.Refresh}"                                  
-                             actionListener="#{explorerBean.reloadDetailsItems()}"
+                             actionListener="#{_explorerBean.reloadDetailsItems()}"
                              update="#{_frmExpl} centerHeaderLabel #{_updates}"
                              oncomplete="initDND()"/> 
             
@@ -18,26 +27,26 @@
             </span>
 
             <p:commandButton icon="ui-icon-arrowthick-1-n" title="#{bundle.Up}"
-                             actionListener="#{explorerBean.onGotoUpLevelContent()}"
-                             disabled="#{explorerBean.treeSelectedNode == null or explorerBean.isSelectRootItem()}"
+                             actionListener="#{_explorerBean.onGotoUpLevelContent()}"
+                             disabled="#{_explorerBean.treeSelectedNode == null or _explorerBean.isSelectRootItem()}"
                              rendered="#{_treeBean != null}"
-                             update="#{_frmExpl} #{_frmTree}"
+                             update="centerHeaderLabel #{_frmExpl} #{_frmTree} "
                              oncomplete="initDND()"/>
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
 
             <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
                             update="#{_frmExpl}:explToolBar"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND();"
-                            actionListener="#{explorerBean.onCopySelectedItem()}"/>
+                            actionListener="#{_explorerBean.onCopySelectedItem()}"/>
             <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
-                            disabled="#{explorerBean.canPasteItem}"
+                            disabled="#{_explorerBean.canPasteItem}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide();"
-                            actionListener="#{explorerBean.onPasteItemToTable()}"
+                            actionListener="#{_explorerBean.onPasteItemToTable()}"
                             update="#{_frmExpl} #{_frmTree}"/>
 
             <span class="ui-separator">
@@ -45,32 +54,32 @@
             </span>
                 
             <p:commandButton value="#{_CreateItemLabel}"
-                             title="#{explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
+                             title="#{_explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
                              icon="ui-icon-document" id="createItemBtn"
-                             disabled="#{explorerBean.canCreateItem}"
-                             rendered="#{!explorerBean.isTrashSelected()}"
-                             style="#{explorerBean.selectorViewMode ? 'display: none;' : ''}"
-                             actionListener="#{explorerBean.onCreateDetailItem()}">
+                             disabled="#{_explorerBean.canCreateItem}"
+                             rendered="#{!_explorerBean.isTrashSelected()}"
+                             style="#{_explorerBean.selectorViewMode ? 'display: none;' : ''}"
+                             actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
                         update="#{_frmExpl}"
-                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                        listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
 
             <p:commandButton value="#{_CreateGroupLabel}" icon="ui-icon-folder-open"
-                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
-                             rendered="#{_treeBean != null and !explorerBean.isTrashSelected()}"
-                             actionListener="#{explorerBean.onCreateTreeItem()}">
+                             disabled="#{_treeBean != null and _explorerBean.treeSelectedNode == null}"
+                             rendered="#{_treeBean != null and !_explorerBean.isTrashSelected()}"
+                             actionListener="#{_explorerBean.onCreateTreeItem()}">
                 <p:ajax event="dialogReturn" 
                         update="#{_frmTree} #{_frmExpl}" 
-                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                        listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
             <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-plus" 
-                             disabled="#{_treeBean != null and explorerBean.treeSelectedNode == null}"
-                             rendered="#{!explorerBean.isTrashSelected() and explorerBean.selectorViewMode}"
-                             actionListener="#{explorerBean.onCreateDetailItem()}">
+                             disabled="#{_treeBean != null and _explorerBean.treeSelectedNode == null}"
+                             rendered="#{!_explorerBean.isTrashSelected() and _explorerBean.selectorViewMode}"
+                             actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
                         update="#{_frmExpl}"
-                        listener="#{explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                        listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
             <ui:insert name="addMenuCreates" />
         </f:facet> 
@@ -78,33 +87,33 @@
         <f:facet name="right">
             <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 
                             title="#{bundle.SelectChecked}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
-                            rendered="#{explorerBean.multySelectMode}"
-                            action="#{explorerBean.onMultySelect()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{_explorerBean.multySelectMode}"
+                            action="#{_explorerBean.onMultySelect()}"
                             onclick="return isClose = 1;">
             </p:commandButton>
                 
             <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
-                           rendered="#{!explorerBean.isTrashSelected()}">
+                           rendered="#{!_explorerBean.isTrashSelected()}">
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
                             update="#{_frmTree} #{_frmExpl}"
-                            actionListener="#{explorerBean.onMoveCheckedContentToTrash()}"
+                            actionListener="#{_explorerBean.onMoveCheckedContentToTrash()}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                 </p:menuitem>
                 <p:separator />
                 <ui:insert name="addMenuActions" />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddCheckedToFavorites}" title="#{bundle.AddToFavorites}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
-                            rendered="#{!explorerBean.isFavoriteSelected()}"
-                            actionListener="#{explorerBean.onAddCheckedContentInFavorites()}"/>
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{!_explorerBean.isFavoriteSelected()}"
+                            actionListener="#{_explorerBean.onAddCheckedContentInFavorites()}"/>
                 <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteCheckedFromFavorites}" title="#{bundle.DeleteFromFavorites}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
-                            rendered="#{explorerBean.isFavoriteSelected()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
+                            rendered="#{_explorerBean.isFavoriteSelected()}"
                             update="#{_frmExpl}"
                             oncomplete="initDND()"
-                            actionListener="#{explorerBean.onDelCheckedFromFavorites()}"/>
+                            actionListener="#{_explorerBean.onDelCheckedFromFavorites()}"/>
                 <p:separator />
                 <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
                                 actionListener="#{sessionBean.onViewHelp()}"/>
@@ -112,26 +121,26 @@
 
             <!-- Кнопка для Корзины -->
             <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
-                           rendered="#{sessionBean.userAdmin and explorerBean.isTrashSelected()}">
+                           rendered="#{sessionBean.userAdmin and _explorerBean.isTrashSelected()}">
                 <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
-                            disabled="#{explorerBean.detailItems.isEmpty()}"
+                            disabled="#{_explorerBean.detailItems.isEmpty()}"
                             update="#{_frmExpl}"
-                            actionListener="#{explorerBean.onClearTrash()}"
+                            actionListener="#{_explorerBean.onClearTrash()}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 </p:menuitem>
                 <p:menuitem value="#{bundle.ClearCheckedTrash}" icon="ui-icon-close"                                                 
                             update="#{_frmExpl}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
-                            actionListener="#{explorerBean.onClearCheckedContentTrash()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
+                            actionListener="#{_explorerBean.onClearCheckedContentTrash()}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 </p:menuitem> 
                 <p:separator/>
                 <p:menuitem value="#{bundle.RestoreChecked}" icon="ui-icon-arrowreturnthick-1-w"                                                 
                             update="#{_frmExpl}"
-                            disabled="#{explorerBean.checkedItems.isEmpty()}"
-                            actionListener="#{explorerBean .onRestoreCheckedContentTrash()}"
+                            disabled="#{_explorerBean.checkedItems.isEmpty()}"
+                            actionListener="#{_explorerBean .onRestoreCheckedContentTrash()}"
                             oncomplete="initDND()">
                 </p:menuitem>
             </p:splitButton>            

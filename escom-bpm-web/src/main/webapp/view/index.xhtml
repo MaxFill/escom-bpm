@@ -7,7 +7,7 @@
                 template="/view/templ/templ.xhtml">
     
     <ui:define name="title">
-        #{applicationBean.APP_NAME}
+        #{applicationBean.appName}
     </ui:define>
     
     <ui:define name="body">
@@ -42,17 +42,19 @@
             </style>
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
                         
-            <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="bar">               
+            <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
                                  icon="ui-icon-circle-close"
-                                 onclick="PF('bar').hide()" type="button" />
+                                 onclick="PF('notifBar').hide()" type="button" />
                 <br/>
                 <h:panelGrid columns="1">
-                    <p:outputLabel value="#{msg.NeedUpdateSystem}" style="font-size:18px;" />
-                    <br/>
-                    <h:outputLink value="http://www.escom-bpm.com" target="_blank">
-                        <h:outputText value="#{msg.GetInfoAboutNewversion}" />
-                    </h:outputLink>
+                    <ui:repeat var="notifMsg" value="#{sessionBean.notifMessages}" >
+                        <p:outputLabel value="#{notifMsg.message}" style="font-size:20px;" />
+                        <br/>
+                        <h:outputLink value="#{notifMsg.url}" target="_blank">
+                            <h:outputText value="#{notifMsg.urlCaption}" />
+                        </h:outputLink>
+                    </ui:repeat>
                 </h:panelGrid>
             </p:notificationBar>           
             
@@ -73,7 +75,7 @@
                         <p:menuitem value="#{bundle.Support}" icon="ui-icon-wrench" url="http://support.escom-bpm.com" target="blank"/>
                         <p:menuitem value="#{bundle.CheckUpdates}" icon="ui-icon-script"
                                     actionListener="#{sessionBean.onCheckReleaseApp()}"/>
-                        <p:menuitem value="#{bundle.EscomWWW}" url="http://www.escom-bpm.com" icon="ui-icon-home" target="blank"/>
+                        <p:menuitem value="#{bundle.EscomWWW}" url="https://escom-archive.ru" icon="ui-icon-home" target="blank"/>
                         <p:separator />
                         <p:menuitem value="#{bundle.About}" icon="ui-icon-note" 
                                     process="@this" update="logFRM:aboutPanel"
@@ -102,14 +104,17 @@
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
-                            <p:commandLink value="#{bundle.SettigsObject}" 
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="objectsExpl"/>
                             <p:commandLink value="#{bundle.Users}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="user-explorer"/>
+                            <p:commandLink value="#{bundle.Sessions}"
+                                           actionListener="#{sessionBean.openSessionsForm()}"/>
+                            <p:separator/>
+                            <p:commandLink value="#{bundle.SettigsObject}"
+                                           onstart="return isClose = 1;"
+                                           ajax="false"
+                                           action="objectsExpl"/>
                             <p:commandLink value="#{bundle.Numerators}" 
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -217,7 +222,6 @@
     </ui:define>
 
     <ui:define name="dialogs">        
-
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgAbout">
             <h:form id="logFRM">
                 <p:outputPanel id="aboutPanel" style="width: 600px; height: 400px;">

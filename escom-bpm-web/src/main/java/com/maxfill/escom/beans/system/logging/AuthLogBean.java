@@ -163,12 +163,6 @@ public class AuthLogBean extends BaseDialogBean{
         FontFactory.register(fontUrl);
     }
 
-    protected void initLayotOptions() {
-        super.initLayotOptions();
-        LayoutOptions west = layoutOptions.getWestOptions();
-        west.addOption("initClosed", true);
-    }
-
     /* gets & sets */
 
     public LazyDataModel <Authlog> getAuthlogs() {

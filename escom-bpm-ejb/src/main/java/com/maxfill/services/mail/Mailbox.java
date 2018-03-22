@@ -46,7 +46,6 @@ public class Mailbox implements Serializable {
     @Column(name = "Id")
     private Integer id;
     
-    @Size(max = 1024)
     @Column(name = "Subject")
     private String subject;
     

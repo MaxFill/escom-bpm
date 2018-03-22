@@ -12,7 +12,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/* Бин карточки "Группы видов документов" */
+/* Контролер формы "Группа видов документов" */
 @Named
 @ViewScoped
 public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{

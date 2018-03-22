@@ -200,6 +200,14 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
         return StringUtils.isNotBlank(folderNumber);
     }
 
+    /**
+     * Возвращает индекс дела для отображения его в таблице обозревателя
+     * @return
+     */
+    public String getRegNumber(){
+        return getFolderFullNumber();
+    }
+
     /* gets & sets */
 
     @Override

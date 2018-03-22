@@ -40,6 +40,7 @@ import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.lang.StringUtils;
@@ -62,13 +63,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.time.Instant;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -94,7 +92,8 @@ public class SessionBean implements Serializable{
     private List<Theme> themes;
     private Locale locale;
     private UserSettings userSettings = new UserSettings();
-    
+    private final List<NotifMsg> notifMessages = new ArrayList <>();
+
     @EJB
     protected Configuration configuration;    
     @EJB
@@ -238,12 +237,31 @@ public class SessionBean implements Serializable{
     
     /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
     public void showNotification(){
+        if (!canShowNotifBar) return;
         Boolean needUpadateSystem = appBean.getNeedUpadateSystem();
-        if (canShowNotifBar && needUpadateSystem){
+        notifMessages.clear();
+        if (needUpadateSystem) {
+            String urlCaption = EscomMsgUtils.getMessageLabel("GetInfoAboutNewversion");
+            String url = "https://escom-archive.ru/news";
+            String msg = EscomMsgUtils.getMessageLabel("NeedUpdateSystem");
+            notifMessages.add(new NotifMsg(msg, url, urlCaption));
+        }
+
+        if (checkExpiredLicense()){
+            String dateExpire = getLicenseExpireAsString();
+            String licensee = appBean.getLicensee();
+            String remainedDays = DateUtils.differenceDays(Instant.now(), appBean.getLicenseExpireDate().toInstant());
+            String msg = MessageFormat.format(EscomMsgUtils.getMessageLabel("LicenseExpired"), new Object[]{licensee, dateExpire, remainedDays});
+            String url = "https://escom-archive.ru/faqs/";
+            String urlCaption = EscomMsgUtils.getMessageLabel("UpdateInformation");
+            notifMessages.add(new NotifMsg(msg, url, urlCaption));
+        }
+        if (!notifMessages.isEmpty()){
             RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('bar').show();");
+            context.execute("PF('notifBar').show();");
         }
         canShowNotifBar = false;
+        //ToDo вызов проверки сообщений нужно отсюда убрать!
         checkUnReadMessages();
     }          
     
@@ -290,7 +308,10 @@ public class SessionBean implements Serializable{
         UserGroups groupAdmin = currentUser.getUsersGroupsList().stream().filter(userGroup -> userGroup.getId() == 1).findFirst().orElse(null);
         return groupAdmin != null;
     }
-    
+
+    /**
+     * Вывод сообщения о количестве непрочитанных сообщений
+     */
     public void checkUnReadMessages(){
         Integer countUnreadMessage = getCountUnreadMessage();
         if (countUnreadMessage > 0){
@@ -361,7 +382,13 @@ public class SessionBean implements Serializable{
         Map<String, List<String>> paramMap = new HashMap<>();
         openDialogFrm(DictDlgFrmName.FRM_SCANING, paramMap);
     }
-    
+
+    /* Открытие окна пользовательских сессий */
+    public void openSessionsForm(){
+        Map<String, List<String>> paramMap = new HashMap<>();
+        openDialogFrm(DictDlgFrmName.FRM_USER_SESSIONS, paramMap);
+    }
+
     /* Открытие окна просмотра лицензии */
     public void openLicenseForm(){
         Map<String, List<String>> paramMap = new HashMap<>();
@@ -591,9 +618,22 @@ public class SessionBean implements Serializable{
     /* GETS & SETS */
             
     public String getLicenseLocalName(){
-        return EscomMsgUtils.getBandleLabel(appBean.getLicence().getLicenceName());
+        return EscomMsgUtils.getBandleLabel(appBean.getLicenseBundleName());
     }
-    
+
+    /* Проверяет, истекает ли срок лицензии в течении месяца */
+    public Boolean checkExpiredLicense(){
+        Date currentClearDate = DateUtils.clearDate(new Date());
+        Date licenceClearDate = DateUtils.addMounth(DateUtils.clearDate(appBean.getLicenseExpireDate()), -1);
+        return !licenceClearDate.after(currentClearDate);
+    }
+
+    /* Возвращает дату окончания лицензии в виде строки */
+    public String getLicenseExpireAsString(){
+        Date termLicense = appBean.getLicenseExpireDate();
+        return DateUtils.dateToString(termLicense, DateFormat.SHORT, null, getLocale());
+    }
+
     private BaseExplBean getItemBean(BaseDict item){
         return getItemBeanByClassName(item.getClass().getSimpleName());
     }   
@@ -681,18 +721,7 @@ public class SessionBean implements Serializable{
         }
         return getCurrentUserStaff().getPost();
     }
-            
-    public DashboardModel getDashboardModel() {
-        return dashboardModel;
-    }  
-    
-    public User getCurrentUser() {
-        return currentUser;
-    }
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
-    }
-    
+
     public Boolean getCanShowNotifBar() {
         return canShowNotifBar;
     }
@@ -713,9 +742,6 @@ public class SessionBean implements Serializable{
     public void saveTheme(AjaxBehaviorEvent ajax) {
         primefacesTheme = ((String) ((ThemeSwitcher)ajax.getSource()).getValue());
     }
-    public List<Theme> getThemes() {
-        return themes;
-    } 
 
     public LayoutOptions getExplLayoutOptions(String formName) {
         LayoutOptions layoutOptions = new LayoutOptions();
@@ -746,13 +772,7 @@ public class SessionBean implements Serializable{
         }
     }
 
-    public UserSettings getUserSettings() {
-        return userSettings;
-    }
-    public void setUserSettings(UserSettings userSettings) {
-        this.userSettings = userSettings;
-    }
-         
+
     public String getMessagesInfo(){
         Integer countMsg = getCountUnreadMessage();
         
@@ -765,5 +785,58 @@ public class SessionBean implements Serializable{
         }
         info.append(")");
         return info.toString();
+    }
+
+    /* Gets & Sets */
+
+    public DashboardModel getDashboardModel() {
+        return dashboardModel;
+    }
+
+    public List<Theme> getThemes() {
+        return themes;
+    }
+
+    public List <NotifMsg> getNotifMessages() {
+        return notifMessages;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public UserSettings getUserSettings() {
+        return userSettings;
+    }
+    public void setUserSettings(UserSettings userSettings) {
+        this.userSettings = userSettings;
+    }
+
+    public class NotifMsg{
+        private String message;
+        private String url;
+        private String urlCaption;
+
+        public NotifMsg(String message, String url, String urlCaption) {
+            this.message = message;
+            this.url = url;
+            this.urlCaption = urlCaption;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getUrlCaption() {
+            return urlCaption;
+        }
+
     }
 }

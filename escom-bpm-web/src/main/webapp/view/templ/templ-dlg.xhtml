@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                template="/view/templ/templ.xhtml">
+
+    <ui:define name="title">
+        #{bundle.AuthenticationLog}
+    </ui:define>
+
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{_bean.onOpenCard()}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="body">
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}">
+            <p:ajax event="resize" listener="#{_bean.handleResize}"/>
+
+            <pe:layoutPane id="west" position="west" rendered="#{authLogBean.isWestShow()}">
+                <h:form id="leftFRM" style="font-size: 80%;">
+                    <ui:insert name="leftFormContent"/>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane id="center" position="center" resizable="true">
+                <h:form id="centerFRM" style="font-size: 80%;">
+                    <p:outputPanel style="width: 100%;" >
+                        <p:hotkey bind="esc" id="hotskey"
+                                  immediate="true"
+                                  onstart="document.getElementById('centerFRM:btnClose').click();">
+                        </p:hotkey>
+
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                    <ui:insert name="menuActions" />
+                                    <p:separator />
+                                    <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                                onclick="document.getElementById('centerFRM:btnClose').click();">
+                                    </p:menuitem>
+                                </p:menuButton>
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+                                <ui:insert name="toolbarComponents"/>
+                            </f:facet>
+
+                            <f:facet name="right">
+                                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                                 title="#{bundle.Close}"
+                                                 action="#{_bean.onCloseCard()}">
+                                </p:commandButton>
+                            </f:facet>
+                        </p:toolbar>
+
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+                            <ui:insert name="centerFormContent"/>
+                        </p:panelGrid>
+                    </p:outputPanel>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position="north" rendered="#{authLogBean.isNorthShow()}">>
+                <h:form id="northFRM" style="font-size: 80%;">
+                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
+                        <ui:insert name="northFormContent" />
+                    </p:outputPanel>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane position="south" rendered="#{authLogBean.isSouthShow()}">>
+                <h:form id="southFRM" style="font-size: 80%;">
+                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
+                        <ui:insert name="southFormContent" />
+                    </p:outputPanel>
+                </h:form>
+            </pe:layoutPane>
+
+        </pe:layout>
+    </ui:define>
+
+</ui:composition>

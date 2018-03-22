@@ -159,10 +159,22 @@
 
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >                               
                 <p:outputLabel value="#{bundle.EmailSign}" />
-                <p:editor value="#{_bean.editedItem.emailSign}"
-                              style="width: 100%;"
-                              disabled="#{_bean.isReadOnly()}"
-                              onchange="return itemChange = 1;"/>
+                <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
+                              disabled="#{_bean.isReadOnly()}" height="200"
+                              onchange="return itemChange = 1;">
+                    <f:facet name="toolbar">
+                         <span class="ql-formats">
+                            <button class="ql-bold"></button>
+                            <button class="ql-italic"></button>
+                            <button class="ql-underline"></button>
+                            <button class="ql-strike"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-font"></select>
+                            <select class="ql-size"></select>
+                        </span>
+                    </f:facet>
+                </p:textEditor>
             </p:panelGrid>
         </p:tab>
 

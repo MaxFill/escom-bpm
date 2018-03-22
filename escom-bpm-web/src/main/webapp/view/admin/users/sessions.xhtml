@@ -4,75 +4,58 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="title">
         #{bundle.ActiveUsers}
     </ui:define>
 
-    <ui:define name="body">
-        <pe:layout fullPage="true" options="#{usersSessionsBean.layoutOptions}">
-            <pe:layoutPane position="west" resizable="true">
-                <h:form id="westFRM" style="font-size: 80%;">
-                    <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                                     actionListener="#{usersSessionsBean.refreshData()}"
-                                     update="centerFRM"/>
-                </h:form>
-            </pe:layoutPane> 
-            <pe:layoutPane position="center" resizable="true">
-                <h:form id="centerFRM" style="font-size: 80%;">
-                    <p:outputPanel style="width: 100%;" >
-                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                        </p:confirmDialog>
-                        
-                        <p:dataTable id="tblLog"
-                                     value="#{usersSessionsBean.listSessions}" var="item" 
-                                     rowKey="#{item.id}" selection="#{usersSessionsBean.selectedSession}" selectionMode="single"
-                                     emptyMessage="#{bundle.EmptyTable}"
-                                     paginator="true" paginatorPosition="bottom"  
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rows="25" rowsPerPageTemplate="25,50,100" 
-                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">   
+    <ui:param name="_bean" value="#{usersSessionsBean}"/>
 
-                            <p:column headerText="#{bundle.User}">
-                                #{item.user.shortFIO}
-                            </p:column>
+    <ui:define name="menuActions" >
+        <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
+                    onclick="document.getElementById('centerFRM:btnRefresh').click();">
+        </p:menuitem>
+    </ui:define>
 
-                            <p:column headerText="#{bundle.Login}">
-                                #{item.user.login}
-                            </p:column>
+    <ui:define name="toolbarComponents" >
+        <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh" id="btnRefresh"
+                         actionListener="#{usersSessionsBean.refreshData()}"
+                         update="centerFRM"/>
+    </ui:define>
 
-                            <p:column headerText="#{bundle.DateLogin}">
-                                <p:outputLabel value="#{item.dateConnect}">
-                                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                                </p:outputLabel>
-                            </p:column>
+    <ui:define name="centerFormContent">
+        <p:dataTable id="tblLog"
+                     value="#{usersSessionsBean.listSessions}" var="item"
+                     rowKey="#{item.id}" selection="#{usersSessionsBean.selectedSession}" selectionMode="single"
+                     emptyMessage="#{bundle.EmptyTable}"
+                     paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rows="25" rowsPerPageTemplate="25,50,100"
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
 
-                            <p:column headerText="">
-                                <p:commandButton value="#{bundle.Disconnect}" icon="ui-icon-closethick"                                                     
-                                                 update="centerFRM:tblLog"
-                                                 actionListener="#{applicationBean.disconectUser(item)}">
-                                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable> 
-                    </p:outputPanel>                                       
-                </h:form>
-            </pe:layoutPane>
+            <p:column headerText="#{bundle.User}">
+                #{item.user.shortFIO}
+            </p:column>
 
-            <pe:layoutPane position="south" >
-                <h:form id="southFRM" style="font-size: 80%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
-                                         value="#{bundle.Close}"
-                                         actionListener="#{usersSessionsBean.onCloseForm()}"/>
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>            
+            <p:column headerText="#{bundle.Login}">
+                #{item.user.login}
+            </p:column>
 
-        </pe:layout>
+            <p:column headerText="#{bundle.DateLogin}">
+                <p:outputLabel value="#{item.dateConnect}">
+                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                </p:outputLabel>
+            </p:column>
+
+            <p:column headerText="">
+                <p:commandButton value="#{bundle.Disconnect}" icon="ui-icon-closethick"
+                                 update="centerFRM:tblLog"
+                                 actionListener="#{applicationBean.disconectUser(item)}">
+                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
     </ui:define>
 
 </ui:composition>

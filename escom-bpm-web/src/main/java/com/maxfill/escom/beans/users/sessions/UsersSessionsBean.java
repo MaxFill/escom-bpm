@@ -1,6 +1,7 @@
-
 package com.maxfill.escom.beans.users.sessions;
 
+import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.escom.beans.ApplicationBean;
 import java.io.Serializable;
@@ -14,25 +15,24 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /**
- *
+ * Контролер формы "Сессии пользователей"
  * @author mfilatov
  */
 @Named
 @ViewScoped
-public class UsersSessionsBean implements Serializable{
+public class UsersSessionsBean extends BaseDialogBean{
     private static final long serialVersionUID = 127067622604654493L;
 
     private UsersSessions selectedSession;
-    private final LayoutOptions layoutOptions = new LayoutOptions();  
+
     private List<UsersSessions> listSessions;
             
     @Inject 
     private ApplicationBean appBean;
-            
-    @PostConstruct
-    public void init(){
-        initLayoutOptions();
-    }        
+
+    @Override
+    protected void initBean() {
+    }
 
     public List<UsersSessions> getListSessions() {           
         if (listSessions == null){
@@ -51,50 +51,17 @@ public class UsersSessionsBean implements Serializable{
     /**
      * Закрытие формы
      */
-    public void onCloseForm(){
-       RequestContext.getCurrentInstance().closeDialog(null); 
+    @Override
+    public String onCloseCard() {
+        return super.onFinalCloseCard(null);
     }
-    
-    private void initLayoutOptions() {
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        panes.addOption("resizable", true);
-        layoutOptions.setPanesOptions(panes);
 
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("size", 600);
-        center.addOption("minWidth", 300);
-        center.addOption("minHeight", 300);
-        layoutOptions.setCenterOptions(center);  
-        
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 38);
-        layoutOptions.setSouthOptions(south);
-        
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 150);
-        west.addOption("minSize", 150);
-        west.addOption("maxSize", 350);
-        layoutOptions.setWestOptions(west);
-        /*        
-        LayoutOptions east = new LayoutOptions();;
-        east.addOption("size", 300);
-        east.addOption("minSize", 150);
-        east.addOption("maxSize", 450);
-        layoutOptions.setEastOptions(east);
-        */
-     
+    @Override
+    protected String getFormName() {
+        return DictDlgFrmName.FRM_USER_SESSIONS;
     }
 
     /* gets & sets */
-
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }
 
     public UsersSessions getSelectedSession() {
         return selectedSession;

@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.mail.internet.AddressException;
@@ -27,6 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
+
+/* Контролер формы "E-mail сообщение" */
 
 @Named
 @ViewScoped
@@ -47,16 +50,17 @@ public class MailMessageBean extends BaseDialogBean{
     @EJB
     private Configuration configuration;
     
-    private Mailbox selected;
+    private final Mailbox selected = new Mailbox();
     private Map<String, String> attaches = null;
     private String modeSentAttache = null;
     private String content;
-    
+
     @Override
-    protected void initBean() {    
+    protected void initBean() {
     }
-    
-    public void onOpenForm(){
+
+    @Override
+    public void onOpenCard(){
         if (modeSentAttache != null) return;
         Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         modeSentAttache = params.get("modeSendAttache");        
@@ -76,7 +80,6 @@ public class MailMessageBean extends BaseDialogBean{
         if (StringUtils.isBlank(senderEmail)){
             senderEmail = configuration.getDefaultSenderEmail();
         }
-        selected = new Mailbox();
         selected.setActual(true);
         selected.setSender(senderEmail);
         selected.setAuthor(sessionBean.getCurrentUser());
@@ -138,6 +141,7 @@ public class MailMessageBean extends BaseDialogBean{
         if (attaches == null){
             attaches= new HashMap<>();
         }
+        if (attache == null) return;
         attaches.put(attache.getName(), attache.getFullName());
     }
     
@@ -213,17 +217,21 @@ public class MailMessageBean extends BaseDialogBean{
         }
         return true;
     }
-    
+
+    /**
+     * Обработка события изменения сообщения
+     * @param event
+     */
+    public void onMessageChange(ValueChangeEvent event){
+        onItemChange();
+    }
+
     public void removeAttache(String fileName){
         attaches.remove(fileName);
     }
     
     public Mailbox getSelected() {
         return selected;
-    }
-
-    public void setSelected(Mailbox selected) {
-        this.selected = selected;
     }
         
     public Set<String> getAttaches() {

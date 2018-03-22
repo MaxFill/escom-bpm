@@ -13,7 +13,7 @@ public final class SysParams {
 
     //TODO Нужно получать из файла конфигурации и разделитель формировать через + File.separator    
      
-    public static final String APP_NAME = "EscomBPM3";
+    public static final String APP_NAME = "ProgramName";
         
     public static final String MAIN_PAGE     = "/view/index.xhtml";
     public static final String LOGIN_PAGE    = "login.xhtml";

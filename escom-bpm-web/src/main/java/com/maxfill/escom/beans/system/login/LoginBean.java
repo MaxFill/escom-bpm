@@ -90,9 +90,9 @@ public class LoginBean implements Serializable{
             return;
         }
 
-        if(appBean.getLicence().isExpired()) {
-            Date termLicense = appBean.getLicence().getDateTermLicence();
-            String dateTerm = DateUtils.dateToString(termLicense, DateFormat.SHORT, null, sessionBean.getLocale());
+        //проверка на просроченность лицензии
+        if(appBean.isLicenseExpire()) {
+            String dateTerm = sessionBean.getLicenseExpireAsString();
             errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
         }
 

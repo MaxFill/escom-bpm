@@ -708,9 +708,8 @@ public class ExplorerBean implements Serializable {
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: переход на уровень вверх в таблице */ 
     public void onGotoUpLevelContent() {
-        if (treeSelectedNode == null){
-            return;
-        }
+        if (treeSelectedNode == null) return;
+
         currentItem = (BaseDict) treeSelectedNode.getData();        
         if (currentItem.getParent() != null) {           
             makeSelectedGroup(currentItem.getParent());
@@ -788,9 +787,8 @@ public class ExplorerBean implements Serializable {
     
     /* ДЕРЕВО: установка текущего элемента в дереве по заданному объекту item */
     public void makeSelectedGroup(BaseDict item){      
-        if (item == null){
-            return;
-        }                             
+        if (item == null) return;
+
         //сброс предыдущей установки текущей node в дереве
         if (treeSelectedNode != null) {
             treeSelectedNode.setSelected(false);
@@ -917,13 +915,18 @@ public class ExplorerBean implements Serializable {
     private void doSearcheInTree(TreeNode rootNode, List<TreeNode> rezult){
         rootNode.getChildren().stream().map(node -> {
             BaseDict item = (BaseDict) node.getData();            
-            if (StringUtils.containsIgnoreCase(item.getName(), treeSearcheKey)){
+            if (StringUtils.containsIgnoreCase(item.getName(), treeSearcheKey) || extTreeSearche(treeSearcheKey, item)){
                 node.setSelected(true);
                 expandUp(node);
                 rezult.add(node);
             }
             return node;
         }).forEach(node -> doSearcheInTree(node, rezult));
+    }
+
+    /* Дополнительный поиск в дереве */
+    protected boolean extTreeSearche(String searche, BaseDict item){
+        return false;
     }
 
     /* НАВИГАТОР */

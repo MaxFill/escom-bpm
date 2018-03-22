@@ -4,25 +4,25 @@
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
    
-    <p:dataTable id="tblDetail" value="#{explorerBean.detailItems}" var="item"
+    <p:dataTable id="tblDetail" value="#{_explorerBean.detailItems}" var="item"
                  emptyMessage="#{bundle.EmptyTable}"
-                 paginator="true" paginatorPosition="bottom" first="#{explorerBean.currentPage}"
+                 paginator="true" paginatorPosition="bottom" first="#{_explorerBean.currentPage}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{explorerBean.rowsInPage}"
+                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_explorerBean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
-                 sortMode="multiple" sortBy="#{explorerBean.sortOrder}"
-                 selection="#{explorerBean.checkedItems}"
+                 sortMode="multiple" sortBy="#{_explorerBean.sortOrder}"
+                 selection="#{_explorerBean.checkedItems}"
                  rowKey="#{item.itemKey}">
 
         <p:ajax event="rowSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" 
-                listener="#{explorerBean.onRowDblClckOpen}"
+                listener="#{_explorerBean.onRowDblClckOpen}"
                 oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="toggleSelect" update="#{_frmExpl}:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="page" listener="#{explorerBean.onPageChange}" oncomplete="initDND()"/>             
+        <p:ajax event="page" listener="#{_explorerBean.onPageChange}" oncomplete="initDND()"/>             
         
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
 
@@ -38,13 +38,13 @@
         
         <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
-                           rendered="#{explorerBean.isItemTreeType(item)}"
-                           actionListener="#{explorerBean.onLoadGroupContent(item)}"
+                           rendered="#{_explorerBean.isItemTreeType(item)}"
+                           actionListener="#{_explorerBean.onLoadGroupContent(item)}"
                            update="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}" 
                            oncomplete="initDND()"/>
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
-                           rendered="#{!explorerBean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
-                           actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                           rendered="#{!_explorerBean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
+                           actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                            oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();">
             </p:commandLink>
             <ui:insert name="specCommandLinks"/>
@@ -81,65 +81,65 @@
 
         <p:column style="text-align: center;" width="90" >
             <p:splitButton  value="#{bundle.Select}"
-                            rendered="#{!item.deleted and item.actual and explorerBean.selectorViewMode}" 
-                            action="#{explorerBean.onSelect(item)}">                
+                            rendered="#{!item.deleted and item.actual and _explorerBean.selectorViewMode}" 
+                            action="#{_explorerBean.onSelect(item)}">                
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();"/>
             </p:splitButton>                      
                         
             <p:splitButton value="#{bundle.Edit}"
-                           actionListener="#{explorerBean.onSetCurrentItem(item)}"
-                           rendered="#{!item.deleted and explorerBean.explorerViewMode}"
+                           actionListener="#{_explorerBean.onSetCurrentItem(item)}"
+                           rendered="#{!item.deleted and _explorerBean.explorerViewMode}"
                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();">
                 <ui:insert name="addItemMenu" />                 
                 <p:separator/>
                 <p:menuitem icon="ui-icon-search" value="#{bundle.ViewCard}" 
-                            actionListener="#{explorerBean.onSetCurrentItem(item)}"
+                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('#{_frmExpl}:editCardBtn').click();"/>
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
                             update="#{_frmExpl}:explToolBar"
-                            actionListener="#{explorerBean.onCopyItem(item)}"/>
+                            actionListener="#{_explorerBean.onCopyItem(item)}"/>
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                             disabled="#{item.id == 0}"
                             update="#{_frmTree} #{_frmExpl}"
-                            actionListener="#{explorerBean.onMoveContentToTrash(item)}"
+                            actionListener="#{_explorerBean.onMoveContentToTrash(item)}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.Move}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />
                 </p:menuitem>
 
                 <p:separator/>
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
-                            rendered="#{!explorerBean.isFavoriteSelected()}"
-                            actionListener="#{explorerBean.onAddContentInFavorites(item)}"/>
+                            rendered="#{!_explorerBean.isFavoriteSelected()}"
+                            actionListener="#{_explorerBean.onAddContentInFavorites(item)}"/>
                 <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" 
-                            rendered="#{explorerBean.isFavoriteSelected()}"
-                            actionListener="#{explorerBean.onDelContentFromFavorites(item)}"
+                            rendered="#{_explorerBean.isFavoriteSelected()}"
+                            actionListener="#{_explorerBean.onDelContentFromFavorites(item)}"
                             update="#{_frmExpl}"
                             oncomplete="initDND()"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
                             rendered="#{sessionBean.userAdmin}"
-                            actionListener="#{explorerBean.onOpenAdmCardForm(item)}"/>                
+                            actionListener="#{_explorerBean.onOpenAdmCardForm(item)}"/>                
             </p:splitButton>                           
 
             <p:splitButton value="#{bundle.Delete}"  
                             rendered="#{item.deleted}"
                             disabled="#{!sessionBean.userAdmin}"
                             update="#{_frmExpl} #{_frmTree}"
-                            actionListener="#{explorerBean.onDeleteContentFromTrash(item)}"
+                            actionListener="#{_explorerBean.onDeleteContentFromTrash(item)}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()">
                 <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 <p:menuitem value="#{bundle.Restore}"
                             icon="ui-icon-arrowreturnthick-1-w"
                             update="#{_frmExpl} #{_frmTree}"
-                            actionListener="#{explorerBean.onRestoreContentFromTrash(item)}"
+                            actionListener="#{_explorerBean.onRestoreContentFromTrash(item)}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()">
                 </p:menuitem>                

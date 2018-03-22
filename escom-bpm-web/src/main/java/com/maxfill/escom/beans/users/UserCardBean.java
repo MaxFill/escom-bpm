@@ -62,6 +62,14 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     }
 
     /**
+     * Обработка события изменения подписи
+     * @param event
+     */
+    public void onEmailSignChange(ValueChangeEvent event){
+        onItemChange();
+    }
+
+    /**
      * Обработка события выбора дефолтной папки
      */
     public void onInboxSelected(SelectEvent event){

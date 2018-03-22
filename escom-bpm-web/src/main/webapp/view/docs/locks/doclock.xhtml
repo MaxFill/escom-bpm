@@ -92,7 +92,7 @@
                             <p:outputLabel value="#{bundle.LockPeriod}"/>
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
                                         styleClass="ui-grid-col-12" 
-                                        required="true" navigator="true" showButtonPanel="true"
+                                        required="#{param['isRequired'] == 'true'}" navigator="true" showButtonPanel="true"
                                         showHour="true" mask="true" 
                                         locale="#{sessionBean.locale}"
                                         mindate="#{docLockBean.minLockDate}" maxdate="#{docLockBean.maxLockDate}"                              
@@ -108,7 +108,9 @@
                                 </p:selectOneRadio>
                                 <p:commandButton id="btnSetUnLock" value="#{bundle.Make}" title="#{bundle.SetUnLock}" 
                                             update="#{_frm}"
-                                            action="#{docLockBean.makeUnLock()}"/> 
+                                            action="#{docLockBean.makeUnLock()}">
+                                    <f:param name="isRequired" value="true"/>
+                                </p:commandButton>
                             </h:panelGrid>
                         </p:panelGrid> 
                         <p:separator />

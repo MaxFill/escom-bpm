@@ -16,7 +16,7 @@
             <p:outputLabel value="#{bundle.MailServer}"/>
             <p:inputText id="server" style="width: 100%;"
                          title="#{bundle.MailServer}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.MailServer}] #{bundle.MustBeFilled}"
                          value="#{mailReaderBean.settings.serverAdress}"/>
             <p:message for="server" display="tooltip"/>
@@ -24,7 +24,7 @@
             <p:outputLabel value="#{bundle.IMAPport}"/>
             <p:inputText id="smtpPort" style="width: 100%;"
                          title="#{bundle.IMAPport}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
                          value="#{mailReaderBean.settings.port}"/>
             <p:message for="smtpPort" display="tooltip"/>
@@ -52,7 +52,7 @@
             <p:outputLabel value="#{bundle.Login}"/>
             <p:inputText id="login" style="width: 100%;"
                          title="#{bundle.Login}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
                          value="#{mailReaderBean.settings.user}"/>
             <p:message for="login"/>
@@ -60,7 +60,7 @@
             <p:outputLabel value="#{bundle.password}"/>
             <p:inputText id="password" style="width: 100%;"
                          title="#{bundle.password}"
-                         required="true"
+                         required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                          value="#{mailReaderBean.settings.password}"/>
             <p:message for="password"/>
@@ -71,7 +71,9 @@
                 <p:commandButton icon="ui-icon-check"
                             value="#{bundle.Test}" title="#{bundle.CheckConnect}"
                             actionListener="#{mailReaderBean.onCheckConnect()}"
-                            update="eastFRM"/>
+                            update="eastFRM">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
             </h:panelGrid>
            
         </p:panelGrid>

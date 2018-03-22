@@ -18,6 +18,8 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 
+/* Контролер формы проверки версии системы */
+
 @ViewScoped
 @Named
 public class CheckReleaseBean extends BaseDialogBean{
@@ -34,7 +36,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     private Licence licence;
     
     @Override
-    protected void initBean(){       
+    protected void initBean(){
        licence = appBean.getLicence();
     }
     
@@ -71,7 +73,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     public void onGotoSupportPage(){
         try {
             if (!isCorrectSupportPage()){
-                pageRelease = "http://www.escom-bpm.com";
+                pageRelease = "https://escom-archive.ru";
             }
             ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
             externalContext.redirect(pageRelease);

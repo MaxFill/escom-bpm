@@ -9,85 +9,17 @@
 
     <ui:define name="page_body">
 
-        <p:tab title="#{bundle.Folder}">
-            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
-
-                <p:outputLabel value="#{bundle.Name}:" />
-                <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
-                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                                 readonly="#{!_bean.isHaveRightEdit()}"
-                                 onchange="return itemChange = 1;"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 required="#{param['isRequired'] == 'true'}"
-                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                </p:inputText>
-
-                <p:outputLabel value="#{bundle.InheritParams}" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding"/>
-                <p:separator/>
-                
-                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritCompany}" itemLabel="#{bundle.InheritCompany}:"
-                        disabled="#{_bean.isReadOnly()}">
-                    <p:ajax oncomplete="itemChange = 1;" update="сompanyPanel"/> 
-                </p:selectBooleanCheckbox>
-                <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
-                    <p:selectOneMenu value="#{_bean.editedItem.companyDefault}" id="company" converter="companyConvertor"                                     
-                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritCompany}"
-                                     title="#{bundle.CompanyForNewDoc}"
-                                     styleClass="ui-grid-col-12" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-                        <p:ajax event="change" oncomplete="return itemChange = 1;"/>
-                    </p:selectOneMenu>
-                </h:panelGroup>
-                
-                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritDocType}" itemLabel="#{bundle.InheritDocType}:"
-                                        disabled="#{_bean.isReadOnly()}">
-                    <p:ajax oncomplete="itemChange = 1;" update="docTypePanel"/> 
-                </p:selectBooleanCheckbox>                
-                <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                    <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
-                    <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritDocType}"/>
-                    <ui:param name="_converter" value="docsTypesConvertor" />
-                    <ui:param name="_itemPanel" value="docTypePanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.DocTypesForNewDocs}"/>
-                    <ui:param name="_selectorBean" value="#{docTypeBean}"/>
-                    <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
-                    <ui:param name="_actionClear" value="setDocTypeDefault"/>
-                    <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
-                    <ui:param name="_update" value=""/>
-                </ui:include>
-                
-                <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritPartner}" itemLabel="#{bundle.InheritPartner}:"
-                                        disabled="#{_bean.isReadOnly()}">
-                    <p:ajax oncomplete="itemChange = 1;" update="partnerPanel"/> 
-                </p:selectBooleanCheckbox>
-                <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                    <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>
-                    <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritPartner}"/>
-                    <ui:param name="_converter" value="partnersConvertor" />
-                    <ui:param name="_itemPanel" value="partnerPanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.PartnerForNewDocs}"/>
-                    <ui:param name="_selectorBean" value="#{partnersBean}"/>
-                    <ui:param name="_items" value="#{partnersBean.findAll()}"/>
-                    <ui:param name="_actionClear" value="setPartnerDefault"/>
-                    <ui:param name="_actionSelect" value="onPartnerSelected"/>
-                    <ui:param name="_update" value=""/>
-                </ui:include>
-                                
-            </p:panelGrid>
-        </p:tab>
-
-        <p:tab title="#{bundle.Case}">
+        <p:tab title="#{_bean.editedItem.case ? bundle.Case : bundle.Folder}">
             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
                 <p:outputLabel value="#{bundle.Header}"/>
-                <p:inputText value="#{_bean.editedItem.name}" styleClass="ui-grid-col-12"
+                <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                             readonly="true"
-                             disabled="true">
+                             readonly="#{!_bean.isHaveRightEdit()}"
+                             onchange="return itemChange = 1;"
+                             disabled="#{_bean.isReadOnly()}"
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
 
                 <p:outputLabel value="#{bundle.IndexCase}" />
@@ -106,6 +38,71 @@
                                  disabled="#{_bean.isReadOnly()}">
                     </p:inputText>
                 </h:panelGroup>
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.AutoFillDocuments}">
+            <p:panelGrid id="gridAutoFill" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+
+                <p:outputLabel value="#{bundle.Company}:"/>
+                <p:inputSwitch value="#{_bean.editedItem.inheritCompany}" label="111" showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="сompanyPanel"/>
+                </p:inputSwitch>
+                <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
+                    <p:selectOneMenu value="#{_bean.editedItem.companyDefault}" id="company" converter="companyConvertor"
+                                     rendered="#{!_bean.editedItem.inheritCompany}"
+                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritCompany}"
+                                     title="#{bundle.CompanyForNewDoc}"
+                                     styleClass="ui-grid-col-12"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+                        <p:ajax event="change" oncomplete="return itemChange = 1;"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+
+                <p:outputLabel value="#{bundle.TypeDoc}:"/>
+                <p:inputSwitch value="#{_bean.editedItem.inheritDocType}" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="typeDocPanel"/>
+                </p:inputSwitch>
+                <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
+                        <ui:param name="_required" value="#{false}" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritDocType}"/>
+                        <ui:param name="_converter" value="docsTypesConvertor" />
+                        <ui:param name="_itemPanel" value="docTypePanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.DocTypesForNewDocs}"/>
+                        <ui:param name="_selectorBean" value="#{docTypeBean}"/>
+                        <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setDocTypeDefault"/>
+                        <ui:param name="_actionSelect" value="onDocTypeDefaultSelected"/>
+                        <ui:param name="_rendered" value="#{!_bean.editedItem.inheritDocType}"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+                </h:panelGroup>
+
+                <p:outputLabel value="#{bundle.Partner}:"/>
+                <p:inputSwitch value="#{_bean.editedItem.inheritPartner}" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                    <p:ajax oncomplete="itemChange = 1;" update="panelPartner"/>
+                </p:inputSwitch>
+                <h:panelGroup id="panelPartner" styleClass="ui-grid-col-12" >
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>
+                        <ui:param name="_required" value="#{false}" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritPartner}"/>
+                        <ui:param name="_converter" value="partnersConvertor" />
+                        <ui:param name="_itemPanel" value="partnerPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.PartnerForNewDocs}"/>
+                        <ui:param name="_selectorBean" value="#{partnersBean}"/>
+                        <ui:param name="_items" value="#{partnersBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setPartnerDefault"/>
+                        <ui:param name="_actionSelect" value="onPartnerSelected"/>
+                        <ui:param name="_rendered" value="#{!_bean.editedItem.inheritPartner}" />
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+                </h:panelGroup>
+
             </p:panelGrid>
         </p:tab>
 

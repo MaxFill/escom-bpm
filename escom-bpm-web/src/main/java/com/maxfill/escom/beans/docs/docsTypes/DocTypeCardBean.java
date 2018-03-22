@@ -13,7 +13,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 /**
- * Фасад для сущности "Виды документов"
+ * Контролер формы "Вид документа"
  * @author mfilatov
  */
 @Named

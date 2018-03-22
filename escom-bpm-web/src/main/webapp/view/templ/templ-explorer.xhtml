@@ -8,33 +8,35 @@
 
     <ui:define name="initBeans">
         <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
-        #{explorerBean.setSelectorHeader(_selectorHeader)}
-        #{explorerBean.setExplorerHeader(_explorerHeader)}
-        #{explorerBean.setSearcheBean(_searcheBean)}
+        <ui:param name="_explorerBean" value="#{_explorerBean == null ? explorerBean : _explorerBean}" />
 
-        #{_rootBean   != null ? explorerBean.setRootBean(_rootBean) : ''}
-        #{_detailBean != null ? explorerBean.setTableBean(_detailBean)  : ''}
-        #{_treeBean   != null ? explorerBean.setTreeBean(_treeBean) : ''}
+        #{_explorerBean.setSelectorHeader(_selectorHeader)}
+        #{_explorerBean.setExplorerHeader(_explorerHeader)}
+        #{_explorerBean.setSearcheBean(_searcheBean)}
+
+        #{_rootBean   != null ? _explorerBean.setRootBean(_rootBean) : ''}
+        #{_detailBean != null ? _explorerBean.setTableBean(_detailBean)  : ''}
+        #{_treeBean   != null ? _explorerBean.setTreeBean(_treeBean) : ''}
 
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
     </ui:define>
 
     <ui:define name="title">
-        #{explorerBean.jurnalHeader}
+        #{_explorerBean.jurnalHeader}
     </ui:define>
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{explorerBean.onOpenExplorer()}"/>
+            <f:event type="preRenderView" listener="#{_explorerBean.onOpenExplorer()}"/>
             <ui:insert name="preRenderAction" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">        
-        <pe:layout fullPage="true" options="#{explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
+        <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
             
-            <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!explorerBean.selectorViewMode}" /> 
+            <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 
             <h:outputScript library="js" name="drag-drop.js" />  
             
             <pe:layoutPane position="west" resizable="true">
@@ -55,24 +57,24 @@
             <pe:layoutPane position="center" resizable="true">
                 <pe:layoutPane position="center">
                     <f:facet name="header">
-                        <p:outputLabel id="centerHeaderLabel" value="#{explorerBean.jurnalHeader}" />
+                        <p:outputLabel id="centerHeaderLabel" value="#{_explorerBean.jurnalHeader}" />
                     </f:facet>
 
                     <h:form id="#{_frmExpl}" style="font-size: 80%;">
-                        <p:remoteCommand name="dropToTree"  actionListener="#{explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToTable" actionListener="#{explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToNavig" actionListener="#{explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
+                        <p:remoteCommand name="dropToTree"  actionListener="#{_explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
+                        <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
+                        <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
 
-                        <p:commandButton id="viewCardBtn" actionListener="#{explorerBean.onEditContentItem()}" 
+                        <p:commandButton id="viewCardBtn" actionListener="#{_explorerBean.onEditContentItem()}" 
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">
-                            <p:ajax event="dialogReturn" listener="#{explorerBean.onUpdateAfterCloseForm}"
+                            <p:ajax event="dialogReturn" listener="#{_explorerBean.onUpdateAfterCloseForm}"
                                     update="#{_frmExpl} #{_frmTree}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editCardBtn" actionListener="#{explorerBean.onViewContentItem()}"
+                        <p:commandButton id="editCardBtn" actionListener="#{_explorerBean.onViewContentItem()}"
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
                                          update="" style="display: none;">
@@ -81,18 +83,18 @@
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editDocument" actionListener="#{explorerBean.onEditDocument()}"
+                        <p:commandButton id="editDocument" actionListener="#{_explorerBean.onEditDocument()}"
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
                                          update="" style="display: none;">
                             <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl}" listener="#{explorerBean.onUpdateAfterChangeItem}"
+                                    update="#{_frmExpl}" listener="#{_explorerBean.onUpdateAfterChangeItem}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>                                                 
                         
                         <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"     
                                 actionListener="#{sessionBean.openScaningForm()}"> 
-                            <p:ajax event="dialogReturn" listener="#{explorerBean.addAttacheFromScan}"/>
+                            <p:ajax event="dialogReturn" listener="#{_explorerBean.addAttacheFromScan}"/>
                         </p:commandButton>
                         
                         <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 

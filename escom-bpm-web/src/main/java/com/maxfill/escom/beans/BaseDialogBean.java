@@ -19,7 +19,7 @@ import org.primefaces.event.CloseEvent;
 import org.primefaces.extensions.component.layout.LayoutPane;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
-/* Базовый бин для служебных диалогов  */
+/* Базовый бин для диалогов  */
 public abstract class BaseDialogBean implements Serializable{    
     private static final long serialVersionUID = 3712139345846276454L;
     protected static final Logger LOGGER = Logger.getLogger(BaseDialogBean.class.getName());
@@ -75,7 +75,7 @@ public abstract class BaseDialogBean implements Serializable{
         setItemChange(Boolean.TRUE);
     }
 
-    /* Обработка ajax cобытия изменения размеров формы */
+    /* Обработка cобытия изменения размеров формы */
     public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
         LayoutPane o = (LayoutPane)event.getSource();
         Double width = event.getWidth();
@@ -114,19 +114,34 @@ public abstract class BaseDialogBean implements Serializable{
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
         layoutOptions.setPanesOptions(panes);
-        
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 45);
-        layoutOptions.setSouthOptions(south);
 
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 170);
-        west.addOption("minSize", 150);
-        west.addOption("maxSize", 250);
-        west.addOption("resizable", true);
-        layoutOptions.setWestOptions(west);
+        if (isSouthShow()) {
+            LayoutOptions south = new LayoutOptions();
+            south.addOption("resizable", false);
+            south.addOption("closable", false);
+            south.addOption("size", 45);
+            south.addOption("initClosed", isSouthInitClosed());
+            layoutOptions.setSouthOptions(south);
+        }
+
+        if (isNorthShow()) {
+            LayoutOptions north = new LayoutOptions();
+            north.addOption("resizable", false);
+            north.addOption("closable", false);
+            north.addOption("size", 45);
+            north.addOption("initClosed", isNorthInitClosed());
+            layoutOptions.setNorthOptions(north);
+        }
+
+        if (isWestShow()) {
+            LayoutOptions west = new LayoutOptions();
+            west.addOption("size", 170);
+            west.addOption("minSize", 150);
+            west.addOption("maxSize", 250);
+            west.addOption("resizable", true);
+            west.addOption("initClosed", isWestInitClosed());
+            layoutOptions.setWestOptions(west);
+        }
 
         LayoutOptions center = new LayoutOptions();
         center.addOption("resizable", true);
@@ -135,7 +150,31 @@ public abstract class BaseDialogBean implements Serializable{
         center.addOption("minHeight", 100);
         layoutOptions.setCenterOptions(center);
     }
-    
+
+    public Boolean isSouthShow(){
+        return false;
+    }
+
+    public Boolean isWestShow(){
+        return false;
+    }
+
+    public Boolean isNorthShow(){
+        return false;
+    }
+
+    protected boolean isSouthInitClosed(){
+        return false;
+    }
+
+    protected boolean isWestInitClosed(){
+        return true;
+    }
+
+    protected boolean isNorthInitClosed(){
+        return false;
+    }
+
     protected User getCurrentUser(){
         return sessionBean.getCurrentUser();
     }    

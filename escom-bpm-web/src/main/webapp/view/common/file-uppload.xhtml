@@ -6,8 +6,8 @@
 
     <h:form id="fileUploadFRM" style="font-size: 90%;">
         
-        <p:fileUpload id="file" disabled="#{explorerBean.treeSelectedNode == null}"
-                      rendered="#{!explorerBean.isTrashSelected()}"
+        <p:fileUpload id="file" disabled="#{_explorerBean.treeSelectedNode == null}"
+                      rendered="#{!_explorerBean.isTrashSelected()}"
                       styleClass="ui-grid-col-12"
                       allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
                       sizeLimit="#{docsBean.maxFileSize}"
@@ -20,7 +20,7 @@
                       label="#{bundle.SelectFileAndCreateDoc}" 
                       cancelLabel="#{bundle.Cancel}"
                       uploadLabel="#{bundle.SaveFiles}"
-                      fileUploadListener="#{explorerBean.onUploadFile}" 
+                      fileUploadListener="#{_explorerBean.onUploadFile}" 
                       onstart="PF('statusDialog').show()"
                       oncomplete="PF('statusDialog').hide(); document.getElementById('#{_frmExpl}:createItemBtn').click();">
         </p:fileUpload>

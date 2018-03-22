@@ -60,7 +60,11 @@ public final class Licence implements Serializable{
     public Date getDateTermLicence() {
         return dateTermLicence;
     }
-        
+
+    /**
+     * Признак того, что лицензия просрочена
+     * @return
+     */
     public Boolean isExpired(){
         Date currentClearDate = DateUtils.clearDate(new Date());
         Date licenceClearDate = DateUtils.clearDate(dateTermLicence);

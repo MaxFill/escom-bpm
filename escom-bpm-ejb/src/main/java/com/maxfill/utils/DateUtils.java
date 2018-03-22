@@ -4,10 +4,7 @@ import com.google.common.base.Preconditions;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -42,7 +39,8 @@ public final class DateUtils {
         }
         return rezult;
     }
-    
+
+    /* Конвертация строки в дату */
     public static Date convertStrToDate(String dateStr, Locale locale){        
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", locale);
         Date date = null;
@@ -146,8 +144,19 @@ public final class DateUtils {
         cal.add(Calendar.MONTH, mounth); 
         return cal.getTime();
     }
-    
-    /* Возвращает разницу во времени между двумя датами */
+
+    /**
+     * Возвращает разницу между двумя датами в днях
+     * @param dateStart
+     * @param dateEnd
+     * @return
+     */
+    public static String differenceDays(Instant dateStart, Instant dateEnd) {
+        Duration duration = Duration.between(dateStart, dateEnd);
+        return String.valueOf(duration.toDays());
+    }
+
+    /* Возвращает разницу между двумя датами в виде времени в часах:минутах:секундах */
     public static String differenceTime(Date dateStart, Date dateEnd) {        
         LocalDateTime ldStart = toLocalDateTime(dateStart);
         LocalDateTime ldEnd = toLocalDateTime(dateEnd);

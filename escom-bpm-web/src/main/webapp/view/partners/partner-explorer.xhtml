@@ -14,12 +14,12 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreatePartner}" />
         
-    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('PartnerSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('Partners')}"/>
+    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('PartnerSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Partners')}"/>
     
     <!-- специфичные поля таблицы обозревателя Detail -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{explorerBean.isNowShowDetail()}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_explorerBean.isNowShowDetail()}">
             #{item.code}
         </p:column>
     </ui:define> 
@@ -35,7 +35,7 @@
             <div class="ui-inputgroup">
                 <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}" widgetVar="searchCode"
                              styleClass="ui-grid-col-12"
-                             value="#{explorerBean.model.codeSearche}"
+                             value="#{_explorerBean.model.codeSearche}"
                              placeholder="#{bundle.InputCreteriaForSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>

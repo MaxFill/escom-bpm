@@ -9,16 +9,10 @@
     <ui:param name="_detailBean" value="#{docTypeBean}" /> 
     <ui:param name="_searcheBean" value="#{docTypeBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{explorerBean.getLabelFromBundle('DocTypeSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{explorerBean.getLabelFromBundle('DocsTypes')}"/>
+    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('DocTypeSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('DocsTypes')}"/>
     
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateChildGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDocType}" />
-    
-    <ui:define name="specDetailColumns"> 
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}">
-            #{item.code}
-        </p:column>
-    </ui:define>   
 
 </ui:composition>

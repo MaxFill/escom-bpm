@@ -118,7 +118,6 @@
                             <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"                                                                                             
                                              action="#{_bean.onCancelItemSave()}"
                                              icon="ui-icon-circle-close"
-                                             immediate="true"
                                              onclick="if (itemChange == 1)
                                                              onChangeItem();">
                                 <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
@@ -131,7 +130,7 @@
                             <p:autoUpdate />
                         </p:messages>
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true">
-                            <ui:insert name="page_body">Body<br /></ui:insert>
+                            <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
                             <ui:include src="/view/common/dict-info.xhtml"/>
                             <ui:include src="/view/common/dict-log.xhtml"/> 
