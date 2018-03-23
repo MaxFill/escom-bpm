@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
-    <system systemId="http://localhost:8080/EscomInfoSOAP/ReleaseInfoWS?wsdl" uri="wsdl/localhost_8080/EscomInfoSOAP/ReleaseInfoWS.wsdl"/>
-    <system systemId="http://localhost:8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo?wsdl" uri="wsdl/localhost_8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo.wsdl"/>
+    <system systemId="https://escom-demo.ru:8443/EscomInfoSOAP/ReleaseInfoWS?wsdl" uri="wsdl/localhost_8080/EscomInfoSOAP/ReleaseInfoWS.wsdl"/>
+    <system systemId="https://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo?wsdl" uri="wsdl/localhost_8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo.wsdl"/>
 </catalog>

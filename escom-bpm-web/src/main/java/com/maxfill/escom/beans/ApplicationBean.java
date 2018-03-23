@@ -42,7 +42,7 @@ public class ApplicationBean implements Serializable{
 
     private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/";
         
-    private Boolean needUpadateSystem = false;
+    private boolean needUpadateSystem;
     private Licence licence;
     private String appName;
 
@@ -239,7 +239,7 @@ public class ApplicationBean implements Serializable{
 
     /* GETS & SETS */
     
-    public Boolean getNeedUpadateSystem() {
+    public boolean getNeedUpadateSystem() {
         return needUpadateSystem;
     }
     public void setNeedUpadateSystem(Boolean needUpadateSystem) {

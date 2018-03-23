@@ -34,7 +34,11 @@
                                   onstart="document.getElementById('centerFRM:btnClose').click();">
                         </p:hotkey>
 
-                        <p:toolbar>
+                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                            <p:autoUpdate />
+                        </p:messages>
+
+                        <p:toolbar styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
                             <f:facet name="left">
                                 <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
                                     <ui:insert name="menuActions" />
@@ -56,10 +60,6 @@
                                 </p:commandButton>
                             </f:facet>
                         </p:toolbar>
-
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                            <p:autoUpdate />
-                        </p:messages>
 
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                             <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />

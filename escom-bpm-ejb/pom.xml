@@ -261,7 +261,7 @@
                                 <wsdlFile>localhost_8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName>com.maxfill.services.update</packageName>
-                            <wsdlLocation>http://localhost:8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo?wsdl</wsdlLocation>
+                            <wsdlLocation>https://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo?wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/ReleaseInfo.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-ReleaseInfo</id>

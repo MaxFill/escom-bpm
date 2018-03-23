@@ -50,7 +50,7 @@
   </wsdl:binding>
   <wsdl:service name="ReleaseInfo">
     <wsdl:port binding="tns:ReleaseInfoSoapBinding" name="ReleaseInfoPort">
-      <soap:address location="http://localhost:8080/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo"/>
+      <soap:address location="https://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/ReleaseInfo"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

@@ -30,5 +30,4 @@ public class CheckNewVersion {
         //timer.cancel();
     }
 
-
 }

@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 
 /* Контролер формы проверки версии системы */
@@ -24,10 +26,10 @@ import org.primefaces.context.RequestContext;
 @Named
 public class CheckReleaseBean extends BaseDialogBean{
     private static final long serialVersionUID = -5278789301121698576L;
-
+    private static final String websocketURL = "wss://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/release_info";
     @Inject
-    private ApplicationBean appBean; 
-    
+    private ApplicationBean appBean;
+
     private String versionRelease;  //номер версии актуального релиза
     private String releaseNumber;   //номер актуального релиза
     private String pageRelease;     //страница актуального релиза
@@ -38,8 +40,13 @@ public class CheckReleaseBean extends BaseDialogBean{
     @Override
     protected void initBean(){
        licence = appBean.getLicence();
+       PrimeFaces.current().executeScript("init('" + websocketURL +"')");
     }
-    
+
+    /**
+     * Обработка события получения сообщения от удалённого сервера
+     * Метод вызывается с экранной формы через javascript
+     */
     public void updateReleaseInfo(){      
         if (StringUtils.isBlank(strDateRelease)){
             EscomMsgUtils.errorMsg("NoGetRealiseInfo");
@@ -51,19 +58,20 @@ public class CheckReleaseBean extends BaseDialogBean{
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) > 0){
             EscomMsgUtils.warnMsg("NeedUpdateProgram");
-            appBean.setNeedUpadateSystem(Boolean.TRUE);
-            sessionBean.setCanShowNotifBar(Boolean.TRUE);
+            if (!appBean.getNeedUpadateSystem()) {
+                appBean.setNeedUpadateSystem(Boolean.TRUE);
+                sessionBean.setCanShowNotifBar(Boolean.TRUE);
+            }
         }
         if (dateRelease.compareTo(licence.getReleaseDate()) == 0){
             EscomMsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
-        RequestContext.getCurrentInstance().update("checkFRM");
+        RequestContext.getCurrentInstance().update("centerFRM");
     }
     
     @Override
-    public void onOpenCard(){
-    }
+    public void onOpenCard(){}
     
     @Override
     public String onCloseCard() {
