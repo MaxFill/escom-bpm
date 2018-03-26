@@ -323,7 +323,13 @@ public class SessionBean implements Serializable{
     private Integer getCountUnreadMessage(){
         return messagesFacade.getCountUnReadMessage(currentUser);        
     }
-    
+
+    /**
+     * Вывод отчёта на просмотр
+     * @param dataReport
+     * @param parameters
+     * @param reportName
+     */
     public void preViewReport(List<Object> dataReport, Map<String, Object> parameters, String reportName){
         printService.doPrint(dataReport, parameters, reportName);
         String pdfFile = new StringBuilder()

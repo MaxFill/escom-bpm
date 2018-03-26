@@ -184,15 +184,6 @@ public class ApplicationBean implements Serializable{
 
     /* Установка признака наличия новой версии */
     public void checkNewVersionAvailable(){
-        /*
-        String actualReleasesJSON = EscomUtils.getReleaseInfo(licence.getLicenceNumber());
-
-        if (StringUtils.isBlank(actualReleasesJSON)) {
-            LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");
-            return;
-        }
-        */
-
         Map<String,String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), WSS_INFO_URL);
         if (MapUtils.isEmpty(releaseInfoMap)){
             LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");

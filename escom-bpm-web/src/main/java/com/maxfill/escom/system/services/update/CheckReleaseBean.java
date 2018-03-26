@@ -54,7 +54,10 @@ public class CheckReleaseBean extends BaseDialogBean{
        PrimeFaces.current().executeScript("init('" + appBean.WSS_INFO_URL +"')");
     }
 
-    //вызов wss сервиса через jetty
+    /**
+     * вызов wss сервиса через jetty
+     * код оставлен для тестирования
+     */
     public void test(){
         Map<String, String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), appBean.WSS_INFO_URL);
         if (MapUtils.isEmpty(releaseInfoMap )) {
@@ -67,6 +70,14 @@ public class CheckReleaseBean extends BaseDialogBean{
         String dateStr = releaseInfoMap.get("date");
         dateRelease = DateUtils.convertStrToDate(dateStr, sessionBean.getLocale());
     }
+
+    /**
+     * Вывод сообщения об успешном подключении к серверу
+     */
+     public void onServerConnect(){
+         EscomMsgUtils.succesMsg("ConnectionEstablished");
+         PrimeFaces.current().executeScript("doSend('" + licence.getLicenceName() +"')");
+     }
 
     /**
      * Вывод сообщения в случае неудачного соединения

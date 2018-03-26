@@ -21,13 +21,12 @@
                 };
                 websocket.onerror = function (evt) {
                     onError(evt)
-
                 };
             }
 
             function onOpen(evt) {
                 console.log("CONNECTED");
-                document.getElementById('centerFRM:btnRefresh').click();
+                onSucessConnect();
             }
 
             function onMessage(evt) {
@@ -63,15 +62,9 @@
     </ui:define>
 
     <ui:define name="menuActions" >
-        <p:menuitem icon="ui-icon-arrowrefresh-1-w" value="#{bundle.Refresh}"
-                    onclick="document.getElementById('centerFRM:btnRefresh').click();">
-        </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" title="#{bundle.CheckUpdates}"
-                     onclick="doSend('#{checkReleaseBean.licence.licenceNumber}')"/>
-        <p:commandButton value="Test" action="#{checkReleaseBean.test()}" />
     </ui:define>
 
     <ui:define name="centerFormContent">
@@ -123,6 +116,7 @@
 
         <p:remoteCommand name="updateReleaseInfo" action="#{checkReleaseBean.updateReleaseInfo()}"/>
         <p:remoteCommand name="onErrorConnect" action="#{checkReleaseBean.onErrorConnect()}"/>
+        <p:remoteCommand name="onSucessConnect" action="#{checkReleaseBean.onServerConnect()}"/>
 
         <p:inputText id="dateRelease" value="#{checkReleaseBean.strDateRelease}" style="display: none;"/>
         <p:inputText id="versionRelease" value="#{checkReleaseBean.versionRelease}" style="display: none;"/>
