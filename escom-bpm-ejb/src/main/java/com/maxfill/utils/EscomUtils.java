@@ -28,7 +28,12 @@ import java.util.zip.GZIPOutputStream;
 public final class EscomUtils {
     private static final Logger LOGGER = Logger.getLogger(EscomUtils.class.getName());             
     
-    /* Получение номера актуального релиза */
+    /**
+     * Получение номера актуального релиза
+     * не используется потому что к серверу по ssl не удалось подключиться. Нужно установить сертификат сервера, к которму коннектишься
+     * в хранилище java. Это гемор, так как придётся после устаревания сертификата обновлять сертификат у всех клиентов.
+     * Код оставлен для примера.
+     */
     public static String getReleaseInfo(String licenceNumber){
         String result= "";
         try { 

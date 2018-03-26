@@ -3,11 +3,14 @@ package com.maxfill.escom.system.services.update;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.licence.Licence;
+import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -16,9 +19,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 
 /* Контролер формы проверки версии системы */
 
@@ -26,9 +30,15 @@ import org.primefaces.context.RequestContext;
 @Named
 public class CheckReleaseBean extends BaseDialogBean{
     private static final long serialVersionUID = -5278789301121698576L;
-    private static final String websocketURL = "wss://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/release_info";
+
     @Inject
     private ApplicationBean appBean;
+
+    @Inject
+    private SessionBean sessionBean;
+
+    @EJB
+    private UpdateInfo updateInfo;
 
     private String versionRelease;  //номер версии актуального релиза
     private String releaseNumber;   //номер актуального релиза
@@ -40,7 +50,29 @@ public class CheckReleaseBean extends BaseDialogBean{
     @Override
     protected void initBean(){
        licence = appBean.getLicence();
-       PrimeFaces.current().executeScript("init('" + websocketURL +"')");
+       // вызов wss сервиса через javascript
+       PrimeFaces.current().executeScript("init('" + appBean.WSS_INFO_URL +"')");
+    }
+
+    //вызов wss сервиса через jetty
+    public void test(){
+        Map<String, String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), appBean.WSS_INFO_URL);
+        if (MapUtils.isEmpty(releaseInfoMap )) {
+            onErrorConnect();
+            return;
+        }
+        versionRelease = releaseInfoMap.get("version");
+        releaseNumber = releaseInfoMap.get("number");
+        pageRelease = releaseInfoMap.get("page");
+        String dateStr = releaseInfoMap.get("date");
+        dateRelease = DateUtils.convertStrToDate(dateStr, sessionBean.getLocale());
+    }
+
+    /**
+     * Вывод сообщения в случае неудачного соединения
+     */
+    public void onErrorConnect(){
+        EscomMsgUtils.errorMsg("NoGetRealiseInfo");
     }
 
     /**
@@ -67,7 +99,7 @@ public class CheckReleaseBean extends BaseDialogBean{
             EscomMsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
-        RequestContext.getCurrentInstance().update("centerFRM");
+        PrimeFaces.current().ajax().update("centerFRM");
     }
     
     @Override

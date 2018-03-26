@@ -21,6 +21,7 @@
                 };
                 websocket.onerror = function (evt) {
                     onError(evt)
+
                 };
             }
 
@@ -41,7 +42,7 @@
 
             function onError(evt) {
                 console.log('ERROR: ' + evt.data);
-                document.getElementById('centerFRM:connectStatus').value = "disconnected";
+                onErrorConnect();
             }
 
             function doSend(message) {
@@ -70,11 +71,12 @@
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" title="#{bundle.CheckUpdates}"
                      onclick="doSend('#{checkReleaseBean.licence.licenceNumber}')"/>
+        <p:commandButton value="Test" action="#{checkReleaseBean.test()}" />
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 col-padding">
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
+        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
                     <p:outputLabel value="#{bundle.ActualRelease}" />
                     <p:separator/>
@@ -95,17 +97,16 @@
                     <p:spacer/>
                     <p:commandLink value="#{bundle.GoToSupport}"
                                actionListener="#{checkReleaseBean.onGotoSupportPage}" target="_blank"/>
-
                 </p:panelGrid>
             </p:panelGrid>
 
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
                     <p:outputLabel value="#{bundle.CurrentRelease}" />
                     <p:separator/>
                 </h:panelGroup>
 
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
                     <h:outputLabel value="#{bundle.Version}:" />
                     <p:inputText value="#{checkReleaseBean.licence.versionNumber}" readonly="true" />
 
@@ -119,7 +120,10 @@
                 </p:panelGrid>
             </p:panelGrid>
         </p:panelGrid>
+
         <p:remoteCommand name="updateReleaseInfo" action="#{checkReleaseBean.updateReleaseInfo()}"/>
+        <p:remoteCommand name="onErrorConnect" action="#{checkReleaseBean.onErrorConnect()}"/>
+
         <p:inputText id="dateRelease" value="#{checkReleaseBean.strDateRelease}" style="display: none;"/>
         <p:inputText id="versionRelease" value="#{checkReleaseBean.versionRelease}" style="display: none;"/>
         <p:inputText id="actualRelease" value="#{checkReleaseBean.releaseNumber}" style="display: none;"/>

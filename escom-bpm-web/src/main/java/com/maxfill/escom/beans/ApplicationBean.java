@@ -14,9 +14,11 @@ import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -41,14 +43,17 @@ public class ApplicationBean implements Serializable{
     private static final Logger LOGGER = Logger.getLogger(ApplicationBean.class.getName());
 
     private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/";
-        
+    public static final String WSS_INFO_URL = "wss://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/release_info";
+
     private boolean needUpadateSystem;
     private Licence licence;
     private String appName;
 
     @EJB
     private Configuration configuration;
-    
+    @EJB
+    private UpdateInfo updateInfo;
+
     //открытые сессии пользователей
     private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
     
@@ -179,22 +184,18 @@ public class ApplicationBean implements Serializable{
 
     /* Установка признака наличия новой версии */
     public void checkNewVersionAvailable(){
+        /*
         String actualReleasesJSON = EscomUtils.getReleaseInfo(licence.getLicenceNumber());
 
         if (StringUtils.isBlank(actualReleasesJSON)) {
             LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");
             return;
         }
+        */
 
-        Map<String,String> releaseInfoMap = new HashMap<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            releaseInfoMap = objectMapper.readValue(actualReleasesJSON, HashMap.class);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-
-        if (releaseInfoMap.isEmpty()){
+        Map<String,String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), WSS_INFO_URL);
+        if (MapUtils.isEmpty(releaseInfoMap)){
+            LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");
             return;
         }
 
