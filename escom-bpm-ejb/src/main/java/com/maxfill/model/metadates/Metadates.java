@@ -96,7 +96,6 @@ public class Metadates implements Serializable{
     
     @JoinColumn(name = "NumPattern", referencedColumnName = "ID")
     @ManyToOne(optional = false)
-    @NotNull
     private NumeratorPattern numPattern;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "metadateObj")

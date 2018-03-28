@@ -16,39 +16,29 @@ public final class EscomMsgUtils{
     private EscomMsgUtils() {}
 
     /**
-     * Вывод сообщения в диалоге
-     */
-    public static void warnMsgDlg(String title, String msg, Object[] msgParams) {
-        FacesMessage message = makeFacesMsg(FacesMessage.SEVERITY_WARN, title, msg, msgParams);
-        RequestContext.getCurrentInstance().showMessageInDialog(message);
-    }
-
-    /**
      * Вывод сообщения об ошибке. Текст ошибки (error) уже ранее должен быть подготовлен!
      * @param error
      */
     public static void errorMessage(String error) {
-        ResourceBundle bundle = getResourceBundle("msg");
-        String title = bundle.getString("Error");
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, title, error);
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_ERROR, error, "");
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
     public static void succesFormatMsg(String msg, Object[] msgParams) {
-        addFacesMsg(FacesMessage.SEVERITY_INFO, "Successfully", msg, msgParams);
+        addFacesMsg(FacesMessage.SEVERITY_INFO, msg, msgParams);
     }
 
     public static void warnFormatMsg(String msg, Object[] msgParams) {
-        addFacesMsg(FacesMessage.SEVERITY_WARN, "Attention", msg, msgParams);
+        addFacesMsg(FacesMessage.SEVERITY_WARN, msg, msgParams);
     }
 
     public static void errorFormatMsg(String msg, Object[] msgParams) {
-        addFacesMsg(FacesMessage.SEVERITY_ERROR,  "Error", msg, msgParams);
+        addFacesMsg(FacesMessage.SEVERITY_ERROR, msg, msgParams);
     }
 
     /* Формирует и возвращает FacesMessage c текстом ошибки */
     public static FacesMessage prepFormatErrorMsg(String key, Object[] msgParams){
-        return makeFacesMsg(FacesMessage.SEVERITY_ERROR, "Error", key, msgParams);
+        return makeFacesMsg(FacesMessage.SEVERITY_ERROR, key, msgParams);
     }
 
     public static void showFacesMessages(Set<FacesMessage> messages){
@@ -64,15 +54,15 @@ public final class EscomMsgUtils{
     }
 
     public static void succesMsg(String msg) {
-        addFacesMsg(FacesMessage.SEVERITY_INFO, "Successfully", msg, new Object[]{});
+        addFacesMsg(FacesMessage.SEVERITY_INFO, msg, new Object[]{});
     }
 
     public static void warnMsg(String msg) {
-        addFacesMsg(FacesMessage.SEVERITY_WARN, "Attention", msg, new Object[]{});
+        addFacesMsg(FacesMessage.SEVERITY_WARN, msg, new Object[]{});
     }
 
     public static void errorMsg(String msg) {
-        addFacesMsg(FacesMessage.SEVERITY_ERROR,  "Error", msg, new Object[]{});
+        addFacesMsg(FacesMessage.SEVERITY_ERROR, msg, new Object[]{});
     }
 
     /* Возвращает значение из msg по ключу  */
@@ -93,8 +83,8 @@ public final class EscomMsgUtils{
     /**
      * Формирование и вывод FacesMessage сообщения
      */
-    private static void addFacesMsg(FacesMessage.Severity type, String keyTitle, String keyMsg, Object[] msgParams){
-        addMessage(makeFacesMsg(type, keyTitle, keyMsg, msgParams));
+    private static void addFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){
+        addMessage(makeFacesMsg(type, keyMsg, msgParams));
     }
 
     /**
@@ -107,11 +97,10 @@ public final class EscomMsgUtils{
     /**
      * Формирование FacesMessage сообщения
      */
-    private static FacesMessage makeFacesMsg(FacesMessage.Severity type, String keyTitle, String keyMsg, Object[] msgParams){
+    private static FacesMessage makeFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){
         ResourceBundle bundle = getResourceBundle("msg");
         String message = MessageFormat.format(bundle.getString(keyMsg), msgParams);
-        String title = bundle.getString(keyTitle);
-        return new FacesMessage(type, title, message);
+        return new FacesMessage(type, message, "");
     }
 
     public static String getFromBundle(String key, String bundleName) {

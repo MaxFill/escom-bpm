@@ -17,14 +17,33 @@
     </ui:define>
 
     <ui:define name="body">
+        <script type="text/javascript" >
+            function checkEsc(componentName) {
+                if (event.keyCode === 27) {
+                    document.getElementById(componentName).focus();
+                    return;
+                }
+            }
+        </script>
+        <script type="text/javascript" >
+            var itemChange = 0;
+        </script>
+
+        <style>
+            .ui-tabs-left>.ui-tabs-panels{
+                float:left !important;
+            }
+            .ui-tabs .ui-tabs-panel{
+                padding: 0em 1.4em !important;
+            }
+            ul.ui-menu-child {
+                white-space: nowrap;
+                width: auto !important;
+            }
+        </style>
+
         <pe:layout fullPage="true" options="#{_bean.layoutOptions}">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>
-
-            <pe:layoutPane id="west" position="west" rendered="#{authLogBean.isWestShow()}">
-                <h:form id="leftFRM" style="font-size: 80%;">
-                    <ui:insert name="leftFormContent"/>
-                </h:form>
-            </pe:layoutPane>
 
             <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="centerFRM" style="font-size: 80%;">
@@ -34,7 +53,7 @@
                                   onstart="document.getElementById('centerFRM:btnClose').click();">
                         </p:hotkey>
 
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
                             <p:autoUpdate />
                         </p:messages>
 
@@ -66,11 +85,15 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
                             <ui:insert name="centerFormContent"/>
                         </p:panelGrid>
+
+                        <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}"
+                                         oncomplete="return itemChange = 0;"/>
+
                     </p:outputPanel>
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane position="north" rendered="#{authLogBean.isNorthShow()}">>
+            <pe:layoutPane position="north" rendered="#{_bean.isNorthShow()}">>
                 <h:form id="northFRM" style="font-size: 80%;">
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="northFormContent" />
@@ -78,11 +101,17 @@
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane position="south" rendered="#{authLogBean.isSouthShow()}">>
+            <pe:layoutPane position="south" rendered="#{_bean.isSouthShow()}">>
                 <h:form id="southFRM" style="font-size: 80%;">
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="southFormContent" />
                     </p:outputPanel>
+                </h:form>
+            </pe:layoutPane>
+
+            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}">
+                <h:form id="leftFRM" style="font-size: 80%;">
+                    <ui:insert name="leftFormContent"/>
                 </h:form>
             </pe:layoutPane>
 

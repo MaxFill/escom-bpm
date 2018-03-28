@@ -58,7 +58,16 @@ public class UserMessagesFacade extends BaseFacade<UserMessages> {
         String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
         createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, doc);
     }
-    
+
+    /**
+     * Создание нового сообщения
+     * @param addressee
+     * @param senderName
+     * @param senderEmail
+     * @param subject
+     * @param content
+     * @param doc
+     */
     public void createMessage(User addressee, String senderName, String senderEmail, String subject, String content, Doc doc){        
         UserMessages message = new UserMessages();
         message.setName(subject);

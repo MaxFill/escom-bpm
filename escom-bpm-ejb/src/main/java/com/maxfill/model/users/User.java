@@ -88,8 +88,11 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     private boolean duplicateMessagesEmail = true;
 
     @Column(name = "DoubleFactorAuth")
-    private boolean doubleFactorAuth = false;
-            
+    private boolean doubleFactorAuth;
+
+    @Column(name = "NeedChangePwl")
+    private boolean needChangePwl = true;
+
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
     private List<FavoriteObj> favoriteObjList;        
     
@@ -170,6 +173,13 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @Override
     public String getIconName() {
         return "user";
+    }
+
+    public boolean isNeedChangePwl() {
+        return needChangePwl;
+    }
+    public void setNeedChangePwl(boolean needChangePwl) {
+        this.needChangePwl = needChangePwl;
     }
 
     public Folder getInbox() {

@@ -55,12 +55,21 @@ public class UserMsgBean extends BaseDialogBean{
     public void markAsRead(){
         if (checkedMessages == null || checkedMessages.isEmpty()) return;
         checkedMessages.stream().forEach(message -> markAsRead(message));
+        checkedMessages.clear();
     }
-    
+
+    /**
+     * Установка отметки о прочтении сообщения
+     * @param message
+     */
     public void markAsRead(UserMessages message){
-        message.setDateReading(new Date());
-        messagesFacade.edit(message);
-        messages.remove(message);
+        if (message.getDateReading() == null) {
+            message.setDateReading(new Date());
+            messagesFacade.edit(message);
+        }
+        if (showOnlyUnread) {
+            messages.remove(message);
+        }
     }
     
     public void onChangeChBoxShowMsgType(){

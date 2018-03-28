@@ -9,6 +9,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+/**
+ * Фасад для "Состояния обектов"
+ */
 @Stateless
 public class StateFacade extends BaseFacade {
 

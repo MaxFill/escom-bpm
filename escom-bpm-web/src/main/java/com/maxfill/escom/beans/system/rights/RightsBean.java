@@ -63,7 +63,7 @@ public class RightsBean implements Serializable{
         return accessorName;
     } 
     
-    // Формирует именя типа для отображения на карточке
+    // Формирует имя типа для отображения на карточке
     public String getTypeName(Integer objType){         
         switch (objType){
             case (DictRights.TYPE_GROUP):{  

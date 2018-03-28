@@ -82,7 +82,15 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         return newItem;
     }
 
-    /* Проверка возможности создание объекта с открытием карточки */
+    /**
+     * Проверка возможности создания объекта
+     * для того чтобы узнать, может ли пользователь создать объект нужно его создать, получить для него права и только затем проверить*
+     * @param parent
+     * @param owner
+     * @param errors Метод вернёт непустой errors если у пользователя нет права на создание
+     * @param params
+     * @return
+     */
     public T checkCanCreateItem(BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
         T newItem = createItem(owner, currentUser, params);
         prepCreate(newItem, parent, errors);

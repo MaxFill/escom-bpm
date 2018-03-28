@@ -115,6 +115,12 @@
                              onkeypress="checkEsc(#{_bean.cancelBtnName});">
                 </p:inputText>
 
+                <p:selectBooleanCheckbox value="#{_bean.editedItem.needChangePwl}"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         itemLabel="#{bundle.UserMustChangePassword}">
+                    <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
+                </p:selectBooleanCheckbox>
+
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.duplicateMessagesEmail}"
                                          disabled="#{_bean.isReadOnly()}"
                                          itemLabel="#{bundle.DuplicateMessagesEmail}">

@@ -165,7 +165,10 @@ body{
     vertical-align: central;
     text-align: center;
 }
-        
+
+.ui-messages-error ui-corner-all{
+    margin: 5px !important;
+}
 .ui-panelgrid-content {
     border: none !important;
 }
@@ -216,6 +219,7 @@ body{
     text-wrap: normal;
     width: auto;
     float: left;
+    font-weight: normal;
   }
 
 .title{

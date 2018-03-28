@@ -70,7 +70,10 @@ public abstract class BaseDialogBean implements Serializable{
     protected String onFinalCloseCard(Object param){
         return sessionBean.closeDialog(param);
     }
-        
+
+    /**
+     * Обработка события изменения чего-либо на карточке
+     */
     public void onItemChange() {
         setItemChange(Boolean.TRUE);
     }

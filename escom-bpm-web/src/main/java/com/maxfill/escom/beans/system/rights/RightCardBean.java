@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
-/* Карточка настройки прав доступа */
+/* Контролер формы "Карточка прав доступа" */
 @Named
 @ViewScoped
 public class RightCardBean extends BaseDialogBean{    
@@ -57,22 +57,23 @@ public class RightCardBean extends BaseDialogBean{
     private List<User> users;
     private List<UserGroups> userGroupses; 
     private List<UserGroups> roles;
+    private Boolean showCreateRight;
     
     @Override
     protected void initBean(){    
     }
     
-    /* При открытии карточки объекта */
+    /* При открытии карточки права */
     @Override
     public void onOpenCard(){
-        if (getSelRight() == null){
+        if (selRight == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             editMode = Integer.valueOf(params.get("editMode"));
-            
+            showCreateRight = Boolean.valueOf(params.get("showCreate"));
             switch (editMode){
                 case DictEditMode.INSERT_MODE:{
                     Integer stateId = Integer.valueOf(params.get("stateId"));
-                    State state = (State) stateFacade.find(stateId);
+                    State state = stateFacade.find(stateId);
                     selRight = new Right(DictRights.TYPE_GROUP, null, null, "<Не указано!>", state);
                     break;
                 }
@@ -238,7 +239,8 @@ public class RightCardBean extends BaseDialogBean{
         if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
         return EscomMsgUtils.getBandleLabel(metadate.getBundleName());
     }
-    /* GET & SET */
+
+    /* GETS & SETS */
 
     public List<User> getUsers() {
         if (users == null){
@@ -260,7 +262,11 @@ public class RightCardBean extends BaseDialogBean{
         }
         return roles;
     }
-        
+
+    public Boolean isShowCreateRight() {
+        return showCreateRight;
+    }
+
     public Right getSelRight() {
         return selRight;
     }

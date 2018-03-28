@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * Логика получения дефолтных права объектов
+ * Сервис формирования дефолтных прав объектов
  */
 @Singleton
 @LocalBean
@@ -49,5 +49,14 @@ public class RightsDef{
             throw new NullPointerException("EscomErr: for object " + metadateId + " no have default rights!");
         }
         return rights;
+    }
+
+    /**
+     * Перезагружает дефолтные права объекта метаданных
+     * @param metadateId
+     */
+    public void reloadDefaultRight(Metadates metadatesObj){
+        Rights freshRights = rightFacade.getObjectDefaultRights(metadatesObj);
+        defRights.replace(metadatesObj.getObjectName(), freshRights);
     }
 }

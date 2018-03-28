@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.system.metadata;
 
+import com.maxfill.RightsDef;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.model.metadates.Metadates;
@@ -27,7 +28,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
-/* Бин для метаданных */
+/* Контроллер формы обозревателя объектов */
 @ViewScoped
 @Named
 public class MetadatesBean implements Serializable{
@@ -35,6 +36,7 @@ public class MetadatesBean implements Serializable{
     
     private Metadates selectedObject;
     private List<Metadates> allItems;
+    private List<State> states;
     private LayoutOptions layoutOptions;
     private Right selRight;
     private Integer editMode;
@@ -53,6 +55,8 @@ public class MetadatesBean implements Serializable{
     private RightFacade rightFacade;
     @EJB
     private StateFacade stateFacade;
+    @EJB
+    private RightsDef rightsDef;
 
     @PostConstruct
     public void init() {
@@ -65,7 +69,7 @@ public class MetadatesBean implements Serializable{
     public void onAddRight(State state) {
         editMode = DictEditMode.INSERT_MODE;
         selRight = new Right();
-        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "");
+        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", true);
     }
     
     /* Открытие карточки для редактирования права объекта  */
@@ -75,10 +79,13 @@ public class MetadatesBean implements Serializable{
         String keyRight = hashCode.toString();
         editMode = DictEditMode.EDIT_MODE;
         sessionBean.addSourceRight(keyRight, selRight);
-        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight);
+        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight, true);
     }
-    
-    /* Обработка события закрытия карточки редактирования права  */
+
+    /**
+     * Обработка события закрытия карточки редактирования права
+     * @param event
+     */
     public void onCloseRightCard(SelectEvent event) {
         Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
         Boolean isChange = tuple.a;
@@ -96,6 +103,7 @@ public class MetadatesBean implements Serializable{
                     break;
                 }
             }
+            rightsDef.reloadDefaultRight(selectedObject);
         }                
     }
     
@@ -112,13 +120,6 @@ public class MetadatesBean implements Serializable{
     /* Удаление записи права из базы данных через */ 
     public void onDeleteRight(Right right){        
         rightFacade.remove(right);  
-    }            
-    
-    public List<State> onGetAvailableStates(){        
-        if (selectedObject == null) return null;
-        List<State> states = stateFacade.findAll();
-        states.removeAll(selectedObject.getStatesList());
-        return states;
     }
     
     public void onAddState(){
@@ -135,7 +136,11 @@ public class MetadatesBean implements Serializable{
         rightFacade.create(right);
         EscomMsgUtils.succesMsg("StateIsAdd");
     }
-    
+
+    /**
+     * Удаление состояния у объекта
+     * @param state
+     */
     public void onDeleteState(State state){
         Set<String> errors = new HashSet<>();
         if (Objects.equals(state, startState)){
@@ -149,15 +154,19 @@ public class MetadatesBean implements Serializable{
             EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
-        selectedObject.getStatesList().remove(state);        
-        metadatesFacade.edit(selectedObject);
-        List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);
-        rights.stream().forEach(right -> rightFacade.remove(right));
+        selectedObject.getStatesList().remove(state);   //удалили состояние
+        metadatesFacade.edit(selectedObject);           //сохранили изменения в объекте
+        List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);  //получили права, которые надо удалить (связанные с состоянием)
+        rights.stream().forEach(right -> rightFacade.remove(right));    //удалили права
+        rightsDef.reloadDefaultRight(selectedObject);
     }
-    
-    /* Установка начального состояния объекта */
-    public void onSetStartState(){
-        if (selectedObject == null) return;
+
+    /**
+     * Установка начального состояния объекта
+     * @param state
+     */
+    public void onSetStartState(State state){
+        startState = state;
         selectedObject.setStateForNewObj(startState);
         metadatesFacade.edit(selectedObject);
         EscomMsgUtils.succesMsg("StartSateIsChange");
@@ -208,8 +217,9 @@ public class MetadatesBean implements Serializable{
      * @param event 
      */
     public void onSelectedItem(SelectEvent event){
-        if (event.getObject() == null){ return;}
-        selectedObject = ((Metadates) event.getObject());        
+        if (event.getObject() == null) return;
+        selectedObject = ((Metadates) event.getObject());
+        states = null;
     } 
       
     public String getBundleName(Metadates metadate){
@@ -218,8 +228,16 @@ public class MetadatesBean implements Serializable{
     }
 
     /* *** GET & SET *** */
-    
-    public State getStartState() {         
+
+    public List <State> getStates() {
+        if (selectedObject != null || states == null){
+            states = stateFacade.findAll();
+            states.removeAll(selectedObject.getStatesList());
+        }
+        return states;
+    }
+
+    public State getStartState() {
         if (selectedObject == null) return null;
         startState = selectedObject.getStateForNewObj();
         return startState;

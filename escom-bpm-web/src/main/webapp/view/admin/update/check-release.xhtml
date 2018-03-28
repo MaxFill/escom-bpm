@@ -25,12 +25,10 @@
             }
 
             function onOpen(evt) {
-                console.log("CONNECTED");
                 onSucessConnect();
             }
 
             function onMessage(evt) {
-                console.log("RECEIVED: " + evt.data);
                 var json = JSON.parse(evt.data); 
                 document.getElementById('centerFRM:actualRelease').value = json.number;
                 document.getElementById('centerFRM:pageRelease').value = json.page;
@@ -40,12 +38,12 @@
             }
 
             function onError(evt) {
-                console.log('ERROR: ' + evt.data);
+                //console.log('ERROR: ' + evt.data);
                 onErrorConnect();
             }
 
             function doSend(message) {
-                console.log("SENT: " + message);
+                //console.log("SENT: " + message);
                 websocket.send(message);
             }
 

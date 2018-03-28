@@ -47,15 +47,14 @@
                                  icon="ui-icon-circle-close"
                                  onclick="PF('notifBar').hide()" type="button" />
                 <br/>
-                <h:panelGrid columns="1">
-                    <ui:repeat var="notifMsg" value="#{sessionBean.notifMessages}" >
+                <ui:repeat var="notifMsg" value="#{sessionBean.notifMessages}" >
+                    <h:panelGrid columns="1">
                         <p:outputLabel value="#{notifMsg.message}" style="font-size:20px;" />
-                        <br/>
                         <h:outputLink value="#{notifMsg.url}" target="_blank">
                             <h:outputText value="#{notifMsg.urlCaption}" />
                         </h:outputLink>
-                    </ui:repeat>
-                </h:panelGrid>
+                    </h:panelGrid>
+                </ui:repeat>
             </p:notificationBar>           
             
             <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm()}">

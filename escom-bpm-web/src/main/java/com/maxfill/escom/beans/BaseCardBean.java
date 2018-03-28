@@ -335,7 +335,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     /* ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту  */
     public void onAddRight(State state) {
         //getSessionBean().addSourceBean(this.toString(), this);
-        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "");
+        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", false);
     }
     
     /* ПРАВА ДОСТУПА: открытие карточки для редактирования права объекта  */
@@ -343,7 +343,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         Integer hashCode = right.hashCode();
         String keyRight = hashCode.toString();
         sessionBean.addSourceRight(keyRight, right);
-        sessionBean.openRightCard(DictEditMode.EDIT_MODE, right.getState(), keyRight);
+        sessionBean.openRightCard(DictEditMode.EDIT_MODE, right.getState(), keyRight, false);
     }      
     
     /* ПРАВА ДОСТУПА: удаление права из редактируемого объекта  */

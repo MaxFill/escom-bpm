@@ -1,5 +1,8 @@
 package com.maxfill.escom.system.validator;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
+
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
@@ -16,6 +19,8 @@ public class EmptyValidator extends AbstractValidator{
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        System.out.println();
+        String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+        String errMsg = EscomMsgUtils.getBandleLabel("MustBeFilled");
+        throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
     }
 }

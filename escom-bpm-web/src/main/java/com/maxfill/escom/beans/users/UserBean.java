@@ -1,72 +1,68 @@
 package com.maxfill.escom.beans.users;
 
-import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.escom.beans.staffs.StaffsSearche;
-import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.UserFacade;
-import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
-import com.maxfill.model.BaseDict;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.facade.UserFacade;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
+
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
-import javax.inject.Named;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /* Сервисный бин "Пользователи" */
 @Named
 @SessionScoped
-public class UserBean extends BaseExplBeanGroups<User, UserGroups>{            
-    private static final long serialVersionUID = -523024840800823503L;    
+public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
+    private static final long serialVersionUID = -523024840800823503L;
 
     @Inject
     private UserGroupsBean groupsBean;
-    
-    @EJB 
-    private StaffFacade staffFacade;        
-    
+
+    @EJB
+    private StaffFacade staffFacade;
+
     /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
     @Override
-    public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target){
+    public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target) {
         return !(target instanceof UserGroups);
-    }   
-        
+    }
+
     @Override
-    public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target){
+    public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target) {
         super.preparePasteItem(pasteItem, sourceItem, target);
-        if (!isNeedCopyOnPaste(pasteItem, target)){
-            addItemToGroup(pasteItem, target);        
+        if(!isNeedCopyOnPaste(pasteItem, target)) {
+            addItemToGroup(pasteItem, target);
         }
-    }  
-    
+    }
+
     /* при перемещении пользователя drag&drop */
     @Override
-    public boolean addItemToGroup(User user, BaseDict targetGroup){
-        if (user == null || targetGroup == null) return false;
-        
-        UserGroups group = (UserGroups)targetGroup;
-        if (!user.getUsersGroupsList().contains((UserGroups)targetGroup)){
-            user.getUsersGroupsList().add((UserGroups)targetGroup);
+    public boolean addItemToGroup(User user, BaseDict targetGroup) {
+        if(user == null || targetGroup == null) return false;
+
+        UserGroups group = (UserGroups) targetGroup;
+        if(!user.getUsersGroupsList().contains((UserGroups) targetGroup)) {
+            user.getUsersGroupsList().add((UserGroups) targetGroup);
             group.getUsersList().add(user);
             getItemFacade().edit(user);
         }
         return true;
-    }      
+    }
 
     @Override
     public UserFacade getItemFacade() {
@@ -75,15 +71,15 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     /* Перемещение пользователя из одной группы в другую  */
     @Override
-    public void moveItemToGroup(BaseDict targetGroup, User user, TreeNode sourceNode) {        
-        if (sourceNode != null){
-            UserGroups sourceGroup = (UserGroups)sourceNode.getData();
+    public void moveItemToGroup(BaseDict targetGroup, User user, TreeNode sourceNode) {
+        if(sourceNode != null) {
+            UserGroups sourceGroup = (UserGroups) sourceNode.getData();
             user.getUsersGroupsList().remove(sourceGroup);
-        }                             
-        user.getUsersGroupsList().add((UserGroups)targetGroup);
+        }
+        user.getUsersGroupsList().add((UserGroups) targetGroup);
         getItemFacade().edit(user);
-    }    
-    
+    }
+
     @Override
     public BaseExplBean getDetailBean() {
         return null;
@@ -91,13 +87,14 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     /* Возвращает список групп, в которые входит пользователь  */
     @Override
-    public List<UserGroups> getGroups(User item) {
+    public List <UserGroups> getGroups(User item) {
         return item.getUsersGroupsList();
-    }    
-    
+    }
+
     /* Открытие формы активных пользователей */
-    public void onActiveUsersFormShow(){
-        Map<String, Object> options = new HashMap<>();
+    //ToDo переделать на стандартный алгоритм открытия диалогов!
+    public void onActiveUsersFormShow() {
+        Map <String, Object> options = new HashMap <>();
         options.put("resizable", true);
         options.put("modal", true);
         options.put("width", 800);
@@ -107,20 +104,20 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/admin/users/sessions", options, null); 
-    }                
-    
+        PrimeFaces.current().dialog().openDynamic("/view/admin/users/sessions", options, null);
+    }
+
     /* Формирует число ссылок на user в связанных объектах */
     @Override
-    public void doGetCountUsesItem(User user,  Map<String, Integer> rezult){
+    public void doGetCountUsesItem(User user, Map <String, Integer> rezult) {
         rezult.put("Staffs", staffFacade.findStaffsByUser(user).size());
-    }    
-    
+    }
+
     /* Проверка возможности удаления user */
     @Override
-    protected void checkAllowedDeleteItem(User user, Set<String> errors){
+    protected void checkAllowedDeleteItem(User user, Set <String> errors) {
         super.checkAllowedDeleteItem(user, errors);
-        if (!staffFacade.findStaffsByUser(user).isEmpty()){
+        if(!staffFacade.findStaffsByUser(user).isEmpty()) {
             Object[] messageParameters = new Object[]{user.getShortFIO()};
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
             errors.add(error);
@@ -129,10 +126,11 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     /**
      * Возвращает список логинов пользователей с учётом прав доступа пользователя, выполняющего запрос
+     *
      * @return
      */
-    public List<String> findAllLogins(){
-        return findAll().stream().map(user->user.getLogin()).sorted().collect(Collectors.toList());
+    public List <String> findAllLogins() {
+        return findAll().stream().map(user -> user.getLogin()).sorted().collect(Collectors.toList());
     }
 
     @Override

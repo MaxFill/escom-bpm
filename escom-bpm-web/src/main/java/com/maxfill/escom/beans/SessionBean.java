@@ -364,22 +364,25 @@ public class SessionBean implements Serializable{
         itemIds.add(String.valueOf(item.getId()));
         paramMap.put("beanName", beanNameList);
         paramMap.put("itemId", itemIds);
-        openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramMap);      
+        openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramMap);
     }
         
     /* Открытие карточки записи права  */ 
-    public void openRightCard(Integer editMode, State state, String keyRight){
+    public void openRightCard(Integer editMode, State state, String keyRight, Boolean showCreateRight){
         Integer stateId = state.getId();
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> keyRightList = new ArrayList<>();
         List<String> editModeList = new ArrayList<>();
         List<String> stateIdList = new ArrayList<>();
-        editModeList.add(editMode.toString());        
+        List<String> showCreateRightList = new ArrayList<>();
+        editModeList.add(editMode.toString());
         stateIdList.add(stateId.toString());
         keyRightList.add(keyRight);
+        showCreateRightList.add(showCreateRight.toString());
         paramMap.put("editMode", editModeList);
         paramMap.put("stateId", stateIdList);
         paramMap.put("keyRight", keyRightList);
+        paramMap.put("showCreate", showCreateRightList);
         openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
     }
     
@@ -777,7 +780,6 @@ public class SessionBean implements Serializable{
             Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
     public String getMessagesInfo(){
         Integer countMsg = getCountUnreadMessage();

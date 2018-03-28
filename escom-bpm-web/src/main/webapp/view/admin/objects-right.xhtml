@@ -6,35 +6,26 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html">       
 
     <p:panelGrid id="mainGrid" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
-        <h:panelGrid columns="3">
-            <p:outputLabel value="#{bundle.State}"/>
-            <p:selectOneMenu value="#{metadatesBean.stateAdd}" converter="stateConvertor" styleClass="ui-grid-col-12" >
-                <f:selectItems value="#{metadatesBean.onGetAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+        <h:panelGrid columns="3" rendered="#{metadatesBean.selectedObject != null}">
+            <p:outputLabel value="#{bundle.AvailableStates}"/>
+            <p:selectOneMenu value="#{metadatesBean.stateAdd}" converter="stateConvertor" styleClass="ui-grid-col-12"
+                disabled="#{metadatesBean.states.isEmpty()}">
+                <f:selectItems value="#{metadatesBean.states}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
             </p:selectOneMenu>
             <p:commandButton value="#{bundle.AddState}"
-                             disabled="#{metadatesBean.onGetAvailableStates() == null or metadatesBean.onGetAvailableStates().isEmpty()}"
+                             disabled="#{metadatesBean.states.isEmpty()}"
                              styleClass="ui-grid-col-12"
                              update="mainGrid"
                              actionListener="#{metadatesBean.onAddState()}">    
             </p:commandButton>
-            <p:outputLabel value="#{bundle.StartState}"/>
-            <p:selectOneMenu value="#{metadatesBean.startState}" converter="stateConvertor" styleClass="ui-grid-col-12">
-                <f:selectItems value="#{metadatesBean.selectedObject.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
-            </p:selectOneMenu>
-            <p:commandButton value="#{bundle.MakeAsStartState}"
-                             disabled="#{metadatesBean.selectedObject.statesList == null or metadatesBean.selectedObject.statesList.isEmpty()}"
-                             styleClass="ui-grid-col-12"
-                             update="frmFldDefRight"
-                             actionListener="#{metadatesBean.onSetStartState()}">    
-            </p:commandButton> 
+
         </h:panelGrid>
 
         <p:dataGrid id="dataGrid" var="state" value="#{metadatesBean.selectedObject.statesList}" columns="1" layout="grid" 
-                    emptyMessage="#{bundle.EmptyTable}" styleClass="ui-grid-col-12 without-spaces"
+                    emptyMessage="#{bundle.EmptyTable}" styleClass="ui-grid-col-12 without-spaces" rendered="#{metadatesBean.selectedObject != null}"
                     paginator="true" paginatorPosition="bottom" rows="7" style="font-size: 90%" >
             <p:accordionPanel>
-                <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{metadatesBean.selectedObject != null}">
-
+                <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" >
                     <h:panelGrid columns="2" columnClasses="ui-grid-col-11, ui-grid-col-1 colTop" styleClass="ui-panelgrid-blank" >                
                         <p:dataTable id="tblRightDoc" value="#{metadatesBean.getRightsInState(state)}" 
                                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
@@ -79,18 +70,25 @@
                         </p:dataTable>
 
                         <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                            <p:commandButton value="#{bundle.DeleteState}" 
-                                             styleClass="ui-grid-col-12"
-                                             update="frmFldDefRight:mainGrid"
-                                             actionListener="#{metadatesBean.onDeleteState(state)}">  
-                                <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                            </p:commandButton>
+                            <h:panelGrid columns="2" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                                <p:commandButton value="#{bundle.DeleteState}"
+                                                 styleClass="ui-grid-col-12"
+                                                 update="frmFldDefRight:mainGrid"
+                                                 actionListener="#{metadatesBean.onDeleteState(state)}">
+                                    <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                                </p:commandButton>
+                                <p:commandButton id="btnRight" value="#{bundle.AddRight}"
+                                                 styleClass="ui-grid-col-12"
+                                                 actionListener="#{metadatesBean.onAddRight(state)}">
+                                    <p:ajax event="dialogReturn" update="frmFldDefRight:mainGrid"
+                                            listener="#{metadatesBean.onCloseRightCard}"/>
+                                </p:commandButton>
+                            </h:panelGrid>
                             <p:separator />
-                            <p:commandButton id="btnRight" value="#{bundle.AddRight}" 
-                                             styleClass="ui-grid-col-12"
-                                             actionListener="#{metadatesBean.onAddRight(state)}">
-                                <p:ajax event="dialogReturn" update="frmFldDefRight:mainGrid"
-                                        listener="#{metadatesBean.onCloseRightCard}"/>
+                            <p:commandButton value="#{bundle.MakeAsStartState}"
+                                             update="frmFldDefRight:dataGrid"
+                                             disabled="#{metadatesBean.startState eq state }"
+                                             actionListener="#{metadatesBean.onSetStartState(state)}">
                             </p:commandButton>
                         </h:panelGrid>
                     </h:panelGrid>  

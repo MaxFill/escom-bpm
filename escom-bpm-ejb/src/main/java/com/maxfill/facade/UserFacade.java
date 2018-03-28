@@ -20,6 +20,7 @@ import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
 import io.jsonwebtoken.ClaimJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -47,6 +48,8 @@ import javax.persistence.criteria.*;
 
 import org.apache.commons.lang.StringUtils;
 
+import static com.maxfill.model.messages.UserMessages_.addressee;
+
 /* Пользователи */
 @Stateless
 public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserStates> {
@@ -63,7 +66,9 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     private UserGroupsFacade userGroupsFacade;
     @EJB    
     private UsersService usersService;
-    
+    @EJB
+    private UserMessagesFacade messagesFacade;
+
     public UserFacade() {
         super(User.class, UserLog.class, UserStates.class);
     }
@@ -358,6 +363,14 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         tokenMap.put("token", jwt);
         Gson gson = new Gson();
         return gson.toJson(tokenMap, Map.class);
+    }
+
+    /**
+     * Отправка сообщения пользователю о необходимости смены пароля
+     * @return
+     */
+    public void sendSystemMsg(User receiver, String msg) {
+        messagesFacade.createSystemMessage(receiver, msg, msg, null);
     }
 
     /* Дополнения при выполнении поиска пользователей через форму поиска */

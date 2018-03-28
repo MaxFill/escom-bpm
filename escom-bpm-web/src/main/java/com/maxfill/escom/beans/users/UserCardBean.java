@@ -159,11 +159,19 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
             errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("NeedSetMobilePhone"), new Object[]{}));
         }
     }
-    
+
+    /**
+     * Действия перед сохранением пользователя
+     * @param user
+     */
     @Override
     protected void onBeforeSaveItem(User user){
         if (StringUtils.isBlank(user.getName())){
             user.setName(user.getShortFIO());
+        }
+        if (user.isNeedChangePwl()){
+            String msg = EscomMsgUtils.getMessageLabel("YouNeedChangePassword");
+            getItemFacade().sendSystemMsg(user, msg);
         }
         super.onBeforeSaveItem(user);
     }
