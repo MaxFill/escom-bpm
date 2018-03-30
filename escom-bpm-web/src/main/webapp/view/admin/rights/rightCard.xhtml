@@ -31,10 +31,9 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:spacer/>
         <p:outputLabel value="#{bundle.RrightsAreSet}:" />
-        <p:selectOneRadio id="rbRightType" value="#{rightCardBean.selRight.objType}" layout="custom" style="float: right;"
-                          valueChangeListener="#{rightCardBean.onTypeChangeRight}">
+
+        <p:selectOneRadio id="rbRightType" value="#{rightCardBean.objType}" layout="custom" style="float: right;">
             <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="0" />
             <f:selectItem itemLabel="#{bundle.ForUser}"  itemValue="1" />
             <f:selectItem itemLabel="#{bundle.ForRole}"  itemValue="2" />
@@ -43,48 +42,48 @@
 
         <p:panelGrid id="options" columns="3" styleClass="ui-panelgrid-blank">
             <p:outputLabel value="#{bundle.ForUser}"
-                           styleClass="#{rightCardBean.selRight.objType == 1 ? '': 'value'}"
-                           indicateRequired="#{rightCardBean.selRight.objType == 1}"/>
+                           styleClass="#{rightCardBean.objType == 1 ? '': 'value'}"
+                           />
             <p:radioButton id="optUser" for="rbRightType" itemIndex="1" />
             <p:selectOneMenu id="selUser" value="#{rightCardBean.selUser}" filter="true" filterMatchMode="startsWith"
                              valueChangeListener="#{rightCardBean.onUserChange}" styleClass="ui-grid-col-12"
-                             required="#{param['isRequired'] == 'true' and rightCardBean.selRight.objType == 1}"
+                             required="#{param['isRequired'] == 'true' and rightCardBean.objType == 1}"
                              requiredMessage="#{bundle.Field} [#{bundle.ForUser}] #{bundle.MustBeFilled}"
                              converter="usersConvertor"
-                             disabled="#{rightCardBean.selRight.objType != 1}">
+                             disabled="#{rightCardBean.objType != 1}">
                 <f:selectItems value="#{rightCardBean.users}" var="users" itemLabel="#{users.shortFIO}" itemValue="#{users}"/>
                 <f:selectItem itemValue="#{rightCardBean.selUser}" itemLabel="#{rightCardBean.selUser.shortFIO}" />
-                <p:ajax event="change" update="centerFRM:options" oncomplete="itemChange = 1;"/>
+                <p:ajax event="change" oncomplete="itemChange = 1;"/>
             </p:selectOneMenu>
 
             <p:outputLabel value="#{bundle.ForGroup}"
-                           styleClass="#{rightCardBean.selRight.objType == 0 ? '': 'value'}"
-                           indicateRequired="#{rightCardBean.selRight.objType == 0}" />
+                           styleClass="#{rightCardBean.objType == 0 ? '': 'value'}"
+                           />
             <p:radioButton id="optGroup" for="rbRightType" itemIndex="0" />
             <p:selectOneMenu id="selGroup" value="#{rightCardBean.selUsGroup}"  filter="true" filterMatchMode="startsWith"
                              valueChangeListener="#{rightCardBean.onGroupChange}" styleClass="ui-grid-col-12"
-                             required="#{param['isRequired'] == 'true' and rightCardBean.selRight.objType == 0}"
+                             required="#{param['isRequired'] == 'true' and rightCardBean.objType == 0}"
                              requiredMessage="#{bundle.Field} [#{bundle.ForGroup}] #{bundle.MustBeFilled}"
                              converter="groupsUserConvertor"
-                             disabled="#{rightCardBean.selRight.objType != 0}" >
+                             disabled="#{rightCardBean.objType != 0}" >
                 <f:selectItems value="#{rightCardBean.userGroupses}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
                 <f:selectItem itemValue="#{rightCardBean.selUsGroup}" itemLabel="#{rightCardBean.selUsGroup.name}" />
-                <p:ajax event="change" update="centerFRM:options" oncomplete="itemChange = 1;"/>
+                <p:ajax event="change" oncomplete="itemChange = 1;"/>
             </p:selectOneMenu>
 
             <p:outputLabel value="#{bundle.ForRole}"
-                           styleClass="#{rightCardBean.selRight.objType == 2 ? '': 'value'}"
-                           indicateRequired="#{rightCardBean.selRight.objType == 2}"/>
+                           styleClass="#{rightCardBean.objType == 2 ? '': 'value'}"
+                           />
             <p:radioButton id="optRole" for="rbRightType" itemIndex="2" />
             <p:selectOneMenu id="selRole" value="#{rightCardBean.selUsRole}"  filter="true" filterMatchMode="startsWith"
                              valueChangeListener="#{rightCardBean.onRoleChange}" styleClass="ui-grid-col-12"
                              converter="groupsUserConvertor"
-                             required="#{param['isRequired'] == 'true' and rightCardBean.selRight.objType == 2}"
+                             required="#{param['isRequired'] == 'true' and rightCardBean.objType == 2}"
                              requiredMessage="#{bundle.Field} [#{bundle.ForRole}] #{bundle.MustBeFilled}"
-                             disabled="#{rightCardBean.selRight.objType != 2}" >
+                             disabled="#{rightCardBean.objType != 2}" >
                 <f:selectItems value="#{rightCardBean.roles}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups}"/>
                 <f:selectItem itemValue="#{rightCardBean.selUsRole}" itemLabel="#{rightCardBean.selUsRole.name}" />
-                <p:ajax event="change" update="centerFRM:options" oncomplete="itemChange = 1;"/>
+                <p:ajax event="change" oncomplete="itemChange = 1;"/>
             </p:selectOneMenu>
         </p:panelGrid>
 
@@ -98,7 +97,7 @@
             </p:selectBooleanCheckbox>
         </h:panelGrid>
 
-        <h:panelGrid id="chBoxPanel" columns="6" >
+        <p:panelGrid id="chBoxPanel" layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-panelgrid-blank ui-grid-col-10 without-spaces">
             <p:selectBooleanCheckbox value="#{rightCardBean.selRight.read}" id="chBoxRead"
                                      itemLabel="#{bundle.View}" onchange="itemChange = 1;"/>
 
@@ -117,6 +116,6 @@
 
             <p:selectBooleanCheckbox value="#{rightCardBean.selRight.addChild}"
                                      itemLabel="#{bundle.AddChildsRight}" onchange="itemChange = 1;"/>
-        </h:panelGrid>
+        </p:panelGrid>
     </ui:define>
 </ui:composition>
