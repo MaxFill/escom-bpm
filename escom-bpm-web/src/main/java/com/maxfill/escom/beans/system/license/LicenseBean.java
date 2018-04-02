@@ -23,19 +23,25 @@ public class LicenseBean extends BaseDialogBean{
     @Override
     protected void initBean(){        
     }
-    
+
+    /**
+     * Принятие соглашения пользователем
+     */
     public void onAcceptAndClose(){
        sessionBean.getUserSettings().setAgreeLicense(true);
-       String targetPage = SysParams.MAIN_PAGE;
-       sessionBean.redirectToPage(targetPage, Boolean.FALSE);
+       onCloseCard();
     }
-    
-    public void onExitProgram(){
-        sessionBean.onSessionExit();
+
+    /**
+     * Обработка события отказа от лицензионного соглашения
+     * @return
+     */
+    public String onExitProgram(){
+        return super.onFinalCloseCard("no_agree");
     }
     
     @Override
-    public void onOpenCard(){    
+    public void onBeforeOpenCard(){
         if (content != null) return;
         String separator = File.separator;
         Locale locale = sessionBean.getLocale();
@@ -67,6 +73,7 @@ public class LicenseBean extends BaseDialogBean{
     
     @Override
     public String onCloseCard() {
+        content = null;
         return super.onFinalCloseCard(null);
     }
 

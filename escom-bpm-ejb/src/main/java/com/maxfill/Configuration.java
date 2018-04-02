@@ -2,11 +2,12 @@ package com.maxfill;
 
 import com.maxfill.model.licence.Licence;
 import io.jsonwebtoken.impl.crypto.MacProvider;
+import org.bouncycastle.crypto.CryptoException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,6 +18,11 @@ import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.jcr.Repository;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 /* Конфигурационные настройки программы */
 @Singleton
@@ -218,20 +224,39 @@ public class Configuration {
     private void initServerLocale(String nameLocale){
         serverLocale = new Locale(nameLocale);
     }
-    
+
     private void initLicense(){
-        String propertyFile = System.getProperty("license.properties");
-        File file = new File(propertyFile);
-        Properties properties = new Properties();
+        final byte[] keyValue = new byte[]{'L', '1', '_', 'D', '2', '-', 'z', 'O', 'j', 'w', 'e', 'c', '4', 'L', '4', '!'};
+
+        String propertyFile = System.getProperty("license-info");
+        File inputFile = new File(propertyFile);
+
         try {
-            properties.load(new FileInputStream(file));            
+            Key secretKey = new SecretKeySpec(keyValue, "AES");;
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+            FileInputStream inputStream = new FileInputStream(inputFile);
+            byte[] inputBytes = new byte[(int) inputFile.length()];
+            inputStream.read(inputBytes);
+
+            byte[] outputBytes = cipher.doFinal(inputBytes);
+
+            Properties properties = new Properties();
+            properties.load(new ByteArrayInputStream(outputBytes));
+
             licence = new Licence((String)properties.get("LICENCE_TERM"),
-                Integer.valueOf((String) properties.get("LICENCE_COUNT")),
-                (String) properties.get("LICENCE_EDITION"),
-                (String) properties.get("LICENCE_NUMBER"),
-                (String) properties.get("LICENSOR"));
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
+                    Integer.valueOf((String) properties.get("LICENCE_COUNT")),
+                    (String) properties.get("LICENCE_EDITION"),
+                    (String) properties.get("LICENCE_NUMBER"),
+                    (String) properties.get("LICENSOR"));
+
+            inputStream.close();
+
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException
+                | InvalidKeyException | BadPaddingException
+                | IllegalBlockSizeException | IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

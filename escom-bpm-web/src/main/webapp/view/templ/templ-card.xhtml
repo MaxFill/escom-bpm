@@ -41,7 +41,7 @@
                 float:left !important;
             }
             .ui-tabs .ui-tabs-panel{
-                padding: 0em 1.4em !important;
+                padding: 0em 1.0em !important;
             }
             ul.ui-menu-child {
                 white-space: nowrap;
@@ -63,72 +63,73 @@
                     
                     <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
 
-                    <p:menubar styleClass="without-spaces">
-                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <ui:insert name="specActionMenu" />
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
-                                        actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}" 
-                                    rendered="#{!_bean.isReadOnly()}" 
-                                    onclick="document.getElementById('#{_frm}:btnSaveOnly').click();">
-                            </p:menuitem>
-                            <p:menuitem value="#{bundle.SaveClose}" 
-                                        rendered="#{!_bean.isReadOnly()}" 
-                                        icon="ui-icon-circle-check"                                      
-                                        onclick="document.getElementById('#{_frm}:btnSaveClose').click();">
-                            </p:menuitem>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                        onclick="document.getElementById('#{_frm}:btnCancel').click();">  
-                            </p:menuitem>
-                        </p:submenu>
-                        <p:submenu label="#{bundle.Print}" icon="ui-icon-print" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
-                                        disabled="#{_bean.editedItem.id == null}"
-                                        actionListener="#{_bean.onPreViewItemCard()}"/>
-                            <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}" 
-                                        disabled="#{_bean.editedItem.id == null}"
-                                        actionListener="#{_bean.onPreViewBarcode()}"/>                        
-                        </p:submenu>
-                        <ui:insert name="specSubMenu" />
-                        <p:menuitem id="btnSaveOnly" icon="ui-icon-disk" value="#{bundle.Save}" 
-                                    rendered="#{!_bean.isReadOnly()}"                        
-                                    update="#{_frm}"
-                                    actionListener="#{_bean.doSaveItem()}"
-                                    onclick="if (itemChange == 1) {
-                                                onChangeItem();
-                                            }"
-                                    oncomplete="return itemChange = 0;">
-                            <f:param name="isRequired" value="true"/>
-                        </p:menuitem>
-                        <p:menuitem id="btnSaveClose" value="#{bundle.SaveClose}" 
-                                    rendered="#{!_bean.isReadOnly()}"
-                                    icon="ui-icon-circle-check"                                      
-                                    update="#{_frm}"
-                                    action="#{_bean.prepSaveItemAndClose()}"
-                                    onclick="if (itemChange == 1) {
-                                                onChangeItem();
-                                            }">
-                            <f:param name="isRequired" value="true"/>
-                        </p:menuitem>
-                        <f:facet name="options">
-                            <ui:insert name="specMenuButtons" />
-                            <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"                                                                                             
-                                             action="#{_bean.onCancelItemSave()}"
-                                             icon="ui-icon-circle-close"
-                                             onclick="if (itemChange == 1)
-                                                             onChangeItem();">
-                                <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
-                            </p:commandButton>
-                        </f:facet>
-                    </p:menubar>
-
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
                             <p:autoUpdate />
                         </p:messages>
+
+                        <p:menubar styleClass="without-spaces">
+                            <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
+                                <ui:insert name="specActionMenu" />
+                                <p:separator />
+                                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
+                                            actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
+                                <p:separator />
+                                <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}"
+                                        rendered="#{!_bean.isReadOnly()}"
+                                        onclick="document.getElementById('#{_frm}:btnSaveOnly').click();">
+                                </p:menuitem>
+                                <p:menuitem value="#{bundle.SaveClose}"
+                                            rendered="#{!_bean.isReadOnly()}"
+                                            icon="ui-icon-circle-check"
+                                            onclick="document.getElementById('#{_frm}:btnSaveClose').click();">
+                                </p:menuitem>
+                                <p:separator />
+                                <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                            onclick="document.getElementById('#{_frm}:btnCancel').click();">
+                                </p:menuitem>
+                            </p:submenu>
+                            <p:submenu label="#{bundle.Print}" icon="ui-icon-print" styleClass="submenu">
+                                <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
+                                            disabled="#{_bean.editedItem.id == null}"
+                                            actionListener="#{_bean.onPreViewItemCard()}"/>
+                                <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
+                                            disabled="#{_bean.editedItem.id == null}"
+                                            actionListener="#{_bean.onPreViewBarcode()}"/>
+                            </p:submenu>
+                            <ui:insert name="specSubMenu" />
+                            <p:menuitem id="btnSaveOnly" icon="ui-icon-disk" value="#{bundle.Save}"
+                                        rendered="#{!_bean.isReadOnly()}"
+                                        update="#{_frm}"
+                                        actionListener="#{_bean.doSaveItem()}"
+                                        onclick="if (itemChange == 1) {
+                                                    onChangeItem();
+                                                }"
+                                        oncomplete="return itemChange = 0;">
+                                <f:param name="isRequired" value="true"/>
+                            </p:menuitem>
+                            <p:menuitem id="btnSaveClose" value="#{bundle.SaveClose}"
+                                        rendered="#{!_bean.isReadOnly()}"
+                                        icon="ui-icon-circle-check"
+                                        update="#{_frm}"
+                                        action="#{_bean.prepSaveItemAndClose()}"
+                                        onclick="if (itemChange == 1) {
+                                                    onChangeItem();
+                                                }">
+                                <f:param name="isRequired" value="true"/>
+                            </p:menuitem>
+                            <f:facet name="options">
+                                <ui:insert name="specMenuButtons" />
+                                <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
+                                                 action="#{_bean.onCancelItemSave()}"
+                                                 icon="ui-icon-circle-close"
+                                                 onclick="if (itemChange == 1)
+                                                                 onChangeItem();">
+                                    <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
+                                </p:commandButton>
+                            </f:facet>
+                        </p:menubar>
+
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true">
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>

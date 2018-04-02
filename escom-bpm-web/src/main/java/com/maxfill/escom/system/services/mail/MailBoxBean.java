@@ -25,7 +25,7 @@ public class MailBoxBean extends BaseDialogBean{
     }
     
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
     }
     
     @Override

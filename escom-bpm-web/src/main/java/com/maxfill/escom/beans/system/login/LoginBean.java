@@ -135,19 +135,16 @@ public class LoginBean implements Serializable{
             return showErrMsg(errorsKey, context);            
         }
         */
-        if (initCurrentUser(user)){
-            if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
-                targetPage = SysParams.MAIN_PAGE;
-            }
-        } else {
-            targetPage = SysParams.AGREE_LICENSE;
+        initCurrentUser(user);
+        if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
+            targetPage = SysParams.MAIN_PAGE;
         }
         generatePinCode = null;
         sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }               
         
     /* Инициализация текущего пользователя */
-    private boolean initCurrentUser(User user){
+    private void initCurrentUser(User user){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest)ectx.getRequest();
         HttpSession httpSession = request.getSession();
@@ -169,7 +166,6 @@ public class LoginBean implements Serializable{
         sessionBean.setUserSettings(userSettings);
         sessionBean.setPrimefacesTheme(userSettings.getTheme());
         appBean.addBusyLicence(user, httpSession);
-        return userSettings.isAgreeLicense();
     }             
     
     /* Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок  */

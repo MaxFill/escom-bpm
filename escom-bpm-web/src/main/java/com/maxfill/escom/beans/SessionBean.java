@@ -47,6 +47,7 @@ import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DashboardColumn;
 import org.primefaces.model.DashboardModel;
 import org.primefaces.model.DefaultDashboardColumn;
@@ -160,6 +161,7 @@ public class SessionBean implements Serializable{
         column2.addWidget("dictsExplorer");
          
         column1.addWidget("userParams");
+        column1.addWidget("messages");
  
         dashboardModel.addColumn(column1);
         dashboardModel.addColumn(column2);
@@ -265,7 +267,7 @@ public class SessionBean implements Serializable{
         checkUnReadMessages();
     }          
     
-    /* Метод завершения сессии вызывается со страницы рабочего места пользователя */
+    /* Обработка события выхода из программы, завершения сессии */
     public void onSessionExit() {
         doSessionExit(SysParams.LOGOUT_PAGE);
     }
@@ -310,6 +312,34 @@ public class SessionBean implements Serializable{
     }
 
     /**
+     * Обработка события после открытия экранной формы рабочего места
+     */
+    public void onAfterFormLoad(){
+        checkUserMastChangePwl();
+        if (!userSettings.isAgreeLicense()){
+            PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnLicense').click()");
+        }
+    }
+
+    /**
+     * Обработка события закрытия диалога лицензионного соглашения
+     * @param event
+     */
+    public void onAfterCloseLicenseDlg(SelectEvent event){
+        if (event.getObject() == null) return;
+        onSessionExit();
+    }
+
+    /**
+     * Открытие окна смены пароля в случае если у пользователя установлен признак необходимости его смены
+     */
+    public void checkUserMastChangePwl(){
+        if (currentUser.isNeedChangePwl()){
+            openSettingsForm();
+        }
+    }
+
+    /**
      * Вывод сообщения о количестве непрочитанных сообщений
      */
     public void checkUnReadMessages(){
@@ -320,7 +350,7 @@ public class SessionBean implements Serializable{
     }
     
     /* Колво непрочитанных сообщений у текущего пользователя */
-    private Integer getCountUnreadMessage(){
+    public Integer getCountUnreadMessage(){
         return messagesFacade.getCountUnReadMessage(currentUser);        
     }
 
@@ -487,8 +517,12 @@ public class SessionBean implements Serializable{
     }
 
     /* Открытие окна списка сообщений пользователя */
-    public void openUserMessagesForm(){        
-        openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, new HashMap<>());
+    public void openUserMessagesForm(String typeMsg){
+        List<String> msgList = new ArrayList<>();
+        msgList.add(typeMsg);
+        Map<String, List<String>> paramMap = new HashMap<>();
+        paramMap.put("typeMsg", msgList);
+        openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, paramMap);
     }
     
     /* Открытие окна счётчиков нумераторов */
@@ -781,18 +815,17 @@ public class SessionBean implements Serializable{
         }
     }
 
+    /**
+     * Формирует сообщение о количестве новых сообщений у текущего пользователя
+     * @return
+     */
     public String getMessagesInfo(){
         Integer countMsg = getCountUnreadMessage();
-        
-        StringBuilder info = new StringBuilder();
-        info.append(EscomMsgUtils.getBandleLabel("Messages")).append(" (");
         if (countMsg > 0){
-            info.append(EscomMsgUtils.getBandleLabel("CountNewMessages")).append(" ").append(countMsg);
+            return countMsg.toString();
         } else {
-            info.append(EscomMsgUtils.getBandleLabel("NoNewMessages"));
+            return EscomMsgUtils.getBandleLabel("No");
         }
-        info.append(")");
-        return info.toString();
     }
 
     /* Gets & Sets */

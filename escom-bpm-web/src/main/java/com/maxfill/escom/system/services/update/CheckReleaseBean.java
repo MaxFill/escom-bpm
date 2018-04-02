@@ -114,7 +114,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     }
     
     @Override
-    public void onOpenCard(){}
+    public void onBeforeOpenCard(){}
     
     @Override
     public String onCloseCard() {

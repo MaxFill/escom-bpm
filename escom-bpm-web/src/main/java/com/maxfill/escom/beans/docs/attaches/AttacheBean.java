@@ -67,7 +67,7 @@ public class AttacheBean extends BaseDialogBean{
     }        
     
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String path = null;
         if (params.containsKey("itemId")){

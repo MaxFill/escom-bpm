@@ -35,6 +35,15 @@ public class UserSettingsBean extends BaseDialogBean{
     private String repeatePassword;
 
     @Override
+    public void onAfterFormLoad() {
+        super.onAfterFormLoad();
+        User user = sessionBean.getCurrentUser();
+        if (user.isNeedChangePwl()) {
+            EscomMsgUtils.errorMsg("YouNeedChangePassword");
+        }
+    }
+
+    @Override
     protected void initBean(){        
     }
     
@@ -57,6 +66,7 @@ public class UserSettingsBean extends BaseDialogBean{
 
         User user = sessionBean.getCurrentUser();
         user.setPassword(EscomUtils.encryptPassword(newPwl));
+        user.setNeedChangePwl(false);
         userFacade.edit(user);
         onCloseCard();
         setNewPassword(null);

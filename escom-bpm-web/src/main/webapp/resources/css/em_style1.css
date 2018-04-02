@@ -179,6 +179,10 @@ body{
     padding-right: 0px !important;
 }
 
+.ui-outputlabel-rfi{
+    color: red !important;
+}
+
 .label-card{
     padding-left: 0px !important;
     padding-bottom: 0px !important;

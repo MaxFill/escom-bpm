@@ -48,7 +48,7 @@ public class DocLockBean extends BaseDialogBean{
     }
 
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         if (attache != null) return;
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         Integer attacheId = Integer.valueOf(params.get("attache"));        

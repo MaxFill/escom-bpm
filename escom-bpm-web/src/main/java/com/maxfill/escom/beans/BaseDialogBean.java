@@ -62,9 +62,15 @@ public abstract class BaseDialogBean implements Serializable{
     /**
      * Метод вызывается автоматически при открытии формы диалога
      */
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
     }
-    
+
+    /**
+     * Метод вызывается автоматически после загрузки формы диалога
+     */
+    public void onAfterFormLoad(){
+    }
+
     protected abstract String onCloseCard();
      
     protected String onFinalCloseCard(Object param){

@@ -15,6 +15,12 @@
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />               
         
         <script type="text/javascript">
+            function init() {
+                onOpenForm();
+            }
+
+            window.addEventListener("load", init, false);
+
             function OpenFolder(sFolderUrl) {
                 ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
             }
@@ -46,7 +52,6 @@
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
                                  icon="ui-icon-circle-close"
                                  onclick="PF('notifBar').hide()" type="button" />
-                <br/>
                 <ui:repeat var="notifMsg" value="#{sessionBean.notifMessages}" >
                     <h:panelGrid columns="1">
                         <p:outputLabel value="#{notifMsg.message}" style="font-size:20px;" />
@@ -57,8 +62,14 @@
                 </ui:repeat>
             </p:notificationBar>           
             
-            <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm()}">
-                <p:ajax event="dialogReturn" update="mainFRM:linkMsgInfo"/>
+            <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('newMsg')}">
+                <p:ajax event="dialogReturn" update="mainFRM:messages"/>
+            </p:commandButton>
+            <p:commandButton id="btnMessages" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('allMsg')}">
+                <p:ajax event="dialogReturn" update="mainFRM:messages"/>
+            </p:commandButton>
+            <p:commandButton id="btnLicense" style="display: none;" actionListener="#{sessionBean.openLicenseForm()}">
+                <p:ajax event="dialogReturn" listener="#{sessionBean.onAfterCloseLicenseDlg}" />
             </p:commandButton>
             
             <p:toolbar style="">
@@ -168,9 +179,19 @@
                                 </p:column>
                                 <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
                             </p:themeSwitcher>
-                            <p:separator />
-                            <p:commandLink id="linkMsgInfo" value="#{sessionBean.messagesInfo}" 
-                                           onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank without-spaces" >
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-1" styleClass="ui-grid-col-12 ui-panelgrid-blank without-spaces" >
+                                <p:commandLink value="#{bundle.CountNewMessages}"
+                                               onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
+                                <p:commandLink value="#{sessionBean.getMessagesInfo()}" style="font-weight: bold;"
+                                               onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
+                                <p:commandLink value="#{bundle.AllMessages}"
+                                               onclick="document.getElementById('mainFRM:btnMessages').click();" />
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>
 
@@ -217,6 +238,7 @@
                 </p:dashboard>                 
                 
             </p:panelGrid>
+            <p:remoteCommand name="onOpenForm" action="#{sessionBean.onAfterFormLoad()}"/>
         </h:form>
     </ui:define>
 
@@ -263,7 +285,7 @@
                                 <p:outputLabel value="#{bundle.Licensor}: "/>
                                 <h:outputLabel value="#{applicationBean.licence.licensor}" />
                             </h:panelGroup>
-                            <h:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/> 
+                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/>
                             <p:separator />
                             <h:panelGrid columns="2" styleClass="ui-grid-col-12">
                                 <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"

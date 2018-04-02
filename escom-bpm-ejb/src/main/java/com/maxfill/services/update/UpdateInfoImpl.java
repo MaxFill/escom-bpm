@@ -39,10 +39,10 @@ public class UpdateInfoImpl implements UpdateInfo{
             client.start();
             UpdateInfoWS socket = new UpdateInfoWS();
             Future<Session> fut = client.connect(socket, URI.create(uri));
-            fut.get(2, TimeUnit.SECONDS);
+            fut.get(5, TimeUnit.SECONDS);
             session = fut.get();
             session.getRemote().sendStringByFuture(licenseNumber);
-            fut.get(1, TimeUnit.SECONDS);
+            fut.get(2, TimeUnit.SECONDS);
             String actualReleasesJSON = socket.getResult();
             ObjectMapper objectMapper = new ObjectMapper();
             result = objectMapper.readValue(actualReleasesJSON, HashMap.class);

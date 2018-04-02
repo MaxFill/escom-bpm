@@ -32,7 +32,7 @@ public class AddAttacheBean extends BaseDialogBean{
     }
     
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         if (doc == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             if (params.containsKey("docId")){

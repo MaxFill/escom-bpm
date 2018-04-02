@@ -4,82 +4,67 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="title">
         #{bundle.PersonalSettings}
     </ui:define>
-
-    <ui:param name="_frm" value="settingsFRM" />
     
-    <ui:define name="body">        
-        <pe:layout fullPage="true" options="#{userSettingsBean.layoutOptions}" widgetVar="fpLayoutWidget">
-            <p:ajax event="resize" listener="#{userSettingsBean.handleResize}"/> 
-            <pe:layoutPane position="center" resizable="true">
-                <h:form id="#{_frm}" styleClass="formLayoute">  
-                    <p:hotkey bind="esc" id="hotskey"
-                              immediate="true"                             
-                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
-                    </p:hotkey>
-                    <p:commandButton id="btnSave"
+    <ui:param name="_bean" value="#{userSettingsBean}"/>
+
+    <ui:define name="menuActions" >
+        <p:menuitem icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
+                    onclick="document.getElementById('centerFRM:btnMake').click();">
+        </p:menuitem>
+    </ui:define>
+
+    <ui:define name="toolbarComponents" >
+        <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
+                         update="centerFRM"
+                         actionListener="#{userSettingsBean.onChangePassword()}">
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
+    </ui:define>
+
+    <ui:define name="centerFormContent">
+        <p:commandButton id="btnSave"
                          style="float: right; display: none;"
                          actionListener="#{userSettingsBean.saveSettings()}"/>
-                    
-                    <p:menubar styleClass="without-spaces">
-                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
-                                        onclick="document.getElementById('#{_frm}:btnMake').click();"> 
-                            </p:menuitem>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
-                            </p:menuitem>
-                        </p:submenu>
-                        <f:facet name="options">
-                            <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}" 
-                                         update="#{_frm}" 
-                                         actionListener="#{userSettingsBean.onChangePassword()}">
-                                <f:param name="isRequired" value="true"/>
-                            </p:commandButton>
-                            <p:spacer width="5" />
-                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                             immediate="true"
-                                             title="#{bundle.Close}"
-                                             action="#{userSettingsBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
-                    </p:menubar>
-                    
-                    <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                        <p:autoUpdate />
-                    </p:messages>
 
-                    <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
-                        <br/>
-                        <h3>#{msg.UsedLDAPauth}</h3>
-                    </p:outputPanel>
+        <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding"
+                         styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{msg.PasswordSecurityInfo}:"/>
+            </p:panelGrid>
+        </p:panelGrid>
 
-                    <p:panelGrid columns="1" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}">
-                        <p:outputLabel value="#{msg.PasswordSecurityInfo}:"/>
-                        <p:spacer/>
-                        <p:outputLabel value="#{bundle.CurrentPassword}:"/>
-                        <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
-                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
+        <p:panelGrid columns="2" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
+                     columnClasses="col-padding"
+                     styleClass="ui-grid-col-5 ui-panelgrid-blank col-padding">
+            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                <p:outputLabel value="#{bundle.CurrentPassword}:"/>
+                <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
+                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
+            </p:panelGrid>
+            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                <p:outputLabel value="#{bundle.NewPassword}:"/>
+                <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
+                            feedback="true" promptLabel="#{bundle.InputNewPassword}"
+                            goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
+                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
 
-                        <p:outputLabel value="#{bundle.NewPassword}:"/>                        
-                        <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
-                                    feedback="true" promptLabel="#{bundle.InputNewPassword}"
-                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
-                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
+                <p:outputLabel value="#{bundle.RepeatPassword}:"/>
+                <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
+                            goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
+                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
+            </p:panelGrid>
+        </p:panelGrid>
 
-                        <p:outputLabel value="#{bundle.RepeatPassword}:"/>                        
-                        <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
-                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
-                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
-                    </p:panelGrid>
-                </h:form>
-            </pe:layoutPane>
-        </pe:layout>
+        <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
+            <br/>
+            <h3>#{msg.UsedLDAPauth}</h3>
+        </p:outputPanel>
+
     </ui:define>
 </ui:composition>
 

@@ -27,7 +27,7 @@ public class CountersExplBean extends BaseDialogBean{
     }
 
     @Override
-    public void onOpenCard(){       
+    public void onBeforeOpenCard(){
     }
     
     @Override

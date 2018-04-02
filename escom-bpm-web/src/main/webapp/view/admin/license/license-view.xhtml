@@ -4,78 +4,41 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 template="/view/templ/templ.xhtml">
+                 template="/view/templ/templ-dlg.xhtml">
 
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{licenseBean.onOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
+    <ui:param name="_bean" value="#{licenseBean}"/>
+    <ui:param name="_canNotClose" value="#{!sessionBean.userSettings.agreeLicense}"/>
 
     <ui:define name="title">
         #{bundle.LicenseAgreement}
     </ui:define>
 
-    <ui:param name="_frm" value="licenseViewFRM" />
-    
-    <ui:define name="body">
-        <pe:layout fullPage="true" options="#{licenseBean.layoutOptions}" widgetVar="fpLayoutWidget">
-            <p:ajax event="resize" listener="#{licenseBean.handleResize}"/> 
-            <pe:layoutPane position="center" resizable="true">
-                <h:form id="#{_frm}">                    
-                    <p:messages id="messages" showDetail="true" closable="true" >
-                        <p:autoUpdate />
-                    </p:messages>
+    <ui:define name="menuActions" >
+    </ui:define>
 
-                    <p:menubar styleClass="without-spaces">
-                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-extlink" value="#{bundle.ExitProgramm}"
-                                        rendered="#{!sessionBean.userSettings.agreeLicense}"
-                                        onclick="document.getElementById('#{_frm}:btnExit').click();">  
-                            </p:menuitem>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                        disabled="#{!sessionBean.userSettings.agreeLicense}"
-                                        onclick="document.getElementById('#{_frm}:btnClose').click();">  
-                            </p:menuitem>
-                        </p:submenu>
-                    
-                        <f:facet name="options">
-                            <p:commandButton icon="ui-icon-extlink" id="btnExit"
-                                             value="#{bundle.ExitProgramm}"
-                                             rendered="#{!sessionBean.userSettings.agreeLicense}"
-                                             action="#{licenseBean.onExitProgram()}"> 
-                            </p:commandButton> 
-                            
-                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                             disabled="#{!sessionBean.userSettings.agreeLicense}"
-                                             title="#{bundle.Close}"
-                                             action="#{licenseBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
+    <ui:define name="toolbarComponents" >
+    </ui:define>
 
-                    </p:menubar>
-                    
-                    <p:panelGrid layout="grid" columns="1" rendered="#{licenseBean.content != null}" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
-                        <pe:documentViewer value="#{licenseBean.content}" height="750" style="width: 100%;"/>                        
-                        
-                        <h:panelGroup id="groupConfirm">
-                            <p:selectBooleanCheckbox value="#{sessionBean.userSettings.agreeLicense}"
-                                                     itemLabel="#{bundle.AgreeLicenseConfirm}" 
-                                                     rendered="#{sessionBean.userSettings.agreeLicense}" 
-                                                     disabled="true">                             
-                            </p:selectBooleanCheckbox>
-                            <p:spacer width="5" />
-                            <p:commandButton id="btnConfirm" icon="ui-icon-circle-check"
-                                             rendered="#{!sessionBean.userSettings.agreeLicense}"    
-                                             value="#{bundle.Accept}"
-                                             action="#{licenseBean.onAcceptAndClose()}"> 
-                            </p:commandButton> 
-                        </h:panelGroup>
-                    </p:panelGrid>
-                </h:form>
-            </pe:layoutPane>
-        </pe:layout>
+    <ui:define name="centerFormContent">
+        <pe:documentViewer value="#{licenseBean.content}" height="750" style="width: 100%;"/>
+
+        <h:panelGroup id="groupConfirm">
+            <p:selectBooleanCheckbox value="#{sessionBean.userSettings.agreeLicense}"
+                                     disabled="#{sessionBean.userSettings.agreeLicense}"
+                                     itemLabel="#{bundle.AgreeLicenseConfirm}">
+            </p:selectBooleanCheckbox>
+            <p:spacer width="5" />
+            <p:commandButton id="btnConfirm" icon="ui-icon-circle-check"
+                             rendered="#{!sessionBean.userSettings.agreeLicense}"
+                             value="#{bundle.Accept}"
+                             action="#{licenseBean.onAcceptAndClose()}">
+            </p:commandButton>
+            <p:commandButton id="btnExit"
+                             value="#{bundle.Refuse}" icon="ui-icon-close" title="#{bundle.ExitProgramm}"
+                             rendered="#{!sessionBean.userSettings.agreeLicense}"
+                             action="#{licenseBean.onExitProgram()}">
+            </p:commandButton>
+        </h:panelGroup>
     </ui:define>
 
 </ui:composition>

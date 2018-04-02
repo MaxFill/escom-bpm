@@ -169,11 +169,16 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         if (StringUtils.isBlank(user.getName())){
             user.setName(user.getShortFIO());
         }
+        super.onBeforeSaveItem(user);
+    }
+
+    @Override
+    protected void onAfterSaveItem(User user) {
         if (user.isNeedChangePwl()){
             String msg = EscomMsgUtils.getMessageLabel("YouNeedChangePassword");
             getItemFacade().sendSystemMsg(user, msg);
         }
-        super.onBeforeSaveItem(user);
+        super.onAfterSaveItem(user);
     }
 
     @Override

@@ -23,7 +23,7 @@ public abstract class BaseReportBean extends BaseDialogBean{
     }
     
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
     }
     
     @Override

@@ -165,7 +165,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
             onAfterSaveItem(item);
             setIsItemChange(Boolean.FALSE);
         }
-        EscomMsgUtils.succesMsg("Saved");
+        EscomMsgUtils.succesMsg("ChangesSaved");
         return Boolean.TRUE;
     }
     

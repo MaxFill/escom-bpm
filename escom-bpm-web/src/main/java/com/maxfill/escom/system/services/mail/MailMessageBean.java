@@ -60,7 +60,7 @@ public class MailMessageBean extends BaseDialogBean{
     }
 
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         if (modeSentAttache != null) return;
         Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         modeSentAttache = params.get("modeSendAttache");        

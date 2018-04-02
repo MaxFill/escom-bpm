@@ -36,7 +36,7 @@ public class AdmObjectBean extends BaseDialogBean{
     }
     
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         if (sourceItem == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             String beanName = params.get("beanName");

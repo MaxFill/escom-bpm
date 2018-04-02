@@ -58,14 +58,15 @@ public class RightCardBean extends BaseDialogBean{
     private List<UserGroups> userGroupses; 
     private List<UserGroups> roles;
     private Boolean showCreateRight;
-    
+    private Integer objType;
+
     @Override
     protected void initBean(){    
     }
     
     /* При открытии карточки права */
     @Override
-    public void onOpenCard(){
+    public void onBeforeOpenCard(){
         if (selRight == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             editMode = Integer.valueOf(params.get("editMode"));
@@ -89,8 +90,9 @@ public class RightCardBean extends BaseDialogBean{
                     break;
                 }
             }
-            
-            switch (selRight.getObjType()){
+
+            objType = selRight.getObjType();
+            switch (objType){
                 case DictRights.TYPE_GROUP: {  
                     selUser = null;
                     selUsRole = null;
@@ -121,6 +123,30 @@ public class RightCardBean extends BaseDialogBean{
     
     public String onSaveChangeRight() {        
         if (isItemChange()) {
+            selRight.setObjType(objType);
+            String name = EscomMsgUtils.getBandleLabel("EmptySelData");
+            switch (objType){
+                case DictRights.TYPE_GROUP: {
+                    if (selUsGroup != null){
+                        name = selUsGroup.getName();
+                    }
+                    break;
+                }
+                case DictRights.TYPE_USER: {
+                    if (selUser != null){
+                        name = selUser.getShortFIO();
+                    }
+                    break;
+                }
+                case DictRights.TYPE_ROLE: {
+                    if (selUsRole != null){
+                        name = selUsRole.getName();
+                    }
+                    break;
+                }
+            }
+            selRight.setName(name);
+
             switch(editMode){
                 case DictEditMode.INSERT_MODE:{                    
                     break;
@@ -189,8 +215,10 @@ public class RightCardBean extends BaseDialogBean{
         }
     } 
     
-    /* Событие изменения типа права в карточке права  */ 
+    /* Событие изменения типа права в карточке права  */
+    /*
     public void onTypeChangeRight(ValueChangeEvent event){
+        if (event.getNewValue() == null) return;
         selRight.setObjType((Integer) event.getNewValue());
         String name = EscomMsgUtils.getBandleLabel("EmptySelData");
         switch (selRight.getObjType()){
@@ -221,7 +249,7 @@ public class RightCardBean extends BaseDialogBean{
         }
         selRight.setName(name);
     } 
-    
+    */
     @Override
     protected String getFormName() {
         return DictDlgFrmName.FRM_RIGHT_CARD;
@@ -241,6 +269,13 @@ public class RightCardBean extends BaseDialogBean{
     }
 
     /* GETS & SETS */
+
+    public Integer getObjType() {
+        return objType;
+    }
+    public void setObjType(Integer objType) {
+        this.objType = objType;
+    }
 
     public List<User> getUsers() {
         if (users == null){

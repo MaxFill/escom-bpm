@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+
+import com.maxfill.utils.Tuple;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -22,22 +25,23 @@ public class HelpBean extends BaseDialogBean{
     }    
     
     @Override
-    public void onOpenCard(){    
+    public void onBeforeOpenCard(){
+        if (content != null) return;
         String separator = File.separator;
         StringBuilder sb = new StringBuilder(conf.getServerPath());
         sb.append("standalone")
                 .append(separator)                
-                .append("help")
+                .append("configuration")
                 .append(separator)
                 .append(HELP_FILE);
         try {
             //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
-            content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");                
+            content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
-        }    
+        }
     }
-    
+
     public StreamedContent getContent() {
         return content;
     }
@@ -47,6 +51,7 @@ public class HelpBean extends BaseDialogBean{
     
     @Override
     public String onCloseCard() {
+        content = null;
         return super.onFinalCloseCard(null);
     }
 

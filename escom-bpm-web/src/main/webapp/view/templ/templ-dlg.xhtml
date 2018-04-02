@@ -6,24 +6,30 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ.xhtml">
 
+    <ui:param name="_canNotClose" value="#{_canNotClose == null ? false : _canNotClose}"/>
+
     <ui:define name="title">
         #{bundle.AuthenticationLog}
     </ui:define>
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{_bean.onOpenCard()}"/>
+            <f:event type="preRenderView" listener="#{_bean.onBeforeOpenCard()}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
         <script type="text/javascript" >
+            function init() {
+                onAfterFormLoad();
+            }
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
                     document.getElementById(componentName).focus();
                     return;
                 }
             }
+            window.addEventListener("load", init, false);
         </script>
         <script type="text/javascript" >
             var itemChange = 0;
@@ -46,23 +52,25 @@
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>
 
             <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="centerFRM" style="font-size: 80%;">
-                    <p:outputPanel style="width: 100%;" >
-                        <p:hotkey bind="esc" id="hotskey"
-                                  immediate="true"
-                                  onstart="document.getElementById('centerFRM:btnClose').click();">
-                        </p:hotkey>
+                <h:form id="centerFRM" >
+                    <p:hotkey bind="esc" id="hotskey"
+                              immediate="true"
+                              onstart="document.getElementById('centerFRM:btnClose').click();">
+                    </p:hotkey>
 
-                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                            <p:autoUpdate />
-                        </p:messages>
+                    <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                        <p:autoUpdate />
+                    </p:messages>
 
-                        <p:toolbar styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+
+                        <p:toolbar >
                             <f:facet name="left">
                                 <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
                                     <ui:insert name="menuActions" />
                                     <p:separator />
                                     <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                                disabled="#{_canNotClose}"
                                                 onclick="document.getElementById('centerFRM:btnClose').click();">
                                     </p:menuitem>
                                 </p:menuButton>
@@ -75,26 +83,24 @@
                             <f:facet name="right">
                                 <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
                                                  title="#{bundle.Close}"
+                                                 disabled="#{_canNotClose}"
                                                  action="#{_bean.onCloseCard()}">
                                 </p:commandButton>
                             </f:facet>
                         </p:toolbar>
 
                         <ui:include src="/view/common/confirm-dlg.xhtml"/>
+                        <ui:insert name="centerFormContent"/>
+                    </p:panelGrid>
 
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
-                            <ui:insert name="centerFormContent"/>
-                        </p:panelGrid>
-
-                        <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}"
-                                         oncomplete="return itemChange = 0;"/>
-
-                    </p:outputPanel>
+                    <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}"
+                                     oncomplete="return itemChange = 0;"/>
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad()}"/>
                 </h:form>
             </pe:layoutPane>
 
             <pe:layoutPane position="north" rendered="#{_bean.isNorthShow()}">>
-                <h:form id="northFRM" style="font-size: 80%;">
+                <h:form id="northFRM" >
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="northFormContent" />
                     </p:outputPanel>
@@ -102,7 +108,7 @@
             </pe:layoutPane>
 
             <pe:layoutPane position="south" rendered="#{_bean.isSouthShow()}">>
-                <h:form id="southFRM" style="font-size: 80%;">
+                <h:form id="southFRM" >
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="southFormContent" />
                     </p:outputPanel>
@@ -110,7 +116,7 @@
             </pe:layoutPane>
 
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}">
-                <h:form id="leftFRM" style="font-size: 80%;">
+                <h:form id="leftFRM" >
                     <ui:insert name="leftFormContent"/>
                 </h:form>
             </pe:layoutPane>

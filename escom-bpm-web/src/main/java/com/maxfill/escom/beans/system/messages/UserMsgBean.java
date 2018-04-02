@@ -8,7 +8,9 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,7 +20,7 @@ import javax.inject.Named;
 public class UserMsgBean extends BaseDialogBean{
     private static final long serialVersionUID = -7376087892834532742L;
 
-    private boolean showOnlyUnread = true;
+    private Boolean showOnlyUnread;
     private List<UserMessages> messages;        
     private List<UserMessages> checkedMessages;
     private UserMessages selectedMessages;
@@ -34,7 +36,11 @@ public class UserMsgBean extends BaseDialogBean{
     }
 
     @Override
-    public void onOpenCard(){       
+    public void onBeforeOpenCard(){
+        if (showOnlyUnread == null){
+            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+            showOnlyUnread = params.get("typeMsg").equals("newMsg");
+        }
     }
     
     @Override
