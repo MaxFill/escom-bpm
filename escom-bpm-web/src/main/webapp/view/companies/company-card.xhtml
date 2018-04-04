@@ -7,19 +7,27 @@
 
     <ui:param name="_bean" value="#{companyCardBean}"/>
 
-    <ui:define name="page_body">
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateDepartaments}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreateStaffs}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+    </ui:define>
 
-        <p:tab id="cardTab" title="#{bundle.Explorer}">     
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Explorer}">
             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">       
                 <p:outputLabel value="#{bundle.Name}" />
-                <p:inputText id="companyName" value="#{_bean.editedItem.name}" 
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:message for="companyName"/>
+                <p:message for="nameItem"/>
 
                 <p:outputLabel value="#{bundle.Code}" />
                 <p:inputText id="companyCode" value="#{_bean.editedItem.code}" 
@@ -32,8 +40,10 @@
                 <p:message for="companyCode" />
                 
             </p:panelGrid>
-        </p:tab>                
-        <p:tab title="#{bundle.RightsChilds}">
+        </p:tab>
+    </ui:define>
+    <ui:define name="childs_rights">
+        <p:tab title="#{bundle.RightsDepartments}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>
     </ui:define>
