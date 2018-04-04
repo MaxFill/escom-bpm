@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.posts;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.escom.beans.BaseCardBean;
@@ -24,6 +25,6 @@ public class PostCardBean extends BaseCardBean<Post>{
     @Override
     public PostFacade getItemFacade() {
         return itemsFacade;
-    }        
+    }
 
 }

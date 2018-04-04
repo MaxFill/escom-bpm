@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners.groups;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -16,7 +17,7 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
     private static final long serialVersionUID = 4638462307270732308L;
     
     @EJB
-    private PartnersGroupsFacade itemsFacade;       
+    private PartnersGroupsFacade itemsFacade;
 
     @Override
     public PartnersGroupsFacade getItemFacade() {

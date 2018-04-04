@@ -7,18 +7,17 @@ import com.maxfill.model.users.User;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
-/* Бин для карточки "Группа пользователей" */
+/* Контроллер формы "Группа пользователей" */
 @Named
 @ViewScoped
 public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     private static final long serialVersionUID = -8016244075607449606L;  
                 
     @EJB
-    private UserGroupsFacade usGroupFacade;   
-           
+    private UserGroupsFacade usGroupFacade;
+
     @Override
     public UserGroupsFacade getItemFacade() {
         return usGroupFacade;

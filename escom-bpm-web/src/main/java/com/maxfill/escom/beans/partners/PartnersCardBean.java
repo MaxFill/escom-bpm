@@ -37,8 +37,8 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     @Override
     public PartnersFacade getItemFacade() {
         return itemsFacade;
-    }         
-    
+    }
+
     /* Проверка корректности Контрагента перед сохранением карточки */
     @Override
     protected void checkItemBeforeSave(Partner partner, Set<String> errors) {       

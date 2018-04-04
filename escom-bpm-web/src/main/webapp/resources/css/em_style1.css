@@ -74,6 +74,10 @@ body{
   text-align: center !important;  
 }
 
+.colRight{
+    text-align: center !important;
+    width: 7%;
+}
 .colTop{
     vertical-align: top !important;
 }

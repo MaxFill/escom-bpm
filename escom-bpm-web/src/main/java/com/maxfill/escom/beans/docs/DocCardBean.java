@@ -64,7 +64,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private DocStatusFacade docStatusFacade;
     @EJB
     private AttacheFacade attacheFacade;
-       
+
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()

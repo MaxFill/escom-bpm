@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
@@ -7,6 +8,7 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,13 +21,12 @@ import org.primefaces.event.SelectEvent;
 /* Базовый бин карточек древовидных объектов */
 public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     private static final long serialVersionUID = 1711235249835675543L;
-    private static final int TYPE_RIGHT_CHILDS = 1;
-    private static final int TYPE_RIGHT_ITEM = 0; 
-        
-    private Integer typeEditedRight;
+    private static final int TYPE_RIGHT_CHILDS = 1; //права для дочерних
+    private static final int TYPE_RIGHT_ITEM = 0;   //права для самого объекта
         
     protected abstract BaseTreeBean getTreeBean();
-    
+    private List<Right> rightsChilds;
+
     /* Возвращает список прав к дочерним объектам в заданном состоянии */
     public List<Right> getRightChildsForState(T item, State state) {
         List<Right> rights = item.getRightForChild().getRights()
@@ -40,6 +41,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         onItemChange();
         Set<String> errors = new LinkedHashSet<>();
         Boolean inherit = (Boolean) event.getNewValue();
+        //ToDo может быть это нужно?
         //checkRightsChilds(getEditedItem(), inherit, errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
@@ -55,42 +57,77 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                     childRights.getRights().add(right);
                 }
                 getEditedItem().setRightForChild(childRights);
-                rightsBean.prepareRightsForView(childRights.getRights());                
+                rightsBean.prepareRightsForView(childRights.getRights());
                 EscomMsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }                         
         }
+        rightsChilds = null;
     }
-    
-    
+
+
     /* Проверка на наличие у объекта корректных прав доступа для дочерних объектов */
     /*
     @Override
-    protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){ 
+    protected void checkRightsChilds(T item, Boolean isInheritsAccessChilds, Set<String> errors){
         if (isInheritsAccessChilds && item.getParent() == null){
             errors.add(getMessageLabel("RightsChildInheritIncorrect"));
         }
     }
     */
+
+    /**
+     * Возвращает список состояний для подчинённых объектов
+     * @return
+     */
     protected abstract List<State> getStateForChild();
     
-    /* Удаление права доступа к дочерним объеткам из списка  */
+    /* Удаление права доступа к дочерним объектам из списка  */
     public void onDeleteRightChild(Right right) {
         getEditedItem().getRightForChild().getRights().remove(right);
         onItemChange();
     }
-    
-    /* Редактирование права к дочерним объектам */
-    public void onEditRightChild(Right right){
-        typeEditedRight = TYPE_RIGHT_CHILDS;
-        super.onEditRight(right);
-    }
-    
-    /* Создание права к дочерним объектам */
-    public void onAddRightChild(State state){
-        typeEditedRight = TYPE_RIGHT_CHILDS;
-        super.onAddRight(state);
+
+    /**
+     * Обработка события добавления права в права дочерних объектов
+     */
+    public void onAddRightChild(){
+        Set<String> errors = new HashSet<>();
+        BaseDict obj = null;
+        switch(typeAddRight){
+            case DictRights.TYPE_GROUP :{
+                if (selUsGroup == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                } else {
+                    obj = selUsGroup;
+                }
+                break;
+            }
+            case DictRights.TYPE_USER :{
+                if (selUser == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                } else {
+                    obj = selUser;
+                }
+                break;
+            }
+            case DictRights.TYPE_ROLE :{
+                if (selUserRole == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                } else {
+                    obj = selUserRole;
+                }
+                break;
+            }
+        }
+        if (!errors.isEmpty()) {
+            EscomMsgUtils.showErrorsMsg(errors);
+        } else {
+            Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
+            rightsChilds.add(right);
+            onItemChange();
+        }
     }
     
     /* Подготовка к визуализации прав доступа к дочерним объектам */
@@ -101,43 +138,6 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         rightsBean.prepareRightsForView(item.getRightForChild().getRights());
     }
     
-    /* Добавление права для объекта в заданном состоянии */
-    @Override
-    public void onAddRight(State state){
-        typeEditedRight = TYPE_RIGHT_ITEM;
-        super.onAddRight(state);
-    }
-        
-    /* Редактирование права объекта */
-    @Override
-    public void onEditRight(Right right){
-        typeEditedRight = TYPE_RIGHT_ITEM;
-        super.onEditRight(right);
-    }
-    
-    /* Обработка события закрытия карточки прав доступа */
-    @Override
-    public void onCloseRightCard(SelectEvent event) {
-        switch (typeEditedRight){
-            case TYPE_RIGHT_ITEM:{
-                super.onCloseRightCard(event);
-                break;
-            }
-            case TYPE_RIGHT_CHILDS:{
-                Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
-                Boolean isChange = tuple.a;
-                if (isChange) {
-                    onItemChange();                    
-                    Right right = tuple.b;
-                    if (right != null){
-                        getEditedItem().getRightForChild().getRights().add(right);
-                    }
-                }            
-                break;
-            }
-        }
-    } 
-    
     @Override
     protected void onBeforeSaveItem(T item) {
         Rights newChildsRight = item.getRightForChild();
@@ -147,5 +147,20 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             getItemFacade().saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
         }
         super.onBeforeSaveItem(item);
-    }    
+    }
+
+    @Override
+    public Integer getRightColSpan(){
+        return 8;
+    }
+
+    public List <Right> getRightsChilds() {
+        if (rightsChilds==null){
+            rightsChilds = getEditedItem().getRightForChild().getRights();
+        }
+        return rightsChilds;
+    }
+    public void setRightsChilds(List <Right> rightsChilds) {
+        this.rightsChilds = rightsChilds;
+    }
 }

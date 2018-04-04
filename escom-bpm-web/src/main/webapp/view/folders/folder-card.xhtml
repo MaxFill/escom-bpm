@@ -7,8 +7,16 @@
 
     <ui:param name="_bean" value="#{foldersCardBean}"/>  
 
-    <ui:define name="page_body">
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateSubfolders}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreateDocuments}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+    </ui:define>
 
+    <ui:define name="page_body">
         <p:tab title="#{_bean.editedItem.case ? bundle.Case : bundle.Folder}">
             <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
@@ -105,10 +113,12 @@
 
             </p:panelGrid>
         </p:tab>
+    </ui:define>
 
+    <ui:define name="childs_rights">
         <p:tab title="#{bundle.RightsDoc}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
-        </p:tab>   
-
+        </p:tab>
     </ui:define>
+
 </ui:composition>

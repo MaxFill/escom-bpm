@@ -22,10 +22,8 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.commons.lang.StringUtils;
 
 /* Контроллер формы обозревателя объектов */
@@ -69,7 +67,9 @@ public class MetadatesBean implements Serializable{
     public void onAddRight(State state) {
         editMode = DictEditMode.INSERT_MODE;
         selRight = new Right();
-        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", true);
+        Map<String, String> params = new HashMap <>();
+        params.put("showCreate", "true");
+        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", params);
     }
     
     /* Открытие карточки для редактирования права объекта  */
@@ -79,7 +79,9 @@ public class MetadatesBean implements Serializable{
         String keyRight = hashCode.toString();
         editMode = DictEditMode.EDIT_MODE;
         sessionBean.addSourceRight(keyRight, selRight);
-        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight, true);
+        Map<String, String> params = new HashMap <>();
+        params.put("showCreate", "true");
+        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight, params);
     }
 
     /**
@@ -97,7 +99,6 @@ public class MetadatesBean implements Serializable{
                 }
                 case DictEditMode.INSERT_MODE:{
                     selRight = tuple.b;
-                    selRight.setObjLink(getSelectedObject());
                     selectedObject.getRightList().add(selRight);
                     rightFacade.create(selRight);
                     break;
@@ -126,9 +127,9 @@ public class MetadatesBean implements Serializable{
         if (selectedObject == null) return;
         selectedObject.getStatesList().add(stateAdd);
         metadatesFacade.edit(selectedObject);
-        Right right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ADMIN_ID, selectedObject, "", stateAdd);
+        Right right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ADMIN_ID, "", stateAdd, selectedObject);
         rightFacade.create(right);
-        right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ALL_USER_ID, selectedObject, "", stateAdd);
+        right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ALL_USER_ID, "", stateAdd, selectedObject);
         right.setAddChild(false);
         right.setChangeRight(false);
         right.setExecute(false);

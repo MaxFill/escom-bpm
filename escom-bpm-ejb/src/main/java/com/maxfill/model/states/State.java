@@ -1,20 +1,16 @@
 package com.maxfill.model.states;
 
+import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
+
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.*;
+
 import static javax.persistence.GenerationType.TABLE;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 
 @Entity
 @Table(name = "states")
@@ -53,7 +49,7 @@ public class State implements Serializable{
     @NotNull    
     @Column(name = "Icon", length = 1024)
     private String icon;
-    
+
     public State() {
     }    
 
@@ -83,8 +79,8 @@ public class State implements Serializable{
     }
     public void setIcon(String icon) {
         this.icon = icon;
-    }   
-    
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -106,7 +102,7 @@ public class State implements Serializable{
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.docs.DocsState[ id=" + id + " ]";
+        return "State[ id=" + id + " ]";
     }
 
     

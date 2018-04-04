@@ -3,52 +3,61 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:custom="http://java.sun.com/jsf/composite/components"
                 template="/view/templ/templ-card.xhtml">
 
-    <ui:param name="_bean" value="#{departmentCardBean}"/> 
-    
-    <ui:define name="page_body">
-        
-          <p:tab title="#{bundle.Explorer}">
-            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"
-                         columnClasses="ui-grid-col-12 col-padding">
-                
-                <p:outputLabel value="#{bundle.Company}"/>     
-                <p:inputText value="#{_bean.companyName}" disabled="true" styleClass="ui-grid-col-12" />
-                
-                <p:outputLabel value="#{bundle.Departament}" />
-                <p:inputText id="name" value="#{_bean.editedItem.name}" title="#{bundle.Name}"
-                            styleClass="ui-grid-col-12"
-                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                            onchange="return itemChange = 1;"
-                            disabled="#{_bean.isReadOnly()}"
-                            required="#{param['isRequired'] == 'true'}"
-                            requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:message for="name" display="icon"/>
+    <ui:param name="_bean" value="#{departmentCardBean}"/>
 
-                <p:outputLabel value="#{bundle.Code}" />
-                <h:panelGroup styleClass="ui-grid-col-12" id="codeGroup">
-                    <p:inputText id="companyCode" value="#{_bean.editedItem.code}" 
-                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateDepartaments}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreateStaffs}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+    </ui:define>
+
+    <ui:define name="page_body">
+      <p:tab title="#{bundle.Explorer}">
+        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding"
+                     columnClasses="ui-grid-col-12 col-padding">
+
+            <p:outputLabel value="#{bundle.Company}"/>
+            <p:inputText value="#{_bean.companyName}" disabled="true" styleClass="ui-grid-col-12" />
+
+            <p:outputLabel value="#{bundle.Departament}" />
+            <p:inputText id="nameItem" value="#{_bean.editedItem.name}" title="#{bundle.Name}"
+                        styleClass="ui-grid-col-12"
+                        onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                        onchange="return itemChange = 1;"
+                        disabled="#{_bean.isReadOnly()}"
+                        required="#{param['isRequired'] == 'true'}"
+                        requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+            <p:message for="nameItem" display="icon"/>
+
+            <p:outputLabel value="#{bundle.Code}" />
+            <h:panelGroup styleClass="ui-grid-col-12" id="codeGroup">
+                <p:inputText id="companyCode" value="#{_bean.editedItem.code}"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             disabled="#{_bean.isReadOnly()}"
+                             styleClass="ui-grid-col-12"
+                             size="10"
+                             onchange="return itemChange = 1;">
+                    <f:validateLength for="companyCode" maximum="50"/>
+                </p:inputText>
+                <p:message for="codeGroup" />
+                <p:commandButton value="#{bundle.ToForm}" title="#{bundle.Generate}"
+                                 update="codeGroup"
                                  disabled="#{_bean.isReadOnly()}"
-                                 styleClass="ui-grid-col-12"
-                                 size="10"
-                                 onchange="return itemChange = 1;">
-                        <f:validateLength for="companyCode" maximum="50"/>
-                    </p:inputText>
-                    <p:message for="codeGroup" />
-                    <p:commandButton value="#{bundle.ToForm}" title="#{bundle.Generate}"
-                                     update="codeGroup"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     actionListener="#{_bean.makeCode()}"
-                                     oncomplete="return itemChange = 1;">                        
-                    </p:commandButton>   
-                </h:panelGroup>                
-                
-            </p:panelGrid>
-          </p:tab>
-        <p:tab title="#{bundle.RightsChilds}">
+                                 actionListener="#{_bean.makeCode()}"
+                                 oncomplete="return itemChange = 1;">
+                </p:commandButton>
+            </h:panelGroup>
+
+        </p:panelGrid>
+      </p:tab>
+    </ui:define>
+    <ui:define name="childs_rights">
+        <p:tab title="#{bundle.RightsStaffs}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>
     </ui:define>

@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.DepartmentFacade;
 import com.maxfill.escom.beans.BaseCardTree;
@@ -25,7 +26,7 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     private StaffBean staffBean;
             
     @EJB
-    private DepartmentFacade itemsFacade;     
+    private DepartmentFacade itemsFacade;
 
     @Override
     public List<State> getStateForChild(){

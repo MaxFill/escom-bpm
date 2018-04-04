@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 
-/* Карточка Штатные единицы */
+/* Контролер формы "Штатная единица" */
 @Named
 @ViewScoped
 public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
@@ -37,7 +37,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
         super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_STAFF_CARD);
     }
-        
+
     /* Обработка события на выбор сотрудника   */
     public void onEmployeeSelected(SelectEvent event){
         List<User> items = (List<User>) event.getObject();

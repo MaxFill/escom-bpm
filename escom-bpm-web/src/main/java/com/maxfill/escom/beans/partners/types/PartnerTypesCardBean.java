@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners.types;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.facade.BaseDictFacade;

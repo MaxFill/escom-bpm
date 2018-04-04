@@ -546,6 +546,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_ADD_CHILDS);
     }
 
+    /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на создание подчинённых объектов */
+    public Boolean isHaveRightAddDetail(BaseDict item) {
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_ADD_DETAIL);
+    }
+
     /* ПРАВА ДОСТУПА: проверяет право текущего пользователя на удаление объекта  */
     public Boolean isHaveRightDelete(BaseDict item) {
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_DELETE);
@@ -610,6 +615,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
         if (right.isAddChild()) {
             accessMask = accessMask | DictRights.RIGHT_ADD_CHILDS;
+        }
+        if (right.isAddDetail()) {
+            accessMask = accessMask | DictRights.RIGHT_ADD_DETAIL;
         }
         return accessMask;
     }

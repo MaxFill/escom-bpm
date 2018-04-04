@@ -19,8 +19,10 @@ public class EmptyValidator extends AbstractValidator{
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
-        String errMsg = EscomMsgUtils.getBandleLabel("MustBeFilled");
-        throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
+        if (value == null) {
+            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+            String errMsg = EscomMsgUtils.getBandleLabel("MustBeFilled");
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
+        }
     }
 }

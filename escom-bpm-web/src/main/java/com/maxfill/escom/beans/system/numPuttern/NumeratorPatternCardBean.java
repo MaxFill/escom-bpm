@@ -26,7 +26,12 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     }       
     
     @EJB
-    private NumeratorPatternFacade numeratorFacade;        
+    private NumeratorPatternFacade numeratorFacade;
+
+    @Override
+    public String getRightsForObjectTitle() {
+        return EscomMsgUtils.getBandleLabel("RightsForObject");
+    }
 
     @Override
     public NumeratorPatternFacade getItemFacade() {

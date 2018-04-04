@@ -11,7 +11,6 @@ import com.maxfill.model.rights.Right;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.escom.beans.users.settings.Theme;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRights;
@@ -90,7 +89,7 @@ public class SessionBean implements Serializable{
     private DashboardModel dashboardModel;
     private Boolean canShowNotifBar = true;
     private String primefacesTheme;   
-    private List<Theme> themes;
+    private List<String> themes;
     private Locale locale;
     private UserSettings userSettings = new UserSettings();
     private final List<NotifMsg> notifMessages = new ArrayList <>();
@@ -398,21 +397,27 @@ public class SessionBean implements Serializable{
     }
         
     /* Открытие карточки записи права  */ 
-    public void openRightCard(Integer editMode, State state, String keyRight, Boolean showCreateRight){
+    public void openRightCard(Integer editMode, State state, String keyRight, Map<String, String> extParams){
         Integer stateId = state.getId();
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> keyRightList = new ArrayList<>();
         List<String> editModeList = new ArrayList<>();
         List<String> stateIdList = new ArrayList<>();
-        List<String> showCreateRightList = new ArrayList<>();
+        //List<String> showCreateRightList = new ArrayList<>();
         editModeList.add(editMode.toString());
         stateIdList.add(stateId.toString());
         keyRightList.add(keyRight);
-        showCreateRightList.add(showCreateRight.toString());
+        for (Map.Entry<String, String> param : extParams.entrySet()){
+            List<String> list = new ArrayList<>();
+            list.add(param.getValue());
+            paramMap.put(param.getKey(), list);
+        }
+        //Boolean showCreateRight
+        //showCreateRightList.add(showCreateRight.toString());
         paramMap.put("editMode", editModeList);
         paramMap.put("stateId", stateIdList);
         paramMap.put("keyRight", keyRightList);
-        paramMap.put("showCreate", showCreateRightList);
+        //paramMap.put("showCreate", showCreateRightList);
         openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
     }
     
@@ -544,41 +549,41 @@ public class SessionBean implements Serializable{
     /* Инициализация спиcка тем */
     private void temeInit(){
         themes = new ArrayList<>();
-        themes.add(new Theme(0, "Afterdark", "afterdark"));
-        themes.add(new Theme(1, "Afternoon", "afternoon"));
-        themes.add(new Theme(2, "Afterwork", "afterwork"));
-        themes.add(new Theme(3, "Aristo", "aristo"));
-        themes.add(new Theme(4, "Black-Tie", "black-tie"));
-        themes.add(new Theme(5, "Blitzer", "blitzer"));
-        themes.add(new Theme(6, "Bluesky", "bluesky"));
-        themes.add(new Theme(7, "Bootstrap", "bootstrap"));
-        themes.add(new Theme(8, "Casablanca", "casablanca"));
-        themes.add(new Theme(9, "Cupertino", "cupertino"));
-        themes.add(new Theme(10, "Cruze", "cruze"));
-        themes.add(new Theme(11, "Dark-Hive", "dark-hive"));
-        themes.add(new Theme(12, "Delta", "delta"));
-        themes.add(new Theme(13, "Dot-Luv", "dot-luv"));
-        themes.add(new Theme(14, "Eggplant", "eggplant"));
-        themes.add(new Theme(16, "Flick", "flick"));
-        themes.add(new Theme(17, "Glass-X", "glass-x"));
-        themes.add(new Theme(18, "Home", "home"));
-        themes.add(new Theme(19, "Hot-Sneaks", "hot-sneaks"));
-        themes.add(new Theme(20, "Humanity", "humanity"));
-        themes.add(new Theme(21, "Le-Frog", "le-frog"));
-        themes.add(new Theme(22, "Midnight", "midnight"));
-        themes.add(new Theme(23, "Mint-Choc", "mint-choc"));
-        themes.add(new Theme(24, "Overcast", "overcast"));
-        themes.add(new Theme(25, "Pepper-Grinder", "pepper-grinder"));
-        themes.add(new Theme(26, "Redmond", "redmond"));
-        themes.add(new Theme(27, "Rocket", "rocket"));
-        themes.add(new Theme(28, "Sam", "sam"));
-        themes.add(new Theme(29, "Smoothness", "smoothness"));
-        themes.add(new Theme(30, "South-Street", "south-street"));
-        themes.add(new Theme(31, "Start", "start"));
-        themes.add(new Theme(32, "Sunny", "sunny"));
-        themes.add(new Theme(35, "UI-Darkness", "ui-darkness"));
-        themes.add(new Theme(36, "UI-Lightness", "ui-lightness"));
-        themes.add(new Theme(37, "Vader", "vader"));
+        themes.add("afterdark");
+        themes.add("afternoon");
+        themes.add("afterwork");
+        themes.add("aristo");
+        themes.add("black-tie");
+        themes.add("blitzer");
+        themes.add("bluesky");
+        themes.add("bootstrap");
+        themes.add("casablanca");
+        themes.add("cupertino");
+        themes.add("cruze");
+        themes.add("dark-hive");
+        themes.add("delta");
+        themes.add("dot-luv");
+        themes.add("eggplant");
+        themes.add("flick");
+        themes.add("glass-x");
+        themes.add("home");
+        themes.add("hot-sneaks");
+        themes.add("humanity");
+        themes.add("le-frog");
+        themes.add("midnight");
+        themes.add("mint-choc");
+        themes.add("overcast");
+        themes.add("pepper-grinder");
+        themes.add("redmond");
+        themes.add("rocket");
+        themes.add("sam");
+        themes.add("smoothness");
+        themes.add("south-street");
+        themes.add("start");
+        themes.add("sunny");
+        themes.add("ui-darkness");
+        themes.add("ui-lightness");
+        themes.add("vader");
     }
 
     /**
@@ -834,7 +839,7 @@ public class SessionBean implements Serializable{
         return dashboardModel;
     }
 
-    public List<Theme> getThemes() {
+    public List<String> getThemes() {
         return themes;
     }
 

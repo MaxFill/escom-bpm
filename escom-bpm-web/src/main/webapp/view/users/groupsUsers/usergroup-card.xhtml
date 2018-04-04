@@ -7,6 +7,15 @@
 
     <ui:param name="_bean" value="#{userGroupsCardBean}"/>
 
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateSubGroup}">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreatePartners}">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true"/>
+        </p:column>
+    </ui:define>
+
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Explorer}">             
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 ui-panelgrid-blank" >

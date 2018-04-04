@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseCardTree;
@@ -24,8 +25,8 @@ public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     private DocTypeBean docTypeBean;
     
     @EJB
-    private DocTypeGroupsFacade itemsFacade;     
-    
+    private DocTypeGroupsFacade itemsFacade;
+
     @Override
     public List<State> getStateForChild(){
         return docTypeBean.getMetadatesObj().getStatesList();

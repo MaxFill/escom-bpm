@@ -9,68 +9,92 @@
             <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsAccessChilds}" 
                                      disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
                                      valueChangeListener="#{_bean.onInheritsChildsRightChange}" >
-                <p:ajax update="docRightsGrid inheritsAccessChilds"/>
+                <p:ajax update="tblChildRight inheritsAccessChilds"/>
             </p:selectBooleanCheckbox>
             <h:outputLabel id="inheritsAccessChilds" value="#{_bean.inheritsAccessChildName}"/>
         </p:panelGrid>
 
-        <h:panelGroup id="docRightsGrid" style="font-size: 80%;">        
-            <ui:repeat var="state" value="#{_bean.stateForChild}">
-                <p:accordionPanel activeIndex="null">
-                    <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" rendered="#{_bean.editedItem != null}" > 
-                        <p:dataTable id="tblRight" value="#{_bean.getRightChildsForState(_bean.editedItem, state)}" var="right" 
-                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                                     emptyMessage="#{bundle.EmptyTable}">
-                            <p:column headerText="#{bundle.RightOwner}">
-                                <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
-                                <h:outputText value="#{right.name}"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Read}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.read}" disabled="true"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Change}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.update}" disabled="true"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Creating}" style="text-align: center;">                                    
-                                <p:selectBooleanCheckbox value="#{right.create}" disabled="true"/>
-                            </p:column>                        
-                            <p:column headerText="#{bundle.Remove}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
-                            </p:column> 
-                            <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
-                                <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
-                            </p:column>                         
-                            <p:column headerText="#{bundle.Commands}" style="text-align: center;">
-                                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12 without-spaces, ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
-                                    <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" styleClass="without-spaces"
-                                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds}"
-                                                     actionListener="#{_bean.onEditRightChild(right)}" >
-                                        <p:ajax event="dialogReturn" update="#{_frm}:mainTabView:docRightsGrid"
-                                                listener="#{_bean.onCloseRightCard}"/>
-                                    </p:commandButton>
-                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
-                                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.inheritsAccessChilds}"
-                                                     update="tblRight"
-                                                     actionListener="#{_bean.onDeleteRightChild(right)}">
-                                    </p:commandButton>
-                                </p:panelGrid>
-                            </p:column>
-                        </p:dataTable>
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">
-                            <p:commandButton id="btnAddDocRight" value="#{bundle.Add}" 
-                                             icon="ui-icon-circle-plus" style="float:right;"
-                                             disabled="#{_bean.isReadOnly() or !_bean.isHaveRightChangeRight()}"
-                                             rendered="#{!_bean.editedItem.inheritsAccessChilds}" 
-                                             actionListener="#{_bean.onAddRightChild(state)}">
-                                <p:ajax event="dialogReturn" 
-                                        update="#{_frm}:mainTabView:docRightsGrid"
-                                        listener="#{_bean.onCloseRightCard}"/>
-                            </p:commandButton>
-                        </p:panelGrid>
-                    </p:tab>
-                </p:accordionPanel>
-            </ui:repeat>
-        </h:panelGroup>
+        <p:dataTable id="tblChildRight" value="#{_bean.rightsChilds}" var="right" expandableRowGroups="true"
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12" style="font-size: 80%;"
+                     sortBy="#{right.state.name}"
+                     emptyMessage="#{bundle.EmptyTable}">
+
+            <p:headerRow >
+                <p:column colspan="#{_bean.getRightColSpan()}">
+                    <h:outputText value="#{bundle.State}: #{stateBean.getBundleName(right.state)}" />
+                </p:column>
+            </p:headerRow>
+
+            <p:column headerText="#{bundle.RightOwner}" >
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank">
+                    <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
+                    <p:outputLabel value="#{right.name}"/>
+                </p:panelGrid>
+            </p:column>
+            <p:column headerText="#{bundle.Read}" styleClass="colRight">
+                <p:selectBooleanCheckbox value="#{right.read}" disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"/>
+            </p:column>
+            <p:column headerText="#{bundle.Change}" styleClass="colRight" >
+                <p:selectBooleanCheckbox value="#{right.update}" disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"/>
+            </p:column>
+            <p:column headerText="#{bundle.Remove}" styleClass="colRight" >
+                <p:selectBooleanCheckbox value="#{right.delete}" disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"/>
+            </p:column>
+            <p:column headerText="#{bundle.ChangeRight}" styleClass="colRight" >
+                <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.Commands}" styleClass="colRight">
+                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" styleClass="without-spaces"
+                                 disabled="#{_bean.editedItem.inheritsAccessChilds or _bean.isReadOnly()}"
+                                 actionListener="#{_bean.onDeleteRightChild(right)}"
+                                 update="#{_frm}:mainTabView:tblChildRight">
+                </p:commandButton>
+            </p:column>
+
+            <f:facet name="footer">
+                <h:panelGroup rendered="#{!_bean.editedItem.inheritsAccessChilds and !_bean.isReadOnly()}">
+                    <p:outputLabel value="#{bundle.AddRight}: " />
+                    <p:selectOneMenu value="#{_bean.selState}" title="#{bundle.State}" converter="stateConvertor">
+                        <f:selectItems value="#{_bean.getStateForChild()}" var="s" itemLabel="#{stateBean.getBundleName(s)}" itemValue="#{s}" />
+                    </p:selectOneMenu>
+                    <p:spacer/>
+                    <p:selectOneMenu value="#{_bean.typeAddRight}" title="#{bundle.ForSomeone}">
+                        <f:selectItem itemLabel="#{bundle.ForUser}" itemValue="#{DictRights.TYPE_USER}" />
+                        <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="#{DictRights.TYPE_GROUP}" />
+                        <f:selectItem itemLabel="#{bundle.ForRole}" itemValue="#{DictRights.TYPE_ROLE}" />
+                        <p:ajax event="change" update="pnForObject"/>
+                    </p:selectOneMenu>
+                    <p:spacer/>
+                    <h:panelGroup id="pnForObject">
+                        <p:selectOneMenu value="#{_bean.selUser}" filter="true" filterMatchMode="startsWith" title="#{bundle.Users}"
+                                         converter="usersConvertor" placeholder="#{bundle.Select}"
+                                         rendered="#{_bean.typeAddRight == DictRights.TYPE_USER}">
+                            <f:selectItems value="#{userBean.findAll()}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                        </p:selectOneMenu>
+                        <p:selectOneMenu value="#{_bean.selUsGroup}" filter="true" filterMatchMode="startsWith" title="#{bundle.Groups}"
+                                         converter="groupsUserConvertor" placeholder="#{bundle.Select}"
+                                         rendered="#{_bean.typeAddRight == DictRights.TYPE_GROUP}" >
+                            <f:selectItems value="#{userGroupsBean.findOnlyGroups()}" var="g" itemLabel="#{g.name}" itemValue="#{g}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                        </p:selectOneMenu>
+                        <p:selectOneMenu value="#{_bean.selUserRole}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
+                                         converter="groupsUserConvertor" placeholder="#{bundle.Select}"
+                                         rendered="#{_bean.typeAddRight == DictRights.TYPE_ROLE}" >
+                            <f:selectItems value="#{userGroupsBean.findOnlyRoles()}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+                    <p:spacer/>
+                    <p:commandButton value="#{bundle.Add}" title="#{bundle.AddRight}"
+                                     actionListener="#{_bean.onAddRightChild()}"
+                                     update="#{_frm}:mainTabView:tblChildRight">
+                    </p:commandButton>
+                </h:panelGroup>
+            </f:facet>
+        </p:dataTable>
+
     </p:panelGrid>
 </ui:composition>
 

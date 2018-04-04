@@ -7,8 +7,7 @@
     <ui:param name="_bean" value="#{docTypeGroupsCardBean}"/>
         
     <ui:define name="page_body">
-
-        <p:tab title="#{bundle.Explorer}">     
+        <p:tab title="#{bundle.Explorer}">
             <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank"
                          columnClasses="ui-grid-col-12 col-padding" >
                 <p:outputLabel value="#{bundle.Name}" />
@@ -20,8 +19,10 @@
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
             </p:panelGrid>
-        </p:tab>                
-        <p:tab title="#{bundle.RightsChilds}">
+        </p:tab>
+    </ui:define>
+    <ui:define name="childs_rights">
+        <p:tab title="#{bundle.RightsDocTypes}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>
     </ui:define>

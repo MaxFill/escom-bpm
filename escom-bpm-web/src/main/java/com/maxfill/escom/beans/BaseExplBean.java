@@ -121,17 +121,25 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     }  
     
     /* Действия перед созданием объекта */
-    private void prepCreate(T newItem, BaseDict parent, Set<String> errors){
+    protected void prepCreate(T newItem, BaseDict parent, Set<String> errors){
         boolean isAllowedEditOwner = true;
         boolean isAllowedEditParent = true;
         BaseDict owner = newItem.getOwner();
         if (owner != null) {
             getOwnerBean().getItemFacade().actualizeRightItem(owner, currentUser);
-            isAllowedEditOwner = getItemFacade().isHaveRightAddChild(owner); //можно ли создавать дочерние объекты?
+            isAllowedEditOwner = getItemFacade().isHaveRightAddDetail(owner); //можно ли создавать подчинённые объекты?
+            if (!isAllowedEditOwner){
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName())});
+                errors.add(error);
+            }
         }
         if (parent != null){
             getItemFacade().actualizeRightItem(parent, currentUser);
             isAllowedEditParent = getItemFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
+            if (!isAllowedEditParent){
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName())});
+                errors.add(error);
+            }
         }
         if (isAllowedEditOwner && isAllowedEditParent) {
             newItem.setParent(parent);
@@ -141,11 +149,6 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             } else {
                 String objName = EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName());
                 String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
-                errors.add(error);
-            }
-        } else {
-            if (owner != null){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{owner.getName()});
                 errors.add(error);
             }
         }

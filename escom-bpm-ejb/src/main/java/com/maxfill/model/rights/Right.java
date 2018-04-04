@@ -76,8 +76,14 @@ public class Right implements Serializable{
     @NotNull
     @Column(name = "IsAddChild")
     @XmlElement(name = "IsAddChild")
-    private boolean addChild = true;
-        
+    private boolean addChild;
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "IsAddDetail")
+    @XmlElement(name = "IsAddDetail")
+    private boolean addDetail;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "ObjId")
@@ -94,7 +100,7 @@ public class Right implements Serializable{
     private Integer objType;
     
     /**
-     * Объект метаданных
+     * Объект метаданных. Ссылка используется для хранения записей дефолтных прав объекта метаданных
      */
     @JoinColumn(name = "ObjLink", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -121,12 +127,12 @@ public class Right implements Serializable{
     public Right() {
     }
 
-    public Right(Integer type, Integer id, Metadates objLink, String name, State state) {
+    public Right(Integer type, Integer objId, String name, State state, Metadates metadateObj) {
         this.objType = type; //0 - группа, 1 - пользователь
-        this.objId = id;        
+        this.objId = objId;
         this.name = name;
-        this.objLink = objLink;
         this.state = state;
+        this.objLink = metadateObj;
     }
 
     public String getIcon() {
@@ -191,7 +197,14 @@ public class Right implements Serializable{
     public void setAddChild(boolean addChild) {
         this.addChild = addChild;
     }
-    
+
+    public boolean isAddDetail() {
+        return addDetail;
+    }
+    public void setAddDetail(boolean addDetail) {
+        this.addDetail = addDetail;
+    }
+
     public String getName() {
         return name;
     }
@@ -218,13 +231,6 @@ public class Right implements Serializable{
     }
     public void setObjType(Integer objType) {
         this.objType = objType;
-    }
-
-    public Metadates getObjLink() {
-        return objLink;
-    }
-    public void setObjLink(Metadates objLink) {
-        this.objLink = objLink;
     }
 
     @Override

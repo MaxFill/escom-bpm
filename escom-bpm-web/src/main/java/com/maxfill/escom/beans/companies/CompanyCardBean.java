@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.companies;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.CompanyFacade;
 import com.maxfill.escom.beans.BaseCardTree;
@@ -25,7 +26,7 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     
     @EJB
     private CompanyFacade itemsFacade;
-    
+
     @Override
     public List<State> getStateForChild(){
         return departmentBean.getMetadatesObj().getStatesList();

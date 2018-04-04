@@ -103,4 +103,6 @@ public class RightFacade extends BaseFacade<Right> {
         Query q = getEntityManager().createQuery(cq);       
         return (UserGroups)q.getSingleResult();
     }
+
+
 }

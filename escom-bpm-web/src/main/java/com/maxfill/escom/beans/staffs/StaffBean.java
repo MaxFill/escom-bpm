@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+
+import org.apache.poi.ss.formula.functions.T;
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Штатные единицы" */
@@ -56,7 +58,27 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         //TODO добавить поиск штатной единицы для текущего пользователя
         currentStaff = itemsFacade.find(1);
     }
-    
+
+    /**
+     * Проверка перед созданием штатной единицы
+     * @param newItem
+     * @param parent
+     * @param errors
+     */
+    @Override
+    protected void prepCreate(Staff newItem, BaseDict parent, Set <String> errors) {
+        if (newItem.getOwner() == null && newItem.getCompany() != null) {
+            Company company = newItem.getCompany();
+            companyBean.getItemFacade().actualizeRightItem(company, currentUser);
+            Boolean isAllowedAddDetail = companyBean.getItemFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
+            if (!isAllowedAddDetail){
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName())});
+                errors.add(error);
+            }
+        }
+        super.prepCreate(newItem, parent, errors);
+    }
+
     @Override
     public BaseExplBean getOwnerBean() {
         return ownerBean;

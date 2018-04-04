@@ -59,6 +59,8 @@ public class RightCardBean extends BaseDialogBean{
     private List<UserGroups> roles;
     private Boolean showCreateRight;
     private Integer objType;
+    private String rightAddChildTitle;
+    private String rightAddDetailTitle;
 
     @Override
     protected void initBean(){    
@@ -70,12 +72,20 @@ public class RightCardBean extends BaseDialogBean{
         if (selRight == null){
             Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             editMode = Integer.valueOf(params.get("editMode"));
-            showCreateRight = Boolean.valueOf(params.get("showCreate"));
+            if (params.containsKey("showCreate")) {
+                showCreateRight = Boolean.valueOf(params.get("showCreate"));
+            }
+            if (params.containsKey("AddChildTitle")){
+                rightAddChildTitle = params.get("AddChildTitle");
+            }
+            if (params.containsKey("AddDetailTitle")){
+                rightAddDetailTitle = params.get("AddDetailTitle");
+            }
             switch (editMode){
                 case DictEditMode.INSERT_MODE:{
                     Integer stateId = Integer.valueOf(params.get("stateId"));
                     State state = stateFacade.find(stateId);
-                    selRight = new Right(DictRights.TYPE_GROUP, null, null, "<Не указано!>", state);
+                    selRight = new Right(DictRights.TYPE_GROUP, null, null, state, null);
                     break;
                 }
                 case DictEditMode.EDIT_MODE:{
@@ -214,51 +224,12 @@ public class RightCardBean extends BaseDialogBean{
             selRight.setName(usRole.getName());
         }
     } 
-    
-    /* Событие изменения типа права в карточке права  */
-    /*
-    public void onTypeChangeRight(ValueChangeEvent event){
-        if (event.getNewValue() == null) return;
-        selRight.setObjType((Integer) event.getNewValue());
-        String name = EscomMsgUtils.getBandleLabel("EmptySelData");
-        switch (selRight.getObjType()){
-            case DictRights.TYPE_GROUP: {
-                if (selUsGroup != null){
-                    name = selUsGroup.getName();
-                    selUser = null;
-                    selUsRole = null;
-                } 
-                break;
-            }
-            case DictRights.TYPE_USER: {
-                if (selUser != null){
-                    selUsRole = null;
-                    selUsGroup = null;
-                    name = selUser.getShortFIO();
-                }
-                break;
-            }
-            case DictRights.TYPE_ROLE: {
-                if (selUsRole != null){
-                    selUsGroup = null;
-                    selUser = null;
-                    name = selUsRole.getName();
-                }
-                break;
-            }
-        }
-        selRight.setName(name);
-    } 
-    */
+
     @Override
     protected String getFormName() {
         return DictDlgFrmName.FRM_RIGHT_CARD;
     }
-    
-    public String getTypeName(){
-        return rightsBean.getTypeName(selRight.getObjType());
-    }
-    
+
     public String getStateName(){
         return stateBean.getBundleName(selRight.getState());
     }
@@ -298,8 +269,28 @@ public class RightCardBean extends BaseDialogBean{
         return roles;
     }
 
+    /**
+     * Определяет, можно ли отображать на карточке право создания объекта
+     * @return
+     */
     public Boolean isShowCreateRight() {
         return showCreateRight;
+    }
+
+    /**
+     * Определяет, можно ли отображать на карточке право создания подчинённых объектов
+     * @return
+     */
+    public Boolean isShowAddDetailRight() {
+        return StringUtils.isNotBlank(rightAddDetailTitle);
+    }
+
+    /**
+     * Определяет, можно ли отображать на карточке право создания дочерних объектов
+     * @return
+     */
+    public Boolean isShowAddChildRight() {
+        return StringUtils.isNotBlank(rightAddChildTitle);
     }
 
     public Right getSelRight() {

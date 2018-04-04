@@ -1,20 +1,17 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.dictionary.*;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
-import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictLogEvents;
-import com.maxfill.dictionary.DictPrintTempl;
-import com.maxfill.dictionary.DictRoles;
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
@@ -37,17 +34,23 @@ import org.apache.commons.beanutils.BeanUtils;
 
 /* Базовый бин для карточек объектов */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
-    private static final long serialVersionUID = 6864719383155087328L;    
-    
+    private static final long serialVersionUID = 6864719383155087328L;
+
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
     private Boolean openInDialog;
-    private Integer rightPageIndex;
-    private String itemOpenKey;      
+    private String itemOpenKey;
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
     private User owner;
     private State itemCurrentState;
     private final LayoutOptions cardLayoutOptions = new LayoutOptions();
+    private List<Right> rights;
+
+    protected Integer typeAddRight = DictRights.TYPE_GROUP;
+    protected State selState;
+    protected User selUser;
+    protected UserGroups selUsGroup;
+    protected UserGroups selUserRole;
 
     @Override
     public void onInitBean(){
@@ -260,16 +263,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         appBean.deleteLockItem(itemKey);        //удаление из буфера заблокированных объектов
     }
 
-    /* Изменение страницы аккардиона с правами доступа на карточке объекта */
-    public void onRightTabChange(TabChangeEvent event) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-        Tab tab = event.getTab();
-        String activeIndexValue = params.get(tab.getParent().getClientId(context) + "_tabindex");
-        Integer tabId = Integer.parseInt(activeIndexValue);
-        setRightPageIndex(tabId);
-    }
-
     /* Обработка события изменения состояния */
     public void onStateChange(){
         getEditedItem().getState().setPreviousState(itemCurrentState);
@@ -331,43 +324,52 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         parameters.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel(key));
         return parameters;
     }
-            
-    /* ПРАВА ДОСТУПА: открытие карточки для создание нового права к объекту  */
-    public void onAddRight(State state) {
-        //getSessionBean().addSourceBean(this.toString(), this);
-        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", false);
+
+    /**
+     * Обработка события добавления права в права объекта
+     */
+    public void onAddRight(){
+        Set<String> errors = new HashSet <>();
+        BaseDict obj = null;
+        switch(typeAddRight){
+            case DictRights.TYPE_GROUP :{
+                if (selUsGroup == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                } else {
+                    obj = selUsGroup;
+                }
+                break;
+            }
+            case DictRights.TYPE_USER :{
+                if (selUser == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                } else {
+                    obj = selUser;
+                }
+                break;
+            }
+            case DictRights.TYPE_ROLE :{
+                if (selUserRole == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                } else {
+                    obj = selUserRole;
+                }
+                break;
+            }
+        }
+        if (!errors.isEmpty()) {
+            EscomMsgUtils.showErrorsMsg(errors);
+        } else {
+            Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
+            rights.add(right);
+            onItemChange();
+        }
     }
-    
-    /* ПРАВА ДОСТУПА: открытие карточки для редактирования права объекта  */
-    public void onEditRight(Right right) {
-        Integer hashCode = right.hashCode();
-        String keyRight = hashCode.toString();
-        sessionBean.addSourceRight(keyRight, right);
-        sessionBean.openRightCard(DictEditMode.EDIT_MODE, right.getState(), keyRight, false);
-    }      
     
     /* ПРАВА ДОСТУПА: удаление права из редактируемого объекта  */
     public void onDeleteRight(Right right) {
-        getEditedItem().getRightItem().getRights().remove(right);
+        rights.remove(right);
         onItemChange();
-    }
-
-    /* ПРАВА ДОСТУПА: Обработка события закрытия карточки редактирования права объекта  */
-    public void onCloseRightCard(SelectEvent event) {
-        Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
-        Boolean isChange = tuple.a;
-        if (isChange) {
-            onItemChange();
-            Right right = tuple.b;
-            if (right != null){
-                getEditedItem().getRightItem().getRights().add(right);
-            }
-            Set<String> errors = new LinkedHashSet<>();
-            checkCorrectItemRight(getEditedItem(), errors);
-            if (!errors.isEmpty()) {
-                EscomMsgUtils.showErrorsMsg(errors);
-            }
-        }                
     }
 
     /* ПРАВА ДОСТУПА: Выполняет проверку на наличие у объекта права на редактирование */
@@ -460,12 +462,13 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
                 }
                 editedItem.setInherits(Boolean.FALSE);
                 editedItem.setRightItem(newRight);
-                rightsBean.prepareRightsForView(newRight.getRights());                
+                rightsBean.prepareRightsForView(newRight.getRights());
                 EscomMsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
         }
+        rights = null;
     }
     
     public String getCancelBtnName() {
@@ -518,7 +521,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public String getItemObjName(){
         return getItemFacade().getFRM_NAME().toLowerCase();
     }
-    
+
+    /* Возвращает название для заголовка для вкладки "Права доступа к объекту" */
+    public String getRightsForObjectTitle(){
+        return EscomMsgUtils.getBandleLabel("Rights");
+    }
+
     public String getBarCode(T item){
         Integer serverId = conf.getServerId();
         String barcode = EscomUtils.getBarCode(editedItem, getMetadatesObj(), serverId); 
@@ -526,6 +534,15 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     }
 
     /* GETS & SETS  */
+
+    /**
+     * Возвращает число столбцов в групповой строке таблицы прав доступа
+     * @return
+     */
+    public Integer getRightColSpan(){
+        return 6;
+    }
+
     public User getOwner() {
         return owner;  //пользователь, владелец объекта
     }
@@ -544,12 +561,22 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
         }
         return result;
     }
-    
-    public Integer getRightPageIndex() {
-        return rightPageIndex;
+
+    public State getSelState() {
+        return selState;
     }
-    public void setRightPageIndex(Integer rightPageIndex) {
-        this.rightPageIndex = rightPageIndex;
+    public void setSelState(State selState) {
+        this.selState = selState;
+    }
+
+    public List<Right> getRights() {
+        if (rights == null){
+            rights = getEditedItem().getRightItem().getRights();
+        }
+        return rights;
+    }
+    public void setRights(List <Right> rights) {
+        this.rights = rights;
     }
 
     public String getItemOpenKey() {
@@ -569,7 +596,35 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseBean<T> {
     public void setTypeEdit(Integer typeEdit) {
         this.typeEdit = typeEdit;
     }
-    
+
+    public Integer getTypeAddRight() {
+        return typeAddRight;
+    }
+    public void setTypeAddRight(Integer typeAddRight) {
+        this.typeAddRight = typeAddRight;
+    }
+
+    public User getSelUser() {
+        return selUser;
+    }
+    public void setSelUser(User selUser) {
+        this.selUser = selUser;
+    }
+
+    public UserGroups getSelUsGroup() {
+        return selUsGroup;
+    }
+    public void setSelUsGroup(UserGroups selUsGroup) {
+        this.selUsGroup = selUsGroup;
+    }
+
+    public UserGroups getSelUserRole() {
+        return selUserRole;
+    }
+    public void setSelUserRole(UserGroups selUserRole) {
+        this.selUserRole = selUserRole;
+    }
+
     public T getEditedItem() {
         return editedItem;
     }

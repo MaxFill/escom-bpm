@@ -115,7 +115,12 @@
                                      itemLabel="#{bundle.ChangeRight}" onchange="itemChange = 1;"/>
 
             <p:selectBooleanCheckbox value="#{rightCardBean.selRight.addChild}"
+                                     rendered="#{rightCardBean.isShowAddChildRight()}"
                                      itemLabel="#{bundle.AddChildsRight}" onchange="itemChange = 1;"/>
+
+            <p:selectBooleanCheckbox value="#{rightCardBean.selRight.addDetail}"
+                                     rendered="#{rightCardBean.isShowAddDetailRight()}"
+                                     itemLabel="#{bundle.AddDetailRight}" onchange="itemChange = 1;"/>
         </p:panelGrid>
     </ui:define>
 </ui:composition>

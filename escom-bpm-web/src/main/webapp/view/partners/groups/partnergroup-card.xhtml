@@ -4,10 +4,18 @@
                 template="/view/templ/templ-card.xhtml">
 
     <ui:param name="_bean" value="#{partnersGroupsCardBean}"/>
-   
-    <ui:define name="page_body">
 
-        <p:tab id="cardTab" title="#{bundle.Explorer}">     
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateSubGroup}">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreatePartners}">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true"/>
+        </p:column>
+    </ui:define>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Explorer}">
             <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding"
                          columnClasses="ui-grid-col-12 col-padding" >
 
@@ -28,8 +36,7 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
             </p:panelGrid>
-        </p:tab> 
-        
+        </p:tab>
         <p:tab title="#{bundle.Partners}"> 
             <ui:include src="/view/common/dict-item-groups.xhtml" >
                 <ui:param name="_groups" value="#{partnersGroupsCardBean.editedItem.partnersList}" />    

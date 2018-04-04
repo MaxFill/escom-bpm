@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.filters;
 
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
 import com.maxfill.escom.beans.BaseCardBean;
@@ -20,7 +21,7 @@ public class FiltersCardBean extends BaseCardBean<Filter> {
     private FiltersFacade itemsFacade;   
     
     public FiltersCardBean() {  
-    }              
+    }
 
     @Override
     public FiltersFacade getItemFacade() {

@@ -37,7 +37,7 @@
         
         <f:event listener="#{sessionBean.showNotification()}" type="preRenderView" />
 
-        <h:form id="mainFRM" style="font-size: 90%">           
+        <h:form id="mainFRM">
             <style type="text/css">
                 .ui-dashboard-column {
                     width: 300px !important;
@@ -173,9 +173,9 @@
                             <p:outputLabel value="#{bundle.ChooseTheme}"/>
                             <p:themeSwitcher effect="fade" var="t">
                                 <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
-                                <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item.displayName}" itemValue="#{item}"/>
+                                <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item}" itemValue="#{item}"/>
                                 <p:column>
-                                    <h:outputText value="#{t.displayName}"/>
+                                    <h:outputText value="#{t}"/>
                                 </p:column>
                                 <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
                             </p:themeSwitcher>

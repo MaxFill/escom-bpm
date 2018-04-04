@@ -24,7 +24,12 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
     private DocTypeBean docTypeBean;
     @EJB
     private StatusesDocFacade itemFacade;
-   
+
+    @Override
+    public String getRightsForObjectTitle() {
+        return EscomMsgUtils.getBandleLabel("RightsForObject");
+    }
+
     public void onAddStatusInTypeDocs(){
         docTypeBean.onManySelectItem();
     }

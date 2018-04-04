@@ -8,6 +8,7 @@ import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
+import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
@@ -28,7 +29,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     private FoldersBean foldersBean;
     @Inject
     private DocBean docBean;
-    
+
     @EJB
     private FoldersFacade foldersFacade;                     
     
@@ -59,7 +60,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
         getEditedItem().setPartnerDefault(partner);
         onItemChange();
     }
-    
+
     /* Возвращает название для заголовка наследования прав к документам  */
     @Override
     public String getInheritsAccessChildName(){
@@ -88,7 +89,11 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     public String getTypeName(){
         return foldersBean.getTypeName(getEditedItem());
     }
-        
+
+    /**
+     * Возвращает список состояний для подчинённых объектов
+     * @return
+     */
     @Override
     public List<State> getStateForChild(){
         return docBean.getMetadatesObj().getStatesList();
@@ -103,4 +108,5 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     protected BaseTreeBean getTreeBean() {
         return foldersBean;
     }
+
 }
