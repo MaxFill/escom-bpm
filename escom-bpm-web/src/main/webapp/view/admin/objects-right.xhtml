@@ -3,97 +3,148 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:p="http://primefaces.org/ui"
     xmlns:f="http://xmlns.jcp.org/jsf/core" 
-    xmlns:h="http://xmlns.jcp.org/jsf/html">       
+    xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
 
     <p:panelGrid id="mainGrid" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
-        <h:panelGrid columns="3" rendered="#{metadatesBean.selectedObject != null}">
-            <p:outputLabel value="#{bundle.AvailableStates}"/>
-            <p:selectOneMenu value="#{metadatesBean.stateAdd}" converter="stateConvertor" styleClass="ui-grid-col-12"
-                disabled="#{metadatesBean.states.isEmpty()}">
-                <f:selectItems value="#{metadatesBean.states}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
-            </p:selectOneMenu>
-            <p:commandButton value="#{bundle.AddState}"
-                             disabled="#{metadatesBean.states.isEmpty()}"
-                             styleClass="ui-grid-col-12"
-                             update="mainGrid"
-                             actionListener="#{metadatesBean.onAddState()}">    
-            </p:commandButton>
+        <h3 style="margin-top: 0">#{bundle.SettigsObject}: #{metadatesBean.selectedObject == null ? bundle.EmptySelData : metadatesBean.getBundleName(metadatesBean.selectedObject)}</h3>
 
-        </h:panelGrid>
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true" rendered="#{metadatesBean.selectedObject != null}">
+            <p:tab title="#{bundle.States}">
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 col-padding">
 
-        <p:dataGrid id="dataGrid" var="state" value="#{metadatesBean.selectedObject.statesList}" columns="1" layout="grid" 
-                    emptyMessage="#{bundle.EmptyTable}" styleClass="ui-grid-col-12 without-spaces" rendered="#{metadatesBean.selectedObject != null}"
-                    paginator="true" paginatorPosition="bottom" rows="7" style="font-size: 90%" >
-            <p:accordionPanel>
-                <p:tab title="#{bundle.State}: #{stateBean.getBundleName(state)}" >
-                    <h:panelGrid columns="2" columnClasses="ui-grid-col-11, ui-grid-col-1 colTop" styleClass="ui-panelgrid-blank" >                
-                        <p:dataTable id="tblRightDoc" value="#{metadatesBean.getRightsInState(state)}" 
-                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
-                                     selection="#{metadatesBean.selRight}" emptyMessage="#{bundle.EmptyTable}"
-                                     var="right">
-                            <p:column headerText="#{bundle.RightOwner}" width="170">
-                                <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
-                                <h:outputText value="#{right.name}"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Read}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.read}" disabled="true"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Change}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.update}" disabled="true"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.Creating}" style="text-align: center;">                                    
-                                <p:selectBooleanCheckbox value="#{right.create}" disabled="true"/>
-                            </p:column>                        
-                            <p:column headerText="#{bundle.Remove}" style="text-align: center;">
-                                <p:selectBooleanCheckbox value="#{right.delete}"  disabled="true"/>                                        
-                            </p:column> 
-                            <p:column headerText="#{bundle.AddChildsRight}" width="100" style="text-align: center;">                                    
-                                <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
-                            </p:column>
-                            <p:column headerText="#{bundle.ChangeRight}" style="text-align: center;">                                    
-                                <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/>
-                            </p:column>                         
-                            <p:column headerText="#{bundle.Commands}" style="text-align: center;" >
-                                <h:panelGroup styleClass="ui-grid-col-12 without-spaces">
-                                    <p:commandButton icon="ui-icon-document" title="#{bundle.Edit}" 
-                                                     actionListener="#{metadatesBean.onEditRight(right)}" >
-                                        <p:ajax event="dialogReturn" update="tblRightDoc"
-                                                listener="#{metadatesBean.onCloseRightCard}"/>
-                                    </p:commandButton>
-                                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                                     update="tblRightDoc"
-                                                     actionListener="#{metadatesBean.onDeleteRight(right)}" >
-                                        <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                                    </p:commandButton>
-                                </h:panelGroup>
-                            </p:column>                        
-                        </p:dataTable>
+                    <p:pickList id="pickList" value="#{metadatesBean.states}" var="state" converter="stateConvertor"
+                                showCheckbox="true"
+                                itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}">
+                        <f:facet name="sourceCaption">#{bundle.AvailableStates}</f:facet>
+                        <f:facet name="targetCaption">#{bundle.ObjectStates}</f:facet>
+                    </p:pickList>
 
-                        <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                            <h:panelGrid columns="2" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                                <p:commandButton value="#{bundle.DeleteState}"
-                                                 styleClass="ui-grid-col-12"
-                                                 update="frmFldDefRight:mainGrid"
-                                                 actionListener="#{metadatesBean.onDeleteState(state)}">
-                                    <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                                </p:commandButton>
-                                <p:commandButton id="btnRight" value="#{bundle.AddRight}"
-                                                 styleClass="ui-grid-col-12"
-                                                 actionListener="#{metadatesBean.onAddRight(state)}">
-                                    <p:ajax event="dialogReturn" update="frmFldDefRight:mainGrid"
-                                            listener="#{metadatesBean.onCloseRightCard}"/>
-                                </p:commandButton>
-                            </h:panelGrid>
-                            <p:separator />
-                            <p:commandButton value="#{bundle.MakeAsStartState}"
-                                             update="frmFldDefRight:dataGrid"
-                                             disabled="#{metadatesBean.startState eq state }"
-                                             actionListener="#{metadatesBean.onSetStartState(state)}">
-                            </p:commandButton>
-                        </h:panelGrid>
-                    </h:panelGrid>  
-                </p:tab>
-            </p:accordionPanel>
-        </p:dataGrid>
+                    <p:outputLabel value="#{bundle.StartState}"/>
+                    <p:selectOneMenu value="#{metadatesBean.startState}" converter="stateConvertor" >
+                        <f:selectItems value="#{metadatesBean.selectedObject.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+                    </p:selectOneMenu>
+
+                    <p:commandButton value="#{bundle.SaveChange}"
+                                     update="frmFldDefRight:mainGrid"
+                                     actionListener="#{metadatesBean.onSaveChange()}">
+                    </p:commandButton>
+
+                </p:panelGrid>
+            </p:tab>
+            <p:tab title="#{bundle.Rights}">
+                <p:dataTable id="tblRightDoc" value="#{metadatesBean.rights}" editable="true"
+                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
+                             emptyMessage="#{bundle.EmptyTable}" expandableRowGroups="true"
+                             var="right" sortBy="#{right.state.name}">
+                    <p:ajax event="rowEdit" listener="#{metadatesBean.onRightChange}" update="tblRightDoc" />
+
+                    <p:headerRow>
+                        <p:column colspan="10">
+                            <h:outputText value="#{bundle.State}: #{stateBean.getBundleName(right.state)}" />
+                        </p:column>
+                    </p:headerRow>
+
+                    <p:column headerText="#{bundle.RightOwner}" >
+                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank">
+                            <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
+                            <h:outputText value="#{right.name}"/>
+                        </p:panelGrid>
+                    </p:column>
+                    <p:column headerText="#{bundle.Read}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.read}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.read}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.Change}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.update}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.update}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.Creating}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.create}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.create}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.Remove}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.delete}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.delete}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.AddChildsRight}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.addChild}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.AddDetailRight}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.addDetail}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="#{bundle.ChangeRight}" styleClass="colRight">
+                        <p:cellEditor>
+                            <f:facet name="output"><p:selectBooleanCheckbox value="#{right.changeRight}" disabled="true"/></f:facet>
+                            <f:facet name="input"><p:selectBooleanCheckbox value="#{right.changeRight}"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column style="text-align: center; width: 5%;">
+                        <p:rowEditor saveTitle="#{bundle.SaveChange}" cancelTitle="#{bundle.Cancel}" editTitle="#{bundle.Edit}" />
+                    </p:column>
+                    <p:column style="text-align: center; width: 5%;" >
+                        <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                                         update="tblRightDoc"
+                                         actionListener="#{metadatesBean.onDeleteRight(right)}" >
+                            <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{bundle.AddRight}: " />
+                        <p:selectOneMenu value="#{metadatesBean.selState}" title="#{bundle.State}" converter="stateConvertor">
+                            <f:selectItems value="#{metadatesBean.selectedObject.statesList}" var="s" itemLabel="#{stateBean.getBundleName(s)}" itemValue="#{s}" />
+                        </p:selectOneMenu>
+                        <p:spacer/>
+                        <p:selectOneMenu value="#{metadatesBean.typeAddRight}" title="#{bundle.ForSomeone}">
+                            <f:selectItem itemLabel="#{bundle.ForUser}" itemValue="#{DictRights.TYPE_USER}" />
+                            <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="#{DictRights.TYPE_GROUP}" />
+                            <f:selectItem itemLabel="#{bundle.ForRole}" itemValue="#{DictRights.TYPE_ROLE}" />
+                            <p:ajax event="change" update="pnForObject"/>
+                        </p:selectOneMenu>
+                        <p:spacer/>
+                        <h:panelGroup id="pnForObject">
+                            <p:selectOneMenu value="#{metadatesBean.selUser}" filter="true" filterMatchMode="startsWith" title="#{bundle.Users}"
+                                             converter="usersConvertor"
+                                             rendered="#{metadatesBean.typeAddRight == DictRights.TYPE_USER}">
+                                <f:selectItems value="#{userBean.findAll()}" var="u" itemLabel="#{u.shortFIO}" itemValue="#{u}"/>
+                                <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                            </p:selectOneMenu>
+                            <p:selectOneMenu value="#{metadatesBean.selUsGroup}" filter="true" filterMatchMode="startsWith" title="#{bundle.Groups}"
+                                             converter="groupsUserConvertor"
+                                             rendered="#{metadatesBean.typeAddRight == DictRights.TYPE_GROUP}" >
+                                <f:selectItems value="#{userGroupsBean.findOnlyGroups()}" var="g" itemLabel="#{g.name}" itemValue="#{g}"/>
+                                <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                            </p:selectOneMenu>
+                            <p:selectOneMenu value="#{metadatesBean.selUserRole}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
+                                             converter="groupsUserConvertor"
+                                             rendered="#{metadatesBean.typeAddRight == DictRights.TYPE_ROLE}" >
+                                <f:selectItems value="#{userGroupsBean.findOnlyRoles()}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
+                                <f:selectItem itemValue="#{null}" itemLabel="--#{bundle.Select}--" />
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+                        <p:spacer/>
+                        <p:commandButton value="#{bundle.Add}" title="#{bundle.AddRight}"
+                                         actionListener="#{metadatesBean.onAddRight()}"
+                                         update="tblRightDoc">
+                        </p:commandButton>
+                    </f:facet>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
     </p:panelGrid>
 </ui:composition>

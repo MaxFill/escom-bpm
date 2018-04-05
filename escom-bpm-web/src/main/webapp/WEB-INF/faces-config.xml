@@ -83,13 +83,7 @@
             <from-outcome>check-release</from-outcome>
             <to-view-id>/view/admin/update/check-release.xhtml</to-view-id>
             <redirect />
-        </navigation-case> 
-        
-        <navigation-case>
-            <from-outcome>rightCard</from-outcome>
-            <to-view-id>/view/admin/rights/rightCard.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>        
+        </navigation-case>
        
         <navigation-case>
             <from-outcome>doc-viewer</from-outcome>

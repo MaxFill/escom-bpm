@@ -14,6 +14,9 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+/**
+ * Сервисный бин для работы с правами доступа
+ */
 @Named
 @SessionScoped
 public class RightsBean implements Serializable{
@@ -34,6 +37,7 @@ public class RightsBean implements Serializable{
     public Right createRight(Integer typeObj, Integer objId, String name, State state, Metadates metadateObj){
         Right right = new Right(typeObj, objId, name, state, metadateObj);
         prepareRightForView(right);
+        rightFacade.create(right);
         return right;
     }
 

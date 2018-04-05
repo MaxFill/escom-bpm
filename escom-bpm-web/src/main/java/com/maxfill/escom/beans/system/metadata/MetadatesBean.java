@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.system.metadata;
 import com.maxfill.RightsDef;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.MetadatesFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.facade.RightFacade;
@@ -13,7 +14,10 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.facade.StateFacade;
+import com.maxfill.model.users.User;
+import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.utils.Tuple;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import javax.annotation.PostConstruct;
@@ -22,11 +26,13 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.model.DualListModel;
 
-/* Контроллер формы обозревателя объектов */
+/* Контроллер формы обозревателя настройки объектов */
 @ViewScoped
 @Named
 public class MetadatesBean implements Serializable{
@@ -34,13 +40,21 @@ public class MetadatesBean implements Serializable{
     
     private Metadates selectedObject;
     private List<Metadates> allItems;
-    private List<State> states;
+
+    private List<Right> rights = null;
     private LayoutOptions layoutOptions;
-    private Right selRight;
-    private Integer editMode;
+
     private State stateAdd;
     private State startState;
-    
+
+    private Integer typeAddRight = DictRights.TYPE_GROUP;
+    private User selUser;
+    private State selState;
+    private UserGroups selUsGroup;
+    private UserGroups selUserRole;
+
+    private DualListModel<State> states;
+
     @Inject
     private SessionBean sessionBean;
     
@@ -59,120 +73,111 @@ public class MetadatesBean implements Serializable{
     @PostConstruct
     public void init() {
         initLayoutOptions();
-    }  
-    
-    /* ПРАВА ДОСТУПА */
-
-    /* Открытие карточки для создание нового права к объекту  */
-    public void onAddRight(State state) {
-        editMode = DictEditMode.INSERT_MODE;
-        selRight = new Right();
-        Map<String, String> params = new HashMap <>();
-        params.put("showCreate", "true");
-        sessionBean.openRightCard(DictEditMode.INSERT_MODE, state, "", params);
-    }
-    
-    /* Открытие карточки для редактирования права объекта  */
-    public void onEditRight(Right right) {
-        selRight = right;
-        Integer hashCode = selRight.hashCode();
-        String keyRight = hashCode.toString();
-        editMode = DictEditMode.EDIT_MODE;
-        sessionBean.addSourceRight(keyRight, selRight);
-        Map<String, String> params = new HashMap <>();
-        params.put("showCreate", "true");
-        sessionBean.openRightCard(DictEditMode.EDIT_MODE, selRight.getState(), keyRight, params);
     }
 
     /**
-     * Обработка события закрытия карточки редактирования права
+     * Обработка события изменения права
      * @param event
      */
-    public void onCloseRightCard(SelectEvent event) {
-        Tuple<Boolean, Right> tuple = (Tuple)event.getObject();
-        Boolean isChange = tuple.a;
-        if (isChange) {
-            switch (editMode){
-                case DictEditMode.EDIT_MODE: { 
-                    rightFacade.edit(selRight);
-                    break;
-                }
-                case DictEditMode.INSERT_MODE:{
-                    selRight = tuple.b;
-                    selectedObject.getRightList().add(selRight);
-                    rightFacade.create(selRight);
-                    break;
-                }
-            }
-            rightsDef.reloadDefaultRight(selectedObject);
-        }                
-    }
-    
-    /* Возвращает список прав текущего объекта в заданном состоянии  */     
-    public List<Right> getRightsInState(State state) {
-        if (selectedObject != null){
-            List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);
-            rightsBean.prepareRightsForView(rights);
-            return rights;
-        }
-        return null;
-    }    
-    
-    /* Удаление записи права из базы данных через */ 
-    public void onDeleteRight(Right right){        
-        rightFacade.remove(right);  
-    }
-    
-    public void onAddState(){
-        if (selectedObject == null) return;
-        selectedObject.getStatesList().add(stateAdd);
-        metadatesFacade.edit(selectedObject);
-        Right right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ADMIN_ID, "", stateAdd, selectedObject);
-        rightFacade.create(right);
-        right = new Right(DictRights.TYPE_GROUP, DictRights.GROUP_ALL_USER_ID, "", stateAdd, selectedObject);
-        right.setAddChild(false);
-        right.setChangeRight(false);
-        right.setExecute(false);
-        right.setDelete(false);
-        rightFacade.create(right);
-        EscomMsgUtils.succesMsg("StateIsAdd");
+    public void onRightChange(RowEditEvent event){
+        Right right = (Right) event.getObject();
+        rightFacade.edit(right);
     }
 
     /**
-     * Удаление состояния у объекта
+     * Добавление права доступа
      * @param state
      */
-    public void onDeleteState(State state){
-        Set<String> errors = new HashSet<>();
+    public void onAddRight(){
+        Set<String> errors = new HashSet <>();
+        BaseDict obj = null;
+        switch(typeAddRight){
+            case DictRights.TYPE_GROUP :{
+                if (selUsGroup == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                } else {
+                    obj = selUsGroup;
+                }
+                break;
+            }
+            case DictRights.TYPE_USER :{
+                if (selUser == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                } else {
+                    obj = selUser;
+                }
+                break;
+            }
+            case DictRights.TYPE_ROLE :{
+                if (selUserRole == null){
+                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                } else {
+                    obj = selUserRole;
+                }
+                break;
+            }
+        }
+        if (!errors.isEmpty()) {
+            EscomMsgUtils.showErrorsMsg(errors);
+        } else {
+            Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, selectedObject);
+            rights.add(right);
+        }
+    }
+
+    /* Удаление записи права из базы данных  */
+    public void onDeleteRight(Right right){        
+        rightFacade.remove(right);
+        rights.remove(right);
+    }
+
+    /**
+     * Проверка возможности удалить состояние у объекта
+     * @param state
+     */
+    private void checkStateBeforeDelete(State state,  Set<String> errors){
         if (Objects.equals(state, startState)){
-            errors.add("CantDeleteStartState");
+            errors.add(EscomMsgUtils.getMessageLabel("CantDeleteStartState"));
         }
         BaseExplBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
         if (bean != null && bean.getItemFacade().countItemsByState(state) > 0){
-            errors.add("CantRemoveUsedState");
+            String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
+            errors.add(message);
+        }
+    }
+
+    /**
+     * Удаление прав состояния
+     * @param state
+     */
+    private void deleteStateRigts(State state){
+        List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);  //получили права, которые надо удалить (связанные с состоянием)
+        rights.stream().forEach(right -> rightFacade.remove(right));    //удалили права
+    }
+
+    /**
+     * Сохранение изменений в объекте
+     */
+    public void onSaveChange(){
+        List<State> oldStates = selectedObject.getStatesList();
+        List<State> newStates = states.getTarget();
+        oldStates.removeAll(newStates);
+        Set<String> errors = new HashSet<>();
+        if (!oldStates.isEmpty()){
+            oldStates.stream().forEach(state->checkStateBeforeDelete(state, errors));
         }
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return;
         }
-        selectedObject.getStatesList().remove(state);   //удалили состояние
-        metadatesFacade.edit(selectedObject);           //сохранили изменения в объекте
-        List<Right> rights = rightFacade.findDefaultRightState(selectedObject, state);  //получили права, которые надо удалить (связанные с состоянием)
-        rights.stream().forEach(right -> rightFacade.remove(right));    //удалили права
+        oldStates.stream().forEach(state->deleteStateRigts(state));
+        selectedObject.setStatesList(states.getTarget());
+        metadatesFacade.edit(selectedObject);
         rightsDef.reloadDefaultRight(selectedObject);
+        rights = null;
+        EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{getBundleName(selectedObject)});
     }
 
-    /**
-     * Установка начального состояния объекта
-     * @param state
-     */
-    public void onSetStartState(State state){
-        startState = state;
-        selectedObject.setStateForNewObj(startState);
-        metadatesFacade.edit(selectedObject);
-        EscomMsgUtils.succesMsg("StartSateIsChange");
-    }
-    
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
     /**
@@ -221,6 +226,7 @@ public class MetadatesBean implements Serializable{
         if (event.getObject() == null) return;
         selectedObject = ((Metadates) event.getObject());
         states = null;
+        rights = null;
     } 
       
     public String getBundleName(Metadates metadate){
@@ -228,23 +234,75 @@ public class MetadatesBean implements Serializable{
         return EscomMsgUtils.getBandleLabel(metadate.getBundleName());
     }
 
-    /* *** GET & SET *** */
+    /* *** GETS & SETS *** */
 
-    public List <State> getStates() {
-        if (selectedObject != null || states == null){
-            states = stateFacade.findAll();
-            states.removeAll(selectedObject.getStatesList());
+    public DualListModel<State> getStates() {
+        if (selectedObject != null && states == null){
+            List<State> allStates = stateFacade.findAll();
+            List<State> objectStates = selectedObject.getStatesList();
+            allStates.removeAll(objectStates);
+            states = new DualListModel<State>(allStates, objectStates);
         }
         return states;
     }
+    public void setStates(DualListModel <State> states) {
+        this.states = states;
+    }
+
+    public List <Right> getRights() {
+        if (selectedObject != null && rights == null){
+            rights = rightFacade.findDefaultRight(selectedObject);
+            rightsBean.prepareRightsForView(rights);
+        }
+        return rights;
+    }
+    public void setRights(List <Right> rights) {
+        this.rights = rights;
+    }
 
     public State getStartState() {
-        if (selectedObject == null) return null;
-        startState = selectedObject.getStateForNewObj();
+        if (selectedObject != null && startState == null) {
+            startState = selectedObject.getStateForNewObj();
+        }
         return startState;
     }
     public void setStartState(State startState) {
         this.startState = startState;
+    }
+
+    public Integer getTypeAddRight() {
+        return typeAddRight;
+    }
+    public void setTypeAddRight(Integer typeAddRight) {
+        this.typeAddRight = typeAddRight;
+    }
+
+    public State getSelState() {
+        return selState;
+    }
+    public void setSelState(State selState) {
+        this.selState = selState;
+    }
+
+    public User getSelUser() {
+        return selUser;
+    }
+    public void setSelUser(User selUser) {
+        this.selUser = selUser;
+    }
+
+    public UserGroups getSelUsGroup() {
+        return selUsGroup;
+    }
+    public void setSelUsGroup(UserGroups selUsGroup) {
+        this.selUsGroup = selUsGroup;
+    }
+
+    public UserGroups getSelUserRole() {
+        return selUserRole;
+    }
+    public void setSelUserRole(UserGroups selUserRole) {
+        this.selUserRole = selUserRole;
     }
 
     public void setStateAdd(State stateAdd) {
@@ -266,13 +324,6 @@ public class MetadatesBean implements Serializable{
             allItems = getItemFacade().findAll();
         }
         return allItems;
-    }
-
-    public Right getSelRight() {
-        return selRight;
-    }
-    public void setSelRight(Right selRight) {
-        this.selRight = selRight;
     }
         
     public MetadatesFacade getItemFacade(){

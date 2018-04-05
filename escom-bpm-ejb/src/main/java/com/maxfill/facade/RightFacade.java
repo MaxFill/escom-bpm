@@ -27,7 +27,8 @@ public class RightFacade extends BaseFacade<Right> {
     }
     
     /* Отбирает из базы дефолтные права объекта */
-    private List<Right> findDefaultRight(Metadates objLink){
+    public List<Right> findDefaultRight(Metadates objLink){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
         Root<Right> root = cq.from(Right.class);        

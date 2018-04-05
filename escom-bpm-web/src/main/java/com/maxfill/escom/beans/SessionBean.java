@@ -395,31 +395,6 @@ public class SessionBean implements Serializable{
         paramMap.put("itemId", itemIds);
         openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramMap);
     }
-        
-    /* Открытие карточки записи права  */ 
-    public void openRightCard(Integer editMode, State state, String keyRight, Map<String, String> extParams){
-        Integer stateId = state.getId();
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> keyRightList = new ArrayList<>();
-        List<String> editModeList = new ArrayList<>();
-        List<String> stateIdList = new ArrayList<>();
-        //List<String> showCreateRightList = new ArrayList<>();
-        editModeList.add(editMode.toString());
-        stateIdList.add(stateId.toString());
-        keyRightList.add(keyRight);
-        for (Map.Entry<String, String> param : extParams.entrySet()){
-            List<String> list = new ArrayList<>();
-            list.add(param.getValue());
-            paramMap.put(param.getKey(), list);
-        }
-        //Boolean showCreateRight
-        //showCreateRightList.add(showCreateRight.toString());
-        paramMap.put("editMode", editModeList);
-        paramMap.put("stateId", stateIdList);
-        paramMap.put("keyRight", keyRightList);
-        //paramMap.put("showCreate", showCreateRightList);
-        openDialogFrm(DictDlgFrmName.FRM_RIGHT_CARD, paramMap);
-    }
     
     /* Открытие окна сканирования */
     public void openScaningForm(){

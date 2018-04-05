@@ -53,7 +53,7 @@
             <p:panelGrid id="gridAutoFill" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
                 <p:outputLabel value="#{bundle.Company}:"/>
-                <p:inputSwitch value="#{_bean.editedItem.inheritCompany}" label="111" showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                <p:inputSwitch value="#{_bean.editedItem.inheritCompany}" showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="сompanyPanel"/>
                 </p:inputSwitch>
                 <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
