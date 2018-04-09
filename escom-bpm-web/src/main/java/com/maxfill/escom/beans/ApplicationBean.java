@@ -1,39 +1,34 @@
 package com.maxfill.escom.beans;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maxfill.Configuration;
-import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.licence.Licence;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.MetadatesFacade;
-import com.maxfill.facade.RightFacade;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Rights;
+import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.core.Release;
+import com.maxfill.model.licence.Licence;
+import com.maxfill.model.users.User;
+import com.maxfill.model.users.sessions.UsersSessions;
+import com.maxfill.services.licenses.ActivateApp;
 import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Named
 @ApplicationScoped
@@ -46,13 +41,14 @@ public class ApplicationBean implements Serializable{
     public static final String WSS_INFO_URL = "wss://escom-demo.ru:8443/escom-bpm-info-1.0-SNAPSHOT/release_info";
 
     private boolean needUpadateSystem;
-    private Licence licence;
+    private Licence licence = null;
     private String appName;
+    private final Release release = new Release();
 
     @EJB
-    private Configuration configuration;
-    @EJB
     private UpdateInfo updateInfo;
+    @EJB
+    private ActivateApp activateApp;
 
     //открытые сессии пользователей
     private final ConcurrentHashMap<String, UsersSessions> userSessions = new ConcurrentHashMap<>();
@@ -64,16 +60,20 @@ public class ApplicationBean implements Serializable{
     private final ConcurrentHashMap<String, User> itemsLock = new ConcurrentHashMap<>();
 
     @PostConstruct
-    public void init() { 
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        licence = configuration.getLicence();
-        licence.setVersionNumber(ec.getInitParameter("VersionNumber"));
-        licence.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
-        licence.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
+    public void init() {
         appName = EscomMsgUtils.getBandleLabel(SysParams.APP_NAME);
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        release.setVersionNumber(ec.getInitParameter("VersionNumber"));
+        release.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
+        release.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
+        initLicense();
     }
-    
+
+    public void initLicense(){
+        licence = activateApp.initLicense();
+    }
+
     /* БЛОКИРОВКИ ОБЪЕКТОВ  */
     
     /* Добавление объекта в буфер для его блокировки и передачи во view бины
@@ -116,9 +116,7 @@ public class ApplicationBean implements Serializable{
     public void clearUserLock(User user){
         itemsLock.values().removeIf(value -> value.equals(user));        
     }
-    
-    /* ЛИЦЕНЗИРОВАНИЕ */
-    
+
     /* Добавление занятой лицензии  */
     public void addBusyLicence(User user, HttpSession httpSession){
         UsersSessions userSession =  new UsersSessions();
@@ -141,7 +139,7 @@ public class ApplicationBean implements Serializable{
     
     /* Проверка наличия свободных лицензий  */
     public Boolean isNoAvailableLicence(){
-        return licence.getTotalLicence() <= getBasyLicence();
+        return licence.getTotal() <= getBasyLicence();
     }
     
     /* Возвращает число занятых лицензий */
@@ -154,27 +152,22 @@ public class ApplicationBean implements Serializable{
         usersSession.getHttpSession().invalidate();
         clearBasyLicence(usersSession.getUser().getLogin());        
     }
-    
+
     /* Обновление данных об актуальном релизе */
     public void updateActualReleaseData(Map<String,String> releaseInfoMap){
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        String version = (String) releaseInfoMap.get("version");
-        String number = (String) releaseInfoMap.get("number");
-        String page = (String) releaseInfoMap.get("page");
-        String dateStr = (String) releaseInfoMap.get("date");
+        String version = releaseInfoMap.get("version");
+        String number = releaseInfoMap.get("number");
+        String page = releaseInfoMap.get("page");
+        String dateStr = releaseInfoMap.get("date");
         Date date = DateUtils.convertStrToDate(dateStr, locale);
         updateActualReleaseData(version, number, page, date);
     }
     public synchronized void updateActualReleaseData(String releaseVersion, String releaseNumber, String releasePage, Date releaseDate){
-        licence.setActualReleaseDate(releaseDate);
-        licence.setActualReleaseNumber(releaseNumber);
-        licence.setActualVersionNumber(releaseVersion);
-        licence.setActualReleasePage(releasePage);
-    }
-
-    /* Возвращает дату окончания лицензии */
-    public Date getLicenseExpireDate(){
-        return licence.getDateTermLicence();
+        release.setActualReleaseDate(releaseDate);
+        release.setActualReleaseNumber(releaseNumber);
+        release.setActualVersionNumber(releaseVersion);
+        release.setActualReleasePage(releasePage);
     }
 
     /* Определяет что срок лицензии истёк */
@@ -184,7 +177,7 @@ public class ApplicationBean implements Serializable{
 
     /* Установка признака наличия новой версии */
     public void checkNewVersionAvailable(){
-        Map<String,String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), WSS_INFO_URL);
+        Map<String,String> releaseInfoMap = updateInfo.start(licence.getNumber(), WSS_INFO_URL);
         if (MapUtils.isEmpty(releaseInfoMap)){
             LOGGER.log(Level.SEVERE, "CheckNewVersion: Failed to connect to the service informing about new versions!");
             return;
@@ -192,8 +185,8 @@ public class ApplicationBean implements Serializable{
 
         updateActualReleaseData(releaseInfoMap);
 
-        Date dateReleas = licence.getReleaseDate();
-        Date dateActual = licence.getActualReleaseDate();
+        Date dateReleas = release.getReleaseDate();
+        Date dateActual = release.getActualReleaseDate();
 
         if (dateActual == null){
             dateActual = DateUtils.clearDate(new Date());
@@ -204,6 +197,15 @@ public class ApplicationBean implements Serializable{
             setNeedUpadateSystem(Boolean.TRUE);
         }
     }
+
+    /**
+     * Возвращает дату окончания лицензии
+     * @return
+     */
+    public Date getLicenseExpireDate(){
+        return licence.getDateTerm();
+    }
+
 
     /**
      * Возвращает имя лицензиата
@@ -218,11 +220,11 @@ public class ApplicationBean implements Serializable{
      * @return
      */
     public String getLicenseBundleName(){
-        return licence.getLicenceName();
+        return licence.getName();
     }
 
     /**
-     * Возвращает имя программы по bundle ключу
+     * Возвращает имя программы локализованное имя программы
      * @return
      */
     public String getAppName() {
@@ -249,5 +251,8 @@ public class ApplicationBean implements Serializable{
     public String getALLOW_FILE_TYPES() {
         return ALLOW_FILE_TYPES;
     }
-      
+
+    public Release getRelease() {
+        return release;
+    }
 }

@@ -42,8 +42,13 @@ public class RedirectFilter implements Filter {
 
         String serverURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "").toString();
         String reqURL = request.getRequestURI();
-                
+
         if (reqURL.contains(SysParams.PRIME_URL) || reqURL.contains(SysParams.RESOURCE_URL)){
+            chain.doFilter(request, response);
+            return;
+        }
+
+        if (reqURL.contains(SysParams.ACTIVATE_PAGE)){
             chain.doFilter(request, response);
             return; 
         }        

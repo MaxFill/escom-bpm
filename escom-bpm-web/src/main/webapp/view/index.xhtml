@@ -96,7 +96,6 @@
                     </span>
 
                     <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
-                                     icon="ui-icon-extlink"
                                      onstart="return isClose = 1;"
                                      ajax="false"
                                      action="#{sessionBean.onSessionExit()}"/>
@@ -249,16 +248,16 @@
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{bundle.LicenceNumber}"/>
-                            <p:inputText value="#{applicationBean.licence.licenceNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{applicationBean.licence.number}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.Version}"/>
-                            <p:inputText value="#{applicationBean.licence.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{applicationBean.release.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
                             <p:outputLabel value="#{bundle.Release}"/>
-                            <p:inputText value="#{applicationBean.licence.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{applicationBean.release.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
                             <p:outputLabel value="#{bundle.DateRelease}"/>
-                            <p:inputText value="#{applicationBean.licence.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
+                            <p:inputText value="#{applicationBean.release.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
                                 <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                             </p:inputText>
                         </p:panelGrid>
@@ -268,13 +267,13 @@
                             <p:inputText value="#{sessionBean.licenseLocalName}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.LicenceTotal}"/>
-                            <p:inputText value="#{applicationBean.licence.totalLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+                            <p:inputText value="#{applicationBean.licence.total}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.LicenceBusy}"/>
                             <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
                             
                             <p:outputLabel value="#{bundle.TermLicense}"/>
-                            <p:inputText value="#{applicationBean.licence.dateTermLicence}" readonly="true" styleClass="ui-grid-col-12">
+                            <p:inputText value="#{applicationBean.licence.dateTerm}" readonly="true" styleClass="ui-grid-col-12">
                                 <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                             </p:inputText>
                         </p:panelGrid>

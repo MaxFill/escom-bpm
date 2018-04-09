@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Проверка наличия обновлений программы
+ * Сервис проверки наличия обновлений программы
  */
 @Stateless
 public class CheckNewVersion {

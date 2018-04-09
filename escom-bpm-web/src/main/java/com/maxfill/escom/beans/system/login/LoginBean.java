@@ -36,13 +36,13 @@ import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 
-/* Bean формы входа  */
+/* Контролер формы логина */
 @Named
 @ViewScoped
 public class LoginBean implements Serializable{    
     private static final long serialVersionUID = 4390983938416752289L;
-    protected static final Logger LOGGER = Logger.getLogger(LoginBean.class.getName());
-    
+    private static final Logger LOGGER = Logger.getLogger(LoginBean.class.getName());
+
     private String userName;
     private String password;
     private List<CountryFlags> languages;
@@ -66,6 +66,10 @@ public class LoginBean implements Serializable{
 
     @PostConstruct
     public void init(){
+        if (appBean.getLicence() == null) {
+            sessionBean.redirectToPage(SysParams.ACTIVATE_PAGE, Boolean.FALSE);
+            return;
+        }
         languages = new ArrayList<>();        
         languages.add(new CountryFlags(0, "en", "English"));
         languages.add(new CountryFlags(1, "ru", "Русский"));

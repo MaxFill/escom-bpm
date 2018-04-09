@@ -1,64 +1,37 @@
 package com.maxfill.model.licence;
 
 import com.maxfill.utils.DateUtils;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public final class Licence implements Serializable{
     private static final long serialVersionUID = 1156677344730726415L;
-    
-    private String versionNumber;       //версия используемого релиза
-    private String releaseNumber;       //номер используемого релиза
-    private String releasePage;         //страница на сайте тех. поддержки используемого релиза
-    private Date releaseDate;           //дата используемого релиза    
-    
-    private String actualVersionNumber; //версия актуального релиза
-    private String actualReleaseNumber; //номер актуального релиза
-    private String actualReleasePage;   //страница на сайте тех. поддержки актуального релиза
-    private Date actualReleaseDate;     //дата актуального релиза
-      
-    private final String licensor;
-    private final Integer totalLicence;       //всего лицензий
-    private final String termLicence;         //срок действия лицензии
-    private final String licenceName;
-    private final String licenceNumber;
-    private final Date dateTermLicence;
+
+    @XmlElement(name = "Licensor")
+    private String licensor;
+
+    @XmlElement(name = "Total")
+    private Integer total;
+
+    @XmlElement(name = "Name")
+    private String name;
+
+    @XmlElement(name = "Number")
+    private String number;
+
+    @XmlElement(name = "DateTerm")
+    private Date dateTerm;
     
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
 
-    public Licence(String termLicence, Integer totalLicence, String licenceName, String licenceNumber, String licensor) {
-        this.termLicence = termLicence;
-        this.totalLicence = totalLicence;
-        this.licenceName = licenceName;
-        this.licenceNumber = licenceNumber;
-        this.licensor = licensor;
-
-        Date newDate = DateUtils.convertStrToDate(termLicence);
-        if (newDate == null){
-            this.dateTermLicence = new Date();
-        } else {
-            this.dateTermLicence = newDate;
-        }
-    }
-    
-    public String getLicenceNumber() {
-        return licenceNumber;
-    }
-        
-    public String getLicensor() {
-        return licensor;
-    } 
-    
-    public Integer getTotalLicence() {
-        return totalLicence;
-    }
-    
-    public String getLicenceName() {
-        return licenceName;
-    }    
-
-    public Date getDateTermLicence() {
-        return dateTermLicence;
+    public Licence() {
     }
 
     /**
@@ -67,68 +40,29 @@ public final class Licence implements Serializable{
      */
     public Boolean isExpired(){
         Date currentClearDate = DateUtils.clearDate(new Date());
-        Date licenceClearDate = DateUtils.clearDate(dateTermLicence);
+        Date licenceClearDate = DateUtils.clearDate(dateTerm);
         return !licenceClearDate.after(currentClearDate);         
     }
 
-    public String getTermLicence() {
-        return termLicence;
-    }
-    
-    public String getVersionNumber() {
-        return versionNumber;
-    }
-    public void setVersionNumber(String versionNumber) {
-        this.versionNumber = versionNumber;
+    /* gets & sets */
+
+    public Integer getTotal() {
+        return total;
     }
 
-    public String getReleaseNumber() {
-        return releaseNumber;
-    }
-    public void setReleaseNumber(String releaseNumber) {
-        this.releaseNumber = releaseNumber;
-    }  
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
+    public String getName() {
+        return name;
     }
 
-    public String getReleasePage() {
-        return releasePage;
-    }
-    public void setReleasePage(String releasePage) {
-        this.releasePage = releasePage;
+    public String getNumber() {
+        return number;
     }
 
-    public String getActualVersionNumber() {
-        return actualVersionNumber;
-    }
-    public void setActualVersionNumber(String actualVersionNumber) {
-        this.actualVersionNumber = actualVersionNumber;
+    public Date getDateTerm() {
+        return dateTerm;
     }
 
-    public String getActualReleaseNumber() {
-        return actualReleaseNumber;
+    public String getLicensor() {
+        return licensor;
     }
-    public void setActualReleaseNumber(String actualReleaseNumber) {
-        this.actualReleaseNumber = actualReleaseNumber;
-    }
-
-    public Date getActualReleaseDate() {
-        return actualReleaseDate;
-    }
-    public void setActualReleaseDate(Date actualReleaseDate) {
-        this.actualReleaseDate = actualReleaseDate;
-    }
-
-    public String getActualReleasePage() {
-        return actualReleasePage;
-    }
-    public void setActualReleasePage(String actualReleasePage) {
-        this.actualReleasePage = actualReleasePage;
-    }
-    
 }

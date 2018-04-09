@@ -5,6 +5,7 @@ import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.model.core.Release;
 import com.maxfill.model.licence.Licence;
 import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
@@ -46,12 +47,16 @@ public class CheckReleaseBean extends BaseDialogBean{
     private Date dateRelease;       //дата актуального релиза
     private String strDateRelease;  //служебное поле
     private Licence licence;
+    private Release release;
     
     @Override
     protected void initBean(){
-       licence = appBean.getLicence();
-       // вызов wss сервиса через javascript
-       PrimeFaces.current().executeScript("init('" + appBean.WSS_INFO_URL +"')");
+        licence = appBean.getLicence();
+        release = appBean.getRelease();
+        if (release != null) {
+            // вызов wss сервиса через javascript
+            PrimeFaces.current().executeScript("init('" + appBean.WSS_INFO_URL + "')");
+        }
     }
 
     /**
@@ -59,7 +64,7 @@ public class CheckReleaseBean extends BaseDialogBean{
      * код оставлен для тестирования
      */
     public void test(){
-        Map<String, String> releaseInfoMap = updateInfo.start(licence.getLicenceNumber(), appBean.WSS_INFO_URL);
+        Map<String, String> releaseInfoMap = updateInfo.start(licence.getNumber(), appBean.WSS_INFO_URL);
         if (MapUtils.isEmpty(releaseInfoMap )) {
             onErrorConnect();
             return;
@@ -76,7 +81,7 @@ public class CheckReleaseBean extends BaseDialogBean{
      */
      public void onServerConnect(){
          EscomMsgUtils.succesMsg("ConnectionEstablished");
-         PrimeFaces.current().executeScript("doSend('" + licence.getLicenceName() +"')");
+         PrimeFaces.current().executeScript("doSend('" + licence.getNumber() +"')");
      }
 
     /**
@@ -99,14 +104,14 @@ public class CheckReleaseBean extends BaseDialogBean{
         if (dateRelease == null){
             return;
         }
-        if (dateRelease.compareTo(licence.getReleaseDate()) > 0){
+        if (dateRelease.compareTo(release.getReleaseDate()) > 0){
             EscomMsgUtils.warnMsg("NeedUpdateProgram");
             if (!appBean.getNeedUpadateSystem()) {
                 appBean.setNeedUpadateSystem(Boolean.TRUE);
                 sessionBean.setCanShowNotifBar(Boolean.TRUE);
             }
         }
-        if (dateRelease.compareTo(licence.getReleaseDate()) == 0){
+        if (dateRelease.compareTo(release.getReleaseDate()) == 0){
             EscomMsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
@@ -182,5 +187,8 @@ public class CheckReleaseBean extends BaseDialogBean{
     public Licence getLicence() {
         return licence;
     }
-    
+
+    public Release getRelease() {
+        return release;
+    }
 }

@@ -22,7 +22,7 @@ public class UpdateInfoImpl implements UpdateInfo{
     private static final Logger LOG = Logger.getLogger(UpdateInfoImpl.class.getName());
 
     /**
-     * Выполняет подключение к wss серверу и возвращает информацио о текущем релизе
+     * Выполняет подключение к wss серверу и возвращает информацию о текущем релизе
      * @param licenseNumber
      * @param uri
      * @return

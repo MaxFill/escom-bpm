@@ -5,17 +5,13 @@ import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.update.ReleaseInfo;
 import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;
+
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -106,8 +102,8 @@ public final class EscomUtils {
             newFormatDate = sdf.format(resultdate);
         }
         return newFormatDate;  
-    }       
-    
+    }
+
     /* Проверка корректности ИНН */
     private static final Pattern INN_PATTER = Pattern.compile("\\d{10}|\\d{12}");
     private static final int[] CHECK_ARR = new int[] {3,7,2,4,10,3,5,9,4,6,8};
