@@ -43,14 +43,11 @@ public class LicenseBean extends BaseDialogBean{
     @Override
     public void onBeforeOpenCard(){
         if (content != null) return;
-        String separator = File.separator;
         Locale locale = sessionBean.getLocale();
         String localeName = locale.getLanguage().toLowerCase();
-        StringBuilder sb = new StringBuilder(conf.getServerPath());
-        sb.append("standalone")
-                .append(separator)
-                .append("configuration")
-                .append(separator)
+        String serverDir = System.getProperty("server-dir");
+        StringBuilder sb = new StringBuilder(serverDir);
+        sb.append(File.separator)
                 .append(LICENSE_FILE)
                 .append(localeName)
                 .append(".pdf");

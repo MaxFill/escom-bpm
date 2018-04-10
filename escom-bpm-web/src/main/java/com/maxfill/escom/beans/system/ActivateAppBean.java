@@ -48,10 +48,9 @@ public class ActivateAppBean implements Serializable{
      * Отправка запроса на активацию
      */
     private void sendActivateRequest(){
-        //ToDo тут надо получить код материнки сервера и отправить его вместе с номером лицензии
         String json = Json.createObjectBuilder()
                 .add("number", licNumber)
-                .add("key", "1234567890124345")
+                .add("key", new String(activateApp.makeKeyInfo()))
                 .build()
                 .toString();
         PrimeFaces.current().executeScript("doSend('" + json +"')");
@@ -66,7 +65,7 @@ public class ActivateAppBean implements Serializable{
             EscomMsgUtils.errorMessage(licenseData);
             return;
         }
-        if (activateApp.activate(licenseData)){
+        if (activateApp.activate(licNumber,licenseData)){
             appBean.initLicense();
             EscomMsgUtils.succesMsg("ApplicationIsActivate");
             PrimeFaces.current().ajax().update("activateFRM:mainPanel");

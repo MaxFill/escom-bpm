@@ -76,7 +76,6 @@
                         <h2>#{bundle.ProgramActivated}</h2>
                         <p:spacer/>
                         <p:commandButton value="#{bundle.EnterProgram}"
-                                         icon="ui-icon-circle-triangle-e"
                                          actionListener="#{activateAppBean.onEnterApp()}"/>
                     </p:panelGrid>
                     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" rendered="#{applicationBean.licence == null}">
@@ -91,7 +90,6 @@
                         <p:spacer/><p:spacer/>
                         <p:spacer/>
                         <p:commandButton id="btnLogin" value="#{bundle.Activate}"
-                                         icon="ui-icon-circle-triangle-e"
                                          actionListener="#{activateAppBean.onActivate()}"/>
                     </p:panelGrid>
                 </p:panelGrid>

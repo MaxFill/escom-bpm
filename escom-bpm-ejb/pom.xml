@@ -200,6 +200,11 @@
             <artifactId>websocket-client</artifactId>
             <version>9.3.14.v20161028</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

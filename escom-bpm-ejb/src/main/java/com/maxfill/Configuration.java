@@ -28,7 +28,7 @@ public class Configuration {
 
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
-       
+
     private String serverOS;
     private Locale serverLocale;
     private String serverURL;
