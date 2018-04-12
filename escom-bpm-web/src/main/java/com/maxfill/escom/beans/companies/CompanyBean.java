@@ -4,25 +4,18 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.companies.Company;
-import com.maxfill.facade.CompanyFacade;
+import com.maxfill.facade.treelike.CompanyFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
-import com.maxfill.facade.DepartmentFacade;
+import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.StaffFacade;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -61,10 +54,9 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     }
 
     @Override
-    protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
+    public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
         TreeNode rezNode = null;
-        String typeNode = "tree";
-        
+
         if (itemsFacade.preloadCheckRightView(item, currentUser)){
             List<Department> childs = new ArrayList<>();
             
@@ -80,24 +72,69 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
                     break;
                 }
             }
-            TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);    
-            childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild));
+            TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
+            String finalTypeNode = typeNode;
+            childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild, finalTypeNode));
             rezNode = newNode;
         }
         return rezNode;
-    } 
-    
+    }
+
+    /* Удаление подчинённых объектов из корзины */
+    @Override
+    protected void deleteDetails(Company company) {
+        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        if (!departments.isEmpty()) {
+            departments.stream().forEach(child -> departmentBean.deleteItem(child));
+        }
+        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        if (!staffs.isEmpty()){
+            staffs.stream().forEach((staff -> staffBean.deleteItem(staff)));
+        }
+    }
+
+    /* Перемещение в корзину подчинённых объектов  */
+    @Override
+    protected void moveDetailItemsToTrash(Company company, Set<String> errors) {
+        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        if (!departments.isEmpty()) {
+            departments.stream().forEach(child -> departmentBean.moveToTrash(child, errors));
+        }
+        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        if (!staffs.isEmpty()){
+            staffs.stream().forEach((staff -> staffBean.moveToTrash(staff, errors)));
+        }
+    }
+
+    /* Восстановление подчинённых объектов из корзины */
+    @Override
+    protected void restoreDetails(Company company) {
+        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        if (departments != null){
+            departments.stream().forEach(item -> departmentBean.doRestoreItemFromTrash(item));
+        }
+        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        if (!staffs.isEmpty()){
+            staffs.stream().forEach((staff -> staffBean.doRestoreItemFromTrash(staff)));
+        }
+    }
+
     /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
     public List<List<?>> doGetDependency(Company company){
         List<List<?>> dependency = new ArrayList<>();
-        dependency.add(company.getDetailItems());
-        List<Staff> staffs = staffFacade.findStaffByCompany(company, null);
-        dependency.add(staffs);
+        List<Department> departments = departmentFacade.findDepartmentByCompany(company);
+        if (!departments.isEmpty()) {
+            dependency.add(departments); //копируются все подразделения, кроме удалённых в корзину
+        }
+        List<Staff> staffs = staffFacade.findStaffByCompany(company, null); //копируются все штединицы, кроме удалённых в корзину
+        if (!staffs.isEmpty()) {
+            dependency.add(staffs);
+        }
         return dependency;
     } 
     
-    /* Формирование контента компании */     
+    /* Формирование контента компании */
     @Override
     public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
@@ -117,20 +154,33 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         }
     }           
      
-    /* Формирует число ссылок на company в связанных объектах   */
+    /* Формирует число ссылок на Компанию в подчинённых объектах   */
     @Override
     public void doGetCountUsesItem(Company company,  Map<String, Integer> rezult){
-        rezult.put("Departaments", company.getDetailItems().size() - 1);
+        rezult.put("Departaments", company.getDetailItems().size());
+        rezult.put("Staffs", company.getDetailItems().size());
     }
-    
-    /* Проверка возможности удаления company */
+
+    /**
+     * Проверка возможности удаления Компании в корзину
+     * Компанию без всяких проверок можно поместить в корзину
+     * @param company
+     * @param errors
+     */
     @Override
-    protected void checkAllowedDeleteItem(Company company, Set<String> errors){       
-        if (departmentFacade.findDepartmentByCompany(company).size() >1){ //одно подразделение служебное и его не надо учитывать!
+    protected void checkAllowedDeleteItem(Company company, Set<String> errors){
+        /* 12/04/2018г. Думаю что нет причины блокировать удаление компании, даже если она последняя...
+        if (!departmentFacade.findDepartmentByCompany(company).isEmpty()){
             Object[] messageParameters = new Object[]{company.getName()};
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("CompanyUsedInDepartaments"), messageParameters);
             errors.add(error);
         }
+        if (!staffFacade.findStaffByCompany(company, null).isEmpty()){
+            Object[] messageParameters = new Object[]{company.getName()};
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("CompanyUsedInStaffs"), messageParameters);
+            errors.add(error);
+        }
+        */
     }
 
     @Override
