@@ -1,14 +1,13 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.FoldersFacade;
+import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;

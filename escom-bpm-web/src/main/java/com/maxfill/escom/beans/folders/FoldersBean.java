@@ -2,23 +2,16 @@ package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.FoldersFacade;
+import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +35,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private FoldersFacade foldersFacade;
     @EJB
     private DocFacade docFacade;
-        
+
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
@@ -101,20 +94,34 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public void doGetCountUsesItem(Folder folder,  Map<String, Integer> rezult){
         rezult.put("Documents", folder.getDetailItems().size());
         rezult.put("Folders", folder.getChildItems().size());
-    }    
-    
-    /* Проверка возможности удаления Папки */
+    }
+
+    /**
+     * Проверка возможности удаления Папки
+     * Папку можно удалить всегда (при наличии прав) не зависимо от наличия дочерних папок и документов
+     * @param folder
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
-        //super.checkAllowedDeleteItem(folder, errors);
-    }  
-    
-    /* Возвращает списки зависимых объектов, необходимых для копирования */
+    }
+
+    /**
+     * Возвращает списки зависимых объектов, необходимых для копирования папки
+     * @param folder
+     * @return
+     */
     @Override
     public List<List<?>> doGetDependency(Folder folder){
         List<List<?>> dependency = new ArrayList<>();
-        dependency.add(docFacade.findAllDetailItems(folder));
-        dependency.add(foldersFacade.findAllChilds(folder));
+        List detail = docFacade.findActualDetailItems(folder);
+        if (!detail.isEmpty()) {
+            dependency.add(detail);
+        }
+        List<Folder> childs = foldersFacade.findActualChilds(folder);
+        if (!childs.isEmpty()) {
+            dependency.add(childs);
+        }
         return dependency;
     }
     

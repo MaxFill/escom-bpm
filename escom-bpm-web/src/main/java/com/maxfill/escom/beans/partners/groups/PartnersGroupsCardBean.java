@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.partners.groups;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.PartnersGroupsFacade;
+import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.partners.Partner;

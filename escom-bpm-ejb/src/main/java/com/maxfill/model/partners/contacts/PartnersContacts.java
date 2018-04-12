@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.maxfill.model.partners.contacts;
 
 import com.maxfill.model.partners.Partner;
@@ -20,8 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- *
- * @author Maxim
+ * Класс сущности "Контакты контрагента"
  */
 @Entity
 @Table(name = "partnersContacts")
@@ -32,7 +26,6 @@ public class PartnersContacts implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "ID")
     private Integer id;
     
@@ -54,7 +47,6 @@ public class PartnersContacts implements Serializable {
     public Integer getId() {
         return id;
     }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -62,7 +54,6 @@ public class PartnersContacts implements Serializable {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -70,7 +61,6 @@ public class PartnersContacts implements Serializable {
     public Partner getPartner() {
         return partner;
     }
-
     public void setPartner(Partner partner) {
         this.partner = partner;
     }

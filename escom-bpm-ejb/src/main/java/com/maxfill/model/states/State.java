@@ -28,7 +28,6 @@ public class State implements Serializable{
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="stateIdGen")
     @Column(name = "ID")
     @XmlElement(name = "ID")

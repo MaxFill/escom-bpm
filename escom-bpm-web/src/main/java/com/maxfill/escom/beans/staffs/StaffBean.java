@@ -138,21 +138,19 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         }                
         getItemFacade().edit(dragItem);
     }
-        
+
+    /**
+     * Проверка возможности удаления Штатной единицы
+     * @param staff
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(Staff staff, Set<String> errors){
-        if (!docFacade.findDocsByManager(staff).isEmpty()){
-            Object[] messageParameters = new Object[]{staff.getStaffFIO()};
-            String message = EscomMsgUtils.getMessageLabel("StaffUsedInDocs");
-            String error = MessageFormat.format(message, messageParameters);
-            errors.add(error);
-        }
         super.checkAllowedDeleteItem(staff, errors);
     }
     
     @Override
     public void doGetCountUsesItem(Staff staff,  Map<String, Integer> rezult){
-        rezult.put("Documents", docFacade.findDocsByManager(staff).size());
         rezult.put("Users", userFacade.findUsersByStaff(staff).size());
     }  
 

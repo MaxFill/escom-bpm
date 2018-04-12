@@ -99,7 +99,6 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     /* Признак наследования дефолтных прав для дочерних объектов */
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsInheritsAccessChilds")
     private boolean inheritsAccessChilds = true;   
@@ -126,21 +125,18 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     /* Признак наследования прав объекта. 
      * TRUE - наследуются, FALSE - не наследуются (индивидуальные права)  */
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsInherits")
     private boolean inherits = true;    
         
     /* Признак того, что запись помечена на удаление */
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsDeleted")
     private boolean deleted = false;
         
     /* Признак того, что запись актуальная */
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsActual")
     private boolean actual = true;        

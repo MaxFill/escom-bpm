@@ -35,7 +35,7 @@
         </p:column>
 
         <ui:insert name="specDetailColumns"/>
-        
+
         <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_explorerBean.isItemTreeType(item)}"
@@ -75,8 +75,8 @@
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" style="width:15px;" priority="5" rendered="#{_showId == true}">
-            #{item.id}
+        <p:column headerText="Id" sortBy="#{item.id}" priority="5">
+            <h:outputText value="#{item.id}"/>
         </p:column>
 
         <p:column style="text-align: center;" width="90" >
@@ -105,6 +105,7 @@
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
                             update="#{_frmExpl}:explToolBar"
                             actionListener="#{_explorerBean.onCopyItem(item)}"/>
+
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                             disabled="#{item.id == 0}"
                             update="#{_frmTree} #{_frmExpl}"

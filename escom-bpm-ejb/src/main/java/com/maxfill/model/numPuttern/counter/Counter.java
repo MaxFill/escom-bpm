@@ -30,7 +30,6 @@ public class Counter implements Serializable {
  
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="numeratorIdGen")
     @Column(name = "Id")
     private Integer id;

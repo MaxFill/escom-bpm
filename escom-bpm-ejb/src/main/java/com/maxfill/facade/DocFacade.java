@@ -2,12 +2,12 @@ package com.maxfill.facade;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocLog;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
@@ -95,19 +95,6 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         Query q = getEntityManager().createQuery(cq);        
         List r = q.getResultList();
         return (List<Doc>)r;
-    }
-    
-    /* Возвращает документы с указанным Менеджером  */ 
-    public List<Doc> findDocsByManager(Staff manager){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
-        Root<Doc> c = cq.from(Doc.class);        
-        Predicate crit1 = builder.equal(c.get("manager"), manager);
-        Predicate crit2 = builder.equal(c.get("deleted"), false);
-        cq.select(c).where(builder.and(crit1, crit2));
-        TypedQuery<Doc> q = getEntityManager().createQuery(cq);       
-        return q.getResultList(); 
     }
     
     /* Возвращает документы с указанным Контрагентом  */

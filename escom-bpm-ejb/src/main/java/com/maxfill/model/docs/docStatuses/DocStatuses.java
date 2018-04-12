@@ -39,7 +39,6 @@ public class DocStatuses implements Serializable {
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=TABLE, generator="DocsStatusIdGen")
-    @NotNull
     @Column(name = "Id")
     private Integer id;
         

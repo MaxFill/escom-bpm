@@ -37,7 +37,6 @@ public class Metadates implements Serializable{
 
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Id")
     @XmlElement(name = "Id")
     private Integer id;

@@ -48,28 +48,21 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Формирование дерева */
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
-        List<T> sourceTreeItems = (List<T>) getRootItems();
-        sourceTreeItems.stream()
-                .filter(treeItem -> treeItem.getParent() == null)
-                .forEach(treeItem -> addItemInTree(tree, treeItem));
+        List<T> rootItem = getItemFacade().findRootItems();
+        List<BaseDict> sourceTreeItems = prepareItems(rootItem);
+        sourceTreeItems.stream().forEach(treeItem -> addItemInTree(tree, treeItem, "tree"));
         return tree;
     }
     
-    /* Формирует список объектов нулевого уровня (parent = 0)  */
-    protected List<T> getRootItems() {
-        List<T> rootItems = prepareItems(getItemFacade().findActualDetailItems(null));
-        return rootItems;
-    }
-    
     /* Добавление узла в дерево при его формировании  */
-    protected TreeNode addItemInTree(TreeNode parentNode, BaseDict item) {           
+    public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
         TreeNode rezNode = null;
         if (getItemFacade().preloadCheckRightView(item, currentUser)) {
-            TreeNode newNode = new DefaultTreeNode("tree", item, parentNode);
+            TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
 
             List<T> childs = getItemFacade().findActualChilds(item);
             childs.stream()
-                    .forEach(itemChild -> addItemInTree(newNode, itemChild)
+                    .forEach(itemChild -> addItemInTree(newNode, itemChild, typeNode)
             );
             rezNode = newNode;
         }
@@ -90,12 +83,11 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     protected void restoreDetails(T ownerItem) {
         List<BaseDict> details = getItemFacade().findAllDetailItems(ownerItem);
         if (details != null){
-            details.stream().forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item)
-            );
+            details.stream().forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item));
         }
     }
     
-    /* Перемещение в корзину подчинённых объектов Владельца (ownerItem) */
+    /* Перемещение в корзину подчинённых объектов Владельца */
     @Override
     protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {        
         List<BaseDict> details = getItemFacade().findAllDetailItems(ownerItem);
@@ -104,11 +96,18 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
             );
         }
     }
-    
+
+    /**
+     * Базовый метод проверки возможности удаления древовидного объекта
+     * Древовидный объект можно удалить только если у него нет подчинённых объектов.
+     * При удалении дочерних объектов быдет выполнена эта же проверка
+     * @param item
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
-        List<BaseDict> details = getItemFacade().findAllDetailItems(item);        
-        if (CollectionUtils.isNotEmpty(details) || CollectionUtils.isNotEmpty(item.getChildItems())) {
+        List<BaseDict> details = getItemFacade().findAllDetailItems(item);
+        if (CollectionUtils.isNotEmpty(details)) {
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
             errors.add(error);

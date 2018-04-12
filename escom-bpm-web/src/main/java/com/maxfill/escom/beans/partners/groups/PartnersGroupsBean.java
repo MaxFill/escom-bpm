@@ -2,28 +2,17 @@ package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.facade.PartnersGroupsFacade;
+import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.facade.PartnersFacade;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.rights.Rights;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -76,7 +65,10 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @Override
     public List<List<?>> doGetDependency(PartnerGroups group){
         List<List<?>> dependency = new ArrayList<>();
-        dependency.add(group.getChildItems());
+        List<PartnerGroups> partnerGroups = itemsFacade.findActualChilds(group);
+        if (!partnerGroups.isEmpty()) {
+            dependency.add(partnerGroups);
+        }
         return dependency;
     }
     
@@ -85,12 +77,16 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     public void doGetCountUsesItem(PartnerGroups partnerGroups,  Map<String, Integer> rezult){
         rezult.put("Partners", partnerGroups.getDetailItems().size());
         rezult.put("PartnersGroups", partnerGroups.getChildItems().size());
-    }    
-    
-    /* Проверка возможности удаления partnerGroups */
+    }
+
+    /**
+     * Проверка возможности удаления Группы контрагентов
+     * Группу контрагентов можно удалить без ограничений, т.к. контрагенты не удаляются, а удаляются только ссылки на них
+     * @param partnerGroups
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(PartnerGroups partnerGroups, Set<String> errors){
-        // Группу контрагентов можно удалить без ограничений, т.к. контрагенты не удаляются, а только ссылки на них
     }
 
     /* Обработка события перемещения подчинённых объектов при перемещение группы контрагента в корзину */

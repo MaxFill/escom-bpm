@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.users.groups;
 
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.facade.UserGroupsFacade;
+import com.maxfill.facade.treelike.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.users.User;
 import java.util.List;

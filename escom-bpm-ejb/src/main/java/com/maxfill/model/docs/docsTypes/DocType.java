@@ -42,7 +42,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
                 
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="DocsTypesIdGen")
     @Column(name = "Id")
     private Integer id;

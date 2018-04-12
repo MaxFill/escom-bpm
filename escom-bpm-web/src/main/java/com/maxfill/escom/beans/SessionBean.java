@@ -205,10 +205,12 @@ public class SessionBean implements Serializable{
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
         BaseExplBean bean = getItemBean(sourceItem);       
         BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
-        
+
+        if (!errors.isEmpty()) return null;
+
         if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
             List<List<?>> dependency = bean.doGetDependency(sourceItem);
-            if (dependency != null){
+            if (dependency != null && !dependency.isEmpty()){
                 copyPasteDependency(dependency, pasteItem, errors);
                 pasteItem = bean.findItem(pasteItem.getId());
             }

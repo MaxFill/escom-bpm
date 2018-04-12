@@ -33,7 +33,6 @@ public class UserMessages implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="UserMessagesIdGen")
     @Column(name = "Id")
     private Integer id;

@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.PartnersLog;
 import com.maxfill.model.partners.groups.PartnerGroups;
@@ -27,7 +28,7 @@ import javax.persistence.criteria.Root;
 public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, PartnersLog, PartnerStates> {
 
     @EJB
-    private PartnersGroupsFacade partnersGroupsFacade;    
+    private PartnersGroupsFacade partnersGroupsFacade;
     
     public PartnersFacade() {
         super(Partner.class, PartnersLog.class, PartnerStates.class);

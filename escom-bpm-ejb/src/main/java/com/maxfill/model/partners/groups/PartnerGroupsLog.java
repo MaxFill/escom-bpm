@@ -1,4 +1,3 @@
-
 package com.maxfill.model.partners.groups;
 
 import com.maxfill.model.BaseLogItems;

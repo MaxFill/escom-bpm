@@ -35,7 +35,6 @@ public class FavoriteObj implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="FavoriteObjIdGen")
     @Column(name = "Id")
     private Integer id;

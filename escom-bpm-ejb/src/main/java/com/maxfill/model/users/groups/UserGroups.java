@@ -25,7 +25,9 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import org.eclipse.persistence.jpa.config.Cascade;
 
-/* Группы пользователей  */
+/**
+ * Класс сущности "Группы пользователей"
+ */
 @Entity
 @Table(name = "usersGroups")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -41,7 +43,6 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
      
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="groupUsIdGen")
     @Column(name = "Id")
     private Integer id;

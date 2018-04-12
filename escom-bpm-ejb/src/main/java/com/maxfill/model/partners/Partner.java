@@ -47,7 +47,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
           
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="PartnerIdGen")
     @Column(name = "ID")
     private Integer id;
@@ -254,7 +253,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.partners.Partners[ id=" + id + " ]";
+        return "Partner[ id=" + id + " ]";
     }   
 
 }

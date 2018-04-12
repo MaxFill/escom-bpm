@@ -1,4 +1,3 @@
-
 package com.maxfill.model.users.sessions;
 
 import com.maxfill.model.users.User;
@@ -28,7 +27,6 @@ public class UsersSessions implements Serializable{
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
@@ -36,7 +34,6 @@ public class UsersSessions implements Serializable{
     public Date getDateConnect() {
         return dateConnect;
     }
-
     public void setDateConnect(Date dateConnect) {
         this.dateConnect = dateConnect;
     }
@@ -44,7 +41,6 @@ public class UsersSessions implements Serializable{
     public String getIpAdress() {
         return ipAdress;
     }
-
     public void setIpAdress(String ipAdress) {
         this.ipAdress = ipAdress;
     }
@@ -52,7 +48,6 @@ public class UsersSessions implements Serializable{
     public HttpSession getHttpSession() {
         return httpSession;
     }
-
     public void setHttpSession(HttpSession httpSession) {
         this.httpSession = httpSession;
     }

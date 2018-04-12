@@ -27,6 +27,7 @@ import com.maxfill.services.searche.SearcheService;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
@@ -109,10 +110,10 @@ public class ExplorerBean implements Serializable {
 
     private final String typeMixed = "mixed";        
     private String currentType = typeMixed;
-    
-    private String typeDetail;
-    private String typeTree;
-    private String typeRoot;
+
+    protected String typeDetail;
+    protected String typeTree;
+    protected String typeRoot;
 
     private Integer typeEdit;                   //режим редактирования записи
     
@@ -143,10 +144,14 @@ public class ExplorerBean implements Serializable {
     private Integer selectedDocId;      //при открытии обозревателя документов в это поле заносится параметр id документа для открытия
         
     @PostConstruct
-    public void init() {        
+    private void init() {
+        initBean();
        // System.out.println("Создан explorerBean="+ this.toString());
-    }     
-    
+    }
+
+    protected void initBean(){};
+
+
     @PreDestroy
     private void destroy(){
         //sessionBean.saveLayoutOptions(layoutOptions, getFrmName());
@@ -387,7 +392,13 @@ public class ExplorerBean implements Serializable {
             if (isItemTreeType(item)){
                 treeBean.doRestoreItemFromTrash(item);
                 restoreItemInTree(item);
-            }      
+            } else {
+                if (isItemRootType(item)){
+                    rootBean.doRestoreItemFromTrash(item);
+                    restoreItemInTree(item);
+                }
+            }
+
         getDetailItems().remove(item);         
     }
     
@@ -474,15 +485,7 @@ public class ExplorerBean implements Serializable {
     
     /* КОРЗИНА: удаление из корзины выбранных записей контента */
     public void onClearCheckedContentTrash(){
-        getCheckedItems().stream().forEach((item -> {
-            if (isItemDetailType(item)){
-                tableBean.deleteItem(item);
-            } else
-                if (isItemTreeType(item)){
-                    treeBean.deleteItem(item);
-                }
-        }));
-        getDetailItems().removeAll(getCheckedItems());
+        getCheckedItems().stream().forEach((item -> onDeleteContentFromTrash(item)));
     }
     
     /* КОРЗИНА: удаление из корзины объекта контента  */
@@ -492,6 +495,10 @@ public class ExplorerBean implements Serializable {
         } else
             if (isItemTreeType(item)){
                 treeBean.deleteItem(item);
+            } else {
+                if (isItemRootType(item)){
+                    rootBean.deleteItem(item);
+                }
             }
         getDetailItems().remove(item);        
     }
@@ -819,16 +826,11 @@ public class ExplorerBean implements Serializable {
             parentNode = tree;
         }
         parentNode.setExpanded(true);
-        String type = "tree";
         if (isItemRootType(item)){
-            type = typeRoot;
+            return rootBean.addItemInTree(parentNode, item, typeRoot);
+        } else {
+            return treeBean.addItemInTree(parentNode, item, "tree");
         }
-        TreeNode newNode = new DefaultTreeNode(type, item, parentNode);
-        List<BaseDict> childs = item.getChildItems();
-        if (childs != null){
-            childs.stream().forEach(child -> addNewItemInTree((BaseDict)child, newNode));
-        }
-        return newNode;
     }
          
     /* ДЕРЕВО: удаление узла в дереве  */
@@ -852,7 +854,7 @@ public class ExplorerBean implements Serializable {
         }
         return Objects.equals(treeSelectedNode.getParent(), tree);
     }
-    
+
     /* ДЕРЕВО: разворачивает всё дерево */
     public void onExpandTree(){
         expandDown(tree);
@@ -984,10 +986,30 @@ public class ExplorerBean implements Serializable {
         copiedItems.stream().forEach(item-> EscomMsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{item.getName()}));
     }
 
+    /**
+     * Определят доступность кнопки "Вставить" в дереве
+     * @return
+     */
     public boolean isCanPasteItem(){
         return copiedItems == null || copiedItems.isEmpty();
     }
-    
+
+    /**
+     * Определяет доступность кнопки "Копировать" в дереве
+     * @return
+     */
+    public boolean isCanCopyTreeItem(){
+        return isSelectRootItem();
+    }
+
+    /**
+     * Определяет доступность кнопки "Удалить" в дереве
+     * @return
+     */
+    public boolean isCanDeleteTreeItem(){
+        return isSelectRootItem();
+    }
+
     /* ВСТАВКА: вставка объекта в дерево */
     public void onPasteItemToTree(){
         if (copiedItems == null) return;

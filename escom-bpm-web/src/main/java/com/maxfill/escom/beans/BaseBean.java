@@ -17,7 +17,7 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.facade.UserFacade;
-import com.maxfill.facade.UserGroupsFacade;
+import com.maxfill.facade.treelike.UserGroupsFacade;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

@@ -23,17 +23,21 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "docsDou")
 public class DocDou implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1612388878385765739L;
+
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "DocId")
     private Integer docId;
+
     @Column(name = "FolderId")
     private Integer folderId;
+
     @Size(max = 50)
     @Column(name = "NumberOuter")
     private String numberOuter;
+
     @JoinColumn(name = "DocId", referencedColumnName = "Id", insertable = false, updatable = false)
     @OneToOne(optional = false)
     private Doc docs;

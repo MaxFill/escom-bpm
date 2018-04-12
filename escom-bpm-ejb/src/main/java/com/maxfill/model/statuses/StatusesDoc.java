@@ -1,4 +1,3 @@
-
 package com.maxfill.model.statuses;
 
 import com.maxfill.model.BaseDict;
@@ -23,7 +22,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/* Справочник статусов для документов */
+/**
+ * Класс сущности "Статусы документов"
+ */
 @Entity
 @Table(name = "statusesDoc")
 @XmlRootElement
@@ -41,7 +42,6 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="StatusDocIdGen")
     @Column(name = "ID")
     private Integer id;
@@ -90,7 +90,6 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof StatusesDoc)) {
             return false;
         }

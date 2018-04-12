@@ -29,9 +29,5 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
         }
         return true;
     }
-    
-    /* Возвращает список объектов из группы  */
-    protected List<T> getItemsFromGroup(O owner) {
-        return getItemFacade().findActualDetailItems(owner);
-    }
+
 }

@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.DocTypeGroupsFacade;
+import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.BaseTreeBean;

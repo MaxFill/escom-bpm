@@ -25,7 +25,7 @@
                     <h:panelGroup styleClass="ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Object}:" />
                         <p:spacer width="3"/>
-                        <h:outputText value="#{admObjectBean.sourceItem.name}"/>
+                        <h:outputText value="#{admObjectBean.sourceItem.name} Id=#{admObjectBean.sourceItem.id}"/>
                     </h:panelGroup>
 
                     <p:outputLabel value="#{bundle.UsesIn}:"/>
@@ -50,7 +50,7 @@
                             <p:ajax event="dialogReturn" update="centerFRM:mainTabView" listener="#{admObjectBean.onSelectChangeItem}"/>
                         </p:commandButton>
 
-                        <p:commandButton value="#{bundle.Execute}" update="centerFRM"
+                        <p:commandButton value="#{bundle.Replace}"
                                          disabled="#{admObjectBean.replaceItem == null}"
                                          action="#{admObjectBean.onReplaceItem()}"/>
                     </h:panelGroup>

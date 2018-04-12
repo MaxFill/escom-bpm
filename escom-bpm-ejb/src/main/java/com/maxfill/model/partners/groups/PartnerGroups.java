@@ -24,7 +24,9 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
-/* Группы контрагентов */
+/**
+ * Класс сущности "Группы контрагентов"
+ */
 @Entity
 @Table(name = "partnersGroups")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -40,7 +42,6 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="PartnersGroupsIdGen")
     @Column(name = "Id")
     private Integer id;

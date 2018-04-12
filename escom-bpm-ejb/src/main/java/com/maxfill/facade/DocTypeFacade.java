@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocTypeLog;
@@ -11,8 +12,6 @@ import com.maxfill.model.docs.docsTypes.DocTypeStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 
-import java.util.HashMap;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;

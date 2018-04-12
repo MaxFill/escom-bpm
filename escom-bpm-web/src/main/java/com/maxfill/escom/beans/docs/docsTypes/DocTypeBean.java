@@ -8,17 +8,10 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
-import com.maxfill.facade.FoldersFacade;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.BaseDict;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;

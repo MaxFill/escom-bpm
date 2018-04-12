@@ -3,6 +3,9 @@ package com.maxfill.model.core;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Класс сущности "Релиз". Содержит информацию о текущем релизе программы
+ */
 public class Release implements Serializable{
     private static final long serialVersionUID = 2806296167934868905L;
 

@@ -44,7 +44,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
  
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Id")
     @GeneratedValue(strategy=TABLE, generator="idGen")
     private Integer id;
@@ -63,17 +62,14 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     private FolderStates state;
         
     @Basic(optional = false)
-    @NotNull
     @Column(name = "IsModeration")
     private boolean isModeration;
     
     @Basic(optional = false)
-    @NotNull
     @Column(name = "IsLocked")
-    private boolean isLocked = false;
+    private boolean isLocked;
 
     @Basic(optional = false)
-    @NotNull
     @Column(name = "FolderNumber")
     private String folderNumber;
 
@@ -94,19 +90,16 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     private Company companyDefault;
       
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsInheritCompany")
     private boolean inheritCompany = true;  
     
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsInheritDocType")
     private boolean inheritDocType = true;
     
     @XmlTransient
-    @NotNull
     @Basic(optional = false)
     @Column(name = "IsInheritPartner")
     private boolean inheritPartner = true;

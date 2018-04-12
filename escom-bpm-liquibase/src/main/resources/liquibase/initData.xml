@@ -170,186 +170,203 @@
         
         <!-- Права доступа по умолчанию -->
         <sql>
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 1, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 1, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 1, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 1, 1, 1, 1, 1, 0, 1, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 1, 1, 1, 1, 1, 0, 1, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 1, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 1, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 1, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Documents -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  1, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  1, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 1, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 1, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  1, 1, 1, 1, 1, 0, 1, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  1, 1, 0, 1, 0, 0, 0, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 1, 1, 1, 1, 1, 0, 1, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  1, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  1, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  1, 1, 0, 1, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  1, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 1, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 2, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 2, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 2, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 2, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 2, 1, 0, 0, 0, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 2, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 2, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- Folders -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  2, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  2, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 2, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 2, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  2, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  2, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  2, 1, 0, 0, 0, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  2, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 2, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 15, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 15, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 15, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 15, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 15, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 15, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 15, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Metadates -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  15, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  15, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 15, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 15, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  15, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  15, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  15, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  15, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 15, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 13, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 13, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 13, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 13, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 13, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 13, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 13, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 13, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 13, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- DocStatus -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  13, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  13, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 13, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 13, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  13, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  13, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  13, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  13, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 13, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 11, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 11, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 11, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 11, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 11, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 11, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 11, 1, 0, 0, 0, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 11, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 3, 11, 1, 1, 1, 1, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 11, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- Departaments -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  11, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  11, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 11, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 11, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  11, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  11, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  11, 1, 0, 0, 0, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  11, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 3,  11, 1, 1, 1, 1, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 11, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 6, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 6, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 6, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 6, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 6, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 6, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 6, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 6, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 6, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- UsersGroups -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  6, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  6, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 6, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 6, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  6, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  6, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  6, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  6, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 6, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 5, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 5, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 5, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 5, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 5, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 4, 5, 1, 1, 1, 1, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 5, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- PartnerGroups -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  5, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  5, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 5, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 5, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  5, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  5, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  5, 1, 0, 0, 0, 0, 0, 0, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  5, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 4,  5, 1, 1, 1, 1, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 5, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 4, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 4, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 4, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 4, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 4, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 4, 4, 1, 1, 1, 1, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 4, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Partners -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  4, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  4, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 4, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 4, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  4, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  4, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  4, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  4, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 4,  4, 1, 1, 1, 1, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 4, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 3, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 3, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 3, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 3, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 3, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 3, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Users -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  3, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  3, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 3, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 3, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  3, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  3, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  3, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  3, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 3, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 9, 1, 1, 1, 0, 0, 1, 0, 8); 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 9, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 9, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 9, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 9, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 9, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 9, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 9, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 3, 9, 1, 1, 1, 1, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 9, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Staffs -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  9, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  9, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 9, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 9, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  9, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  9, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  9, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  9, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 3,  9, 1, 1, 1, 1, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 9, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 12, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 12, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 12, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 12, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 12, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 12, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 12, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 12, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 3, 12, 1, 1, 1, 1, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 12, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- Posts -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  12, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  12, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 12, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 12, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  12, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  12, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  12, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  12, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 3,  12, 1, 1, 1, 1, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 12, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 7, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 7, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 7, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 7, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 7, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 7, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 7, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 7, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 5, 7, 1, 1, 1, 1, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 7, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- DocsTypes -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  7, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  7, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 7, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 7, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  7, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  7, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  7, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  7, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 5,  7, 1, 1, 1, 1, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 7, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 10, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 10, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 10, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 10, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 10, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 10, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 10, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 10, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 3, 10, 1, 1, 1, 1, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 10, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- Companies -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  10, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  10, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 10, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 10, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  10, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  10, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  10, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  10, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 3,  10, 1, 1, 1, 1, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 10, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 16, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 16, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 16, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 16, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 16, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 16, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 16, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 16, 1, 1, 1, 1, 0, 1, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 5, 16, 1, 1, 1, 1, 0, 0, 1, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 16, 1, 1, 1, 1, 0, 1, 1, 7);
+            <!-- DocTypeGroups -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  16, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  16, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 16, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 16, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  16, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  16, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  16, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  16, 1, 1, 1, 1, 0, 1, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 5,  16, 1, 1, 1, 1, 0, 0, 1, 1, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 16, 1, 1, 1, 1, 0, 1, 1, 1, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 17, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 17, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 17, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 17, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 17, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 17, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 17, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 17, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 17, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- NumeratorsPatterns -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  17, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  17, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 17, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 17, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  17, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  17, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  17, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  17, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 17, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 18, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 18, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 18, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 18, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 18, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 18, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 18, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 18, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 18, 1, 1, 1, 1, 0, 1, 0, 7);
+            <!-- PartnerTypes -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  18, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  18, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 18, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 18, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  18, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  18, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  18, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  18, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 18, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 19, 1, 1, 1, 0, 0, 1, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 19, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 15, 19, 1, 1, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 19, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 19, 1, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 19, 1, 1, 1, 1, 0, 1, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 0, 19, 1, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (0, 2, 19, 1, 1, 1, 1, 0, 1, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, State) VALUES (2, 16, 19, 1, 1, 1, 1, 0, 1, 0, 7);            
+            <!-- Filters -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  19, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  19, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 19, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 19, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  19, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  19, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  19, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  19, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 19, 1, 1, 1, 1, 0, 1, 0, 0, 7);
         </sql>
         
         <!-- Группы пользователей -->

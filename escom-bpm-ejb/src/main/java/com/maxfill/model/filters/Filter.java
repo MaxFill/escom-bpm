@@ -38,7 +38,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="FiltersIdGen")
     @Column(name = "Id")
     private Integer id;    

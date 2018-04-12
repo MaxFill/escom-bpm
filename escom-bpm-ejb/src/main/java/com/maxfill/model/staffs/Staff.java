@@ -40,7 +40,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = TABLE, generator = "idStaffGen")
     @Column(name = "Id")
     private Integer id;
@@ -94,10 +93,10 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
                 orgUnit.append(owner.getOwner().getName());
                 orgUnit.append("->");
             }
-            orgUnit.append(owner.getName());
+            orgUnit.append(owner.getName()).append(" Id=").append(owner.getId());
         } else 
             if (company != null){
-                orgUnit.append(company.getName());
+                orgUnit.append(company.getName()).append(" Id=").append(company.getId());
             }        
         return orgUnit.toString();
     }
@@ -208,7 +207,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.companies.staffs.Staffs[ id=" + id + " ]";
+        return "Staff[ id=" + id + " ]";
     }
 
 }

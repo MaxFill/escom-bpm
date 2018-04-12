@@ -76,13 +76,13 @@ public class Right implements Serializable{
     @NotNull
     @Column(name = "IsAddChild")
     @XmlElement(name = "IsAddChild")
-    private boolean addChild;
+    private boolean addChild = true;
 
     @Basic(optional = false)
     @NotNull
     @Column(name = "IsAddDetail")
     @XmlElement(name = "IsAddDetail")
-    private boolean addDetail;
+    private boolean addDetail = true;
 
     @Basic(optional = false)
     @NotNull

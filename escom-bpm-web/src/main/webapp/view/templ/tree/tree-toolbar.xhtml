@@ -29,18 +29,9 @@
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
-                    <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
-                                     disabled="#{_explorerBean.selectRootItem}"
-                                     style="font-size: 90%;"
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide(); initDND();"
-                                     update="#{_frmTree}:accord:tree #{_frmTree}:accord:toolbarTree #{_frmExpl} centerHeaderLabel #{_updates}"
-                                     actionListener="#{_explorerBean.onMoveTreeItemToTrash()}">
-                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                    </p:commandButton> 
                     <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
                                      style="font-size: 90%;"
-                                     disabled="#{_explorerBean.selectRootItem}"
+                                     disabled="#{!_explorerBean.isCanCopyTreeItem()}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
                                      update="#{_frmTree}:accord:toolbarTree"
@@ -52,7 +43,20 @@
                                      oncomplete="PF('statusDialog').hide(); initDND()"
                                      actionListener="#{_explorerBean.onPasteItemToTree()}"
                                      update="#{_frmTree}:accord:tree #{_frmExpl}"/>
-                    <p:inputText value="#{_explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"                            
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
+                                     disabled="#{!_explorerBean.isCanDeleteTreeItem()}"
+                                     style="font-size: 90%;"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND();"
+                                     update="#{_frmTree}:accord:tree #{_frmTree}:accord:toolbarTree #{_frmExpl} centerHeaderLabel #{_updates}"
+                                     actionListener="#{_explorerBean.onMoveTreeItemToTrash()}">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                    </p:commandButton>
+
+                    <p:inputText value="#{_explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
                                  disabled="#{!_explorerBean.isShowTree()}"
                                  style="font-size: 90%;">
                     </p:inputText>

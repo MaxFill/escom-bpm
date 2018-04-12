@@ -37,7 +37,6 @@ private static final long serialVersionUID = -2116686297842684933L;
     @Id
     @GeneratedValue(strategy=TABLE, generator="DocTypeGroupIdGen")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Id")
     private Integer id;
     

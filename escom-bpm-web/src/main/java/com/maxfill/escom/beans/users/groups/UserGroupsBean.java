@@ -4,21 +4,14 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.facade.UserGroupsFacade;
+import com.maxfill.facade.treelike.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.escom.utils.EscomBeanUtils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +53,19 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     public List<UserGroups> getGroups(UserGroups item) {
         return null;
     }
-    
-    /* Возвращает списки зависимых объектов, необходимых для копирования */
+
+    /**
+     * Возвращает списки зависимых объектов, необходимых для копирования
+     * @param group
+     * @return
+     */
     @Override
     public List<List<?>> doGetDependency(UserGroups group){
         List<List<?>> dependency = new ArrayList<>();
-        dependency.add(group.getChildItems());
+        List<UserGroups> userGroups = itemFacade.findActualChilds(group);
+        if (!userGroups.isEmpty()) {
+            dependency.add(userGroups);
+        }
         return dependency;
     }
     
@@ -82,8 +82,13 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
         rezult.put("UsersGroups", userGroups.getChildItems().size());
         rezult.put("Rights", rightFacade.findRightsByGroupId(userGroups.getId()).size());
     }
-    
-    /* Проверка возможности удаления группы пользователей */
+
+    /**
+     * Проверка возможности удаления группы пользователей
+     * Группу можно удалить если она не используется в настройках прав доступа
+     * @param userGroups
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(UserGroups userGroups, Set<String> errors){
         if (!rightFacade.findRightsByGroupId(userGroups.getId()).isEmpty()){

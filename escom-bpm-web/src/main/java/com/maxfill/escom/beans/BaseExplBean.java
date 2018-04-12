@@ -169,7 +169,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         changeNamePasteItem(sourceItem, pasteItem);
         getItemFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
-        getItemFacade().edit(pasteItem);
+        //getItemFacade().edit(pasteItem);
         return pasteItem;
     }
     
@@ -187,7 +187,10 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         getItemFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
     };  
     
-    /* Определяется, нужно ли копировать объект при вставке */
+    /**
+     * Определяет, нужно ли копировать объект при вставке
+     * Некоторые объекты при вставке не нужно копировать!
+     */
     public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
         return true;
     }
@@ -213,8 +216,8 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return newItem;
-    } 
-    
+    }
+
     /* Добавление объекта в группу. Вызов из drag & drop */
     public boolean addItemToGroup(T item, BaseDict targetGroup){ 
         return false;
@@ -224,9 +227,13 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){          
         String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
         pasteItem.setName(name);        
-    } 
-    
-    /* Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта */
+    }
+
+    /**
+     * Возвращает списки зависимых объектов, необходимых для копирования при вставке объекта, кроме удалённых в корзину!
+     * @param item
+     * @return
+     */
     public List<List<?>> doGetDependency(T item){
         return null;
     }           
@@ -337,12 +344,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
      * При удалении объекта из корзины проверок не выполняется */
         
     /* УДАЛЕНИЕ: Проверка возможности удаления объекта. Переопределяется в бинах  */
-    protected void checkAllowedDeleteItem(T item, Set<String> errors) {        
-        if (CollectionUtils.isNotEmpty(item.getChildItems())) {
-            Object[] messageParameters = new Object[]{item.getName()};
-            String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
-            errors.add(error);
-        }
+    protected void checkAllowedDeleteItem(T item, Set<String> errors) {
     }    
     
     /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
@@ -546,9 +548,14 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
     public boolean canCreateItem(TreeNode treeSelectedNode){
         return getOwnerBean() != null && treeSelectedNode == null;
     }
-        
-    public void replaceItem(BaseDict oldItem, BaseDict newItem){
-        getItemFacade().replaceItem(oldItem, newItem);
+
+    /**
+     * Замена одного объекта на другой
+     * @param oldItem
+     * @param newItem
+     */
+    public int replaceItem(BaseDict oldItem, BaseDict newItem){
+        return getItemFacade().replaceItem(oldItem, newItem);
     }        
    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */

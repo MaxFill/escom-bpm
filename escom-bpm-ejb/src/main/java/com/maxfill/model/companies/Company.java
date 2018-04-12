@@ -37,7 +37,6 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
         
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="idCompanyGen")
     @Column(name = "Id")
     private Integer id;    
@@ -132,7 +131,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.datamodel.docs.Companies[ id=" + id + " ]";
+        return "Company[ id=" + id + " ]";
     }
 
     }

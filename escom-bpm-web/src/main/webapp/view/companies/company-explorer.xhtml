@@ -4,7 +4,8 @@
                 template="/view/templ/templ-explorer.xhtml">
 
     <!-- Используется как селектор компаний ! -->
-    
+
+    <ui:param name="_explorerBean" value="#{companyExplBean}"/>
     <ui:param name="_treeBean" value="#{companyBean}" />
     <ui:param name="_detailBean" value="#{departmentBean}" />
     <ui:param name="_searcheBean" value="#{companyBean}"/>
@@ -15,10 +16,7 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />            
     
-    <ui:define name="specDetailColumns">          
-         <p:column headerText="#{bundle.Code}" sortBy="#{item.code}">
-            #{item.code}
-        </p:column>
+    <ui:define name="specDetailColumns">
     </ui:define>   
 
 </ui:composition>

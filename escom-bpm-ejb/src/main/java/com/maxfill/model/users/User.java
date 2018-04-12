@@ -34,7 +34,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="usersIdGen")
     @Column(name = "Id")
     private Integer id;
@@ -356,7 +355,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.users.Users[ id=" + id + " ]";
+        return "User[ id=" + id + " ]";
     }
 
 }

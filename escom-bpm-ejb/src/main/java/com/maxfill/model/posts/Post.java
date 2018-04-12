@@ -35,7 +35,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
 
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy = TABLE, generator = "idPostGen")
     @Column(name = "Id")
     private Integer id;

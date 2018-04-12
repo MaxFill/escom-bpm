@@ -75,6 +75,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         super.doPasteMakeSpecActions(sourceItem, pasteItem);
         copyMainAttacheFromDoc(pasteItem, sourceItem);
         copyDocStatuses(pasteItem, sourceItem);
+        getItemFacade().edit(pasteItem);
     }
 
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){

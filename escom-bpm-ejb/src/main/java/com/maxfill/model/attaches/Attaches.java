@@ -41,7 +41,6 @@ public class Attaches implements Serializable {
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="attacheIdGen")
     @Column(name = "Id")
     private Integer id;

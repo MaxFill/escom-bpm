@@ -37,7 +37,6 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Id")
     @GeneratedValue(strategy=TABLE, generator="numeratorPatternIdGen")
     private Integer id;

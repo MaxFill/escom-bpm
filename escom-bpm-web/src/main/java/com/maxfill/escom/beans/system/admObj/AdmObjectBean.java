@@ -7,6 +7,7 @@ import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -72,6 +73,7 @@ public class AdmObjectBean extends BaseDialogBean{
         if (replaceItem != null) {
             itemBean.replaceItem(sourceItem, replaceItem);
             EscomMsgUtils.succesMsg("ReplaceCompleted");
+            PrimeFaces.current().ajax().update("centerFRM");
         } else {
             EscomMsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }

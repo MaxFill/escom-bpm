@@ -6,6 +6,7 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogItems;
+import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -55,7 +56,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     private final Class<T> itemClass; 
     private final Class<L> logClass; 
     private final Class<S> stateClass;
-    
+
     @EJB
     private MetadatesFacade metadatesFacade; 
     @EJB
@@ -176,7 +177,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setState(stateItem);
         }
     }
-            
+
+
     /* Возвращает актуальные подчинённые объекты для владельца  */
     public List<T> findActualDetailItems(O owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -202,24 +204,14 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
-    /* Возвращает все подчинённые объекты для владельца  */
-    public List<T> findAllDetailItems(O owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(itemClass);
-        Root<T> c = cq.from(itemClass);   
-        List<Predicate> criteries = new ArrayList<>();
 
-        criteries.add(builder.equal(c.get("owner"), owner));
-
-        Predicate[] predicates = new Predicate[criteries.size()];
-        predicates = criteries.toArray(predicates);
-
-        cq.select(c).where(builder.and(predicates));               
-        cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+    /**
+     * Отбирает все подчинённые объекты для владельца. Переопределяется в бинах объектов
+     * @param item
+     * @return
+     */
+    public List<BaseDict> findAllDetailItems(T owner){
+        return null;
     }
     
     /* Возвращает корневые объекты  */
@@ -231,9 +223,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         List<Predicate> criteries = new ArrayList<>();
 
         criteries.add(builder.isNull(c.get("parent")));
+        criteries.add(builder.isNull(c.get("owner")));
         criteries.add(builder.equal(c.get("deleted"), false));
         criteries.add(builder.equal(c.get("actual"), true));
-        criteries.add(builder.isNull(c.get("owner")));
 
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
@@ -243,7 +235,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
+
     /* Отбор объектов, созданных пользователем  */
     public List<T> findItemsCreatedByUser(User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -294,20 +286,27 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit2 = builder.equal(c.get("deleted"), true);
         cq.select(c).where(builder.and(crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<T> q = getEntityManager().createQuery(cq);       
-        
-        /* не показывать в корзине child объекты если удалён их parent
-            и не показывать detail если удалён их owner */
+        TypedQuery<T> q = getEntityManager().createQuery(cq);
+        return filtrationTrashResult(q.getResultList());
+    }
 
-        List<T> result = q.getResultList().stream()
+    /**
+     * Фильтрует результат отбора данных для корзины
+     * Нужно не показывать в корзине child объекты если удалён их parent
+     * и не показывать detail если удалён их owner
+     * @param trashes
+     * @return
+     */
+    protected List<T> filtrationTrashResult(List<T> trashes){
+        List<T> result = trashes.stream()
                 .filter(item ->
                         (item.getParent() == null || (item.getParent() != null && !item.getParent().isDeleted())) &&
                         (item.getOwner() == null || (item.getOwner() != null && !item.getOwner().isDeleted()))
-                       )
+                )
                 .collect(Collectors.toList());
         return result;
     }
- 
+
     /* Отбор не актуальных объектов  */
     public List<T> loadNotActualItems(){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -488,7 +487,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
 
-    public abstract void replaceItem(T oldItem, T newItem);
+    public abstract int replaceItem(T oldItem, T newItem);
 
     /* *** ПРАВА ДОСТУПА *** */
 

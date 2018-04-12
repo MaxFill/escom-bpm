@@ -1,5 +1,7 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.treelike.CompanyFacade;
+import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -94,6 +97,17 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
             }
         }
         return getDefaultRights(item);
+    }
+
+    @Override
+    protected List<Staff> filtrationTrashResult(List<Staff> trashes){
+        List<Staff> result = trashes.stream()
+                .filter(item ->
+                        (item.getCompany() == null || (item.getCompany() != null && !item.getCompany().isDeleted())) &&
+                        (item.getOwner() == null || (item.getOwner() != null && !item.getOwner().isDeleted()))
+                )
+                .collect(Collectors.toList());
+        return result;
     }
 
     @Override
@@ -186,8 +200,13 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
     }
-    
-    /* Поиск штатных единиц, принадлежащих компании и входящих в указанное подразделение */
+
+    /**
+     * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
+     * @param company
+     * @param department
+     * @return
+     */
     public List<Staff> findStaffByCompany(Company company, Department department){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -205,8 +224,12 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
-    /* Поиск штатных единиц входящих в указанное подразделение */
+
+    /**
+     * Отбор штатных единиц (кроме удалённых в корзину), входящих в указанное подразделение
+     * @param department
+     * @return
+     */
     public List<Staff> findStaffByDepartment(Department department){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

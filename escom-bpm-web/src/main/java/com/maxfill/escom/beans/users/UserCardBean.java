@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.facade.FoldersFacade;
+import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
@@ -14,10 +14,8 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.validator.ValidatorException;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
@@ -27,7 +25,6 @@ import java.util.Objects;
 import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.lang.WordUtils;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 /* Контроллер формы "Карточка пользователя */

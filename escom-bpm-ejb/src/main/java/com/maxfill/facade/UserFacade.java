@@ -1,7 +1,9 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
-import com.maxfill.model.staffs.Staff_;
+import com.maxfill.facade.treelike.CompanyFacade;
+import com.maxfill.facade.treelike.DepartmentFacade;
+import com.maxfill.facade.treelike.UserGroupsFacade;
 import com.maxfill.model.users.UserLog;
 import com.maxfill.model.users.User;
 import com.maxfill.model.companies.Company;
@@ -20,7 +22,6 @@ import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.ItemUtils;
 import io.jsonwebtoken.ClaimJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -47,8 +48,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 
 import org.apache.commons.lang.StringUtils;
-
-import static com.maxfill.model.messages.UserMessages_.addressee;
 
 /* Пользователи */
 @Stateless

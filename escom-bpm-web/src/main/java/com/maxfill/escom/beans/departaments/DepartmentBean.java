@@ -2,23 +2,17 @@ package com.maxfill.escom.beans.departaments;
 
 import com.maxfill.escom.beans.BaseExplBean;
 import com.maxfill.model.departments.Department;
-import com.maxfill.facade.DepartmentFacade;
+import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
-import com.maxfill.escom.utils.EscomBeanUtils;
+
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
 
 import java.text.MessageFormat;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +21,8 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+
+import com.maxfill.model.staffs.Staff;
 import org.apache.commons.collections.CollectionUtils;
 
 /* Сервисный бин "Подразделения" */
@@ -69,8 +65,14 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public List<List<?>> doGetDependency(Department department){
         List<List<?>> dependency = new ArrayList<>();
-        dependency.add(department.getDetailItems());
-        dependency.add(department.getChildItems());
+        List<Staff> staffs = staffFacade.findStaffByDepartment(department);
+        if (!staffs.isEmpty()) {
+            dependency.add(staffs);
+        }
+        List<Department> departments = itemFacade.findChildDepartments(department);
+        if (!departments.isEmpty()) {
+            dependency.add(departments);
+        }
         return dependency;
     } 
     
@@ -104,13 +106,18 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         List<BaseDict> staffs = staffFacade.findItemByOwner((Department)department);
         staffs.stream().forEach(staff -> addDetailItemInContent(staff, cnt));
         return cnt;
-    }    
-    
+    }
+
+    /**
+     * Формирует список компаний, в которых находится данное подразделение
+     * @param item
+     * @return
+     */
     @Override
     public List<Company> getGroups(Department item) {
-        List<Company> groups = null;
+        List<Company> groups = new ArrayList <>();;
         if (item.getOwner() != null){
-            groups = item.getOwner().getChildItems();
+            groups.add(item.getOwner());
         }
         return groups;
     }
@@ -119,9 +126,15 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public void doGetCountUsesItem(Department department,  Map<String, Integer> rezult){
         rezult.put("Staffs", staffFacade.findItemByOwner(department).size());
-    }    
-    
-    /* Проверка возможности удаления Подразделения */
+    }
+
+    /**
+     * Проверка возможности удаления Подразделения
+     * Подразделение можно удалить только если в нём нет штатных единиц. Наличие вложенных подразделений не важно.
+     * При удалении вложенных подразделений произойдётаналогичная проверка
+     * @param department
+     * @param errors
+     */
     @Override
     protected void checkAllowedDeleteItem(Department department, Set<String> errors){
         if (CollectionUtils.isNotEmpty(staffFacade.findStaffByDepartment(department)) ) {
