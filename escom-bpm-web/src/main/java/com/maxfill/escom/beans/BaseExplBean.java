@@ -15,6 +15,8 @@ import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.users.User;
 import java.lang.reflect.InvocationTargetException;
+
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.TreeNode;
 import java.text.MessageFormat;
@@ -454,7 +456,7 @@ public abstract class BaseExplBean<T extends BaseDict, O extends BaseDict> exten
         paramList.add(selectMode.toString());
         paramMap.put("selectMode", paramList);
         String frmName = getItemFacade().getFRM_NAME() + "-explorer";
-        RequestContext.getCurrentInstance().openDialog(frmName, options, paramMap);
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramMap);
     }        
     
     /* ИЗБРАННОЕ */

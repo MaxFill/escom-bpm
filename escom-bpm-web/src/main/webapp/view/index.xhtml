@@ -199,11 +199,15 @@
                             <p:commandLink value="#{bundle.DocsExplorer}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
-                                           action="doc-explorer"/>
+                                           action="#{sessionBean.openDocExplorer('Folders')}"/>
                             <p:commandLink value="#{bundle.DocsTypes}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="doctype-explorer"/>
+                            <p:separator />
+                            <p:commandLink value="#{bundle.Favorites}"
+                                           ajax="false"
+                                           action="#{sessionBean.openDocExplorer('Favorites')}"/>
                         </p:panelGrid>
                     </p:panel>
 

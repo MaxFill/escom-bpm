@@ -114,7 +114,7 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2" rendered="#{_explorerBean.source != DictSource.FILTER_SOURCE}"
+        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2" rendered="#{_explorerBean.isNowShowDetail()}"
                   sortBy="#{item.dateDoc}">
             <h:outputLabel value="#{item.dateDoc}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>

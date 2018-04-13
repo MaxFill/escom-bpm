@@ -3,7 +3,7 @@ package com.maxfill.escom.beans;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.*;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.BaseDict;
@@ -12,8 +12,6 @@ import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.beans.users.settings.UserSettings;
-import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
@@ -34,7 +32,6 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
@@ -56,6 +53,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -384,7 +382,17 @@ public class SessionBean implements Serializable{
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
     }
-    
+
+    /**
+     * Открытие обозревателя документов
+     * @param filterName
+     */
+    public String openDocExplorer(String filterName){
+        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+        flash.put("viewMode", DictExplForm.EXPLORER_MODE);
+        return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true";
+    }
+
     /* Открытие карточки администрирования объекта */
     public void openAdmCardForm(BaseDict item){
         String beanName = item.getClass().getSimpleName();

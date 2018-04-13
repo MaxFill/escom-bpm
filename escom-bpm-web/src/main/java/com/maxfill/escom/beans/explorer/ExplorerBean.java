@@ -42,6 +42,7 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -146,6 +147,7 @@ public class ExplorerBean implements Serializable {
     @PostConstruct
     private void init() {
         initBean();
+        setCurrentTab("1");
        // System.out.println("Создан explorerBean="+ this.toString());
     }
 
@@ -166,7 +168,9 @@ public class ExplorerBean implements Serializable {
                 selectMode = Integer.valueOf(params.get("selectMode"));
                 viewMode = DictExplForm.SELECTOR_MODE;
             } else {
-                viewMode = DictExplForm.EXPLORER_MODE;
+                Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
+                viewMode = (Integer) flash.get("viewMode");
+                //viewMode = DictExplForm.EXPLORER_MODE;
             }            
         }    
     }

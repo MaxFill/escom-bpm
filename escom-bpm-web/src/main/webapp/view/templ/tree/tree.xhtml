@@ -39,8 +39,8 @@
         <p:ajax event="dialogReturn" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:accordionPanel id="accord" widgetVar="accordion">
-        <p:ajax event="tabChange" listener="#{_explorerBean.onTreeTabChange}" 
+    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_explorerBean.currentTab}">
+        <p:ajax event="tabChange" listener="#{_explorerBean.onTreeTabChange}"
                 update="#{_frmExpl} centerHeaderLabel #{_updates}"
                 oncomplete="initDND()"/>
 
