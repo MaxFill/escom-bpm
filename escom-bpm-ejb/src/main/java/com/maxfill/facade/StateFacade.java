@@ -10,7 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
- * Фасад для "Состояния обектов"
+ * Фасад для сущности "Состояния обектов"
  */
 @Stateless
 public class StateFacade extends BaseFacade {

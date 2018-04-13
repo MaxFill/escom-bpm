@@ -6,7 +6,6 @@ import javax.ejb.Stateless;
 
 /**
  *
- * @author Maxim
  */
 @Stateless
 public class ServicesFacade extends BaseFacade<Services> {

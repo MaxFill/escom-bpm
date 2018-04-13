@@ -10,6 +10,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.DepartamentLog;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentStates;
+import com.maxfill.model.departments.Department_;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
@@ -26,10 +27,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+
 import org.apache.commons.lang.StringUtils;
 
 @Stateless
@@ -148,11 +147,6 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
             item.setParent((Department)target);
         }
     }
-    
-    @Override
-    public void replaceItem(Department oldItem, Department newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
     /**
      * Отбор всех подразделений, относящихся к указанной компании, кроме удалённых в корзину
@@ -256,5 +250,52 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         StringBuilder sb = new StringBuilder();
         sb.append(company.getCode()).append(SysParams.CODE_SEPARATOR).append(number);
         department.setCode(sb.toString());
+    }
+
+    /**
+     * Замена подразделения на другое в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    @Override
+    public int replaceItem(Department oldItem, Department newItem) {
+        int count = replaceDepartments(oldItem, newItem);                   // замена в подразделениях
+        count = count + replaceDepartamentsInStaffs(oldItem, newItem);  // замена в штатных единицах
+        return count;
+    }
+
+    /**
+     * Выполняет замену подразделения в подразделениях
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceDepartments(Department oldItem, Department newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Department> update = builder.createCriteriaUpdate(Department.class);
+        Root root = update.from(Department.class);
+        update.set(Department_.parent, newItem);
+        Predicate predicate = builder.equal(root.get(Department_.parent), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Выполняет замены подразделения в штатных единицах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceDepartamentsInStaffs(Department oldItem, Department newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Staff> update = builder.createCriteriaUpdate(Staff.class);
+        Root root = update.from(Staff.class);
+        update.set(Staff_.owner, newItem);
+        Predicate predicate = builder.equal(root.get(Staff_.owner), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
     }
 }

@@ -3,6 +3,10 @@ package com.maxfill.facade.treelike;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.departments.Department;
+import com.maxfill.model.departments.Department_;
+import com.maxfill.model.rights.Right;
+import com.maxfill.model.rights.Right_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
@@ -19,10 +23,9 @@ import java.util.Objects;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+
+import com.maxfill.model.users.groups.UserGroups_;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -140,7 +143,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         List<User> usersListNew = usersGroups.getUsersList();
         for (User usersListNewUsers : usersListNew) {
             usersListNewUsers.getUsersGroupsList().add(usersGroups);
-            usersListNewUsers = getEntityManager().merge(usersListNewUsers);
+            getEntityManager().merge(usersListNewUsers);
         }
     }
     
@@ -160,13 +163,13 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         for (User usersListOldUsers : usersListOld) {
             if (!usersListNew.contains(usersListOldUsers)) {
                 usersListOldUsers.getUsersGroupsList().remove(usersGroups);
-                usersListOldUsers = getEntityManager().merge(usersListOldUsers);
+                getEntityManager().merge(usersListOldUsers);
             }
         }
         for (User usersListNewUsers : usersListNew) {
             if (!usersListOld.contains(usersListNewUsers)) {
                 usersListNewUsers.getUsersGroupsList().add(usersGroups);
-                usersListNewUsers = getEntityManager().merge(usersListNewUsers);
+                getEntityManager().merge(usersListNewUsers);
             }
         }
     }  
@@ -176,7 +179,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return DictMetadatesIds.OBJ_GROUPS_USERS;
     }
  
-    /* Ищет группу с указанным названием и если не найдена то создаёт новую  */
+    /* Ищет группу пользователей с указанным названием и если не найдена то создаёт новую  */
     public UserGroups onGetGroupByName(String groupName){
         if (StringUtils.isBlank(groupName)){
             return null;
@@ -193,8 +196,53 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         return group;
     }
 
+    /**
+     * Замена группы пользователей на другую в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(UserGroups oldItem, UserGroups newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }        
+    public int replaceItem(UserGroups oldItem, UserGroups newItem) {
+        int count = replaceUserGroups(oldItem, newItem);
+        count = count + replaceUserGroupInRights(oldItem, newItem);
+        return count;
+    }
+
+    /**
+     * Замена группы пользователей в правах доступа
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    public int replaceUserGroupInRights(UserGroups oldItem, UserGroups newItem){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Right> update = builder.createCriteriaUpdate(Right.class);
+        Root<Right> root = update.from(Right.class);
+        update.set(Right_.objId, newItem.getId());
+        Predicate crit1 = builder.equal(root.get(Right_.objType), 0);
+        Predicate crit2 = builder.equal(root.get(Right_.objId), oldItem.getId());
+        update.where(builder.and(crit1, crit2));
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Замена группы пользователей в группах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceUserGroups(UserGroups oldItem, UserGroups newItem) {
+        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<UserGroups> update = builder.createCriteriaUpdate(UserGroups.class);
+        Root root = update.from(UserGroups.class);
+        update.set(UserGroups_.parent, newItem);
+        Predicate predicate = builder.equal(root.get(UserGroups_.parent), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
 }

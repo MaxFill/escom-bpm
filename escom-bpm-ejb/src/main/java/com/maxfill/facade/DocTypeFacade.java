@@ -2,6 +2,7 @@ package com.maxfill.facade;
 
 import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocTypeLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
@@ -9,6 +10,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.docs.docsTypes.DocTypeStates;
+import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 
@@ -64,11 +66,17 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
         return getDefaultRights(item);
     }
 
-    /* Замена вида документа в связанных объектах  */
+    /**
+     * Замена вида документа в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(DocType oldItem, DocType newItem) {
-        replaceDocTypeInDocs(oldItem, newItem);
-        replaceDocTypeInFolders(oldItem, newItem);
+    public int replaceItem(DocType oldItem, DocType newItem) {
+        int count = replaceDocTypeInDocs(oldItem, newItem);
+        count = count + replaceDocTypeInFolders(oldItem, newItem);
+        return count;
     }    
             
     /* Замена вида документа в документах */
@@ -76,8 +84,8 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
         Root root = update.from(Doc.class);  
-        update.set("docType", newItem);
-        Predicate predicate = builder.equal(root.get("docType"), oldItem);
+        update.set(Doc_.docType, newItem);
+        Predicate predicate = builder.equal(root.get(Doc_.docType), oldItem);
         update.where(predicate);
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();
@@ -88,8 +96,8 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);    
         Root root = update.from(Folder.class);  
-        update.set("docTypeDefault", newItem);
-        Predicate predicate = builder.equal(root.get("docTypeDefault"), oldItem);
+        update.set(Folder_.docTypeDefault, newItem);
+        Predicate predicate = builder.equal(root.get(Folder_.docTypeDefault), oldItem);
         update.where(predicate);
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();

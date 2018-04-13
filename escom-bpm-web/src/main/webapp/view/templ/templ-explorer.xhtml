@@ -33,7 +33,9 @@
         </f:metadata>
     </ui:define>
 
-    <ui:define name="body">        
+    <ui:define name="body">
+        <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
+
         <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
             
             <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 

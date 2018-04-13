@@ -3,6 +3,7 @@ package com.maxfill.facade;
 import com.maxfill.Configuration;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
+import com.maxfill.model.messages.UserMessages_;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import java.util.Date;
@@ -34,10 +35,10 @@ public class UserMessagesFacade extends BaseFacade<UserMessages> {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<UserMessages> cq = builder.createQuery(UserMessages.class);
         Root<UserMessages> root = cq.from(UserMessages.class);        
-        Predicate crit1 = builder.equal(root.get("addressee"), addressee);
-        Predicate crit2 = builder.isNull(root.get("dateReading"));
+        Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), addressee);
+        Predicate crit2 = builder.isNull(root.get(UserMessages_.dateReading));
         cq.select(root).where(builder.and(crit1, crit2));        
-        cq.orderBy(builder.asc(root.get("dateSent")));
+        cq.orderBy(builder.asc(root.get(UserMessages_.dateSent)));
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }
@@ -47,9 +48,9 @@ public class UserMessagesFacade extends BaseFacade<UserMessages> {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<UserMessages> cq = builder.createQuery(UserMessages.class);
         Root<UserMessages> c = cq.from(UserMessages.class);        
-        Predicate crit1 = builder.equal(c.get("addressee"), addressee);
+        Predicate crit1 = builder.equal(c.get(UserMessages_.addressee), addressee);
         cq.select(c).where(builder.and(crit1));
-        cq.orderBy(builder.asc(c.get("dateSent")));
+        cq.orderBy(builder.asc(c.get(UserMessages_.dateSent)));
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }
@@ -89,8 +90,8 @@ public class UserMessagesFacade extends BaseFacade<UserMessages> {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root<UserMessages> root = cq.from(UserMessages.class);        
-        Predicate crit1 = builder.equal(root.get("addressee"), addressee);
-        Predicate crit2 = builder.isNull(root.get("dateReading"));
+        Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), addressee);
+        Predicate crit2 = builder.isNull(root.get(UserMessages_.dateReading));
         cq.select(builder.count(root));
         cq.where(builder.and(crit1, crit2));        
         Query query = getEntityManager().createQuery(cq);

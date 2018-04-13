@@ -37,8 +37,8 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
     }
 
     @Override
-    public void replaceItem(Filter oldItem, Filter newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int replaceItem(Filter oldItem, Filter newItem) {
+        return 0;
     }
 
     public List<Filter> findChildsFilters(Filter parent, Metadates metadate){

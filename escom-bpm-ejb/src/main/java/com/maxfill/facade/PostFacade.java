@@ -16,11 +16,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import com.maxfill.model.staffs.Staff_;
 import org.apache.commons.lang.StringUtils;
 
 /**
  * Фасад для сущности "Должности"
- * @author Maxim
  */
 @Stateless
 public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> {  
@@ -68,10 +69,16 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> 
         return post;
     }
 
-    /* Замена должности в штатных единицах   */
+    /**
+     * Замена должности на другую в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(Post oldItem, Post newItem) {
-        replacePostInStaffs(oldItem, newItem);
+    public int replaceItem(Post oldItem, Post newItem) {
+        int count = replacePostInStaffs(oldItem, newItem);
+        return count;
     }
 
     /**
@@ -84,8 +91,8 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> 
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Staff> update = builder.createCriteriaUpdate(Staff.class);    
         Root root = update.from(Staff.class);  
-        update.set("post", newItem);
-        Predicate predicate = builder.equal(root.get("post"), oldItem);
+        update.set(Staff_.post, newItem);
+        Predicate predicate = builder.equal(root.get(Staff_.post), oldItem);
         update.where(predicate);
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();

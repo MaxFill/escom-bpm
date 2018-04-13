@@ -4,6 +4,7 @@ import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
+import com.maxfill.model.departments.Department_;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocType_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
@@ -18,10 +19,7 @@ import com.maxfill.model.users.User;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 /* Фасад для сущности "Группы видов документов" */
@@ -92,8 +90,32 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
         return q.getResultList();
     }
 
+    /**
+     * Замена группы вида документов на другую
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(DocTypeGroups oldItem, DocTypeGroups newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int replaceItem(DocTypeGroups oldItem, DocTypeGroups newItem) {
+        int count = replaceDocTypeGroupInDocTypes(oldItem, newItem);
+        return count;
+    }
+
+    /**
+     * Замена группы видов документов в видах документов
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceDocTypeGroupInDocTypes(DocTypeGroups oldItem, DocTypeGroups newItem) {
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<DocType> update = builder.createCriteriaUpdate(DocType.class);
+        Root root = update.from(DocType.class);
+        update.set(DocType_.owner, newItem);
+        Predicate predicate = builder.equal(root.get(DocType_.owner), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
     }
 }

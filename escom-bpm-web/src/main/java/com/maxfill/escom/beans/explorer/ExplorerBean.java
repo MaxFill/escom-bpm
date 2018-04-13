@@ -1007,7 +1007,8 @@ public class ExplorerBean implements Serializable {
      * @return
      */
     public boolean isCanDeleteTreeItem(){
-        return isSelectRootItem();
+        boolean flag = isSelectRootItem();
+        return flag;
     }
 
     /* ВСТАВКА: вставка объекта в дерево */
@@ -1316,7 +1317,7 @@ public class ExplorerBean implements Serializable {
     /* Обработка drop помещения объекта в дерево */
     private void doDropToTree(List<BaseDict> dragItems){
         Set<String> errors = new HashSet<>();
-        switch (source){
+        switch (getSource()){
             case DictDetailSource.TREE_SOURCE:{    //если источник для detail дерево, то будем перемещать объект                            
                 checkedItems =
                     dragItems.stream().filter(dragItem -> 

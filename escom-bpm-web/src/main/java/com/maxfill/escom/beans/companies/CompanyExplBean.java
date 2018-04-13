@@ -23,7 +23,7 @@ public class CompanyExplBean extends ExplorerBean{
      */
     @Override
     public boolean isCanCopyTreeItem(){
-        return getTreeSelectedNode() != null;
+        return getTreeSelectedNode() == null;
     }
 
     /**
@@ -32,7 +32,7 @@ public class CompanyExplBean extends ExplorerBean{
      */
     @Override
     public boolean isCanDeleteTreeItem(){
-        return getTreeSelectedNode() != null;
+        return getTreeSelectedNode() == null;
     }
 
     @Override

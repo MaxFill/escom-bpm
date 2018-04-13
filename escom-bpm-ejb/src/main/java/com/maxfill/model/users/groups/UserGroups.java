@@ -1,26 +1,15 @@
 package com.maxfill.model.users.groups;
 
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.departments.Department;
 import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
+import javax.persistence.*;
+
 import static javax.persistence.GenerationType.TABLE;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
+
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import org.eclipse.persistence.jpa.config.Cascade;
@@ -46,22 +35,27 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     @GeneratedValue(strategy=TABLE, generator="groupUsIdGen")
     @Column(name = "Id")
     private Integer id;
-    
+
+    @ManyToOne
+    @JoinColumn(name = "Parent", referencedColumnName = "Id")
+    private UserGroups parent;
+
+    @Column(name = "TypeActualize")
+    private Integer typeActualize = 0;
+
+    @Column(name = "RoleFieldName")
+    private String roleFieldName;
+
+    @XmlTransient
+    @ManyToMany(mappedBy = "usersGroupsList", fetch = FetchType.EAGER)
+    private List<User> usersList = new ArrayList<>();
+
     @OneToMany
     @JoinColumn(name = "parent")
     private List<UserGroups> childItems;
-        
-    @ManyToMany(mappedBy = "usersGroupsList", fetch = FetchType.EAGER)
-    private List<User> usersList = new ArrayList<>();
-    
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserGroupsLog> itemLogs = new ArrayList<>();
-    
-    @Column(name = "TypeActualize")
-    private Integer typeActualize = 0;
-    
-    @Column(name = "RoleFieldName")
-    private String roleFieldName;
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -93,7 +87,16 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     public void setTempId(Integer tempId) {
         this.tempId = tempId;
     }
-    
+
+    @Override
+    public UserGroups getParent() {
+        return parent;
+    }
+    @Override
+    public void setParent(UserGroups parent) {
+        this.parent = parent;
+    }
+
     @Override
     public UserGroupsStates getState() {
         return state;

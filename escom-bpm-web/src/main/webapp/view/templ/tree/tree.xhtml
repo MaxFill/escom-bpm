@@ -5,6 +5,8 @@
 
     <ui:include src="/view/common/drag-drop-dlg.xhtml"/>
 
+    <ui:param name="_CreateGroupLabel" value="#{_CreateGroupLabel == null ? bundle.CreateGroup : _CreateGroupLabel}" />
+
     <p:commandButton id="createTreeCardBtn" action="#{_explorerBean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"
@@ -21,13 +23,15 @@
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="openTreeCardBtn" actionListener="#{_explorerBean.onEditContentItem()}" 
+
+    <p:commandButton id="openTreeCardBtn" actionListener="#{_explorerBean.onEditContentItem()}"
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
                 update="#{_frmTree} #{_frmExpl}"
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
+
     <p:commandButton id="viewTreeCardBtn" actionListener="#{_explorerBean.onViewContentItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"

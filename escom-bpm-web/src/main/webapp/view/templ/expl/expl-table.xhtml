@@ -34,7 +34,7 @@
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <ui:insert name="specDetailColumns"/>
+        <ui:insert name="specDetailColumns" />
 
         <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 

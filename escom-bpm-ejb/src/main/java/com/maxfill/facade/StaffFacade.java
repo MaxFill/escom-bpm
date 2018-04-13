@@ -235,43 +235,23 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
-        Predicate crit1 = builder.equal(c.get("owner"), department);        
+        Predicate crit1 = builder.equal(c.get(Staff_.owner), department);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
-    
-    /* Процедура замены штатной единицы в связанных с ней объектах  */
-    @Override
-    public void replaceItem(Staff oldItem, Staff newItem) {
-        Map<String, Integer> rezultMap = new HashMap<>();
-        rezultMap.put("Documents", replaceStaffInDocs(oldItem, newItem));
-        rezultMap.put("Users", replaceStaffInUsers(oldItem, newItem));        
-    }
 
-    /* Замена штатной единицы в документах */
-    private int replaceStaffInDocs(Staff oldItem, Staff newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
-        CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
-        Root root = update.from(Doc.class);  
-        update.set("manager", newItem);
-        Predicate predicate = builder.equal(root.get("manager"), oldItem);
-        update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
-        return query.executeUpdate();
-    }
-    
-    /* Замена штатной единицы в пользователях */
-    private int replaceStaffInUsers(Staff oldItem, Staff newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
-        CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);    
-        Root root = update.from(User.class);  
-        update.set("staff", newItem);
-        Predicate predicate = builder.equal(root.get("staff"), oldItem);
-        update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
-        return query.executeUpdate();
+    /**
+     * Замена штатной единицы в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    @Override
+    public int replaceItem(Staff oldItem, Staff newItem) {
+        int count = 0;
+        return count;
     }
     
 }

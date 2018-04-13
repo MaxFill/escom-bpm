@@ -111,12 +111,12 @@
             <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.docType.name : bundle.Folder}"/>
         </p:column>
 
-        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >            
+        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2"
+        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2" rendered="#{_explorerBean.source != DictSource.FILTER_SOURCE}"
                   sortBy="#{item.dateDoc}">
-            <h:outputLabel value="#{item.getClass().getSimpleName() == 'Doc' ? item.dateDoc : ''}">
+            <h:outputLabel value="#{item.dateDoc}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>

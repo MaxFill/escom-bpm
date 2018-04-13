@@ -9,6 +9,8 @@ import com.maxfill.model.companies.CompanyLog;
 import com.maxfill.model.companies.CompanyStates;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.Department_;
+import com.maxfill.model.folders.Folder;
+import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
@@ -99,19 +101,6 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     /**
-     * Замена компании на другую
-     * @param oldItem
-     * @param newItem
-     */
-    @Override
-    public int replaceItem(Company oldItem, Company newItem) {
-        int count = 0;
-        count = replaceCompanyInDepartments(oldItem, newItem); // замена в подразделениях
-        replaceCompanyInStaffs(oldItem, newItem);// замена в штатных единицах
-        return count;
-    }
-
-    /**
      * Отбор всех штатных единиц, принадлежащих напрямую указанной компании, c учётом не актуальных и удалённых в корзину
      * @param company
      * @return
@@ -145,6 +134,20 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     /**
+     * Замена компании на другую
+     * @param oldItem
+     * @param newItem
+     */
+    @Override
+    public int replaceItem(Company oldItem, Company newItem) {
+        int count = 0;
+        count = replaceCompanyInDepartments(oldItem, newItem);
+        count = count + replaceCompanyInStaffs(oldItem, newItem);
+        count = count + replaceCompanyInFolders(oldItem, newItem);
+        return count;
+    }
+
+    /**
      * Выполняет замену компании в штатных единицах, напрямую с ней связанных
      * @param oldItem
      * @param newItem
@@ -171,6 +174,22 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
         Root root = update.from(Department.class);
         update.set(Department_.owner, newItem);
         Predicate predicate = builder.equal(root.get(Department_.owner), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Выполняет замену компании в папках
+     * @param oldItem
+     * @param newItem
+     */
+    private int replaceCompanyInFolders(Company oldItem, Company newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);
+        Root root = update.from(Folder.class);
+        update.set(Folder_.companyDefault, newItem);
+        Predicate predicate = builder.equal(root.get(Folder_.companyDefault), oldItem);
         update.where(predicate);
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();

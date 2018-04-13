@@ -6,6 +6,7 @@ import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
+import com.maxfill.model.departments.Department_;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.folders.FolderLog;
@@ -14,10 +15,12 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.folders.FolderStates;
+import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.User_;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,9 +161,50 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         return DictMetadatesIds.OBJ_FOLDERS;
     }
 
+    /**
+     * Замена папки на другую папку в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(Folder oldItem, Folder newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int replaceItem(Folder oldItem, Folder newItem) {
+        int count = replaceFolders(oldItem, newItem);
+        count = count + replaceFoldersInUsers(oldItem, newItem);
+        return count;
     }
 
+    /**
+     * Выполняет замену папки в папках
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceFolders(Folder oldItem, Folder newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);
+        Root root = update.from(Folder.class);
+        update.set(root.get("parent"), newItem);
+        Predicate predicate = builder.equal(root.get("parent"), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Выполняет замену папки в пользователях
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replaceFoldersInUsers(Folder oldItem, Folder newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);
+        Root root = update.from(User.class);
+        update.set(User_.inbox, newItem);
+        Predicate predicate = builder.equal(root.get(User_.inbox), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
 }

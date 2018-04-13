@@ -31,12 +31,13 @@
                     </span>
                     <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
                                      style="font-size: 90%;"
-                                     disabled="#{!_explorerBean.isCanCopyTreeItem()}"
+                                     disabled="#{_explorerBean.isCanCopyTreeItem()}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
                                      update="#{_frmTree}:accord:toolbarTree"
                                      actionListener="#{_explorerBean.onCopySelectedTreeItem()}"/>
-                    <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
+
+                    <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}"
                                      style="font-size: 90%;"
                                      disabled="#{_explorerBean.canPasteItem}"
                                      onstart="PF('statusDialog').show()"
@@ -46,8 +47,9 @@
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
+
                     <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
-                                     disabled="#{!_explorerBean.isCanDeleteTreeItem()}"
+                                     disabled="#{_explorerBean.isCanDeleteTreeItem()}"
                                      style="font-size: 90%;"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND();"

@@ -4,8 +4,6 @@ import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.groups.UserGroups;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -82,28 +80,5 @@ public class RightFacade extends BaseFacade<Right> {
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
     }    
-    
-    /* Получение пользователя по ID для прав доступа */
-    public User findUserById(Integer userId){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<User> cq = builder.createQuery(User.class);
-        Root<User> c = cq.from(User.class);
-        Predicate crit1 = builder.equal(c.get("id"), userId);        
-        cq.select(c).where(builder.and(crit1));        
-        Query q = getEntityManager().createQuery(cq);       
-        return (User)q.getSingleResult();
-    }
-    
-    /* Получение группы пользователей по ID для прав доступа */
-    public UserGroups findGroupUserById(Integer groupId){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
-        Root<UserGroups> root = cq.from(UserGroups.class);
-        Predicate crit1 = builder.equal(root.get("id"), groupId);        
-        cq.select(root).where(builder.and(crit1));        
-        Query q = getEntityManager().createQuery(cq);       
-        return (UserGroups)q.getSingleResult();
-    }
-
 
 }

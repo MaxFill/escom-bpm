@@ -269,11 +269,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_USERS;
     }
-
-    @Override
-    public void replaceItem(User oldItem, User newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
      
     /** 
      * Выполняет проверку логина и пароля пользователя 
@@ -400,5 +395,17 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     @Override
     public String getFRM_NAME() {
         return DictObjectName.USER.toLowerCase();
+    }
+
+    /**
+     * Замена пользователя на другого в связанных объектах
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    @Override
+    public int replaceItem(User oldItem, User newItem) {
+        int count = 0;
+        return 0;
     }
 }

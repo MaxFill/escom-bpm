@@ -7,7 +7,9 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.statuses.StatusesDocStates;
 import javax.ejb.Stateless;
 
-/* Cтатусы документов */
+/**
+ * Фасад для сущности "Cтатусы документов"
+ */
 @Stateless
 public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog, StatusesDocStates> {
 
@@ -30,9 +32,15 @@ public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, 
         return DictMetadatesIds.OBJ_DOCS_STATUS;
     }
 
+    /**
+     * Замена статуса документа на другой статус
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(StatusesDoc oldItem, StatusesDoc newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int replaceItem(StatusesDoc oldItem, StatusesDoc newItem) {
+        return 0;
     }
     
 }

@@ -466,9 +466,16 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         return DictMetadatesIds.OBJ_DOCS; 
     }
 
+    /**
+     * Замена документа на другой
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
     @Override
-    public void replaceItem(Doc oldItem, Doc newItem) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int replaceItem(Doc oldItem, Doc newItem) {
+        int count = 0;
+        return count;
     }
     
 }

@@ -71,8 +71,8 @@ public class AdmObjectBean extends BaseDialogBean{
     /* Обработка события замены объекта в связанных объектах  */
     public void onReplaceItem(){ 
         if (replaceItem != null) {
-            itemBean.replaceItem(sourceItem, replaceItem);
-            EscomMsgUtils.succesMsg("ReplaceCompleted");
+            int count = itemBean.replaceItem(sourceItem, replaceItem);
+            EscomMsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
             PrimeFaces.current().ajax().update("centerFRM");
         } else {
             EscomMsgUtils.errorMsg("DoNotSpecifyValueReplacement");

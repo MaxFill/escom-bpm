@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /* Реализация методов для объектов с группами (пользователи, контрагенты и т.п.) */
+
 public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseCardBean<T> {
     private static final long serialVersionUID = -3667710671312550624L;
 
@@ -98,8 +99,13 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
             group = getOwnerAndAddGroups(item, (O) group.getParent());
         }
         return group;
-    }         
-   
+    }
+
+    @Override
+    public Integer getRightColSpan(){
+        return 8;
+    }
+
     public List<O> getCheckedGroups() {
         return checkedGroups;
     }

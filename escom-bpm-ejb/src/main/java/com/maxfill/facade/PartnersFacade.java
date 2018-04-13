@@ -1,6 +1,9 @@
 package com.maxfill.facade;
 
 import com.maxfill.facade.treelike.PartnersGroupsFacade;
+import com.maxfill.model.docs.Doc_;
+import com.maxfill.model.folders.Folder;
+import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.PartnersLog;
 import com.maxfill.model.partners.groups.PartnerGroups;
@@ -114,8 +117,10 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     }
 
     @Override
-    public void replaceItem(Partner oldItem, Partner newItem) {
-        replacePartnerInDocs(oldItem, newItem);
+    public int replaceItem(Partner oldItem, Partner newItem) {
+        int count = replacePartnerInDocs(oldItem, newItem);
+        count = count + replacePartnerInFolders(oldItem, newItem);
+        return count;
     }
     
     /**
@@ -128,8 +133,25 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
         CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
         Root root = update.from(Doc.class);  
-        update.set("partner", newItem);
-        Predicate predicate = builder.equal(root.get("partner"), oldItem);
+        update.set(Doc_.partner, newItem);
+        Predicate predicate = builder.equal(root.get(Doc_.partner), oldItem);
+        update.where(predicate);
+        Query query = getEntityManager().createQuery(update);
+        return query.executeUpdate();
+    }
+
+    /**
+     * Замена контрагента в папках
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    private int replacePartnerInFolders(Partner oldItem, Partner newItem){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);
+        Root root = update.from(Folder.class);
+        update.set(Folder_.partnerDefault, newItem);
+        Predicate predicate = builder.equal(root.get(Folder_.partnerDefault), oldItem);
         update.where(predicate);
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();
