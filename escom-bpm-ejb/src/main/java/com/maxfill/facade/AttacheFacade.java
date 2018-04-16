@@ -1,6 +1,7 @@
 
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.Doc;

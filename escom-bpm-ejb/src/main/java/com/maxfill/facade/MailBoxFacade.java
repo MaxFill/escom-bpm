@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.services.mail.Mailbox;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
@@ -14,7 +15,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Stateless
-public class MailBoxFacade extends BaseFacade<Mailbox> {
+public class MailBoxFacade extends BaseFacade<Mailbox>{
     
     public MailBoxFacade() {
         super(Mailbox.class);

@@ -1,7 +1,7 @@
 package com.maxfill.facade.treelike;
 
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;

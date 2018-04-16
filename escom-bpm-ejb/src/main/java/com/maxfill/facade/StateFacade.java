@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.states.State;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -13,7 +14,7 @@ import javax.persistence.criteria.Root;
  * Фасад для сущности "Состояния обектов"
  */
 @Stateless
-public class StateFacade extends BaseFacade {
+public class StateFacade extends BaseFacade{
 
     public StateFacade() {
         super(State.class);

@@ -12,8 +12,9 @@
     
     <ui:define name="body">
         <ui:include src="/view/common/error-dlg.xhtml"/>
-        <h:outputScript library="js" name="ITHitWebDAVClient.js" />               
-        
+        <h:outputScript library="js" name="ITHitWebDAVClient.js" />
+        <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
+
         <script type="text/javascript">
             function init() {
                 onOpenForm();
@@ -199,7 +200,7 @@
                             <p:commandLink value="#{bundle.DocsExplorer}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
-                                           action="#{sessionBean.openDocExplorer('Folders')}"/>
+                                           action="doc-explorer"/>
                             <p:commandLink value="#{bundle.DocsTypes}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -207,7 +208,7 @@
                             <p:separator />
                             <p:commandLink value="#{bundle.Favorites}"
                                            ajax="false"
-                                           action="#{sessionBean.openDocExplorer('Favorites')}"/>
+                                           action="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
                         </p:panelGrid>
                     </p:panel>
 

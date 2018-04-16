@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.filters.FilterLog;
 import com.maxfill.model.filters.FiltersStates;
@@ -15,7 +16,7 @@ import javax.persistence.criteria.Root;
 
 /* Фасад для сущности "Фильтры" */
 @Stateless
-public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, FiltersStates> {
+public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, FiltersStates>{
 
     public FiltersFacade() {
         super(Filter.class, FilterLog.class, FiltersStates.class);

@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.metadates.Metadates;

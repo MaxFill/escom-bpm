@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.statuses.StatusesDocLog;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictMetadatesIds;
@@ -11,7 +12,7 @@ import javax.ejb.Stateless;
  * Фасад для сущности "Cтатусы документов"
  */
 @Stateless
-public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog, StatusesDocStates> {
+public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, StatusesDocLog, StatusesDocStates>{
 
     public StatusesDocFacade() {
         super(StatusesDoc.class, StatusesDocLog.class, StatusesDocStates.class);

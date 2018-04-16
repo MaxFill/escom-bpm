@@ -9,8 +9,8 @@ public final class DictExplForm {
     private DictExplForm() {
     }
     
-    public static final String TAB_FILTER = "tabFilter";
-    public static final String TAB_TREE = "tabTree"; 
+    public static final String TAB_FILTER = "1";
+    public static final String TAB_TREE = "0";
     
     public static final int ROW_IN_PAGE = 15;
     

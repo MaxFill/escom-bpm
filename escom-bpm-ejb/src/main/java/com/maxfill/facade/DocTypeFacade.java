@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc_;
@@ -24,7 +25,7 @@ import javax.persistence.criteria.Root;
 
 /* Фасад для сущности "Виды документов" */
 @Stateless
-public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTypeLog, DocTypeStates> {
+public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTypeLog, DocTypeStates>{
 
     @EJB
     private DocTypeGroupsFacade docTypeGroupsFacade;

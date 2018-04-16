@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.Partner_;
 import com.maxfill.model.partners.types.PartnerTypes;
@@ -18,7 +19,7 @@ import javax.persistence.criteria.Root;
  * Фасад для сущности "Виды контрагентов"
  */
 @Stateless
-public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerTypes, PartnerTypesLog, PartnerTypesStates> {
+public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerTypes, PartnerTypesLog, PartnerTypesStates>{
 
     public PartnerTypesFacade() {
         super(PartnerTypes.class, PartnerTypesLog.class, PartnerTypesStates.class);

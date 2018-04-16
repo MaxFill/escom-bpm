@@ -14,17 +14,17 @@
 
     <ui:define name="menuActions" >
         <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
-                    disabled="#{userMsgBean.messages.isEmpty()}"
+                    disabled="#{userMsgBean.getLazyDataModel().dataEmpty}"
                     onclick="document.getElementById('centerFRM:btnMarkAllAsRead').click();">
         </p:menuitem>
         <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="centerFRM" actionListener="#{userMsgBean.refresh()}">
+                    update="centerFRM" actionListener="#{userMsgBean.refreshData()}">
         </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
-                         disabled="#{userMsgBean.messages.isEmpty()}"
+                         disabled="#{userMsgBean.getLazyDataModel().dataEmpty}"
                          update="centerFRM"
                          actionListener="#{userMsgBean.markAsRead()}">
         </p:commandButton>
@@ -40,7 +40,7 @@
                                     itemLabel="#{bundle.ShowOnlyUnReadMessage}">
                     <p:ajax update="centerFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
             </p:selectBooleanCheckbox>
-            <p:dataTable id="messageTBL" value="#{userMsgBean.messages}"
+            <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
                          emptyMessage="#{bundle.EmptyTable}"
                          paginator="true" paginatorPosition="bottom"
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

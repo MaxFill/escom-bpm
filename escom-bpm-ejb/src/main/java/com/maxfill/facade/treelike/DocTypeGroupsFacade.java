@@ -1,10 +1,8 @@
 package com.maxfill.facade.treelike;
 
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.Department_;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocType_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
@@ -12,8 +10,6 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsStates;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
 
 import javax.ejb.EJB;

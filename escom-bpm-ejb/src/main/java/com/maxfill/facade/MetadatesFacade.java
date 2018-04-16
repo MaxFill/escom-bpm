@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.Metadates_;
 
@@ -13,7 +14,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Stateless
-public class MetadatesFacade extends BaseFacade<Metadates> {
+public class MetadatesFacade extends BaseFacade<Metadates>{
     
     public MetadatesFacade() {
         super(Metadates.class);

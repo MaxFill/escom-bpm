@@ -1,12 +1,9 @@
 package com.maxfill.facade.treelike;
 
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.Department_;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.folders.FolderLog;
@@ -15,10 +12,7 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.folders.FolderStates;
-import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 

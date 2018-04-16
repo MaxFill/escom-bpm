@@ -73,11 +73,12 @@
             <p:panelGrid id="panelDocCard" layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                 <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" id="сompanyPanel" styleClass="ui-grid-col-12 without-spaces">
-                        <p:outputLabel value="#{bundle.Organization}:" for="company"/>                    
+                        <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                          title="#{bundle.CompanyDocRegistred}"
                                          disabled="#{_bean.isReadOnly()}"
-                                         styleClass="ui-grid-col-12"                                          
+                                         styleClass="ui-grid-col-12"
+                                         required="#{param['isRequired'] == 'true'}"
                                          requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                             <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
@@ -86,7 +87,7 @@
                     </h:panelGrid>
 
                     <h:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces">
-                        <p:outputLabel value="#{bundle.DocTypes}:"/>
+                        <p:outputLabel value="#{bundle.DocTypes}:" indicateRequired="true"/>
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >
                             <ui:param name="_itemValue" value="#{_bean.editedItem.docType}"/>
                             <ui:param name="_required" value="#{true}" />
@@ -103,7 +104,7 @@
                     </h:panelGrid>
 
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.Name}:" />                    
+                        <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                         <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}"
                                          title="#{bundle.BriefDescriptionDocument}"
                                          styleClass="ui-grid-col-12"
@@ -154,7 +155,7 @@
                     </h:panelGrid>
 
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
-                        <p:outputLabel value="#{bundle.DateDoc}:" />                                                 
+                        <p:outputLabel value="#{bundle.DateDoc}:" indicateRequired="true"/>
                         <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
                                     styleClass="ui-grid-col-12"
                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"

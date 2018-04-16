@@ -1,7 +1,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.services.Services;
-import com.maxfill.facade.BaseFacade;
+import com.maxfill.facade.base.BaseFacade;
 import javax.ejb.Stateless;
 
 /**

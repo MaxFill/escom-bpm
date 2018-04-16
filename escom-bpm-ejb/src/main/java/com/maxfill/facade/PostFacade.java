@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.posts.PostLog;
 import com.maxfill.model.staffs.Staff;
@@ -24,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * Фасад для сущности "Должности"
  */
 @Stateless
-public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates> {  
+public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
     
     @EJB
     private UserFacade userFacade;

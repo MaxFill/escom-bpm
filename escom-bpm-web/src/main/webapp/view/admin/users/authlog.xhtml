@@ -113,7 +113,7 @@
 
     <ui:define name="centerFormContent">
         <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true" lazy="true"
-                     value="#{authLogBean.authlogs}" var="item"
+                     value="#{authLogBean.lazyDataModel}" var="item"
                      rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
                      emptyMessage="#{bundle.EmptyTable}"
                      paginator="true" paginatorPosition="bottom"

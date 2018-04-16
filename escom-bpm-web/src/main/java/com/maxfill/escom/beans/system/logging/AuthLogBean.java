@@ -1,47 +1,38 @@
 package com.maxfill.escom.beans.system.logging;
 
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.BadElementException;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.FontFactory;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.system.lazyload.LazyLoadDialogBean;
+import com.maxfill.escom.beans.system.lazyload.LazyLoadModel;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
+import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
-import com.maxfill.utils.DateUtils;
-import org.primefaces.component.column.Column;
-import org.primefaces.component.columntoggler.ColumnToggler;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.component.export.ExporterType;
 import org.primefaces.event.ToggleEvent;
-import org.primefaces.extensions.model.layout.LayoutOptions;
-import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.Visibility;
 
-import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /* Контролер формы журнала аутентификации пользователей */
 
 @ViewScoped
 @Named
-public class AuthLogBean extends BaseDialogBean{
+public class AuthLogBean extends LazyLoadDialogBean {
     private static final long serialVersionUID = -2035201127652612778L;
 
     private Authlog selected;
-    private final LazyDataModel<Authlog> authlogs = new AuthLogLazyModel(null, this);
 
     private String orientationName = "Portret";
     private boolean orientation;
@@ -49,9 +40,7 @@ public class AuthLogBean extends BaseDialogBean{
     private final Map<String, Boolean> visibleColumns = new HashMap <>();
     private final Map<Integer, String> columns = new HashMap <>();
 
-    private Map<String,Object> filters;
-    private Date dateStart;
-    private Date dateEnd;
+    private final LazyLoadModel<Authlog> lazyModel = new LazyLoadModel(null, this);
 
     @EJB
     private Configuration conf;
@@ -60,17 +49,24 @@ public class AuthLogBean extends BaseDialogBean{
 
     @Override
     protected void initBean(){
-        dateEnd = DateUtils.clearDate(DateUtils.addDays(new Date(), 1));
-        dateStart = DateUtils.addDays(dateEnd, -3);
-
+        super.initBean();
         columns.put(0, "colImg");
         columns.put(1, "colDate");
         columns.put(2, "colLogin");
         columns.put(3, "colEvent");
         columns.put(4, "colIP");
         columns.put(5, "colSMS");
-
         columns.entrySet().stream().forEach(col->visibleColumns.put(col.getValue(), true));
+    }
+
+    @Override
+    protected BaseLazyLoadFacade getFacade() {
+        return authLogFacade;
+    }
+
+    @Override
+    public LazyLoadModel<Authlog> getLazyDataModel() {
+        return lazyModel;
     }
 
     @Override
@@ -133,18 +129,8 @@ public class AuthLogBean extends BaseDialogBean{
      * @return
      */
     public String clearEventsConfirmMsg(){
-        Object[] params = new Object[]{countEvents(filters)};
+        Object[] params = new Object[]{countItems(filters)};
         return MessageFormat.format(EscomMsgUtils.getBandleLabel("WillBeDeleted"), params);
-    }
-
-    public List<Authlog> loadEvents(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
-        this.filters = filters;
-        return authLogFacade.findEventsByPeriod(dateStart, dateEnd, first, pageSize, sortField, sortOrder.name(), filters);
-    }
-
-    public int countEvents(Map<String,Object> filters){
-        this.filters = filters;
-        return authLogFacade.countEvents(dateStart, dateEnd, filters);
     }
 
     public void onChangeOrientation(){
@@ -164,10 +150,6 @@ public class AuthLogBean extends BaseDialogBean{
     }
 
     /* gets & sets */
-
-    public LazyDataModel <Authlog> getAuthlogs() {
-        return authlogs;
-    }
 
     public boolean isOnlyCurPageExp() {
         return onlyCurPageExp;
@@ -192,20 +174,6 @@ public class AuthLogBean extends BaseDialogBean{
     }
     public void setSelected(Authlog selected) {
         this.selected = selected;
-    }
-
-    public Date getDateStart() {
-        return dateStart;
-    }
-    public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
-    }
-
-    public Date getDateEnd() {
-        return dateEnd;
-    }
-    public void setDateEnd(Date dateEnd) {
-        this.dateEnd = dateEnd;
     }
 
 }

@@ -1,7 +1,6 @@
 <ui:composition 
     xmlns="http://www.w3.org/1999/xhtml"    
     xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:p="http://primefaces.org/ui">
     
@@ -57,7 +56,7 @@
                              title="#{_explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
                              icon="ui-icon-document" id="createItemBtn"
                              disabled="#{_explorerBean.canCreateItem}"
-                             rendered="#{!_explorerBean.isTrashSelected()}"
+                             rendered="#{_explorerBean.isShowTree()}"
                              style="#{_explorerBean.selectorViewMode ? 'display: none;' : ''}"
                              actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
@@ -67,7 +66,7 @@
 
             <p:commandButton value="#{_CreateGroupLabel}" icon="ui-icon-folder-open"
                              disabled="#{_treeBean != null and _explorerBean.treeSelectedNode == null}"
-                             rendered="#{_treeBean != null and !_explorerBean.isTrashSelected()}"
+                             rendered="#{_treeBean != null and _explorerBean.isShowTree()}"
                              actionListener="#{_explorerBean.onCreateTreeItem()}">
                 <p:ajax event="dialogReturn" 
                         update="#{_frmTree} #{_frmExpl}" 

@@ -1,17 +1,14 @@
 package com.maxfill.facade.treelike;
 
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.Department_;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.model.partners.groups.PartnerGroupsLog;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.partners.groups.PartnerGroupsStates;
-import com.maxfill.model.partners.groups.PartnerGroups_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 
@@ -20,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 

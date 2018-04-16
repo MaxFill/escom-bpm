@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.users.groups.UserGroups;
 import javax.ejb.Stateless;
 

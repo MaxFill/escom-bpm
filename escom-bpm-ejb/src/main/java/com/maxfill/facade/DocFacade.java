@@ -2,6 +2,7 @@ package com.maxfill.facade;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;

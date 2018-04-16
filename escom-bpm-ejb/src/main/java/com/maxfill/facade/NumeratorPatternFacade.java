@@ -1,13 +1,12 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocType_;
 import com.maxfill.model.numPuttern.NumeratorPatternLog;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.numPuttern.NumeratorPatternStates;
-import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.model.users.groups.UserGroups_;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -21,7 +20,7 @@ import javax.persistence.criteria.Root;
  * @author mfilatov
  */
 @Stateless
-public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, NumeratorPattern, NumeratorPatternLog, NumeratorPatternStates> {
+public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, NumeratorPattern, NumeratorPatternLog, NumeratorPatternStates>{
 
     public NumeratorPatternFacade() {
         super(NumeratorPattern.class, NumeratorPatternLog.class, NumeratorPatternStates.class);

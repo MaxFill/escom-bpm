@@ -1,6 +1,7 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.treelike.CompanyFacade;
 import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.facade.treelike.UserGroupsFacade;
@@ -51,7 +52,7 @@ import org.apache.commons.lang.StringUtils;
 
 /* Пользователи */
 @Stateless
-public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserStates> {
+public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserStates>{
  
     @EJB    
     private PostFacade postFacade;

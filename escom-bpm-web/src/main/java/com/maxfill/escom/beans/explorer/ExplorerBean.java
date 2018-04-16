@@ -28,6 +28,7 @@ import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.formula.functions.T;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
@@ -86,7 +87,7 @@ public class ExplorerBean implements Serializable {
     private AttacheBean attacheBean; 
     
     @EJB
-    private FiltersFacade filtersFacade;
+    protected FiltersFacade filtersFacade;
     
     @EJB
     private SearcheService searcheService;
@@ -133,26 +134,25 @@ public class ExplorerBean implements Serializable {
     private String jurnalHeader;
     private String selectorHeader;
     private String explorerHeader;
-    private String currentTab = DictExplForm.TAB_FILTER;
+    private String currentTab = "0";
     private List<SortMeta> sortOrder;
     private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
     private Integer currentPage = 0;
-    
+
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
     private Integer source = DictDetailSource.TREE_SOURCE;
-    private Integer viewMode;          //режим отображения формы
-    private Integer selectMode;        //режим выбора для селектора            
-    private Integer selectedDocId;      //при открытии обозревателя документов в это поле заносится параметр id документа для открытия
-        
+    private Integer viewMode;           //режим отображения формы
+    private Integer selectMode;         //режим выбора для селектора
+    private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
+    private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
+
     @PostConstruct
     private void init() {
         initBean();
-        setCurrentTab("1");
        // System.out.println("Создан explorerBean="+ this.toString());
     }
 
     protected void initBean(){};
-
 
     @PreDestroy
     private void destroy(){
@@ -168,11 +168,18 @@ public class ExplorerBean implements Serializable {
                 selectMode = Integer.valueOf(params.get("selectMode"));
                 viewMode = DictExplForm.SELECTOR_MODE;
             } else {
-                Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-                viewMode = (Integer) flash.get("viewMode");
-                //viewMode = DictExplForm.EXPLORER_MODE;
+                viewMode = DictExplForm.EXPLORER_MODE;
+                if (params.containsKey("filterId")) {
+                    filterId = Integer.valueOf(params.get("filterId"));
+                }
             }            
         }    
+    }
+
+    /**
+     * Обработка события после открытия формы
+     */
+    public void onAfterFormLoad(){
     }
 
     /* КАРТОЧКИ ОБЪЕКТОВ */
@@ -573,7 +580,13 @@ public class ExplorerBean implements Serializable {
 
         return newNode;
     }
-    
+
+    /* ФИЛЬТР: установка текущего элемента в ФИЛЬТРАХ по заданному объекту filter */
+    public void makeSelectedFilter(BaseDict filter){
+        TreeNode node = EscomBeanUtils.findTreeNode(getFilterTree(), filter);
+        doFilterTreeNodeSelect(node);
+    }
+
     /* ФИЛЬТР: обработка события щелчка по фильтру на форме */
     public void onFilterTreeNodeSelect(NodeSelectEvent event) {
         filterSelectedNode = event.getTreeNode();
@@ -583,13 +596,24 @@ public class ExplorerBean implements Serializable {
     /* ФИЛЬТР: обработка события выбора фильтра */
     private void doFilterTreeNodeSelect(TreeNode node){
         if (node == null) return;
-        
-        setCurrentTab(DictExplForm.TAB_FILTER);
+
+        currentTab = DictExplForm.TAB_FILTER;
+
+        //если фильтр был ранее установлен, то выполняем сброс установки фильтра
+        if (filterSelectedNode != null) {
+            filterSelectedNode.setSelected(false);
+        }
+
+        filterSelectedNode = node;
+        filterSelectedNode.setSelected(true);
+
         Filter filter = (Filter) node.getData();
         if (filter == null){
             return;
         }
-        doMakeFilterJurnalHeader(node, filter);                   
+
+        doMakeFilterJurnalHeader(node, filter);
+
         List<BaseDict> result = null;
         if (node.getType().equals(typeDetail)){
             result = tableBean.makeFilteredContent(filter);                    
@@ -603,6 +627,7 @@ public class ExplorerBean implements Serializable {
                     result = rootBean.makeFilteredContent(filter);
                     setCurrentViewModeRoot();
                 }
+
         setDetails(result, DictDetailSource.FILTER_SOURCE);
     }
 
@@ -647,13 +672,15 @@ public class ExplorerBean implements Serializable {
     /* ФИЛЬТР: обработка события переключения между панелью фильтров и панелью дерева в аккордионе  */
     public void onTreeTabChange(TabChangeEvent event) {
         Tab tab = event.getTab();
-        currentTab = tab.getId();        
-        switch (currentTab) {
-            case DictExplForm.TAB_TREE: {                
+        String tabId = tab.getId();
+        switch (tabId) {
+            case "tabTree": {
+                currentTab = DictExplForm.TAB_TREE;
                 onSelectInTree(treeSelectedNode);
                 break;
             }
-            case DictExplForm.TAB_FILTER: {
+            case "tabFilter": {
+                currentTab = DictExplForm.TAB_FILTER;
                 doFilterTreeNodeSelect(filterSelectedNode);
                 break;
             }
@@ -773,7 +800,7 @@ public class ExplorerBean implements Serializable {
             treeSelectedNode.setSelected(false);
         }
         treeSelectedNode = node;
-        setCurrentTab(DictExplForm.TAB_TREE);
+        currentTab = DictExplForm.TAB_TREE;
         treeSelectedNode.setSelected(true);
         currentItem = (BaseDict) treeSelectedNode.getData();
         List<BaseDict> details = null; 
@@ -796,7 +823,7 @@ public class ExplorerBean implements Serializable {
         makeJurnalHeader(rootItem.getName(), journalName);
     }
     
-    /* ДЕРЕВО: установка текущего элемента в дереве по заданному объекту item */
+    /* ДЕРЕВО: установка текущего элемента в ДЕРЕВЕ по заданному объекту item */
     public void makeSelectedGroup(BaseDict item){      
         if (item == null) return;
 
@@ -1809,7 +1836,14 @@ public class ExplorerBean implements Serializable {
     public BaseDict getCurrentItem() {
         return currentItem;
     }
-        
+
+    public String getCurrentTab() {
+        return currentTab;
+    }
+    public void setCurrentTab(String currentTab) {
+        this.currentTab = currentTab;
+    }
+
     public void setCheckedItems(List<BaseDict> items) {
         checkedItems = items;
     }
@@ -1831,7 +1865,6 @@ public class ExplorerBean implements Serializable {
     public void setTreeBean(BaseTreeBean treeBean) {
         this.treeBean = treeBean;
         this.typeTree = treeBean.getItemFacade().getItemClass().getSimpleName();
-        currentTab = DictExplForm.TAB_TREE;
     }
     
     public void setTableBean(BaseExplBean tableBean) {
@@ -1876,6 +1909,10 @@ public class ExplorerBean implements Serializable {
 
     public String getCurrentType() {
         return currentType;
+    }
+
+    public Integer getFilterId() {
+        return filterId;
     }
 
     public Set<BaseDict> getCopiedItems() {
@@ -1929,13 +1966,6 @@ public class ExplorerBean implements Serializable {
     }
     public void setExplorerHeader(String explorerHeader) {
         this.explorerHeader = explorerHeader;
-    }
-     
-    public String getCurrentTab() {
-        return currentTab;
-    }
-    public void setCurrentTab(String currentTab) {
-        this.currentTab = currentTab;
     }
 
     public String getTreeSearcheKey() {

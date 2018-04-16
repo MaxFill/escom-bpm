@@ -1,11 +1,16 @@
 package com.maxfill.escom.beans.system.messages;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.system.lazyload.LazyLoadDialogBean;
+import com.maxfill.escom.beans.system.lazyload.LazyLoadModel;
+import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.model.authlog.Authlog;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
+import org.primefaces.model.SortOrder;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,22 +22,28 @@ import javax.inject.Named;
 
 @ViewScoped
 @Named
-public class UserMsgBean extends BaseDialogBean{
+public class UserMsgBean extends LazyLoadDialogBean{
     private static final long serialVersionUID = -7376087892834532742L;
 
     private Boolean showOnlyUnread;
-    private List<UserMessages> messages;        
     private List<UserMessages> checkedMessages;
     private UserMessages selectedMessages;
-     
+    private final LazyLoadModel<Authlog> lazyModel = new LazyLoadModel(null, this);
+
     @Inject
     private DocBean docBean;
     
     @EJB
     private UserMessagesFacade messagesFacade;
-            
+
     @Override
-    protected void initBean() {       
+    protected BaseLazyLoadFacade getFacade() {
+        return messagesFacade;
+    }
+
+    @Override
+    public LazyLoadModel getLazyDataModel() {
+        return lazyModel;
     }
 
     @Override
@@ -53,10 +64,6 @@ public class UserMsgBean extends BaseDialogBean{
         return DictDlgFrmName.FRM_USER_MESSAGES;
     }
     
-    public void refresh(){
-        messages = null;
-    }
-    
     /* установка отметки о прочтении на выделенных сообщениях */
     public void markAsRead(){
         if (checkedMessages == null || checkedMessages.isEmpty()) return;
@@ -74,12 +81,12 @@ public class UserMsgBean extends BaseDialogBean{
             messagesFacade.edit(message);
         }
         if (showOnlyUnread) {
-            messages.remove(message);
+            removeItemFromData(message);
         }
     }
     
     public void onChangeChBoxShowMsgType(){
-        messages = null;
+        refreshData();
     }
     
     public void onSetSelectedMessage(UserMessages message){
@@ -92,7 +99,17 @@ public class UserMsgBean extends BaseDialogBean{
         if (doc == null) return;
         docBean.prepEditItem(doc);
     }
-    
+
+    @Override
+    public List loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        filters.put("addressee", sessionBean.getCurrentUser());
+        if (showOnlyUnread){
+            filters.put("dateReading", null);
+        }
+        return super.loadItems(first, pageSize, sortField, sortOrder, filters);
+    }
+
+
     /* GETS & SETS */
 
     public List<UserMessages> getCheckedMessages() {
@@ -109,18 +126,5 @@ public class UserMsgBean extends BaseDialogBean{
         this.showOnlyUnread = showOnlyUnread;
     }
 
-    public List<UserMessages> getMessages() {
-        if (messages == null){
-            if (showOnlyUnread){
-                messages = messagesFacade.findUnReadMessageByUser(sessionBean.getCurrentUser());
-            } else {
-                messages = messagesFacade.findMessageByUser(sessionBean.getCurrentUser());
-            }    
-        }
-        return messages;
-    }
-    public void setMessages(List<UserMessages> messages) {
-        this.messages = messages;
-    }
     
 }

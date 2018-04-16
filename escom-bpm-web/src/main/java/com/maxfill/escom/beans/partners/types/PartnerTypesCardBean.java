@@ -1,11 +1,9 @@
 package com.maxfill.escom.beans.partners.types;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.escom.beans.BaseCardBean;
-import com.maxfill.dictionary.DictObjectName;
+
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;

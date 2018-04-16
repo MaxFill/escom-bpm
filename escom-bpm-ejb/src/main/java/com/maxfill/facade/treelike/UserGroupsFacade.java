@@ -1,10 +1,8 @@
 package com.maxfill.facade.treelike;
 
-import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.Department_;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Right_;
 import com.maxfill.model.rights.Rights;

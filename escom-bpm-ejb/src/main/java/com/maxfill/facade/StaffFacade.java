@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.treelike.CompanyFacade;
 import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.model.rights.Rights;
@@ -9,7 +10,6 @@ import com.maxfill.model.staffs.StaffLog;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
@@ -26,14 +26,13 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
-public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, StaffStates> {
+public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, StaffStates>{
     
     @EJB
     private UserFacade userFacade;

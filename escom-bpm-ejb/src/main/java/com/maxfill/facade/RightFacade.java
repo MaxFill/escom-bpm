@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.metadates.Metadates;
@@ -13,7 +14,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Stateless
-public class RightFacade extends BaseFacade<Right> {           
+public class RightFacade extends BaseFacade<Right>{
     public RightFacade() {
         super(Right.class);
     }

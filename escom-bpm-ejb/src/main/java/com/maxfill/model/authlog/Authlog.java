@@ -1,5 +1,7 @@
 package com.maxfill.model.authlog;
 
+import com.maxfill.dictionary.Dict;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,7 +11,7 @@ import java.util.Date;
 /* Класс сущности событий аутентификации */
 @Entity
 @Table(name = "authlog")
-public class Authlog implements Serializable{
+public class Authlog implements Serializable, Dict{
     private static final long serialVersionUID = 2001763513625256052L;
 
     @Id
@@ -50,9 +52,11 @@ public class Authlog implements Serializable{
 
     /* gets & sets */
 
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

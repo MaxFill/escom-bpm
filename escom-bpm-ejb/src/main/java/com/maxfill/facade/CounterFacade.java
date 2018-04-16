@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.numPuttern.counter.Counter;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -10,7 +11,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Stateless
-public class CounterFacade extends BaseFacade<Counter> {
+public class CounterFacade extends BaseFacade<Counter>{
 
     public CounterFacade() {
         super(Counter.class);

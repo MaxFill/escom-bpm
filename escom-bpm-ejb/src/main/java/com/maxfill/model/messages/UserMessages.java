@@ -1,5 +1,6 @@
 package com.maxfill.model.messages;
 
+import com.maxfill.dictionary.Dict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
@@ -21,7 +22,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "userMessages")
-public class UserMessages implements Serializable {
+public class UserMessages implements Serializable, Dict{
     private static final long serialVersionUID = 5227427212529784972L;
     
     @TableGenerator(
@@ -71,10 +72,12 @@ public class UserMessages implements Serializable {
 
     public UserMessages() {
     }
-        
+
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

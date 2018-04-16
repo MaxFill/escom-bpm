@@ -387,10 +387,8 @@ public class SessionBean implements Serializable{
      * Открытие обозревателя документов
      * @param filterName
      */
-    public String openDocExplorer(String filterName){
-        Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
-        flash.put("viewMode", DictExplForm.EXPLORER_MODE);
-        return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true";
+    public String openDocExplorer(String filterId){
+        return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true&filterId=" + filterId;
     }
 
     /* Открытие карточки администрирования объекта */

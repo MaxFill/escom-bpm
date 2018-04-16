@@ -2,7 +2,7 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.favorites.FavoriteObj;
-import com.maxfill.facade.BaseFacade;
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.users.User;
 import java.util.List;

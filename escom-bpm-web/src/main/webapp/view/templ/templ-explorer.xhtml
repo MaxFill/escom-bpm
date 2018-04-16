@@ -29,11 +29,17 @@
     <ui:define name="preRendered">
         <f:metadata>
             <f:event type="preRenderView" listener="#{_explorerBean.onOpenExplorer()}"/>
-            <ui:insert name="preRenderAction" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
+        <script type="text/javascript" >
+            function init() {
+                onAfterFormLoad();
+            }
+            window.addEventListener("load", init, false);
+        </script>
+
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
 
         <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
@@ -122,6 +128,7 @@
                     <ui:include src="/view/templ/templ-searche.xhtml">
                         <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
                     </ui:include>
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_explorerBean.onAfterFormLoad()}"/>
                 </h:form>
             </pe:layoutPane>
 
