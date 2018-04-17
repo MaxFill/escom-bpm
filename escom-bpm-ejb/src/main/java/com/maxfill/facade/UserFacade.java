@@ -23,6 +23,7 @@ import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
 import io.jsonwebtoken.ClaimJwtException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -69,6 +70,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     @EJB
     private UserMessagesFacade messagesFacade;
 
+
     public UserFacade() {
         super(User.class, UserLog.class, UserStates.class);
     }
@@ -82,6 +84,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     public void create(User user) {
         updateUserInfoInRealm(user);
         super.create(user);
+        String welcomMsg = ItemUtils.getMessageLabel("Welcom", configuration.getServerLocale());
+        sendSystemMsg(user, welcomMsg);
     }
 
     @Override
@@ -361,7 +365,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
 
     /**
-     * Отправка сообщения пользователю о необходимости смены пароля
+     * Отправка сообщения пользователю
      * @return
      */
     public void sendSystemMsg(User receiver, String msg) {

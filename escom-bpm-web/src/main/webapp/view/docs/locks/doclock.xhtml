@@ -92,8 +92,8 @@
                             <p:outputLabel value="#{bundle.LockPeriod}"/>
                             <p:calendar id="dateLock" value="#{docLockBean.lockDate}" title="#{bundle.DatePlanUnlock}"
                                         styleClass="ui-grid-col-12" 
-                                        required="#{param['isRequired'] == 'true'}" navigator="true" showButtonPanel="true"
-                                        showHour="true" mask="true" 
+                                        required="#{param['isRequired'] == 'true'}"
+                                        navigator="true" showHour="true" mask="true"
                                         locale="#{sessionBean.locale}"
                                         mindate="#{docLockBean.minLockDate}" maxdate="#{docLockBean.maxLockDate}"                              
                                         requiredMessage="#{bundle.Field} [#{bundle.DatePlanUnlock}] #{bundle.MustBeFilled}">

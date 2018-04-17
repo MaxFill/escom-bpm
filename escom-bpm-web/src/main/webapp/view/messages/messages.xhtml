@@ -24,67 +24,103 @@
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
-                         disabled="#{userMsgBean.getLazyDataModel().dataEmpty}"
+                         disabled="#{userMsgBean.checkedItemsEmpty()}"
                          update="centerFRM"
                          actionListener="#{userMsgBean.markAsRead()}">
         </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:commandButton id="openDocBtn" style="display: none;"                                           
-                         actionListener="#{userMsgBean.onGoToDocument()}"> 
-            <p:ajax event="dialogReturn" update="messageTBL"/>
-        </p:commandButton>
-
+        <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{userMsgBean.showOnlyUnread}" toggleSpeed="500" widgetVar="panel">
             <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
                                     itemLabel="#{bundle.ShowOnlyUnReadMessage}">
                     <p:ajax update="centerFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
             </p:selectBooleanCheckbox>
-            <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
-                         emptyMessage="#{bundle.EmptyTable}"
-                         paginator="true" paginatorPosition="bottom"
-                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                         rowsPerPageTemplate="10,25,50" rows="10" rowKey="#{item.id}"
-                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
-                         var="item" sortBy="#{item.dateSent}" sortOrder="descending"
-                         selection="#{userMsgBean.checkedMessages}">
+            <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
+                <p:panelGrid columns="2" styleClass="without-spaces">
+                    #{bundle.With}
+                    <p:calendar value="#{userMsgBean.dateStart}" id="dateStart"
+                                widgetVar="dateCreateStartSearche"
+                                showHour="true" showMinute="true"
+                                navigator="true" yearRange="c-120:c+20"
+                                disabled="#{userMsgBean.showOnlyUnread}"
+                                locale="#{sessionBean.locale}"
+                                pattern="dd.MM.yyyy HH:mm:ss"
+                                required="#{param['isRequired'] == 'true'}"
+                                requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+                    </p:calendar>
+                    #{bundle.At}
+                    <p:calendar value="#{userMsgBean.dateEnd}" id="dateEnd"
+                                widgetVar="dateCreateEndSearche"
+                                navigator="true" yearRange="c-120:c+20"
+                                showHour="true" showMinute="true"
+                                disabled="#{userMsgBean.showOnlyUnread}"
+                                locale="#{sessionBean.locale}"
+                                pattern="dd.MM.yyyy HH:mm:ss"
+                                required="#{param['isRequired'] == 'true'}"
+                                requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                    </p:calendar>
+                </p:panelGrid>
 
-                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
+            </p:panelGrid>
+        </p:panel>
 
-                <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}">
-                    <h:outputLabel value="#{item.dateSent}">
-                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
-                    </h:outputLabel>
-                </p:column>
+        <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
+                     emptyMessage="#{bundle.EmptyTable}"
+                     paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,25,50" rows="10" rowKey="#{item.id}"
+                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                     var="item" sortBy="#{item.dateSent}" sortOrder="descending"
+                     selection="#{userMsgBean.checkedItems}">
 
-                <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
-                    <h:outputLabel value="#{item.name}"/>
-                </p:column>
+            <p:ajax event="rowSelectCheckbox" update="centerFRM:btnMarkAllAsRead" />
+            <p:ajax event="rowUnselectCheckbox" update="centerFRM:btnMarkAllAsRead" />
+            <p:ajax event="toggleSelect" update="centerFRM:btnMarkAllAsRead"/>
 
-                <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
-                    <h:outputLabel value="#{item.sender}"/>
-                </p:column>
+            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
-                <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}">
-                    <h:outputLabel value="#{item.dateReading}" >
-                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
-                    </h:outputLabel>
-                </p:column>
+            <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}">
+                <h:outputLabel value="#{item.dateSent}">
+                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                </h:outputLabel>
+            </p:column>
 
-                <p:column headerText="#{bundle.Doc}">
-                    <p:commandLink  value="#{bundle.GoToDocument}"
-                                    rendered="#{item.document != null}"
-                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                    oncomplete="document.getElementById('centerFRM:openDocBtn').click();"/>
-                </p:column>
-                <p:column >
-                    <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
-                                    update="messageTBL"
-                                    rendered="#{item.dateReading == null}"
-                                    actionListener="#{userMsgBean.markAsRead(item)}">
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
+            <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
+                <h:outputLabel value="#{item.name}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
+                <h:outputLabel value="#{item.sender}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}">
+                <h:outputLabel value="#{item.dateReading}" >
+                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                </h:outputLabel>
+            </p:column>
+
+            <p:column headerText="#{bundle.Doc}">
+                <p:commandLink  value="#{bundle.GoToDocument}"
+                                rendered="#{item.document != null}"
+                                actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                oncomplete="document.getElementById('centerFRM:openDocBtn').click();"/>
+            </p:column>
+            <p:column >
+                <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
+                                update="messageTBL"
+                                rendered="#{item.dateReading == null}"
+                                actionListener="#{userMsgBean.markAsRead(item)}">
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+        <p:commandButton id="openDocBtn" style="display: none;"
+                         actionListener="#{userMsgBean.onGoToDocument()}">
+            <p:ajax event="dialogReturn" update="messageTBL"/>
+        </p:commandButton>
     </ui:define>
 </ui:composition>

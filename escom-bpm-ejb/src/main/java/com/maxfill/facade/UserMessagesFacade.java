@@ -57,7 +57,14 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }
-    
+
+    /**
+     * Создание системного сообщения
+     * @param addressee
+     * @param subject
+     * @param content
+     * @param doc
+     */
     public void createSystemMessage(User addressee, String subject, String content, Doc doc){        
         String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
         createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, doc);
@@ -101,8 +108,4 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         return ((Long) query.getSingleResult()).intValue();
     }
 
-    @Override
-    protected SingularAttribute<UserMessages, Date> getFieldDateCrit() {
-        return UserMessages_.dateSent;
-    }
 }

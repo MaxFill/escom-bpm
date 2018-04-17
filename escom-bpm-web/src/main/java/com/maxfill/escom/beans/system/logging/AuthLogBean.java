@@ -6,11 +6,11 @@ import com.lowagie.text.FontFactory;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.system.lazyload.LazyLoadDialogBean;
-import com.maxfill.escom.beans.system.lazyload.LazyLoadModel;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
+import com.maxfill.model.authlog.Authlog_;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
@@ -20,6 +20,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.persistence.metamodel.SingularAttribute;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -39,8 +40,6 @@ public class AuthLogBean extends LazyLoadDialogBean {
     private boolean onlyCurPageExp;
     private final Map<String, Boolean> visibleColumns = new HashMap <>();
     private final Map<Integer, String> columns = new HashMap <>();
-
-    private final LazyLoadModel<Authlog> lazyModel = new LazyLoadModel(null, this);
 
     @EJB
     private Configuration conf;
@@ -65,8 +64,8 @@ public class AuthLogBean extends LazyLoadDialogBean {
     }
 
     @Override
-    public LazyLoadModel<Authlog> getLazyDataModel() {
-        return lazyModel;
+    protected String getFieldDateCrit() {
+        return"dateEvent";
     }
 
     @Override
@@ -78,6 +77,7 @@ public class AuthLogBean extends LazyLoadDialogBean {
     public String getFormName(){
         return DictDlgFrmName.FRM_AUTH_LOG;
     }
+
 
     public String getBundleName(String keyBundle){
         if (keyBundle == null) return null;
@@ -120,7 +120,7 @@ public class AuthLogBean extends LazyLoadDialogBean {
      * Обработка команды очистки журнала
      */
     public void onClearData(){
-        Integer countDelete = authLogFacade.clearEvents(dateStart, dateEnd, filters);
+        Integer countDelete = deleteItems();
         EscomMsgUtils.succesFormatMsg("RemovedEntries", new Object[]{countDelete});
     }
 
@@ -129,7 +129,7 @@ public class AuthLogBean extends LazyLoadDialogBean {
      * @return
      */
     public String clearEventsConfirmMsg(){
-        Object[] params = new Object[]{countItems(filters)};
+        Object[] params = new Object[]{countItems()};
         return MessageFormat.format(EscomMsgUtils.getBandleLabel("WillBeDeleted"), params);
     }
 
@@ -144,7 +144,7 @@ public class AuthLogBean extends LazyLoadDialogBean {
      * @throws BadElementException
      * @throws DocumentException
      */
-    public void preProcessPDF(Object document) throws IOException, BadElementException, DocumentException {
+    public void preProcessPDF(Object document) throws IOException, DocumentException {
         String fontUrl = conf.getJasperReports() + conf.getPdfFont();
         FontFactory.register(fontUrl);
     }

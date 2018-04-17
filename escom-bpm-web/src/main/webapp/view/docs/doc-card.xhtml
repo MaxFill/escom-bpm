@@ -162,7 +162,7 @@
                                     disabled="#{_bean.isReadOnly()}"
                                     onselect="return itemChange = 1;"
                                     required="#{param['isRequired'] == 'true'}" 
-                                    showButtonPanel="true" locale="#{sessionBean.locale}"                                
+                                    locale="#{sessionBean.locale}"
                                     navigator="true" yearRange="c-120:c+20"                                
                                     requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />

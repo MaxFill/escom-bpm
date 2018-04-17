@@ -3,22 +3,21 @@ package com.maxfill.escom.beans.system.messages;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.system.lazyload.LazyLoadDialogBean;
-import com.maxfill.escom.beans.system.lazyload.LazyLoadModel;
-import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.facade.UserMessagesFacade;
-import com.maxfill.model.authlog.Authlog;
+import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
+import com.maxfill.utils.DateUtils;
 import org.primefaces.model.SortOrder;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @ViewScoped
 @Named
@@ -26,9 +25,7 @@ public class UserMsgBean extends LazyLoadDialogBean{
     private static final long serialVersionUID = -7376087892834532742L;
 
     private Boolean showOnlyUnread;
-    private List<UserMessages> checkedMessages;
     private UserMessages selectedMessages;
-    private final LazyLoadModel<Authlog> lazyModel = new LazyLoadModel(null, this);
 
     @Inject
     private DocBean docBean;
@@ -37,13 +34,19 @@ public class UserMsgBean extends LazyLoadDialogBean{
     private UserMessagesFacade messagesFacade;
 
     @Override
+    protected void initBean() {
+        dateEnd = DateUtils.clearDate(DateUtils.addDays(new Date(), 1));
+        dateStart = DateUtils.addDays(dateEnd, - 7);
+    }
+
+    @Override
     protected BaseLazyLoadFacade getFacade() {
         return messagesFacade;
     }
 
     @Override
-    public LazyLoadModel getLazyDataModel() {
-        return lazyModel;
+    protected String getFieldDateCrit() {
+        return "dateSent";
     }
 
     @Override
@@ -66,9 +69,9 @@ public class UserMsgBean extends LazyLoadDialogBean{
     
     /* установка отметки о прочтении на выделенных сообщениях */
     public void markAsRead(){
-        if (checkedMessages == null || checkedMessages.isEmpty()) return;
-        checkedMessages.stream().forEach(message -> markAsRead(message));
-        checkedMessages.clear();
+        if (checkedItemsEmpty()) return;
+        checkedItems.stream().forEach(message -> markAsRead((UserMessages)message));
+        checkedItems.clear();
     }
 
     /**
@@ -84,7 +87,10 @@ public class UserMsgBean extends LazyLoadDialogBean{
             removeItemFromData(message);
         }
     }
-    
+
+    /**
+     * Обработка события нажатия флага отображения только новых сообщений
+     */
     public void onChangeChBoxShowMsgType(){
         refreshData();
     }
@@ -101,23 +107,17 @@ public class UserMsgBean extends LazyLoadDialogBean{
     }
 
     @Override
-    public List loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    protected Map <String, Object> makeFilters(Map filters) {
+        super.makeFilters(filters);
         filters.put("addressee", sessionBean.getCurrentUser());
         if (showOnlyUnread){
             filters.put("dateReading", null);
+            filters.remove("dateSent");
         }
-        return super.loadItems(first, pageSize, sortField, sortOrder, filters);
+        return filters;
     }
-
 
     /* GETS & SETS */
-
-    public List<UserMessages> getCheckedMessages() {
-        return checkedMessages;
-    }
-    public void setCheckedMessages(List<UserMessages> checkedMessages) {
-        this.checkedMessages = checkedMessages;
-    }
     
     public boolean isShowOnlyUnread() {
         return showOnlyUnread;

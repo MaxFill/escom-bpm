@@ -63,35 +63,6 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        #{bundle.With}
-        <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
-                    widgetVar="dateCreateStartSearche"
-                    showHour="true" showMinute="true"
-                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
-                    locale="#{sessionBean.locale}"
-                    pattern="dd.MM.yyyy HH:mm:ss"
-                    required="#{param['isRequired'] == 'true'}"
-                    requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
-        </p:calendar>
-        #{bundle.At}
-        <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
-                    widgetVar="dateCreateEndSearche"
-                    showButtonPanel="true" navigator="true" yearRange="c-120:c+20"
-                    showHour="true" showMinute="true"
-                    locale="#{sessionBean.locale}"
-                    pattern="dd.MM.yyyy HH:mm:ss"
-                    required="#{param['isRequired'] == 'true'}"
-                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
-        </p:calendar>
-        <p:spacer/>
-
-        <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM">
-            <f:param name="isRequired" value="true"/>
-        </p:commandButton>
-
-        <span class="ui-separator">
-            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-        </span>
 
         <p:commandButton value="#{bundle.Clear}" id="btnClear"
                          actionListener="#{authLogBean.onClearData()}"
@@ -103,15 +74,48 @@
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
 
-        <h:panelGroup>
-            <p:commandButton id="toggler" type="button" value="#{bundle.Columns}" icon="ui-icon-calculator" />
-            <p:columnToggler datasource="tblLog" trigger="toggler">
-                <p:ajax event="toggle" listener="#{authLogBean.onToggle}" update="tblLog" />
-            </p:columnToggler>
-        </h:panelGroup>
     </ui:define>
 
     <ui:define name="centerFormContent">
+        <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" widgetVar="panel" styleClass="ui-grid-col-12 ">
+            <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
+                    <p:panelGrid columns="2" styleClass="without-spaces">
+                        #{bundle.With}
+                        <p:calendar value="#{authLogBean.dateStart}" id="dateStart"
+                                    widgetVar="dateCreateStartSearche"
+                                    showHour="true" showMinute="true"
+                                    navigator="true" yearRange="c-120:c+20"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="#{param['isRequired'] == 'true'}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+                        </p:calendar>
+                        #{bundle.At}
+                        <p:calendar value="#{authLogBean.dateEnd}" id="dateEnd"
+                                    widgetVar="dateCreateEndSearche"
+                                    navigator="true" yearRange="c-120:c+20"
+                                    showHour="true" showMinute="true"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="#{param['isRequired'] == 'true'}"
+                                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                        </p:calendar>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM" >
+                        <f:param name="isRequired" value="true"/>
+                    </p:commandButton>
+                </p:panelGrid>
+
+                <p:commandButton id="toggler" type="button" title="#{bundle.Columns}" style="float: right;" icon="ui-icon-calculator" >
+                </p:commandButton>
+
+                <p:columnToggler datasource="tblLog" trigger="toggler">
+                    <p:ajax event="toggle" listener="#{authLogBean.onToggle}" update="tblLog" />
+                </p:columnToggler>
+            </p:panelGrid>
+        </p:panel>
+
         <p:dataTable id="tblLog" widgetVar="tblLog" draggableColumns="true" lazy="true"
                      value="#{authLogBean.lazyDataModel}" var="item"
                      rowKey="#{item.id}" selection="#{authLogBean.selected}" selectionMode="single"
@@ -123,10 +127,6 @@
                      sortBy="#{item.dateEvent}" sortOrder="descending"
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12">
             <p:ajax event="colReorder" listener="#{authLogBean.onColumnReorder}"/>
-
-            <f:facet name="header">
-                <h:outputText value="#{bundle.AuthenticationLog}" />
-            </f:facet>
 
             <p:column id="colImg" width="16" exportable="false" visible="#{authLogBean.isVisibleColumn('colImg')}">
                 <p:graphicImage value="/resources/icon/#{item.eventName == 'UserEnter' ? 'arrow_right' : 'arrow_left'}.png" />

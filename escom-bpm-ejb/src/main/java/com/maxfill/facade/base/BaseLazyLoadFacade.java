@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import javax.persistence.metamodel.SingularAttribute;
 import java.util.*;
 
 public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
@@ -15,24 +14,20 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
 
     /**
      * Возвращает число записей журнала в заданном диаппазоне
-     * @param startDate
-     * @param endDate
      * @param filters
      * @return
      */
-    public int countEvents(Date startDate, Date endDate, Map<String,Object> filters){
+    public int countItems(Map<String,Object> filters){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root<T> root = cq.from(entityClass);
-        cq.select(builder.count(root)).where(builder.and(makePredicates(builder, root, startDate, endDate, filters)));
+        cq.select(builder.count(root)).where(builder.and(makePredicates(builder, root, filters)));
         Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
 
     /**
      * Загрузка событий атентификации за определённый период времени
-     * @param startDate
-     * @param endDate
      * @param firstPosition
      * @param numberOfRecords
      * @param sortField
@@ -40,12 +35,12 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      * @param filters
      * @return
      */
-    public List<T> findItemsByPeriod(Date startDate, Date endDate, int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
+    public List<T> findItemsByPeriod(int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(entityClass);
         Root<T> root = cq.from(entityClass);
-        cq.select(root).where(builder.and(makePredicates(builder, root, startDate, endDate, filters)));
+        cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
         if (StringUtils.isNotBlank(sortField)){ //если задано по какому полю сортировать
             if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
                 cq.orderBy(builder.asc(root.get(sortField)));
@@ -56,20 +51,19 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
         Query query = getEntityManager().createQuery(cq);
         query.setFirstResult(firstPosition);
         query.setMaxResults(numberOfRecords);
-        return query.getResultList();
+        List<T> result = query.getResultList();
+        return result;
     }
 
     /**
      * Очистка журнала за указанный период времени
-     * @param startDate
-     * @param endDate
      * @param filters
      */
-    public int clearEvents(Date startDate, Date endDate, Map<String,Object> filters) {
+    public int deleteItems(Map<String,Object> filters) {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaDelete<T> cd = builder.createCriteriaDelete(entityClass);
         Root root = cd.from(entityClass);
-        cd.where(makePredicates(builder, root, startDate, endDate, filters));
+        cd.where(makePredicates(builder, root, filters));
         Query query = getEntityManager().createQuery(cd);
         return query.executeUpdate();
     }
@@ -78,22 +72,31 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      * Формирование условий для запросов
      * @param builder
      * @param root
-     * @param startDate
-     * @param endDate
      * @param filters
      * @return
      */
-    private Predicate[] makePredicates(CriteriaBuilder builder, Root root, Date startDate, Date endDate, Map<String,Object> filters) {
+    private Predicate[] makePredicates(CriteriaBuilder builder, Root root, Map<String,Object> filters) {
         List<Predicate> criteries = new ArrayList<>();
-        if (startDate != null && endDate != null) {
-            criteries.add(builder.between(root.get(getFieldDateCrit()), startDate, endDate));
-        }
 
         if(filters != null) {
             for(Iterator<String> it = filters.keySet().iterator(); it.hasNext(); ) {
                 String filterProperty = it.next();
                 Object filterValue = filters.get(filterProperty);
-                criteries.add(builder.equal(root.get(filterProperty), filterValue));
+                if (filterValue instanceof Map){
+                    Map <String, Date> dateFilters = (Map) filterValue;
+                    if (dateFilters.containsKey("startDate")){
+                        criteries.add(builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate")));
+                    }
+                    if (dateFilters.containsKey("endDate")){
+                        criteries.add(builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate")));
+                    }
+                } else {
+                    if(filterValue != null) {
+                        criteries.add(builder.equal(root.get(filterProperty), filterValue));
+                    } else {
+                        criteries.add(builder.isNull(root.get(filterProperty)));
+                    }
+                }
             }
         }
         Predicate[] predicates = new Predicate[criteries.size()];
@@ -101,5 +104,4 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
         return predicates;
     }
 
-    protected abstract SingularAttribute<T, Date> getFieldDateCrit();
 }

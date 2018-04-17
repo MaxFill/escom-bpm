@@ -59,8 +59,7 @@
                         </f:facet>
                         <f:facet name="input">
                             <p:calendar value="#{item.dateStatus}"                                     
-                                        required="#{param['isRequired'] == 'true'}" 
-                                        showButtonPanel="true"
+                                        required="#{param['isRequired'] == 'true'}"
                                         disabled="#{ _bean.isReadOnly()}"
                                         locale="#{sessionBean.locale}"                                    
                                         navigator="true" yearRange="c-120:c+20"                                    

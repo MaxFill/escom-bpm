@@ -64,7 +64,7 @@
                 #{bundle.With}
                 <p:calendar value="#{_explorerBean.model.dateDocStart}" id="dateDocStart" 
                             widgetVar="dateDocStartSearche"
-                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                            navigator="true" yearRange="c-120:c+20"
                             locale="#{sessionBean.locale}"
                             required="#{_explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.With}] #{bundle.MustBeFilled}"
@@ -76,7 +76,7 @@
                 #{bundle.At}
                 <p:calendar value="#{_explorerBean.model.dateDocEnd}" id="dateDocEnd"
                             widgetVar="dateDocEndSearche"
-                            showButtonPanel="true" navigator="true" yearRange="c-120:c+20" 
+                            navigator="true" yearRange="c-120:c+20"
                             locale="#{sessionBean.locale}"
                             required="#{_explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.At}] #{bundle.MustBeFilled}"

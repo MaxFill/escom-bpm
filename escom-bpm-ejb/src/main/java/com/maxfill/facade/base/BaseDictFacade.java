@@ -65,8 +65,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @EJB
     protected NumeratorService numeratorService;
     @EJB
-    protected RightFacade rightFacade;
-    @EJB
     protected Configuration configuration;          
     @EJB
     private StateFacade stateFacade;

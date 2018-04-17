@@ -48,12 +48,4 @@ public class AuthLogFacade extends BaseLazyLoadFacade<Authlog>{
         create(authlog);
     }
 
-    /**
-     * Определяет поле даты по которому будет выполнятся отбор
-     * @return
-     */
-    @Override
-    protected SingularAttribute <Authlog, Date> getFieldDateCrit() {
-        return Authlog_.dateEvent;
-    }
 }
