@@ -2,14 +2,14 @@ package com.maxfill.escom.beans.partners.types;
 
 import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.escom.beans.BaseCardBean;
+import com.maxfill.escom.beans.core.BaseCardBean;
 
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 /**
- * Бин для карточки "Виды контрагентов"
+ * Контролер карточки "Виды контрагентов"
  * @author mfilatov
  */
 @ViewScoped
@@ -21,7 +21,7 @@ public class PartnerTypesCardBean extends BaseCardBean<PartnerTypes>{
     private PartnerTypesFacade partnerTypesFacade;
    
     @Override
-    public PartnerTypesFacade getItemFacade() {
+    public PartnerTypesFacade getFacade() {
         return partnerTypesFacade;
     }
 

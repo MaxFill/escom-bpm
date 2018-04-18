@@ -1,9 +1,7 @@
 package com.maxfill.escom.system.services.update;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.ApplicationBean;
-import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.core.Release;
 import com.maxfill.model.licence.Licence;
@@ -18,7 +16,6 @@ import javax.ejb.EJB;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections4.MapUtils;
@@ -29,14 +26,8 @@ import org.primefaces.PrimeFaces;
 
 @ViewScoped
 @Named
-public class CheckReleaseBean extends BaseDialogBean{
+public class CheckReleaseBean extends BaseViewBean{
     private static final long serialVersionUID = -5278789301121698576L;
-
-    @Inject
-    private ApplicationBean appBean;
-
-    @Inject
-    private SessionBean sessionBean;
 
     @EJB
     private UpdateInfo updateInfo;
@@ -117,14 +108,6 @@ public class CheckReleaseBean extends BaseDialogBean{
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
         PrimeFaces.current().ajax().update("centerFRM");
     }
-    
-    @Override
-    public void onBeforeOpenCard(){}
-    
-    @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);  
-    }
 
     public void onGotoSupportPage(){
         try {
@@ -145,7 +128,7 @@ public class CheckReleaseBean extends BaseDialogBean{
     /* GETS & SETS */
     
     @Override
-    protected String getFormName() {
+    public String getFormName() {
         return DictDlgFrmName.FRM_CHECK_RELEASE;
     }
 

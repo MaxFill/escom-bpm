@@ -4,17 +4,10 @@ package com.maxfill.escom.beans.partners.types;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.facade.PartnersFacade;
-import com.maxfill.escom.utils.EscomBeanUtils;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
@@ -25,7 +18,7 @@ import javax.enterprise.context.SessionScoped;
 /* Сервисный бин "Виды контрагентов" */
 @SessionScoped
 @Named
-public class PartnerTypesBean extends BaseExplBean<PartnerTypes, PartnerTypes>{
+public class PartnerTypesBean extends BaseTableBean<PartnerTypes, PartnerTypes>{
     private static final long serialVersionUID = -3103245251075095183L;
 
     @EJB
@@ -34,17 +27,17 @@ public class PartnerTypesBean extends BaseExplBean<PartnerTypes, PartnerTypes>{
     private PartnersFacade partnersFacade;
 
     @Override
-    public PartnerTypesFacade getItemFacade() {
+    public PartnerTypesFacade getFacade() {
         return partnerTypesFacade;
     }
     
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
          return null;
     }
 
@@ -72,4 +65,5 @@ public class PartnerTypesBean extends BaseExplBean<PartnerTypes, PartnerTypes>{
     public Class<PartnerTypes> getOwnerClass() {
         return null;
     }
+
 }

@@ -1,10 +1,8 @@
 package com.maxfill.escom.beans.system.license;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Locale;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
@@ -15,15 +13,11 @@ import org.primefaces.model.StreamedContent;
 
 @Named
 @SessionScoped
-public class LicenseBean extends BaseDialogBean{
+public class LicenseBean extends BaseViewBean{
     private static final long serialVersionUID = -740004080013527296L; 
     private static final String LICENSE_FILE = "License_";        
     private StreamedContent content;
         
-    @Override
-    protected void initBean(){        
-    }
-
     /**
      * Принятие соглашения пользователем
      */
@@ -37,7 +31,7 @@ public class LicenseBean extends BaseDialogBean{
      * @return
      */
     public String onExitProgram(){
-        return super.onFinalCloseCard("no_agree");
+        return super.onCloseCard();
     }
     
     @Override
@@ -71,11 +65,11 @@ public class LicenseBean extends BaseDialogBean{
     @Override
     public String onCloseCard() {
         content = null;
-        return super.onFinalCloseCard(null);
+        return super.onCloseCard();
     }
 
     @Override
-    protected String getFormName(){
+    public String getFormName(){
         return DictDlgFrmName.FRM_AGREE_LICENSE;
     }
       

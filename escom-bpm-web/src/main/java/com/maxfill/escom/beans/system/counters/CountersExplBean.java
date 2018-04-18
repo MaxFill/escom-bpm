@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.system.counters;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.CounterFacade;
 import com.maxfill.model.numPuttern.counter.Counter;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.primefaces.event.CellEditEvent;
 
 @ViewScoped
 @Named
-public class CountersExplBean extends BaseDialogBean{
+public class CountersExplBean extends BaseViewBean{
     private static final long serialVersionUID = 5004791826027575029L;
 
     private List<Counter> counters;        
@@ -21,22 +21,9 @@ public class CountersExplBean extends BaseDialogBean{
     
     @EJB
     private CounterFacade counterFacade;
-            
-    @Override
-    protected void initBean() {       
-    }
 
     @Override
-    public void onBeforeOpenCard(){
-    }
-    
-    @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);
-    }
-
-    @Override
-    protected String getFormName() {
+    public String getFormName() {
         return DictDlgFrmName.FRM_COUNTERS;
     }
     

@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.docs.attaches;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AttacheFacade;
@@ -27,7 +27,7 @@ import org.primefaces.model.UploadedFile;
 /* Версии вложений, работа с прикреплёнными файлами  */
 @Named
 @SessionScoped
-public class AttacheBean extends BaseDialogBean{
+public class AttacheBean extends BaseViewBean{
     private static final long serialVersionUID = -5107683464380454618L;
     
     @EJB
@@ -74,8 +74,8 @@ public class AttacheBean extends BaseDialogBean{
             Integer docId = Integer.valueOf(params.get("itemId"));
             Doc doc = docFacade.find(docId);
             if (doc == null) return;
-            docBean.getItemFacade().actualizeRightItem(doc, getCurrentUser());
-            if (docBean.getItemFacade().isHaveRightView(doc)) {
+            docBean.getFacade().actualizeRightItem(doc, getCurrentUser());
+            if (docBean.getFacade().isHaveRightView(doc)) {
                 Attaches attache = doc.getMainAttache();
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();
@@ -105,19 +105,10 @@ public class AttacheBean extends BaseDialogBean{
     public void setContent(StreamedContent content) {
         this.content = content;
     }
-    
-    @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);
-    }
 
     @Override
-    protected String getFormName(){
+    public String getFormName(){
         return DictDlgFrmName.FRM_DOC_VIEWER;
-    }
-
-    @Override
-    protected void initBean() {       
     }
 
 }

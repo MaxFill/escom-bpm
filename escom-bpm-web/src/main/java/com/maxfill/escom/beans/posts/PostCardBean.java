@@ -1,10 +1,8 @@
 package com.maxfill.escom.beans.posts;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;
-import com.maxfill.escom.beans.BaseCardBean;
-import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.escom.beans.core.BaseCardBean;
 
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -23,7 +21,7 @@ public class PostCardBean extends BaseCardBean<Post>{
     private PostFacade itemsFacade;
         
     @Override
-    public PostFacade getItemFacade() {
+    public PostFacade getFacade() {
         return itemsFacade;
     }
 

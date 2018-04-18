@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.model.BaseDict;
 import org.primefaces.event.SelectEvent;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 /* Реализация методов для объектов с группами (пользователи, контрагенты и т.п.) */
 
-public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseCardBean<T> {
+public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseCardBean<T>{
     private static final long serialVersionUID = -3667710671312550624L;
 
     private List<O> checkedGroups = new ArrayList<>(); 

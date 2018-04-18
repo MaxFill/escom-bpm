@@ -1,10 +1,10 @@
 package com.maxfill.escom.system.services.mail;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.mail.Mailbox;
-import java.util.ArrayList;
+
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
@@ -12,29 +12,16 @@ import javax.inject.Named;
 
 @Named
 @ViewScoped
-public class MailBoxBean extends BaseDialogBean{    
+public class MailBoxBean extends BaseViewBean{
     private static final long serialVersionUID = -3168942305502913635L;
     
     @EJB
     private MailBoxFacade mailBoxFacade;
         
     private List<Mailbox> messages;
-        
-    @Override
-    protected void initBean() {    
-    }
-    
-    @Override
-    public void onBeforeOpenCard(){
-    }
-    
-    @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);
-    }
 
     @Override
-    protected String getFormName() {
+    public String getFormName() {
         return DictDlgFrmName.FRM_MAIL_BOX;
     }
     

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.folders;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
@@ -9,6 +9,7 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.users.User;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
@@ -41,7 +42,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         TreeNode tree = new DefaultTreeNode("Root", null);
         tree.setExpanded(true);       
         //To do! тут нужно получать видимо права для тек. пользователя?      
-        Folder rootFolder = getItemFacade().find(ROOT_FOLDER_ID);
+        Folder rootFolder = getFacade().find(ROOT_FOLDER_ID);
         if (rootFolder == null){
             throw new NullPointerException("RootFolder null in make tree metod!"); 
         }
@@ -54,13 +55,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
         TreeNode resultNode = null;
 
-        if (getItemFacade().preloadCheckRightView(folder, currentUser)) { //проверяем право на просмотр папки текущему пользователю
+        if (getFacade().preloadCheckRightView(folder, getCurrentUser())) { //проверяем право на просмотр папки текущему пользователю
             //актуализируем права документов папки
             
             TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
 
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
-            getItemFacade().findActualChilds((Folder)folder)
+            getFacade().findActualChilds((Folder)folder)
                     .stream()
                     .forEach(folderChild -> addNode(newNode, folderChild));
             
@@ -74,10 +75,10 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode) {
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент дочерние папки
-        List<Folder> folders = getItemFacade().findActualChilds((Folder)folder);        
+        List<Folder> folders = getFacade().findActualChilds((Folder)folder);
         folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
         //загружаем в контент документы
-        List<Doc> docs = getDetailBean().getItemFacade().findItemByOwner(folder);
+        List<Doc> docs = getDetailBean().getFacade().findItemByOwner(folder);
         docs.stream().forEach(doc -> addDetailItemInContent(doc, cnt));
         return cnt;
     }
@@ -138,10 +139,15 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         return EscomMsgUtils.getBandleLabel("FolderType");
     }
         
-    /* GETS & SETS */    
+    /* GETS & SETS */
 
     @Override
-    public FoldersFacade getItemFacade() {
+    public User getCurrentUser(){
+        return sessionBean.getCurrentUser();
+    }
+
+    @Override
+    public FoldersFacade getFacade() {
         return foldersFacade;
     }
     
@@ -156,12 +162,12 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return docBean;
     }
 

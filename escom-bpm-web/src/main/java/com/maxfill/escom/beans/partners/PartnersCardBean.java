@@ -35,7 +35,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     private Doc selectedDoc;
     
     @Override
-    public PartnersFacade getItemFacade() {
+    public PartnersFacade getFacade() {
         return itemsFacade;
     }
 
@@ -44,7 +44,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     protected void checkItemBeforeSave(Partner partner, Set<String> errors) {       
         String code = partner.getCode();
         Integer partnerId = partner.getId();
-        List<Partner> existPartner = getItemFacade().findByCodeExclId(code, partnerId);
+        List<Partner> existPartner = getFacade().findByCodeExclId(code, partnerId);
         if (!existPartner.isEmpty()) {
             String partnerName = existPartner.get(0).getName();
             Object[] params = new Object[]{partnerName, code};
@@ -52,7 +52,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
             errors.add(error);
         }
         
-        existPartner = getItemFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
+        existPartner = getFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
         if (!existPartner.isEmpty()) {
             Object[] params = new Object[]{getTitleName()};
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerIsExsist"), params);

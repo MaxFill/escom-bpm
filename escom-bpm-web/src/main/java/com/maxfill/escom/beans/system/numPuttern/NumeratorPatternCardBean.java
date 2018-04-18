@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.system.numPuttern;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.escom.beans.BaseCardBean;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.dictionary.DictNumerator;
 
 import javax.ejb.EJB;
@@ -34,7 +34,7 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     }
 
     @Override
-    public NumeratorPatternFacade getItemFacade() {
+    public NumeratorPatternFacade getFacade() {
         return numeratorFacade;
     }
     
@@ -44,4 +44,5 @@ public class NumeratorPatternCardBean extends BaseCardBean<NumeratorPattern>{
     public void setNumPatternTypes(List<SelectItem> numPatternTypes) {
         this.numPatternTypes = numPatternTypes;
     }
+
 }

@@ -1,24 +1,24 @@
 package com.maxfill.escom.beans.users.groups;
 
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
-import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.facade.treelike.UserGroupsFacade;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.treelike.UserGroupsFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.users.groups.UserGroups;
 
+import javax.ejb.EJB;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import javax.ejb.EJB;
-import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 
 /* Сервисный бин "Группы пользователей" */
 @Named
@@ -33,19 +33,19 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private UserGroupsFacade itemFacade;     
     
     public List<UserGroups> findOnlyGroups(){
-        return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP).stream()
-                    .filter(item -> itemFacade.preloadCheckRightView(item, currentUser))
+        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP).stream()
+                    .filter(item -> itemFacade.preloadCheckRightView(item, getCurrentUser()))
                     .collect(Collectors.toList());
     }
     
     public List<UserGroups> findOnlyRoles(){
-        return getItemFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD).stream()
-                    .filter(item -> itemFacade.preloadCheckRightView(item, currentUser))
+        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD).stream()
+                    .filter(item -> itemFacade.preloadCheckRightView(item, getCurrentUser()))
                     .collect(Collectors.toList());
     }
         
     @Override
-    public UserGroupsFacade getItemFacade() {
+    public UserGroupsFacade getFacade() {
         return itemFacade;
     }
 
@@ -117,12 +117,12 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return userBean;
     }
 

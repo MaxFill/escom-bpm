@@ -24,6 +24,11 @@ public final class EscomMsgUtils{
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
+    public static void succesMessage(String strMsg) {
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, strMsg, "");
+        FacesContext.getCurrentInstance().addMessage(null, facesMessage);
+    }
+
     public static void succesFormatMsg(String msg, Object[] msgParams) {
         addFacesMsg(FacesMessage.SEVERITY_INFO, msg, msgParams);
     }
@@ -53,12 +58,16 @@ public final class EscomMsgUtils{
         errors.stream().limit(10).forEach(error->errorMessage(error));
     }
 
-    public static void succesMsg(String msg) {
-        addFacesMsg(FacesMessage.SEVERITY_INFO, msg, new Object[]{});
+    /**
+     * Формирование FM сообщения
+     * @param keyMsg - строка-ресурс из msg
+     */
+    public static void succesMsg(String keyMsg) {
+        addFacesMsg(FacesMessage.SEVERITY_INFO, keyMsg, new Object[]{});
     }
 
-    public static void warnMsg(String msg) {
-        addFacesMsg(FacesMessage.SEVERITY_WARN, msg, new Object[]{});
+    public static void warnMsg(String keyMsg) {
+        addFacesMsg(FacesMessage.SEVERITY_WARN, keyMsg, new Object[]{});
     }
 
     public static void errorMsg(String msg) {

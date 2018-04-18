@@ -2,8 +2,8 @@
 package com.maxfill.escom.beans.system.admObj;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
@@ -21,21 +21,17 @@ import javax.faces.context.FacesContext;
 /* Контролер формы администрирования объекта */
 @Named
 @ViewScoped
-public class AdmObjectBean extends BaseDialogBean{    
+public class AdmObjectBean extends BaseViewBean{
     private static final long serialVersionUID = -7160350484665477991L;    
     
     private BaseDict replaceItem;
     private BaseDict sourceItem;
     private Map<String, Integer> rezultUpdate;
-    private BaseExplBean itemBean;
+    private BaseTableBean itemBean;
 
     @Inject
     private SessionBean sessionBean;
 
-    @Override
-    protected void initBean(){        
-    }
-    
     @Override
     public void onBeforeOpenCard(){
         if (sourceItem == null){
@@ -45,11 +41,6 @@ public class AdmObjectBean extends BaseDialogBean{
             Integer itemId = Integer.valueOf(params.get("itemId"));
             sourceItem = itemBean.findItem(itemId);
         }
-    }
-    
-    @Override
-    public String onCloseCard(){
-        return super.onFinalCloseCard(null);
     }
 
     /* Вычисление числа ссылок на объект в связанных объектах */
@@ -81,7 +72,7 @@ public class AdmObjectBean extends BaseDialogBean{
 
     /* gets & sets */
 
-    public BaseExplBean getItemBean() {
+    public BaseTableBean getItemBean() {
         return itemBean;
     }
 
@@ -94,7 +85,7 @@ public class AdmObjectBean extends BaseDialogBean{
     }
 
     @Override
-    protected String getFormName() {
+    public String getFormName() {
         return DictDlgFrmName.FRM_OBJECT_ADMIN;
     }
     

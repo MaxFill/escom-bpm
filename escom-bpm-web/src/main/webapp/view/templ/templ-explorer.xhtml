@@ -73,6 +73,8 @@
                         <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
 
+                        <ui:insert name="btnDisplayNone" />
+
                         <p:commandButton id="viewCardBtn" actionListener="#{_explorerBean.onEditContentItem()}" 
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"

@@ -32,7 +32,7 @@ public class DocTypeGroupsCardBean extends BaseCardTree<DocTypeGroups>{
     }
     
     @Override
-    public DocTypeGroupsFacade getItemFacade() {
+    public DocTypeGroupsFacade getFacade() {
         return itemsFacade;
     }
 

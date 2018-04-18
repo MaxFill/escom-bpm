@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.*;
+import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
@@ -31,14 +35,16 @@ import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.states.State;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.themeswitcher.ThemeSwitcher;
@@ -53,7 +59,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -106,6 +111,8 @@ public class SessionBean implements Serializable{
     protected PrintService printService;
     @EJB
     private AuthLogFacade authLogFacade;
+    @EJB
+    protected FavoriteService favoriteService;
 
     @Inject
     private ApplicationBean appBean;    
@@ -186,29 +193,29 @@ public class SessionBean implements Serializable{
     /* ITEM HELPER */    
         
     public BaseDict reloadItem(BaseDict item){
-        BaseExplBean bean = getItemBean(item);
-        return (BaseDict)bean.getItemFacade().find(item.getId());
+        BaseTableBean bean = getItemBean(item);
+        return (BaseDict)bean.getFacade().find(item.getId());
     }
     
     public BaseDict prepEditItem(BaseDict item){
-        BaseExplBean bean = getItemBean(item);
+        BaseTableBean bean = getItemBean(item);
         return bean.prepEditItem(item);
     }
     
     public BaseDict prepViewItem(BaseDict item){
-        BaseExplBean bean = getItemBean(item);
+        BaseTableBean bean = getItemBean(item);
         return bean.prepViewItem(item, new HashSet<>());
     }    
     
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
-        BaseExplBean bean = getItemBean(sourceItem);       
+        BaseTableBean bean = getItemBean(sourceItem);
         BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
 
         if (!errors.isEmpty()) return null;
 
         if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
             List<List<?>> dependency = bean.doGetDependency(sourceItem);
-            if (dependency != null && !dependency.isEmpty()){
+            if (CollectionUtils.isNotEmpty(dependency)){
                 copyPasteDependency(dependency, pasteItem, errors);
                 pasteItem = bean.findItem(pasteItem.getId());
             }
@@ -220,7 +227,7 @@ public class SessionBean implements Serializable{
     }
     
     public BaseDict prepCopyItem(BaseDict copyItem){
-        return getItemBean(copyItem).doCopy(copyItem, currentUser);
+        return getItemBean(copyItem).doCopy(copyItem);
     }
     
     /* копирование дочерних и подчинённых объектов */
@@ -234,8 +241,18 @@ public class SessionBean implements Serializable{
         return getItemBean(item).addItemToGroup(item, targetGroup);
     }                  
     
-    /* ПРОЧИЕ МЕТОДЫ */    
-    
+    /* ПРОЧИЕ МЕТОДЫ */
+
+    /* Добавление объекта в избранное  */
+    public void addInFavorites(BaseDict item, Metadates metadates){
+        Object[] params = new Object[]{item.getName()};
+        if (favoriteService.addInFavorites(item, metadates, getCurrentUser())){
+            EscomMsgUtils.succesFormatMsg("ObjectAddedToFavorites", params);
+        } else {
+            EscomMsgUtils.warnFormatMsg("ObjectAlreadyAddedFavorites", params);
+        }
+    }
+
     /* Отображение системной панели напоминания о сроках тех. поддержки и т.п. */
     public void showNotification(){
         if (!canShowNotifBar) return;
@@ -353,25 +370,21 @@ public class SessionBean implements Serializable{
         return messagesFacade.getCountUnReadMessage(currentUser);        
     }
 
-    /**
-     * Вывод отчёта на просмотр
-     * @param dataReport
-     * @param parameters
-     * @param reportName
-     */
-    public void preViewReport(List<Object> dataReport, Map<String, Object> parameters, String reportName){
-        printService.doPrint(dataReport, parameters, reportName);
-        String pdfFile = new StringBuilder()
-                    .append(configuration.getTempFolder())
-                    .append(reportName)
-                    .append("_")
-                    .append(getCurrentUser().getLogin())
-                    .append(".pdf").toString();
+    /* Просмотр вложения  */
+    public void onViewAttache(Attaches attache) {
+        String path = configuration.getUploadPath() + attache.getFullName();
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> pathList = new ArrayList<>();
-        pathList.add(pdfFile);
+        pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
         paramMap.put("path", pathList);
         openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+    }
+
+    /* Скачивание вложения  */
+    public void attacheDownLoad(Attaches attache){
+        if (attache == null) return;
+        String path = configuration.getUploadPath() + attache.getFullName();
+        EscomFileUtils.attacheDownLoad(path, attache.getName());
     }
 
     /**
@@ -455,6 +468,32 @@ public class SessionBean implements Serializable{
      */
     public void openAuthLog(){
         openDialogFrm(DictDlgFrmName.FRM_AUTH_LOG, new HashMap<>());
+    }
+
+    /* Просмотр файла PDF в диалоговом окне */
+    public void onViewReport(String reportName){
+        String pdfFile = new StringBuilder()
+                .append(configuration.getTempFolder())
+                .append(reportName)
+                .append("_")
+                .append(getCurrentUser().getLogin())
+                .append(".pdf").toString();
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> pathList = new ArrayList<>();
+        pathList.add(pdfFile);
+        paramMap.put("path", pathList);
+        openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+    }
+
+    /**
+     * Подготовка отчёта для вывода на просмотр
+     * @param dataReport
+     * @param parameters
+     * @param reportName
+     */
+    public void preViewReport(List<Object> dataReport, Map<String, Object> parameters, String reportName){
+        printService.doPrint(dataReport, parameters, reportName);
+        onViewReport(reportName);
     }
 
     /* Открытие формы почтовой службы отправки e-mail сообщений */
@@ -665,11 +704,11 @@ public class SessionBean implements Serializable{
         return DateUtils.dateToString(termLicense, DateFormat.SHORT, null, getLocale());
     }
 
-    private BaseExplBean getItemBean(BaseDict item){
+    private BaseTableBean getItemBean(BaseDict item){
         return getItemBeanByClassName(item.getClass().getSimpleName());
     }   
-    public BaseExplBean getItemBeanByClassName(String className){
-        BaseExplBean bean = null;
+    public BaseTableBean getItemBeanByClassName(String className){
+        BaseTableBean bean = null;
         switch(className){
             case DictObjectName.STAFF:{
                 bean = staffBean;

@@ -105,7 +105,7 @@ public class DocReportBean extends BaseReportBean{
     }
 
     @Override
-    protected String getFormName() {
+    public String getFormName() {
         return DictDlgFrmName.REP_DOC_COUNT_TYPES;
     }
     

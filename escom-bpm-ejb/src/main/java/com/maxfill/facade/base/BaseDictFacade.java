@@ -5,7 +5,6 @@ import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.MetadatesFacade;
-import com.maxfill.facade.RightFacade;
 import com.maxfill.facade.RoleFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.model.BaseDict;
@@ -55,7 +54,7 @@ import javax.xml.bind.JAXB;
  * @param <L>   //класс таблицы лога
  * @param <S>   //класс таблицы состояний
  */
-public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseFacade<T>{
+public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseLazyLoadFacade<T>{
     private final Class<T> itemClass; 
     private final Class<L> logClass; 
     private final Class<S> stateClass;
@@ -118,8 +117,16 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             criteries.add(builder.isNull(root.get("owner")));
         }
     }
-    
-    /* СОЗДАНИЕ: cоздание объекта */
+
+    /* РАБОТА С ЕДИНИЧНЫМ ОБЪЕКТОМ */
+
+    /**
+     * Создание нового объекта в памяти
+     * @param author
+     * @param owner
+     * @param params
+     * @return
+     */
     public T createItem(User author, O owner, Map<String, Object> params) {
         try {
             T item = itemClass.newInstance();
@@ -136,8 +143,14 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             LOGGER.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
-    }     
-    
+    }
+
+    @Override
+    public void remove(T entity){
+        entity = getEntityManager().getReference(itemClass, entity.getId());
+        getEntityManager().remove(entity);
+    }
+
     protected void detectParentOwner(T item, BaseDict owner){
         item.setOwner(owner);
     } 
@@ -179,6 +192,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
 
+    /**
+     * Замена объекта на другой
+     * @param oldItem
+     * @param newItem
+     * @return
+     */
+    public abstract int replaceItem(T oldItem, T newItem);
+
+    /* *** *** */
 
     /* Возвращает актуальные подчинённые объекты для владельца  */
     public List<T> findActualDetailItems(O owner){
@@ -360,12 +382,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return null;
-    }         
-    
-    @Override
-    public void remove(T entity){
-        entity = getEntityManager().getReference(itemClass, entity.getId());
-        getEntityManager().remove(entity);
     }
 
     /* ПОИСК из формы поиска */
@@ -424,7 +440,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> addParams){};
-    
+
     public Metadates getMetadatesObj() {
         return metadatesFacade.find(getMetadatesObjId());
     }    
@@ -488,7 +504,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
 
-    public abstract int replaceItem(T oldItem, T newItem);
 
     /* *** ПРАВА ДОСТУПА *** */
 

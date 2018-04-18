@@ -1,6 +1,6 @@
 package com.maxfill.model.messages;
 
-import com.maxfill.dictionary.Dict;
+import com.maxfill.model.Dict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import java.io.Serializable;

@@ -6,6 +6,10 @@ import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.util.*;
 
+/**
+ * Абстрактный фасад для работы с ленивой загрузки списков данных из таблиц БД
+ * @param <T>
+ */
 public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
 
     public BaseLazyLoadFacade(Class<T> itemClass){
@@ -27,7 +31,7 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
     }
 
     /**
-     * Загрузка событий атентификации за определённый период времени
+     * Отбор заданного числа записей объектов по критериям с сортировкой
      * @param firstPosition
      * @param numberOfRecords
      * @param sortField
@@ -35,7 +39,7 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      * @param filters
      * @return
      */
-    public List<T> findItemsByPeriod(int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
+    public List<T> findItemsByFilters(int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(entityClass);

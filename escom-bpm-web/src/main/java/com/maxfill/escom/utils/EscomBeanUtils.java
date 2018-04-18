@@ -82,38 +82,6 @@ public final class EscomBeanUtils {
         layoutOptions.setCenterOptions(center);        
     }
     
-    public static void initCardLayout(LayoutOptions layoutOptions){
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        layoutOptions.setPanesOptions(panes);
-
-        LayoutOptions north = new LayoutOptions();
-        north.addOption("resizable", false);
-        north.addOption("closable", false);
-        north.addOption("size", 38);
-        layoutOptions.setNorthOptions(north);
-        
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 45);
-        layoutOptions.setSouthOptions(south);
-
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 170);
-        west.addOption("minSize", 150);
-        west.addOption("maxSize", 250);
-        west.addOption("resizable", true);
-        layoutOptions.setWestOptions(west);
-
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("minWidth", 200);
-        center.addOption("minHeight", 100);
-        layoutOptions.setCenterOptions(center);
-    }   
-    
     public static void initAddLayoutOptions(LayoutOptions layoutOptions){
         /*
         LayoutOptions east = layoutOptions.getEastOptions();

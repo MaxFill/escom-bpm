@@ -9,10 +9,10 @@
 
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateDepartaments}" styleClass="colRight">
-            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}"/>
         </p:column>
         <p:column headerText="#{bundle.CreateStaffs}" styleClass="colRight">
-            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}"/>
         </p:column>
     </ui:define>
 
@@ -22,23 +22,23 @@
                      columnClasses="ui-grid-col-12 col-padding">
 
             <p:outputLabel value="#{bundle.Company}"/>
-            <p:inputText value="#{_bean.companyName} Id=#{_bean.id}" disabled="true" styleClass="ui-grid-col-12" />
+            <p:inputText value="#{departmentCardBean.getCompanyName()}" disabled="true" styleClass="ui-grid-col-12" />
 
             <p:outputLabel value="#{bundle.Departament}" />
-            <p:inputText id="nameItem" value="#{_bean.editedItem.name}" title="#{bundle.Name}"
+            <p:inputText id="nameItem" value="#{departmentCardBean.editedItem.name}" title="#{bundle.Name}"
                         styleClass="ui-grid-col-12"
-                        onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                        onkeypress="checkEsc(#{departmentCardBean.cancelBtnName});"
                         onchange="return itemChange = 1;"
-                        disabled="#{_bean.isReadOnly()}"
+                        disabled="#{departmentCardBean.isReadOnly()}"
                         required="#{param['isRequired'] == 'true'}"
                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
             <p:message for="nameItem" display="icon"/>
 
             <p:outputLabel value="#{bundle.Code}" />
             <h:panelGroup styleClass="ui-grid-col-12" id="codeGroup">
-                <p:inputText id="companyCode" value="#{_bean.editedItem.code}"
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                             disabled="#{_bean.isReadOnly()}"
+                <p:inputText id="companyCode" value="#{departmentCardBean.editedItem.code}"
+                             onkeypress="checkEsc(#{departmentCardBean.cancelBtnName});"
+                             disabled="#{departmentCardBean.isReadOnly()}"
                              styleClass="ui-grid-col-12"
                              size="10"
                              onchange="return itemChange = 1;">
@@ -47,8 +47,8 @@
                 <p:message for="codeGroup" />
                 <p:commandButton value="#{bundle.ToForm}" title="#{bundle.Generate}"
                                  update="codeGroup"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 actionListener="#{_bean.makeCode()}"
+                                 disabled="#{departmentCardBean.isReadOnly()}"
+                                 actionListener="#{departmentCardBean.makeCode()}"
                                  oncomplete="return itemChange = 1;">
                 </p:commandButton>
             </h:panelGroup>

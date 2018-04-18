@@ -1,26 +1,19 @@
 package com.maxfill.escom.beans.staffs;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.departments.Department;
-import com.maxfill.facade.DocFacade;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -30,7 +23,6 @@ import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Штатные единицы" */
@@ -44,20 +36,8 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     private DepartmentBean ownerBean;
     @Inject
     private CompanyBean companyBean;
-    
     @EJB
     private StaffFacade itemsFacade;
-    @EJB
-    private DocFacade docFacade;
-    
-    private Staff currentStaff;            
-    
-    @Override
-    public void onInitBean() {
-        super.onInitBean();
-        //TODO добавить поиск штатной единицы для текущего пользователя
-        currentStaff = itemsFacade.find(1);
-    }
 
     /**
      * Проверка перед созданием штатной единицы
@@ -69,10 +49,10 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     protected void prepCreate(Staff newItem, BaseDict parent, Set <String> errors) {
         if (newItem.getOwner() == null && newItem.getCompany() != null) {
             Company company = newItem.getCompany();
-            companyBean.getItemFacade().actualizeRightItem(company, currentUser);
-            Boolean isAllowedAddDetail = companyBean.getItemFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
+            companyBean.getFacade().actualizeRightItem(company, getCurrentUser());
+            Boolean isAllowedAddDetail = companyBean.getFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
             if (!isAllowedAddDetail){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), EscomMsgUtils.getBandleLabel(getItemFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
@@ -80,17 +60,17 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return ownerBean;
     }
     
     @Override
-    public BaseExplBean getGroupBean() {
+    public BaseTableBean getGroupBean() {
         return ownerBean;
     }
     
     @Override
-    public StaffFacade getItemFacade() {
+    public StaffFacade getFacade() {
         return itemsFacade;
     }
     
@@ -116,15 +96,15 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
 
     public void moveItemToGroup(BaseDict group, Staff staff){
         itemsFacade.detectParentOwner(staff, group);
-        getItemFacade().edit(staff);
+        getFacade().edit(staff);
     }
       
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Department){
-            getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
+            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
         } else {
-            companyBean.getItemFacade().actualizeRightItem(dropItem, currentUser);
+            companyBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
     
@@ -136,7 +116,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             dragItem.setOwner(null);
             dragItem.setCompany((Company)dropItem);
         }                
-        getItemFacade().edit(dragItem);
+        getFacade().edit(dragItem);
     }
 
     /**
@@ -155,7 +135,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }  
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return null;
     }
 
@@ -178,14 +158,9 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     public SearcheModel initSearcheModel() {
         return new StaffsSearche();
     }
-    
-    /* GETS & SETS */
-    
-    public Staff getCurrentStaff() {
-        return currentStaff;
-    }
-    public void setCurrentStaff(Staff currentStaff) {
-        this.currentStaff = currentStaff;
-    }     
 
+    @Override
+    public String getFormName(){
+        return DictDlgFrmName.FRM_STAFF_EXPLORER;
+    }
 }

@@ -1,28 +1,22 @@
 package com.maxfill.escom.beans.system.help;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import com.maxfill.utils.Tuple;
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 @Named
 @SessionScoped
-public class HelpBean extends BaseDialogBean{
+public class HelpBean extends BaseViewBean{
     private static final long serialVersionUID = -740004080013527296L; 
     private static final String HELP_FILE = "UserManual_Storage.pdf";        
     private StreamedContent content;
-        
-    @Override
-    protected void initBean(){        
-    }    
     
     @Override
     public void onBeforeOpenCard(){
@@ -52,11 +46,11 @@ public class HelpBean extends BaseDialogBean{
     @Override
     public String onCloseCard() {
         content = null;
-        return super.onFinalCloseCard(null);
+        return super.onCloseCard();
     }
 
     @Override
-    protected String getFormName(){
+    public String getFormName(){
         return DictDlgFrmName.FRM_HELP;
     }
       

@@ -3,22 +3,15 @@ package com.maxfill.escom.beans.partners;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
@@ -48,12 +41,12 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }
     
     @Override
-    public PartnersFacade getItemFacade() {
+    public PartnersFacade getFacade() {
         return itemsFacade;
     }
 
     @Override
-    public BaseExplBean getDetailBean(){
+    public BaseTableBean getDetailBean(){
         return null;
     }          
     
@@ -85,7 +78,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         if (!partner.getPartnersGroupsList().contains(group)){
             partner.getPartnersGroupsList().add(group);          
             group.getPartnersList().add(partner);
-            getItemFacade().edit(partner);  
+            getFacade().edit(partner);
             return true;
         }
         return false;
@@ -118,7 +111,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
             partner.getPartnersGroupsList().remove(sourceGroup);
         }                             
         partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
-        getItemFacade().edit(partner);
+        getFacade().edit(partner);
     }
 
     @Override
@@ -127,12 +120,12 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }    
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
     
     @Override
-    public BaseExplBean getGroupBean() {
+    public BaseTableBean getGroupBean() {
         return groupsBean;
     }
     

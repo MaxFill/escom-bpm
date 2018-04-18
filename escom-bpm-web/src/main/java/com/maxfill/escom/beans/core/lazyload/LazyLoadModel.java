@@ -1,6 +1,6 @@
-package com.maxfill.escom.beans.system.lazyload;
+package com.maxfill.escom.beans.core.lazyload;
 
-import com.maxfill.dictionary.Dict;
+import com.maxfill.model.Dict;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -10,9 +10,9 @@ import java.util.Map;
 public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
 
     private List<T> datasource;
-    private LazyLoadDialogBean bean;
+    private LazyLoadBean bean;
 
-    public LazyLoadModel(List <T> datasource, LazyLoadDialogBean bean) {
+    public LazyLoadModel(List <T> datasource, LazyLoadBean bean) {
         this.datasource = datasource;
         this.bean = bean;
     }

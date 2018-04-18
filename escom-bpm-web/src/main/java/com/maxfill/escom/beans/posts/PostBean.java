@@ -3,15 +3,9 @@ package com.maxfill.escom.beans.posts;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.model.posts.Post;
-import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.facade.StaffFacade;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.ConverterException;
-import javax.faces.convert.FacesConverter;
+
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
@@ -23,7 +17,7 @@ import javax.enterprise.context.SessionScoped;
 /* Сервисный бин "Должности" */
 @Named
 @SessionScoped
-public class PostBean extends BaseExplBean<Post, Post>{
+public class PostBean extends BaseTableBean<Post, Post>{
     private static final long serialVersionUID = -257932838724865134L;
     
     @EJB
@@ -32,12 +26,12 @@ public class PostBean extends BaseExplBean<Post, Post>{
     private StaffFacade staffFacade;    
         
     @Override
-    public PostFacade getItemFacade() {
+    public PostFacade getFacade() {
         return itemFacade;
     }
     
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
@@ -57,7 +51,7 @@ public class PostBean extends BaseExplBean<Post, Post>{
     }    
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return null;
     }
 

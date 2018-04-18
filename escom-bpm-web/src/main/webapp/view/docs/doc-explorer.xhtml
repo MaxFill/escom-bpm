@@ -98,12 +98,25 @@
     <ui:define name="addMenuActions">
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
                     disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                    actionListener="#{_explorerBean.prepareSendMailDocs('asAttache')}"/>
+                    onclick="document.getElementById('#{_frmExpl}:btnSendDocAttache').click();"/>
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsLink}" title="#{bundle.SendToEmailAsLink}"
                     disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                    actionListener="#{_explorerBean.prepareSendMailDocs('asLink')}"/> 
+                    onclick="document.getElementById('#{_frmExpl}:btnSendDocLink').click();"/>
         <p:separator />
     </ui:define>   
+
+    <ui:define name="btnDisplayNone" >
+        <p:commandButton id="btnSendDocAttache" actionListener="#{_explorerBean.prepareSendMailDocs('asAttache')}" style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{docsBean.onAfterSendDocToEmail}"
+                    update="#{_frmExpl}:messages"
+                    oncomplete="initDND()"/>
+        </p:commandButton>
+        <p:commandButton id="btnSendDocLink" actionListener="#{_explorerBean.prepareSendMailDocs('asLink')}" style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{docsBean.onAfterSendDocToEmail}"
+                    update="#{_frmExpl}:messages"
+                    oncomplete="initDND()"/>
+        </p:commandButton>
+    </ui:define>
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
@@ -143,7 +156,7 @@
                     ajax="false"
                     onstart="return isClose = 1;"
                     rendered="#{_explorerBean.isItemHaveAttache(item)}"
-                    action="#{docsBean.attacheDownLoad(item.getAttache())}"/>
+                    action="#{sessionBean.attacheDownLoad(item.getAttache())}"/>
         <p:separator />
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"

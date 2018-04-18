@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.partners.groups;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -19,7 +20,7 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
     private PartnersGroupsFacade itemsFacade;
 
     @Override
-    public PartnersGroupsFacade getItemFacade() {
+    public PartnersGroupsFacade getFacade() {
         return itemsFacade;
     }
 
@@ -41,4 +42,5 @@ public class PartnersGroupsCardBean extends BaseCardBeanGroups<PartnerGroups, Pa
         }
         onItemChange();        
     }
+
 }

@@ -19,7 +19,7 @@ public class UserGroupsCardBean extends BaseCardBeanGroups<UserGroups, User> {
     private UserGroupsFacade usGroupFacade;
 
     @Override
-    public UserGroupsFacade getItemFacade() {
+    public UserGroupsFacade getFacade() {
         return usGroupFacade;
     }
 

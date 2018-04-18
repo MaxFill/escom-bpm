@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.users.settings;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
@@ -17,12 +17,11 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 
 /* Персональные настройки пользователя  */
 @Named
 @ViewScoped
-public class UserSettingsBean extends BaseDialogBean{
+public class UserSettingsBean extends BaseViewBean{
     private static final long serialVersionUID = -3347099990747559193L;
 
     @EJB
@@ -41,10 +40,6 @@ public class UserSettingsBean extends BaseDialogBean{
         if (user.isNeedChangePwl()) {
             EscomMsgUtils.errorMsg("YouNeedChangePassword");
         }
-    }
-
-    @Override
-    protected void initBean(){        
     }
     
     /* Сохранение настроек пользователя  */
@@ -131,12 +126,7 @@ public class UserSettingsBean extends BaseDialogBean{
     }
 
     @Override
-    public String onCloseCard() {
-       return super.onFinalCloseCard(null);
-    }
-    
-    @Override
-    protected String getFormName(){
+    public String getFormName(){
         return DictDlgFrmName.FRM_USER_SETTINGS;
     }
     

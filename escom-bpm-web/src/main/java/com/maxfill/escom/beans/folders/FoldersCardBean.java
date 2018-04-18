@@ -99,7 +99,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     }
     
     @Override
-    public FoldersFacade getItemFacade() {
+    public FoldersFacade getFacade() {
         return foldersFacade;
     }
 

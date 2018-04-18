@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.staffs;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
@@ -28,7 +29,7 @@ public class StaffCardBean extends BaseCardBeanGroups<Staff, Department> {
     private StaffFacade itemFacade;   
     
     @Override
-    public StaffFacade getItemFacade() {
+    public StaffFacade getFacade() {
         return itemFacade;
     }
 

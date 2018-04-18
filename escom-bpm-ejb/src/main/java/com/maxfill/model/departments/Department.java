@@ -168,7 +168,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
 
     @Override
     public String toString() {
-        return "Department[ id=" + id + " ]";
+        return "Department[ id=" + id + " ] [" + getName() + "]";
     }
     
 }

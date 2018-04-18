@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.statuses;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 
@@ -12,24 +12,24 @@ import java.util.List;
 /* Сервисный бин "Статусы документов" */
 @SessionScoped
 @Named
-public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
+public class StatusesDocBean extends BaseTableBean<StatusesDoc, StatusesDoc>{
     private static final long serialVersionUID = 7864211951329104261L;
     
     @EJB
     private StatusesDocFacade itemFacade;     
             
     @Override
-    public StatusesDocFacade getItemFacade() {
+    public StatusesDocFacade getFacade() {
         return itemFacade;
     }
   
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
          return null;
     }
     
@@ -42,5 +42,5 @@ public class StatusesDocBean extends BaseExplBean<StatusesDoc, StatusesDoc>{
     public Class<StatusesDoc> getOwnerClass() {
         return null;
     }
-     
+
 }

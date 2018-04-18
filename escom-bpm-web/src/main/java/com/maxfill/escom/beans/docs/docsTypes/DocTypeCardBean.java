@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.docs.docsTypes;
 
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.escom.beans.BaseCardBean;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +26,7 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
     private DocTypeGroupsFacade docTypeGroupsFacade;
 
     @Override
-    public DocTypeFacade getItemFacade() {
+    public DocTypeFacade getFacade() {
         return itemsFacade;
     }   
 

@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.docs;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.escom.beans.BaseCardBean;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
@@ -87,7 +87,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
         
     @Override
-    public DocFacade getItemFacade() {
+    public DocFacade getFacade() {
         return itemFacade;
     }         
         
@@ -174,7 +174,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
                         docStatusFacade.remove(docsStatus);
-                        getItemFacade().addLogEvent(getEditedItem(), EscomMsgUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), currentUser);
+                        getFacade().addLogEvent(getEditedItem(), EscomMsgUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), getCurrentUser());
                     });
         }        
     }     
@@ -295,7 +295,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         Doc doc = getEditedItem();        
         Attaches attache = attacheService.findAttacheByDoc(doc);                               
         if (attache != null){
-            attacheDownLoad(attache);               
+            sessionBean.attacheDownLoad(attache);
         } else {
             EscomMsgUtils.warnMsg("FileNotFound");
         }
@@ -354,7 +354,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     @Override
     public String prepSaveItemAndPublic(){
-        getItemFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
+        getFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
         onItemChange();
         return super.prepSaveItemAndClose(); 
     }
@@ -372,9 +372,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (docsStatus.getDateStatus() == null){
             docsStatus.setDateStatus(new Date());
         }
-        docsStatus.setAuthor(currentUser);
+        docsStatus.setAuthor(getCurrentUser());
         //String statusName = docsStatus.getStatus().getName() + " = " + EscomBeanUtils.getBandleLabel(docsStatus.getValueBundleKey());
-        //getItemFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, currentUser);
+        //getFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, getCurrentUser());
         onItemChange();
     }
     
@@ -424,7 +424,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void checkRegNumber(Doc doc, Set<String> errors) {
         String regNumber = doc.getRegNumber();
         if (StringUtils.isNotBlank(regNumber)){
-            if (!getItemFacade().checkRegNumber(regNumber, doc)) {
+            if (!getFacade().checkRegNumber(regNumber, doc)) {
                 errors.add("REGNUMBER_IS_DUBLICATE");              
             }
         }
@@ -439,7 +439,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     public void onUpdateLinkedDocs(){
-        List<Doc> linkedDocs = getItemFacade().findLinkedDocs(getEditedItem());
+        List<Doc> linkedDocs = getFacade().findLinkedDocs(getEditedItem());
         getEditedItem().setDocsLinks(linkedDocs);
     }
     

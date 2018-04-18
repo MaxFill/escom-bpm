@@ -1,8 +1,7 @@
 package com.maxfill.escom.beans.companies;
 
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.escom.beans.BaseExplBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.treelike.CompanyFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -17,7 +16,6 @@ import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +42,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     private StaffFacade staffFacade;    
     
     @Override
-    public CompanyFacade getItemFacade() {
+    public CompanyFacade getFacade() {
         return itemsFacade;
     }
 
@@ -57,7 +55,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
         TreeNode rezNode = null;
 
-        if (itemsFacade.preloadCheckRightView(item, currentUser)){
+        if (itemsFacade.preloadCheckRightView(item, getCurrentUser())){
             List<Department> childs = new ArrayList<>();
             
             switch (item.getClass().getSimpleName()){
@@ -83,11 +81,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Удаление подчинённых объектов из корзины */
     @Override
     protected void deleteDetails(Company company) {
-        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        List<Department> departments = getFacade().findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.deleteItem(child));
         }
-        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        List<Staff> staffs = getFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.deleteItem(staff)));
         }
@@ -96,11 +94,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Перемещение в корзину подчинённых объектов  */
     @Override
     protected void moveDetailItemsToTrash(Company company, Set<String> errors) {
-        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        List<Department> departments = getFacade().findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.moveToTrash(child, errors));
         }
-        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        List<Staff> staffs = getFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.moveToTrash(staff, errors)));
         }
@@ -109,11 +107,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Восстановление подчинённых объектов из корзины */
     @Override
     protected void restoreDetails(Company company) {
-        List<Department> departments = getItemFacade().findDepartmentByCompany(company);
+        List<Department> departments = getFacade().findDepartmentByCompany(company);
         if (departments != null){
             departments.stream().forEach(item -> departmentBean.doRestoreItemFromTrash(item));
         }
-        List<Staff> staffs = getItemFacade().findStaffByCompany(company);
+        List<Staff> staffs = getFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.doRestoreItemFromTrash(staff)));
         }
@@ -149,7 +147,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
 
     /* Добавляет штатную единицу в контент  */ 
     public void addStaffInCnt(Staff staff, List<BaseDict> cnts) {
-        if (staffBean.getItemFacade().preloadCheckRightView(staff, currentUser)){
+        if (staffBean.getFacade().preloadCheckRightView(staff, getCurrentUser())){
             cnts.add(staff);
         }
     }           
@@ -189,12 +187,12 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return departmentBean;
     }
 

@@ -5,7 +5,7 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
@@ -75,7 +75,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         super.doPasteMakeSpecActions(sourceItem, pasteItem);
         copyMainAttacheFromDoc(pasteItem, sourceItem);
         copyDocStatuses(pasteItem, sourceItem);
-        getItemFacade().edit(pasteItem);
+        getFacade().edit(pasteItem);
     }
 
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
@@ -93,7 +93,18 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             pasteStatuses.add(new DocStatuses(pasteItem, docStatus.getStatus()));
         }
     }
-    
+
+    /**
+     * Обработка события после закрытия окна отправки документа
+     * @param event
+     */
+    public void onAfterSendDocToEmail(SelectEvent event){
+        if (event.getObject() != null) {
+            String message = (String)event.getObject();
+            EscomMsgUtils.succesMessage(message);
+        }
+    }
+
     /* Возвращает полное регистрационное имя документа */
     public String getFullRegistrName(Doc doc){
         if (StringUtils.isNotBlank(doc.getRegNumber())){
@@ -140,22 +151,22 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     @Override
-    public DocFacade getItemFacade() {
+    public DocFacade getFacade() {
         return docsFacade;
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return ownerBean;
     }
     
     @Override
-    public BaseExplBean getGroupBean() {
+    public BaseTableBean getGroupBean() {
         return ownerBean;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return null;
     }
 
@@ -167,7 +178,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     protected void checkLockItem(Doc item, Set<String> errors){
         if (item.getState().getId().equals(DictStates.STATE_EDITED)){
-            Object[] messageParameters = new Object[]{item.getName(), getItemFacade().getActorName(item, "editor")};
+            Object[] messageParameters = new Object[]{item.getName(), getFacade().getActorName(item, "editor")};
             String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
             errors.add(error);
             return;
@@ -211,8 +222,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = doc.getMainAttache();
         if (attache != null) {
             Set<String> errors = new HashSet<>();
-            getItemFacade().makeRightItem(doc, currentUser);
-            if (!getItemFacade().isHaveRightEdit(doc)){
+            getFacade().makeRightItem(doc, getCurrentUser());
+            if (!getFacade().isHaveRightEdit(doc)){
                 String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
                 String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
                 errors.add(error);
@@ -231,8 +242,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void openAttacheAddForm(Doc doc){
         if (doc == null) return;
         Set<String> errors = new HashSet<>();
-        getItemFacade().makeRightItem(doc, currentUser);
-        if (!getItemFacade().isHaveRightEdit(doc)){
+        getFacade().makeRightItem(doc, getCurrentUser());
+        if (!getFacade().isHaveRightEdit(doc)){
             String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
@@ -256,8 +267,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (documentId == null) return;            
         Doc doc = docsFacade.find(documentId);
         if (doc == null) return;
-        getItemFacade().actualizeRightItem(doc, currentUser);
-        if (getItemFacade().isHaveRightView(doc)) {
+        getFacade().actualizeRightItem(doc, getCurrentUser());
+        if (getFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 attacheDownLoadPDF(attache);
@@ -272,8 +283,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     /* Просмотр файла вложения основной версии документа как PDF */
     public void onViewMainAttache(Doc doc) {
         if (doc == null) return;
-        getItemFacade().actualizeRightItem(doc, currentUser);
-        if (getItemFacade().isHaveRightView(doc)) {
+        getFacade().actualizeRightItem(doc, getCurrentUser());
+        if (getFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 onViewAttache(attache);
@@ -283,6 +294,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         } else {
             EscomMsgUtils.warnMsg("RightViewNo");
         }
+    }
+
+    public void onViewAttache(Attaches attache){
+        sessionBean.onViewAttache(attache);
     }
 
     /* Скачивание файла вложения основной версии документа как PDF */

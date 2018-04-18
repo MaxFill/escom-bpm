@@ -1,28 +1,28 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Set;
 
 /* Реализация методов для объектов с группами (пользователи, контрагенты и т.п.) */
-public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseExplBean<T, O> {
+public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseTableBean<T, O>{
     private static final long serialVersionUID = -2983279513793115056L;    
 
-    public abstract BaseExplBean getGroupBean();
+    public abstract BaseTableBean getGroupBean();
     
     /* Обработка перед добавлением объекта в группу  */
     @Override
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
-        getGroupBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
-        if (!getItemFacade().isHaveRightAddChild(dropItem)) {
+        getGroupBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
+        if (!getFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
-        getItemFacade().actualizeRightItem(dragItem, currentUser);
-        if (!getItemFacade().isHaveRightEdit(dragItem)) {
+        getFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;

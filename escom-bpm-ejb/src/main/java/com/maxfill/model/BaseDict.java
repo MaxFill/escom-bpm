@@ -44,7 +44,7 @@ import javax.persistence.OneToOne;
 @MappedSuperclass
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends BaseDict, L extends BaseLogItems, T extends BaseStateItem> implements Serializable {
+public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends BaseDict, L extends BaseLogItems, T extends BaseStateItem> implements Serializable, Dict {
     private static final long serialVersionUID = 1844448252960314998L;
     private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
     

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.users;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
@@ -59,13 +59,13 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if(!user.getUsersGroupsList().contains((UserGroups) targetGroup)) {
             user.getUsersGroupsList().add((UserGroups) targetGroup);
             group.getUsersList().add(user);
-            getItemFacade().edit(user);
+            getFacade().edit(user);
         }
         return true;
     }
 
     @Override
-    public UserFacade getItemFacade() {
+    public UserFacade getFacade() {
         return userFacade;
     }
 
@@ -77,11 +77,11 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
             user.getUsersGroupsList().remove(sourceGroup);
         }
         user.getUsersGroupsList().add((UserGroups) targetGroup);
-        getItemFacade().edit(user);
+        getFacade().edit(user);
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return null;
     }
 
@@ -139,12 +139,12 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
     
     @Override
-    public BaseExplBean getGroupBean() {
+    public BaseTableBean getGroupBean() {
         return groupsBean;
     }
 
@@ -152,4 +152,5 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     public SearcheModel initSearcheModel() {
         return new UsersSearche();
     }
+
 }

@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictExplForm;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -46,7 +46,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     }
 
     @Override
-    public PartnersGroupsFacade getItemFacade() {
+    public PartnersGroupsFacade getFacade() {
         return itemsFacade;
     }
 
@@ -107,12 +107,12 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return partnerBean;
     }
 

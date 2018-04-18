@@ -1,12 +1,13 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
-import com.maxfill.utils.Tuple;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -16,7 +17,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.beanutils.BeanUtils;
-import org.primefaces.event.SelectEvent;
 
 /* Базовый бин карточек древовидных объектов */
 public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
@@ -50,7 +50,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
             try {
                 Rights childRights = new Rights();
-                Rights childDef = getTreeBean().getItemFacade().getRightForChild(getEditedItem());
+                Rights childDef = getTreeBean().getFacade().getRightForChild(getEditedItem());
                 for(Right rightDef : childDef.getRights()){
                     Right right = new Right();
                     BeanUtils.copyProperties(right, rightDef); 
@@ -134,7 +134,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     @Override
     protected void prepareRightsForView(T item){
         super.prepareRightsForView(item);
-        getTreeBean().getItemFacade().makeRightForChilds(item);
+        getTreeBean().getFacade().makeRightForChilds(item);
         rightsBean.prepareRightsForView(item.getRightForChild().getRights());
     }
     
@@ -142,9 +142,9 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     protected void onBeforeSaveItem(T item) {
         Rights newChildsRight = item.getRightForChild();
         if (item.isInheritsAccessChilds()) { //если галочка установлена, значит права наследуются                         
-            getItemFacade().saveAccessChild(getEditedItem(), "");
+            getFacade().saveAccessChild(getEditedItem(), "");
         } else {
-            getItemFacade().saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
+            getFacade().saveAccessChild(getEditedItem(), newChildsRight.toString()); //сохраняем права в XML
         }
         super.onBeforeSaveItem(item);
     }

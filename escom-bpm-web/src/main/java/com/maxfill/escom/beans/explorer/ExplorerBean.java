@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.explorer;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.BaseTreeBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
@@ -27,8 +27,6 @@ import com.maxfill.services.searche.SearcheService;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.poi.ss.formula.functions.T;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
@@ -43,7 +41,6 @@ import javax.ejb.EJB;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -94,8 +91,8 @@ public class ExplorerBean implements Serializable {
     
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
-    protected BaseExplBean tableBean;
-    protected BaseExplBean searcheBean;
+    protected BaseTableBean tableBean;
+    protected BaseTableBean searcheBean;
     
     private BaseDict currentItem;    
     private BaseDict editItem; 
@@ -1162,7 +1159,7 @@ public class ExplorerBean implements Serializable {
         }
                 
         if (model.isFullTextSearche() && name.length() >= 3 &&
-                Objects.equals("Doc", tableBean.getItemFacade().getItemClass().getSimpleName())){ //если поиск выполняется в документах
+                Objects.equals("Doc", tableBean.getFacade().getItemClass().getSimpleName())){ //если поиск выполняется в документах
             Set<Integer> docIds = searcheService.fullSearche(name);
             if (docIds.isEmpty()){
               docIds.add(0);
@@ -1538,7 +1535,7 @@ public class ExplorerBean implements Serializable {
     
     /* СЕЛЕКТОР: определяет, является ли объект доступным для выбора в селекторе  */
     public boolean isCanSelectedItem(BaseDict item){
-        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getItemFacade().getItemClass().getSimpleName());
+        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getFacade().getItemClass().getSimpleName());
     }
         
     /* CЕЛЕКТОР: выбор объекта по двойному клику  */
@@ -1588,7 +1585,7 @@ public class ExplorerBean implements Serializable {
         if (currentItem == null) return;
         Doc doc = (Doc) currentItem;
         docBean.addAttacheFromScan(doc, event);
-        docBean.getItemFacade().edit(doc);
+        docBean.getFacade().edit(doc);
     }
         
     public boolean isItemHaveAttache(BaseDict item){
@@ -1853,7 +1850,7 @@ public class ExplorerBean implements Serializable {
 
     public void setRootBean(BaseTreeBean rootBean) {
         this.rootBean = rootBean;
-        this.typeRoot = rootBean.getItemFacade().getItemClass().getSimpleName();
+        this.typeRoot = rootBean.getFacade().getItemClass().getSimpleName();
     }
     public BaseTreeBean getRootBean() {
         return rootBean;
@@ -1864,21 +1861,21 @@ public class ExplorerBean implements Serializable {
     }
     public void setTreeBean(BaseTreeBean treeBean) {
         this.treeBean = treeBean;
-        this.typeTree = treeBean.getItemFacade().getItemClass().getSimpleName();
+        this.typeTree = treeBean.getFacade().getItemClass().getSimpleName();
     }
     
-    public void setTableBean(BaseExplBean tableBean) {
+    public void setTableBean(BaseTableBean tableBean) {
         this.tableBean = tableBean; 
-        this.typeDetail = tableBean.getItemFacade().getItemClass().getSimpleName();
+        this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
     }
-    public BaseExplBean getTableBean() {
+    public BaseTableBean getTableBean() {
         return tableBean;
     }
 
-    public BaseExplBean getSearcheBean() {
+    public BaseTableBean getSearcheBean() {
         return searcheBean;
     }
-    public void setSearcheBean(BaseExplBean searcheBean) {
+    public void setSearcheBean(BaseTableBean searcheBean) {
         model = searcheBean.initSearcheModel();
         this.searcheBean = searcheBean;
     }

@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import javax.faces.application.FacesMessage;
@@ -15,8 +15,8 @@ public abstract class BaseBeanConvertor<T extends BaseDict> implements Converter
     public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                BaseExplBean bean = EscomBeanUtils.findBean(getBeanName(), fc);
-                Object searcheObj = bean.getItemFacade().find(Integer.parseInt(value));
+                BaseTableBean bean = EscomBeanUtils.findBean(getBeanName(), fc);
+                Object searcheObj = bean.getFacade().find(Integer.parseInt(value));
                 return searcheObj;
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));

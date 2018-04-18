@@ -32,7 +32,7 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     }
     
     @Override
-    public CompanyFacade getItemFacade() {
+    public CompanyFacade getFacade() {
         return itemsFacade;
     }
 

@@ -1,6 +1,6 @@
 package com.maxfill.model.authlog;
 
-import com.maxfill.dictionary.Dict;
+import com.maxfill.model.Dict;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

@@ -8,7 +8,7 @@ import com.maxfill.services.numerators.NumeratorBase;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
-/* Нумератор для контрагентов */
+/* Нумератор для Подразделений */
 @Stateless
 public class DepartmentNumeratorImpl extends NumeratorBase implements DepartmentNumeratorService{                      
     
@@ -20,6 +20,5 @@ public class DepartmentNumeratorImpl extends NumeratorBase implements Department
         Company company = departmentFacade.findCompany((Department) item);        
         return "department_" + company.getId();
     }
-    
 
 }

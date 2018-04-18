@@ -39,8 +39,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     private FoldersFacade folderFacade;
 
     @Override
-    public void onOpenCard() {
-        super.onOpenCard(); 
+    public void onBeforeOpenCard() {
+        super.onBeforeOpenCard();
         if (getTypeEdit().equals(DictEditMode.EDIT_MODE)){
             password = "**********";
         }
@@ -82,7 +82,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
      * Проверка выбранной папки
      */
     public void checkFolder(Folder folder){
-        if(!folderFacade.checkRightAddDetail(folder, currentUser)) {
+        if(!folderFacade.checkRightAddDetail(folder, getCurrentUser())) {
             String errMsg = EscomMsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
@@ -133,7 +133,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     }
     
     @Override
-    public UserFacade getItemFacade() {
+    public UserFacade getFacade() {
         return userFacade;
     }
 
@@ -148,7 +148,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
 
         String login = user.getLogin();
         Integer userId = user.getId();
-        List<User> existUsers = getItemFacade().findByLoginExcludeId(login, userId);
+        List<User> existUsers = getFacade().findByLoginExcludeId(login, userId);
         if (!existUsers.isEmpty()) {
             errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("UserLoginIsExsist"), new Object[]{login}));
         }
@@ -173,7 +173,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     protected void onAfterSaveItem(User user) {
         if (user.isNeedChangePwl()){
             String msg = EscomMsgUtils.getMessageLabel("YouNeedChangePassword");
-            getItemFacade().sendSystemMsg(user, msg);
+            getFacade().sendSystemMsg(user, msg);
         }
         super.onAfterSaveItem(user);
     }

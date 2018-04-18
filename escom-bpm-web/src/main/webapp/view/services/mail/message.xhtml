@@ -20,8 +20,9 @@
 
     <ui:define name="toolbarComponents" >
         <p:commandButton value="#{bundle.Send}" id="btnSend"
-                        icon="ui-icon-mail-closed"
-                        update="centerFRM">
+                         icon="ui-icon-mail-closed"
+                         actionListener="#{mailMessageBean.sendMail()}"
+                         update="centerFRM">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
     </ui:define>
@@ -29,7 +30,7 @@
     <ui:define name="centerFormContent">
         <h:panelGroup id="msgPanel">
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.Subject}"/>
+                <p:outputLabel value="#{bundle.Subject}" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText value="#{mailMessageBean.selected.subject}" id="subject" title="#{bundle.Subject}"
                                  required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.Subject}] #{bundle.MustBeFilled}"
@@ -38,7 +39,7 @@
                     <p:message for="subject" display="tooltip" />
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.Sender}"/>
+                <p:outputLabel value="#{bundle.Sender}" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText value="#{mailMessageBean.selected.sender}" id="sender" title="#{bundle.Sender}"
                                  required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.Sender}] #{bundle.MustBeFilled}"
@@ -49,7 +50,7 @@
                     <p:message for="sender" display="tooltip"/>
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.Addresses}"/>
+                <p:outputLabel value="#{bundle.Addresses}" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText value="#{mailMessageBean.selected.addresses}" id="addresses" title="#{msg.SeparatedMultipleAddresses}"
                                  required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.Addresses}] #{bundle.MustBeFilled}"
@@ -67,7 +68,7 @@
                     <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9,\.\-@]/i" preventPaste="false"/>
                 </p:inputText>
 
-                <p:outputLabel value="#{bundle.Attachment}"/>
+                <p:outputLabel value="#{bundle.Attachment}" rendered="#{mailMessageBean.attaches.size() >0}"/>
                 <p:panel id="attaches" styleClass="ui-grid-col-12" style="font-size: 80%;" rendered="#{mailMessageBean.attaches.size() >0}">
 
                     <ui:repeat var="attache" value="#{mailMessageBean.attaches}">
@@ -81,7 +82,7 @@
                 <p:outputLabel value="#{bundle.Content}"/>
             </p:panelGrid>
 
-            <p:textEditor value="#{mailMessageBean.content}" valueChangeListener="#{mailMessageBean.onMessageChange}" height="300" styleClass="ui-grid-col-12"/>
+            <p:textEditor value="#{mailMessageBean.content}" height="300" styleClass="ui-grid-col-12"/>
 
         </h:panelGroup>
     </ui:define>

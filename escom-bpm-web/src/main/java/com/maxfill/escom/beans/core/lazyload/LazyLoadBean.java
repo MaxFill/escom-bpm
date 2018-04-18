@@ -1,9 +1,8 @@
-package com.maxfill.escom.beans.system.lazyload;
+package com.maxfill.escom.beans.core.lazyload;
 
-import com.maxfill.dictionary.Dict;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.model.Dict;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
-import com.maxfill.utils.DateUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.primefaces.model.SortOrder;
 
@@ -12,19 +11,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class LazyLoadDialogBean<T extends Dict> extends BaseDialogBean {
+/**
+ * Базовый бин реализующий методы ленивой загрузки списков данных из таблиц БД
+ * с фильтрацией
+ * @param <T>
+ */
+public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean{
 
-    protected Map<String,Object> filters;
-    protected Date dateStart;
-    protected Date dateEnd;
     protected LazyLoadModel<T> lazyModel;
     protected List<T> checkedItems;
 
-    @Override
-    protected void initBean() {
-        dateEnd = DateUtils.clearDate(DateUtils.addDays(new Date(), 1));
-        dateStart = DateUtils.addDays(dateEnd, -3);
-    }
+    /* Атрибуты для фильтра */
+    protected Date dateStart;
+    protected Date dateEnd;
+    protected Map<String,Object> filters = new HashMap <>();
+
+    protected abstract BaseLazyLoadFacade getFacade();
 
     public int countItems(){
         return getFacade().countItems(makeFilters(filters));
@@ -36,7 +38,7 @@ public abstract class LazyLoadDialogBean<T extends Dict> extends BaseDialogBean 
 
     public List<T> loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
-        return getFacade().findItemsByPeriod(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
+        return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
     }
 
     public void refreshData(){
@@ -47,8 +49,6 @@ public abstract class LazyLoadDialogBean<T extends Dict> extends BaseDialogBean 
         getLazyDataModel().removeItem(item);
         new LazyLoadModel<T>(null, this);
     }
-
-    protected abstract BaseLazyLoadFacade getFacade();
 
     public boolean checkedItemsEmpty(){
         return CollectionUtils.isEmpty(checkedItems);
@@ -61,19 +61,7 @@ public abstract class LazyLoadDialogBean<T extends Dict> extends BaseDialogBean 
         return lazyModel;
     }
 
-    protected abstract String getFieldDateCrit();
-
     protected Map<String,Object> makeFilters(Map<String, Object> filters){
-        if (filters == null){
-            filters = new HashMap <>();
-            this.filters = filters;
-        }
-        if (dateStart != null || dateEnd != null) {
-            Map <String, Date> dateFilters = new HashMap <>();
-            dateFilters.put("startDate", dateStart);
-            dateFilters.put("endDate", dateEnd);
-            filters.put(getFieldDateCrit(), dateFilters);
-        }
         return filters;
     }
 

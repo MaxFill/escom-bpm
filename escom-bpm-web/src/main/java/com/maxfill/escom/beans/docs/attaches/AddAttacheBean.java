@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.docs.attaches;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.BaseDialogBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
@@ -17,7 +17,7 @@ import org.primefaces.event.SelectEvent;
 
 @Named
 @ViewScoped
-public class AddAttacheBean extends BaseDialogBean{
+public class AddAttacheBean extends BaseViewBean{
     private static final long serialVersionUID = 1614637915713000615L;
     
     @EJB
@@ -26,11 +26,7 @@ public class AddAttacheBean extends BaseDialogBean{
     private DocBean docBean;
                      
     private Doc doc;
-    
-    @Override
-    protected void initBean(){
-    }
-    
+
     @Override
     public void onBeforeOpenCard(){
         if (doc == null){
@@ -53,12 +49,7 @@ public class AddAttacheBean extends BaseDialogBean{
     }
 
     @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);
-    }
-
-    @Override
-    protected String getFormName(){
+    public String getFormName(){
         return DictDlgFrmName.FRM_ADD_ATTACHE;
     }
 

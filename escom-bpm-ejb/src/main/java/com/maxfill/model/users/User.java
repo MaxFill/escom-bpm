@@ -342,7 +342,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof User)) {
             return false;
         }
@@ -355,7 +354,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
 
     @Override
     public String toString() {
-        return "User[ id=" + id + " ]";
+        return "User[ id=" + id + " ] [" + getName() + "]";
     }
 
 }

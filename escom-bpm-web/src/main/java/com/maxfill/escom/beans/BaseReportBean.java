@@ -5,11 +5,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 
-public abstract class BaseReportBean extends BaseDialogBean{
+public abstract class BaseReportBean extends BaseViewBean{
     private static final long serialVersionUID = -6471738532714818611L;    
             
     private Date dateStart;
@@ -17,25 +18,11 @@ public abstract class BaseReportBean extends BaseDialogBean{
     
     protected PieChartModel pieModel;
     protected TreeNode[] selectedNodes;
-      
-    @Override
-    protected void initBean(){        
-    }
-    
-    @Override
-    public void onBeforeOpenCard(){
-    }
-    
-    @Override
-    public String onCloseCard(){
-        return super.onFinalCloseCard(null);
-    }
     
     public void dateStartChange(){        
     }
     
     public void dateEndChange(){
-        
     }
        
     public void onPreViewReport() {

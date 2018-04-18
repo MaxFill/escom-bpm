@@ -13,7 +13,7 @@ import javax.inject.Named;
 import java.util.List;
 import javax.inject.Inject;
 
-/* Карточка подразделения  */
+/* Контролер формы "Карточка подразделения"  */
 @Named
 @ViewScoped
 public class DepartmentCardBean extends BaseCardTree<Department>{
@@ -33,16 +33,18 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     }
     
     @Override
-    public DepartmentFacade getItemFacade() {
+    public DepartmentFacade getFacade() {
         return itemsFacade;
-    }    
-    
+    }
+
+    /**
+     * Формирует наименование компании для отображения на карточке подразделения
+     * @return
+     */
     public String getCompanyName(){
-        if (getEditedItem() == null){
-            return "";
-        }
+        if (getEditedItem() == null) return "";
         Company company = itemsFacade.findCompany(getEditedItem());
-        return company.getName();
+        return company.getName() + " Id=" + company.getId();
     }         
     
     public void makeCode(){
@@ -53,4 +55,5 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     protected BaseTreeBean getTreeBean() {
         return departmentBean;
     }
+
 }

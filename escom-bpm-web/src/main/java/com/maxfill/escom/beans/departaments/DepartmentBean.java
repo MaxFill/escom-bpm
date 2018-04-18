@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -42,22 +42,22 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private StaffFacade staffFacade;
     
     @Override
-    public DepartmentFacade getItemFacade() {
+    public DepartmentFacade getFacade() {
         return itemFacade;
     }
     
     @Override
     public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
         itemFacade.detectParentOwner(dragItem, dropItem);
-        getItemFacade().edit(dragItem);
+        getFacade().edit(dragItem);
     }
     
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Company){
-            getOwnerBean().getItemFacade().actualizeRightItem(dropItem, currentUser);
+            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
         } else {
-            getItemFacade().actualizeRightItem(dropItem, currentUser);
+            getFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
     
@@ -145,7 +145,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }
 
     @Override
-    public BaseExplBean getOwnerBean() {
+    public BaseTableBean getOwnerBean() {
         return ownerBean;
     }
     
@@ -155,7 +155,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }
 
     @Override
-    public BaseExplBean getDetailBean() {
+    public BaseTableBean getDetailBean() {
         return staffBean;
     }
 

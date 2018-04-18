@@ -9,14 +9,12 @@ import com.maxfill.model.rights.Right;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.beans.BaseExplBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.utils.Tuple;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -139,8 +137,8 @@ public class MetadatesBean implements Serializable{
         if (Objects.equals(state, startState)){
             errors.add(EscomMsgUtils.getMessageLabel("CantDeleteStartState"));
         }
-        BaseExplBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
-        if (bean != null && bean.getItemFacade().countItemsByState(state) > 0){
+        BaseTableBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
+        if (bean != null && bean.getFacade().countItemsByState(state) > 0){
             String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
             errors.add(message);
         }

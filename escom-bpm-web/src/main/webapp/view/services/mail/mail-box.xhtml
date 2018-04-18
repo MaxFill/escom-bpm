@@ -2,58 +2,30 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="title">
         #{bundle.MessagesForSent}
-    </ui:define> 
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{mailBoxBean.onBeforeOpenCard()}"/>
-        </f:metadata>
     </ui:define>
 
-    <ui:param name="_frm" value="mailBoxFRM" />
-    
-    <ui:define name="body">
-        <pe:layout fullPage="true" options="#{mailBoxBean.layoutOptions}" widgetVar="fpLayoutWidget">
-            <p:ajax event="resize" listener="#{mailBoxBean.handleResize}"/> 
-            <pe:layoutPane position="center" resizable="true">
+    <ui:param name="_bean" value="#{mailBoxBean}"/>
 
-                <h:form id="#{_frm}" styleClass="formLayoute">                                        
-                    <p:hotkey bind="esc" id="hotskey"
-                              immediate="true"                             
-                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
-                    </p:hotkey>
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-                        <p:messages id="messages" showDetail="true" closable="true" >
-                            <p:autoUpdate />
-                        </p:messages>
-                        
-                        <p:menubar styleClass="without-spaces">
-                            <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                                <p:menuitem value="#{bundle.Refresh}" 
-                                            icon="ui-icon-refresh"
-                                            onclick="document.getElementById('#{_frm}:btnRefresh').click();"/> 
-                                <p:separator/>
-                                <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                            onclick="document.getElementById('#{_frm}:btnClose').click();">  
-                                </p:menuitem>
-                            </p:submenu>
-                            <f:facet name="options">
-                                <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                                                 update="#{_frm}:tblDetail" 
-                                                 actionListener="#{mailBoxBean.refreshMessages()}"/>
-                                <p:commandButton title="#{bundle.Close}" icon="ui-icon-circle-close"
-                                                 style="float: right;" immediate="true"
-                                                 action="#{mailBoxBean.onCloseCard()}"/>
-                            </f:facet>
-                         </p:menubar>
-                    
-                    <p:dataTable id="tblDetail"
+    <ui:define name="menuActions" >
+        <p:menuitem value="#{bundle.Refresh}"
+                    icon="ui-icon-refresh"
+                    onclick="document.getElementById('centerFRM:btnRefresh').click();"/>
+    </ui:define>
+
+    <ui:define name="toolbarComponents" >
+        <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
+                         update="centerFRM:tblDetail"
+                         actionListener="#{mailBoxBean.refreshMessages()}"/>
+    </ui:define>
+
+    <ui:define name="centerFormContent">
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+            <p:dataTable id="tblDetail"
                                  value="#{mailBoxBean.messages}" var="item" 
                                  emptyMessage="#{bundle.EmptyTable}"
                                  paginator="true" paginatorPosition="bottom"  
@@ -86,9 +58,6 @@
                                              actionListener="#{mailBoxBean.deleteMessage(item)}"/>
                         </p:column> 
                     </p:dataTable>
-                </p:panelGrid>
-                </h:form>
-            </pe:layoutPane>
-        </pe:layout>
+        </p:panelGrid>
     </ui:define>
 </ui:composition>

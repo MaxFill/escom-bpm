@@ -3,14 +3,14 @@ package com.maxfill.escom.beans.system.logging;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.FontFactory;
-import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.system.lazyload.LazyLoadDialogBean;
+import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
+import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
-import com.maxfill.model.authlog.Authlog_;
+import com.maxfill.utils.DateUtils;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.model.Visibility;
@@ -20,9 +20,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.event.AjaxBehaviorEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.persistence.metamodel.SingularAttribute;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ import java.util.Map;
 
 @ViewScoped
 @Named
-public class AuthLogBean extends LazyLoadDialogBean {
+public class AuthLogBean extends LazyLoadBean{
     private static final long serialVersionUID = -2035201127652612778L;
 
     private Authlog selected;
@@ -42,13 +42,10 @@ public class AuthLogBean extends LazyLoadDialogBean {
     private final Map<Integer, String> columns = new HashMap <>();
 
     @EJB
-    private Configuration conf;
-    @EJB
     private AuthLogFacade authLogFacade;
 
     @Override
     protected void initBean(){
-        super.initBean();
         columns.put(0, "colImg");
         columns.put(1, "colDate");
         columns.put(2, "colLogin");
@@ -56,6 +53,8 @@ public class AuthLogBean extends LazyLoadDialogBean {
         columns.put(4, "colIP");
         columns.put(5, "colSMS");
         columns.entrySet().stream().forEach(col->visibleColumns.put(col.getValue(), true));
+        dateEnd = DateUtils.clearDate(DateUtils.addDays(new Date(), 1));
+        dateStart = DateUtils.addDays(dateEnd, -3);
     }
 
     @Override
@@ -64,13 +63,14 @@ public class AuthLogBean extends LazyLoadDialogBean {
     }
 
     @Override
-    protected String getFieldDateCrit() {
-        return"dateEvent";
-    }
-
-    @Override
-    public String onCloseCard() {
-        return super.onFinalCloseCard(null);
+    protected Map <String, Object> makeFilters(Map filters) {
+        if (dateStart != null || dateEnd != null) {
+            Map <String, Date> dateFilters = new HashMap<>();
+            dateFilters.put("startDate", dateStart);
+            dateFilters.put("endDate", dateEnd);
+            filters.put("dateEvent", dateFilters);
+        }
+        return filters;
     }
 
     @Override

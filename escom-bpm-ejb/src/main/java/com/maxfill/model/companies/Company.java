@@ -131,7 +131,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
 
     @Override
     public String toString() {
-        return "Company[ id=" + id + " ]";
+        return "Company[ id=" + id + " ] [" + getName() + "]";
     }
 
     }
