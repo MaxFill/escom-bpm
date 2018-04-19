@@ -3,6 +3,7 @@ package com.maxfill.facade;
 import com.google.gson.Gson;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.facade.base.BaseDictWithRolesFacade;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
@@ -49,12 +50,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Stateless
-public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
+public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocStates> {
     private static final String HTML_HEAD = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"></head>";
     @EJB
     private AttacheService attacheService;
-    @EJB
-    private UserFacade userFacade;
     @EJB
     private SearcheService searcheService;
     @EJB
@@ -227,14 +226,12 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
 
     @Override
     public void edit(Doc doc) {
-        doSaveRoleToJson(doc);
         super.edit(doc);
         searcheService.updateFullTextIndex(doc);
     }
 
     @Override
     public void create(Doc doc) {
-        doSaveRoleToJson(doc);
         super.create(doc);
         searcheService.addFullTextIndex(doc);
     }
@@ -419,40 +416,6 @@ public class DocFacade extends BaseDictFacade<Doc, Folder, DocLog, DocStates>{
         params.put("author", author);
         loadMailAttache(params, new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8.name())), doc);
     }
-
-    private void doSaveRoleToJson(Doc doc){
-        Gson gson = new Gson();
-        String attacheJson = gson.toJson(doc.getRoles());        
-        doc.setRoleJson(attacheJson);
-    }
-    
-    /* Проверка вхождения пользователя в роль документа */
-    @Override
-    public boolean checkUserInRole(Doc doc, String roleName, User user){        
-        roleName = roleName.toLowerCase();
-        Map<String, Set<Integer>> roles = doc.getRoles();
-        if (roles.isEmpty() || !roles.containsKey(roleName)) return false; 
-        HashSet<Integer> usersId = (HashSet<Integer>)roles.get(roleName);
-        if (usersId.isEmpty()) return false;        
-        return usersId.contains(user.getId());             
-    }
-    
-    /* Возвращает имя исполнителя роли */
-    @Override
-    public String getActorName(Doc doc, String roleName){
-        Map<String, Set<Integer>> roles = doc.getRoles();
-        if (roles.isEmpty() || !roles.containsKey(roleName)) return null;
-        Set<Integer> usersId = roles.get(roleName);
-        if (usersId == null || usersId.isEmpty()) return null;
-        StringBuilder names = new StringBuilder();
-        usersId.stream().map((userId) -> userFacade.find(userId)).forEach((user) -> {
-            if (names.length() > 0){
-                names.append(", ");
-            }
-            names.append(user.getName());
-        }); 
-        return names.toString();        
-    }       
     
     /* Удаление документа  */
     @Override

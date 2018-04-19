@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.facade.treelike.DepartmentFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -145,7 +145,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return ownerBean;
     }
     
@@ -155,7 +155,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     }
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return staffBean;
     }
 

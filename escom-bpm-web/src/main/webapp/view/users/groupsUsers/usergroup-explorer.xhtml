@@ -3,7 +3,8 @@
                 template="/view/templ/templ-explorer.xhtml">
 
     <!-- используется в качестве селектора групп пользователей -->
-    
+
+    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
     <ui:param name="_detailBean" value="#{userBean}" />
     <ui:param name="_treeBean" value="#{userGroupsBean}" />
     <ui:param name="_searcheBean" value="#{_treeBean}"/>

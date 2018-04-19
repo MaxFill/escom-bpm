@@ -112,7 +112,31 @@
             <to-view-id>/view/docs/doc-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
-        
+
+        <navigation-case>
+            <from-outcome>process-explorer</from-outcome>
+            <to-view-id>/view/processes/process-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>process-card</from-outcome>
+            <to-view-id>/view/processes/process-card.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>processtype-explorer</from-outcome>
+            <to-view-id>/view/processes/types/process-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+
+        <navigation-case>
+            <from-outcome>processtype-card</from-outcome>
+            <to-view-id>/view/processes/types/processtype-card.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+
         <navigation-case>
             <from-outcome>scanning</from-outcome>
             <to-view-id>/view/scaner/scanning.xhtml</to-view-id>

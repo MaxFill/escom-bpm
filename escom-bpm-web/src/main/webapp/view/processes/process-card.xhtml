@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{processCardBean}"/>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Process}">
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
+                         columnClasses="ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Name}" />
+                    <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
+                                 styleClass="ui-grid-col-12 col-padding"
+                                 onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                                 onchange="return itemChange = 1;"
+                                 disabled="#{processCardBean.isReadOnly()}"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.SchemeConcord}">
+        </p:tab>
+
+    </ui:define>
+</ui:composition>

@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
@@ -60,12 +60,12 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return ownerBean;
     }
     
     @Override
-    public BaseTableBean getGroupBean() {
+    public BaseDetailsBean getGroupBean() {
         return ownerBean;
     }
     
@@ -135,7 +135,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }  
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return null;
     }
 

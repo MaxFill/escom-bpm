@@ -14,6 +14,7 @@
         <ui:include src="/view/common/error-dlg.xhtml"/>
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
+        <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />
 
         <script type="text/javascript">
             function init() {
@@ -161,7 +162,18 @@
                                            actionListener="#{sessionBean.openLdapService()}"/>
                         </p:panelGrid>
                     </p:panel>
-                    
+
+                    <p:panel id="processes" header="#{bundle.Processes}"
+                             rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}"
+                             toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                            <p:commandLink value="#{bundle.Processes}"
+                                           onstart="return isClose = 1;"
+                                           ajax="false"
+                                           action="#{sessionBean.openProcessExpl()}"/>
+                        </p:panelGrid>
+                    </p:panel>
+
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>

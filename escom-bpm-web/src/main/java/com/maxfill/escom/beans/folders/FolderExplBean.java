@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.folders;
 
-import com.maxfill.escom.beans.explorer.ExplorerBean;
+import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
@@ -13,7 +13,7 @@ import javax.inject.Named;
 /* Расширение контролёра обозревателя архива */
 @Named
 @ViewScoped
-public class FolderExplBean extends ExplorerBean{
+public class FolderExplBean extends ExplorerTreeBean{
     private static final long serialVersionUID = 1718197265045722509L;
 
     /* Расширение для поиска в дереве папок по индексу дела */

@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 /* Должность */
@@ -101,7 +100,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Post)) {
             return false;
         }
@@ -114,7 +112,7 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.datamodel.docs.Posts[ id=" + id + " ]";
+        return "Posts[ id=" + id + " ]";
     }
 
 }

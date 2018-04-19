@@ -5,7 +5,7 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
@@ -156,17 +156,17 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return ownerBean;
     }
     
     @Override
-    public BaseTableBean getGroupBean() {
+    public BaseDetailsBean getGroupBean() {
         return ownerBean;
     }
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return null;
     }
 

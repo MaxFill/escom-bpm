@@ -1,13 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-explorer.xhtml"
-                xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">
+                template="/view/templ/templ-explorer.xhtml">
 
     <!-- стандартный обозреватель/селектор для Должностей -->
     
     <ui:param name="_detailBean"  value="#{postBean}" />
     <ui:param name="_searcheBean" value="#{postBean}"/>
+    <ui:param name="_explorerBean" value="#{explorerBean}" />
     
     <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('PostSelector')}"/>
     <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Posts')}"/>   

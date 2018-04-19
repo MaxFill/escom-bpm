@@ -3,6 +3,7 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/view/templ/templ-explorer.xhtml">
 
+    <ui:param name="_explorerBean" value="#{explorerBean}" />
     <ui:param name="_detailBean" value="#{numeratorPatternBean}" />  
 
     <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Numerators')}"/>

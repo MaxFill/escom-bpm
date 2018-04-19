@@ -1,9 +1,7 @@
-
 package com.maxfill.dictionary;
 
 /**
  * Нумераторы
- * @author mfilatov
  */
 public final class DictNumerator {
 

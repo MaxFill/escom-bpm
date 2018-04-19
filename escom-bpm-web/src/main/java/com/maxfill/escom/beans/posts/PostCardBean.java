@@ -9,8 +9,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 /**
- * Бин для карточки "Должность"
- * @author Maxim
+ * Контролер карточки "Должность"
  */
 @Named
 @ViewScoped

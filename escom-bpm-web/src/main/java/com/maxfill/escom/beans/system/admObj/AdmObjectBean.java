@@ -1,14 +1,16 @@
-
 package com.maxfill.escom.beans.system.admObj;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
+
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -16,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.faces.context.FacesContext;
 
 /* Контролер формы администрирования объекта */
 @Named

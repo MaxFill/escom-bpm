@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.partners;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
@@ -46,7 +46,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }
 
     @Override
-    public BaseTableBean getDetailBean(){
+    public BaseDetailsBean getDetailBean(){
         return null;
     }          
     
@@ -120,12 +120,12 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }    
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return null;
     }
     
     @Override
-    public BaseTableBean getGroupBean() {
+    public BaseDetailsBean getGroupBean() {
         return groupsBean;
     }
     

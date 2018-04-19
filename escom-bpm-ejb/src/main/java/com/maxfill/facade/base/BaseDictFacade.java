@@ -7,6 +7,7 @@ import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.facade.RoleFacade;
 import com.maxfill.facade.StateFacade;
+import com.maxfill.facade.UserFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.metadates.Metadates;
@@ -66,11 +67,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @EJB
     protected Configuration configuration;          
     @EJB
-    private StateFacade stateFacade;
+    protected StateFacade stateFacade;
     @EJB
     protected RightsDef rightsDef;
     @EJB
     protected RoleFacade roleFacade;
+    @EJB
+    protected UserFacade userFacade;
 
     public BaseDictFacade(Class<T> itemClass, Class<L> logClass, Class<S> stateClass) {
         super(itemClass);
@@ -346,11 +349,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* Возвращает документы, заблокированные пользователем */
     public List<T> loadLockDocuments(User editor){
-        return null;
-    }
-    
-    /* Возвращает имя исполнителя роли */
-    public String getActorName(T item, String roleName){
         return null;
     }
         

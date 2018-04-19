@@ -16,6 +16,8 @@
             INSERT states (ID, Name, IsActual, Icon) VALUES (6, N'Arhival', 1, N'/resources/icon/doc_storage20.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (7, N'Valid',   1, N'/resources/icon/doc_check20.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (8, N'Edited',  1, N'/resources/icon/doc_lock20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',  1, N'/resources/icon/arrow_right.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (10, N'Сompleted',  1, N'/resources/icon/done.png');
         </sql>                
         
         <!-- Пользователи -->
@@ -63,6 +65,8 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (17, N'NumeratorPattern', N'NumeratorsPatterns', N'NumeratorsPatterns', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (18, N'PartnerTypes', N'PartnerTypes', N'PartnerTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (19, N'Filter', N'Filters', N'Filters', 0, N'ui-icon-search', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
         </sql>
         
         <!-- Доступные переходы между состояниями  -->
@@ -75,7 +79,8 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 6, 7, 2);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 6, 5, 2);            
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 8, 5, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 8, 7, 0);                        
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 8, 7, 0);
+
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 7, 8, 0);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 7, 6, 2);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 6, 7, 2);
@@ -155,6 +160,16 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 7, 6, 2);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 6, 7, 2);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 8, 7, 0);
+
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 7, 9, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 7, 10, 2);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 10, 7, 2);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 9, 7, 0);
+
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 7, 8, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 7, 6, 2);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 6, 7, 2);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 8, 7, 0);
         </sql>
         
         <!-- Фильтры -->
@@ -367,6 +382,29 @@
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  19, 1, 0, 0, 0, 0, 0, 0, 0, 7);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  19, 1, 1, 1, 1, 0, 1, 0, 0, 7);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 19, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+
+            <!-- Process -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 0, 0, 1, 0, 0, 9);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 9);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 20, 1, 1, 0, 0, 0, 0, 0, 0, 9);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 20, 1, 0, 0, 0, 0, 0, 0, 0, 9);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 10);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 10);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 20, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+
+            <!-- ProcessesTypes -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  21, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 21, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 21, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  21, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  21, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 5,  21, 1, 1, 1, 1, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 21, 1, 1, 1, 1, 0, 1, 0, 0, 7);
         </sql>
         
         <!-- Группы пользователей -->
@@ -479,6 +517,17 @@
             VALUES (20, NULL, 7, N'Договоры страхования',   NULL, 1, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT docTypeGroups (Id, Owner, Parent, Name, Number, State, IsActual, IsDeleted, IsInherits, IsInheritsAccessChilds, Access, AccessChilds, Author, DateCreate, DateChange)
             VALUES (21, NULL, 7, N'Договоры хранения',   NULL, 1, 1, 0, 1, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>
+
+        <!-- Виды процессов -->
+        <sql>
+            INSERT processesTypesStates (Id, CurrentState,  PreviousState) VALUES(0, 7, 5);
+            INSERT processesTypesStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
+
+            INSERT processesTypes (Id, Owner, Parent, Name, State, IsDeleted, IsInherits, IsActual, Author, DateCreate, DateChange)
+            VALUES (0, NULL, NULL, N'Виды процессов', 1, 0, 1, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT processesTypes (Id, Owner, Parent, Name, State, IsDeleted, IsInherits, IsActual, Author, DateCreate, DateChange)
+            VALUES (1, NULL, 0, N'Согласование', 1, 0, 1, 1, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
 
         <!-- Виды документов -->

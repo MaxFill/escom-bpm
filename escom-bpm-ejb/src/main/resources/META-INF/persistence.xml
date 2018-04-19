@@ -66,6 +66,12 @@
     <class>com.maxfill.model.users.UserStates</class>
     <class>com.maxfill.model.metadates.MetadatesStates</class>
     <class>com.maxfill.model.authlog.Authlog</class>
+    <class>com.maxfill.model.process.Process</class>
+    <class>com.maxfill.model.process.ProcessLog</class>
+    <class>com.maxfill.model.process.ProcessStates</class>
+    <class>com.maxfill.model.process.types.ProcessType</class>
+    <class>com.maxfill.model.process.types.ProcessTypeLog</class>
+    <class>com.maxfill.model.process.types.ProcessTypeStates</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.*;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
@@ -76,7 +79,6 @@ import java.util.stream.Collectors;
 import javax.inject.Named;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
-
 /* Cессионный бин приложения */
 @SessionScoped
 @Named
@@ -115,7 +117,7 @@ public class SessionBean implements Serializable{
     protected FavoriteService favoriteService;
 
     @Inject
-    private ApplicationBean appBean;    
+    private ApplicationBean appBean;
     @Inject
     private UserBean usersBean;
     @Inject
@@ -146,7 +148,11 @@ public class SessionBean implements Serializable{
     private DocTypeGroupsBean docTypeGroupBean;
     @Inject
     private NumeratorPatternBean numeratorPatternBean;
-    
+    @Inject
+    private ProcessBean processBean;
+    @Inject
+    private ProcessTypesBean processTypeBean;
+
     @PostConstruct
     public void init() {                  
         dashboardModel = new DefaultDashboardModel();
@@ -163,6 +169,7 @@ public class SessionBean implements Serializable{
          
         column2.addWidget("docsExplorer");
         column2.addWidget("dictsExplorer");
+        column2.addWidget("processes");
          
         column1.addWidget("userParams");
         column1.addWidget("messages");
@@ -238,7 +245,7 @@ public class SessionBean implements Serializable{
     }                       
     
     public boolean prepAddItemToGroup(BaseDict item, BaseDict targetGroup){ 
-        return getItemBean(item).addItemToGroup(item, targetGroup);
+        return ((BaseDetailsBean)getItemBean(item)).addItemToGroup(item, targetGroup);
     }                  
     
     /* ПРОЧИЕ МЕТОДЫ */
@@ -297,6 +304,26 @@ public class SessionBean implements Serializable{
         redirectToPage(page, Boolean.TRUE);
     }
 
+    /**
+     * Обработка события закрытия диалога лицензионного соглашения
+     * @param event
+     */
+    public void onAfterCloseLicenseDlg(SelectEvent event){
+        if (event.getObject() == null) return;
+        onSessionExit();
+    }
+
+    /* Закрытие диалога */
+    public String closeDialog(Object param){
+        PrimeFaces.current().dialog().closeDynamic(param);
+        return goToIndex();
+    }
+
+    /* Переход на начальную страницу программы */
+    public String goToIndex(){
+        return "/view/index?faces-redirect=true";
+    }
+
     /* Сохранение настроек текущего пользователя в базу данных */
     private void doSaveUserSettings(){
         if (userSettings == null) return;
@@ -335,15 +362,6 @@ public class SessionBean implements Serializable{
         if (!userSettings.isAgreeLicense()){
             PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnLicense').click()");
         }
-    }
-
-    /**
-     * Обработка события закрытия диалога лицензионного соглашения
-     * @param event
-     */
-    public void onAfterCloseLicenseDlg(SelectEvent event){
-        if (event.getObject() == null) return;
-        onSessionExit();
     }
 
     /**
@@ -394,6 +412,18 @@ public class SessionBean implements Serializable{
      */
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
+    }
+
+    /**
+     * Открытие обозревателя процессов
+     * @return
+     */
+    public String openProcessExpl(){
+        String url = "";
+        if (appBean.getLicence().isCanUses(DictModules.MODULE_PROCESSES)){
+            url = "/view/processes/" + DictDlgFrmName.FRM_PROCESS_EXPL + "?faces-redirect=true";
+        }
+        return url;
     }
 
     /**
@@ -556,17 +586,6 @@ public class SessionBean implements Serializable{
     public void openContersExpl(){        
         openDialogFrm(DictDlgFrmName.FRM_COUNTERS, new HashMap<>());
     }
-
-    /* Закрытие диалога */
-    public String closeDialog(Object param){
-        PrimeFaces.current().dialog().closeDynamic(param);
-        return goToIndex();
-    }
-
-    /* Переход на начальную страницу программы */
-    public String goToIndex(){
-        return "/view/index?faces-redirect=true";
-    } 
 
     /* Инициализация спиcка тем */
     private void temeInit(){
@@ -768,6 +787,14 @@ public class SessionBean implements Serializable{
             }
             case DictObjectName.NUMERATOR_PATTERN:{
                 bean = numeratorPatternBean;
+                break;
+            }
+            case DictObjectName.PROCESS:{
+                bean = processBean;
+                break;
+            }
+            case DictObjectName.PROCESS_TYPE:{
+                bean = processTypeBean;
                 break;
             }
         }

@@ -1,5 +1,6 @@
 package com.maxfill.model.licence;
 
+import com.maxfill.dictionary.DictModules;
 import com.maxfill.utils.DateUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,6 +9,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -31,7 +34,11 @@ public final class Licence implements Serializable{
     
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
 
+    private Set<String> modules = new HashSet<>();
+
     public Licence() {
+        modules.add(DictModules.MODULE_CONCORD);
+        modules.add(DictModules.MODULE_PROCESSES);
     }
 
     /**
@@ -42,6 +49,14 @@ public final class Licence implements Serializable{
         Date currentClearDate = DateUtils.clearDate(new Date());
         Date licenceClearDate = DateUtils.clearDate(dateTerm);
         return !licenceClearDate.after(currentClearDate);         
+    }
+
+    /**
+     * Определяет возможность использования модулей
+     * @return
+     */
+    public Boolean isCanUses(String moduleName){
+        return modules.contains(moduleName);
     }
 
     /* gets & sets */

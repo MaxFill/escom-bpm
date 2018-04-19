@@ -3,10 +3,11 @@ package com.maxfill.escom.beans.system.numPuttern;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictNumerator;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 
 import java.util.ArrayList;
 import javax.ejb.EJB;
@@ -18,7 +19,7 @@ import javax.faces.model.SelectItem;
 /* Сервисный бин "НУМЕРАТОР" */
 @SessionScoped
 @Named
-public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern, NumeratorPattern>{
+public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern>{
     private static final long serialVersionUID = 7793437880614397796L;
 
     @EJB
@@ -46,25 +47,10 @@ public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern, Numera
     public NumeratorPatternFacade getFacade() {
         return numeratorFacade;
     }
-    
-    @Override
-    public BaseTableBean getOwnerBean() {
-        return null;
-    }
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
          return null;
-    }
-
-    @Override
-    public List<NumeratorPattern> getGroups(NumeratorPattern item) {
-        return null;
-    }
-
-    @Override
-    public Class<NumeratorPattern> getOwnerClass() {
-        return null;
     }
 
     @Override

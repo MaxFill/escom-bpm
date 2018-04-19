@@ -4,7 +4,8 @@
                 template="/view/templ/templ-explorer.xhtml">
 
     <!-- Используется как селектор Подразделений -->
-    
+
+    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
     <ui:param name="_rootBean" value="#{companyBean}"/>
     <ui:param name="_detailBean" value="#{staffBean}"/> 
     <ui:param name="_treeBean" value="#{departmentBean}"/> 

@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.docs.docsTypes;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.facade.DocFacade;
@@ -53,7 +53,7 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     }   
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return null;
     }
 
@@ -92,12 +92,12 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return ownerBean;
     }
 
     @Override
-    public BaseTableBean getGroupBean() {
+    public BaseDetailsBean getGroupBean() {
         return ownerBean;
     }
 

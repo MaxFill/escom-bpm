@@ -1,46 +1,43 @@
 package com.maxfill.escom.beans.core;
 
-import com.maxfill.dictionary.DictFilters;
-import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictExplForm;
+import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.facade.UserFacade;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.filters.Filter;
-import com.maxfill.model.favorites.FavoriteObj;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.favorites.FavoriteObj;
+import com.maxfill.model.filters.Filter;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.users.User;
-import java.lang.reflect.InvocationTargetException;
-
-import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.services.print.PrintService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
+
+import javax.ejb.EJB;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import org.apache.commons.beanutils.BeanUtils;
 
-import javax.ejb.EJB;
+import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 
 /**
- * Базовый бин для работы с табличными представлениями объектов
- * @param <T>
- * @param <O>
+ * Базовый бин для работы с табличными представлениями объектов (без владельцев)
+ * @param <T> - класс объекта
  */
-public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> extends LazyLoadBean<T>{
-    private static final long serialVersionUID = -4409411219233607045L;
+public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     @EJB
     protected PrintService printService;
@@ -49,17 +46,13 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
     @EJB
     protected NumeratorService numeratorService;
     @EJB
-    protected AttacheService attacheService;
-    @EJB
     protected UserFacade userFacade;
     @EJB
     protected RightFacade rightFacade;
 
-    public abstract List<O> getGroups(T item);          //возвращает список групп объекта   
     public abstract BaseTableBean getDetailBean();       //возвращает бин подчинённых объектов
-    public abstract BaseTableBean getOwnerBean();        //возвращает бин владельца объекта
 
-    private Metadates metadatesObj;             //объект метаданных
+    private Metadates metadatesObj;                     //объект метаданных
 
     public abstract BaseDictFacade getFacade();
 
@@ -122,9 +115,7 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
 
     /**
      * Проверка возможности создания объекта
-     * для того чтобы узнать, может ли пользователь создать объект нужно его создать, получить для него права и только затем проверить*
-     * @param parent
-     * @param owner
+     * для того чтобы узнать, может ли пользователь создать объект нужно его создать, получить для него права и только затем проверить
      * @param errors Метод вернёт непустой errors если у пользователя нет права на создание
      * @param params
      * @return
@@ -154,41 +145,19 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
         }
 
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
-        String cardName = item.getClass().getSimpleName().toLowerCase();
+        String cardName = getFormName();
         EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
     }  
     
     /* Действия перед созданием объекта */
     protected void prepCreate(T newItem, BaseDict parent, Set<String> errors){
-        boolean isAllowedEditOwner = true;
-        boolean isAllowedEditParent = true;
-        BaseDict owner = newItem.getOwner();
-        if (owner != null) {
-            getOwnerBean().getFacade().actualizeRightItem(owner, getCurrentUser());
-            isAllowedEditOwner = getFacade().isHaveRightAddDetail(owner); //можно ли создавать подчинённые объекты?
-            if (!isAllowedEditOwner){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
-                errors.add(error);
-            }
-        }
-        if (parent != null){
-            getFacade().actualizeRightItem(parent, getCurrentUser());
-            isAllowedEditParent = getFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
-            if (!isAllowedEditParent){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
-                errors.add(error);
-            }
-        }
-        if (isAllowedEditOwner && isAllowedEditParent) {
-            newItem.setParent(parent);
-            getFacade().makeRightItem(newItem, getCurrentUser());
-            if (getFacade().isHaveRightCreate(newItem)) {
-                setSpecAtrForNewItem(newItem);                
-            } else {
-                String objName = EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName());
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
-                errors.add(error);
-            }
+        getFacade().makeRightItem(newItem, getCurrentUser());
+        if (getFacade().isHaveRightCreate(newItem)) {
+            setSpecAtrForNewItem(newItem);
+        } else {
+            String objName = EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName());
+            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+            errors.add(error);
         }
     }
     
@@ -199,7 +168,7 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
         T pasteItem = doCopy(sourceItem);
         preparePasteItem(pasteItem, sourceItem, recipient);
-        prepCreate(pasteItem, pasteItem.getParent(), errors); 
+        prepCreate(pasteItem, null, errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return null;
@@ -207,7 +176,6 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
         changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
-        //getFacade().edit(pasteItem);
         return pasteItem;
     }
     
@@ -245,13 +213,9 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
                     .collect(Collectors.toList());             
     }
     
-    /* Копирование объекта !*/
+    /* Копирование объекта */
     public T doCopy(T sourceItem){
-        BaseDict ownership = sourceItem.getOwner();
-        if (ownership == null){
-            ownership = sourceItem.getParent();
-        }
-        T newItem = createItem(ownership);
+        T newItem = createItem(null);
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -260,13 +224,9 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
         return newItem;
     }
 
-    /* Добавление объекта в группу. Вызов из drag & drop */
-    public boolean addItemToGroup(T item, BaseDict targetGroup){ 
-        return false;
-    }   
     
     /* Изменение имени вставляемого объекта */
-    private void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){          
+    protected void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
         String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
         pasteItem.setName(name);        
     }
@@ -280,22 +240,6 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
         return null;
     }           
     
-    /* Проверка прав перед добавлением объекта в группу  */
-    public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
-        getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        if (!getFacade().isHaveRightAddChild(dropItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        return true;
-    }
 
     protected void checkLockItem(T item, Set<String> errors){
         String itemKey = item.getItemKey();
@@ -306,33 +250,10 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
             errors.add(error);
         }
     }
-        
-    /* РЕДАКТИРОВАНИЕ: Перед перемещением объекта в группу  */
-    public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)){
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        
-        actualizeRightForDropItem(dropItem);
 
-        if (!getFacade().isHaveRightAddChild(dropItem)){
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
-            errors.add(error);
-            return false;
-        }
-
-        return true;
-    }
 
     protected void actualizeRightForDropItem(BaseDict dropItem){
-        if (getOwnerBean() != null){
-            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        } else {
-            getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        }
+        getFacade().actualizeRightItem(dropItem, getCurrentUser());
     }
             
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
@@ -355,21 +276,6 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
             return false;
         }
         return true;        
-    }
-    
-    /* РЕДАКТИРОВАНИЕ: Обработка события перемещения в дереве группы в группу  */
-    public void moveGroupToGroup(BaseDict dropItem, T dragItem) {
-        dragItem.setParent(dropItem);
-        getFacade().edit(dragItem);
-    }
-
-    /* РЕДАКТИРОВАНИЕ: Обработка перемещения объекта в группу при drag & drop*/
-    public void moveItemToGroup(BaseDict dropItem, T dragItem, TreeNode sourceNode) {
-        O ownerDragItem = (O) dragItem.getOwner();    
-        if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
-            dragItem.setOwner(dropItem);
-            getFacade().edit(dragItem);
-        }
     }
 
     /* Обработка перемещения объекта в не актульные  */
@@ -517,8 +423,8 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
     }
 
     /**
-     * Добавление документа в избранное
-     * @param doc
+     * Добавление объекта в избранное
+     * @param item
      */
     public void addInFavorites(BaseDict item){
         sessionBean.addInFavorites(item, getMetadatesObj());
@@ -564,39 +470,16 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
+    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
         List<T> sourceItems = getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
-        if (searcheGroups.isEmpty()){
-            return prepareSetDetails(sourceItems);
-        } else {
-            List<T> searcheItems = new ArrayList<>();
-            for (T item : sourceItems) {
-                boolean include = false;
-
-                List<O> itemGroups = getGroups((T)item);
-                if (itemGroups != null) {
-                    for (O group : searcheGroups) {
-                        if (itemGroups.contains(group)) {
-                            include = true;
-                            break;
-                        }
-                    }
-                } else {
-                    include = true;
-                }
-                if (include){
-                    searcheItems.add(item);
-                }
-            }
-            return prepareSetDetails(searcheItems);
-        }
+        return prepareSetDetails(sourceItems);
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
     
     /* Определяет доступность кнопки "Создать" на панели обозревателя */
     public boolean canCreateItem(TreeNode treeSelectedNode){
-        return getOwnerBean() != null && treeSelectedNode == null;
+        return treeSelectedNode == null;
     }
 
     /**
@@ -612,8 +495,6 @@ public abstract class BaseTableBean<T extends BaseDict, O extends BaseDict> exte
     public void doGetCountUsesItem(T item, Map<String, Integer> rezult) {
         rezult.put("CheckObjectNotSet", 0);
     }
-       
-    public abstract Class<O> getOwnerClass();
 
     @Override
     public String getFormName() {

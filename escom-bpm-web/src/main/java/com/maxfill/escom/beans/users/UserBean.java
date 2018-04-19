@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.users;
 
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
@@ -81,7 +81,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     }
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return null;
     }
 
@@ -139,12 +139,12 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return null;
     }
     
     @Override
-    public BaseTableBean getGroupBean() {
+    public BaseDetailsBean getGroupBean() {
         return groupsBean;
     }
 

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.companies;
 
-import com.maxfill.escom.beans.explorer.ExplorerBean;
+import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
 import com.maxfill.model.BaseDict;
 import org.primefaces.model.TreeNode;
 
@@ -10,7 +10,7 @@ import javax.inject.Named;
 /* Расширение контролёра обозревателя оргструктуры */
 @Named
 @ViewScoped
-public class CompanyExplBean extends ExplorerBean{
+public class CompanyExplBean extends ExplorerTreeBean{
     private static final long serialVersionUID = 4688543715184790711L;
 
     protected void initBean() {

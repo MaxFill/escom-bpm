@@ -8,6 +8,8 @@ import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -30,8 +32,8 @@ public class LicenseBean extends BaseViewBean{
      * Обработка события отказа от лицензионного соглашения
      * @return
      */
-    public String onExitProgram(){
-        return super.onCloseCard();
+    public void onExitProgram(){
+        onCloseCard("exit");
     }
     
     @Override

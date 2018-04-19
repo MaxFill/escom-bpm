@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.companies;
 
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.treelike.CompanyFacade;
 import com.maxfill.escom.beans.BaseTreeBean;
@@ -187,12 +187,12 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     }
 
     @Override
-    public BaseTableBean getOwnerBean() {
+    public BaseDetailsBean getOwnerBean() {
         return null;
     }
 
     @Override
-    public BaseTableBean getDetailBean() {
+    public BaseDetailsBean getDetailBean() {
         return departmentBean;
     }
 

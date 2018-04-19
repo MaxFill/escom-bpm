@@ -187,7 +187,7 @@ public abstract class BaseViewBean implements Serializable{
         return false;
     }
 
-    protected User getCurrentUser(){
+    public User getCurrentUser(){
         return sessionBean.getCurrentUser();
     }    
     

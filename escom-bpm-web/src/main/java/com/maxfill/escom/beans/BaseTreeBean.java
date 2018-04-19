@@ -2,7 +2,7 @@ package com.maxfill.escom.beans;
 
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.BaseDict;
 
 import java.text.MessageFormat;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
-public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseTableBean<T , O >{
+public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T , O >{
     private static final long serialVersionUID = -2983279513793115056L;
     
     /* Установка специфичных атрибутов при создании объекта  */ 
@@ -120,6 +120,6 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     }
 
     @Override
-    public abstract BaseTableBean getDetailBean();
+    public abstract BaseDetailsBean getDetailBean();
 
 }

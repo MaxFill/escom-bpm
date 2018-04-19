@@ -8,7 +8,6 @@
 
     <ui:define name="initBeans">
         <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
-        <ui:param name="_explorerBean" value="#{_explorerBean == null ? explorerBean : _explorerBean}" />
 
         #{_explorerBean.setSelectorHeader(_selectorHeader)}
         #{_explorerBean.setExplorerHeader(_explorerHeader)}

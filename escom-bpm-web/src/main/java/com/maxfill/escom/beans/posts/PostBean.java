@@ -1,23 +1,23 @@
 package com.maxfill.escom.beans.posts;
 
+import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PostFacade;
-import com.maxfill.model.posts.Post;
-import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.posts.Post;
 
-import javax.inject.Named;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.Set;
 
 /* Сервисный бин "Должности" */
 @Named
 @SessionScoped
-public class PostBean extends BaseTableBean<Post, Post>{
+public class PostBean extends BaseTableBean<Post>{
     private static final long serialVersionUID = -257932838724865134L;
     
     @EJB
@@ -30,11 +30,6 @@ public class PostBean extends BaseTableBean<Post, Post>{
         return itemFacade;
     }
     
-    @Override
-    public BaseTableBean getOwnerBean() {
-        return null;
-    }
-
     @Override
     public void doGetCountUsesItem(Post item,  Map<String, Integer> rezult){
         rezult.put("Staffs", staffFacade.findStaffByPost(item).size());
@@ -51,17 +46,7 @@ public class PostBean extends BaseTableBean<Post, Post>{
     }    
 
     @Override
-    public BaseTableBean getDetailBean() {
-        return null;
-    }
-
-    @Override
-    public List<Post> getGroups(Post item) {
-        return null;
-    }
-
-    @Override
-    public Class<Post> getOwnerClass() {
+    public BaseDetailsBean getDetailBean() {
         return null;
     }
 

@@ -23,5 +23,7 @@ public final class DictObjectName {
     public static final String NUMERATOR_PATTERN = "NumeratorPattern";
     public static final String PARTNER_TYPES = "PartnerTypes";
     public static final String FILTERS = "Filter";
+    public static final String PROCESS = "Process";
+    public static final String PROCESS_TYPE = "ProcessType";
    
 }

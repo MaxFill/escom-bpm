@@ -166,7 +166,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocType)) {
             return false;
         }
@@ -179,7 +178,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.datamodel.DocsTypes[ id=" + id + " ]";
+        return "DocsTypes[ id=" + id + " ]";
     }
 
 }

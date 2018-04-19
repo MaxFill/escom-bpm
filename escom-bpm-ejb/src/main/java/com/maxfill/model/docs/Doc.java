@@ -49,7 +49,7 @@ import org.apache.commons.lang.StringUtils;
 @Entity
 @Table(name = "docs")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {            
+public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     private static final long serialVersionUID = 5208895312598249913L;
 
     @TableGenerator(
@@ -61,7 +61,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
 
     @Id
     @Basic(optional = false)
-    @NotNull
     @Column(name = "Id")
     @GeneratedValue(strategy = TABLE, generator = "docIdGen")
     private Integer id;
@@ -230,10 +229,12 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     public void setPartner(Partner partner) {
         this.partner = partner;
     }
- 
+
+    @Override
     public String getRoleJson() {
         return roleJson;
     }
+    @Override
     public void setRoleJson(String roleJson) {
         this.roleJson = roleJson;
     }
@@ -335,7 +336,6 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Doc)) {
             return false;
         }
@@ -348,7 +348,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.datamodel.Docs[ id=" + id + " ]";
+        return "Docs[ id=" + id + " ] [" + getName() + "]";
     }
 
 }

@@ -33,6 +33,8 @@ public final class DictDlgFrmName {
     public static final String FRM_COUNTERS = "counters";
     public static final String FRM_AUTH_LOG = "authlog";
 
+    public static final String FRM_PROCESS_EXPL = "process-explorer";
+
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     public static final String REP_DOC_JOURNAL = "doc-journal";

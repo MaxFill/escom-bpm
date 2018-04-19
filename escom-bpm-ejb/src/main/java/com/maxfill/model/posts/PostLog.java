@@ -43,7 +43,6 @@ public class PostLog extends BaseLogItems<Post>{
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof PostLog)) {
             return false;
         }
@@ -56,7 +55,7 @@ public class PostLog extends BaseLogItems<Post>{
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.partners.PartnersLog[ id=" + id + " ]";
+        return "PostLog[ id=" + id + " ]";
     }
     
 }

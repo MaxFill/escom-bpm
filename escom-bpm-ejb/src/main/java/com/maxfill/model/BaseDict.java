@@ -102,7 +102,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Basic(optional = false)
     @Column(name = "IsInheritsAccessChilds")
     private boolean inheritsAccessChilds = true;   
-   
+
+    /* Состояние объекта */
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false)
@@ -238,8 +239,14 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setItemLogs(List<L> itemsLogs) {
         this.itemLogs = itemsLogs;
-    }    
-    
+    }
+
+    public String getRoleJson() {
+        return null;
+    }
+    public void setRoleJson(String roleJson) {
+    }
+
     /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
     public String getNameEndElipse(){
         return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);
@@ -393,7 +400,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setRoles(Map<String, Set<Integer>> roles) {
         this.roles = roles;
     }
-        
+
     /* установка (перезапись) одиночной роли */
     public void doSetSingleRole(String roleName, User user){
         Set<Integer> usersId = new HashSet<>();
@@ -407,6 +414,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void doSetMultyRole(String roleName, Set<Integer> usersId){
         getRoles().put(roleName, usersId);
     }
+
     /* добавление исполнителя в роль */
     public void doAddInRole(String roleName, Integer userId){
         Set<Integer> usersIds;

@@ -1,16 +1,16 @@
 package com.maxfill.escom.beans;
 
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import java.text.MessageFormat;
 import java.util.Set;
 
 /* Реализация методов для объектов с группами (пользователи, контрагенты и т.п.) */
-public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseTableBean<T, O>{
+public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T, O>{
     private static final long serialVersionUID = -2983279513793115056L;    
 
-    public abstract BaseTableBean getGroupBean();
+    public abstract BaseDetailsBean getGroupBean();
     
     /* Обработка перед добавлением объекта в группу  */
     @Override
