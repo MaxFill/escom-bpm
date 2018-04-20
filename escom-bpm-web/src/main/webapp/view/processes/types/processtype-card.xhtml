@@ -5,20 +5,35 @@
 
     <ui:param name="_bean" value="#{processTypesCardBean}"/>
 
+    <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.CreateTypeProcesses}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+        <p:column headerText="#{bundle.CreateProcesses}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>
+    </ui:define>
+
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Process}">
+        <p:tab id="cardTab" title="#{bundle.ProcessType}">
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
                          columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}"/>
-                <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12 col-padding"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
-                             disabled="#{processCardBean.isReadOnly()}"
+                             disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
             </p:panelGrid>
         </p:tab>
-
     </ui:define>
+
+    <ui:define name="childs_rights">
+        <p:tab title="#{bundle.RightsProcesses}">
+            <ui:include src="/view/common/dict-rights-childs.xhtml"/>
+        </p:tab>
+    </ui:define>
+
 </ui:composition>

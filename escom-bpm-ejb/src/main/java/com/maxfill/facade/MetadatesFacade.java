@@ -3,6 +3,7 @@ package com.maxfill.facade;
 import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.Metadates_;
+import com.maxfill.model.states.State;
 
 import java.util.List;
 import javax.ejb.Stateless;

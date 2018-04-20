@@ -1,15 +1,61 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/view/templ/templ-card.xhtml">
 
     <ui:param name="_bean" value="#{processCardBean}"/>
 
+    <ui:define name="customStyleCSS">
+        <style type="text/css">
+            .ui-diagram-element {
+                border:0.1em dotted #E5E4E2;
+                border-radius: 4px;
+                background-color: #EFEEEC;
+                width:8em;
+                height:8em;
+                text-align: center;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+            }
+
+            .ui-diagram-element:hover {
+                background-color: #C7C6C4;
+            }
+
+            .ui-diagram-success {
+                background-color: #9CB071;
+                color: #ffffff;
+                border-color: #7ab02c;
+            }
+
+            .ui-diagram-fail {
+                background-color: #C34A2C;
+                color: #ffffff;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="customJavaScript">
+        <script type="text/javascript">
+            $(document).on('click','.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    elementClicked([ {
+                        name : 'elementId',
+                        value : info.target.id
+                    } ]);
+                });
+        </script>
+    </ui:define>
+
+    <ui:define name="card_scripts">
+        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
+    </ui:define>
+
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Process}">
-            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
-                         columnClasses="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.Name}" />
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
                     <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                                  styleClass="ui-grid-col-12 col-padding"
                                  onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -20,8 +66,60 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.SchemeConcord}">
-        </p:tab>
+        <p:tab title="#{bundle.Scheme}">
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+                <p:toolbar styleClass="ui-grid-col-12" >
+                    <f:facet name="left">
+                        <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
+                            <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                                <ui:param name="_itemValue" value="#{processCardBean.selectedStaff}"/>
+                                <ui:param name="_required" value="#{false}" />
+                                <ui:param name="_disabled" value="#{processCardBean.isReadOnly()}"/>
+                                <ui:param name="_converter" value="staffConvertor" />
+                                <ui:param name="_itemPanel" value="staffPanel"/>
+                                <ui:param name="_titleItem" value="#{bundle.Employee}"/>
+                                <ui:param name="_selectorBean" value="#{staffBean}"/>
+                                <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                                <ui:param name="_actionClear" value="setSelectedStaff"/>
+                                <ui:param name="_actionSelect" value="onStaffSelected"/>
+                                <ui:param name="_rendered" value="#{true}"/>
+                                <ui:param name="_update" value=""/>
+                            </ui:include>
+                        </h:panelGroup>
 
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+
+                        <p:commandButton title="Load" icon="ui-icon-folder-open"
+                                         actionListener="#{processCardBean.loadModel()}"
+                                         update="diagramm">
+                        </p:commandButton>
+                        <p:commandButton title="Clear" icon="ui-icon-closethick"
+                                         actionListener="#{processCardBean.clearModel()}"
+                                         update="diagramm">
+                        </p:commandButton>
+                        <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
+                    </f:facet>
+
+                    <f:facet name="right">
+                        <p:menuButton value="Options">
+                            <p:menuitem value="Save" actionListener="#{processCardBean.saveModel()}" icon="ui-icon-disk" />
+                            <p:menuitem value="Reload" actionListener="#{processCardBean.reloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
+                            <p:menuitem value="Clear" actionListener="#{processCardBean.clearModel()}" update="diagramm" icon="ui-icon-close" />
+                        </p:menuButton>
+                    </f:facet>
+                </p:toolbar>
+
+                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el">
+                    <f:facet name="element">
+                        <h:outputText value="#{el.name}" style="display:block;margin-top:1em;"/>
+                    </f:facet>
+                    <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
+                    <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />
+                    <p:ajax event="connectionChange" listener="#{processCardBean.onConnectionChange}" />
+                </p:diagram>
+            </p:panelGrid>
+        </p:tab>
     </ui:define>
 </ui:composition>

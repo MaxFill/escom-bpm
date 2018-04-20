@@ -19,11 +19,12 @@
                                 itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}">
                         <f:facet name="sourceCaption">#{bundle.AvailableStates}</f:facet>
                         <f:facet name="targetCaption">#{bundle.ObjectStates}</f:facet>
+                        <p:ajax event="transfer" listener="#{metadatesBean.onTransfer}" update="objectStates" />
                     </p:pickList>
 
-                    <p:outputLabel value="#{bundle.StartState}"/>
-                    <p:selectOneMenu value="#{metadatesBean.startState}" converter="stateConvertor" >
-                        <f:selectItems value="#{metadatesBean.selectedObject.statesList}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+                    <p:outputLabel value="#{bundle.StartState}" indicateRequired="true"/>
+                    <p:selectOneMenu id="objectStates" value="#{metadatesBean.startState}" converter="stateConvertor"  >
+                        <f:selectItems value="#{metadatesBean.objectStates}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
                     </p:selectOneMenu>
 
                     <p:commandButton value="#{bundle.SaveChange}"

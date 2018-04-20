@@ -5,6 +5,8 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -84,7 +86,28 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     public void setState(StaffStates state) {
         this.state = state;
     }
-    
+
+    /**
+     * Формирует полное наименование штатной единицы: Должность ФИО Подразделение Компания
+     * @return
+     */
+    public String getFullName(){
+        StringBuilder sb = new StringBuilder();
+        if (post != null && StringUtils.isNotBlank(post.getName())){
+            sb.append(post.getName()).append(" ");
+        }
+        if (employee != null && StringUtils.isNotBlank(employee.getName())){
+            sb.append(employee.getShortFIO()).append(" ");
+        }
+        if (owner != null && StringUtils.isNotBlank(owner.getName())){
+            sb.append(owner.getFullName()).append(" ").append(owner.getOwner().getName());
+        } else
+            if (company != null){
+                sb.append(company.getName());
+            }
+        return sb.toString();
+    }
+
     /* Формирует наименование Компания + Подразделение   */
     public String getOrgUnit() {
         StringBuilder orgUnit = new StringBuilder();
@@ -184,7 +207,9 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     public void setItemLogs(List<StaffLog> itemLogs) {
         this.itemLogs = itemLogs;
     }
-    
+
+    /* *** *** */
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -194,7 +219,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Staff)) {
             return false;
         }
@@ -207,7 +231,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String toString() {
-        return "Staff[ id=" + id + " ]";
+        return "Staff[ id=" + id + " ] [" + getName() + "]";
     }
 
 }

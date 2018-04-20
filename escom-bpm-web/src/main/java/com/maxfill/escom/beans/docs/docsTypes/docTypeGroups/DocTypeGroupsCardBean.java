@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 import com.maxfill.facade.treelike.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.BaseCardTree;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.model.states.State;
 import java.util.List;

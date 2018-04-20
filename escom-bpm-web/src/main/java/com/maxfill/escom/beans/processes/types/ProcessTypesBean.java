@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes.types;
 
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.facade.ProcessTypesFacade;

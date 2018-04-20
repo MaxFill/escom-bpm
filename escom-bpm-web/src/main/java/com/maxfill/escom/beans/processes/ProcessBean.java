@@ -8,6 +8,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;
+import org.primefaces.model.TreeNode;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -48,5 +49,10 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     @Override
     public Class getOwnerClass() {
         return ProcessType.class;
+    }
+
+    @Override
+    public boolean canCreateItem(TreeNode treeSelectedNode){
+        return treeSelectedNode == null || ((BaseDict)treeSelectedNode.getData()).getId() == 0;
     }
 }

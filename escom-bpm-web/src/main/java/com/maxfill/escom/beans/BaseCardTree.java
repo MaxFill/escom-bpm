@@ -2,6 +2,7 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
@@ -81,7 +82,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
      * Возвращает список состояний для подчинённых объектов
      * @return
      */
-    protected abstract List<State> getStateForChild();
+    public abstract List<State> getStateForChild();
     
     /* Удаление права доступа к дочерним объектам из списка  */
     public void onDeleteRightChild(Right right) {

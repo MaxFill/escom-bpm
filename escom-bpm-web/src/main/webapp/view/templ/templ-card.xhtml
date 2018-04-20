@@ -36,6 +36,9 @@
             var itemChange = 0;
         </script>
 
+        <ui:insert name="customStyleCSS"/>
+        <ui:insert name="customJavaScript"/>
+
         <style>
             .ui-tabs-left>.ui-tabs-panels{
                 float:left !important;
@@ -52,7 +55,7 @@
         <pe:layout fullPage="true" options="#{_bean.cardLayoutOptions}">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/> 
 
-            <pe:layoutPane position="center" resizable="true">
+            <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"

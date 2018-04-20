@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
@@ -49,7 +49,6 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -1193,7 +1192,7 @@ public class ExplorerBean implements Serializable {
         makeJurnalHeader(EscomMsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomMsgUtils.getBandleLabel("SearcheResult"));
         navigator = null;
     }
-    
+
     /* Выполняет поиск в дереве объектов */
     public void onSearcheInTree(){
         if (StringUtils.isNotBlank(treeSearcheKey)){

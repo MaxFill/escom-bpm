@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.facade.treelike.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;

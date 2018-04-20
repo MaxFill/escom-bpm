@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.facade.treelike.CompanyFacade;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;

@@ -113,7 +113,6 @@ private static final long serialVersionUID = -2116686297842684933L;
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof DocTypeGroups)) {
             return false;
         }
@@ -126,7 +125,7 @@ private static final long serialVersionUID = -2116686297842684933L;
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.docs.docsTypes.docTypeGroups.DocTypeGroups[ id=" + id + " ]";
+        return "DocTypeGroups[ id=" + id + " ] ["+ getName() + "]";
     }
     
 }

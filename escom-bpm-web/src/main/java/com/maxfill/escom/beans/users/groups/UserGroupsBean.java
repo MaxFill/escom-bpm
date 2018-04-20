@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.users.groups;
 
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.treelike.UserGroupsFacade;

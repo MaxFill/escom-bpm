@@ -576,11 +576,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
     public Integer getAccessMask(T item, Rights sourcesRight, User user) {
-        State state = item.getState().getCurrentState();
+        State currentState = item.getState().getCurrentState();
         Integer userId = user.getId();
         Integer accessMask = 0;
         for (Right right : sourcesRight.getRights()) {  //распарсиваем права
-            if (right.getState().equals(state)) {
+            if (right.getState().equals(currentState)) {
                 switch (right.getObjType()) {
                     case DictRights.TYPE_USER: {    //права указаны для пользователя
                         if (right.getObjId().equals(userId)) { //это текущий пользователь, добавляем ему права

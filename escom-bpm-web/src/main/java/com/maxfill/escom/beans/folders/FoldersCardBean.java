@@ -4,7 +4,7 @@ import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
-import com.maxfill.escom.beans.BaseTreeBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
@@ -17,7 +17,7 @@ import java.util.List;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 
-/* Карточка Папки */
+/* Контролер формы "Папка" */
 
 @Named
 @ViewScoped

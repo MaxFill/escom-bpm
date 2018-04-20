@@ -145,7 +145,9 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     public void setDetailItems(List<Staff> detailItems) {
         this.detailItems = detailItems;
     }
-    
+
+    /* *** *** */
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -155,7 +157,6 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Department)) {
             return false;
         }

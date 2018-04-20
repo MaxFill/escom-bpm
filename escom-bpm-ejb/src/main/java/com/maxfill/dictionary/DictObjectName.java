@@ -25,5 +25,6 @@ public final class DictObjectName {
     public static final String FILTERS = "Filter";
     public static final String PROCESS = "Process";
     public static final String PROCESS_TYPE = "ProcessType";
+    public static final String TASK = "Task";
    
 }

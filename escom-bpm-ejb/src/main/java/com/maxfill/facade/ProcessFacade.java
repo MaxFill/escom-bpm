@@ -3,13 +3,16 @@ package com.maxfill.facade;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.base.BaseDictWithRolesFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.ProcessLog;
 import com.maxfill.model.process.ProcessStates;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,6 +23,9 @@ import java.util.Set;
  */
 @Stateless
 public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType, ProcessLog, ProcessStates>{
+
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
 
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
@@ -51,4 +57,22 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         process.setName(processType.getName());
     }
 
+    /**
+     * Получение прав доступа к процессу
+     */
+    @Override
+    public Rights getRightItem(BaseDict item, User user) {
+        if (item == null) return null;
+
+        if (!item.isInherits()) {
+            return getActualRightItem(item, user);
+        }
+        if (item.getOwner() != null) {
+            Rights childRight = processTypesFacade.getRightForChild(item.getOwner());
+            if (childRight != null) {
+                return childRight;
+            }
+        }
+        return getDefaultRights(item);
+    }
 }

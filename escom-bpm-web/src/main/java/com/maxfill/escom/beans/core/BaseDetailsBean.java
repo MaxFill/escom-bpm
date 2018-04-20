@@ -52,7 +52,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         }
         if (isAllowedEditOwner && isAllowedEditParent) {
             newItem.setParent(parent);
-            prepCreate(newItem, parent, errors);
+            super.prepCreate(newItem, parent, errors);
         }
     }
 
@@ -187,7 +187,10 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         }
     }
 
-    /* Определяет доступность кнопки "Создать" на панели обозревателя */
+    /**
+    * Определяет доступность кнопки "Создать" на панели обозревателя
+    * Если метод возвращает true то кнопка не доступна!
+    */
     @Override
     public boolean canCreateItem(TreeNode treeSelectedNode){
         return getOwnerBean() != null && treeSelectedNode == null;

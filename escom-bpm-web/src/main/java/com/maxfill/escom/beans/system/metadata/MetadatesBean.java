@@ -18,6 +18,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -41,6 +42,7 @@ public class MetadatesBean implements Serializable{
     private List<Metadates> allItems;
 
     private List<Right> rights = null;
+    private List<State> objectStates;
     private LayoutOptions layoutOptions;
 
     private State stateAdd;
@@ -155,13 +157,27 @@ public class MetadatesBean implements Serializable{
     }
 
     /**
+     * Обработка события изменения списка состояний объекта в pickList
+     */
+    public void onTransfer(TransferEvent event){
+        List<State> newStates = states.getTarget();
+        objectStates = newStates;
+    }
+
+    /**
      * Сохранение изменений в объекте
      */
     public void onSaveChange(){
         List<State> oldStates = selectedObject.getStatesList();
         List<State> newStates = states.getTarget();
-        oldStates.removeAll(newStates);
+        oldStates.removeAll(newStates);     //определяем, какие состояния нужно удалить
         Set<String> errors = new HashSet<>();
+        if (!newStates.contains(startState)){
+            String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("StartStateNotPresentinListsStates"), new Object[]{startState.getName()});
+            errors.add(message);
+        } else {
+            selectedObject.setStateForNewObj(startState);
+        }
         if (!oldStates.isEmpty()){
             oldStates.stream().forEach(state->checkStateBeforeDelete(state, errors));
         }
@@ -226,6 +242,8 @@ public class MetadatesBean implements Serializable{
         selectedObject = ((Metadates) event.getObject());
         states = null;
         rights = null;
+        objectStates =  selectedObject.getStatesList();
+        startState = selectedObject.getStateForNewObj();
     } 
       
     public String getBundleName(Metadates metadate){
@@ -234,6 +252,13 @@ public class MetadatesBean implements Serializable{
     }
 
     /* *** GETS & SETS *** */
+
+    public List <State> getObjectStates() {
+        return objectStates;
+    }
+    public void setObjectStates(List <State> objectStates) {
+        this.objectStates = objectStates;
+    }
 
     public DualListModel<State> getStates() {
         if (selectedObject != null && states == null){
@@ -260,9 +285,6 @@ public class MetadatesBean implements Serializable{
     }
 
     public State getStartState() {
-        if (selectedObject != null && startState == null) {
-            startState = selectedObject.getStateForNewObj();
-        }
         return startState;
     }
     public void setStartState(State startState) {
