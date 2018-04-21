@@ -6,6 +6,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
+import java.util.Iterator;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.diagram.ConnectEvent;
@@ -35,12 +36,8 @@ import java.util.logging.Logger;
 @Named
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process>{
-    private static final Logger LOGGER = Logger.getLogger(ProcessCardBean.class.getName());
-
     @EJB
     private ProcessFacade processFacade;
-
-    private Staff selectedStaff;
 
     private final DefaultDiagramModel model = new DefaultDiagramModel();
 
@@ -63,32 +60,69 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
 
     /**
-     * Добавляет элемент в модель
+     * Добавляет элемент "Поручение" в модель
+     * @param executor
+     * @param x
+     * @param y
      */
-    public void addTaskElement(){
-        Element element = new Element(new Task("Task", selectedStaff, getEditedItem()), "10em", "6em");
+    private void addTaskElement(Staff executor, int x, int y){
+        Element element = new Element(new Task("Task", executor, getEditedItem()), x + "em", y + "em");
         EndPoint endPointCA = createRectangleEndPoint(EndPointAnchor.LEFT);
         EndPoint endPointSA = createDotEndPoint(EndPointAnchor.RIGHT);
         endPointCA.setSource(true);
         endPointSA.setTarget(true);
         element.addEndPoint(endPointSA);
         element.addEndPoint(endPointCA);
-        model.addElement(element);
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
+        model.addElement(element);        
     }
 
+    /**
+     * Обоработка события удаления элемента со схемы
+     */
+    public void onDeleteElement(Element element){
+        model.removeElement(element);
+        modelRefresh();
+    }
+    
+    /**
+     * Обоработка события открытия карточки элемента
+     * @param element
+     */
+    public void onOpenElement(Element element){
+        
+    }
+    
+    /**
+     * Обработка события после закрытия карточки поручения
+     */
+    public void afterTaskEdit(){
+        modelRefresh();
+    }
+    
+    /**
+     * Создание точки приёмника для поручения
+     * @param anchor
+     * @return 
+     */
     private EndPoint createDotEndPoint(EndPointAnchor anchor) {
         DotEndPoint endPoint = new DotEndPoint(anchor);
         endPoint.setScope("network");
         endPoint.setTarget(true);
+        endPoint.setMaxConnections(1);
         endPoint.setStyle("{fillStyle:'#98AFC7'}");
         endPoint.setHoverStyle("{fillStyle:'#5C738B'}");
         return endPoint;
     }
 
+    /**
+     * Создание точки источника для поручения
+     * @param anchor
+     * @return 
+     */
     private EndPoint createRectangleEndPoint(EndPointAnchor anchor) {
         RectangleEndPoint endPoint = new RectangleEndPoint(anchor);
         endPoint.setScope("network");
+        endPoint.setMaxConnections(1);
         endPoint.setSource(true);
         endPoint.setStyle("{fillStyle:'#98AFC7'}");
         endPoint.setHoverStyle("{fillStyle:'#5C738B'}");
@@ -99,32 +133,31 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Загрузка модели из шаблона
      */
     public void loadModel(){
-
+        //ToDo !
+        modelRefresh();
     }
 
     /**
      * Перезагрузка модели из ранее выбранного шаблона
      */
     public void reloadModel(){
-
+        //ToDo !
+        modelRefresh();
     }
 
     /**
      * Очистка модели
      */
     public void clearModel(){
-
+        model.clear();
+        modelRefresh();
     }
 
     /**
      * Сохранение модели в шаблон
      */
     public void saveModel(){
-
-    }
-
-    public void onElementClicked(){
-        LOGGER.info(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("elementId"));
+        //ToDo !
     }
 
     public void onConnect(ConnectEvent event){
@@ -137,33 +170,31 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     }
 
-
     /**
-     * Обработка события выбора штатной единицы
+     * Обработка события добавления в модель штатных единиц - исполнителей 
      * @param event
      */
-    public void onStaffSelected(SelectEvent event){
-        List<Staff> items = (List<Staff>) event.getObject();
-        if (items.isEmpty()) return;
-        selectedStaff = items.get(0);
-        onItemChange();
-        addTaskElement();
-    }
-    public void onStaffSelected(ValueChangeEvent event){
-        selectedStaff = (Staff) event.getNewValue();
-        onItemChange();
-        addTaskElement();
+    public void onStaffsSelected(SelectEvent event){
+        List<Staff> executors = (List<Staff>) event.getObject();        
+        if (executors.isEmpty()) return;
+        int x = 8;
+        int y = 6;
+        for (Staff executor : executors) {
+            addTaskElement(executor, x++, y++);        
+        }
+        onItemChange(); 
+        modelRefresh();
     }
 
+    /**
+     * Перерисовка модели на странице формы
+     */
+    private void modelRefresh(){
+        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
+    }
+    
     /* GETS & SETS */
-
-    public Staff getSelectedStaff() {
-        return selectedStaff;
-    }
-    public void setSelectedStaff(Staff selectedStaff) {
-        this.selectedStaff = selectedStaff;
-    }
-
+    
     public DiagramModel getModel() {
         return model;
     }

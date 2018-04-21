@@ -36,22 +36,6 @@
         </style>
     </ui:define>
 
-    <ui:define name="customJavaScript">
-        <script type="text/javascript">
-            $(document).on('click','.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    elementClicked([ {
-                        name : 'elementId',
-                        value : info.target.id
-                    } ]);
-                });
-        </script>
-    </ui:define>
-
-    <ui:define name="card_scripts">
-        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
-    </ui:define>
-
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Process}">
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
@@ -69,23 +53,14 @@
         <p:tab title="#{bundle.Scheme}">
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:toolbar styleClass="ui-grid-col-12" >
-                    <f:facet name="left">
-                        <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
-                            <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                                <ui:param name="_itemValue" value="#{processCardBean.selectedStaff}"/>
-                                <ui:param name="_required" value="#{false}" />
-                                <ui:param name="_disabled" value="#{processCardBean.isReadOnly()}"/>
-                                <ui:param name="_converter" value="staffConvertor" />
-                                <ui:param name="_itemPanel" value="staffPanel"/>
-                                <ui:param name="_titleItem" value="#{bundle.Employee}"/>
-                                <ui:param name="_selectorBean" value="#{staffBean}"/>
-                                <ui:param name="_items" value="#{staffBean.findAll()}"/>
-                                <ui:param name="_actionClear" value="setSelectedStaff"/>
-                                <ui:param name="_actionSelect" value="onStaffSelected"/>
-                                <ui:param name="_rendered" value="#{true}"/>
-                                <ui:param name="_update" value=""/>
-                            </ui:include>
-                        </h:panelGroup>
+                    <f:facet name="left">                        
+                        <p:commandButton  title="#{bundle.AddTask}" icon="ui-icon-plus"
+                                        disabled="#{processCardBean.isReadOnly()}"
+                                        onstart="PF('statusDialog').show()"
+                                        oncomplete="PF('statusDialog').hide();"
+                                        actionListener="#{staffBean.onManySelectItem()}" >
+                           <p:ajax event="dialogReturn" listener="#{processCardBean.onStaffsSelected}" />
+                        </p:commandButton>
 
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -113,7 +88,11 @@
 
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el">
                     <f:facet name="element">
-                        <h:outputText value="#{el.name}" style="display:block;margin-top:1em;"/>
+                        <h:outputText value="#{el.staff != null ? el.staff.name : bundle.NotAssigned}" style="display:block;margin-top:1em;"/>
+                        <p:splitButton value="#{bundle.Open}" actionListener="#{processCardBean.onOpenElement(el)}" icon="ui-icon-extlink">                            
+                            <p:menuitem value="#{bundle.Delete}" actionListener="#{processCardBean.onDeleteElement(el)}" icon="ui-icon-close" />
+                            <p:ajax event="dialogReturn" listener="#{processCardBean.afterTaskEdit}" />                            
+                        </p:splitButton>                        
                     </f:facet>
                     <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />

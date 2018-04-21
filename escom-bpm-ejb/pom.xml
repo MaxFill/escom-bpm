@@ -203,7 +203,8 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
-            <version>RELEASE</version>
+            <version>3.5.0</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 

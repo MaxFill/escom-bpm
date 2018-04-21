@@ -32,7 +32,7 @@
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
-                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
+                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" 
                                     orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 

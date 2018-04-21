@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{taskCardBean}"/>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Task}">
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" />
+                <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{taskCardBean.executor}"/>
+                        <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
+                        <ui:param name="_disabled" value="#{taskCardBean.isReadOnly()}"/>
+                        <ui:param name="_converter" value="staffConvertor" />
+                        <ui:param name="_itemPanel" value="staffPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.Executor}"/>
+                        <ui:param name="_selectorBean" value="#{staffBean}"/>
+                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setExecutor"/>
+                        <ui:param name="_actionSelect" value="onExecutorChanged"/>
+                        <ui:param name="_rendered" value="#{true}"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+                </h:panelGroup>
+                
+                <p:outputLabel value="#{bundle.Task}" indicateRequired="true" />
+                <p:inputText id="nameItem" value="#{taskCardBean.editedItem.name}"
+                             styleClass="ui-grid-col-12 col-padding"
+                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onchange="return itemChange = 1;"
+                             disabled="#{taskCardBean.isReadOnly()}"
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+            </p:panelGrid>
+        </p:tab>
+       
+    </ui:define>
+</ui:composition>

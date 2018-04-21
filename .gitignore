@@ -28,3 +28,6 @@
 Будет удалено escom-bpm-web/escom-bpm-web.iml
 Будет удалено escom-bpm-web/lib/
 /.idea/artifacts/escom_bpm_liquibase_war_exploded.xml
+/escom-bpm-resource/target/
+/escom-bpm-ejb/target/
+/escom-bpm-ear/target/

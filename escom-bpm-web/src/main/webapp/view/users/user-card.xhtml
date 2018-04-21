@@ -170,8 +170,7 @@
             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-3, ui-grid-col-12" >                               
                 <p:outputLabel value="#{bundle.EmailSign}" />
                 <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
-                              disabled="#{_bean.isReadOnly()}" height="200"
-                              onchange="return itemChange = 1;">
+                              height="200" readonly="#{_bean.isReadOnly()}">
                     <f:facet name="toolbar">
                          <span class="ql-formats">
                             <button class="ql-bold"></button>
