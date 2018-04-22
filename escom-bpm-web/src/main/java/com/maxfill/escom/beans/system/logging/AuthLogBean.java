@@ -1,13 +1,11 @@
 package com.maxfill.escom.beans.system.logging;
 
-import com.lowagie.text.BadElementException;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.FontFactory;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AuthLogFacade;
-import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
 import com.maxfill.utils.DateUtils;
@@ -141,7 +139,6 @@ public class AuthLogBean extends LazyLoadBean{
      * Установка шрифта для экспорта журнала в PDF
      * @param document
      * @throws IOException
-     * @throws BadElementException
      * @throws DocumentException
      */
     public void preProcessPDF(Object document) throws IOException, DocumentException {

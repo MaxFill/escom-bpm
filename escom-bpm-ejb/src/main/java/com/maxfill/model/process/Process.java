@@ -7,6 +7,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
+import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
 import org.apache.commons.lang.StringUtils;
 
@@ -67,6 +68,12 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private ProcessStates state;
 
+    /* Схема процесса */
+    @XmlTransient
+    @JoinColumn(name = "Scheme", referencedColumnName = "Id")
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    private Scheme scheme;
+    
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcessLog> itemLogs = new ArrayList<>();
@@ -115,6 +122,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.doc = doc;
     }
 
+    public Scheme getScheme() {
+        return scheme;
+    }
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
+    }
+    
     @Override
     public List<Process> getDetailItems() {
         return null;

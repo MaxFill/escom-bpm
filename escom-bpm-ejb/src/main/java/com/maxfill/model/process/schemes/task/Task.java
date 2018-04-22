@@ -1,9 +1,9 @@
-package com.maxfill.model.task;
+package com.maxfill.model.process.schemes.task;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.process.Process;
+import com.maxfill.model.process.schemes.Scheme;
+import com.maxfill.model.process.schemes.SchemeElement;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.users.User;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -19,7 +19,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "tasks")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates>{
+public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements SchemeElement{
     private static final long serialVersionUID = 2862379210656085637L;
 
     @TableGenerator(
@@ -40,10 +40,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates>{
     @ManyToOne(optional = false)
     private Staff owner;
 
-    /* Ссылка на процесс */
-    @JoinColumn(name = "Process", referencedColumnName = "Id")
+    /* Ссылка на схему процесса */
+    @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Process process;
+    private Scheme scheme;
 
     /* Дата выдачи (назначения) поручения */
     @Column(name = "BeginDate")
@@ -75,9 +75,9 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates>{
 
     public Task() {}
 
-    public Task(String taskName, Staff owner, Process process) {
+    public Task(String taskName, Staff owner, Scheme scheme) {
         this.owner = owner;
-        this.process = process;
+        this.scheme = scheme;
         setName(taskName);
     }
 
@@ -101,11 +101,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates>{
         this.owner = owner;
     }
 
-    public Process getProcess() {
-        return process;
+    public Scheme getScheme() {
+        return scheme;
     }
-    public void setProcess(Process process) {
-        this.process = process;
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
     }
 
     public Date getBeginDate() {

@@ -2,9 +2,9 @@ package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.base.BaseDictFacade;
-import com.maxfill.model.task.Task;
-import com.maxfill.model.task.TaskLog;
-import com.maxfill.model.task.TaskStates;
+import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.process.schemes.task.TaskLog;
+import com.maxfill.model.process.schemes.task.TaskStates;
 import com.maxfill.model.users.User;
 
 import javax.ejb.Stateless;

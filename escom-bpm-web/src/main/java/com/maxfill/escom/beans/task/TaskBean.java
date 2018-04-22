@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
-import com.maxfill.model.task.Task;
+import com.maxfill.model.process.schemes.task.Task;
 import com.maxfill.model.users.User;
 
 import javax.ejb.EJB;

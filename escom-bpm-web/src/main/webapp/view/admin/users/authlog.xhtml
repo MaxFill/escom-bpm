@@ -19,8 +19,8 @@
             <h:panelGroup>
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
-                    <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" encoding="utf-8"
-                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                    <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" encoding="utf-8"
+                                    pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 
                 <h:commandLink>
@@ -32,14 +32,14 @@
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
-                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial" 
-                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" 
+                                    pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
-                    <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" fontName="Arial"
-                                    orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
+                    <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" 
+                                    pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
             </h:panelGroup>
 

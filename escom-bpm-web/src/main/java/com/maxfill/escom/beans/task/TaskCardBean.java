@@ -4,7 +4,7 @@ import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.task.Task;
+import com.maxfill.model.process.schemes.task.Task;
 import java.util.List;
 
 import javax.ejb.EJB;

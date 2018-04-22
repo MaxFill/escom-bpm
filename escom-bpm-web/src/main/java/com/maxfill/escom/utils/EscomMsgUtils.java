@@ -53,6 +53,7 @@ public final class EscomMsgUtils{
 
     /**
      * Отображение 10-ти сообщений об ошибке
+     * @param errors
      */
     public static void showErrorsMsg(Set<String> errors) {
         errors.stream().limit(10).forEach(error->errorMessage(error));

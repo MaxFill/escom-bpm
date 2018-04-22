@@ -2,10 +2,14 @@ package com.maxfill.model.process.schemes;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.ProcessLog;
+import com.maxfill.model.process.schemes.task.Task;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /* Класс сущности "Схемы процессов" */
 @Entity
@@ -25,6 +29,10 @@ public class Scheme implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Process process;
 
+    /* Список поручений, входящих в схему процесса */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
+    private List<Task> tasks = new ArrayList<>();
+        
     /* GETS & SETS */
 
     @Override
@@ -43,6 +51,13 @@ public class Scheme implements Serializable, Dict{
         this.process = process;
     }
 
+    public List<Task> getTasks() {
+        return tasks;
+    }
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+    
     /* *** *** */
 
     @Override
