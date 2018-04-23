@@ -23,17 +23,74 @@
                 background-color: #C7C6C4;
             }
 
-            .ui-diagram-success {
-                background-color: #9CB071;
+            .ui-diagram-logic-element {
+                width:3em;
+                height:3em;
+                line-height:5em;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+                border-radius: 5em;
+                border: 1px solid #404a4e;
+                background-color: #099b05;
                 color: #ffffff;
-                border-color: #7ab02c;
+                font-weight: bold;
             }
 
-            .ui-diagram-fail {
-                background-color: #C34A2C;
+            .ui-diagram-success-state {
+                width:10em;
+                height:6em;
+                background-color: #02b044;
                 color: #ffffff;
+                border-color: #7ab02c;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
             }
+
+            .ui-diagram-fail-state {
+                width:10em;
+                height:6em;
+                background-color: #C33730;
+                color: #ffffff;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+            }
+
+            .d16 {
+                margin: 20px 0; width: 100px; height: 50px;
+                line-height:5em;
+                background: #F1009A;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+                position: relative;}
+            .d16:before, .d16:after {
+                content: "";
+                width: 0; height: 0;
+                position: absolute; left: 0;
+                border-left: 50px solid transparent;
+                border-right: 50px solid transparent;}
+            .d16:before {
+                top: -25px;
+                border-bottom: 25px solid #F1009A;}
+            .d16:after {
+                bottom: -25px;
+                border-top: 25px solid #F1009A;}
+            .d16:hover {
+                background-color: #C7C6C4;
+            }
+
         </style>
+    </ui:define>
+
+    <ui:define name="card_scripts">
+        <script type="text/javascript">
+            $(document).on('click', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    elementClicked([
+                        {name : 'elementId',value : info.target.id},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+                });
+        </script>
+        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
     </ui:define>
 
     <ui:define name="page_body">
@@ -50,10 +107,10 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.Scheme}">
+        <p:tab title="#{bundle.Scheme}" styleClass="ui-grid-col-12" >
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:toolbar styleClass="ui-grid-col-12" >
-                    <f:facet name="left">                        
+                    <f:facet name="left">
                         <p:commandButton  title="#{bundle.AddTask}" icon="ui-icon-plus"
                                         disabled="#{processCardBean.isReadOnly()}"
                                         onstart="PF('statusDialog').show()"
@@ -61,7 +118,22 @@
                                         actionListener="#{staffBean.onManySelectItem()}" >
                            <p:ajax event="dialogReturn" listener="#{processCardBean.onStaffsSelected}" />
                         </p:commandButton>
-
+                        <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddLogicElement('and')}" >
+                        </p:commandButton>
+                        <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddLogicElement('or')}" >
+                        </p:commandButton>
+                        <p:commandButton  value="If" title="#{bundle.AddCondition}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddConditionElement()}" >
+                        </p:commandButton>
+                        <p:commandButton  value="State" title="#{bundle.AddState}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddStateElement('success')}" >
+                        </p:commandButton>
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
                         </span>
@@ -88,11 +160,15 @@
 
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el">
                     <f:facet name="element">
-                        <h:outputText value="#{el.staff != null ? el.staff.name : bundle.NotAssigned}" style="display:block;margin-top:1em;"/>
-                        <p:splitButton value="#{bundle.Open}" actionListener="#{processCardBean.onOpenElement(el)}" icon="ui-icon-extlink">                            
-                            <p:menuitem value="#{bundle.Delete}" actionListener="#{processCardBean.onDeleteElement(el)}" icon="ui-icon-close" />
-                            <p:ajax event="dialogReturn" listener="#{processCardBean.afterTaskEdit}" />                            
-                        </p:splitButton>                        
+                        <h:panelGroup rendered="#{processCardBean.canShowElFacet(el) }">
+                            #{el}
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{processCardBean.canShowTaskFacet(el) }">
+                            <h:outputText value="#{el.staff != null ? el.staff.name : bundle.NotAssigned}" style="display:block;margin-top:1em;"/>
+                            <p:splitButton value="#{bundle.Open}" actionListener="#{processCardBean.onOpenElement(el)}" icon="ui-icon-extlink">
+                                <p:menuitem value="#{bundle.Delete}" actionListener="#{processCardBean.onDeleteElement(el)}" icon="ui-icon-close" />
+                            </p:splitButton>
+                        </h:panelGroup>
                     </f:facet>
                     <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />
@@ -101,4 +177,5 @@
             </p:panelGrid>
         </p:tab>
     </ui:define>
+
 </ui:composition>
