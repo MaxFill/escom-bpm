@@ -215,6 +215,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
 
     /**
      * Формирует полный путь к объекту
+     * @return 
      */
     public String getPath(){
         path = ItemUtils.makePath(this);

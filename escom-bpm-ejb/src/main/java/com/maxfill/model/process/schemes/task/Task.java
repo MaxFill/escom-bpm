@@ -83,6 +83,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
 
     /* GETS & SETS */
 
+    
     @Override
     public Integer getId() {
         return id;
@@ -101,9 +102,25 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.owner = owner;
     }
 
+    @Override
+    public String getCaption(){
+        StringBuilder sb = new StringBuilder();
+        if (owner != null){
+            if (owner.getPost() != null){
+                sb.append(owner.getPost().getName()).append(" ");
+            }
+            if (owner.getEmployee() != null){
+                sb.append(owner.getEmployee().getShortFIO());
+            }
+        }
+        return sb.toString();
+    }
+    
+    @Override
     public Scheme getScheme() {
         return scheme;
     }
+    @Override
     public void setScheme(Scheme scheme) {
         this.scheme = scheme;
     }
