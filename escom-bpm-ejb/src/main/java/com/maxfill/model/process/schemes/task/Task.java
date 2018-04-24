@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.task;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.SchemeElement;
@@ -105,6 +106,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @Override
     public String getCaption(){
         StringBuilder sb = new StringBuilder();
+        sb.append("<").append(getName()).append(">").append(" ");
         if (owner != null){
             if (owner.getPost() != null){
                 sb.append(owner.getPost().getName()).append(" ");
@@ -115,7 +117,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         }
         return sb.toString();
     }
-    
+    @Override
+    public void setCaption(String caption) {
+    }
+
     @Override
     public Scheme getScheme() {
         return scheme;

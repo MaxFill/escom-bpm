@@ -10,68 +10,56 @@
     <ui:define name="customStyleCSS">
         <style type="text/css">
             .ui-diagram-task {
-                border:0.1em dotted #E5E4E2;
-                border-radius: 4px;
-                background-color: #EFEEEC;
-                width:8em;
-                height:8em;
-                text-align: center;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+                background-color: #9ed4ef;
+                width:12em;
+                height:6em;
             }
 
             .ui-diagram-element:hover {
                 background-color: #C7C6C4;
             }
 
-            .ui-diagram-logic {
-                width:3em;
-                height:3em;
-                line-height:5em;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-                border-radius: 5em;
-                border: 1px solid #404a4e;
-                background-color: #099b05;
-                color: #ffffff;
+            .ui-diagram-element {
+                text-align: center;
                 font-weight: bold;
+                word-wrap: break-word;
+                white-space: pre-wrap;
+                color: #ffffff;
+                border-radius: 4px;
+                border:0.1em dotted #E5E4E2;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+            }
+
+            .ui-diagram-logic {
+                width:4em;
+                height:4em;
+                border-radius: 4em;
+                background-color: #099b05;
+            }
+
+            .ui-diagram-start {
+                width:6em;
+                height:3em;
+                border-radius: 3em;
+                background-color: #edef04;
             }
 
             .ui-diagram-success-state {
                 width:10em;
                 height:6em;
                 background-color: #02b044;
-                color: #ffffff;
-                border-color: #7ab02c;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
             }
 
             .ui-diagram-fail-state {
                 width:10em;
                 height:6em;
                 background-color: #C33730;
-                color: #ffffff;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
             }
 
-            .d16 {
-                margin: 20px 0; width: 100px; height: 50px;
-                line-height:5em;
-                background: #F1009A;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-                position: relative;}
-            .d16:before, .d16:after {
-                content: "";
-                width: 0; height: 0;
-                position: absolute; left: 0;
-                border-left: 50px solid transparent;
-                border-right: 50px solid transparent;}
-            .d16:before {
-                top: -25px;
-                border-bottom: 25px solid #F1009A;}
-            .d16:after {
-                bottom: -25px;
-                border-top: 25px solid #F1009A;}
-            .d16:hover {
-                background-color: #C7C6C4;
+            .ui-diagram-condition {
+                width:8em;
+                height:6em;
+                background-color: #c306ab;
             }
 
         </style>
@@ -89,8 +77,19 @@
                         {name : 'posY',     value : yPos}
                     ]);
                 });
+            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    elementOpen([
+                        {name : 'elementId',value : info.target.id},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+                });
         </script>
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
+        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpen}"/>
     </ui:define>
 
     <ui:define name="page_body">
@@ -111,7 +110,7 @@
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:toolbar styleClass="ui-grid-col-12" >
                     <f:facet name="left">
-                        <p:commandButton  title="#{bundle.AddTask}" icon="ui-icon-plus"
+                        <p:commandButton  value="#{bundle.addExecutors}" icon="ui-icon-plus"
                                         disabled="#{processCardBean.isReadOnly()}"
                                         onstart="PF('statusDialog').show()"
                                         oncomplete="PF('statusDialog').hide();"
@@ -120,11 +119,11 @@
                         </p:commandButton>
                         <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
                                           disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddLogicElement('and')}" >
+                                          actionListener="#{processCardBean.onAddLogicElement('And')}" >
                         </p:commandButton>
                         <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
                                           disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddLogicElement('or')}" >
+                                          actionListener="#{processCardBean.onAddLogicElement('Or')}" >
                         </p:commandButton>
                         <p:commandButton  value="If" title="#{bundle.AddCondition}"
                                           disabled="#{processCardBean.isReadOnly()}"
@@ -139,7 +138,7 @@
                         </span>
 
                         <p:commandButton title="Load" icon="ui-icon-folder-open"
-                                         actionListener="#{processCardBean.loadModel()}"
+                                         actionListener="#{processCardBean.loadModelFromTempl()}"
                                          update="diagramm">
                         </p:commandButton>
                         <p:commandButton title="Clear" icon="ui-icon-closethick"
@@ -159,14 +158,8 @@
                 </p:toolbar>
 
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el">
-                    <f:facet name="element">
-                        <h:outputText value="#{el.caption}" style="display:block;"/>
-                        <h:panelGroup rendered="#{processCardBean.canShowTaskFacet(el) }">
-                            <h:outputText value="#{el.staff != null ? el.staff.name : bundle.NotAssigned}" style="display:block;"/>
-                            <p:splitButton value="#{bundle.Open}" actionListener="#{processCardBean.onOpenElement(el)}" icon="ui-icon-extlink">
-                                <p:menuitem value="#{bundle.Delete}" actionListener="#{processCardBean.onDeleteElement(el)}" icon="ui-icon-close" />
-                            </p:splitButton>
-                        </h:panelGroup>
+                    <f:facet name="element" >
+                        <h:outputLabel value="#{el.caption}" style="display:block; margin-top:1em;"/>
                     </f:facet>
                     <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />

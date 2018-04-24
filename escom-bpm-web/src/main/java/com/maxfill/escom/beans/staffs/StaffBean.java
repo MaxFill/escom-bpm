@@ -159,8 +159,4 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         return new StaffsSearche();
     }
 
-    @Override
-    public String getFormName(){
-        return DictDlgFrmName.FRM_STAFF_EXPLORER;
-    }
 }

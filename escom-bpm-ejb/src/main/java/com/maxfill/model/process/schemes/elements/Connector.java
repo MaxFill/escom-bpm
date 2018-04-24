@@ -11,7 +11,7 @@ public class Connector implements SchemeElement{
     private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
     private Scheme scheme;
     private final Integer id;
-    private final String caption = "";
+    private String caption;
     
     public Connector() {
         this.id = NUMBER_ID.incrementAndGet();
@@ -25,7 +25,11 @@ public class Connector implements SchemeElement{
     @Override
     public String getCaption() {
         return caption;
-    } 
+    }
+    @Override
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
 
     @Override
     public Scheme getScheme() {

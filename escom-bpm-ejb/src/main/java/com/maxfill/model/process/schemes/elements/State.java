@@ -11,10 +11,11 @@ public class State implements SchemeElement{
     private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
     private Scheme scheme;    
     private final Integer id;
-    private final String caption = "";
+    private String caption;
 
-    public State() {
+    public State(String caption) {
         this.id = NUMBER_ID.incrementAndGet();
+        this.caption = caption;
     }
     
     @Override
@@ -25,8 +26,12 @@ public class State implements SchemeElement{
     @Override
     public String getCaption() {
         return caption;
-    } 
-    
+    }
+    @Override
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
     @Override
     public Scheme getScheme() {
         return scheme;

@@ -82,7 +82,7 @@ public class ExplorerBean implements Serializable {
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
     protected BaseTableBean tableBean;
-    protected BaseDetailsBean searcheBean;
+    protected BaseTableBean searcheBean;
     
     private BaseDict currentItem;    
     private BaseDict editItem; 
@@ -1183,9 +1183,14 @@ public class ExplorerBean implements Serializable {
         Map<String, Object> addParams = new HashMap<>();
         model.addSearcheParams(paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
         
-        List<Integer> statesIds = model.getStateSearche().stream().map(item -> item.getId()).collect(Collectors.toList());        
-                
-        List<BaseDict> result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        List<Integer> statesIds = model.getStateSearche().stream().map(item -> item.getId()).collect(Collectors.toList());
+
+        List<BaseDict> result;
+        if (searcheBean instanceof BaseDetailsBean) {
+            result = ((BaseDetailsBean)searcheBean).doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
+        } else {
+            result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+        }
         
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();
@@ -1608,7 +1613,7 @@ public class ExplorerBean implements Serializable {
         this.typeTree = treeBean.getFacade().getItemClass().getSimpleName();
     }
     
-    public void setTableBean(BaseDetailsBean tableBean) {
+    public void setTableBean(BaseTableBean tableBean) {
         this.tableBean = tableBean; 
         this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
     }
@@ -1616,10 +1621,10 @@ public class ExplorerBean implements Serializable {
         return tableBean;
     }
 
-    public BaseDetailsBean getSearcheBean() {
+    public BaseTableBean getSearcheBean() {
         return searcheBean;
     }
-    public void setSearcheBean(BaseDetailsBean searcheBean) {
+    public void setSearcheBean(BaseTableBean searcheBean) {
         model = searcheBean.initSearcheModel();
         this.searcheBean = searcheBean;
     }

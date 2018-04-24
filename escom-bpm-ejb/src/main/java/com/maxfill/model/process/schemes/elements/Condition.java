@@ -12,10 +12,11 @@ public class Condition implements SchemeElement{
     
     private Scheme scheme;
     private final Integer id;
-    private final String caption = "";
+    private String caption;
 
-    public Condition() {
+    public Condition(String caption) {
         this.id = NUMBER_ID.incrementAndGet();
+        this.caption = caption;
     }    
     
     @Override
@@ -26,8 +27,12 @@ public class Condition implements SchemeElement{
     @Override
     public String getCaption() {
         return caption;
-    } 
-    
+    }
+    @Override
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
     @Override
     public Scheme getScheme() {
         return scheme;

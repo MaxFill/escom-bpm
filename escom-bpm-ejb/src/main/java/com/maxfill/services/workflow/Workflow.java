@@ -2,11 +2,9 @@ package com.maxfill.services.workflow;
 
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.SchemeElement;
-import com.maxfill.model.process.schemes.elements.Condition;
-import com.maxfill.model.process.schemes.elements.Connector;
-import com.maxfill.model.process.schemes.elements.Logic;
+import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.schemes.task.Task;
-import com.maxfill.model.process.schemes.elements.State;
+
 import java.util.Set;
 import javax.ejb.Local;
 
@@ -17,4 +15,5 @@ public interface Workflow {
     void addCondition(Condition condition, Scheme scheme, Set<String> errors);
     void addLogic(Logic logic, Scheme scheme, Set<String> errors);
     void addState(State state, Scheme scheme, Set<String> errors);
+    void addStart(Start start, Scheme scheme, Set<String> errors);
 }

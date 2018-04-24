@@ -50,11 +50,6 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         return Staff.class;
     }
 
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.STAFF.toLowerCase();
-    }
-
     /* Дополнения при выполнении поиска через форму поиска */
     @Override
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
@@ -201,6 +196,19 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
 
     /**
+     * Возвращает штатную eдиницу указанного пользователя
+     * @param user
+     * @return
+     */
+    public Staff findStaffByUser(User user){
+        Staff staff = null;
+        List<Staff> staffs = findStaffsByUser(user);
+        if (!staffs.isEmpty()){
+            staff = staffs.get(0);
+        }
+        return staff;
+    }
+    /**
      * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
      * @param company
      * @param department
@@ -252,5 +260,9 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         int count = 0;
         return count;
     }
-    
+
+    @Override
+    public String getFRM_NAME() {
+        return DictObjectName.STAFF.toLowerCase();
+    }
 }

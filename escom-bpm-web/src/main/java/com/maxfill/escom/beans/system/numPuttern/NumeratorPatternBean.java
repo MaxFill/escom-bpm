@@ -53,8 +53,4 @@ public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern>{
          return null;
     }
 
-    @Override
-    public String getFormName(){
-        return DictDlgFrmName.FRM_NUMERATORS_EXPLORER;
-    }
 }

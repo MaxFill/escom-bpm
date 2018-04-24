@@ -21,5 +21,29 @@
         </addColumn>
      </changeSet>
 
+    <changeSet id="task-scheme" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="tasks" columnName="Scheme" />
+            </not>
+        </preConditions>
+        <addColumn tableName="tasks">
+            <column name="Scheme" type="int()" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
+    <changeSet id="process-scheme" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="Scheme" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="Scheme" type="int()" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

@@ -5,4 +5,5 @@ public interface SchemeElement {
     void setScheme(Scheme scheme);         
     Integer getId();
     String getCaption();
+    void setCaption(String caption);
 }
