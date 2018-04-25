@@ -476,10 +476,15 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
-    
-    /* Определяет доступность кнопки "Создать" на панели обозревателя */
+
+    /**
+     * Определяет доступность кнопки "Создать" на панели обозревателя
+     * Если метод возвращает true, то кнопка недоступна - disable(true)
+     * @param treeSelectedNode
+     * @return
+     */
     public boolean canCreateItem(TreeNode treeSelectedNode){
-        return treeSelectedNode == null;
+        return treeSelectedNode != null;
     }
 
     /**

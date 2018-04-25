@@ -1,27 +1,26 @@
 package com.maxfill.model.process.schemes.task;
 
-import com.maxfill.dictionary.SysParams;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.Dict;
 import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.process.schemes.SchemeElement;
+import com.maxfill.model.process.schemes.elements.AnchorElem;
+import com.maxfill.model.process.schemes.elements.BaseConnectedElement;
 import com.maxfill.model.staffs.Staff;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static javax.persistence.GenerationType.TABLE;
 
 /**
- * Сущность "Поручение"
+ * Сущность "Элемент схемы процесса "Поручение"
  */
 @Entity
 @Table(name = "tasks")
-@DiscriminatorColumn(name = "REF_TYPE")
-public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements SchemeElement{
+public class Task extends BaseConnectedElement implements Dict{
     private static final long serialVersionUID = 2862379210656085637L;
+    private static final String STYLE_NAME = "ui-diagram-task";
 
     @TableGenerator(
             name = "TaskIdGen",
@@ -45,6 +44,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Scheme scheme;
+
+    @Size(max = 255)
+    @Column(name = "Name")
+    private String name;
 
     /* Дата выдачи (назначения) поручения */
     @Column(name = "BeginDate")
@@ -74,39 +77,25 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<TaskLog> itemLogs = new ArrayList<>();
 
-    public Task() {}
+    public Task() {
+        super("", 0, 0, new HashSet <>());
+    }
 
-    public Task(String taskName, Staff owner, Scheme scheme) {
+    public Task(String taskName, Staff owner, Scheme scheme, int x, int y, Set<AnchorElem> anchors) {
+        super(taskName, x, y, anchors);
         this.owner = owner;
         this.scheme = scheme;
-        setName(taskName);
+        this.name = taskName;
     }
 
-    /* GETS & SETS */
-
-    
-    @Override
-    public Integer getId() {
-        return id;
-    }
     @Override
     public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public Staff getOwner() {
-        return owner;
-    }
-    @Override
-    public void setOwner(Staff owner) {
-        this.owner = owner;
     }
 
     @Override
     public String getCaption(){
         StringBuilder sb = new StringBuilder();
-        sb.append("<").append(getName()).append(">").append(" ");
+        sb.append("<").append(name).append(">").append(" ");
         if (owner != null){
             if (owner.getPost() != null){
                 sb.append(owner.getPost().getName()).append(" ");
@@ -117,17 +106,19 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         }
         return sb.toString();
     }
-    @Override
-    public void setCaption(String caption) {
-    }
 
     @Override
-    public Scheme getScheme() {
-        return scheme;
+    public String getStyle() {
+        return STYLE_NAME;
     }
-    @Override
-    public void setScheme(Scheme scheme) {
-        this.scheme = scheme;
+
+    /* GETS & SETS */
+
+    public Staff getOwner() {
+        return owner;
+    }
+    public void setOwner(Staff owner) {
+        this.owner = owner;
     }
 
     public Date getBeginDate() {
@@ -151,20 +142,16 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.factExecDate = factExecDate;
     }
 
-    @Override
     public TaskStates getState() {
         return state;
     }
-    @Override
     public void setState(TaskStates state) {
         this.state = state;
     }
 
-    @Override
     public List <TaskLog> getItemLogs() {
         return itemLogs;
     }
-    @Override
     public void setItemLogs(List <TaskLog> itemLogs) {
         this.itemLogs = itemLogs;
     }
@@ -192,6 +179,6 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
 
     @Override
     public String toString() {
-        return "Task [ id=" + id + " ] [" + getName() + "]";
+        return "Task [ id=" + id + " ] [" + name + "]";
     }
 }

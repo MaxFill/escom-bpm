@@ -35,29 +35,13 @@ public class LicenseBean extends BaseViewBean{
     public void onExitProgram(){
         onCloseCard("exit");
     }
-    
-    @Override
-    public void onBeforeOpenCard(){
-        if (content != null) return;
-        Locale locale = sessionBean.getLocale();
-        String localeName = locale.getLanguage().toLowerCase();
-        String serverDir = System.getProperty("server-dir");
-        StringBuilder sb = new StringBuilder(serverDir);
-        sb.append(File.separator)
-                .append(LICENSE_FILE)
-                .append(localeName)
-                .append(".pdf");
-        try {
+
+    public StreamedContent getContent() {
+        if (content == null){
             content = new DefaultStreamedContent(
                     FacesContext.getCurrentInstance().getExternalContext()
                             .getResourceAsStream("/resources/License_ru.pdf"));
-            //content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }    
-    }
-    
-    public StreamedContent getContent() {
+        }
         return content;
     }
     public void setContent(StreamedContent content) {

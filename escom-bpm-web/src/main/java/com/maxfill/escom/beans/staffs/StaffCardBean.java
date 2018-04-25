@@ -48,7 +48,6 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         getEditedItem().setEmployee(item);
         makeName();
     }
-
     public void onEmployeeSelected(ValueChangeEvent event) {
         User user = (User) event.getNewValue();
         getEditedItem().setEmployee(user);
@@ -69,7 +68,6 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         }
         makeName();
     }
-
     public void onPostSelected(ValueChangeEvent event) {
         Post post = (Post) event.getNewValue();
         getEditedItem().setPost(post);

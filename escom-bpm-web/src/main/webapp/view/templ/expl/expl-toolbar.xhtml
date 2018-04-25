@@ -56,7 +56,7 @@
                              title="#{_explorerBean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
                              icon="ui-icon-document" id="createItemBtn"
                              disabled="#{_explorerBean.canCreateItem}"
-                             rendered="#{_explorerBean.isShowTree()}"
+                             rendered="#{_treeBean == null or _explorerBean.isShowTree()}"
                              style="#{_explorerBean.selectorViewMode ? 'display: none;' : ''}"
                              actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"

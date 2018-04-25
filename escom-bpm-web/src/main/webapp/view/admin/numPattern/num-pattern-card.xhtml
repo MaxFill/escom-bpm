@@ -12,7 +12,7 @@
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
                          columnClasses="ui-grid-col-12 col-padding" >                
 
-                <p:outputLabel value="#{bundle.NamePattern}" />
+                <p:outputLabel value="#{bundle.NamePattern}" indicateRequired="true"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
@@ -22,7 +22,7 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                 <p:watermark for="nameItem" value="#{bundle.InputNameNumerator}" />             
 
-                <p:outputLabel value="#{bundle.PatternAutoGenerate}"/>
+                <p:outputLabel value="#{bundle.PatternAutoGenerate}" indicateRequired="true"/>
                 <p:inputText id="patternAuto" value="#{_bean.editedItem.pattern}"
                              title="#{bundle.PatternAutoGenerate}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -34,7 +34,7 @@
                     <p:keyFilter regEx="/[CODEMPGRTYNy//-]/i" />
                 </p:inputText>    
                 <p:watermark for="patternAuto" value="#{bundle.InputPattern}"/> 
-                <p:outputLabel value="#{bundle.LeadingZeros}" />                
+                <p:outputLabel value="#{bundle.LeadingZeros}" indicateRequired="true"/>
                 <p:spinner id="leadingZeros" value="#{_bean.editedItem.leadingZeros}" 
                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
                            onchange="return itemChange = 1;"

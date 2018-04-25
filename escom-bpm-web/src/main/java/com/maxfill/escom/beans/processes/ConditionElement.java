@@ -14,8 +14,7 @@ public class ConditionElement extends Element{
      */
     public EndPoint getYesPoint(){
         for (EndPoint endPoint : getEndPoints()){
-            String id = endPoint.getId();
-            if (id.equals("yes")){
+            if (endPoint.getId().equals("yes")){
                 return endPoint;
             }
         }
@@ -28,8 +27,7 @@ public class ConditionElement extends Element{
      */
     public EndPoint getNoPoint(){
         for (EndPoint endPoint : getEndPoints()){
-            String id = endPoint.getId();
-            if (id.equals("no")){
+            if (endPoint.getId().equals("no")){
                 return endPoint;
             }
         }

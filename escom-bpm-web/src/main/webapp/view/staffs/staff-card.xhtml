@@ -45,8 +45,8 @@
                     <ui:param name="_update" value="staffGroup"/>
                 </ui:include>
                 
-                <p:outputLabel value="#{bundle.Name}" />
-                <h:panelGroup id="staffGroup" layout="grid" styleClass="ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Name}" indicateRequired="true"/>
+                <h:panelGroup id="staffGroup" styleClass="ui-grid-col-12">
                     <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}" 
                                     styleClass="ui-grid-col-12"
                                     rows="1" autoResize="true"

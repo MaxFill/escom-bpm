@@ -1,40 +1,40 @@
 package com.maxfill.model.process.schemes.elements;
 
 import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.process.schemes.SchemeElement;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Start implements SchemeElement{
-    private static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
-    private Scheme scheme;
-    private final Integer id;
-    private String caption;
+/**
+ * Абстрактный класс элементов графической модели процесса
+ */
+public abstract class BaseElement implements Serializable{
+    protected static final AtomicInteger NUMBER_ID = new AtomicInteger(0);
+    protected Scheme scheme;
+    protected final Integer id;
+    protected String caption;
 
-    public Start() {
-        this.id = NUMBER_ID.incrementAndGet();;
+    public BaseElement(String caption) {
+        this.id = NUMBER_ID.incrementAndGet();
+        this.caption = caption;
     }
 
-    @Override
     public Integer getId() {
         return id;
     }
 
-    @Override
     public String getCaption() {
         return caption;
     }
-    @Override
     public void setCaption(String caption) {
         this.caption = caption;
     }
 
-    @Override
     public Scheme getScheme() {
         return scheme;
     }
-    @Override
     public void setScheme(Scheme scheme) {
         this.scheme = scheme;
     }
+
 }

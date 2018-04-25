@@ -3,6 +3,7 @@ package com.maxfill.model.process.schemes;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.ProcessLog;
+import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.schemes.task.Task;
 
 import javax.persistence.*;
@@ -29,11 +30,63 @@ public class Scheme implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Process process;
 
-    /* Список поручений, входящих в схему процесса */
+    /* Список поручений */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
-    private List<Task> tasks = new ArrayList<>();
-        
+    private final List<Task> tasks = new ArrayList<>();
+
+    /* Список состояний */
+    @Transient
+    private final List<StateElem> states = new ArrayList<>();
+
+    /* Список условий */
+    @Transient
+    private final List<ConditionElem> conditions = new ArrayList<>();
+
+    /* Список ветвлений */
+    @Transient
+    private final List<LogicElem> logics = new ArrayList<>();
+
+    /* Список входов */
+    @Transient
+    private final List<StartElem> starts = new ArrayList<>();
+
+    /* Список выходов */
+    @Transient
+    private final List<ExitElem> exits = new ArrayList<>();
+
+    /* Список коннекторов */
+    @Transient
+    private final List<ConnectorElem> connectors = new ArrayList<>();
+
     /* GETS & SETS */
+
+    public List <StateElem> getStates() {
+        return states;
+    }
+
+    public List <ConditionElem> getConditions() {
+        return conditions;
+    }
+
+    public List <LogicElem> getLogics() {
+        return logics;
+    }
+
+    public List <StartElem> getStarts() {
+        return starts;
+    }
+
+    public List <ExitElem> getExits() {
+        return exits;
+    }
+
+    public List <Task> getTasks() {
+        return tasks;
+    }
+
+    public List <ConnectorElem> getConnectors() {
+        return connectors;
+    }
 
     @Override
     public Integer getId() {
@@ -49,13 +102,6 @@ public class Scheme implements Serializable, Dict{
     }
     public void setProcess(Process process) {
         this.process = process;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
     }
     
     /* *** *** */
