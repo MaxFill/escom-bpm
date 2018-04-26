@@ -34,25 +34,8 @@ public class Scheme implements Serializable, Dict{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
     private final List<Task> tasks = new ArrayList<>();
 
-    /* Список состояний */
     @Transient
-    private final List<StateElem> states = new ArrayList<>();
-
-    /* Список условий */
-    @Transient
-    private final List<ConditionElem> conditions = new ArrayList<>();
-
-    /* Список ветвлений */
-    @Transient
-    private final List<LogicElem> logics = new ArrayList<>();
-
-    /* Список входов */
-    @Transient
-    private final List<StartElem> starts = new ArrayList<>();
-
-    /* Список выходов */
-    @Transient
-    private final List<ExitElem> exits = new ArrayList<>();
+    private final List<WorkflowConnectedElement> elements = new ArrayList <>();
 
     /* Список коннекторов */
     @Transient
@@ -60,25 +43,10 @@ public class Scheme implements Serializable, Dict{
 
     /* GETS & SETS */
 
-    public List <StateElem> getStates() {
-        return states;
+    public List <WorkflowConnectedElement> getElements() {
+        return elements;
     }
 
-    public List <ConditionElem> getConditions() {
-        return conditions;
-    }
-
-    public List <LogicElem> getLogics() {
-        return logics;
-    }
-
-    public List <StartElem> getStarts() {
-        return starts;
-    }
-
-    public List <ExitElem> getExits() {
-        return exits;
-    }
 
     public List <Task> getTasks() {
         return tasks;

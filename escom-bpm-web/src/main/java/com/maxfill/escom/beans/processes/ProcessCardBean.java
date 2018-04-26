@@ -21,11 +21,9 @@ import org.primefaces.model.diagram.Connection;
 import org.primefaces.model.diagram.DefaultDiagramModel;
 import org.primefaces.model.diagram.DiagramModel;
 import org.primefaces.model.diagram.Element;
+import org.primefaces.model.diagram.connector.Connector;
 import org.primefaces.model.diagram.connector.FlowChartConnector;
-import org.primefaces.model.diagram.endpoint.DotEndPoint;
-import org.primefaces.model.diagram.endpoint.EndPoint;
-import org.primefaces.model.diagram.endpoint.EndPointAnchor;
-import org.primefaces.model.diagram.endpoint.RectangleEndPoint;
+import org.primefaces.model.diagram.endpoint.*;
 import org.primefaces.model.diagram.overlay.ArrowOverlay;
 import org.primefaces.model.diagram.overlay.LabelOverlay;
 
@@ -53,7 +51,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private int defX = 8;
     private int defY = 8;
 
-    private final List<EndPoint> endPoints = new ArrayList<>();
     private final DefaultDiagramModel model = new DefaultDiagramModel();
 
     @Override
@@ -104,28 +101,32 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
 
     /**
-     * Формирует графическую схему из данных модели
+     * Формирует графическую схему из данных модели процесса
      */
     private void restoreModel(){
         model.clear();
-        Set<String> errors = new HashSet <>();
-        scheme.getStarts().stream().forEach(e-> );
-        scheme.getExits().stream().forEach(e->);
-        scheme.getConditions().stream().forEach(e->);
-        scheme.getStates().stream().forEach(e->);
-        scheme.getTasks().stream().forEach(e-> );
-        scheme.getLogics().stream().forEach(e-> );
-    }
 
-    private List<EndPoint> restoreEndPoints(Set<AnchorElem> anchorElems){
-        for (AnchorElem anchorElem : anchorElems){
-            if (anchorElem.isSource()) {
-                makeSourceEndPoints(EndPointAnchor.valueOf(anchorElem.getPosition()));
-            } else {
-                makeTargetEndPoints(EndPointAnchor.valueOf(anchorElem.getPosition()));
+        Map<String, Element> elementMap = new HashMap <>();
+        scheme.getElements().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        List<Connection> connections = new ArrayList <>();
+        scheme.getConnectors().stream().forEach(connectorElem->{
+            AnchorElem anchorFrom = connectorElem.getFrom();
+            WorkflowConnectedElement wfFrom = anchorFrom.getOwner();
+            Element fromEl = elementMap.get(wfFrom.getUid());
+            EndPoint endPointFrom = getEndPointById(fromEl, anchorFrom.getUid());
+            AnchorElem anchorTo = connectorElem.getTo();
+            WorkflowConnectedElement wfTo = anchorTo.getOwner();
+            Element toEl = elementMap.get(wfTo.getUid());
+            EndPoint endPointTo = getEndPointById(toEl, anchorFrom.getUid());
+            String label = "";
+            if (StringUtils.isNotBlank(connectorElem.getCaption())){
+                label = EscomMsgUtils.getBandleLabel(connectorElem.getCaption());
             }
-        }
-        return endPoints;
+            Connection connection = createConnection(endPointFrom, endPointTo, label);
+            connections.add(connection);
+        });
+        elementMap.forEach((s, element) -> model.addElement(element));
+        connections.stream().forEach(c -> model.connect(c));
     }
 
     /**
@@ -146,11 +147,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     /**
      * Обоработка события удаления текущего визуального компонента со схемы
-     * @param element
      */
     public void onDeleteElement(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement((BaseElement)selectedElement.getData(), scheme, errors);
+        workflow.removeElement((WorkflowConnectedElement)selectedElement.getData(), scheme, errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             visualModelRefresh();
@@ -175,7 +175,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             selectedElement.setY(y + "em");
             defX = Integer.valueOf(x) + 5;
             defY = Integer.valueOf(y) + 5;
-            BaseConnectedElement baseElement = (BaseConnectedElement) selectedElement.getData();
+            WorkflowConnectedElement baseElement = (WorkflowConnectedElement) selectedElement.getData();
             baseElement.setPosX(Integer.valueOf(x));
             baseElement.setPosY(Integer.valueOf(y));
         }
@@ -194,8 +194,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param name
      */
     public void onAddLogicElement(String name){
-        makeSourceEndPoints(EndPointAnchor.BOTTOM, EndPointAnchor.RIGHT);
-        makeTargetEndPoints(EndPointAnchor.TOP, EndPointAnchor.LEFT);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         String caption = EscomMsgUtils.getBandleLabel(name);
         createLogic(caption, defX, defY, endPoints, new HashSet <>());
         visualModelRefresh();
@@ -206,8 +209,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param name
      */
     public void onAddStateElement(String name){
-        makeSourceEndPoints(EndPointAnchor.BOTTOM, EndPointAnchor.RIGHT);
-        makeTargetEndPoints(EndPointAnchor.TOP, EndPointAnchor.LEFT);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         createState("?", "success", defX, defY, endPoints, new HashSet<>());
         visualModelRefresh();
     }
@@ -216,25 +222,15 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Обработка события добавления визуального компонента "Условие" в схему процесса
      */
     public void onAddConditionElement(){
-        createConditionEndPoints();
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
+        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createCondition("?", defX, defY, endPoints, new HashSet<>());
         visualModelRefresh();
     }
 
-
-    /**
-     * Добавление элементов в модель процесса
-     * @param schemeElement
-     */
-    private Element modelAddElement(Element element, String styleClass){
-        for (EndPoint endPoint: endPoints){
-            element.addEndPoint(endPoint);
-        }
-        element.setStyleClass(styleClass);
-        model.addElement(element);
-        this.endPoints.clear();
-        return element;
-    }
+    /* СОЗДАНИЕ КОМПОНЕНТОВ СХЕМЫ ПРОЦЕССА */
 
     /**
      * Создание элемента "Условие" в модель процесса
@@ -243,13 +239,12 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param errors
      * @return
      */
-    private ConditionElement createCondition(String nameCondition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        ConditionElem condition = new ConditionElem(nameCondition, x, y, makeAnchorElems(endPoints));
+    private Element createCondition(String nameCondition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        ConditionElem condition = new ConditionElem(nameCondition, x, y);
+        condition.setAnchors(makeAnchorElems(condition, endPoints));
         workflow.addCondition(condition, scheme, errors);
         if (errors.isEmpty()) {
-            ConditionElement element = new ConditionElement(condition, x+ "em", y+ "em");
-            modelAddElement(element, condition.getStyle());
-            return element;
+            return modelAddElement(condition);
         }
         return null;
     }
@@ -261,10 +256,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param errors
      */
     private Element createLogic(String name, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        LogicElem logic = new LogicElem(name, x, y, makeAnchorElems(endPoints));
+        LogicElem logic = new LogicElem(name, x, y);
+        logic.setAnchors(makeAnchorElems(logic, endPoints));
         workflow.addLogic(logic, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(new Element(logic, x + "em", y + "em"), logic.getStyle());
+            return modelAddElement(logic);
         }
         return null;
     }
@@ -275,11 +271,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param y
      * @param errors
      */
-    private Element createStart(int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        StartElem start = new StartElem("", x, y, makeAnchorElems(endPoints));
+    private StartElem createStart(int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        StartElem start = new StartElem("", x, y);
+        start.setAnchors(makeAnchorElems(start, endPoints));
         workflow.addStart(start, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(new Element(start, x + "em", y + "em"), start.getStyle());
+            modelAddElement(start);
+            return start;
         }
         return null;
     }
@@ -291,10 +289,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param errors
      */
     private Element createExit(int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        ExitElem exit = new ExitElem("", x, y, makeAnchorElems(endPoints));
+        ExitElem exit = new ExitElem("", x, y);
+        exit.setAnchors(makeAnchorElems(exit, endPoints));
         workflow.addExit(exit, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(new Element(exit, x + "em", y + "em"), exit.getStyle());
+            return modelAddElement(exit);
         }
         return null;
     }
@@ -305,88 +304,74 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param x
      * @param y
      */
-    private Element createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        Task task = new Task(taskName, executor, scheme, x, y, makeAnchorElems(endPoints));
+    private Task createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        Task task = new Task(taskName, executor, scheme, x, y);
+        task.setAnchors(makeAnchorElems(task, endPoints));
         workflow.addTask(task, scheme, errors);
         if (errors.isEmpty()){
-            return modelAddElement(new Element(task, x + "em", y + "em"), task.getStyle());
+            modelAddElement(task);
+            return task;
         }
         return null;
     }
 
     /**
      * Создание элемента "Состояние"
-     * @param typeName
+     * @param styleType
      * @param x
      * @param y
      * @param errors
      * @return
      */
-    private Element createState(String caption, String typeName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        StateElem state = new StateElem(caption, x, y, makeAnchorElems(endPoints));
+    private Element createState(String caption, String styleType, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        StateElem state = new StateElem(caption, x, y);
+        state.setAnchors(makeAnchorElems(state, endPoints));
+        state.setStyleType(styleType);
+        workflow.addState(state, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(new Element(state, x + "em", y + "em"), state.getStyle());
+            return modelAddElement(state);
         }
         return null;
     }
 
     /**
-     * Добавляет элемент "Коннектор" в визуальную схему процесса
-     * @param from
-     * @param to
-     * @param errors
+     * Добавление workflow элементов в модель процесса
      */
-    private void addConnector(Element from, Element to, Set<String> errors){
-        makeConnector(from, to, errors);
-        if (errors.isEmpty()) {
-            Connection connection = createConnection(getSourcePoint(from), getTargetPoint(to), null);
-            if (connection != null) {
-                model.connect(connection);
-            }else {
-                errors.add("WorkflowIncorrectData");
-            }
+    private Element modelAddElement(WorkflowConnectedElement wfElement){
+        Element element = createElement(wfElement);
+        model.addElement(element);
+        return element;
+    }
+
+    private Element createElement(WorkflowConnectedElement wfElement){
+        Element element = new Element(wfElement, wfElement.getPosX() + "em", wfElement.getPosY() + "em");
+        List<EndPoint> endPoints = restoreEndPoints(wfElement.getAnchors());
+        for (EndPoint endPoint: endPoints){
+            element.addEndPoint(endPoint);
         }
+        element.setId(wfElement.getUid());
+        element.setStyleClass(wfElement.getStyle());
+        return element;
     }
-    private void addConnectorYes(ConditionElement from, Element to, Set<String> errors){
-        makeConnector(from, to, errors);
-        if (errors.isEmpty()) {
-            Connection connection = createConnection(from.getYesPoint(), getTargetPoint(to), EscomMsgUtils.getBandleLabel("Yes"));
-            if (connection != null) {
-                model.connect(connection);
-            }else {
-                errors.add("WorkflowIncorrectData");
-            }
-        }
-    }
-    private void addConnectorNo(ConditionElement from, Element to, Set<String> errors){
-        makeConnector(from, to, errors);
-        if (errors.isEmpty()) {
-            Connection connection = createConnection(from.getNoPoint(), getTargetPoint(to), EscomMsgUtils.getBandleLabel("No"));
-            if (connection != null) {
-                model.connect(connection);
-            } else {
-                errors.add("WorkflowIncorrectData");
-            }
-        }
-    }
-    private void makeConnector(Element from, Element to, Set<String> errors){
-        ConnectorElem connector = new ConnectorElem("");
-        BaseElement schemeFrom = (BaseElement)from.getData();
-        BaseElement schemeTo = (BaseElement)to.getData();
-        workflow.addConnector(connector, schemeFrom, schemeTo, scheme, errors);
-    }
-    
+
+    /* *** СОЗДАНИЕ КОННЕКТОРОВ и ЯКОРЕЙ *** */
+
+
     /**
      * Создание точки приёмника для элемента
      * @param anchor
      * @return 
      */
-    private DotEndPoint createTargetEndPoint(EndPointAnchor anchor) {
+    private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
+        return createTargetEndPoint(endPoints, anchor, AnchorElem.STYLE_MAIN);
+    }
+    private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
         DotEndPoint endPoint = new DotEndPoint(anchor);
         endPoint.setScope("network");
         endPoint.setTarget(true);
-        endPoint.setStyle("{fillStyle:'#98AFC7'}");
+        endPoint.setStyle(style);
         endPoint.setHoverStyle("{fillStyle:'#5C738B'}");
+        endPoints.add(endPoint);
         return endPoint;
     }
 
@@ -395,80 +380,69 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param anchor
      * @return 
      */
-    private RectangleEndPoint createSourceEndPoint(EndPointAnchor anchor) {
+    private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
+        return createSourceEndPoint(endPoints, anchor, AnchorElem.STYLE_MAIN);
+    }
+    private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
         RectangleEndPoint endPoint = new RectangleEndPoint(anchor);
         endPoint.setScope("network");
         endPoint.setSource(true);
-        endPoint.setStyle("{fillStyle:'#98AFC7'}");
+        endPoint.setStyle(style);
         endPoint.setHoverStyle("{fillStyle:'#5C738B'}");
+        endPoints.add(endPoint);
         return endPoint;
     }
 
     /**
-     * Создаёт якори для компонента "Условие"
-     */
-    private void createConditionEndPoints(){
-        EndPoint endPointYes = createSourceEndPoint(EndPointAnchor.RIGHT);
-        EndPoint endPointNo = createSourceEndPoint(EndPointAnchor.LEFT);
-        EndPoint endPointIn = createTargetEndPoint(EndPointAnchor.TOP);
-        endPointYes.setSource(true);
-        endPointYes.setId("yes");
-        endPointNo.setSource(true);
-        endPointNo.setId("no");
-        endPointIn.setTarget(true);
-        endPointIn.setId("in");
-        endPointYes.setStyle("{fillStyle:'#099b05'}");
-        endPointNo.setStyle("{fillStyle:'#C33730'}");
-        endPoints.add(endPointYes);
-        endPoints.add(endPointNo);
-        endPoints.add(endPointIn);
-    }
-
-    /**
-     * Создание соединения объектов
+     * Создание соединения компонентов схемы
      * @param from
      * @param to
      * @param label
-     * @return 
+     * @return
      */
     private Connection createConnection(EndPoint from, EndPoint to, String label) {
         if (from == null || to == null) return null;
         Connection conn = new Connection(from, to);
-        conn.getOverlays().add(new ArrowOverlay(20, 20, 1, 1));         
+        conn.getOverlays().add(new ArrowOverlay(20, 20, 1, 1));
         if(label != null) {
             conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));
-        }         
+        }
         return conn;
     }
 
-    private EndPoint getSourcePoint(Element element){
-        for (EndPoint ep : element.getEndPoints()){
-            if (ep.isSource()) {
-                return ep;
+    /**
+     * Формирует список точек для компонента из списка якорей workflow элемента
+     * @param anchorElems
+     * @return
+     */
+    private List<EndPoint> restoreEndPoints(Set<AnchorElem> anchorElems){
+        List<EndPoint> endPoints = new ArrayList <>();
+        for (AnchorElem anchorElem : anchorElems){
+            EndPoint endPoint;
+            String position = anchorElem.getPosition().toUpperCase();
+            EndPointAnchor anchor = EndPointAnchor.valueOf(position);
+            if (anchorElem.isSource()) {
+                endPoint = createSourceEndPoint(endPoints, anchor, anchorElem.getStyle());
+            } else {
+                endPoint = createTargetEndPoint(endPoints, anchor, anchorElem.getStyle());
             }
+            endPoint.setId(anchorElem.getUid());
         }
-        return null;
-    }
-
-    private EndPoint getTargetPoint(Element element){
-        for (EndPoint ep : element.getEndPoints()){
-            if (ep.isTarget()) {
-                return ep;
-            }
-        }
-        return null;
+        return endPoints;
     }
 
     /**
-     * Формирует список якорей для элементов маршрута из списка точек визуальных компонент
+     * Формирует список якорей для workflow элементов из списка точек визуальных компонент
      * @param endPoints
      * @return
      */
-    private Set<AnchorElem> makeAnchorElems(List<EndPoint> endPoints){
+    private Set<AnchorElem> makeAnchorElems(WorkflowConnectedElement element, List<EndPoint> endPoints){
         Set<AnchorElem> anchorElems =  new HashSet <>();
         for(EndPoint endPoint : endPoints){
             String position = endPoint.getAnchor().toString();
-            anchorElems.add(new AnchorElem(position, endPoint.isSource()));
+            AnchorElem anchorElem = new AnchorElem("", position, endPoint.isSource(), element);
+            anchorElem.setStyle(endPoint.getStyle());
+            anchorElems.add(anchorElem);
         }
         return anchorElems;
     }
@@ -482,50 +456,41 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         model.clear();
         Staff staff = staffFacade.findStaffByUser(getCurrentUser());
         Set<String> errors = new HashSet <>();
+        List<EndPoint> endPoints = new ArrayList<>();
 
-        makeSourceEndPoints(EndPointAnchor.RIGHT);
-        makeTargetEndPoints(EndPointAnchor.BOTTOM);
-        Element start = createStart(2, 4, endPoints, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createStart(2, 4, endPoints, errors);
+        endPoints.clear();
 
-        makeSourceEndPoints(EndPointAnchor.RIGHT);
-        makeTargetEndPoints(EndPointAnchor.LEFT);
-        Element selfTask = createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
-        addConnector(start, selfTask, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
+        endPoints.clear();
 
-        createConditionEndPoints();
-        ConditionElement condition = createCondition("Все одобрили?", 28, 18, endPoints, errors);
-        addConnector(selfTask, condition, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
+        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createCondition("Все одобрили?", 28, 18, endPoints, errors);
+        endPoints.clear();
 
-        makeSourceEndPoints(EndPointAnchor.RIGHT);
-        makeTargetEndPoints(EndPointAnchor.TOP);
-        Element stateYes = createState("Документ согласован", "success", 36, 26, endPoints, errors);
-        addConnectorYes(condition, stateYes, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createState("Документ согласован", "success", 36, 26, endPoints, errors);
+        endPoints.clear();
 
-        makeSourceEndPoints(EndPointAnchor.BOTTOM);
-        makeTargetEndPoints(EndPointAnchor.TOP);
-        Element stateNo = createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
-        addConnectorNo(condition, stateNo, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
+        endPoints.clear();
 
-        makeTargetEndPoints(EndPointAnchor.BOTTOM);
-        makeSourceEndPoints(EndPointAnchor.TOP);
-        Element remedialTask = createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
-        addConnector(stateNo, remedialTask, errors);
-        addConnector(remedialTask, start, errors);
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
+        endPoints.clear();
 
-        makeTargetEndPoints(EndPointAnchor.LEFT);
-        Element exit = createExit(50, 35, endPoints, errors);
-        addConnector(stateYes, exit, errors);
-    }
-
-    private void makeSourceEndPoints(EndPointAnchor ... sources){
-        for (EndPointAnchor anchor : sources) {
-            endPoints.add(createSourceEndPoint(anchor));
-        }
-    }
-    private void makeTargetEndPoints(EndPointAnchor ... targets){
-        for (EndPointAnchor anchor : targets) {
-            endPoints.add(createTargetEndPoint(anchor));
-        }
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_MAIN);
+        createExit(50, 35, endPoints, errors);
     }
 
     /**
@@ -544,12 +509,62 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
 
     /**
+     * Создание элемента "Коннектор"
+     * @param from
+     * @param to
+     * @param errors
+     */
+    private void createConnector(AnchorElem from, AnchorElem to, String label, Set<String> errors){
+        ConnectorElem connector = new ConnectorElem(label,  from, to);
+        workflow.addConnector(connector, scheme, errors);
+    }
+
+    /**
      * Обработка события соединения объектов визуальной модели
      * @param event 
      */
     public void onConnect(ConnectEvent event){
-        event.getSourceElement().getData();
-        event.getTargetElement().getData();
+        WorkflowConnectedElement wfSource = (WorkflowConnectedElement) event.getSourceElement().getData();
+        WorkflowConnectedElement wfTarget = (WorkflowConnectedElement) event.getTargetElement().getData();
+        EndPoint sourcePoint = event.getSourceEndPoint();
+        EndPoint targetPoint = event.getTargetEndPoint();
+        AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
+        AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
+        Set<String> errors = new HashSet <>();
+        String label = "";
+        switch(sourcePoint.getStyle()){
+            case AnchorElem.STYLE_NO:{
+                label = EscomMsgUtils.getBandleLabel("No");
+                break;
+            }
+            case AnchorElem.STYLE_YES:{
+                label = EscomMsgUtils.getBandleLabel("Yes");
+                break;
+            }
+            default:{
+                label = "";
+            }
+        }
+        createConnector(sourceAnchor, targetAnchor, label, errors);
+        Connection connection = findConnection(sourcePoint, targetPoint);
+        connection.getOverlays().clear();
+        connection.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));
+        if (!errors.isEmpty()){
+            model.disconnect(connection);
+            EscomMsgUtils.showErrorsMsg(errors);
+        }
+    }
+
+    private void renameConnection(Connection connection, String label){
+
+    }
+    private Connection findConnection(EndPoint source, EndPoint target){
+        for(Connection connection : model.getConnections()){
+            if (connection.getSource().equals(source) && connection.getTarget().equals(target)){
+                return connection;
+            }
+        }
+        return null;
     }
 
     public void onDisconnect(DisconnectEvent event) {
@@ -573,8 +588,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Set<String> errors = new HashSet<>();
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
-            makeSourceEndPoints(EndPointAnchor.RIGHT);
-            makeTargetEndPoints(EndPointAnchor.LEFT);
+            List<EndPoint> endPoints = new ArrayList<>();
+            createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+            createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
             createTask(executor, "Согласовать документ!", defX, defY, endPoints, metodErr);
             defX = defX + 5;
             defY = defY + 5;
@@ -594,6 +610,19 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     private void visualModelRefresh(){
         PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
+    }
+
+    /**
+     * Возвращает якорь компонента по ID якоря
+     * @return
+     */
+    public EndPoint getEndPointById(Element element, String endPointId){
+        for (EndPoint endPoint : element.getEndPoints()){
+            if (endPoint.getId().equals(endPointId.toLowerCase())){
+                return endPoint;
+            }
+        }
+        return null;
     }
 
     /* ПРОЧИЕ МЕТОДЫ */

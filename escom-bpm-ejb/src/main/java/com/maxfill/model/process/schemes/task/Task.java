@@ -3,7 +3,7 @@ package com.maxfill.model.process.schemes.task;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.AnchorElem;
-import com.maxfill.model.process.schemes.elements.BaseConnectedElement;
+import com.maxfill.model.process.schemes.elements.WorkflowConnectedElement;
 import com.maxfill.model.staffs.Staff;
 
 import javax.persistence.*;
@@ -18,7 +18,7 @@ import static javax.persistence.GenerationType.TABLE;
  */
 @Entity
 @Table(name = "tasks")
-public class Task extends BaseConnectedElement implements Dict{
+public class Task extends WorkflowConnectedElement implements Dict{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final String STYLE_NAME = "ui-diagram-task";
 
@@ -78,18 +78,14 @@ public class Task extends BaseConnectedElement implements Dict{
     private List<TaskLog> itemLogs = new ArrayList<>();
 
     public Task() {
-        super("", 0, 0, new HashSet <>());
+        super("", 0, 0);
     }
 
-    public Task(String taskName, Staff owner, Scheme scheme, int x, int y, Set<AnchorElem> anchors) {
-        super(taskName, x, y, anchors);
+    public Task(String taskName, Staff owner, Scheme scheme, int x, int y) {
+        super(taskName, x, y);
         this.owner = owner;
         this.scheme = scheme;
         this.name = taskName;
-    }
-
-    @Override
-    public void setId(Integer id) {
     }
 
     @Override
@@ -113,6 +109,15 @@ public class Task extends BaseConnectedElement implements Dict{
     }
 
     /* GETS & SETS */
+
+    @Override
+    public Integer getId() {
+        return null;
+    }
+    @Override
+    public void setId(Integer id) {
+
+    }
 
     public Staff getOwner() {
         return owner;
@@ -181,4 +186,5 @@ public class Task extends BaseConnectedElement implements Dict{
     public String toString() {
         return "Task [ id=" + id + " ] [" + name + "]";
     }
+
 }

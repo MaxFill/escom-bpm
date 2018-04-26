@@ -40,12 +40,12 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */
     @Override
-    public void addConnector(ConnectorElem connector, BaseElement from, BaseElement to, Scheme scheme, Set<String> errors) {
+    public void addConnector(ConnectorElem connector, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
-        if (from == null){
+        if (connector.getFrom() == null){
             errors.add("WorkflowIncorrectData");
         }
-        if (to == null){
+        if (connector.getTo() == null){
             errors.add("WorkflowIncorrectData");
         }
         //ToDO проверить на возможность установки соединения!
@@ -62,7 +62,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getConditions().add(condition);
+            scheme.getElements().add(condition);
         }
     }
 
@@ -74,7 +74,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getLogics().add(logic);
+            scheme.getElements().add(logic);
         }
     }
 
@@ -86,7 +86,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getStates().add(state);
+            scheme.getElements().add(state);
         }
     }
 
@@ -98,7 +98,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getStarts().add(start);
+            scheme.getElements().add(start);
         }
     }
 
@@ -110,13 +110,13 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getExits().add(exit);
+            scheme.getElements().add(exit);
         }
     }
 
     @Override
-    public void removeElement(BaseElement element, Scheme scheme, Set <String> errors) {
-
+    public void removeElement(WorkflowConnectedElement element, Scheme scheme, Set <String> errors) {
+        scheme.getElements().remove(element);
     }
 
     @Override

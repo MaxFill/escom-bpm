@@ -1,6 +1,7 @@
 package com.maxfill.escom.utils;
 
 import com.maxfill.dictionary.DictBundles;
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.context.RequestContext;
 
 import javax.faces.application.FacesMessage;
