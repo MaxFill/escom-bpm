@@ -5,6 +5,7 @@ import com.maxfill.model.process.Process;
 import com.maxfill.model.process.ProcessLog;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.schemes.task.Task;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,23 +31,44 @@ public class Scheme implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Process process;
 
+    @Lob
+    @Column(name = "Elements", length = 4096)
+    private byte[] packElements;
+
     /* Список поручений */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
     private final List<Task> tasks = new ArrayList<>();
 
     @Transient
-    private final List<WorkflowConnectedElement> elements = new ArrayList <>();
+    private final WorkflowElements workflowElements = new WorkflowElements();
 
     /* Список коннекторов */
     @Transient
     private final List<ConnectorElem> connectors = new ArrayList<>();
 
-    /* GETS & SETS */
-
-    public List <WorkflowConnectedElement> getElements() {
-        return elements;
+    public Scheme() {
     }
 
+    public Scheme(Process process) {
+        this.process = process;
+    }
+
+    public List<WorkflowConnectedElement> getElements(){
+        return workflowElements.getElements();
+    }
+
+    /* GETS & SETS */
+
+    public WorkflowElements getWorkflowElements() {
+        return workflowElements;
+    }
+
+    public byte[] getPackElements() {
+        return packElements;
+    }
+    public void setPackElements(byte[] packElements) {
+        this.packElements = packElements;
+    }
 
     public List <Task> getTasks() {
         return tasks;

@@ -5,10 +5,13 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.AnchorElem;
 import com.maxfill.model.process.schemes.elements.WorkflowConnectedElement;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.utils.EscomUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 import java.util.*;
 
 import static javax.persistence.GenerationType.TABLE;
@@ -77,15 +80,79 @@ public class Task extends WorkflowConnectedElement implements Dict{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<TaskLog> itemLogs = new ArrayList<>();
 
+    @XmlElement(name = "uid")
+    protected String uid;
+
+    @XmlElement(name = "caption")
+    protected String caption;
+
+    @XmlElement(name = "posY")
+    protected int posX;
+
+    @XmlElement(name = "posY")
+    protected int posY;
+
+    @XmlElement(name = "anchors")
+    protected Set<AnchorElem> anchors = new HashSet<>();
+
     public Task() {
-        super("", 0, 0);
     }
 
     public Task(String taskName, Staff owner, Scheme scheme, int x, int y) {
-        super(taskName, x, y);
+        this.caption = caption;
+        this.posX = x;
+        this.posY = y;
         this.owner = owner;
         this.scheme = scheme;
         this.name = taskName;
+        this.uid = EscomUtils.generateGUID();
+    }
+    public Set<AnchorElem> getAnchors() {
+        return anchors;
+    }
+    public void setAnchors(Set <AnchorElem> anchors) {
+        this.anchors = anchors;
+    }
+
+    public int getPosX() {
+        return posX;
+    }
+    public void setPosX(int posX) {
+        this.posX = posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public Set<String> validate(){
+        Set <String> errors = new HashSet<>();
+        return errors;
+    }
+
+    public AnchorElem getAnchorsById(String id){
+        AnchorElem anchorElem = null;
+        for (AnchorElem elem : anchors){
+            if (elem.getUid().equals(id)){
+                anchorElem = elem;
+                break;
+            }
+        }
+        return anchorElem;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     @Override

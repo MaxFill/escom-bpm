@@ -71,6 +71,10 @@
         </style>
     </ui:define>
 
+    <ui:define name="customJavaScript">
+        <h:outputScript library="contextMenu" name="contextMenu.js" />
+    </ui:define>
+
     <ui:define name="card_scripts">
         <script type="text/javascript">
             $(document).on('click', '.ui-diagram > .ui-diagram-element',
@@ -93,9 +97,15 @@
                         {name : 'posY',     value : yPos}
                     ]);
                 });
+            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    //Calling context menu
+                });
+
         </script>
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpen}"/>
+        <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
     </ui:define>
 
     <ui:define name="page_body">

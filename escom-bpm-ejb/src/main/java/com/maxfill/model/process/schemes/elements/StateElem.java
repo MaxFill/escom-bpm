@@ -1,17 +1,31 @@
 package com.maxfill.model.process.schemes.elements;
 
-import java.util.Set;
+import com.maxfill.utils.EscomUtils;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Сущность "Элемент схемы процесса "Состояние"
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class StateElem extends WorkflowConnectedElement{
     private static final long serialVersionUID = 8873088059837269820L;
 
+    @XmlElement(name = "styleType")
     private String styleType;
 
+    public StateElem() {
+    }
+
     public StateElem(String caption, int x, int y) {
-        super(caption, x, y);
+        this.caption = caption;
+        this.posX = x;
+        this.posY = y;
+        this.uid = EscomUtils.generateGUID();
     }
 
     @Override
@@ -24,6 +38,22 @@ public class StateElem extends WorkflowConnectedElement{
     }
     public String getStyleType() {
         return styleType;
+    }
+
+    /* *** *** */
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        StateElem stateElem = (StateElem) o;
+
+        return uid.equals(stateElem.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uid.hashCode();
     }
 
     @Override

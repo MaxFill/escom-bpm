@@ -75,14 +75,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @Basic(optional = false)
     @Column(name = "DateCreate")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     private Date dateCreate;
         
     @XmlTransient
     @Basic(optional = false)
     @Column(name = "DateChange")
     @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
     private Date dateChange;
     
     /* собственные права объекта */

@@ -1,18 +1,34 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.utils.EscomUtils;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * Сущность "Элемент схемы процесса "Коннектор"
  */
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ConnectorElem extends WorkflowElement{
     private static final long serialVersionUID = -2062835627519052276L;
 
+    @XmlElement
     private AnchorElem from;
+
+    @XmlElement
     private AnchorElem to;
 
+    public ConnectorElem() {
+    }
+
     public ConnectorElem(String caption, AnchorElem from, AnchorElem to) {
-        super(caption);
+        this.caption = caption;
         this.from = from;
         this.to = to;
+        this.uid = EscomUtils.generateGUID();
     }
 
     public AnchorElem getFrom() {
@@ -30,6 +46,13 @@ public class ConnectorElem extends WorkflowElement{
     }
 
     @Override
+    public String getStyle() {
+        return "";
+    }
+
+    /* *** *** */
+
+    @Override
     public String toString() {
         return "ConnectorElem{" +
                 "caption='" + caption + '\'' +
@@ -37,7 +60,17 @@ public class ConnectorElem extends WorkflowElement{
     }
 
     @Override
-    public String getStyle() {
-        return "";
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        ConnectorElem that = (ConnectorElem) o;
+
+        return uid.equals(that.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uid.hashCode();
     }
 }

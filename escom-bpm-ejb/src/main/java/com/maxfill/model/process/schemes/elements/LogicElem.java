@@ -1,6 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
-import java.util.Set;
+import com.maxfill.utils.EscomUtils;
 
 /**
  * Сущность "Элемент схемы процесса "Логическое ветвление"
@@ -9,13 +9,35 @@ public class LogicElem extends WorkflowConnectedElement{
     private static final String STYLE_NAME = "ui-diagram-logic";
     private static final long serialVersionUID = 1857271531554809843L;
 
+    public LogicElem() {
+    }
+
     public LogicElem(String caption, int x, int y) {
-        super(caption, x, y);
+        this.caption = caption;
+        this.posX = x;
+        this.posY = y;
+        this.uid = EscomUtils.generateGUID();
     }
 
     @Override
     public String getStyle() {
         return STYLE_NAME;
+    }
+
+    /* *** *** */
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        LogicElem logicElem = (LogicElem) o;
+
+        return uid.equals(logicElem.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uid.hashCode();
     }
 
     @Override

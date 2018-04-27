@@ -1,20 +1,19 @@
 package com.maxfill.model.process.schemes.elements;
 
-import com.maxfill.utils.EscomUtils;
-
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
  * Абстрактный класс элементов графической модели процесса
  */
+@XmlTransient
 public abstract class WorkflowElement implements Serializable{
+    @XmlElement(name = "uid")
     protected String uid;
-    protected String caption;
 
-    public WorkflowElement(String caption) {
-        this.caption = caption;
-        uid = EscomUtils.generateGUID();
-    }
+    @XmlElement(name = "caption")
+    protected String caption;
 
     public String getCaption() {
         return caption;
@@ -28,21 +27,6 @@ public abstract class WorkflowElement implements Serializable{
     }
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-
-        WorkflowElement that = (WorkflowElement) o;
-
-        return uid.equals(that.uid);
-    }
-
-    @Override
-    public int hashCode() {
-        return uid.hashCode();
     }
 
     public abstract String getStyle();

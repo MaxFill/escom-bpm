@@ -1,21 +1,39 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.utils.EscomUtils;
+
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AnchorElem extends WorkflowElement{
     private static final long serialVersionUID = 8128988436740920824L;
+
     public static final String STYLE_YES = "{fillStyle:'#099b05'}";
     public static final String STYLE_NO = "{fillStyle:'#C33730'}";
     public static final String STYLE_MAIN = "{fillStyle:'#98AFC7'}";
 
+    @XmlElement(name = "position")
     private String position;
+
+    @XmlElement(name = "type")
     private Boolean type;
-    private WorkflowConnectedElement owner;
+
+    @XmlElement(name = "style")
     private String style;
 
+    @XmlTransient
+    private WorkflowConnectedElement owner;
+
+    public AnchorElem() {
+    }
+
     public AnchorElem(String caption, String position, Boolean type, WorkflowConnectedElement owner) {
-        super(caption);
+        this.caption = caption;
         this.position = position;
         this.type = type;
         this.owner = owner;
+        this.uid = EscomUtils.generateGUID();
     }
 
     public WorkflowConnectedElement getOwner() {
@@ -56,6 +74,21 @@ public class AnchorElem extends WorkflowElement{
     }
 
     /* *** *** */
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        AnchorElem that = (AnchorElem) o;
+
+        return uid.equals(that.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uid.hashCode();
+    }
 
     @Override
     public String toString() {

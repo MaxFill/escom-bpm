@@ -1,21 +1,24 @@
 package com.maxfill.model.process.schemes.elements;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Абстрактный класс элементов графической модели процесса, имеющих коннекторы
  */
+@XmlTransient
 public abstract class WorkflowConnectedElement extends WorkflowElement{
-    protected int posX;
-    protected int posY;
-    protected Set<AnchorElem> anchors = new HashSet <>();
 
-    public WorkflowConnectedElement(String caption, int posX, int posY) {
-        super(caption);
-        this.posX = posX;
-        this.posY = posY;
-    }
+    @XmlElement(name = "posY")
+    protected int posX;
+
+    @XmlElement(name = "posY")
+    protected int posY;
+
+    @XmlElement(name = "anchors")
+    protected Set<AnchorElem> anchors = new HashSet<>();
 
     public Set<AnchorElem> getAnchors() {
         return anchors;
