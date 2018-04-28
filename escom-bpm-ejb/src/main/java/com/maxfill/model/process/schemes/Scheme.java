@@ -40,7 +40,7 @@ public class Scheme implements Serializable, Dict{
     private final List<Task> tasks = new ArrayList<>();
 
     @Transient
-    private final WorkflowElements workflowElements = new WorkflowElements();
+    private final WorkflowElements elements = new WorkflowElements();
 
     /* Список коннекторов */
     @Transient
@@ -53,14 +53,11 @@ public class Scheme implements Serializable, Dict{
         this.process = process;
     }
 
-    public List<WorkflowConnectedElement> getElements(){
-        return workflowElements.getElements();
-    }
 
     /* GETS & SETS */
 
-    public WorkflowElements getWorkflowElements() {
-        return workflowElements;
+    public WorkflowElements getElements() {
+        return elements;
     }
 
     public byte[] getPackElements() {

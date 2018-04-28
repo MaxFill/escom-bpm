@@ -111,6 +111,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Формирует графическую схему из данных модели процесса
      */
     private void restoreModel(){
+        /*
         model.clear();
         Map<String, Element> elementMap = new HashMap <>();
         scheme.getElements().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
@@ -133,6 +134,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         });
         elementMap.forEach((s, element) -> model.addElement(element));
         connections.stream().forEach(c -> model.connect(c));
+        */
     }
 
     /**
@@ -513,13 +515,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
         endPoints.clear();
 
-*/
+
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
         createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createCondition("Все одобрили?", 28, 18, endPoints, errors);
         endPoints.clear();
-/*
+
+*/
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createState("Документ согласован", "success", 36, 26, endPoints, errors);
@@ -529,14 +532,15 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
         endPoints.clear();
-
+/*
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
         createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
         endPoints.clear();
-*/
+
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_MAIN);
         createExit(50, 35, endPoints, errors);
+      */
     }
 
     /**

@@ -32,7 +32,6 @@ public class Rights implements Serializable{
     public List<Right> getRights() {
         return rights;
     }
-
     public void setRights(List<Right> rights) {
         this.rights = rights;
     }

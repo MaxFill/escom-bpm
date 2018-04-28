@@ -77,7 +77,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().add(condition);
+            scheme.getElements().getConditions().add(condition);
         }
     }
 
@@ -89,7 +89,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().add(logic);
+            scheme.getElements().getLogics().add(logic);
         }
     }
 
@@ -101,7 +101,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().add(state);
+            scheme.getElements().getStates().add(state);
         }
     }
 
@@ -113,7 +113,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().add(start);
+            scheme.getElements().getStarts().add(start);
         }
     }
 
@@ -125,21 +125,15 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().add(exit);
+            scheme.getElements().getExits().add(exit);
         }
     }
 
     @Override
     public void removeElement(WorkflowConnectedElement element, Scheme scheme, Set <String> errors) {
-        //ToDo проверка на возможность удаления данного соединения!
-
-        for (AnchorElem anchor : element.getAnchors()){ //сначала нужно удалить все соединения связанные с этим элементом!
-            List<ConnectorElem> connectors = scheme.getConnectors().stream()
-                    .filter(c -> c.getFrom().equals(anchor) || c.getTo().equals(anchor))
-                    .collect(Collectors.toList());
-            scheme.getConnectors().removeAll(connectors);
-        }
-        scheme.getElements().remove(element);
+        //ToDo проверка на возможность удаления
+        removeConnectors(element, scheme);
+        //scheme.getElements().remove(element);
     }
 
     @Override
@@ -159,9 +153,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void packScheme(Scheme scheme, Set <String> errors) {
         StringWriter sw = new StringWriter();
-        JAXB.marshal(scheme.getWorkflowElements().getElements().get(0), sw);
-        StringWriter sw1 = new StringWriter();
-        JAXB.marshal(scheme.getWorkflowElements(), sw1);
+        JAXB.marshal(scheme.getElements(), sw);
         String xml = sw.toString();
         try {
             byte[] compress = EscomUtils.compress(xml);
@@ -186,4 +178,17 @@ public class WorkflowImpl implements Workflow {
         scheme.getTasks().stream().forEach(task->taskFacade.create(task));
     }
 
+    /**
+     * Удаление соединений у элемента модели процесса
+     * @param element
+     * @param scheme
+     */
+    private void removeConnectors(WorkflowConnectedElement element, Scheme scheme){
+        for (AnchorElem anchor : element.getAnchors()){ //сначала нужно удалить все соединения связанные с этим элементом!
+            List<ConnectorElem> connectors = scheme.getConnectors().stream()
+                    .filter(c -> c.getFrom().equals(anchor) || c.getTo().equals(anchor))
+                    .collect(Collectors.toList());
+            scheme.getConnectors().removeAll(connectors);
+        }
+    }
 }
