@@ -41,6 +41,8 @@ import java.util.*;
 @Named
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process>{
+    private static final long serialVersionUID = -5558740260204665618L;
+    
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -110,13 +112,18 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Формирует графическую схему из данных модели процесса
      */
-    private void restoreModel(){
-        /*
+    private void restoreModel(){        
         model.clear();
         Map<String, Element> elementMap = new HashMap <>();
-        scheme.getElements().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getTasks().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getExits().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getLogics().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getStarts().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getStates().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getConditions().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        
         List<Connection> connections = new ArrayList <>();
-        scheme.getConnectors().stream().forEach(connectorElem->{
+        scheme.getElements().getConnectors().stream().forEach(connectorElem->{
             AnchorElem anchorFrom = connectorElem.getFrom();
             WorkflowConnectedElement wfFrom = anchorFrom.getOwner();
             Element fromEl = elementMap.get(wfFrom.getUid());
@@ -133,8 +140,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             connections.add(connection);
         });
         elementMap.forEach((s, element) -> model.addElement(element));
-        connections.stream().forEach(c -> model.connect(c));
-        */
+        connections.stream().forEach(c -> model.connect(c));        
     }
 
     /**
@@ -147,7 +153,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Очистка визуальной схемы процесса
      */
-    public void clearModel(){
+    public void onClearModel(){
         scheme = new Scheme(getEditedItem());
         model.clear();
         visualModelRefresh();
@@ -340,15 +346,15 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param x
      * @param y
      */
-    private Task createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        Task task = new Task(taskName, executor, scheme, x, y);
-        task.setAnchors(makeAnchorElems(task, endPoints));
-        workflow.addTask(task, scheme, errors);
+    private void createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        Task task = new Task(taskName, executor, scheme);
+        TaskElem taskElem = new TaskElem(taskName, x, y);
+        taskElem.setTask(task);
+        taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
+        workflow.addTask(taskElem, scheme, errors);
         if (errors.isEmpty()){
-            modelAddElement(task);
-            return task;
-        }
-        return null;
+            modelAddElement(taskElem);         
+        }        
     }
 
     /**
@@ -393,9 +399,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private Element createElement(WorkflowConnectedElement wfElement){
         Element element = new Element(wfElement, wfElement.getPosX() + "em", wfElement.getPosY() + "em");
         List<EndPoint> endPoints = restoreEndPoints(wfElement.getAnchors());
-        for (EndPoint endPoint: endPoints){
-            element.addEndPoint(endPoint);
-        }
+        endPoints.forEach(endPoint -> element.addEndPoint(endPoint));
         element.setId(wfElement.getUid());
         element.setStyleClass(wfElement.getStyle());
         return element;
@@ -504,7 +508,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Staff staff = staffFacade.findStaffByUser(getCurrentUser());
         Set<String> errors = new HashSet <>();
         List<EndPoint> endPoints = new ArrayList<>();
-        /*
+        
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createStart(2, 4, endPoints, errors);
@@ -515,14 +519,12 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
         endPoints.clear();
 
-
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
         createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createCondition("Все одобрили?", 28, 18, endPoints, errors);
         endPoints.clear();
 
-*/
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createState("Документ согласован", "success", 36, 26, endPoints, errors);
@@ -532,7 +534,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
         endPoints.clear();
-/*
+
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
         createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
@@ -540,13 +542,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_MAIN);
         createExit(50, 35, endPoints, errors);
-      */
+      
     }
 
     /**
      * Загрузка визуальной схемы процесса из шаблона
      */
-    public void loadModelFromTempl(){
+    public void onLoadModelFromTempl(){
         //ToDo !
         visualModelRefresh();
     }
@@ -554,7 +556,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Сохранение модели процесса в шаблон
      */
-    public void saveModelToTempl(){
+    public void onSaveModelToTempl(){
         //ToDo !
     }
 

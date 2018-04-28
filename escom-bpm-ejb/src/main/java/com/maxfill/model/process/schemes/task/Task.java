@@ -6,12 +6,12 @@ import com.maxfill.model.process.schemes.elements.AnchorElem;
 import com.maxfill.model.process.schemes.elements.WorkflowConnectedElement;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.utils.EscomUtils;
+import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
-import java.io.Serializable;
 import java.util.*;
 
 import static javax.persistence.GenerationType.TABLE;
@@ -21,9 +21,8 @@ import static javax.persistence.GenerationType.TABLE;
  */
 @Entity
 @Table(name = "tasks")
-public class Task extends WorkflowConnectedElement implements Dict{
+public class Task implements Serializable, Dict{
     private static final long serialVersionUID = 2862379210656085637L;
-    private static final String STYLE_NAME = "ui-diagram-task";
 
     @TableGenerator(
             name = "TaskIdGen",
@@ -80,99 +79,13 @@ public class Task extends WorkflowConnectedElement implements Dict{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<TaskLog> itemLogs = new ArrayList<>();
 
-    @XmlElement(name = "uid")
-    protected String uid;
-
-    @XmlElement(name = "caption")
-    protected String caption;
-
-    @XmlElement(name = "posY")
-    protected int posX;
-
-    @XmlElement(name = "posY")
-    protected int posY;
-
-    @XmlElement(name = "anchors")
-    protected Set<AnchorElem> anchors = new HashSet<>();
-
     public Task() {
     }
 
-    public Task(String taskName, Staff owner, Scheme scheme, int x, int y) {
-        this.caption = caption;
-        this.posX = x;
-        this.posY = y;
+    public Task(String taskName, Staff owner, Scheme scheme) {
         this.owner = owner;
         this.scheme = scheme;
         this.name = taskName;
-        this.uid = EscomUtils.generateGUID();
-    }
-    public Set<AnchorElem> getAnchors() {
-        return anchors;
-    }
-    public void setAnchors(Set <AnchorElem> anchors) {
-        this.anchors = anchors;
-    }
-
-    public int getPosX() {
-        return posX;
-    }
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public int getPosY() {
-        return posY;
-    }
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
-    public Set<String> validate(){
-        Set <String> errors = new HashSet<>();
-        return errors;
-    }
-
-    public AnchorElem getAnchorsById(String id){
-        AnchorElem anchorElem = null;
-        for (AnchorElem elem : anchors){
-            if (elem.getUid().equals(id)){
-                anchorElem = elem;
-                break;
-            }
-        }
-        return anchorElem;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    @Override
-    public String getCaption(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("<").append(name).append(">").append(" ");
-        if (owner != null){
-            if (owner.getPost() != null){
-                sb.append(owner.getPost().getName()).append(" ");
-            }
-            if (owner.getEmployee() != null){
-                sb.append(owner.getEmployee().getShortFIO());
-            }
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public String getStyle() {
-        return STYLE_NAME;
     }
 
     /* GETS & SETS */
@@ -186,6 +99,13 @@ public class Task extends WorkflowConnectedElement implements Dict{
 
     }
 
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public Staff getOwner() {
         return owner;
     }

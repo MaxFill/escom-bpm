@@ -71,10 +71,6 @@
         </style>
     </ui:define>
 
-    <ui:define name="customJavaScript">
-        <h:outputScript library="contextMenu" name="contextMenu.js" />
-    </ui:define>
-
     <ui:define name="card_scripts">
         <script type="text/javascript">
             $(document).on('click', '.ui-diagram > .ui-diagram-element',
@@ -166,9 +162,9 @@
 
                     <f:facet name="right">
                         <p:menuButton value="Options">
-                            <p:menuitem value="Save" actionListener="#{processCardBean.saveModel()}" icon="ui-icon-disk" />
-                            <p:menuitem value="Reload" actionListener="#{processCardBean.reloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
-                            <p:menuitem value="Clear" actionListener="#{processCardBean.clearModel()}" update="diagramm" icon="ui-icon-close" />
+                            <p:menuitem value="Save" actionListener="#{processCardBean.onSaveModelToTempl()}" icon="ui-icon-disk" />
+                            <p:menuitem value="Reload" actionListener="#{processCardBean.onReloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
+                            <p:menuitem value="Clear" actionListener="#{processCardBean.onClearModel()}" update="diagramm" icon="ui-icon-close" />
                         </p:menuButton>
                     </f:facet>
                 </p:toolbar>

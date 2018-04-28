@@ -177,7 +177,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.45</version>
-            <scope>jar</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="doc-count-types" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c3f7fb00-c592-41e0-acce-2c2dfae278d4">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontName="Arial" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Row" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+			<style backcolor="#E6DAC3"/>
+		</conditionalStyle>
+	</style>
+	<parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATE_START" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="DATE_END" class="java.util.Date" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="key" class="java.lang.String"/>
+	<field name="value" class="java.lang.Number"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="103" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="54" backcolor="#FFB000" uuid="06ae06ee-09c1-405b-a0d4-df1fcf5e44c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="54" width="92" height="47" uuid="84b6f93d-c5f0-4b44-943e-f8e9e40f04bc"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false" />
+				</textElement>
+				<text><![CDATA[За период с:]]></text>
+			</staticText>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement x="92" y="54" width="106" height="47" uuid="5456b27a-0f0b-4e74-840d-910774ed3658"/>
+				<textElement verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DATE_START}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="198" y="54" width="22" height="47" uuid="95edc642-4b7a-4820-beb2-fad16a3ba7a9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<text><![CDATA[по:]]></text>
+			</staticText>
+			<textField pattern="dd.MM.yyyy">
+				<reportElement x="220" y="54" width="106" height="47" uuid="e659c201-b11a-4447-9c2d-99afae8e6ae3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{DATE_END}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="53" width="555" height="1" uuid="8600906b-d665-460b-a394-73cddbda5f79"/>
+			</line>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="134" y="9" width="123" height="18" uuid="6968eeb5-6050-457f-9b5c-c10c544d3545"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH.mm.ss">
+				<reportElement x="0" y="9" width="134" height="19" uuid="f90279cf-d664-4e37-a7ff-23f4164fe6b9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Распечатано в системе ESCOM.BPM :"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="515" y="9" width="40" height="18" uuid="b0925e84-efd3-473c-895e-8cb1ac897f4a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="411" y="8" width="104" height="20" uuid="118bb21f-263e-438b-a88c-efeef4313754"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Страница "+$V{PAGE_NUMBER}+" из"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="97a40c02-3b93-41e7-894a-e80b347a45f4"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="288">
+			<pieChart>
+				<chart>
+					<reportElement x="0" y="0" width="555" height="275" uuid="ae373a2f-f4d4-4b5b-900e-c40f1616486a"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Left"/>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{key}]]></keyExpression>
+					<valueExpression><![CDATA[$F{value}]]></valueExpression>
+					<labelExpression><![CDATA[$F{key}]]></labelExpression>
+				</pieDataset>
+				<piePlot labelFormat="{0} = {1}" legendLabelFormat="{0} = {1}">
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

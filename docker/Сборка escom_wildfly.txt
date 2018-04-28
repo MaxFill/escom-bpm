@@ -1,0 +1,82 @@
+docker stop datastorage; docker rm datastorage; docker stop wildfly; docker rm wildfly;
+
+docker start wildfly 
+docker restart wildfly;
+
+/* начальные сборки */
+docker build --rm -t ubuntu1604 /home/docker/ubuntu/
+docker build --rm -t storage-img /home/docker/datastore/
+docker build --rm -t wildfly-img /home/docker/wildfly/
+
+/* запуски */
+docker run --name datastorage datastorage-img true;
+docker run --name wildfly -d --volumes-from datastorage -p 8443:8443 wildfly-img 
+docker run --name wildfly --restart unless-stopped -d --volumes-from datastorage -p 8090:8080 -p 8444:8443 wildfly-img 
+
+netstat -ltupn
+docker ps -a
+
+/* если контейнер РАБОТАЕТ, то подключиться к нему можно так : */
+docker exec -i -t wildfly8443 bash
+
+/* если контейнер НЕ работает, то подключаемся так: */
+docker run -it wildfly-img /bin/bash
+docker run -it datastorage-img /bin/bash
+docker run -it bitnami/opencart /bin/bash /bin/bash
+
+docker cp wildfly:/opt/wildfly/standalone/configuration/log* /home/escom/
+
+cd /opt/wildfly/standalone/
+ 
+nl2br
+
+/* установка обновлений */
+docker cp /opt/wildfly/standalone/configuration/wildfly.jks  datastorage:/opt/wildfly/standalone/configuration/
+docker cp /opt/wildfly/standalone/configuration/License_Ru.pdf  datastorage:/opt/wildfly/standalone/configuration/
+docker cp /home/docker/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear datastorage:/opt/wildfly/standalone/deployments/
+docker cp /opt/wildfly/standalone/jasper_reports/ datastorage:/opt/wildfly/standalone/
+docker cp /opt/wildfly/standalone/help/ datastorage:/opt/wildfly/standalone/
+
+docker cp opencart_opencart_1:/opt/bitnami/apache/conf/vhost/htaccess/opencart-htacess.conf /home/opencart/
+
+/* сохранение данных */
+docker exec opencart_opencart_1 tar Ccf $(dirname SRC_PATH) - $(basename SRC_PATH) | tar Cxf DEST_PATH -
+docker exec opencart_opencart_1 mysqldump -uroot --password= -hmariadb bitnami_opencart > bitnami_opencart.sql
+
+docker run --rm --volumes-from opencart_opencart_1 -v $(pwd):/backup ubuntu tar cvf /backup/backup.tar /bitnami
+
+
+/* удаление */
+docker volume ls
+удалить все оборванные тома
+docker volume prune
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker volume rm ...
+docker system prune -a
+
+/* удалить все образы */
+
+
+---- MYSQL -----
+SHOW VARIABLES LIKE'character%';
+SHOW VARIABLES LIKE 'collation%';
+SHOW DATABASES;
+
+SELECT User,Host FROM mysql.user;
+SET PASSWORD FOR admin@localhost = PASSWORD('RTY789zxc0');
+GRANT ALL PRIVILEGES ON escomdb.* TO 'admin'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+http://wiki.russianfedora.pro/index.php?title=Docker
+
+/* загрузки для сайта */
+docker cp /home/opencart/catalog/language opencart_opencart_1:/opt/bitnami/opencart/catalog/
+docker cp /home/opencart/theme524-update.zip opencart_opencart_1:/opt/bitnami/opencart/
+docker cp /home/opencart/opencart-3.0.2.0-rs.zip opencart_opencart_1:/opt/bitnami/opencart/
+docker cp /home/opencart/ opencart_opencart_1:/opt/bitnami/opencart/
+
+
+
+
+

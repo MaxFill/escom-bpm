@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.base.BaseDictFacade;

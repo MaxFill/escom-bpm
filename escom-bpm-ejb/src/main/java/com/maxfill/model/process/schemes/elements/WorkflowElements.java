@@ -16,6 +16,9 @@ import java.util.List;
 public class WorkflowElements implements Serializable{
     private static final long serialVersionUID = 5898399111315803093L;
 
+    @XmlElement(name = "tasks")
+    private List<TaskElem> tasks = new ArrayList <>();
+    
     @XmlElement(name = "connectors")
     private List<ConnectorElem> connectors = new ArrayList <>();
 
@@ -37,6 +40,13 @@ public class WorkflowElements implements Serializable{
     public WorkflowElements() {
     }
 
+    public List<TaskElem> getTasks() {
+        return tasks;
+    }
+    public void setTasks(List<TaskElem> tasks) {
+        this.tasks = tasks;
+    }
+    
     public List <ConnectorElem> getConnectors() {
         return connectors;
     }

@@ -2,10 +2,8 @@ package com.maxfill.model.process.schemes;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
-import com.maxfill.model.process.ProcessLog;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.schemes.task.Task;
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,19 +30,15 @@ public class Scheme implements Serializable, Dict{
     private Process process;
 
     @Lob
-    @Column(name = "Elements", length = 4096)
+    @Column(name = "Elements", length = 8192)
     private byte[] packElements;
-
+    
     /* Список поручений */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
     private final List<Task> tasks = new ArrayList<>();
 
     @Transient
-    private final WorkflowElements elements = new WorkflowElements();
-
-    /* Список коннекторов */
-    @Transient
-    private final List<ConnectorElem> connectors = new ArrayList<>();
+    private WorkflowElements elements = new WorkflowElements();
 
     public Scheme() {
     }
@@ -53,11 +47,13 @@ public class Scheme implements Serializable, Dict{
         this.process = process;
     }
 
-
     /* GETS & SETS */
-
+    
     public WorkflowElements getElements() {
         return elements;
+    }
+    public void setElements(WorkflowElements elements) {
+        this.elements = elements;
     }
 
     public byte[] getPackElements() {
@@ -69,10 +65,6 @@ public class Scheme implements Serializable, Dict{
 
     public List <Task> getTasks() {
         return tasks;
-    }
-
-    public List <ConnectorElem> getConnectors() {
-        return connectors;
     }
 
     @Override
