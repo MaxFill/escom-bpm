@@ -49,7 +49,9 @@ public class ActivateAppImpl implements ActivateApp{
 
     /**
      * Инициализация лицензии из лицензионного файла
+     * @return 
      */
+    @Override
     public Licence initLicense(){
         File licenseFile = getLicenseFile();
         if (licenseFile == null) return null;
@@ -75,13 +77,12 @@ public class ActivateAppImpl implements ActivateApp{
         String serverDir = System.getProperty("server-dir");
         Path dir = FileSystems.getDefault().getPath(serverDir);
         File licenseFile = null;
-        try {
-            DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.lic");
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.lic")) {
             for (Path path : stream) {
                 licenseFile = path.toFile();
             }
-            stream.close();
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return licenseFile;

@@ -22,8 +22,8 @@ public class ActivateAppBean implements Serializable{
     private static final long serialVersionUID = -6222739585119426846L;
     protected static final Logger LOGGER = Logger.getLogger(ActivateAppBean.class.getName());
 
-    //public static final String WSS_INFO_URL = "wss://escom-demo.ru:8443/EscomServices-1.0/activate";
-    public static final String WSS_INFO_URL = "wss://localhost:9443/EscomServices-1.0/activate";
+    public static final String WSS_INFO_URL = "wss://escom-demo.ru:9443/EscomServices-1.0/activate";
+    //public static final String WSS_INFO_URL = "wss://localhost:9443/EscomServices-1.0/activate";
 
     private String licNumber;
     private String licenseData;

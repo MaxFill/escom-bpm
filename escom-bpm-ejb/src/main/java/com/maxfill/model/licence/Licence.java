@@ -34,7 +34,7 @@ public final class Licence implements Serializable{
     
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
 
-    private Set<String> modules = new HashSet<>();
+    private final Set<String> modules = new HashSet<>();
 
     public Licence() {
         modules.add(DictModules.MODULE_CONCORD);
@@ -53,6 +53,7 @@ public final class Licence implements Serializable{
 
     /**
      * Определяет возможность использования модулей
+     * @param moduleName
      * @return
      */
     public Boolean isCanUses(String moduleName){

@@ -46,7 +46,8 @@ public class CheckReleaseBean extends BaseViewBean{
         release = appBean.getRelease();
         if (release != null) {
             // вызов wss сервиса через javascript
-            PrimeFaces.current().executeScript("init('" + appBean.WSS_INFO_URL + "')");
+            String wccUrl = appBean.WSS_INFO_URL;
+            PrimeFaces.current().executeScript("serverConnect('" + wccUrl + "')");
         }
     }
 
@@ -96,7 +97,7 @@ public class CheckReleaseBean extends BaseViewBean{
             return;
         }
         if (dateRelease.compareTo(release.getReleaseDate()) > 0){
-            EscomMsgUtils.warnMsg("NeedUpdateProgram");
+            EscomMsgUtils.warnMsg("NeedUpdateSystem");
             if (!appBean.getNeedUpadateSystem()) {
                 appBean.setNeedUpadateSystem(Boolean.TRUE);
                 sessionBean.setCanShowNotifBar(Boolean.TRUE);

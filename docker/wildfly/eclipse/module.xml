@@ -34,6 +34,7 @@
     </resources>
 
     <dependencies>
+        <module name="javax.ws.rs.api"/> 
         <module name="asm.asm"/>
         <module name="javax.api"/>
         <module name="javax.annotation.api"/>

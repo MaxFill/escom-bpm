@@ -71,6 +71,11 @@
         </style>
     </ui:define>
 
+    <ui:define name="customJavaScript">
+         <h:outputScript library="contextMenu" name="contextMenu.js" /> 
+         <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
+    </ui:define>
+    
     <ui:define name="card_scripts">
         <script type="text/javascript">
             $(document).on('click', '.ui-diagram > .ui-diagram-element',
@@ -95,7 +100,23 @@
                 });
             $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
                 function(info) {
-                    //Calling context menu
+                    var menu = [{
+                                name: 'open',
+                                img: '/escom-bpm-web/resources/images/open.png',
+                                title: 'open button',
+                                fun: function () {
+                                    alert('i am open button');
+                                }
+                            },{
+                                name: 'delete',
+                                img: '/escom-bpm-web/resources/images/delete.png',
+                                title: 'delete button',
+                                fun: function () {
+                                    alert('i am delete button');
+                                }
+                            }];
+                    var component = $(document.getElementById(info.target.id)); 
+                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()});
                 });
 
         </script>

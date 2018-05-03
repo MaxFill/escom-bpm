@@ -10,8 +10,8 @@
         
     <ui:define name="systems">
         <script language="javascript" type="text/javascript">
-            function init(wsUri) {
-                console.log("connect to:" + wsUri);
+            function serverConnect(wsUri) {
+                //console.log("fconnect to:" + wsUri);
                 websocket = new WebSocket(wsUri);
                 websocket.onopen = function (evt) {
                     onOpen(evt)
@@ -99,13 +99,13 @@
 
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
                     <h:outputLabel value="#{bundle.Version}:" />
-                    <p:inputText value="#{checkReleaseBean.licence.versionNumber}" readonly="true" />
+                    <p:inputText value="#{checkReleaseBean.release.versionNumber}" readonly="true" />
 
                     <h:outputLabel value="#{bundle.Number}:" />
-                    <p:inputText value="#{checkReleaseBean.licence.releaseNumber}" readonly="true" />
+                    <p:inputText value="#{checkReleaseBean.release.releaseNumber}" readonly="true" />
 
                     <h:outputLabel value="#{bundle.Date}:" />
-                    <p:inputText value="#{checkReleaseBean.licence.releaseDate}" readonly="true" >
+                    <p:inputText value="#{checkReleaseBean.release.releaseDate}" readonly="true" >
                         <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                     </p:inputText>
                 </p:panelGrid>

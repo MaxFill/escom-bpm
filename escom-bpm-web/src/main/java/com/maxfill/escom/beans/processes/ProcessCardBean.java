@@ -191,8 +191,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             defY = Integer.valueOf(y) + 5;
             WorkflowConnectedElement baseElement = (WorkflowConnectedElement) selectedElement.getData();
             baseElement.setPosX(Integer.valueOf(x));
-            baseElement.setPosY(Integer.valueOf(y));
-            PrimeFaces.current().executeScript("var menu = [{name: 'delete',img: 'images/delete.png',title: 'delete button',fun: function () {alert('i am delete button')}}]; $('#"+ paramId + "').contextMenu(menu)");
+            baseElement.setPosY(Integer.valueOf(y));            
         }
     }
 
