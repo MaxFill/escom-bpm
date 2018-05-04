@@ -11,8 +11,8 @@
         <style type="text/css">
             .ui-diagram-task {
                 background-color: #9ed4ef;
-                width:14em;
-                height:6em;
+                width: 14em;
+                min-height: 4em;                
             }
 
             .ui-diagram-element:hover {
@@ -29,8 +29,8 @@
             }
 
             .ui-diagram-logic {
-                width:4em;
-                height:4em;
+                width:5em;
+                height:5em;
                 border-radius: 4em;
                 background-color: #099b05;
             }
@@ -74,7 +74,6 @@
 
     <ui:define name="customJavaScript">
          <h:outputScript library="contextMenu" name="contextMenu.js" /> 
-         <h:outputScript library="js" name="addmenu.js" /> 
          <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
     </ui:define>
     
@@ -100,16 +99,23 @@
 
                 elementIds.forEach(function(elementId){                  
                     var component = $(document.getElementById(elementId)); 
-                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()});
+                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
                 });
             }
 
             function sendClick(info){
-                    //console.log("click="+info.target.id);
+                    //console.log("elementId="+info.target.id);                    
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
                     var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    }
                     elementClicked([
-                        {name : 'elementId',value : info.target.id},
+                        {name : 'elementId',value : elementId},
                         {name : 'posX',     value : xPos},
                         {name : 'posY',     value : yPos}
                     ]);
@@ -123,8 +129,15 @@
                 function(info) {
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
                     var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    }
                     elementOpen([
-                        {name : 'elementId',value : info.target.id},
+                        {name : 'elementId',value : elementId},
                         {name : 'posX',     value : xPos},
                         {name : 'posY',     value : yPos}
                     ]);
@@ -209,7 +222,7 @@
 
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
                     <f:facet name="element" >
-                        #{el.caption}
+                        <h:outputLabel value="#{el.caption}" style="display:block;margin:1em;word-wrap:break-word;"/>
                     </f:facet>
                     <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />
