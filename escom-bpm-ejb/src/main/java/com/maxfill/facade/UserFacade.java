@@ -114,6 +114,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
 
     /**
      * Ищет пользователей по e-mail
+     * @param email
      */
     public List<User> findUserByEmail(String email){
         if (StringUtils.isBlank(email)) return null;
@@ -129,6 +130,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
 
     /**
      * Ищет пользователя по login
+     * @param login
      */
     public List<User> findByLogin(String login){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
@@ -340,6 +342,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
 
     /**
      * Создание токена JWT для пользователя
+     * @param loginMap
      */
     public String makeJsonToken(Map<String, String> loginMap) throws UnsupportedEncodingException{
         String login = loginMap.get("login");
@@ -366,7 +369,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
 
     /**
      * Отправка сообщения пользователю
-     * @return
+     * @param receiver
      */
     public void sendSystemMsg(User receiver, String msg) {
         messagesFacade.createSystemMessage(receiver, msg, msg, null);

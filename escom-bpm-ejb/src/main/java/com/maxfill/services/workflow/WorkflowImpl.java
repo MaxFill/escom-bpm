@@ -182,7 +182,8 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            scheme.setElements(elements);            
+            elements.getTasks().forEach(task->task.setTask(taskFacade.findByLinkUID(task.getUid())));
+            scheme.setElements(elements);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

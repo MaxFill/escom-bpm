@@ -19,11 +19,9 @@
                 background-color: #C7C6C4;
             }
 
-            .ui-diagram-element {
+            .ui-diagram-element {                 
                 text-align: center;
                 font-weight: bold;
-                word-wrap: break-word;
-                white-space: pre-wrap;
                 color: #ffffff;
                 border-radius: 4px;
                 border:0.1em dotted #E5E4E2;
@@ -51,35 +49,63 @@
             }
 
             .ui-diagram-success-state {
-                width:10em;
+                width:9em;
                 height:5em;
                 background-color: #02b044;
             }
 
             .ui-diagram-fail-state {
-                width:10em;
+                width:8em;
                 height:5em;
                 background-color: #C33730;
             }
 
             .ui-diagram-condition {
-                width:8em;
+                width:6em;
                 height:6em;
                 background-color: #c306ab;
             }
 
+            .iw-contextMenu {
+                font-family: Verdana, Helvetica, Arial, sans-serif;
+            }
         </style>
     </ui:define>
 
     <ui:define name="customJavaScript">
          <h:outputScript library="contextMenu" name="contextMenu.js" /> 
+         <h:outputScript library="js" name="addmenu.js" /> 
          <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
     </ui:define>
     
     <ui:define name="card_scripts">
-        <script type="text/javascript">
-            $(document).on('click', '.ui-diagram > .ui-diagram-element',
-                function(info) {
+        <script type="text/javascript"> 
+            function init() {
+                onAfterFormLoad();
+            }
+            function addMenu(elementIds){    
+                var menu = [{
+                        name: '#{bundle.Properties}',
+                        img: '/escom-bpm-web/resources/images/settings.png',
+                        fun: function () {
+                            elementOpen();
+                        }
+                    },{
+                        name: '#{bundle.Delete}',
+                        img: '/escom-bpm-web/resources/images/delete.png',
+                        fun: function () {
+                            elementDelete();
+                        }
+                    }];
+
+                elementIds.forEach(function(elementId){                  
+                    var component = $(document.getElementById(elementId)); 
+                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()});
+                });
+            }
+
+            function sendClick(info){
+                    //console.log("click="+info.target.id);
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
                     var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
                     elementClicked([
@@ -87,6 +113,11 @@
                         {name : 'posX',     value : xPos},
                         {name : 'posY',     value : yPos}
                     ]);
+            }
+            
+            $(document).on('click', '.ui-diagram > .ui-diagram-element', 
+                function(info) {
+                    sendClick(info);
                 });
             $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
                 function(info) {
@@ -100,29 +131,15 @@
                 });
             $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
                 function(info) {
-                    var menu = [{
-                                name: 'open',
-                                img: '/escom-bpm-web/resources/images/open.png',
-                                title: 'open button',
-                                fun: function () {
-                                    alert('i am open button');
-                                }
-                            },{
-                                name: 'delete',
-                                img: '/escom-bpm-web/resources/images/delete.png',
-                                title: 'delete button',
-                                fun: function () {
-                                    alert('i am delete button');
-                                }
-                            }];
-                    var component = $(document.getElementById(info.target.id)); 
-                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()});
+                    sendClick(info);
                 });
-
+            window.addEventListener("load", init, false);
         </script>
+        
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpen}"/>
         <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
+        <p:remoteCommand name="onAfterFormLoad" action="#{processCardBean.onAfterFormLoad()}"/>
     </ui:define>
 
     <ui:define name="page_body">
@@ -143,7 +160,7 @@
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:toolbar styleClass="ui-grid-col-12" >
                     <f:facet name="left">
-                        <p:commandButton  value="#{bundle.addExecutors}" icon="ui-icon-plus"
+                        <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
                                         disabled="#{processCardBean.isReadOnly()}"
                                         onstart="PF('statusDialog').show()"
                                         oncomplete="PF('statusDialog').hide();"
@@ -171,11 +188,11 @@
                         </span>
 
                         <p:commandButton title="Load" icon="ui-icon-folder-open"
-                                         actionListener="#{processCardBean.loadModelFromTempl()}"
+                                         actionListener="#{processCardBean.onLoadModelFromTempl()}"
                                          update="diagramm">
                         </p:commandButton>
                         <p:commandButton title="Clear" icon="ui-icon-closethick"
-                                         actionListener="#{processCardBean.clearModel()}"
+                                         actionListener="#{processCardBean.onClearModel()}"
                                          update="diagramm">
                         </p:commandButton>
                         <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
@@ -190,14 +207,15 @@
                     </f:facet>
                 </p:toolbar>
 
-                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el">
+                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
                     <f:facet name="element" >
-                        <h:outputLabel value="#{el.caption}" style="display:block; margin-top:1em;"/>
+                        #{el.caption}
                     </f:facet>
                     <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />
-                    <p:ajax event="connectionChange" listener="#{processCardBean.onConnectionChange}" />
-                </p:diagram>
+                    <p:ajax event="connectionChange" listener="#{processCardBean.onConnectionChange}" />                    
+                </p:diagram>                
+                
             </p:panelGrid>
         </p:tab>
     </ui:define>

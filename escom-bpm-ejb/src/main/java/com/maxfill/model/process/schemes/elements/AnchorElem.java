@@ -21,26 +21,19 @@ public class AnchorElem extends WorkflowElement{
 
     @XmlElement(name = "style")
     private String style;
-
-    @XmlTransient
-    private WorkflowConnectedElement owner;
+    
+    @XmlElement(name = "ownerUID")
+    private String ownerUID;
 
     public AnchorElem() {
     }
 
-    public AnchorElem(String caption, String position, Boolean type, WorkflowConnectedElement owner) {
+    public AnchorElem(String caption, String position, Boolean type, String ownerUID) {
         this.caption = caption;
         this.position = position;
         this.type = type;
-        this.owner = owner;
+        this.ownerUID = ownerUID;        
         this.uid = EscomUtils.generateGUID();
-    }
-
-    public WorkflowConnectedElement getOwner() {
-        return owner;
-    }
-    public void setOwner(WorkflowConnectedElement owner) {
-        this.owner = owner;
     }
 
     public String getPosition() {
@@ -50,6 +43,13 @@ public class AnchorElem extends WorkflowElement{
         this.position = position;
     }
 
+    public String getOwnerUID() {
+        return ownerUID;
+    }
+    public void setOwnerUID(String ownerUID) {
+        this.ownerUID = ownerUID;
+    }
+    
     public Boolean getType() {
         return type;
     }

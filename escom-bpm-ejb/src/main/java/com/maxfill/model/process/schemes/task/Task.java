@@ -20,7 +20,8 @@ import static javax.persistence.GenerationType.TABLE;
  * Сущность "Элемент схемы процесса "Поручение"
  */
 @Entity
-@Table(name = "tasks")
+@Table(name = "tasks",
+        indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
 public class Task implements Serializable, Dict{
     private static final long serialVersionUID = 2862379210656085637L;
 
@@ -66,6 +67,10 @@ public class Task implements Serializable, Dict{
     @Temporal(TemporalType.TIMESTAMP)
     private Date factExecDate;
 
+    /* Фактический срок исполнения */
+    @Column(name = "TaskLinkUID")
+    private String taskLinkUID;
+    
     /* Категории */
     //ToDo добавить категории
 
@@ -82,10 +87,11 @@ public class Task implements Serializable, Dict{
     public Task() {
     }
 
-    public Task(String taskName, Staff owner, Scheme scheme) {
+    public Task(String taskName, Staff owner, Scheme scheme, String taskLinkUID) {
         this.owner = owner;
         this.scheme = scheme;
         this.name = taskName;
+        this.taskLinkUID = taskLinkUID;
     }
 
     /* GETS & SETS */
@@ -99,6 +105,10 @@ public class Task implements Serializable, Dict{
 
     }
 
+    public String getTaskLinkUID() {
+        return taskLinkUID;
+    }
+    
     public String getName() {
         return name;
     }
