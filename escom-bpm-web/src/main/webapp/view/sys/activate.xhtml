@@ -90,7 +90,9 @@
                         <p:spacer/><p:spacer/>
                         <p:spacer/>
                         <p:commandButton id="btnLogin" value="#{bundle.Activate}" title="#{bundle.ActivateLicense}"
-                                         actionListener="#{activateAppBean.onActivate()}"/>
+                                         actionListener="#{activateAppBean.onActivate()}"
+                                         onstart="PF('statusDialog').show();"
+                                         oncomplete="PF('statusDialog').hide();"/>
                     </p:panelGrid>
                 </p:panelGrid>
             </p:panel>

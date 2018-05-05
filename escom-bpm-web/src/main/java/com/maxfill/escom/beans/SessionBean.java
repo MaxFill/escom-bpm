@@ -428,7 +428,9 @@ public class SessionBean implements Serializable{
 
     /**
      * Открытие обозревателя документов
+     * @param filterId
      * @param filterName
+     * @return 
      */
     public String openDocExplorer(String filterId){
         return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true&filterId=" + filterId;

@@ -21,7 +21,6 @@
 
             .ui-diagram-element {                 
                 text-align: center;
-                font-weight: bold;
                 color: #ffffff;
                 border-radius: 4px;
                 border:0.1em dotted #E5E4E2;
@@ -29,10 +28,11 @@
             }
 
             .ui-diagram-logic {
-                width:5em;
-                height:5em;
+                width:4em;
+                height:4em;
                 border-radius: 4em;
                 background-color: #099b05;
+                word-wrap: normal !important;
             }
 
             .ui-diagram-start {
@@ -156,7 +156,7 @@
     </ui:define>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Process}">
+        <p:tab id="cardTab" title="#{bundle.Process}" >
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
                     <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
@@ -220,7 +220,7 @@
                     </f:facet>
                 </p:toolbar>
 
-                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
+                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
                     <f:facet name="element" >
                         <h:outputLabel value="#{el.caption}" style="display:block;margin:1em;word-wrap:break-word;"/>
                     </f:facet>

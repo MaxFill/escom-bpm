@@ -20,35 +20,39 @@
         #{_bean.makeCardHeader()}
     </ui:define>
 
-    <ui:define name="body">
+    <ui:define name="body">       
         <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
 
         <script type="text/javascript" >
+            var itemChange = 0;
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
                     document.getElementById(componentName).focus();
                     return;
                 }
             }
-        </script>
-
-        <script type="text/javascript" >
-            var itemChange = 0;
-        </script>
+        </script>       
 
         <ui:insert name="customStyleCSS"/>
         <ui:insert name="customJavaScript"/>
 
         <style>
+            .ui-tabs-left>.ui-tabs-nav{
+                width: 15%;
+            }
             .ui-tabs-left>.ui-tabs-panels{
                 float:left !important;
-            }
+                width: 85% !important;
+            }            
             .ui-tabs .ui-tabs-panel{
-                padding: 0em 1.0em !important;
+                padding: 0em !important;
             }
-            ul.ui-menu-child {
+            .ui-menu-child {
                 white-space: nowrap;
                 width: auto !important;
+            }
+            .pe-layout-pane-content{
+                padding: 2px;
             }
         </style>
 
@@ -56,7 +60,7 @@
             <p:ajax event="resize" listener="#{_bean.handleResize}"/> 
 
             <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">
+                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                   
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
                                      oncomplete="return itemChange = 0;">            
@@ -134,7 +138,7 @@
                             </f:facet>
                         </p:menubar>
 
-                        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" >
+                        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding"  >
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
                             <ui:insert name="childs_rights"/>

@@ -200,7 +200,6 @@ public final class EscomBeanUtils {
     /* Открытие карточки объекта  */
     public static void openItemForm(String formName, String itemOpenKey,  Tuple<Integer, Integer> size) {
         Map<String, Object> options = new HashMap<>();
-        //options.put("headerElement", formName + ":btnClose");
         options.put("resizable", true);
         options.put("modal", true);
         options.put("minWidth", 450);
@@ -212,6 +211,7 @@ public final class EscomBeanUtils {
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
+        //options.put("headerElement", formName + ":customheader");
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> itemKeyList = new ArrayList<>();
         List<String> openInDialogList = new ArrayList<>();
@@ -236,6 +236,7 @@ public final class EscomBeanUtils {
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
+        //options.put("headerElement", "centerFRM:customheader");
         PrimeFaces.current().dialog().openDynamic(dlgName, options, paramMap);
     }    
     
