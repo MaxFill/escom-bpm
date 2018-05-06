@@ -22,7 +22,6 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
  * сохранения изменений размеров форм
  */
 public abstract class BaseViewBean implements Serializable{
-    private static final long serialVersionUID = 3712139345846276454L;
     protected static final Logger LOGGER = Logger.getLogger(BaseViewBean.class.getName());
 
     @Inject

@@ -589,6 +589,11 @@ public class SessionBean implements Serializable{
         openDialogFrm(DictDlgFrmName.FRM_COUNTERS, new HashMap<>());
     }
 
+    /* Открытие окна планировщика */
+    public void openScheduler(){
+        openDialogFrm(DictDlgFrmName.FRM_SCHEDULER, new HashMap<>());
+    }
+    
     /* Инициализация спиcка тем */
     private void temeInit(){
         themes = new ArrayList<>();

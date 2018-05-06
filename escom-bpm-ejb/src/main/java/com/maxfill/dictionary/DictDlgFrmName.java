@@ -35,7 +35,7 @@ public final class DictDlgFrmName {
     public static final String FRM_AUTH_LOG = "authlog";
 
     public static final String FRM_PROCESS_EXPL = "process-explorer";
-
+    public static final String FRM_SCHEDULER = "scheduler";
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     public static final String REP_DOC_JOURNAL = "doc-journal";

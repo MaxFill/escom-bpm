@@ -182,7 +182,9 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
-                                                        
+                            
+                            <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
+                                           actionListener="#{sessionBean.openScheduler()}"/>                            
                             <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
                             <p:separator />
