@@ -2,15 +2,11 @@ package com.maxfill.model.process.schemes.task;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.process.schemes.elements.AnchorElem;
-import com.maxfill.model.process.schemes.elements.WorkflowConnectedElement;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 
@@ -66,8 +62,8 @@ public class Task implements Serializable, Dict{
     @Column(name = "FactExecDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date factExecDate;
-
-    /* Фактический срок исполнения */
+    
+    /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TaskLinkUID")
     private String taskLinkUID;
     
@@ -87,13 +83,6 @@ public class Task implements Serializable, Dict{
     public Task() {
     }
 
-    public Task(String taskName, Staff owner, Scheme scheme, String taskLinkUID) {
-        this.owner = owner;
-        this.scheme = scheme;
-        this.name = taskName;
-        this.taskLinkUID = taskLinkUID;
-    }
-
     /* GETS & SETS */
 
     @Override
@@ -107,6 +96,9 @@ public class Task implements Serializable, Dict{
 
     public String getTaskLinkUID() {
         return taskLinkUID;
+    }
+    public void setTaskLinkUID(String taskLinkUID) {
+        this.taskLinkUID = taskLinkUID;
     }
     
     public String getName() {
@@ -158,6 +150,13 @@ public class Task implements Serializable, Dict{
         this.itemLogs = itemLogs;
     }
 
+    public Scheme getScheme() {
+        return scheme;
+    }
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
+    }
+    
     /* *** *** */
 
     @Override

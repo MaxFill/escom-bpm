@@ -40,6 +40,11 @@ public class StateElem extends WorkflowConnectedElement{
         return styleType;
     }
 
+    @Override
+    public String getBundleKey() {
+        return "State";
+    }
+    
     /* *** *** */
     @Override
     public boolean equals(Object o) {

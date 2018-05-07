@@ -68,6 +68,7 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
         return getDefaultRights(item);
     }
 
+    @Override
     public Rights getRightForChild(BaseDict item){
         if (item == null) return null;
 

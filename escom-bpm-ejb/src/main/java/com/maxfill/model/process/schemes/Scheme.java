@@ -34,7 +34,7 @@ public class Scheme implements Serializable, Dict{
     private byte[] packElements;
     
     /* Список поручений */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme", orphanRemoval=true)
     private final List<Task> tasks = new ArrayList<>();
 
     @Transient

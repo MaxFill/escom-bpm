@@ -50,6 +50,11 @@ public class ConnectorElem extends WorkflowElement{
         return "";
     }
 
+    @Override
+    public String getBundleKey() {
+        return "Сonnector";
+    }
+    
     /* *** *** */
 
     @Override

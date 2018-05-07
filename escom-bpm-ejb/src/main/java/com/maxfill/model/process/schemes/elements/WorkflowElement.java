@@ -35,4 +35,5 @@ public abstract class WorkflowElement implements Serializable{
     }
 
     public abstract String getStyle();
+    public abstract String getBundleKey();
 }

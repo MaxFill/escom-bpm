@@ -30,9 +30,6 @@ public class AdmObjectBean extends BaseViewBean{
     private Map<String, Integer> rezultUpdate;
     private BaseTableBean itemBean;
 
-    @Inject
-    private SessionBean sessionBean;
-
     @Override
     public void onBeforeOpenCard(){
         if (sourceItem == null){

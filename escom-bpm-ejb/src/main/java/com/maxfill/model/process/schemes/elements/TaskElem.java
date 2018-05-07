@@ -64,6 +64,11 @@ public class TaskElem extends WorkflowConnectedElement{
         this.task = task;
     }
     
+    @Override
+    public String getBundleKey() {
+        return "Task";
+    }
+    
     /* *** *** */
     
     @Override

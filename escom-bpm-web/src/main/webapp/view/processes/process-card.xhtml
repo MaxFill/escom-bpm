@@ -150,12 +150,16 @@
         </script>
         
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
-        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpen}"/>
+        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick(processCardBean)}"/>
         <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
         <p:remoteCommand name="onAfterFormLoad" action="#{processCardBean.onAfterFormLoad()}"/>
+        
+        <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
+            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
+        </p:commandButton>
     </ui:define>
 
-    <ui:define name="page_body">
+    <ui:define name="page_body">                
         <p:tab id="cardTab" title="#{bundle.Process}" >
             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
@@ -232,5 +236,5 @@
             </p:panelGrid>
         </p:tab>
     </ui:define>
-
+    
 </ui:composition>

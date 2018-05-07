@@ -73,6 +73,11 @@ public class AnchorElem extends WorkflowElement{
         this.style = style;
     }
 
+    @Override
+    public String getBundleKey() {
+        return "Anchor";
+    }
+    
     /* *** *** */
 
     @Override
@@ -97,4 +102,5 @@ public class AnchorElem extends WorkflowElement{
                 ", caption='" + caption + '\'' +
                 '}';
     }
+
 }

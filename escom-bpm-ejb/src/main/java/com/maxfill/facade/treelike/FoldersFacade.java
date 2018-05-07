@@ -57,6 +57,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * @param owner
      * @return
      */
+    @Override
     public List<BaseDict> findAllDetailItems(Folder owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -71,6 +72,8 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
 
     /**
      * Формирование прав доступа к папке
+     * @param item
+     * @param user
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {

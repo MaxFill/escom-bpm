@@ -24,6 +24,11 @@ public class LogicElem extends WorkflowConnectedElement{
         return STYLE_NAME;
     }
 
+    @Override
+    public String getBundleKey() {
+        return "Logic";
+    }
+    
     /* *** *** */
     @Override
     public boolean equals(Object o) {

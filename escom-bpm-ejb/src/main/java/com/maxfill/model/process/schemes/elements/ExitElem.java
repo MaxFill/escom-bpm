@@ -31,6 +31,11 @@ public class ExitElem extends WorkflowConnectedElement{
         return STYLE_NAME;
     }
 
+    @Override
+    public String getBundleKey() {
+        return "Exit";
+    }
+    
     /* *** *** */
     @Override
     public boolean equals(Object o) {

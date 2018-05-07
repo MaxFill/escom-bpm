@@ -414,6 +414,7 @@ public class SessionBean implements Serializable{
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
     }
 
+
     /**
      * Открытие обозревателя процессов
      * @return
@@ -429,7 +430,6 @@ public class SessionBean implements Serializable{
     /**
      * Открытие обозревателя документов
      * @param filterId
-     * @param filterName
      * @return 
      */
     public String openDocExplorer(String filterId){
@@ -918,9 +918,9 @@ public class SessionBean implements Serializable{
     }
 
     public class NotifMsg{
-        private String message;
-        private String url;
-        private String urlCaption;
+        private final String message;
+        private final String url;
+        private final String urlCaption;
 
         public NotifMsg(String message, String url, String urlCaption) {
             this.message = message;

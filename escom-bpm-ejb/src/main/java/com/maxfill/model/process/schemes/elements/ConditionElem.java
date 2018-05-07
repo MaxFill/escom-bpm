@@ -30,6 +30,11 @@ public class ConditionElem extends WorkflowConnectedElement{
         return STYLE_NAME;
     }
 
+    @Override
+    public String getBundleKey() {
+        return "Condition";
+    }
+    
     /* *** *** */
 
     @Override

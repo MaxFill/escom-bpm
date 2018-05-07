@@ -233,7 +233,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Отбирает все подчинённые объекты для владельца. Переопределяется в бинах объектов
-     * @param item
      * @return
      */
     public List<BaseDict> findAllDetailItems(T owner){

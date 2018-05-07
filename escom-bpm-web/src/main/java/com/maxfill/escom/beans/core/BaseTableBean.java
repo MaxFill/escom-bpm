@@ -54,6 +54,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     private Metadates metadatesObj;                     //объект метаданных
 
+    @Override
     public abstract BaseDictFacade getFacade();
 
     /* Формирование списка детальных данных в таблице обозревателя  */

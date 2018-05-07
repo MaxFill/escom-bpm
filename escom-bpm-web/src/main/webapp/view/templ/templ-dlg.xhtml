@@ -70,8 +70,8 @@
                                     <ui:insert name="menuActions" />
                                     <p:separator />
                                     <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                                disabled="#{_canNotClose}"
-                                                onclick="document.getElementById('centerFRM:btnClose').click();">
+                                                disabled="#{_canNotClose}" immediate="true" process="@this"
+                                                action="#{_bean.onCloseCard()}">
                                     </p:menuitem>
                                 </p:menuButton>
                                 <span class="ui-separator">
@@ -82,7 +82,7 @@
 
                             <f:facet name="right">
                                 <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                                 title="#{bundle.Close}"
+                                                 title="#{bundle.Close}" immediate="true" process="@this"
                                                  disabled="#{_canNotClose}"
                                                  action="#{_bean.onCloseCard()}">
                                 </p:commandButton>

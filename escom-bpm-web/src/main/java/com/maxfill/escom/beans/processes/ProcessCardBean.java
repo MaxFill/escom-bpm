@@ -4,6 +4,7 @@ import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.Scheme;
@@ -34,6 +35,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -42,19 +44,24 @@ import java.util.*;
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process>{
     private static final long serialVersionUID = -5558740260204665618L;
-    
+
     @EJB
     private ProcessFacade processFacade;
     @EJB
     private Workflow workflow;
     @EJB
     private StaffFacade staffFacade;
-
+    @EJB
+    private TaskFacade taskFacade;
+        
     private Element selectedElement = null;
     private Scheme scheme;
     private int defX = 8;
     private int defY = 8;
-
+    private WorkflowConnectedElement baseElement;
+    private String beanId;
+    private final Set<Task> editedTasks = new HashSet<>();
+    
     private final DefaultDiagramModel model = new DefaultDiagramModel();
 
     @Override
@@ -81,12 +88,30 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         workflow.packScheme(scheme, errors);
     }
 
+    /**
+     * Перед сохранением процесса
+     * @param item
+     */
     @Override
-    protected void onBeforeSaveItem(Process item) {
+    protected void onBeforeSaveItem(Process item) {      
+        List<Task> liveTask = scheme.getElements().getTasks().stream().map(tsk->tsk.getTask()).collect(Collectors.toList());
+        List<Task> forRemove = new ArrayList<>();
+        forRemove.addAll(getEditedItem().getScheme().getTasks());
+        forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
+        if (!forRemove.isEmpty()){
+            scheme.getTasks().removeAll(forRemove);
+            editedTasks.removeAll(forRemove);
+        }
         getEditedItem().setScheme(scheme);
         super.onBeforeSaveItem(item);
     }
 
+    @Override
+    protected void onAfterSaveItem(Process item){
+        if (editedTasks.isEmpty()) return;        
+        editedTasks.forEach(task -> taskFacade.edit(task));
+    }
+        
     @Override
     public void onAfterFormLoad() {
         addContextMenu();
@@ -189,20 +214,48 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             selectedElement.setY(y + "em");
             defX = Integer.valueOf(x) + 5;
             defY = Integer.valueOf(y) + 5;
-            WorkflowConnectedElement baseElement = (WorkflowConnectedElement) selectedElement.getData();
+            baseElement = (WorkflowConnectedElement) selectedElement.getData();
             baseElement.setPosX(Integer.valueOf(x));
             baseElement.setPosY(Integer.valueOf(y));            
         }
     }
 
     /**
-     * Обоработка события открытия карточки визуального компонента по двойному клику
+     * Обоработка события контекстного меню для открытия карточки свойств визуального компонента 
+     * @param beanId
      */
-    public void onElementOpen(){
+    public void onElementOpenClick(String beanId){
         onElementClicked();
-        //ToDo
+        this.beanId = beanId;
+        PrimeFaces.current().executeScript("document.getElementById('process:btnOpenElement').click();");
     }
 
+     /**
+     * Обоработка события открытия карточки свойств визуального компонента 
+     */
+    public void onElementOpen(){
+        String formName = baseElement.getBundleKey() + "-card";
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(beanId);
+        paramMap.put("beanId", itemIds);
+        sessionBean.openDialogFrm(formName.toLowerCase(), paramMap);
+    }
+    
+    /**
+     * Обработка события закрытия карточки свойств визуального компонента
+     * @param event
+     */
+    public void onElementClose(SelectEvent event){
+        if (event.getObject() == null) return;
+        if (baseElement instanceof TaskElem){
+            TaskElem taskElem = (TaskElem)baseElement;
+            editedTasks.add(taskElem.getTask());            
+        }
+        onItemChange();
+        visualModelRefresh();        
+    }
+    
     /**
      * Обработка события добавления одного или нескольких визуальных компонентов "Поручение" из выбранных в селекторе штатных единиц
      * @param event
@@ -380,7 +433,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     private Element createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = new Task(taskName, executor, scheme, taskElem.getUid());        
+        Task task = taskFacade.createTask(taskName, executor, scheme, taskElem.getUid());
         taskElem.setTask(task);
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
         workflow.addTask(taskElem, scheme, errors);
@@ -669,6 +722,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         addContextMenu();
     }
 
+    /**
+     * Добавление контекстного меню к элементам схемы процесса
+     */
     private void addContextMenu(){
         StringBuilder sb = new StringBuilder("addMenu([");
         model.getElements().forEach(element-> {            
@@ -719,7 +775,22 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     /* GETS & SETS */
 
+    /**
+     * Формирует имя элемента для вывода в заголовке формы
+     * @return 
+     */
+    public String getNameBasedElement(){
+        if (getBaseElement() == null) return "";
+        String key = baseElement.getBundleKey();
+        return getLabelFromBundle(key);
+    }
+    
     public DiagramModel getModel() {
         return model;
     }
+
+    public WorkflowConnectedElement getBaseElement() {
+        return baseElement;
+    }
+        
 }

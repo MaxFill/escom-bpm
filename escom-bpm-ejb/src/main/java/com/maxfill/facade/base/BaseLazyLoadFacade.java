@@ -62,6 +62,7 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
     /**
      * Очистка журнала за указанный период времени
      * @param filters
+     * @return 
      */
     public int deleteItems(Map<String,Object> filters) {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

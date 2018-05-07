@@ -75,6 +75,31 @@
         </navigation-case>
         
         <navigation-case>
+            <from-outcome>condition-card</from-outcome>
+            <to-view-id>/view/processes/elements/condition-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>enter-card</from-outcome>
+            <to-view-id>/view/processes/elements/enter-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>exit-card</from-outcome>
+            <to-view-id>/view/processes/elements/exit-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>logic-card</from-outcome>
+            <to-view-id>/view/processes/elements/logic-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>state-card</from-outcome>
+            <to-view-id>/view/processes/elements/state-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>task-card</from-outcome>
+            <to-view-id>/view/tasks/task-card.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
             <from-outcome>doclock</from-outcome>
             <to-view-id>/view/docs/locks/doclock.xhtml</to-view-id>
         </navigation-case>
