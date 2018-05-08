@@ -11,19 +11,27 @@
     <ui:param name="_bean" value="#{schedulerBean}"/>
 
     <ui:define name="menuActions" >
-    </ui:define>
-
+    </ui:define>   
+    
     <ui:define name="toolbarComponents" >
+        <p:commandButton id="btnCreateTask" value="#{bundle.AddTask}" actionListener="#{schedulerBean.onCreateTask(_bean)}">
+            <p:ajax event="dialogReturn" listener="#{schedulerBean.onTaskDlgClose}"/>
+        </p:commandButton>
+        <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{schedulerBean.onOpenTask(_bean)}">
+            <p:ajax event="dialogReturn" listener="#{schedulerBean.onTaskDlgClose}"/>
+        </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
         <h:panelGrid columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}">
+            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" 
+                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" 
+                        locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}">
                 <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />
                 <p:ajax event="eventSelect" listener="#{schedulerBean.onEventSelect}"  />
                 <p:ajax event="eventMove" listener="#{schedulerBean.onEventMove}"  />
-                <p:ajax event="eventResize" listener="#{schedulerBean.onEventResize}"  />
-            </p:schedule>
+                <p:ajax event="eventResize" listener="#{schedulerBean.onEventResize}" />
+            </p:schedule>  
         </h:panelGrid>
     </ui:define>
 </ui:composition>

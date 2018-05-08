@@ -40,6 +40,7 @@ import org.apache.commons.beanutils.BeanUtils;
 /**
  * Базовый бин для работы с единичными объектами
  * Реализует бызовые функции создания, редактирования, валидации и сохранения объектов на карточках
+ * @param <T>
  */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     private static final long serialVersionUID = 6864719383155087328L;

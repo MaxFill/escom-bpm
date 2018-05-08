@@ -1,6 +1,8 @@
 package com.maxfill.escom.beans.task;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.facade.TaskFacade;
@@ -36,34 +38,29 @@ public class TaskCardBean extends BaseViewBean{
     private Task editedItem = new Task();
     private boolean readOnly;
     private Task sourceTask = null;
+    private ContainsTask sourceBean = null;
     
     @Override
     public void onBeforeOpenCard(){
         if (sourceTask == null){
             FacesContext facesContext = FacesContext.getCurrentInstance();
             Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
-            if (params.containsKey("itemUID")){            
-                String uid = params.get("itemUID");
-                sourceTask = taskFacade.findByLinkUID(uid);
-            } else {
-                String beanId = params.get("beanId");
-                HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-                Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");
-                ProcessCardBean myBean = null;            
-                String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
-                for (Object entry : map.values()) {
-                  if (entry instanceof Map) {
-                    Map viewScopes = (Map) entry;
-                    if (viewScopes.containsKey(beanName)) {
-                        myBean = (ProcessCardBean) viewScopes.get(beanName);
-                        String id = myBean.toString();
-                        if (beanId.equals(id)) break;
-                    }
-                  }
+            String beanId = params.get(SysParams.PARAM_BEAN_ID);
+            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
+            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
+            for (Object entry : map.values()) {
+              if (entry instanceof Map) {
+                Map viewScopes = (Map) entry;
+                if (viewScopes.containsKey(beanName)) {
+                    sourceBean = (ContainsTask) viewScopes.get(beanName);
+                    String id = sourceBean.toString();
+                    if (beanId.equals(id)) break;
                 }
-                if (myBean != null){
-                    sourceTask = ((TaskElem) myBean.getBaseElement()).getTask();
-                }                
+              }
+            }
+            if (sourceBean != null){
+                sourceTask = sourceBean.getTask();
             }
             if (sourceTask != null){
                 try {
@@ -105,6 +102,11 @@ public class TaskCardBean extends BaseViewBean{
          editedItem.setOwner((Staff) event.getNewValue());
     }
     
+    public Boolean isShowExtTaskAtr(){
+        if (sourceBean == null) return false;
+        return sourceBean.isShowExtTaskAtr();
+    }
+        
     /* GETS & SETS */
 
     public Task getEditedItem() {
@@ -122,4 +124,5 @@ public class TaskCardBean extends BaseViewBean{
     public String getFormName() {
         return DictDlgFrmName.FRM_TASK;
     }
+    
 }

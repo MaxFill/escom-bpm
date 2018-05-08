@@ -4,6 +4,8 @@ import com.maxfill.Configuration;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
 
 import javax.annotation.PreDestroy;
@@ -30,7 +32,9 @@ public abstract class BaseViewBean implements Serializable{
     protected SessionBean sessionBean;
     @EJB
     protected Configuration conf;
-
+    @EJB
+    private StaffFacade staffFacade;
+    
     private Integer centerHight = 0;
     private Integer northHight = 0;
     private Integer southHight = 0;
@@ -190,6 +194,9 @@ public abstract class BaseViewBean implements Serializable{
         return sessionBean.getCurrentUser();
     }    
     
+    public Staff getCurrentStaff(){
+        return staffFacade.findStaffByUser(getCurrentUser());
+    }
     /* GETS & SETS */
 
     public LayoutOptions getLayoutOptions() {

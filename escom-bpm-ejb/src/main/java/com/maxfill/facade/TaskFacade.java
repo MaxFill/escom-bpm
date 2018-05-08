@@ -56,6 +56,16 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         return q.getResultList().stream().findFirst().orElse(null); 
     }
     
+    public List<Task> findTaskByStaff(Staff staff){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
+        Root<Task> c = cq.from(Task.class);        
+        Predicate crit1 = builder.equal(c.get(Task_.owner), staff);        
+        cq.select(c).where(builder.and(crit1));
+        TypedQuery<Task> q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
     public Metadates getMetadatesObj() {
         return metadatesFacade.find(22);
     }   

@@ -1,140 +1,155 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.TaskFacade;
-import java.io.Serializable;
+import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.utils.DateUtils;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
 /**
- *
+ * Контролер формы "Планировщик"
  */
 @Named
 @ViewScoped
-public class SchedulerBean extends BaseViewBean {
+public class SchedulerBean extends BaseViewBean implements ContainsTask{
+    private static final long serialVersionUID = -2515586022679502172L;
 
     @EJB
     private TaskFacade taskFacade;
-
+        
     private final ScheduleModel eventModel = new DefaultScheduleModel();
-    private ScheduleEvent event = new DefaultScheduleEvent();
+    private SchedulerTask schedulerTask = new SchedulerTask();
     
     @Override
     protected void initBean(){    
         initData();
     };
     
+    @Override
+    public void onAfterFormLoad(){        
+    }
+            
     private void initData(){
-        eventModel.addEvent(new DefaultScheduleEvent("Champions League Match", previousDay8Pm(), previousDay11Pm()));
-        eventModel.addEvent(new DefaultScheduleEvent("Birthday Party", today1Pm(), today6Pm()));
-        eventModel.addEvent(new DefaultScheduleEvent("Breakfast at Tiffanys", nextDay9Am(), nextDay11Am()));
-        eventModel.addEvent(new DefaultScheduleEvent("Plant the new garden stuff", theDayAfter3Pm(), fourDaysLater3pm()));
-         
+        List<Task> tasks = taskFacade.findTaskByStaff(getCurrentStaff());
+        tasks.stream()
+                .filter(task-> task.getBeginDate() != null && task.getPlanExecDate() != null)
+                .forEach(task-> eventModel.addEvent(new SchedulerTask(task)));
+    }
+  
+    /**
+     * Обработка события создания нового поручения
+     * @param beanId
+     */
+    public void onCreateTask(String beanId){
+        Task task = taskFacade.createTask("", getCurrentStaff());
+        task.setBeginDate(schedulerTask.getStartDate());
+        task.setPlanExecDate(schedulerTask.getEndDate());
+        schedulerTask.setTask(task);        
+        onOpenTask(beanId);
     }
     
-    private Calendar today() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
-        return calendar;
-    }
-     
-    private Date previousDay8Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
-        t.set(Calendar.HOUR, 8);
-         
-        return t.getTime();
-    }
-     
-    private Date previousDay11Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) - 1);
-        t.set(Calendar.HOUR, 11);
-         
-        return t.getTime();
-    }
-     
-    private Date today1Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 1);
-         
-        return t.getTime();
-    }
-     
-    private Date theDayAfter3Pm() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 2);     
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 3);
-         
-        return t.getTime();
-    }
- 
-    private Date today6Pm() {
-        Calendar t = (Calendar) today().clone(); 
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.HOUR, 6);
-         
-        return t.getTime();
-    }
-     
-    private Date nextDay9Am() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.AM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 1);
-        t.set(Calendar.HOUR, 9);
-         
-        return t.getTime();
-    }
-     
-    private Date nextDay11Am() {
-        Calendar t = (Calendar) today().clone();
-        t.set(Calendar.AM_PM, Calendar.AM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 1);
-        t.set(Calendar.HOUR, 11);
-         
-        return t.getTime();
-    }
-     
-    private Date fourDaysLater3pm() {
-        Calendar t = (Calendar) today().clone(); 
-        t.set(Calendar.AM_PM, Calendar.PM);
-        t.set(Calendar.DATE, t.get(Calendar.DATE) + 4);
-        t.set(Calendar.HOUR, 3);
-         
-        return t.getTime();
+    public void onOpenTask(String beanId){
+        String formName = DictDlgFrmName.FRM_TASK + "-card";
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(beanId);
+        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        String beanName = SchedulerBean.class.getSimpleName().substring(0, 1).toLowerCase() + SchedulerBean.class.getSimpleName().substring(1);
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(beanName);
+        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        sessionBean.openDialogFrm(formName.toLowerCase(), paramMap);        
     }
     
-    /* ОБОАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */
+    /**
+     * Обработка события после закрытия карточки задания
+     * @param event
+     */
+    public void onTaskDlgClose(SelectEvent event){
+        if (event.getObject() == null) return;        
+        String action = (String) event.getObject();
+        Task task = getTask();
+        switch (action){
+            case "delete":{
+                if (task.getId() != null){
+                    taskFacade.remove(task);
+                    eventModel.deleteEvent(schedulerTask);
+                }                        
+                break;
+            }
+            case "save": {
+                if (task.getId() == null){
+                    taskFacade.create(getTask());
+                    eventModel.addEvent(schedulerTask);
+                } else {
+                    taskFacade.edit(getTask());
+                }
+                break;
+            }
+        }        
+        modelRefresh();
+    }
+    
+    /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */
     
     public void onEventSelect(SelectEvent selectEvent) {
-        event = (ScheduleEvent) selectEvent.getObject();
+        schedulerTask = (SchedulerTask) selectEvent.getObject();
+        PrimeFaces.current().executeScript("document.getElementById('centerFRM:btnOpenTask').click();");
     }
      
     public void onDateSelect(SelectEvent selectEvent) {
-        event = new DefaultScheduleEvent("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());
+        schedulerTask = new SchedulerTask("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());        
+        PrimeFaces.current().executeScript("document.getElementById('centerFRM:btnCreateTask').click();");
     }
      
     public void onEventMove(ScheduleEntryMoveEvent event) {
         //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());         
+        schedulerTask = (SchedulerTask) event.getScheduleEvent();
+        Integer dayDelta = event.getDayDelta();
+        Integer minuteDelta = event.getMinuteDelta();
+        changeTaskDate(dayDelta, minuteDelta);
     }
      
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());         
+        //FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Day delta:" + event.getDayDelta() + ", Minute delta:" + event.getMinuteDelta());
+        schedulerTask = (SchedulerTask) event.getScheduleEvent();
+        Integer dayDelta = event.getDayDelta();
+        Integer minuteDelta = event.getMinuteDelta();
+        changeTaskDate(dayDelta, minuteDelta);        
+    }
+    
+    private void changeTaskDate(Integer dayDelta, Integer minuteDelta){
+        Task task = getTask();
+        Date newDate = DateUtils.addDays(task.getBeginDate(), dayDelta);
+        newDate = DateUtils.addMinute(newDate, minuteDelta);
+        
+//schedulerTask.getTask().setBeginDate(beginDate);
+    }
+    
+    public void modelRefresh(){
+        PrimeFaces.current().ajax().update("centerFRM");
     }
     
     @Override
@@ -148,8 +163,14 @@ public class SchedulerBean extends BaseViewBean {
         return eventModel;
     }
 
-    public ScheduleEvent getEvent() {
-        return event;
+    @Override
+    public Task getTask() {
+        return schedulerTask.getTask();
+    }
+
+    @Override
+    public Boolean isShowExtTaskAtr() {
+        return true;
     }
     
 }

@@ -1,5 +1,7 @@
 package com.maxfill.escom.beans.processes;
 
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ProcessFacade;
@@ -42,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Named
 @ViewScoped
-public class ProcessCardBean extends BaseCardBean<Process>{
+public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTask{
     private static final long serialVersionUID = -5558740260204665618L;
 
     @EJB
@@ -238,7 +240,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Map<String, List<String>> paramMap = new HashMap<>();
         List<String> itemIds = new ArrayList<>();
         itemIds.add(beanId);
-        paramMap.put("beanId", itemIds);
+        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(beanName);
+        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         sessionBean.openDialogFrm(formName.toLowerCase(), paramMap);
     }
     
@@ -775,6 +781,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     /* GETS & SETS */
 
+    
     /**
      * Формирует имя элемента для вывода в заголовке формы
      * @return 
@@ -793,4 +800,19 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         return baseElement;
     }
         
+    @Override
+    public Task getTask(){
+        if (baseElement == null) return null;
+        if (baseElement instanceof TaskElem){
+            TaskElem taskElem = (TaskElem) baseElement;
+            Task task = (Task) taskElem.getTask();
+            return task;
+        }
+        return null;
+    }
+    
+    @Override
+    public Boolean isShowExtTaskAtr() {
+        return false;
+    }
 }

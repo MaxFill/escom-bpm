@@ -29,7 +29,10 @@ public final class SysParams {
 
     public static final String OS_UNIX = "UNIX";
     public static final String OS_WIN = "WIN";
-        
+     
+    public static final String PARAM_BEAN_ID = "beanId";
+    public static final String PARAM_BEAN_NAME = "beanName";
+    
     public static final int DEFAULT_DOC_TYPE_ID = 1;
     
     public static final int MODE_UNLOCK_CREATE_VERSION = 0;

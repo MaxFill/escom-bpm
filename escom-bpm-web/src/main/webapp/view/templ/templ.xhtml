@@ -40,10 +40,10 @@
                 monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
                 monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
                 dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-                dayNamesShort: ['Воск', 'Пон', 'Вт', 'Ср', 'Четв', 'Пят', 'Суб'],
+                dayNamesShort: ['Вс.', 'Пн.', 'Вт.', 'Ср.', 'Чт.', 'Пт.', 'Сб.'],
                 dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                 weekHeader: 'Неделя',
-                FirstDay: 1,
+                firstDay: 1,
                 isRTL: false,
                 showMonthAfterYear: false,
                 yearSuffix: '',
@@ -59,16 +59,19 @@
                 allDayText: 'Весь день'
             };
         </script>
-
+        
+        <ui:insert name="customStyleCSS"/>
+        <ui:insert name="customJavaScript"/>
+        
         <ui:insert name="dialogs"/>
         <ui:insert name="systems"/>
         <ui:insert name="body" />         
-    
+
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false"
                   resizable="false" showHeader="false">
             <p:graphicImage name="/images/wait.gif" />
-        </p:dialog>   
-              
+        </p:dialog>
+
     </h:body>
 
 </html>

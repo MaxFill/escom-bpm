@@ -200,13 +200,9 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @param user
      * @return
      */
-    public Staff findStaffByUser(User user){
-        Staff staff = null;
+    public Staff findStaffByUser(User user){        
         List<Staff> staffs = findStaffsByUser(user);
-        if (!staffs.isEmpty()){
-            staff = staffs.get(0);
-        }
-        return staff;
+        return staffs.stream().findFirst().orElse(null);       
     }
     /**
      * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
