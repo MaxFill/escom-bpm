@@ -29,12 +29,13 @@ public class TaskStates extends BaseStateItem{
     public Integer getId() {
         return id;
     }
-
     @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

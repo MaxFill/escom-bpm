@@ -68,117 +68,116 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (19, N'Filter', N'Filters', N'Filters', 0, N'ui-icon-search', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', NULL, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 5);
         </sql>
         
         <!-- Доступные переходы между состояними объектов -->
         <sql>
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 5, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 5, 7, 2);            
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 7, 5, 2);            
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 6, 5, 2);            
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 8, 5, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(1, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 7);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 5);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 6, 5);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 8, 5);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 8, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(2, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(2, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(2, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(2, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(2, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(3, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(3, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(3, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(3, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(3, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(3, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(3, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(3, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(4, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(4, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(4, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(4, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(4, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(4, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(4, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(4, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(5, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(5, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(5, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(5, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(5, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(5, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(5, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(5, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(6, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(6, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(6, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(6, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(6, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(6, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(6, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(6, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(7, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(7, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(7, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(7, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(7, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(7, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(7, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(7, 8, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(9, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(9, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(9, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(9, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(9, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(9, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(9, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(9, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(10, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(10, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(10, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(10, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(10, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(10, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(10, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(10, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(11, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(11, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(11, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(11, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(11, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(11, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(11, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(11, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(12, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(12, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(12, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(12, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(12, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(12, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(12, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(12, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(13, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(13, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(13, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(13, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(13, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(13, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(13, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(13, 8, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(15, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(15, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(15, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(15, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(15, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(15, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(15, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(15, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(16, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(16, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(16, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(16, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(16, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(16, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(16, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(16, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(17, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(17, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(17, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(17, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(17, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(17, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(17, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(17, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(18, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(18, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(18, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(18, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(18, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(18, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(18, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(18, 8, 7);
             
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(19, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(19, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(19, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(19, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(19, 8, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 5, 7, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 7, 9, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 7, 10, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 10, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(20, 9, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(20, 5, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(20, 7, 9);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(20, 7, 10);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(20, 10, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(20, 9, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(21, 8, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(21, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(21, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(21, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(21, 8, 7);
 
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(22, 7, 8, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(22, 7, 6, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(22, 6, 7, 2);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(22, 8, 7, 0);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget, MoveType) VALUES(22, 11, 7, 0);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 9, 10);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 5, 9);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 9, 11);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 11, 5);
         </sql>
 
         <!-- Доступные состояния объектов метаданных -->
@@ -187,64 +186,84 @@
             INSERT objectsStates (ObjId, StateId) VALUES (1, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (1, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (1, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (2, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (2, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (2, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (3, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (3, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (3, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (4, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (4, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (4, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (5, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (5, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (5, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (6, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (6, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (6, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (7, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (7, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (7, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (9, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (9, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (9, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (10, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (10, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (10, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (11, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (11, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (11, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (12, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (12, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (12, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (13, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (13, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (13, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (15, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (15, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (15, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (16, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (16, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (16, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (17, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (17, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (17, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (18, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (18, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (18, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (19, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (19, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (19, 8);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (20, 5);
             INSERT objectsStates (ObjId, StateId) VALUES (20, 9);
             INSERT objectsStates (ObjId, StateId) VALUES (20, 10);
             INSERT objectsStates (ObjId, StateId) VALUES (20, 11);
+            
             INSERT objectsStates (ObjId, StateId) VALUES (21, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (21, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (21, 8);
-            INSERT objectsStates (ObjId, StateId) VALUES (22, 6);
-            INSERT objectsStates (ObjId, StateId) VALUES (22, 7);
-            INSERT objectsStates (ObjId, StateId) VALUES (22, 8);
+            
+            INSERT objectsStates (ObjId, StateId) VALUES (22, 5);
+            INSERT objectsStates (ObjId, StateId) VALUES (22, 9);
+            INSERT objectsStates (ObjId, StateId) VALUES (22, 10);
+            INSERT objectsStates (ObjId, StateId) VALUES (22, 11);
         </sql>
 
         <!-- Фильтры -->

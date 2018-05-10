@@ -13,8 +13,22 @@
     <ui:define name="menuActions" >
     </ui:define>   
     
+    <ui:define name="customStyleCSS">
+        <style>
+            .finished {
+                text-decoration: line-through !important; 
+            }
+            .running {
+                font-weight: bold !important;
+            }
+            .draft {
+                font-style: italic !important;
+            }
+        </style>
+    </ui:define>
+    
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnCreateTask" value="#{bundle.AddTask}" actionListener="#{schedulerBean.onCreateTask(_bean)}">
+        <p:commandButton id="btnCreateTask" style="display: none;" actionListener="#{schedulerBean.onCreateTask(_bean)}">
             <p:ajax event="dialogReturn" listener="#{schedulerBean.onTaskDlgClose}"/>
         </p:commandButton>
         <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{schedulerBean.onOpenTask(_bean)}">
@@ -24,9 +38,9 @@
 
     <ui:define name="centerFormContent">
         <h:panelGrid columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" 
-                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" 
-                        locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}">
+            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" timeZone="#{TimeZone.getDefault()}" ignoreTimezone="false"
+                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true" clientTimeZone="#{TimeZone.getDefault()}" 
+                        locale="#{sessionBean.locale}" >
                 <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />
                 <p:ajax event="eventSelect" listener="#{schedulerBean.onEventSelect}"  />
                 <p:ajax event="eventMove" listener="#{schedulerBean.onEventMove}"  />

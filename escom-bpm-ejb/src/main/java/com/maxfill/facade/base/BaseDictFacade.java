@@ -233,6 +233,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Отбирает все подчинённые объекты для владельца. Переопределяется в бинах объектов
+     * @param owner
      * @return
      */
     public List<BaseDict> findAllDetailItems(T owner){
@@ -646,6 +647,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Стандартная проверка вхождения пользователя в роль
+     * @param item
+     * @param user
      */
     protected boolean checkUserInRole(T item, String roleName, User user){
         return "owner".equals(roleName.toLowerCase()) && Objects.equals(item.getAuthor(), user);

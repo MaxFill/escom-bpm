@@ -14,8 +14,8 @@ public class SchedulerTask extends DefaultScheduleEvent{
     public SchedulerTask() {
     }
 
-    public SchedulerTask(Task task) {        
-        super(task.getName(), task.getBeginDate(), task.getPlanExecDate());
+    public SchedulerTask(Task task) {
+        super(task.getName(), task.getBeginDate(), task.getPlanExecDate(), task.getStyle());        
         this.task = task;
     }
 

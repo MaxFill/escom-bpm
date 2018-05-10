@@ -1,14 +1,16 @@
 package com.maxfill.escom.beans.task;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.facade.TaskFacade;
-import com.maxfill.model.process.schemes.elements.TaskElem;
+import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.process.schemes.task.Task;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.states.State;
 import java.lang.reflect.InvocationTargetException;
 import org.primefaces.event.SelectEvent;
 
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
@@ -61,6 +64,9 @@ public class TaskCardBean extends BaseViewBean{
             }
             if (sourceBean != null){
                 sourceTask = sourceBean.getTask();
+                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != sourceTask.getState().getId()){
+                    readOnly = true;
+                }
             }
             if (sourceTask != null){
                 try {
@@ -107,6 +113,16 @@ public class TaskCardBean extends BaseViewBean{
         return sourceBean.isShowExtTaskAtr();
     }
         
+    /* Возвращает список состояний доступных объекту из его текущего состояния */
+    public List<State> getAvailableStates(){        
+        Metadates metaObj = getMetadatesObj();
+        List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
+        List<State> result = metadatesStates.stream()
+                .map(metadatesState -> metadatesState.getStateTarget())
+                .collect(Collectors.toList());        
+        return result;
+    }
+    
     /* GETS & SETS */
 
     public Task getEditedItem() {
@@ -118,6 +134,11 @@ public class TaskCardBean extends BaseViewBean{
 
     public boolean isReadOnly() {
         return readOnly;
+    }
+    
+    /* Получение ссылки на объект метаданных  */
+    public Metadates getMetadatesObj() {        
+        return taskFacade.getMetadatesObj();        
     }
     
     @Override

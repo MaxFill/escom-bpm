@@ -559,8 +559,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         Metadates metaObj = getMetadatesObj();
         List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
         List<State> result = metadatesStates.stream()
-                .filter(metadatesState -> Objects.equals(itemCurrentState, metadatesState.getStateSource()) 
-                        && !DictStates.MOVED_AUTO.equals(metadatesState.getMoveType()))
+                .filter(metadatesState -> Objects.equals(itemCurrentState, metadatesState.getStateSource()))
                 .map(metadatesState -> metadatesState.getStateTarget())
                 .collect(Collectors.toList());
         if (!result.contains(itemCurrentState)){

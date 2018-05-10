@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.task;
 
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
@@ -83,11 +84,38 @@ public class Task implements Serializable, Dict{
     public Task() {
     }
 
+    @Transient
+    public String getStyle(){
+        String style;
+        switch (state.getCurrentState().getId()){
+            case DictStates.STATE_ARHIVAL:{
+                style = "finished";
+                break;
+            }
+            case DictStates.STATE_RUNNING:{
+                style = "running";
+                break;
+            }
+            case DictStates.STATE_DRAFT:{
+                style = "draft";
+                break;
+            }
+            case DictStates.STATE_COMPLETED:{
+                style = "finished";
+                break;
+            }
+            default:{
+                style = "";
+            }
+        }
+        return style;
+    }
+    
     /* GETS & SETS */
 
     @Override
     public Integer getId() {
-        return null;
+        return id;
     }
     @Override
     public void setId(Integer id) {

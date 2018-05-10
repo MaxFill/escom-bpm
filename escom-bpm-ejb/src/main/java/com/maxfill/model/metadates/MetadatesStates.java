@@ -39,10 +39,7 @@ public class MetadatesStates implements Serializable{
     @JoinColumn(name = "StateTarget", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     @NotNull
-    private State stateTarget;
-    
-    @Column(name = "MoveType")
-    private Integer moveType;
+    private State stateTarget;    
 
     public MetadatesStates() {
     }
@@ -75,12 +72,7 @@ public class MetadatesStates implements Serializable{
         this.stateTarget = stateTarget;
     }
 
-    public Integer getMoveType() {
-        return moveType;
-    }
-    public void setMoveType(Integer moveType) {
-        this.moveType = moveType;
-    }
+    /* *** *** */
     
     @Override
     public int hashCode() {
