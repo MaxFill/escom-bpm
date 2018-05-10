@@ -1,5 +1,7 @@
 package com.maxfill.escom.system.services.mail;
 
+import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.BaseTimer;
@@ -21,7 +23,6 @@ import java.util.logging.Level;
 @ViewScoped
 public class MailReaderBean extends BaseServicesBean<MailSettings>{
     private static final long serialVersionUID = 8484737343525831475L;
-    private static final Integer SERVICE_ID = 3;
     
     @EJB
     private MailReaderTimer mailReaderTimer;
@@ -64,8 +65,8 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
     }
 
     @Override
-    public Integer getSERVICE_ID() {
-        return SERVICE_ID;
+    public int getSERVICE_ID() {
+        return DictServices.MAIL_READER_ID;
     }
 
     @Override
@@ -78,6 +79,11 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
         ServicesEvents selectedEvent = mailReaderTimer.doExecuteTask(service, getSettings());
         setSelectedEvent(selectedEvent);
         getServicesFacade().edit(service);        
+    }
+
+    @Override
+    public String getFormName() {
+        return DictDlgFrmName.FRM_MAIL_READER_SERVICE;
     }
 
 }

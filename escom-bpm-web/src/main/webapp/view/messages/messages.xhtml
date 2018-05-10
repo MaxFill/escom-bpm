@@ -104,13 +104,16 @@
                 </h:outputLabel>
             </p:column>
 
-            <p:column headerText="#{bundle.Doc}">
+            <p:column>
+                <p:commandLink  value="#{bundle.GoToTask}"
+                                rendered="#{item.task != null}"
+                                actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                oncomplete="document.getElementById('centerFRM:openTaskBtn').click();"/>
                 <p:commandLink  value="#{bundle.GoToDocument}"
                                 rendered="#{item.document != null}"
                                 actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
                                 oncomplete="document.getElementById('centerFRM:openDocBtn').click();"/>
-            </p:column>
-            <p:column >
+
                 <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
                                 update="messageTBL"
                                 rendered="#{item.dateReading == null}"
@@ -118,8 +121,13 @@
                 </p:commandButton>
             </p:column>
         </p:dataTable>
+        
         <p:commandButton id="openDocBtn" style="display: none;"
                          actionListener="#{userMsgBean.onGoToDocument()}">
+            <p:ajax event="dialogReturn" update="messageTBL"/>
+        </p:commandButton>
+        <p:commandButton id="openTaskBtn" style="display: none;"
+                         actionListener="#{userMsgBean.onOpenTask(_bean)}">
             <p:ajax event="dialogReturn" update="messageTBL"/>
         </p:commandButton>
     </ui:define>

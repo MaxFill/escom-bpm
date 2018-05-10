@@ -1,5 +1,7 @@
 package com.maxfill.escom.system.services.ldap;
 
+import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.services.ldap.LdapSettings;
 import com.maxfill.services.ldap.LdapUtils;
@@ -78,8 +80,8 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
     }
 
     @Override
-    public Integer getSERVICE_ID() {
-        return 1;
+    public int getSERVICE_ID() {
+        return DictServices.LDAP_ID;
     }
 
     @Override
@@ -95,6 +97,11 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
         ServicesEvents selectedEvent = ldapTimer.doExecuteTask(service, getSettings());
         setSelectedEvent(selectedEvent);
         getServicesFacade().edit(service);        
+    }
+
+    @Override
+    public String getFormName() {
+        return DictDlgFrmName.FRM_LDAP;
     }
 
 }

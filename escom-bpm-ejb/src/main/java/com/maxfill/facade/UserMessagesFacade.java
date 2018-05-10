@@ -5,8 +5,10 @@ import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
 import com.maxfill.model.messages.UserMessages_;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -16,7 +18,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.SingularAttribute;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,11 +64,11 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param addressee
      * @param subject
      * @param content
-     * @param doc
+     * @param tuple
      */
-    public void createSystemMessage(User addressee, String subject, String content, Doc doc){        
+    public void createSystemMessage(User addressee, String subject, String content, Tuple tuple){        
         String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
-        createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, doc);
+        createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, tuple);
     }
 
     /**
@@ -77,14 +78,15 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param senderEmail
      * @param subject
      * @param content
-     * @param doc
+     * @param tuple
      */
-    public void createMessage(User addressee, String senderName, String senderEmail, String subject, String content, Doc doc){        
+    public void createMessage(User addressee, String senderName, String senderEmail, String subject, String content, Tuple tuple){        
         UserMessages message = new UserMessages();
         message.setName(subject);
         message.setAddressee(addressee);
-        message.setDateSent(new Date());
-        message.setDocument(doc);
+        message.setDateSent(new Date());        
+        message.setDocument((Doc)tuple.a);
+        message.setTask((Task)tuple.b);
         message.setSender(senderName);
         message.setImportance(1);
         create(message);

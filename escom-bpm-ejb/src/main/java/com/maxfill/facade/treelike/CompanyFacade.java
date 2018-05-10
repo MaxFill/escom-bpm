@@ -28,8 +28,6 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     protected static final Logger LOG = Logger.getLogger(CompanyFacade.class.getName());
     
     @EJB
-    private UserFacade userFacade;
-    @EJB
     private DepartmentFacade departmentFacade;
     
     public CompanyFacade() {
@@ -41,6 +39,7 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @param owner
      * @return
      */
+    @Override
     public List<BaseDict> findAllDetailItems(Company owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -137,6 +136,7 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * Замена компании на другую
      * @param oldItem
      * @param newItem
+     * @return 
      */
     @Override
     public int replaceItem(Company oldItem, Company newItem) {

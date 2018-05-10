@@ -1,4 +1,3 @@
-
 package com.maxfill.facade;
 
 import com.maxfill.model.favorites.FavoriteObj;
@@ -15,7 +14,6 @@ import javax.persistence.criteria.Root;
 
 /**
  *
- * @author mfilatov
  */
 @Stateless
 public class FavoriteObjFacade extends BaseFacade<FavoriteObj>{

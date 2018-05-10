@@ -3,10 +3,12 @@ package com.maxfill.facade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.process.schemes.task.Task;
-import com.maxfill.model.process.schemes.task.TaskStates;
-import com.maxfill.model.process.schemes.task.Task_;
+import com.maxfill.model.task.Task;
+import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.states.State;
+import com.maxfill.model.task.Task_;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 
@@ -66,7 +68,25 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         TypedQuery<Task> q = getEntityManager().createQuery(cq);       
         return q.getResultList();
     }
+    
+    public List<Task> findTaskByStaffStates(Staff staff, List<State> states){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
+        Root<Task> root = cq.from(Task.class); 
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get(Task_.owner), staff));        
+        criteries.add(root.get("state").get("currentState").in(states));        
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(root).where(builder.and(predicates));
+        TypedQuery<Task> q = getEntityManager().createQuery(cq);
+        return q.getResultList();
+    }
+        
     public Metadates getMetadatesObj() {
         return metadatesFacade.find(22);
     }   
+    
+    
 }

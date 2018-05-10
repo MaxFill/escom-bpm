@@ -25,6 +25,7 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
  */
 public abstract class BaseViewBean implements Serializable{
     protected static final Logger LOGGER = Logger.getLogger(BaseViewBean.class.getName());
+    private static final long serialVersionUID = -255630654257638984L;
 
     @Inject
     protected ApplicationBean appBean;
@@ -128,6 +129,7 @@ public abstract class BaseViewBean implements Serializable{
     protected void initLayotOptions(){        
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
+        panes.addOption("resizable", true);
         layoutOptions.setPanesOptions(panes);
 
         if (isSouthShow()) {
@@ -150,14 +152,24 @@ public abstract class BaseViewBean implements Serializable{
 
         if (isWestShow()) {
             LayoutOptions west = new LayoutOptions();
-            west.addOption("size", 170);
+            west.addOption("size", 250);
             west.addOption("minSize", 150);
-            west.addOption("maxSize", 250);
+            west.addOption("maxSize", 450);
             west.addOption("resizable", true);
             west.addOption("initClosed", isWestInitClosed());
             layoutOptions.setWestOptions(west);
         }
 
+        if (isEastShow()) {
+            LayoutOptions east = new LayoutOptions();;
+            east.addOption("size", 300);
+            east.addOption("minSize", 150);
+            east.addOption("maxSize", 450);
+            east.addOption("resizable", true);
+            east.addOption("initClosed", isEastInitClosed());
+            layoutOptions.setEastOptions(east);
+        }
+        
         LayoutOptions center = new LayoutOptions();
         center.addOption("resizable", true);
         center.addOption("closable", false);
@@ -169,19 +181,22 @@ public abstract class BaseViewBean implements Serializable{
     public Boolean isSouthShow(){
         return false;
     }
-
     public Boolean isWestShow(){
         return false;
     }
-
     public Boolean isNorthShow(){
         return false;
     }
-
+    public Boolean isEastShow(){
+        return false;
+    }
+    
     protected boolean isSouthInitClosed(){
         return false;
     }
-
+    protected boolean isEastInitClosed(){
+        return false;
+    }
     protected boolean isWestInitClosed(){
         return true;
     }
@@ -197,6 +212,7 @@ public abstract class BaseViewBean implements Serializable{
     public Staff getCurrentStaff(){
         return staffFacade.findStaffByUser(getCurrentUser());
     }
+    
     /* GETS & SETS */
 
     public LayoutOptions getLayoutOptions() {

@@ -1,10 +1,8 @@
 package com.maxfill.escom.system.services;
 
-import com.maxfill.Configuration;
-
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 
-import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.BaseTimer;
@@ -15,8 +13,6 @@ import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.extensions.model.layout.LayoutOptions;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.NoSuchObjectLocalException;
 import javax.ejb.Timer;
@@ -28,23 +24,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Inject;
 
 /**
- * Базовый бин для служб
+ * Базовый бин для системных служб (сервисов)
  * @param <P> класс параметров службы
  */
-public abstract class BaseServicesBean<P> implements Serializable{    
+public abstract class BaseServicesBean<P> extends BaseViewBean{    
     private static final long serialVersionUID = -4590499571847393975L;
     protected static final Logger LOG = Logger.getLogger(BaseServicesBean.class.getName());
-    private final LayoutOptions layoutOptions = new LayoutOptions();  
     
     @EJB
     private ServicesFacade servicesFacade;    
-    @EJB
-    protected Configuration conf;
-    @Inject
-    protected SessionBean sessionBean;
+
     
     protected Services service;
     
@@ -54,10 +45,9 @@ public abstract class BaseServicesBean<P> implements Serializable{
     private List<SelectItem> repeatTypes;
     private List<SelectItem> intervalTypes;
     private List<SelectItem> daysOfWeek;
-    
-    @PostConstruct
-    public void init() {
-        initLayoutOptions(); 
+        
+    @Override
+    public void initBean() {
         initSelectItems();
         service = getServicesFacade().find(getSERVICE_ID()); 
         settings = createSettings(); 
@@ -66,7 +56,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
     
     protected abstract P createSettings();    
     public abstract BaseTimer getTimerFacade();
-    public abstract Integer getSERVICE_ID();    
+    public abstract int getSERVICE_ID();    
     
     /**
      * Создаёт объект Sheduler для службы
@@ -184,6 +174,7 @@ public abstract class BaseServicesBean<P> implements Serializable{
 
     /**
      * Удаление события
+     * @param logEvent
      */
     public void deleteLogEvent(ServicesEvents logEvent){
         service.getServicesEventsList().remove(logEvent);
@@ -203,41 +194,25 @@ public abstract class BaseServicesBean<P> implements Serializable{
      */
     public void onRowDblClck(SelectEvent event) {
         selectedEvent = (ServicesEvents) event.getObject();
+    }    
+    
+    @Override
+    public Boolean isSouthShow(){
+        return true;
+    }    
+    @Override
+    public Boolean isWestShow(){
+        return true;
+    }
+    @Override
+    public Boolean isEastShow(){
+        return true;
     }
     
-    private void initLayoutOptions() {
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        panes.addOption("resizable", true);
-        layoutOptions.setPanesOptions(panes);
-
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 38);
-        layoutOptions.setSouthOptions(south);
-
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 350);
-        west.addOption("minSize", 300);
-        west.addOption("maxSize", 450);
-        layoutOptions.setWestOptions(west);
-        
-        LayoutOptions east = new LayoutOptions();;
-        east.addOption("size", 300);
-        east.addOption("minSize", 150);
-        east.addOption("maxSize", 450);
-        layoutOptions.setEastOptions(east);
-
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("size", 300);
-        center.addOption("minWidth", 300);
-        center.addOption("minHeight", 300);
-        layoutOptions.setCenterOptions(center);       
+    @Override
+    protected boolean isWestInitClosed(){
+        return false;
     }
-    
     /**
      * Инициализация списковых значений для настройки расписания
      */
@@ -265,10 +240,6 @@ public abstract class BaseServicesBean<P> implements Serializable{
 
     public Sheduler getScheduler() {
         return scheduler;
-    }
-
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
     }
 
     public P getSettings() {

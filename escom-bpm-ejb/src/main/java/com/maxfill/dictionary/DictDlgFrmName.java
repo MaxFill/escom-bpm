@@ -24,6 +24,9 @@ public final class DictDlgFrmName {
     public static final String FRM_MAIL_MESSAGE = "mail-message";
     public static final String FRM_MAIL_BOX = "mail-box";
 
+    public static final String FRM_NOTIFICATION = "notification";
+    public static final String FRM_LDAP = "ldap";
+                    
     public static final String FRM_CHECK_RELEASE = "check-release";
     public static final String FRM_NUMERATORS_EXPLORER = "num-pattern-explorer";
 

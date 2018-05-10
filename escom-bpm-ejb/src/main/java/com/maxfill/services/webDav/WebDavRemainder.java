@@ -10,6 +10,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.ItemUtils;
+import com.maxfill.utils.Tuple;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -206,14 +207,14 @@ public class WebDavRemainder {
         if (countRemainingCycles == 0){
             cancelTimer(attache, SysParams.MODE_UNLOCK_CREATE_VERSION);
             String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked", conf.getServerLocale() );
-            messagesFacade.createSystemMessage(adressee, subject, content.toString(), doc);
+            messagesFacade.createSystemMessage(adressee, subject, content.toString(), new Tuple(doc, null));
         } else {
             String dateUnlock = DateUtils.dateToString(attache.getPlanUnlockDate(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale());
             String msgError = ItemUtils.getFormatMessage("DocumentWilBeAutomaticallyUnlocked", conf.getServerLocale(), new Object[]{dateUnlock});
             
             StringBuilder subject = new StringBuilder();
-            subject.append(ItemUtils.getMessageLabel("YouNeedUnlockDocument", conf.getServerLocale())).append(" ").append(msgError);  
-            messagesFacade.createSystemMessage(adressee, subject.toString(), content.toString(), doc);
+            subject.append(ItemUtils.getMessageLabel("YouNeedUnlockDocument", conf.getServerLocale())).append(" ").append(msgError);              
+            messagesFacade.createSystemMessage(adressee, subject.toString(), content.toString(), new Tuple(doc, null));
             countRemainingCycles--;
             attache.setCountRemainingCycles(countRemainingCycles);
             attacheFacade.edit(attache);

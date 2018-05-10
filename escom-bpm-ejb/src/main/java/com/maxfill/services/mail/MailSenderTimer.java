@@ -10,7 +10,6 @@ import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.mail.Authenticator;
 import javax.mail.Session;
 import javax.xml.bind.JAXB;
 import java.io.StringReader;
@@ -35,6 +34,10 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
     private MailBoxFacade mailBoxFacade;
     @EJB
     private MailService mailService;
+
+    public MailSenderTimer() {
+        super(MailSettings.class);
+    }
 
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings){
@@ -102,19 +105,6 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
             }
         } 
         return attachments;
-    }
-    
-    @Override
-    protected MailSettings restoreSettings(Services service) {
-        MailSettings mailSettings = null;
-        try {
-            byte[] compressXML = service.getSheduler();
-            String settingsXML = EscomUtils.decompress(compressXML);
-            mailSettings = JAXB.unmarshal(new StringReader(settingsXML), MailSettings.class);
-        } catch (IOException ex) {
-            Logger.getLogger(MailSenderTimer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return mailSettings;
-    }
+    }    
     
 }

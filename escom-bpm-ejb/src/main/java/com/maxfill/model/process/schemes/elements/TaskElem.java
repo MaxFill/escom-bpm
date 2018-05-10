@@ -1,6 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.utils.EscomUtils;
 

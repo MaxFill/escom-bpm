@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.maxfill.services.ldap;
 
 import com.maxfill.utils.EscomUtils;
@@ -22,7 +17,6 @@ import javax.naming.ldap.LdapContext;
 
 /**
  *
- * @author Maxim
  */
 public final class LdapUtils {
     private static final Logger LOG = Logger.getLogger(LdapUtils.class.getName());

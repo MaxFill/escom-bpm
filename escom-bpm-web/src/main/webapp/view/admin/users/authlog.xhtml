@@ -44,11 +44,11 @@
             </h:panelGroup>
 
             <p:selectBooleanCheckbox value="#{authLogBean.onlyCurPageExp}" itemLabel="#{bundle.OnlyCurrentPage}">
-                <p:ajax update="leftFRM"/>
+                <p:ajax update="westFRM"/>
             </p:selectBooleanCheckbox>
 
             <p:selectBooleanButton value="#{authLogBean.orientation}" offLabel="#{bundle.Portret}" onLabel="#{bundle.Landscape}" style="width:70px;" >
-                <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="leftFRM"/>
+                <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="westFRM"/>
             </p:selectBooleanButton>
         </p:panelGrid>
     </ui:define>

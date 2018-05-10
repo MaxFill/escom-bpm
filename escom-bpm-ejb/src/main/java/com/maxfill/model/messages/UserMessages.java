@@ -2,6 +2,7 @@ package com.maxfill.model.messages;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -56,6 +57,10 @@ public class UserMessages implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Doc document;
     
+    @JoinColumn(name = "Task", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Task task;
+        
     @Basic(optional = false)
     @Column(name = "DateSent")
     @Temporal(TemporalType.TIMESTAMP)
@@ -82,6 +87,13 @@ public class UserMessages implements Serializable, Dict{
         this.id = id;
     }
 
+    public Task getTask() {
+        return task;
+    }
+    public void setTask(Task task) {
+        this.task = task;
+    }
+    
     public String getName() {
         return name;
     }

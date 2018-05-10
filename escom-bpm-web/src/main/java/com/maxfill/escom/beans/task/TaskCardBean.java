@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.process.schemes.elements.TaskElem;
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import java.lang.reflect.InvocationTargetException;
 import org.primefaces.event.SelectEvent;

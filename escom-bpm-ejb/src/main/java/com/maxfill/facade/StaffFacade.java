@@ -35,8 +35,6 @@ import org.apache.commons.lang3.StringUtils;
 public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, StaffStates>{
     
     @EJB
-    private UserFacade userFacade;
-    @EJB
     private CompanyFacade companyFacade;
     @EJB
     private DepartmentFacade departmentFacade;
@@ -204,6 +202,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         List<Staff> staffs = findStaffsByUser(user);
         return staffs.stream().findFirst().orElse(null);       
     }
+    
     /**
      * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
      * @param company

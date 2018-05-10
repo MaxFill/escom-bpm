@@ -1,7 +1,6 @@
 package com.maxfill.services.mail;
 
 import com.maxfill.facade.DocFacade;
-import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
@@ -14,7 +13,6 @@ import javax.mail.search.FlagTerm;
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
-import java.security.cert.CollectionCertStoreParameters;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,16 +25,18 @@ import java.util.stream.Collectors;
  */
 @Stateless
 public class MailReaderTimer extends BaseTimer<MailSettings>{
-    @EJB
-    private MailBoxFacade mailBoxFacade;
+
     @EJB
     private DocFacade docFacade;
     @EJB
     private MailService mailService;
 
+    public MailReaderTimer() {
+        super(MailSettings.class);
+    }
+
     @Override
     public ServicesEvents doExecuteTask(Services service, MailSettings settings) {
-        LOG.log(Level.INFO, "Executing MAIL READER task!");
         Date startDate = new Date();
         detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
 
@@ -98,16 +98,4 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
         }
     }
 
-    @Override
-    protected MailSettings restoreSettings(Services service) {
-        MailSettings mailSettings = null;
-        try {
-            byte[] compressXML = service.getSheduler();
-            String settingsXML = EscomUtils.decompress(compressXML);
-            mailSettings = JAXB.unmarshal(new StringReader(settingsXML), MailSettings.class);
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        }
-        return mailSettings;
-    }
 }

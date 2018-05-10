@@ -414,6 +414,22 @@ public class SessionBean implements Serializable{
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
     }
 
+    /**
+     * Открытие формы задачи 
+     * @param beanId 
+     * @param beanName 
+     */
+    public void openTask(String beanId, String beanName) {
+        String formName = DictDlgFrmName.FRM_TASK + "-card";
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(beanId);
+        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(beanName);
+        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        openDialogFrm(formName.toLowerCase(), paramMap);        
+    }
 
     /**
      * Открытие обозревателя процессов
@@ -529,53 +545,26 @@ public class SessionBean implements Serializable{
     }
 
     /* Открытие формы почтовой службы отправки e-mail сообщений */
-    //Todo переделать на открытие диалога с сохранением параметров окна
     public void openMailSenderService(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 1300);
-        options.put("height", 600);
-        options.put("maximizable", true);
-        options.put("closable", false);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, options, null);
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, new HashMap<>());
     }
 
-    /* Открытие формы почтовой службы получения e-mail сообщений */
-    //Todo переделать на открытие диалога с сохранением параметров окна
-    public void openMailReaderService(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 1300);
-        options.put("height", 600);
-        options.put("maximizable", true);
-        options.put("closable", false);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog(DictDlgFrmName.FRM_MAIL_READER_SERVICE, options, null);
+    /* Открытие формы почтовой службы получения e-mail сообщений */    
+    public void openMailReaderService(){        
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_READER_SERVICE, new HashMap<>());
     }
 
-    //Todo переделать на открытие диалога с сохранением параметров окна
+    /* Открытие формы службы интеграции с LDAP */
     public void openLdapService(){
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", 1300);
-        options.put("height", 600);
-        options.put("maximizable", true);
-        options.put("closable", false);
-        options.put("closeOnEscape", true);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        RequestContext.getCurrentInstance().openDialog("/view/services/ldap-users.xhtml", options, null);  
+        openDialogFrm(DictDlgFrmName.FRM_LDAP, new HashMap<>());
     }
 
-    /* Открытие окна списка сообщений пользователя */
+    /* Открытие формы службы формирования системных уведомлений */
+    public void openNotificationService(){
+        openDialogFrm(DictDlgFrmName.FRM_NOTIFICATION, new HashMap<>());
+    }
+    
+    /* Открытие формы списка сообщений пользователя */
     public void openUserMessagesForm(String typeMsg){
         List<String> msgList = new ArrayList<>();
         msgList.add(typeMsg);

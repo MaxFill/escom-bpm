@@ -205,6 +205,9 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
 
     /**
      * Получение прав доступа к документу
+     * @param item
+     * @param user
+     * @return 
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {
@@ -308,6 +311,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
 
     /**
      * Создание документа из e-mail сообщения
+     * @param message
      */
     public boolean createDocFromEmail(Message message, StringBuilder detailInfo, MailSettings settings) {
         try {
