@@ -52,18 +52,16 @@ public class StateFacade extends BaseFacade{
         return q.getResultList();
     }
     
-    //ToDo!
     public State getRunningState(){
-        return find(DictStates.STATE_DRAFT);
+        return find(DictStates.STATE_RUNNING);
     }
     
     public State getDraftState(){
         return find(DictStates.STATE_DRAFT);
     }
     
-    //ToDo!
     public State getCompletedState(){
-        return find(DictStates.STATE_ARHIVAL);
+        return find(DictStates.STATE_COMPLETED);
     }
     
     public State getArhivalState(){
