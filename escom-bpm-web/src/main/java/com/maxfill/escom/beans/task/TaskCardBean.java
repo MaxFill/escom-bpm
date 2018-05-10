@@ -11,6 +11,7 @@ import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
+import com.maxfill.model.task.TaskStates;
 import java.lang.reflect.InvocationTargetException;
 import org.primefaces.event.SelectEvent;
 
@@ -19,6 +20,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -64,7 +66,10 @@ public class TaskCardBean extends BaseViewBean{
             }
             if (sourceBean != null){
                 sourceTask = sourceBean.getTask();
-                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != sourceTask.getState().getId()){
+                TaskStates taskStates = sourceTask.getState();
+                State state = taskStates.getCurrentState();
+                int id = state.getId();
+                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != id){
                     readOnly = true;
                 }
             }

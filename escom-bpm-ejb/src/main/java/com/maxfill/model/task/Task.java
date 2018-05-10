@@ -111,7 +111,7 @@ public class Task implements Serializable, Dict{
 
     @Override
     public Integer getId() {
-        return null;
+        return id;
     }
     @Override
     public void setId(Integer id) {
