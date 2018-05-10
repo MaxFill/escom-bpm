@@ -25,10 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * Фасад для сущности "Должности"
  */
 @Stateless
-public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
-    
-    @EJB
-    private UserFacade userFacade;
+public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{    
 
     public PostFacade() {
         super(Post.class, PostLog.class, PostStates.class);

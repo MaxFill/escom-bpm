@@ -126,11 +126,11 @@
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="objectsExpl"/>
-                            <p:commandLink value="#{bundle.Numerators}" 
+                            <p:commandLink value="#{bundle.Numerators}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="numPatternsExpl"/>
-                            <p:commandLink value="#{bundle.CountersNumbers}" 
+                            <p:commandLink value="#{bundle.CountersNumbers}"
                                            actionListener="#{sessionBean.openContersExpl()}"/>
                             <p:commandLink value="#{bundle.Statuses}"
                                            onstart="return isClose = 1;"
@@ -160,6 +160,8 @@
                                            actionListener="#{sessionBean.openMailReaderService()}"/>
                             <p:commandLink value="#{bundle.LdapService}" 
                                            actionListener="#{sessionBean.openLdapService()}"/>
+                            <p:commandLink value="#{bundle.ServiceNotification}" 
+                                           actionListener="#{sessionBean.openNotificationService()}"/>
                         </p:panelGrid>
                     </p:panel>
 

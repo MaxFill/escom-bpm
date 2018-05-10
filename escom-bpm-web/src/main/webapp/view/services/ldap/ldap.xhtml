@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/view/templ/templ-service.xhtml">
+
+    <ui:param name="_bean" value="#{ldapBean}"/>
+
+    <ui:define name="title">
+        #{bundle.LoadLdapUsers}
+    </ui:define>
+
+    <ui:define name="serviceParams">
+        <p:outputLabel value="#{bundle.LdapAdServer}"/>
+        <p:inputText id="ldapAdServer" style="width: 100%;"
+                     title="#{bundle.LdapAdServer}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.LdapAdServer}] #{bundle.MustBeFilled}"
+                     value="#{ldapBean.settings.ldapAdServer}"/>
+        <p:message for="ldapAdServer" display="tooltip"/>
+
+        <p:outputLabel value="#{bundle.User}"/>
+        <p:inputText id="ldapUsername" style="width: 100%;"
+                     title="#{bundle.LdapUsername}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
+                     value="#{ldapBean.settings.ldapUsername}"/>
+        <p:message for="ldapUsername" display="tooltip"/>
+
+        <p:outputLabel value="#{bundle.password}"/>
+        <p:inputText id="ldapPassword" style="width: 100%;"
+                     title="#{bundle.LdapPassword}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
+                     value="#{ldapBean.settings.ldapPassword}"/> 
+        <p:message for="ldapPassword" display="tooltip"/>
+
+        <h:panelGrid columns="2">
+            <p:commandButton icon="ui-icon-check"
+                             value="#{bundle.Test}" title="#{bundle.CheckConnect}"
+                             actionListener="#{ldapBean.onCheckConnect()}"
+                             update="eastFRM">
+                <f:param name="isRequired" value="true"/>
+            </p:commandButton>
+            <p:commandButton icon="ui-icon-circle-triangle-e"
+                             value="#{bundle.Get}" title="#{msg.GetRecordsFromLDAP}"
+                             actionListener="#{ldapBean.onTestLoadUsers()}"
+                             update="previewLdapPanel"
+                             onsuccess="PF('previewLdapDlg').show();">
+                <f:param name="isRequired" value="true"/>
+            </p:commandButton>
+        </h:panelGrid>
+        <p:separator />
+
+        <p:outputLabel value="#{bundle.Mode}"/>                  
+        <p:selectOneRadio id="city" value="#{ldapBean.settings.updateUsers}"  layout="grid" columns="1">
+            <f:selectItem itemLabel="#{bundle.OnlyCreateItem}" itemValue="#{false}" />
+            <f:selectItem itemLabel="#{bundle.CreateAndUpdate}" itemValue="#{true}" />
+        </p:selectOneRadio>
+
+        <p:outputLabel value="#{bundle.LdapSearchBase}"/>            
+        <p:inputTextarea id="ldapSearchBase" style="width: 100%;"
+                         cols="2"
+                         title="#{bundle.LdapSearchBase}"
+                         required="#{param['isRequired'] == 'true'}"
+                         requiredMessage="#{bundle.Field} [#{bundle.LdapSearchBase}] #{bundle.MustBeFilled}"
+                         value="#{ldapBean.settings.ldapSearchBase}"/>
+        <p:message for="ldapSearchBase" display="tooltip"/>
+        <p:inputText id="ldapSearchGroup" style="width: 100%;"
+                     title="#{bundle.LdapSearchGroup}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.LdapSearchGroup}] #{bundle.MustBeFilled}"
+                     value="#{ldapBean.settings.ldapSearcheGroup}"/>
+        <p:message for="ldapSearchBase" display="tooltip"/>
+
+    </ui:define>
+
+    <ui:define name="dialogsAdd">
+        <p:dialog widgetVar="previewLdapDlg" header="#{bundle.PreView}" modal="true" closeOnEscape="true" resizable="true" maximizable="true">
+            <p:outputPanel id="previewLdapPanel" style="width: 900px; height: 500px;">                             
+                <p:dataTable id="tblDetail"
+                             value="#{ldapBean.ldapUsers}" var="item" 
+                             emptyMessage="#{bundle.EmptyTable}"
+                             paginator="true" paginatorPosition="bottom"  
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.name}"
+                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                             rowKey="#{item.id}" selectionMode="single">
+
+                    <p:column headerText="#{bundle.Login}" sortBy="#{item.login}">
+                        #{item.userPrincipalName}
+                    </p:column>
+                    <p:column headerText="#{bundle.User}" sortBy="#{item.login}">
+                        #{item.login}
+                    </p:column>
+                    <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
+                        #{item.name}
+                    </p:column>                        
+                    <p:column headerText="#{bundle.EMail}" sortBy="#{item.mail}">
+                        #{item.mail}
+                    </p:column> 
+                    <p:column headerText="#{bundle.Phone}" sortBy="#{item.phone}">
+                        #{item.phone}
+                    </p:column> 
+                    <p:column headerText="#{bundle.Post}" sortBy="#{item.post}">
+                        #{item.post}
+                    </p:column> 
+                    <p:column headerText="#{bundle.Departament}" sortBy="#{item.departament}">
+                        #{item.departament}
+                    </p:column>
+                    <p:column headerText="#{bundle.Company}" sortBy="#{item.company}">
+                        #{item.company}
+                    </p:column> 
+                </p:dataTable>
+            </p:outputPanel>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>
+

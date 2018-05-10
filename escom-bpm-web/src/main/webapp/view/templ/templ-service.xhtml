@@ -2,95 +2,80 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
-    <ui:define name="body">
-        <script type="text/javascript">
-            var isClose = 0;            
-            
-            window.onbeforeunload = function (evt) {
+    <ui:define name="menuActions" >
+    </ui:define>
 
-                var message = "Confirm close the window! Data may be lost! Click 'Cancel' and use the button to exit the program.";
-                if (typeof evt == "undefined") {
-                    evt = window.event;
-                }
+    <ui:define name="toolbarComponents" >
+        <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
+                         update="centerFRM:tblLog" 
+                         actionListener="#{_bean.refreshLogEvents()}"/>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+        <p:commandButton value="#{bundle.Clear}" icon="ui-icon-closethick"
+                         update="centerFRM:tblLog"
+                         actionListener="#{_bean.clearLogEvents()}">
+            <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+        </p:commandButton>
+    </ui:define>
+    
+    <ui:define name="centerFacet">
+        <f:facet name="header">  
+            <p:outputLabel value="#{bundle.LogEventHistory}"/>
+        </f:facet> 
+    </ui:define>
+    
+    <ui:define name="centerFormContent">
+        <ui:include src="/view/services/common/log-events.xhtml"/>
+    </ui:define>
+    
+    <ui:define name="leftFacet">
+        <f:facet name="header">
+            <p:outputLabel value="#{bundle.ServiceSchedule}"/>
+        </f:facet> 
+    </ui:define>
+    
+    <ui:define name="leftFormContent">
+        <ui:include src="/view/services/common/sheduler.xhtml"/>
+        <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;"/> 
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
+            <h:panelGrid columns="1" styleClass="ui-grid-col-12">
+                <p:separator />
+                <p:commandButton icon="ui-icon-play" value="#{bundle.OneTimeStartup}"
+                                 title="#{bundle.StartImmediately}"
+                                 actionListener="#{_bean.doRunService()}"
+                                 onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                                 update="centerFRM, logFRM:logDetailPanel"/>
+            </h:panelGrid>
+        </p:panelGrid>
+    </ui:define>
 
-                if (isClose == 0) {
-                    if (evt) {
-                        evt.returnValue = message;
-
-                    }
-                    ;
-                    return message;
-                }
-            };
-
-        </script>
-        
-        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;">
-            <pe:layoutPane position="center" resizable="true" >
-                <f:facet name="header"  >  
-                    <p:outputLabel value="#{bundle.LogEventHistory}" />
-                </f:facet> 
-                <h:form id="centerFRM" style="font-size: 80%;">
-                    <p:messages id="messages" showDetail="true" closable="true">
-                        <p:autoUpdate />
-                    </p:messages>
-                    <ui:include src="/view/services/common/log-events.xhtml"/>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position="west" resizable="true" >
-                <f:facet name="header"  >  
-                    <p:outputLabel value="#{bundle.ServiceSchedule}"/>
-                </f:facet> 
-                <h:form id="westFRM" style="font-size: 80%;">
-                    <ui:include src="/view/services/common/sheduler.xhtml"/>
-                    <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;" /> 
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
-                        <h:panelGrid columns="1" styleClass="ui-grid-col-12">
-                            <p:separator />
-                            <p:commandButton icon="ui-icon-play" value="#{bundle.OneTimeStartup}"
-                                             title="#{bundle.StartImmediately}"
-                                             actionListener="#{_bean.doRunService()}"
-                                             onclick="document.getElementById('eastFRM:btnEastSave').click();"
-                                             update="centerFRM, logFRM:logDetailPanel" />
-                        </h:panelGrid>
-                    </p:panelGrid>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position="east" resizable="true" >
-                <f:facet name="header">  
-                    <p:outputLabel value="#{bundle.ServiceParams}"/>
-                </f:facet> 
-                <h:form id="eastFRM" style="font-size: 80%;">
-                    <p:outputPanel styleClass="ui-grid-col-12">
-                        <ui:insert name="serviceParams"/>
-                    </p:outputPanel>
-                    <p:commandButton id="btnEastSave" update="eastFRM" style="display: none;" />
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane position ="south" >
-                <h:form id="southFRM" style="font-size: 80%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
-                                         value="#{bundle.Close}"
-                                         actionListener="#{_bean.onCloseForm()}"/>
-                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
-                                         title="#{bundle.SaveServiceSettings}" style="float: right;"
-                                         onclick="document.getElementById('westFRM:btnWestSaves').click();
-                                                 document.getElementById('eastFRM:btnEastSave').click();"
-                                         actionListener="#{_bean.onSaveSettings()}"/>
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
-        </pe:layout>
-    </ui:define>    
+    <ui:define name="rightFacet">
+        <f:facet name="header">  
+            <p:outputLabel value="#{bundle.ServiceParams}"/>
+        </f:facet> 
+    </ui:define>
+    
+    <ui:define name="rightFormContent">
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
+            <ui:insert name="serviceParams"/>
+        </p:panelGrid>
+        <p:commandButton id="btnEastSave" update="eastFRM" style="display: none;" />
+    </ui:define>
+    
+    <ui:define name="southFormContent">
+        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
+                         value="#{bundle.Close}"
+                         actionListener="#{_bean.onCloseForm()}"/>
+        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
+                         title="#{bundle.SaveServiceSettings}" style="float: right;"
+                         onclick="document.getElementById('westFRM:btnWestSaves').click();
+                                  document.getElementById('eastFRM:btnEastSave').click();"
+                         actionListener="#{_bean.onSaveSettings()}"/>
+    </ui:define> 
 
     <ui:define name="dialogs">
         <p:dialog header="#{bundle.Detail}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgDetail">            

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.scheduler;
 
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import java.util.Date;
 import org.primefaces.model.DefaultScheduleEvent;
 

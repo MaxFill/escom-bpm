@@ -1,4 +1,4 @@
-package com.maxfill.model.process.schemes.task;
+package com.maxfill.model.task;
 
 import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.process.Process;

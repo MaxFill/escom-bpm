@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.facade.base.BaseFacade;
 import com.maxfill.model.states.State;
 import java.util.List;
@@ -51,4 +52,21 @@ public class StateFacade extends BaseFacade{
         return q.getResultList();
     }
     
+    //ToDo!
+    public State getRunningState(){
+        return find(DictStates.STATE_DRAFT);
+    }
+    
+    public State getDraftState(){
+        return find(DictStates.STATE_DRAFT);
+    }
+    
+    //ToDo!
+    public State getCompletedState(){
+        return find(DictStates.STATE_ARHIVAL);
+    }
+    
+    public State getArhivalState(){
+        return find(DictStates.STATE_ARHIVAL);
+    }
 }

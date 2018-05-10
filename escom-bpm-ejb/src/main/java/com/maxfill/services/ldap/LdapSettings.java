@@ -9,8 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Класс параметров службы интеграции с LDAP
- * @author mfilatov
+ * Параметры службы интеграции с LDAP
  */
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
@@ -41,7 +40,6 @@ public class LdapSettings implements Serializable{
     public String getLdapSearchBase() {
         return ldapSearchBase;
     }
-
     public void setLdapSearchBase(String ldapSearchBase) {
         this.ldapSearchBase = ldapSearchBase;
     }
@@ -49,7 +47,6 @@ public class LdapSettings implements Serializable{
     public String getLdapUsername() {
         return ldapUsername;
     }
-
     public void setLdapUsername(String ldapUsername) {
         this.ldapUsername = ldapUsername;
     }
@@ -57,7 +54,6 @@ public class LdapSettings implements Serializable{
     public String getLdapAdServer() {
         return ldapAdServer;
     }
-
     public void setLdapAdServer(String ldapAdServer) {
         this.ldapAdServer = ldapAdServer;
     }
@@ -65,7 +61,6 @@ public class LdapSettings implements Serializable{
     public String getLdapPassword() {
         return ldapPassword;
     }
-
     public void setLdapPassword(String ldapPassword) {
         this.ldapPassword = ldapPassword;
     }
@@ -73,7 +68,6 @@ public class LdapSettings implements Serializable{
     public String getLdapSearcheGroup() {
         return ldapSearcheGroup;
     }
-
     public void setLdapSearcheGroup(String ldapSearcheGroup) {
         this.ldapSearcheGroup = ldapSearcheGroup;
     }
@@ -81,7 +75,6 @@ public class LdapSettings implements Serializable{
     public Boolean getUpdateUsers() {
         return updateUsers;
     }
-
     public void setUpdateUsers(Boolean updateUsers) {
         this.updateUsers = updateUsers;
     }

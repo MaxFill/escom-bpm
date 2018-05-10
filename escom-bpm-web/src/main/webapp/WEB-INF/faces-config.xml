@@ -75,6 +75,11 @@
         </navigation-case>
         
         <navigation-case>
+            <from-outcome>notification</from-outcome>
+            <to-view-id>/view/services/notification/notification.xhtml</to-view-id>
+        </navigation-case>
+        
+        <navigation-case>
             <from-outcome>condition-card</from-outcome>
             <to-view-id>/view/processes/elements/condition-card.xhtml</to-view-id>
         </navigation-case>
@@ -197,8 +202,8 @@
         </navigation-case>
 
          <navigation-case>
-            <from-outcome>ldap-user</from-outcome>
-            <to-view-id>/view/services/ldap-users.xhtml</to-view-id>
+            <from-outcome>ldap</from-outcome>
+            <to-view-id>/view/services/ldap/ldap.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         

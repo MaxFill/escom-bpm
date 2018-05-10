@@ -30,7 +30,9 @@ public class MailServiceImpl implements MailService{
     }
 
     /**
-     *  Формирует соединение с почтовым сервером для получения сообщений
+     * Формирует соединение с почтовым сервером для получения сообщений
+     * @param settings
+     * @return 
      */
     @Override
     public Session getSessionReader(MailSettings settings) {
@@ -51,7 +53,9 @@ public class MailServiceImpl implements MailService{
     }
 
     /**
-     *  Формирует соединение с почтовым сервером для отправки сообщений
+     * Формирует соединение с почтовым сервером для отправки сообщений
+     * @param settings
+     * @return 
      */
     @Override
     public Session getSessionSender(MailSettings settings) {
@@ -92,6 +96,9 @@ public class MailServiceImpl implements MailService{
 
     /**
      * Создание настроек почтовой службы
+     * @param service
+     * @param conf
+     * @return 
      */
     @Override
     public MailSettings createSenderSettings(Services service, Configuration conf){
@@ -143,6 +150,7 @@ public class MailServiceImpl implements MailService{
 
     /**
      * Отправка сообщения
+     * @param session
      */
     public void sendMultiMessage(Session session, String sender, String recipients, String copyes, String content, String subject, String encoding, Map<String,String> attachments) throws MessagingException, UnsupportedEncodingException {
         MimeMessage msg = new MimeMessage(session);

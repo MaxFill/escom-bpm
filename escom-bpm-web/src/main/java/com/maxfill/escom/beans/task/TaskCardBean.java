@@ -8,7 +8,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import java.lang.reflect.InvocationTargetException;

@@ -3,7 +3,7 @@ package com.maxfill.model.process.schemes;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.elements.*;
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

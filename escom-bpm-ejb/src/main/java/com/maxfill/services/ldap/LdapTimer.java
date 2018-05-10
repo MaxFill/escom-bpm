@@ -5,28 +5,27 @@ import com.maxfill.facade.UserFacade;
 import com.maxfill.services.*;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.EscomUtils;
-import java.io.IOException;
-import java.io.StringReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.naming.NamingException;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
-import javax.xml.bind.JAXB;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
 public class LdapTimer extends BaseTimer<LdapSettings>{    
     @EJB 
     private UserFacade userFacade;
+
+    public LdapTimer() {
+        super(LdapSettings.class);
+    }
     
     @Override
     public ServicesEvents doExecuteTask(Services service, LdapSettings settings){
@@ -184,19 +183,6 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
             }
         }
         return null;
-    }
-
-    @Override
-    protected LdapSettings restoreSettings(Services service) {
-        LdapSettings ldapSettings = null;
-        try {
-            byte[] compressXML = service.getSheduler();
-            String settingsXML = EscomUtils.decompress(compressXML);
-            ldapSettings = (LdapSettings) JAXB.unmarshal(new StringReader(settingsXML), LdapSettings.class);
-        } catch (IOException ex) {
-            Logger.getLogger(LdapTimer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return ldapSettings;
     }
 
 }

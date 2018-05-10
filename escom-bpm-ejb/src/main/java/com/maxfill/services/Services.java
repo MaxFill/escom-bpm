@@ -1,4 +1,3 @@
-
 package com.maxfill.services;
 
 import com.maxfill.services.common.history.ServicesEvents;
@@ -21,7 +20,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/*  Системные службы */
+/*  Сущность "Системная служба (сервис)" */
 @Entity
 @Table(name = "services")
 public class Services implements Serializable {
@@ -126,6 +125,8 @@ public class Services implements Serializable {
         this.timeHandle = timeHandle;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -1,17 +1,13 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.TaskFacade;
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -64,17 +60,10 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
         onOpenTask(beanId);
     }
     
-    public void onOpenTask(String beanId){
-        String formName = DictDlgFrmName.FRM_TASK + "-card";
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemIds = new ArrayList<>();
-        itemIds.add(beanId);
-        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        String beanName = SchedulerBean.class.getSimpleName().substring(0, 1).toLowerCase() + SchedulerBean.class.getSimpleName().substring(1);
-        List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(beanName);
-        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
-        sessionBean.openDialogFrm(formName.toLowerCase(), paramMap);        
+    @Override
+    public void onOpenTask(String beanId){        
+        String beanName = SchedulerBean.class.getSimpleName().substring(0, 1).toLowerCase() + SchedulerBean.class.getSimpleName().substring(1);        
+        sessionBean.openTask(beanId, beanName);        
     }
     
     /**

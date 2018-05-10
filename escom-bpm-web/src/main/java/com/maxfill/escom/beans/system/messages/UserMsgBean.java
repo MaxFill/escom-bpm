@@ -1,12 +1,14 @@
 package com.maxfill.escom.beans.system.messages;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
+import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
 
 import javax.ejb.EJB;
@@ -20,7 +22,7 @@ import java.util.Map;
 
 @ViewScoped
 @Named
-public class UserMsgBean extends LazyLoadBean{
+public class UserMsgBean extends LazyLoadBean implements ContainsTask{
     private static final long serialVersionUID = -7376087892834532742L;
 
     private Boolean showOnlyUnread;
@@ -93,8 +95,8 @@ public class UserMsgBean extends LazyLoadBean{
         Doc doc = selectedMessages.getDocument();
         if (doc == null) return;
         docBean.prepEditItem(doc);
-    }
-
+    }    
+    
     @Override
     protected Map<String, Object> makeFilters(Map filters) {
         filters.put("addressee", sessionBean.getCurrentUser());
@@ -121,5 +123,20 @@ public class UserMsgBean extends LazyLoadBean{
         this.showOnlyUnread = showOnlyUnread;
     }
 
+    @Override
+    public Task getTask() {
+        return selectedMessages.getTask();
+    }
+
+    @Override
+    public Boolean isShowExtTaskAtr() {
+        return getTask().getScheme() == null;        
+    }
+
+    @Override
+    public void onOpenTask(String beanId) {        
+        String beanName = UserMsgBean.class.getSimpleName().substring(0, 1).toLowerCase() + UserMsgBean.class.getSimpleName().substring(1);        
+        sessionBean.openTask(beanId, beanName);
+    }
     
 }

@@ -11,7 +11,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
-import com.maxfill.model.process.schemes.task.Task;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.workflow.Workflow;
 import org.apache.commons.lang.StringUtils;
@@ -236,16 +236,19 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обоработка события открытия карточки свойств визуального компонента 
      */
     public void onElementOpen(){
-        String formName = baseElement.getBundleKey() + "-card";
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemIds = new ArrayList<>();
-        itemIds.add(beanId);
-        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
-        List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(beanName);
-        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
-        sessionBean.openDialogFrm(formName.toLowerCase(), paramMap);
+       if (baseElement instanceof TaskElem){
+           onOpenTask(beanId);
+       } 
+    }
+    
+    /**
+     * Открытие карточки задачи
+     * @param beanId 
+     */
+    @Override
+    public void onOpenTask(String beanId){        
+        String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);        
+        sessionBean.openTask(beanId, beanName);
     }
     
     /**

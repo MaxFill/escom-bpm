@@ -12,71 +12,68 @@
     </ui:define>
 
     <ui:define name="serviceParams">
-        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
-            <p:outputLabel value="#{bundle.MailServer}"/>
-            <p:inputText id="server" style="width: 100%;"
-                         title="#{bundle.MailServer}"
-                         required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.MailServer}] #{bundle.MustBeFilled}"
-                         value="#{mailReaderBean.settings.serverAdress}"/>
-            <p:message for="server" display="tooltip"/>
+        <p:outputLabel value="#{bundle.MailServer}"/>
+        <p:inputText id="server" style="width: 100%;"
+                     title="#{bundle.MailServer}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.MailServer}] #{bundle.MustBeFilled}"
+                     value="#{mailReaderBean.settings.serverAdress}"/>
+        <p:message for="server" display="tooltip"/>
 
-            <p:outputLabel value="#{bundle.IMAPport}"/>
-            <p:inputText id="smtpPort" style="width: 100%;"
-                         title="#{bundle.IMAPport}"
-                         required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
-                         value="#{mailReaderBean.settings.port}"/>
-            <p:message for="smtpPort" display="tooltip"/>
+        <p:outputLabel value="#{bundle.IMAPport}"/>
+        <p:inputText id="smtpPort" style="width: 100%;"
+                     title="#{bundle.IMAPport}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
+                     value="#{mailReaderBean.settings.port}"/>
+        <p:message for="smtpPort" display="tooltip"/>
 
-            <p:selectBooleanCheckbox value="#{mailReaderBean.settings.useSSL}"
-                                     itemLabel="#{bundle.UseSSL}">
-            </p:selectBooleanCheckbox>
+        <p:selectBooleanCheckbox value="#{mailReaderBean.settings.useSSL}"
+                                 itemLabel="#{bundle.UseSSL}">
+        </p:selectBooleanCheckbox>
 
-            <p:selectBooleanCheckbox id="cbReadOnlyNewMessages"
-                                     value="#{mailReaderBean.settings.readOnlyNewMessages}"
-                                     itemLabel="#{bundle.ReadOnlyNewMsg}">
-            </p:selectBooleanCheckbox>
+        <p:selectBooleanCheckbox id="cbReadOnlyNewMessages"
+                                 value="#{mailReaderBean.settings.readOnlyNewMessages}"
+                                 itemLabel="#{bundle.ReadOnlyNewMsg}">
+        </p:selectBooleanCheckbox>
 
-            <p:selectBooleanCheckbox value="#{mailReaderBean.settings.deleteAfterLoad}"
-                                     itemLabel="#{bundle.DeleteAfterLoad}">
-                <p:ajax event="change" update="cbDeleteIfUnknownSender"/>
-            </p:selectBooleanCheckbox>
+        <p:selectBooleanCheckbox value="#{mailReaderBean.settings.deleteAfterLoad}"
+                                 itemLabel="#{bundle.DeleteAfterLoad}">
+            <p:ajax event="change" update="cbDeleteIfUnknownSender"/>
+        </p:selectBooleanCheckbox>
 
-            <p:selectBooleanCheckbox id="cbDeleteIfUnknownSender"
-                                     value="#{mailReaderBean.settings.deleteIfUnknownSender}"
-                                     disabled="#{!mailReaderBean.settings.deleteAfterLoad}"
-                                     itemLabel="#{bundle.DeleteIfUnknownSender}">
-            </p:selectBooleanCheckbox>
+        <p:selectBooleanCheckbox id="cbDeleteIfUnknownSender"
+                                 value="#{mailReaderBean.settings.deleteIfUnknownSender}"
+                                 disabled="#{!mailReaderBean.settings.deleteAfterLoad}"
+                                 itemLabel="#{bundle.DeleteIfUnknownSender}">
+        </p:selectBooleanCheckbox>
 
-            <p:outputLabel value="#{bundle.Login}"/>
-            <p:inputText id="login" style="width: 100%;"
-                         title="#{bundle.Login}"
-                         required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
-                         value="#{mailReaderBean.settings.user}"/>
-            <p:message for="login"/>
+        <p:outputLabel value="#{bundle.Login}"/>
+        <p:inputText id="login" style="width: 100%;"
+                     title="#{bundle.Login}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
+                     value="#{mailReaderBean.settings.user}"/>
+        <p:message for="login"/>
 
-            <p:outputLabel value="#{bundle.password}"/>
-            <p:inputText id="password" style="width: 100%;"
-                         title="#{bundle.password}"
-                         required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
-                         value="#{mailReaderBean.settings.password}"/>
-            <p:message for="password"/>
+        <p:outputLabel value="#{bundle.password}"/>
+        <p:inputText id="password" style="width: 100%;"
+                     title="#{bundle.password}"
+                     required="#{param['isRequired'] == 'true'}"
+                     requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
+                     value="#{mailReaderBean.settings.password}"/>
+        <p:message for="password"/>
 
-            <p:separator />            
+        <p:separator />            
 
-            <h:panelGrid columns="2">
-                <p:commandButton icon="ui-icon-check"
-                            value="#{bundle.Test}" title="#{bundle.CheckConnect}"
-                            actionListener="#{mailReaderBean.onCheckConnect()}"
-                            update="eastFRM">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>
-            </h:panelGrid>
-           
-        </p:panelGrid>
+        <h:panelGrid columns="2">
+            <p:commandButton icon="ui-icon-check"
+                        value="#{bundle.Test}" title="#{bundle.CheckConnect}"
+                        actionListener="#{mailReaderBean.onCheckConnect()}"
+                        update="eastFRM">
+                <f:param name="isRequired" value="true"/>
+            </p:commandButton>
+        </h:panelGrid>           
 
     </ui:define>
 

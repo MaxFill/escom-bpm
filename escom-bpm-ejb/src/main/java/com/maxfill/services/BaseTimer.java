@@ -6,7 +6,12 @@ import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.history.ServicesEventsFacade;
 import com.maxfill.services.common.sheduler.Sheduler;
+import com.maxfill.services.ldap.LdapSettings;
+import com.maxfill.services.ldap.LdapTimer;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.EscomUtils;
+import java.io.IOException;
+import java.io.StringReader;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
@@ -16,12 +21,14 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXB;
 
 public abstract class BaseTimer<P> {
     protected static final Logger LOG = Logger.getLogger(BaseTimer.class.getName());
     protected static final String RESULT_FAIL = "Error";
     protected static final String RESULT_SUCCESSFULLY = "Ok";
-
+    private final Class<P> settingsClass;
+    
     final StringBuilder detailInfo = new StringBuilder("");
 
     @EJB
@@ -33,6 +40,11 @@ public abstract class BaseTimer<P> {
     
     @Resource
     TimerService timerService;
+
+    public BaseTimer(Class<P> settingsClass) {
+        this.settingsClass = settingsClass;
+    }
+    
     
     /**
      * Создание таймера
@@ -77,7 +89,17 @@ public abstract class BaseTimer<P> {
     }
 
     protected abstract ServicesEvents doExecuteTask(Services service, P settings); 
-    protected abstract P restoreSettings(Services service);
+    protected P restoreSettings(Services service){
+        P settings = null;
+        try {
+            byte[] compressXML = service.getSheduler();
+            String settingsXML = EscomUtils.decompress(compressXML);
+            settings = (P) JAXB.unmarshal(new StringReader(settingsXML), settingsClass);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE, null, ex);
+        }
+        return settings;
+    }
     
     /**
      * Добавление строки в журнал событий службы
@@ -106,6 +128,7 @@ public abstract class BaseTimer<P> {
 
     /**
      * Завершающее действие в doExecuteTask
+     * @param event
      */
     protected void finalAction(ServicesEvents event) {
         Date finishDate = new Date();
