@@ -17,13 +17,13 @@ public interface Workflow {
     void addStart(StartElem start, Scheme scheme, Set<String> errors);
     void addEnter(EnterElem start, Scheme scheme, Set<String> errors);
     void addExit(ExitElem exit, Scheme scheme, Set<String> errors);
-    void removeElement(WFConnectedElement element, Scheme scheme, Set <String> errors);
+    void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors);
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);
     void packScheme(Scheme scheme, Set <String> errors);
     void unpackScheme(Scheme scheme, Set <String> errors);
     void validateScheme(Scheme scheme, Set<String> errors);
     void saveTask(Scheme scheme, Set<String> errors);
-    void run(Scheme scheme, WFConnectedElement startElement, Set<String> errors);
+    void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors);
     void stop(Process process, Set<String> errors);
     void start(Process process, Set<String> errors);
 }

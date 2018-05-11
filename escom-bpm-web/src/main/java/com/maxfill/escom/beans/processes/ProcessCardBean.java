@@ -60,7 +60,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Scheme scheme;
     private int defX = 8;
     private int defY = 8;
-    private WFConnectedElement baseElement;
+    private WFConnectedElem baseElement;
     private String beanId;
     private final Set<Task> editedTasks = new HashSet<>();
     
@@ -97,7 +97,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     @Override
     protected void onBeforeSaveItem(Process item) {      
         if (getEditedItem().getScheme() != null){
-            List<Task> liveTask = scheme.getElements().getTasks().stream().map(tsk->tsk.getTask()).collect(Collectors.toList());
+            List<Task> liveTask = scheme.getElements().getTasks().entrySet().stream()
+                    .map(tsk->tsk.getValue().getTask()).collect(Collectors.toList());
             List<Task> forRemove = new ArrayList<>();
             forRemove.addAll(getEditedItem().getScheme().getTasks());
             forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
@@ -173,7 +174,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private void restoreModel(){        
         model.clear();
         Map<String, Element> elementMap = new HashMap <>();
-        scheme.getElements().getTasks().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getTasks().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getExits().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getLogics().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getEnters().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
@@ -217,7 +218,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onElementDelete(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement((WFConnectedElement)selectedElement.getData(), scheme, errors);
+        workflow.removeElement((WFConnectedElem)selectedElement.getData(), scheme, errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             visualModelRefresh();
@@ -243,7 +244,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             selectedElement.setY(y + "em");
             defX = Integer.valueOf(x) + 5;
             defY = Integer.valueOf(y) + 5;
-            baseElement = (WFConnectedElement) selectedElement.getData();
+            baseElement = (WFConnectedElem) selectedElement.getData();
             baseElement.setPosX(Integer.valueOf(x));
             baseElement.setPosY(Integer.valueOf(y));            
         }
@@ -530,13 +531,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param wfElement
      * @return 
      */    
-    private Element modelAddElement(WFConnectedElement wfElement){
+    private Element modelAddElement(WFConnectedElem wfElement){
         Element element = createElement(wfElement);
         model.addElement(element);
         return element;
     }
 
-    private Element createElement(WFConnectedElement wfElement){
+    private Element createElement(WFConnectedElem wfElement){
         Element element = new Element(wfElement, wfElement.getPosX() + "em", wfElement.getPosY() + "em");        
         List<EndPoint> endPoints = restoreEndPoints(wfElement.getAnchors());
         endPoints.forEach(endPoint -> element.addEndPoint(endPoint));
@@ -628,7 +629,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param endPoints
      * @return
      */
-    private Set<AnchorElem> makeAnchorElems(WFConnectedElement element, List<EndPoint> endPoints){
+    private Set<AnchorElem> makeAnchorElems(WFConnectedElem element, List<EndPoint> endPoints){
         Set<AnchorElem> anchorElems =  new HashSet <>();
         for(EndPoint endPoint : endPoints){
             String position = endPoint.getAnchor().toString();
@@ -706,8 +707,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param event 
      */
     public void onConnect(ConnectEvent event){
-        WFConnectedElement wfSource = (WFConnectedElement) event.getSourceElement().getData();
-        WFConnectedElement wfTarget = (WFConnectedElement) event.getTargetElement().getData();
+        WFConnectedElem wfSource = (WFConnectedElem) event.getSourceElement().getData();
+        WFConnectedElem wfTarget = (WFConnectedElem) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
@@ -747,8 +748,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param event
      */
     public void onDisconnect(DisconnectEvent event) {
-        WFConnectedElement wfSource = (WFConnectedElement) event.getSourceElement().getData();
-        WFConnectedElement wfTarget = (WFConnectedElement) event.getTargetElement().getData();
+        WFConnectedElem wfSource = (WFConnectedElem) event.getSourceElement().getData();
+        WFConnectedElem wfTarget = (WFConnectedElem) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
         Set<String> errors = new HashSet <>();
@@ -844,7 +845,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         return model;
     }
 
-    public WFConnectedElement getBaseElement() {
+    public WFConnectedElem getBaseElement() {
         return baseElement;
     }
         

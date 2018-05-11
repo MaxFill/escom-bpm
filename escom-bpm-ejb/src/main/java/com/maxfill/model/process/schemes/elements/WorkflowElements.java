@@ -6,7 +6,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Класс списка элементов графической модели процесса
@@ -20,7 +22,7 @@ public class WorkflowElements implements Serializable{
     private StartElem startElem = new StartElem();
         
     @XmlElement(name = "tasks")
-    private List<TaskElem> tasks = new ArrayList <>();
+    private Map<String, TaskElem> tasks = new HashMap <>();
     
     @XmlElement(name = "connectors")
     private List<ConnectorElem> connectors = new ArrayList <>();
@@ -56,13 +58,13 @@ public class WorkflowElements implements Serializable{
     public void setStartElem(StartElem startElem) {
         this.startElem = startElem;
     }
-    
-    public List<TaskElem> getTasks() {
+
+    public Map<String, TaskElem> getTasks() {
         return tasks;
     }
-    public void setTasks(List<TaskElem> tasks) {
+    public void setTasks(Map<String, TaskElem> tasks) {
         this.tasks = tasks;
-    }
+    }    
     
     public List <ConnectorElem> getConnectors() {
         return connectors;

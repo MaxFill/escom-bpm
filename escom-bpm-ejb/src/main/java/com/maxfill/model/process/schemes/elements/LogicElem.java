@@ -6,7 +6,7 @@ import com.maxfill.utils.EscomUtils;
 /**
  * Сущность "Элемент схемы процесса "Логическое ветвление"
  */
-public class LogicElem extends WFConnectedElement{
+public class LogicElem extends WFConnectedElem{
     private static final long serialVersionUID = 1857271531554809843L;
 
     public LogicElem() {

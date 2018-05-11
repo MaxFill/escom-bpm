@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnterElem extends WFConnectedElement{
+public class EnterElem extends WFConnectedElem{
     private static final long serialVersionUID = 6677608454096489898L;
 
 

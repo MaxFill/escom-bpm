@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaskElem extends WFConnectedElement{
+public class TaskElem extends WFConnectedElem{
     private static final long serialVersionUID = -148365590532225862L;
     
     @XmlTransient

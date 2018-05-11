@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExitElem extends WFConnectedElement{
+public class ExitElem extends WFConnectedElem{
     private static final long serialVersionUID = 8512962777531919513L;
 
     public ExitElem() {

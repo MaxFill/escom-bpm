@@ -52,11 +52,9 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;
         if (taskElem == null){
             errors.add("WorkflowIncorrectData");
-        }
-        //ToDo проверки!
-        if (errors.isEmpty()) {
-            scheme.getElements().getTasks().add(taskElem);
-            if (taskElem != null && taskElem.getTask() != null){
+        } else {
+            scheme.getElements().getTasks().put(taskElem.getUid(), taskElem);
+            if (taskElem.getTask() != null){
                 scheme.getTasks().add(taskElem.getTask());
             }
         }
@@ -156,10 +154,10 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void removeElement(WFConnectedElement element, Scheme scheme, Set <String> errors) {
+    public void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors) {
         //ToDo проверка на возможность удаления
         if (element instanceof TaskElem){
-            scheme.getElements().getTasks().remove((TaskElem)element);
+            scheme.getElements().getTasks().remove(element.getUid());            
         } else if (element instanceof StartElem){
             scheme.getElements().getEnters().remove((EnterElem)element);
         } else if (element instanceof ExitElem){
@@ -207,7 +205,7 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            elements.getTasks().forEach(task->task.setTask(taskFacade.findByLinkUID(task.getUid())));            
+            elements.getTasks().forEach((key, task)-> task.setTask(taskFacade.findByLinkUID(key)));
             scheme.setElements(elements);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -237,7 +235,7 @@ public class WorkflowImpl implements Workflow {
      * @param element
      * @param scheme
      */
-    private void removeConnectors(WFConnectedElement element, Scheme scheme){
+    private void removeConnectors(WFConnectedElem element, Scheme scheme){
         for (AnchorElem anchor : element.getAnchors()){ //сначала нужно удалить все соединения связанные с этим элементом!
             List<ConnectorElem> connectors = scheme.getElements().getConnectors().stream()
                     .filter(c -> c.getFrom().equals(anchor) || c.getTo().equals(anchor))
@@ -279,7 +277,7 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */
     @Override
-    public void run(Scheme scheme, WFConnectedElement startElement, Set<String> errors) {
+    public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {
         Set<Task> tasks = new HashSet<>();
         doMove(startElement.getAnchors(), scheme, tasks, errors);
         startTasks(tasks);
@@ -289,33 +287,23 @@ public class WorkflowImpl implements Workflow {
         anchors.stream()
                 .filter(anchor->anchor.isSource())
                 .forEach(anchor->{
-                    Set<WFConnectedElement> targetElements = findTargetElement(anchor, scheme.getElements().getConnectors(), getMapElements(scheme));
+                    //Set<WFConnectedElement> targetElements = findTargetElement(anchor, scheme.getElements().getConnectors(), getMapElements(scheme));
                 });
-    }
-    
-    private Map<String, WFConnectedElement> getMapElements(Scheme scheme){
-        Map<String, WFConnectedElement> elements = new HashMap<>();
-        scheme.getElements().getConditions().forEach(el-> elements.put(el.getUid(), el));
-        scheme.getElements().getEnters().forEach(el-> elements.put(el.getUid(), el));
-        scheme.getElements().getExits().forEach(el-> elements.put(el.getUid(), el));
-        scheme.getElements().getTasks().forEach(el-> elements.put(el.getUid(), el));
-        scheme.getElements().getLogics().forEach(el-> elements.put(el.getUid(), el));
-        scheme.getElements().getStates().forEach(el-> elements.put(el.getUid(), el));
-        return elements;
-    }
+    }    
     
     /**
      * Находит целевые элементы модели процесса по исходящему якорю
      * @param sourceAnchor
      * @return 
      */
-    private Set<WFConnectedElement> findTargetElement(AnchorElem sourceAnchor, List<ConnectorElem> connectors, Map<String, WFConnectedElement> elements){
+    /*
+    private Set<WFConnectedElement> findLogicElement(AnchorElem sourceAnchor, List<ConnectorElem> connectors, List<LogicElem> elements){
         return connectors.stream()
                 .filter(connector->connector.getFrom().equals(sourceAnchor))
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .collect(Collectors.toSet());
     }
-    
+    */
     /**
      * Отправляет задачи в работу
      * @param tasks 
