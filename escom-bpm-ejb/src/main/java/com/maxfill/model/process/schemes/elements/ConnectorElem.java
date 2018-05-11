@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ConnectorElem extends WorkflowElement{
+public class ConnectorElem extends WFElement{
     private static final long serialVersionUID = -2062835627519052276L;
 
     @XmlElement

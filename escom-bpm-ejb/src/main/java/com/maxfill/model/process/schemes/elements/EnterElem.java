@@ -1,27 +1,26 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Сущность "Элемент схемы процесса "Состояние"
+ * Сущность "Элемент схемы процесса "Вход в процесс" - точка входа
  */
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StateElem extends WFConnectedElement{
-    private static final long serialVersionUID = 8873088059837269820L;
+public class EnterElem extends WFConnectedElement{
+    private static final long serialVersionUID = 6677608454096489898L;
 
-    @XmlElement(name = "styleType")
-    private String styleType;
 
-    public StateElem() {
+    public EnterElem() {
     }
 
-    public StateElem(String caption, int x, int y) {
+    public EnterElem(String caption, int x, int y) {
         this.caption = caption;
         this.posX = x;
         this.posY = y;
@@ -30,19 +29,12 @@ public class StateElem extends WFConnectedElement{
 
     @Override
     public String getStyle() {
-        return "ui-diagram-" + styleType + "-state";
-    }
-
-    public void setStyleType(String styleType) {
-        this.styleType = styleType;
-    }
-    public String getStyleType() {
-        return styleType;
+        return DictWorkflowElem.STYLE_ENTER;
     }
 
     @Override
     public String getBundleKey() {
-        return "State";
+        return "Enter";
     }
     
     /* *** *** */
@@ -51,9 +43,9 @@ public class StateElem extends WFConnectedElement{
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        StateElem stateElem = (StateElem) o;
+        EnterElem exitElem = (EnterElem) o;
 
-        return uid.equals(stateElem.uid);
+        return uid.equals(exitElem.uid);
     }
 
     @Override
@@ -63,9 +55,8 @@ public class StateElem extends WFConnectedElement{
 
     @Override
     public String toString() {
-        return "StateElem{" +
-                "styleType='" + styleType + '\'' +
-                ", caption='" + caption + '\'' +
+        return "EnterElem{" +
+                "caption='" + caption + '\'' +
                 '}';
     }
 }

@@ -54,9 +54,9 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
         scheduler = createSheduler();
     }
     
-    protected abstract P createSettings();    
+    protected abstract P createSettings();
     public abstract BaseTimer getTimerFacade();
-    public abstract int getSERVICE_ID();    
+    public abstract int getSERVICE_ID();
     
     /**
      * Создаёт объект Sheduler для службы

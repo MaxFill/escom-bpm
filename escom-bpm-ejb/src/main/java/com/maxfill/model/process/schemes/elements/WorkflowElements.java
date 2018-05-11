@@ -16,6 +16,9 @@ import java.util.List;
 public class WorkflowElements implements Serializable{
     private static final long serialVersionUID = 5898399111315803093L;
 
+    @XmlElement(name = "start")
+    private StartElem startElem = new StartElem();
+        
     @XmlElement(name = "tasks")
     private List<TaskElem> tasks = new ArrayList <>();
     
@@ -25,8 +28,8 @@ public class WorkflowElements implements Serializable{
     @XmlElement(name = "conditions")
     private List<ConditionElem> conditions = new ArrayList <>();
 
-    @XmlElement(name = "starts")
-    private List<StartElem> starts = new ArrayList <>();
+    @XmlElement(name = "enters")
+    private List<EnterElem> enters = new ArrayList <>();
 
     @XmlElement(name = "exits")
     private List<ExitElem> exits = new ArrayList <>();
@@ -36,10 +39,24 @@ public class WorkflowElements implements Serializable{
 
     @XmlElement(name = "states")
     private List<StateElem> states = new ArrayList <>();
-
+    
     public WorkflowElements() {
     }
 
+    public List<EnterElem> getEnters() {
+        return enters;
+    }
+    public void setEnters(List<EnterElem> enters) {
+        this.enters = enters;
+    }
+
+    public StartElem getStartElem() {
+        return startElem;
+    }
+    public void setStartElem(StartElem startElem) {
+        this.startElem = startElem;
+    }
+    
     public List<TaskElem> getTasks() {
         return tasks;
     }
@@ -59,13 +76,6 @@ public class WorkflowElements implements Serializable{
     }
     public void setConditions(List <ConditionElem> conditions) {
         this.conditions = conditions;
-    }
-
-    public List <StartElem> getStarts() {
-        return starts;
-    }
-    public void setStarts(List <StartElem> starts) {
-        this.starts = starts;
     }
 
     public List <ExitElem> getExits() {

@@ -50,7 +50,7 @@
                         required="#{param['isRequired'] == 'true'}" 
                         disabled="#{taskCardBean.readOnly}"
                         locale="#{sessionBean.locale}" 
-                        timeZone="#{TimeZone.getDefault()}"
+                        timeZone="#{TimeZone.getDefault()}" 
                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                         navigator="true" yearRange="c-120:c+20"                     
                         requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
@@ -76,6 +76,16 @@
                 <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
             </p:selectOneMenu>
             
+            <p:commandLink  value="#{bundle.GoToProcess}"
+                            rendered="#{taskCardBean.editedItem.scheme != null}"
+                            actionListener="#{taskCardBean.onOpenProcess()}"/>
+            <p:commandLink  value="#{bundle.GoToDocument}"
+                            rendered="#{taskCardBean.editedItem.scheme != null}"
+                            actionListener="#{taskCardBean.onOpenDocument()}"/>
+            <p:commandLink  value="#{bundle.ViewDoc}"
+                            rendered="#{taskCardBean.editedItem.scheme != null}"
+                            actionListener="#{taskCardBean.onViewDocument()}"/>
+                
             <p:separator/>
             <h:panelGroup>
                 <p:commandButton value="#{bundle.Delete}" 

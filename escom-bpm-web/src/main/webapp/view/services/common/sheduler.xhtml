@@ -5,7 +5,33 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
+    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
+        <p:toolbar styleClass="ui-grid-col-12">
+             <p:commandButton title="#{bundle.RunOnSchedule}" icon="ui-icon-circle-triangle-e"
+                          disabled="#{_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
+                          actionListener="#{_bean.onStartService()}"
+                          update="westFRM"
+                          onclick="document.getElementById('eastFRM:btnEastSaves').click();">
+                 <f:param name="isRequired" value="true"/>
+             </p:commandButton>
+             <p:commandButton title="#{bundle.Stop}" icon="ui-icon-circle-close"
+                          disabled="#{!_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
+                          actionListener="#{_bean.onStopService()}"
+                          update="westFRM, centerFRM">
+                 <f:param name="isRequired" value="true"/>
+             </p:commandButton>
+             <span class="ui-separator">
+                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
+             </span>
+             <p:commandButton icon="ui-icon-play" title="#{bundle.StartImmediately}"
+                          actionListener="#{_bean.doRunService()}"
+                          onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                          onstart="PF('statusDialog').show()"
+                          oncomplete="PF('statusDialog').hide();"
+                          update="centerFRM, logFRM:logDetailPanel">
+             </p:commandButton>
+         </p:toolbar>
+        
         <p:selectBooleanCheckbox value="#{_bean.scheduler.autoStart}" 
                                  itemLabel="#{bundle.AutoStart}"
                                  disabled="#{_bean.service.started}">
@@ -19,76 +45,48 @@
             </p:inputText>
         </h:panelGrid>
 
-        <h:panelGrid columns="1" style="width: 100%;" rendered="#{_bean.scheduler.autoStart}">
+        <p:panelGrid columns="1" styleClass="ui-grid-col-12" rendered="#{_bean.scheduler.autoStart}">             
 
-            <p:panelGrid columns="2">                
+            <p:outputLabel value="#{bundle.Repeat}:"/>
+            <p:selectOneRadio value="#{_bean.scheduler.repeatType}" layout="grid" columns="1" 
+                              disabled="#{_bean.service.started}">
+                <f:selectItems value="#{_bean.repeatTypes}" /> 
+                <p:ajax update="westFRM"/> 
+            </p:selectOneRadio>
+            
+            <p:outputLabel value="#{bundle.StartIn}:" rendered="#{_bean.scheduler.repeatType == 1}"/>
+            <p:selectManyCheckbox value="#{_bean.scheduler.dayOfWeek}" layout="grid" columns="2"
+                                  rendered="#{_bean.scheduler.repeatType == 1}"
+                                  disabled="#{_bean.service.started}">
+                <f:selectItems value="#{_bean.daysOfWeek}" />
+            </p:selectManyCheckbox>            
+            
+            <p:outputLabel value="#{bundle.StartInDate}:" rendered="#{_bean.scheduler.repeatType != 1}" indicateRequired="true"/>
+            <p:calendar value="#{_bean.scheduler.startDate}" rendered="#{_bean.scheduler.repeatType != 1}"
+                        disabled="#{_bean.service.started}"
+                        showHour="true" showMinute="true"
+                        locale="#{sessionBean.locale}"
+                        navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
+                        required="#{param['isRequired'] == 'true'}"
+                        requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
+            </p:calendar>            
 
-                <h:panelGroup>
-                    <p:outputLabel value="#{bundle.Repeat}"/>
-                    <p:selectOneRadio value="#{_bean.scheduler.repeatType}" layout="grid" columns="1" 
-                                      disabled="#{_bean.service.started}">
-                        <f:selectItems value="#{_bean.repeatTypes}" /> 
-                        <p:ajax update="westFRM"/> 
-                    </p:selectOneRadio>
-                </h:panelGroup>                
-                
-                <h:panelGroup rendered="#{_bean.scheduler.repeatType == 1}">
-                    <p:outputLabel value="#{bundle.StartIn}"/>
-                    <p:selectManyCheckbox value="#{_bean.scheduler.dayOfWeek}" layout="grid" columns="2"
-                                          disabled="#{_bean.service.started}">
-                        <f:selectItems value="#{_bean.daysOfWeek}" />
-                    </p:selectManyCheckbox>
-                </h:panelGroup>
-                            
-                <h:panelGroup rendered="#{_bean.scheduler.repeatType != 1}">
-                    <p:outputLabel value="#{bundle.StartInDate}" />
-                    <p:calendar value="#{_bean.scheduler.startDate}" 
-                                disabled="#{_bean.service.started}"
-                                showHour="true" showMinute="true"
-                                locale="#{sessionBean.locale}"
-                                navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
-                                required="#{param['isRequired'] == 'true'}"
-                                requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">
-                    </p:calendar>
-                </h:panelGroup>    
-                
-                <p:outputLabel id="repeatEacheLabel" value="#{_bean.scheduler.repeatEachType == 1 ? bundle.RepeatEach : bundle.RepeatEachF}"/>
-                <p:panelGrid columns="2" layout="grid">
-                    <p:spinner value="#{_bean.scheduler.interval}" size="2" min="1" max="100"
-                                 disabled="#{_bean.service.started}"
-                                 required="#{param['isRequired'] == 'true'}"
-                                 requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}"
-                                 title="#{bundle.IntervalRunService}"/>
-                    <p:selectOneMenu value="#{_bean.scheduler.repeatEachType}" required="true" title="#{bundle.IntervalTypeRunService}"
-                                     disabled="#{_bean.service.started}"
-                                     requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{_bean.intervalTypes}" />
-                        <p:ajax update="repeatEacheLabel"/>
-                    </p:selectOneMenu>
-                </p:panelGrid>
-            </p:panelGrid> 
-            
-            <br/>
-            
-            <h:panelGrid columns="2">
-                <p:commandButton icon="ui-icon-circle-triangle-e" value="#{bundle.Start}"
-                             title="#{bundle.RunOnSchedule}"
+            <p:outputLabel id="repeatEacheLabel" value="#{_bean.scheduler.repeatEachType == 1 ? bundle.RepeatEach : bundle.RepeatEachF}:" indicateRequired="true"/>
+            <h:panelGrid columns="2" >
+                <p:spinner value="#{_bean.scheduler.interval}" size="2" min="1" max="100"
                              disabled="#{_bean.service.started}"
-                             actionListener="#{_bean.onStartService()}"
-                             update="westFRM"
-                             onclick="document.getElementById('eastFRM:btnEastSaves').click();">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>
-                <p:commandButton icon="ui-icon-squaresmall-close" value="#{bundle.Stop}"
-                             title="#{bundle.Stop}"
-                             disabled="#{!_bean.service.started}"
-                             actionListener="#{_bean.onStopService()}"
-                             update="westFRM, centerFRM">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>
-            </h:panelGrid>
-        </h:panelGrid>
-                
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}"
+                             title="#{bundle.IntervalRunService}"/>
+                <p:selectOneMenu value="#{_bean.scheduler.repeatEachType}" required="true" title="#{bundle.IntervalTypeRunService}"
+                                 disabled="#{_bean.service.started}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Each}] #{bundle.MustBeFilled}">
+                    <f:selectItems value="#{_bean.intervalTypes}" />
+                    <p:ajax update="repeatEacheLabel"/>
+                </p:selectOneMenu>
+            </h:panelGrid>             
+ 
+        </p:panelGrid>
     </p:panelGrid>
 
 </ui:composition>

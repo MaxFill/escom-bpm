@@ -1,12 +1,12 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -15,8 +15,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TaskElem extends WorkflowConnectedElement{
-    private static final String STYLE_NAME = "ui-diagram-task";
+public class TaskElem extends WFConnectedElement{
     private static final long serialVersionUID = -148365590532225862L;
     
     @XmlTransient
@@ -54,7 +53,7 @@ public class TaskElem extends WorkflowConnectedElement{
     
     @Override
     public String getStyle() {
-        return STYLE_NAME;
+        return DictWorkflowElem.STYLE_TASK;
     }
 
     public Task getTask() {

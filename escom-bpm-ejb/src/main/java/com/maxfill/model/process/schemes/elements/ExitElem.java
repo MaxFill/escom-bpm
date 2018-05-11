@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,8 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExitElem extends WorkflowConnectedElement{
-    private static final String STYLE_NAME = "ui-diagram-exit";
+public class ExitElem extends WFConnectedElement{
     private static final long serialVersionUID = 8512962777531919513L;
 
     public ExitElem() {
@@ -28,7 +28,7 @@ public class ExitElem extends WorkflowConnectedElement{
 
     @Override
     public String getStyle() {
-        return STYLE_NAME;
+        return DictWorkflowElem.STYLE_EXIT;
     }
 
     @Override

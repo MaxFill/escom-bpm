@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class WorkflowElement implements Serializable{
+public abstract class WFElement implements Serializable{
     private static final long serialVersionUID = 7711526969748122074L;
     
     @XmlElement(name = "uid")

@@ -6,6 +6,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
@@ -104,7 +105,10 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
     }
      
     public void onDateSelect(SelectEvent selectEvent) {
-        schedulerTask = new SchedulerTask("", (Date) selectEvent.getObject(), (Date) selectEvent.getObject());        
+        Integer offset  = ZonedDateTime.now().getOffset().getTotalSeconds();
+        Date startDateTime = DateUtils.addSeconds((Date) selectEvent.getObject(), offset);
+        Date endDateTime = DateUtils.addHour(startDateTime, 1); //ToDO нужно вычислять с учётом рабочего времени!
+        schedulerTask = new SchedulerTask("", startDateTime, endDateTime);        
         PrimeFaces.current().executeScript("document.getElementById('centerFRM:btnCreateTask').click();");
     }
      

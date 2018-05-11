@@ -6,12 +6,8 @@ import javax.xml.bind.annotation.*;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AnchorElem extends WorkflowElement{
+public class AnchorElem extends WFElement{
     private static final long serialVersionUID = 8128988436740920824L;
-
-    public static final String STYLE_YES = "{fillStyle:'#099b05'}";
-    public static final String STYLE_NO = "{fillStyle:'#C33730'}";
-    public static final String STYLE_MAIN = "{fillStyle:'#98AFC7'}";
 
     @XmlElement(name = "position")
     private String position;

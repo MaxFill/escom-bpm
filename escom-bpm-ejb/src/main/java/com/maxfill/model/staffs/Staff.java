@@ -1,5 +1,6 @@
 package com.maxfill.model.staffs;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
@@ -91,6 +92,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
      * Формирует полное наименование штатной единицы: Должность ФИО Подразделение Компания
      * @return
      */
+    @Override
     public String getFullName(){
         StringBuilder sb = new StringBuilder();
         if (post != null && StringUtils.isNotBlank(post.getName())){
@@ -108,6 +110,11 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return sb.toString();
     }
 
+    @Override
+    public String getNameEndElipse() {
+        return StringUtils.abbreviate(getStaffFIO(), SysParams.LENGHT_NAME_ELIPSE);
+    }    
+    
     /* Формирует наименование Компания + Подразделение   */
     public String getOrgUnit() {
         StringBuilder orgUnit = new StringBuilder();
@@ -126,7 +133,14 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     /* Формирует краткое наименование штатной единицы  */
     public String getStaffFIO() {
-        return employee.getShortFIO() + " " + post.getName();
+        StringBuilder sb = new StringBuilder();     
+        if (employee != null && StringUtils.isNotBlank(employee.getName())){
+            sb.append(employee.getShortFIO()).append(" ");
+        }
+        if (post != null & StringUtils.isNotBlank(post.getName())){
+            sb.append(post.getName());
+        }
+        return  sb.toString() ;
     }
 
     /* Возвращает email штатной единицы (из user)  */

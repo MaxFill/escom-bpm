@@ -67,4 +67,8 @@ public class StateFacade extends BaseFacade{
     public State getArhivalState(){
         return find(DictStates.STATE_ARHIVAL);
     }
+    
+    public State getCanceledState(){
+        return find(DictStates.STATE_CANCELLED);
+    }
 }

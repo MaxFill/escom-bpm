@@ -5,9 +5,15 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.TaskFacade;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
+import com.maxfill.model.process.schemes.Scheme;
+import com.maxfill.model.process.Process;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
@@ -20,12 +26,12 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -40,6 +46,11 @@ public class TaskCardBean extends BaseViewBean{
     @EJB
     private TaskFacade taskFacade;
     
+    @Inject
+    private ProcessBean processBean;
+    @Inject
+    private DocBean docBean;
+            
     private Task editedItem = new Task();
     private boolean readOnly;
     private Task sourceTask = null;
@@ -94,10 +105,55 @@ public class TaskCardBean extends BaseViewBean{
     }
         
     /**
-     * Обработка события сброса Исполнителя
+     * Обработка события открытия карточки процесса 
      */
-    public void onClearExecutor(){
-        editedItem.setOwner(null);
+    public void onOpenProcess(){        
+        Process process = getProcess();
+        if (process != null){
+            processBean.prepEditItem(process);
+        } else {
+            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+        }
+    }
+    
+    /**
+     * Обработка события открытия карточки документа 
+     */
+    public void onOpenDocument(){        
+        Process process = getProcess();        
+        if (process != null){ 
+            Doc doc = process.getDoc();
+            if (doc != null){
+               docBean.prepEditItem(doc);
+            } else {
+               EscomMsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+            }
+        } else {
+            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+        }
+    }
+    
+    /**
+     * Обработка события просмотра документа
+     */
+    public void onViewDocument(){
+        Process process = getProcess();
+        if (process != null){ 
+            Doc doc = process.getDoc();
+            if (doc != null){
+               docBean.onViewMainAttache(doc);
+            } else {
+               EscomMsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+            }
+        } else {
+            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+        }
+    }
+    
+    private Process getProcess(){
+        Scheme scheme = editedItem.getScheme();
+        if (scheme == null) return null;
+        return scheme.getProcess();
     }
     
     /**
@@ -117,7 +173,7 @@ public class TaskCardBean extends BaseViewBean{
         if (sourceBean == null) return false;
         return sourceBean.isShowExtTaskAtr();
     }
-        
+
     /* Возвращает список состояний доступных объекту из его текущего состояния */
     public List<State> getAvailableStates(){        
         Metadates metaObj = getMetadatesObj();
@@ -148,7 +204,7 @@ public class TaskCardBean extends BaseViewBean{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_TASK;
+        return DictDlgFrmName.FRM_TASK+"-card";
     }
     
 }

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlTransient
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class WorkflowConnectedElement extends WorkflowElement{
+public abstract class WFConnectedElement extends WFElement{
     private static final long serialVersionUID = -7494568064796621469L;
 
     @XmlElement(name = "posX")

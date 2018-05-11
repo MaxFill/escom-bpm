@@ -121,6 +121,12 @@ public final class DateUtils {
         return cal.getTime();
     }
     
+    public static Calendar today() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
+        return calendar;
+    }
+        
     /* Добавление к дате указанного числа часов */
     public static Date addHour(Date date, int hour) {
         Calendar cal = Calendar.getInstance();
@@ -145,6 +151,14 @@ public final class DateUtils {
         return cal.getTime();
     }
 
+    /* Добавление к дате указанного числа секунд */
+    public static Date addSeconds(Date date, int seconds) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.SECOND, seconds); 
+        return cal.getTime();
+    }
+    
     /**
      * Возвращает разницу между двумя датами в днях
      * @param dateStart

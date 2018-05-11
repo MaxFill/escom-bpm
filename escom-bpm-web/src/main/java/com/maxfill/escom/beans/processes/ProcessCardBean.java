@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -59,7 +60,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Scheme scheme;
     private int defX = 8;
     private int defY = 8;
-    private WorkflowConnectedElement baseElement;
+    private WFConnectedElement baseElement;
     private String beanId;
     private final Set<Task> editedTasks = new HashSet<>();
     
@@ -120,6 +121,30 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         addContextMenu();
     }
     
+    /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
+    
+    /**
+     * Обработка события запуска процесса на исполнение
+     */
+    public void onRun(){
+        Set<String> errors = new HashSet<>();
+        workflow.start(getEditedItem(), errors);
+        if (!errors.isEmpty()){
+            EscomMsgUtils.showErrorsMsg(errors);
+        }
+    }
+    
+    /**
+     * Обработка события прерывания процесса
+     */
+    public void onStop(){
+        Set<String> errors = new HashSet<>();
+        workflow.stop(getEditedItem(), errors);
+        if (!errors.isEmpty()){
+            EscomMsgUtils.showErrorsMsg(errors);
+        }
+    }
+    
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
 
     /**
@@ -151,10 +176,11 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         scheme.getElements().getTasks().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getExits().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getLogics().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        scheme.getElements().getStarts().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getEnters().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getStates().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
         scheme.getElements().getConditions().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        
+        StartElem startElem = scheme.getElements().getStartElem();
+        elementMap.put(startElem.getUid(), createElement(startElem));
         List<Connection> connections = new ArrayList <>();
         scheme.getElements().getConnectors().stream().forEach(connectorElem->{
             AnchorElem anchorFrom = connectorElem.getFrom();            
@@ -191,7 +217,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onElementDelete(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement((WorkflowConnectedElement)selectedElement.getData(), scheme, errors);
+        workflow.removeElement((WFConnectedElement)selectedElement.getData(), scheme, errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             visualModelRefresh();
@@ -217,7 +243,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             selectedElement.setY(y + "em");
             defX = Integer.valueOf(x) + 5;
             defY = Integer.valueOf(y) + 5;
-            baseElement = (WorkflowConnectedElement) selectedElement.getData();
+            baseElement = (WFConnectedElement) selectedElement.getData();
             baseElement.setPosX(Integer.valueOf(x));
             baseElement.setPosY(Integer.valueOf(y));            
         }
@@ -267,7 +293,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
     
     /**
-     * Обработка события добавления одного или нескольких визуальных компонентов "Поручение" из выбранных в селекторе штатных единиц
+     * Обработка события добавления в схему процесса одного или нескольких визуальных компонентов "Задача" из выбранных в селекторе штатных единиц
      * @param event
      */
     public void onStaffsSelected(SelectEvent event){
@@ -295,7 +321,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Обработка события добавления визуального компонента "Логическоe ветвление" в схему процесса
+     * Обработка события добавления в схему процесса визуального компонента "Логическоe ветвление" 
      * @param name
      */
     public void onAddLogicElement(String name){
@@ -310,7 +336,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Обработка события добавления визуального компонента "Состояния" в схему процесса
+     * Обработка события добавления в схему процесса визуального компонента "Состояния" 
      * @param name
      */
     public void onAddStateElement(String name){
@@ -324,31 +350,31 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Обработка события добавления визуального компонента "Условие" в схему процесса
+     * Обработка события добавления в схему процесса визуального компонента "Условие" 
      */
     public void onAddConditionElement(){
         List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
-        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
+        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createCondition("?", defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
 
     /**
-     * Обработка события добавления визуального компонента "Вход" в схему процесса
+     * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
-    public void onAddStartElement(){
+    public void onAddEnterElement(){
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        Element elem = createStart(defX, defY, endPoints, new HashSet<>());        
+        createEnter(defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
     
     /**
-     * Обработка события добавления визуального компонента "Выход" в схему процесса
+     * Обработка события добавления в схему процесса визуального компонента "Выход" 
      */
     public void onAddExitElement(){
         List<EndPoint> endPoints = new ArrayList<>();
@@ -409,6 +435,22 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
+    private Element createEnter(int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        EnterElem enter = new EnterElem("", x, y);
+        enter.setAnchors(makeAnchorElems(enter, endPoints));
+        workflow.addEnter(enter, scheme, errors);
+        if (errors.isEmpty()) {
+            return modelAddElement(enter);            
+        }
+        return null;
+    }
+
+    /**
+     * Создание элемента "Старт процесса"
+     * @param x
+     * @param y
+     * @param errors
+     */
     private Element createStart(int x, int y, List<EndPoint> endPoints, Set<String> errors){
         StartElem start = new StartElem("", x, y);
         start.setAnchors(makeAnchorElems(start, endPoints));
@@ -418,7 +460,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         }
         return null;
     }
-
+    
     /**
      * Создание элемента "Вход в процесс"
      * @param x
@@ -488,13 +530,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param wfElement
      * @return 
      */    
-    private Element modelAddElement(WorkflowConnectedElement wfElement){
+    private Element modelAddElement(WFConnectedElement wfElement){
         Element element = createElement(wfElement);
         model.addElement(element);
         return element;
     }
 
-    private Element createElement(WorkflowConnectedElement wfElement){
+    private Element createElement(WFConnectedElement wfElement){
         Element element = new Element(wfElement, wfElement.getPosX() + "em", wfElement.getPosY() + "em");        
         List<EndPoint> endPoints = restoreEndPoints(wfElement.getAnchors());
         endPoints.forEach(endPoint -> element.addEndPoint(endPoint));
@@ -511,7 +553,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @return 
      */
     private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
-        return createTargetEndPoint(endPoints, anchor, AnchorElem.STYLE_MAIN);
+        return createTargetEndPoint(endPoints, anchor, DictWorkflowElem.STYLE_MAIN);
     }
     private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
         DotEndPoint endPoint = new DotEndPoint(anchor);
@@ -529,7 +571,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @return 
      */
     private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
-        return createSourceEndPoint(endPoints, anchor, AnchorElem.STYLE_MAIN);
+        return createSourceEndPoint(endPoints, anchor, DictWorkflowElem.STYLE_MAIN);
     }
     private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
         RectangleEndPoint endPoint = new RectangleEndPoint(anchor);
@@ -586,7 +628,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param endPoints
      * @return
      */
-    private Set<AnchorElem> makeAnchorElems(WorkflowConnectedElement element, List<EndPoint> endPoints){
+    private Set<AnchorElem> makeAnchorElems(WFConnectedElement element, List<EndPoint> endPoints){
         Set<AnchorElem> anchorElems =  new HashSet <>();
         for(EndPoint endPoint : endPoints){
             String position = endPoint.getAnchor().toString();
@@ -610,16 +652,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createStart(2, 4, endPoints, errors);
-        endPoints.clear();
+        createStart(2, 4, endPoints, errors);        
+        endPoints.clear();                
 
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
         endPoints.clear();
 
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, AnchorElem.STYLE_YES);
-        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_NO);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
+        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createCondition("Все одобрили?", 28, 18, endPoints, errors);
         endPoints.clear();
@@ -639,7 +681,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
         endPoints.clear();
 
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT, AnchorElem.STYLE_MAIN);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
         createExit(50, 35, endPoints, errors);
       
     }
@@ -664,8 +706,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param event 
      */
     public void onConnect(ConnectEvent event){
-        WorkflowConnectedElement wfSource = (WorkflowConnectedElement) event.getSourceElement().getData();
-        WorkflowConnectedElement wfTarget = (WorkflowConnectedElement) event.getTargetElement().getData();
+        WFConnectedElement wfSource = (WFConnectedElement) event.getSourceElement().getData();
+        WFConnectedElement wfTarget = (WFConnectedElement) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
@@ -673,11 +715,11 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         Set<String> errors = new HashSet <>();
         String label = "";
         switch(sourcePoint.getStyle()){
-            case AnchorElem.STYLE_NO:{
+            case DictWorkflowElem.STYLE_NO:{
                 label = "No";
                 break;
             }
-            case AnchorElem.STYLE_YES:{
+            case DictWorkflowElem.STYLE_YES:{
                 label = "Yes";
                 break;
             }
@@ -705,8 +747,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param event
      */
     public void onDisconnect(DisconnectEvent event) {
-        WorkflowConnectedElement wfSource = (WorkflowConnectedElement) event.getSourceElement().getData();
-        WorkflowConnectedElement wfTarget = (WorkflowConnectedElement) event.getTargetElement().getData();
+        WFConnectedElement wfSource = (WFConnectedElement) event.getSourceElement().getData();
+        WFConnectedElement wfTarget = (WFConnectedElement) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
         Set<String> errors = new HashSet <>();
@@ -737,7 +779,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     private void addContextMenu(){
         StringBuilder sb = new StringBuilder("addMenu([");
-        model.getElements().forEach(element-> {            
+        model.getElements().stream()
+                .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
+                .forEach(element-> {            
             sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("])");                
@@ -800,7 +844,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         return model;
     }
 
-    public WorkflowConnectedElement getBaseElement() {
+    public WFConnectedElement getBaseElement() {
         return baseElement;
     }
         

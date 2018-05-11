@@ -113,8 +113,9 @@
                                 rendered="#{item.document != null}"
                                 actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
                                 oncomplete="document.getElementById('centerFRM:openDocBtn').click();"/>
-
-                <p:commandButton icon="ui-icon-check" value="#{bundle.ReadIs}" title="#{bundle.MarkAsRead}"
+            </p:column>
+            <p:column>
+                <p:commandButton icon="ui-icon-check" title="#{bundle.MarkAsRead}"
                                 update="messageTBL"
                                 rendered="#{item.dateReading == null}"
                                 actionListener="#{userMsgBean.markAsRead(item)}">

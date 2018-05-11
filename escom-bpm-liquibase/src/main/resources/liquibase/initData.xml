@@ -914,6 +914,7 @@
             INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (1, N'LDAP', NULL, NULL, 0, NULL, NULL);
             INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (2, N'MAIL_SENDER', NULL, NULL, 0, NULL, NULL);
             INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (3, N'MAIL_READER', NULL, NULL, 0, NULL, NULL);
+            INSERT services (Id, Name, Settings, Sheduler, Started, DateNextStart, TimeHandle) VALUES (4, N'REMAINDER', NULL, NULL, 0, NULL, NULL);
         </sql> 
 
         <sql>

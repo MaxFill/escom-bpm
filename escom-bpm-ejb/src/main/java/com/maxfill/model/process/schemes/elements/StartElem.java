@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StartElem extends WorkflowConnectedElement{
-    private static final String STYLE_NAME = "ui-diagram-start";
+public class StartElem extends WFConnectedElement{    
     private static final long serialVersionUID = -7870980216646008269L;
 
     public StartElem() {
@@ -27,7 +27,7 @@ public class StartElem extends WorkflowConnectedElement{
 
     @Override
     public String getStyle() {
-        return STYLE_NAME;
+        return DictWorkflowElem.STYLE_START;
     }
 
     @Override

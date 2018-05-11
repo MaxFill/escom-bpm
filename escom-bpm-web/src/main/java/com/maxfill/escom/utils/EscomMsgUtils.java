@@ -72,6 +72,10 @@ public final class EscomMsgUtils{
         addFacesMsg(FacesMessage.SEVERITY_WARN, keyMsg, new Object[]{});
     }
 
+    /**
+     * Вывод сообщения об ошибке
+     * @param msg ключ ресурса
+     */
     public static void errorMsg(String msg) {
         addFacesMsg(FacesMessage.SEVERITY_ERROR, msg, new Object[]{});
     }

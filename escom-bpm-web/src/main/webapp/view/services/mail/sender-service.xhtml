@@ -61,7 +61,7 @@
 
         <p:separator />            
 
-        <h:panelGrid columns="2">
+        <h:panelGroup >
             <p:commandButton icon="ui-icon-check"
                         value="#{bundle.Test}" title="#{bundle.CheckSentMessage}"
                         actionListener="#{mailSenderBean.onCheckConnect()}"
@@ -73,7 +73,7 @@
                              immediate="true"
                              title="#{bundle.PreviewMessagesBox}"                            
                              actionListener="#{mailSenderBean.onOpenMailBox()}"/>
-        </h:panelGrid>                   
+        </h:panelGroup>                   
 
     </ui:define>
 

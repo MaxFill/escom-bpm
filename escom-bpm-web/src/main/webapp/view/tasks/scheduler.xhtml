@@ -38,8 +38,8 @@
 
     <ui:define name="centerFormContent">
         <h:panelGrid columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" timeZone="#{TimeZone.getDefault()}" ignoreTimezone="false"
-                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true" clientTimeZone="#{TimeZone.getDefault()}" 
+            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" ignoreTimezone="false"
+                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  firstHour="8" 
                         locale="#{sessionBean.locale}" >
                 <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />
                 <p:ajax event="eventSelect" listener="#{schedulerBean.onEventSelect}"  />

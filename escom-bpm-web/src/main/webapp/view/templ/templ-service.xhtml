@@ -41,16 +41,6 @@
     <ui:define name="leftFormContent">
         <ui:include src="/view/services/common/sheduler.xhtml"/>
         <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;"/> 
-        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" style="padding: 0px;">
-            <h:panelGrid columns="1" styleClass="ui-grid-col-12">
-                <p:separator />
-                <p:commandButton icon="ui-icon-play" value="#{bundle.OneTimeStartup}"
-                                 title="#{bundle.StartImmediately}"
-                                 actionListener="#{_bean.doRunService()}"
-                                 onclick="document.getElementById('eastFRM:btnEastSave').click();"
-                                 update="centerFRM, logFRM:logDetailPanel"/>
-            </h:panelGrid>
-        </p:panelGrid>
     </ui:define>
 
     <ui:define name="rightFacet">
