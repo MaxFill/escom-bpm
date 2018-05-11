@@ -15,10 +15,10 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-    </ui:define>
+    </ui:define>    
     
     <ui:define name="centerFormContent">
-        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12" rendered="#{taskCardBean.editedItem != null}">
+        <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12" rendered="#{taskCardBean.editedItem != null}">
             <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" />
             <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" >
                 <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -49,14 +49,18 @@
                         styleClass="without-spaces" rendered="#{taskCardBean.isShowExtTaskAtr()}"
                         required="#{param['isRequired'] == 'true'}" 
                         disabled="#{taskCardBean.readOnly}"
-                        locale="#{sessionBean.locale}"
+                        locale="#{sessionBean.locale}" 
+                        timeZone="#{TimeZone.getDefault()}"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                         navigator="true" yearRange="c-120:c+20"                     
                         requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
             </p:calendar>
             
             <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>
             <p:calendar value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
-                        styleClass="without-spaces"
+                        styleClass="without-spaces" 
+                        timeZone="#{TimeZone.getDefault()}"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                         required="#{param['isRequired'] == 'true'}" 
                         disabled="#{taskCardBean.readOnly}"
                         locale="#{sessionBean.locale}"
@@ -64,13 +68,19 @@
                         requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
             </p:calendar>
 
-            <p:outputLabel value="#{bundle.State}"/>
-            <p:inputText value="#{stateBean.getBundleName(taskCardBean.editedItem.state.currentState)}" disabled="true"/>             
+            <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
+            <p:selectOneMenu value="#{taskCardBean.editedItem.state.currentState}" converter="stateConvertor"                           
+                           disabled="#{taskCardBean.isReadOnly()}"
+                           required="#{param['isRequired'] == 'true'}" 
+                           requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
+            </p:selectOneMenu>
             
             <p:separator/>
             <h:panelGroup>
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
+                                 disabled="#{taskCardBean.readOnly}"
                                  action="#{taskCardBean.onCloseCard('delete')}">                    
                 </p:commandButton>
                 <p:commandButton value="#{bundle.Save}" update="centerFRM"

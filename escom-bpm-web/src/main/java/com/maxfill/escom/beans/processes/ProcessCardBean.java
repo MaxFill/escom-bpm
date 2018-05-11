@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.processes;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -96,14 +95,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     @Override
     protected void onBeforeSaveItem(Process item) {      
-        List<Task> liveTask = scheme.getElements().getTasks().stream().map(tsk->tsk.getTask()).collect(Collectors.toList());
-        List<Task> forRemove = new ArrayList<>();
-        forRemove.addAll(getEditedItem().getScheme().getTasks());
-        forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
-        if (!forRemove.isEmpty()){
-            scheme.getTasks().removeAll(forRemove);
-            editedTasks.removeAll(forRemove);
-        }
+        if (getEditedItem().getScheme() != null){
+            List<Task> liveTask = scheme.getElements().getTasks().stream().map(tsk->tsk.getTask()).collect(Collectors.toList());
+            List<Task> forRemove = new ArrayList<>();
+            forRemove.addAll(getEditedItem().getScheme().getTasks());
+            forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
+            if (!forRemove.isEmpty()){
+                scheme.getTasks().removeAll(forRemove);
+                editedTasks.removeAll(forRemove);
+            }
+        }    
         getEditedItem().setScheme(scheme);
         super.onBeforeSaveItem(item);
     }
@@ -682,13 +683,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             }
         }
         createConnector(sourceAnchor, targetAnchor, label, errors);
-
+        onItemChange();
+        
         if (StringUtils.isNotBlank(label)){
             Connection connection = findConnection(sourcePoint, targetPoint);
             connection.getOverlays().clear();
             connection.getOverlays().add(new LabelOverlay(EscomMsgUtils.getBandleLabel(label), "flow-label", 0.5));
-            visualModelRefresh();
-            onItemChange();
+            visualModelRefresh();            
         }
 
         if (!errors.isEmpty()){

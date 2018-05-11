@@ -192,7 +192,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }    
         
     public boolean docIsLock(Doc doc) {
-        return DictStates.STATE_EDITED.equals(doc.getState().getCurrentState().getId());
+        return DictStates.STATE_EDITED == doc.getState().getCurrentState().getId();
     }      
              
     /* ВЛОЖЕНИЯ */
