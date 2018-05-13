@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,7 +90,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().getConditions().add(condition);
+            scheme.getElements().getConditions().put(condition.getUid(), condition);
         }
     }
 
@@ -101,7 +102,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().getLogics().add(logic);
+            scheme.getElements().getLogics().put(logic.getUid(), logic);
         }
     }
 
@@ -113,7 +114,7 @@ public class WorkflowImpl implements Workflow {
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
-            scheme.getElements().getStates().add(state);
+            scheme.getElements().getStates().put(state.getUid(), state);
         }
     }
 
@@ -122,10 +123,8 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;
         if (enter == null){
             errors.add("WorkflowIncorrectData");
-        }
-        //ToDo проверки!
-        if (errors.isEmpty()) {
-            scheme.getElements().getEnters().add(enter);
+        } else {
+            scheme.getElements().getEnters().put(enter.getUid(), enter);
         }
     }
 
@@ -146,10 +145,8 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;
         if (exit == null){
             errors.add("WorkflowIncorrectData");
-        }
-        //ToDo проверки!
-        if (errors.isEmpty()) {
-            scheme.getElements().getExits().add(exit);
+        } else {
+            scheme.getElements().getExits().put(exit.getUid(), exit);
         }
     }
 
@@ -158,16 +155,16 @@ public class WorkflowImpl implements Workflow {
         //ToDo проверка на возможность удаления
         if (element instanceof TaskElem){
             scheme.getElements().getTasks().remove(element.getUid());            
-        } else if (element instanceof StartElem){
-            scheme.getElements().getEnters().remove((EnterElem)element);
+        } else if (element instanceof EnterElem){
+            scheme.getElements().getEnters().remove(element.getUid());
         } else if (element instanceof ExitElem){
-            scheme.getElements().getExits().remove((ExitElem)element);
+            scheme.getElements().getExits().remove(element.getUid());
         } else if (element instanceof StateElem){
-            scheme.getElements().getStates().remove((StateElem)element);
+            scheme.getElements().getStates().remove(element.getUid());
         } else if (element instanceof ConditionElem){
-            scheme.getElements().getConditions().remove((ConditionElem)element);
+            scheme.getElements().getConditions().remove(element.getUid());
         } else if (element instanceof LogicElem){
-            scheme.getElements().getLogics().remove((LogicElem)element);
+            scheme.getElements().getLogics().remove(element.getUid());
         }
         removeConnectors(element, scheme);        
     }
@@ -213,9 +210,8 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void validateScheme(Scheme scheme, Set <String> errors) {
-        List<ExitElem> exitElems = scheme.getElements().getExits();
-        if (exitElems.isEmpty()){
+    public void validateScheme(Scheme scheme, Set <String> errors) {       
+        if (scheme.getElements().getExits().isEmpty()){
             errors.add("DiagramNotHaveExit");
         }
         StartElem startElem = scheme.getElements().getStartElem();
@@ -287,23 +283,72 @@ public class WorkflowImpl implements Workflow {
         anchors.stream()
                 .filter(anchor->anchor.isSource())
                 .forEach(anchor->{
-                    //Set<WFConnectedElement> targetElements = findTargetElement(anchor, scheme.getElements().getConnectors(), getMapElements(scheme));
+                    List<ConnectorElem> connectors = scheme.getElements().getConnectors().stream()
+                            .filter(connector->connector.getFrom().equals(anchor))
+                            .collect(Collectors.toList());
+                    Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
+                    Set<TaskElem> targetTasks = findTargetTasks(connectors, scheme.getElements().getTasks());
+                    Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
+                    Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
+                    Set<StateElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
                 });
     }    
     
     /**
-     * Находит целевые элементы модели процесса по исходящему якорю
-     * @param sourceAnchor
+     * Находит элементы логики модели процесса к которым идут коннекторы
      * @return 
-     */
-    /*
-    private Set<WFConnectedElement> findLogicElement(AnchorElem sourceAnchor, List<ConnectorElem> connectors, List<LogicElem> elements){
+     */    
+    private Set<LogicElem> findTargetLogics(List<ConnectorElem> connectors, Map<String, LogicElem> elements){
         return connectors.stream()
-                .filter(connector->connector.getFrom().equals(sourceAnchor))
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
                 .collect(Collectors.toSet());
     }
-    */
+    
+    /**
+     * Находит задачи модели процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<TaskElem> findTargetTasks(List<ConnectorElem> connectors, Map<String, TaskElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит выходы процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<ExitElem> findTargetExits(List<ConnectorElem> connectors, Map<String, ExitElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит условия процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<ConditionElem> findTargetConditions(List<ConnectorElem> connectors, Map<String, ConditionElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит состояния процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<StateElem> findTargetStates(List<ConnectorElem> connectors, Map<String, StateElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
     /**
      * Отправляет задачи в работу
      * @param tasks 

@@ -68,6 +68,12 @@ public class Task implements Serializable, Dict{
     @Column(name = "TaskLinkUID")
     private String taskLinkUID;
     
+    @Column(name = "Result")
+    private String result;
+    
+    @Column(name = "Icon")
+    private String iconName;
+                
     /* Категории */
     //ToDo добавить категории
 
@@ -107,6 +113,15 @@ public class Task implements Serializable, Dict{
         return style;
     }
     
+    /**
+     * Возвращает статус задачи: просрочно на, осталось, 
+     * @return 
+     */
+    public String getStatus(){
+        //ToDo 
+        return "";
+    }
+    
     /* GETS & SETS */
 
     @Override
@@ -118,6 +133,20 @@ public class Task implements Serializable, Dict{
 
     }
 
+    public String getResult() {
+        return result;
+    }
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public String getIconName() {
+        return iconName;
+    }
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
+    
     public String getTaskLinkUID() {
         return taskLinkUID;
     }

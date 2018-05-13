@@ -14,6 +14,7 @@ import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -97,8 +98,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     @Override
     protected void onBeforeSaveItem(Process item) {      
         if (getEditedItem().getScheme() != null){
-            List<Task> liveTask = scheme.getElements().getTasks().entrySet().stream()
-                    .map(tsk->tsk.getValue().getTask()).collect(Collectors.toList());
+            List<Task> liveTask = getTasks();
             List<Task> forRemove = new ArrayList<>();
             forRemove.addAll(getEditedItem().getScheme().getTasks());
             forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
@@ -175,11 +175,11 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         model.clear();
         Map<String, Element> elementMap = new HashMap <>();
         scheme.getElements().getTasks().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getExits().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        scheme.getElements().getLogics().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        scheme.getElements().getEnters().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        scheme.getElements().getStates().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
-        scheme.getElements().getConditions().stream().forEach(e->elementMap.put(e.getUid(), createElement(e)));
+        scheme.getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
         StartElem startElem = scheme.getElements().getStartElem();
         elementMap.put(startElem.getUid(), createElement(startElem));
         List<Connection> connections = new ArrayList <>();
@@ -379,10 +379,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onAddExitElement(){
         List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createSourceEndPoint(endPoints, EndPointAnchor.TOP);        
-        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        Element elem = createExit(defX, defY, endPoints, new HashSet<>());        
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);                
+        createExit(defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
     
@@ -677,11 +676,6 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
         endPoints.clear();
 
-        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
-        createTask(staff, "Устранить замечания!", 2, 26, endPoints, errors);
-        endPoints.clear();
-
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
         createExit(50, 35, endPoints, errors);
       
@@ -828,8 +822,33 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         visualModelRefresh();
     }
 
+    public String getTaskStatus(Task task){
+        if (task == null) return "";
+        if (task.getBeginDate() == null) return EscomMsgUtils.getBandleLabel("NotStarted");
+        StringBuilder sb = new StringBuilder();
+        Date dateStart;
+        if (task.getFactExecDate() == null){
+            dateStart = DateUtils.today();                  
+        } else {
+            dateStart = task.getFactExecDate();            
+        }
+        String delta = DateUtils.differenceDays(dateStart.toInstant(), task.getPlanExecDate().toInstant()); 
+        if (dateStart.before(task.getPlanExecDate())){
+            sb.append(EscomMsgUtils.getBandleLabel("Remained"));
+        } else {
+            sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On"));
+        }
+        sb.append(" ").append(delta);
+        return sb.toString();
+    }
+            
     /* GETS & SETS */
 
+    public List<Task> getTasks(){
+        return scheme.getElements().getTasks().entrySet().stream()
+                .map(tsk->tsk.getValue().getTask())
+                .collect(Collectors.toList());
+    }
     
     /**
      * Формирует имя элемента для вывода в заголовке формы

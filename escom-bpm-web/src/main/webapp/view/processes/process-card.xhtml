@@ -85,6 +85,12 @@
     </ui:define>
     
     <ui:define name="specActionMenu" >
+        <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
+                    disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
+                    onclick="document.getElementById('#{_frm}:btnRun').click();"/>
+        <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
+                    disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
+                    onclick="document.getElementById('#{_frm}:btnStop').click();"/>
     </ui:define>
     
     <ui:define name="specMenuButtons" >
@@ -98,6 +104,7 @@
                          update="#{_frm}" 
                          actionListener="#{processCardBean.onStop()}">
         </p:commandButton>
+        <p:separator />
     </ui:define>
     
     <ui:define name="card_scripts">
@@ -182,7 +189,47 @@
         </p:commandButton>
     </ui:define>
 
-    <ui:define name="page_body">                
+    <ui:define name="page_body"> 
+        <p:tab title="#{bundle.Process}" > 
+            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+                <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
+                <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
+                         styleClass="col-padding ui-grid-col-12" 
+                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                         onchange="return itemChange = 1;"
+                         disabled="#{processCardBean.isReadOnly()}"
+                         required="#{param['isRequired'] == 'true'}"
+                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                <p:outputLabel value="#{bundle.ApprovalSheet}" />
+                <p:dataTable value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
+                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">
+                
+                    <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">
+                        <h:outputLabel value="#{task.owner.nameEndElipse}"/>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.Term}" width="90" sortBy="#{task.planExecDate}">
+                        <h:outputLabel value="#{task.planExecDate}">
+                            <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                        </h:outputLabel>
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.Status}" >
+                        <h:outputLabel value="#{processCardBean.getTaskStatus(task)}"/>
+                    </p:column>
+                    
+                    <p:column width="16" sortBy="#{task.iconName}" >
+                        <p:graphicImage value="/resources/icon/#{task.iconName}.png" /> 
+                    </p:column>
+                    
+                    <p:column headerText="#{bundle.Result}" >
+                        <h:outputLabel value="#{task.result}"/>
+                    </p:column>                 
+                    
+                </p:dataTable>
+            </p:panelGrid>
+        </p:tab>
+        
         <p:tab title="#{bundle.Scheme}" >            
             <p:toolbar styleClass="ui-grid-col-12" >
                 <f:facet name="left">
@@ -240,18 +287,7 @@
                         <p:menuitem value="Clear" actionListener="#{processCardBean.onClearModel()}" update="diagramm" icon="ui-icon-close" />
                     </p:menuButton>
                 </f:facet>
-            </p:toolbar>
-
-            <h:panelGrid columns="2" styleClass="ui-panelgrid-blank ui-grid-col-12" >
-                <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
-                <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
-                             styleClass="ui-grid-col-12 col-padding"
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
-                             onchange="return itemChange = 1;"
-                             disabled="#{processCardBean.isReadOnly()}"
-                             required="#{param['isRequired'] == 'true'}"
-                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-            </h:panelGrid>
+            </p:toolbar>  
             
             <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >

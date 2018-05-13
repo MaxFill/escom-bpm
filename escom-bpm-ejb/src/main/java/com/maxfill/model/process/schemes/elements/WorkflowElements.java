@@ -28,28 +28,21 @@ public class WorkflowElements implements Serializable{
     private List<ConnectorElem> connectors = new ArrayList <>();
 
     @XmlElement(name = "conditions")
-    private List<ConditionElem> conditions = new ArrayList <>();
+    private Map<String, ConditionElem> conditions = new HashMap <>();
 
     @XmlElement(name = "enters")
-    private List<EnterElem> enters = new ArrayList <>();
+    private Map<String, EnterElem> enters = new HashMap <>();
 
     @XmlElement(name = "exits")
-    private List<ExitElem> exits = new ArrayList <>();
+    private Map<String, ExitElem> exits = new HashMap <>();
 
     @XmlElement(name = "logics")
-    private List<LogicElem> logics = new ArrayList <>();
+    private Map<String, LogicElem> logics = new HashMap <>();
 
     @XmlElement(name = "states")
-    private List<StateElem> states = new ArrayList <>();
+    private Map<String, StateElem> states = new HashMap <>();
     
     public WorkflowElements() {
-    }
-
-    public List<EnterElem> getEnters() {
-        return enters;
-    }
-    public void setEnters(List<EnterElem> enters) {
-        this.enters = enters;
     }
 
     public StartElem getStartElem() {
@@ -73,31 +66,39 @@ public class WorkflowElements implements Serializable{
         this.connectors = connectors;
     }
 
-    public List <ConditionElem> getConditions() {
+    public Map<String, ConditionElem> getConditions() {
         return conditions;
     }
-    public void setConditions(List <ConditionElem> conditions) {
+    public void setConditions(Map<String, ConditionElem> conditions) {
         this.conditions = conditions;
     }
 
-    public List <ExitElem> getExits() {
+    public Map<String, EnterElem> getEnters() {
+        return enters;
+    }
+    public void setEnters(Map<String, EnterElem> enters) {
+        this.enters = enters;
+    }
+
+    public Map<String, ExitElem> getExits() {
         return exits;
     }
-    public void setExits(List <ExitElem> exits) {
+    public void setExits(Map<String, ExitElem> exits) {
         this.exits = exits;
     }
 
-    public List <LogicElem> getLogics() {
+    public Map<String, LogicElem> getLogics() {
         return logics;
     }
-    public void setLogics(List <LogicElem> logics) {
+    public void setLogics(Map<String, LogicElem> logics) {
         this.logics = logics;
     }
 
-    public List <StateElem> getStates() {
+    public Map<String, StateElem> getStates() {
         return states;
     }
-    public void setStates(List <StateElem> states) {
+    public void setStates(Map<String, StateElem> states) {
         this.states = states;
     }
+
 }

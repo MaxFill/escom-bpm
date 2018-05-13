@@ -21,6 +21,9 @@ public class ConnectorElem extends WFElement{
     @XmlElement
     private AnchorElem to;
 
+    @XmlElement
+    private boolean done;
+    
     public ConnectorElem() {
     }
 
@@ -53,6 +56,13 @@ public class ConnectorElem extends WFElement{
     @Override
     public String getBundleKey() {
         return "Сonnector";
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+    public void setDone(boolean done) {
+        this.done = done;
     }
     
     /* *** *** */

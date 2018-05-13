@@ -121,10 +121,10 @@ public final class DateUtils {
         return cal.getTime();
     }
     
-    public static Calendar today() {
+    public static Date today() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
-        return calendar;
+        return calendar.getTime();
     }
         
     /* Добавление к дате указанного числа часов */
