@@ -58,6 +58,10 @@ public class ConnectorElem extends WFElement{
         return "Сonnector";
     }
 
+    /**
+     * Признак того, что действие выполнено
+     * @return 
+     */
     public boolean isDone() {
         return done;
     }

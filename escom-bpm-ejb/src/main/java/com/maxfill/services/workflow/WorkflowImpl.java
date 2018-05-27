@@ -265,32 +265,69 @@ public class WorkflowImpl implements Workflow {
     }
 
     /**
-     * Выполняет движение процесса по маршруту
-     * Движение начинается от указанного начального элемента
-     * и останавливается после запуска актуальных задач или достижения конца процесса
+     * Выполняет движение процесса по маршруту от указанного начального элемента
+     * по всем исходящим из него переходам (connectors)
+     * и останавливается после запуска всех актуальных задач и/или достижения конца процесса
      * @param scheme
      * @param startElement
      * @param errors 
      */
     @Override
     public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {
-        Set<Task> tasks = new HashSet<>();
-        doMove(startElement.getAnchors(), scheme, tasks, errors);
-        startTasks(tasks);
+        doRun(startElement.getAnchors(), scheme, errors);
     }
     
-    private void doMove(Set<AnchorElem> anchors, Scheme scheme, Set<Task> tasks, Set<String> errors){
+    /**
+     * Обработка движения по исходящим соединениям 
+     * Если процесс входит в задание, то оно запускается если оно не запущено, а если задание выполнено, то оно будет запущено повторно.
+     * Если процесс входит в состояние, то выполняется код изменения состояния. всякий рах при входе
+     * @param anchors
+     * @param scheme
+     * @param tasks
+     * @param errors 
+     */
+    private void doRun(Set<AnchorElem> anchors, Scheme scheme, Set<String> errors){
         anchors.stream()
                 .filter(anchor->anchor.isSource())
                 .forEach(anchor->{
-                    List<ConnectorElem> connectors = scheme.getElements().getConnectors().stream()
-                            .filter(connector->connector.getFrom().equals(anchor))
-                            .collect(Collectors.toList());
-                    Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
-                    Set<TaskElem> targetTasks = findTargetTasks(connectors, scheme.getElements().getTasks());
-                    Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
+                    //получаем список коннекторов, исходящих из якоря
+                    List<ConnectorElem> connectors = 
+                            scheme.getElements().getConnectors().stream()
+                            .filter(connector->connector.getFrom().equals(anchor) && !connector.isDone())                            
+                            .map(connector->{
+                                connector.setDone(true);
+                                return connector;
+                            })
+                            .collect(Collectors.toList());                                                                             
+                    
+                    //запуск задач
+                    connectors.stream()
+                        .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
+                        .filter(element->Objects.nonNull(element))
+                        .forEach(taskElem->{
+                            Task task = taskElem.getTask();
+                            if (!task.getState().getCurrentState().equals(stateFacade.getRunningState())){
+                                task.setBeginDate(new Date());
+                                task.getState().setCurrentState(stateFacade.getRunningState());
+                                taskFacade.edit(task);
+                            }
+                        });
+                    
+                    //обрабатываем условия
                     Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
+                    //Todo
+                    
+                    //изменяем изменения состояния документа
                     Set<StateElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
+                    //Todo
+                    
+                    //обрабатываем логические элементы
+                    Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
+                    targetLogics.forEach(logic-> doRun(logic.getAnchors(), scheme, errors));
+                    
+                    //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
+                    Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
+                    //Todo!
                 });
     }    
     
@@ -347,18 +384,6 @@ public class WorkflowImpl implements Workflow {
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .filter(element->Objects.nonNull(element))
                 .collect(Collectors.toSet());
-    }
-    
-    /**
-     * Отправляет задачи в работу
-     * @param tasks 
-     */
-    private void startTasks(Set<Task> tasks){
-        tasks.stream().forEach(task->{
-            task.setBeginDate(new Date());
-            task.getState().setCurrentState(stateFacade.getRunningState());
-            taskFacade.edit(task);
-        });
-    }
+    }    
     
 }
