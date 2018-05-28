@@ -2,6 +2,7 @@ package com.maxfill.model.process;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
@@ -81,11 +82,15 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public Process() {
     }
 
+    public boolean isRunning(){
+        return state.getCurrentState().getId().equals(DictStates.STATE_RUNNING);
+    }
+    
     /* GETS & SETS */
 
     @Override
     public String getIconName() {
-        return "arrow_right";
+        return "process";
     }
 
     @Override

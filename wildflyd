@@ -1,0 +1,1 @@
+/home/maksim/wildfly/bin/jboss-cli.sh --connect command=:shutdown

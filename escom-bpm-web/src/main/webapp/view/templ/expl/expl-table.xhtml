@@ -25,10 +25,6 @@
         <p:ajax event="page" listener="#{_explorerBean.onPageChange}" oncomplete="initDND()"/>             
         
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
-
-        <p:column width="16" sortBy="#{item.state.currentState.name}">
-            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
-        </p:column>
         
         <p:column width="16" sortBy="#{item.iconName}" id="colIcon">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
@@ -52,6 +48,10 @@
        
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
+        
+        <p:column width="16" sortBy="#{item.state.currentState.name}">
+            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
+        </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="90" priority="3"
                   rendered="#{_showDateChange != false}"
@@ -93,7 +93,7 @@
                         
             <p:splitButton value="#{bundle.Edit}"
                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                           rendered="#{!item.deleted and _explorerBean.explorerViewMode}"
+                           rendered="#{!item.deleted and _explorerBean.explorerViewMode}"                           
                            oncomplete="document.getElementById('#{_frmExpl}:viewCardBtn').click();">
                 <ui:insert name="addItemMenu" />                 
                 <p:separator/>

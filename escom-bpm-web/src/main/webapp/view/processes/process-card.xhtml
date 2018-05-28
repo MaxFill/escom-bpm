@@ -76,6 +76,7 @@
             .iw-contextMenu {
                 font-family: Verdana, Helvetica, Arial, sans-serif;
             }
+            
         </style>
     </ui:define>
 
@@ -83,7 +84,7 @@
          <h:outputScript library="contextMenu" name="contextMenu.js" /> 
          <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
     </ui:define>
-    
+        
     <ui:define name="specActionMenu" >
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
                     disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
@@ -95,12 +96,12 @@
     
     <ui:define name="specMenuButtons" >
         <p:commandButton id="btnRun" title="#{bundle.Run}" icon="ui-icon-play"
-                         disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
+                         disabled="#{processCardBean.isDisableBtnRun()}"
                          update="#{_frm}"
                          actionListener="#{processCardBean.onRun()}">
         </p:commandButton>
         <p:commandButton id="btnStop" title="#{bundle.Stop}" icon="ui-icon-stop"
-                         disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_RUNNING}"
+                         disabled="#{processCardBean.isDisableBtnStop()}"
                          update="#{_frm}" 
                          actionListener="#{processCardBean.onStop()}">
         </p:commandButton>
@@ -201,9 +202,15 @@
                          required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />
+                
                 <p:dataTable value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
+                             rowKey="#{task.tempId}" selection="#{processCardBean.currentTask}" selectionMode="single"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">
                 
+                    <p:column width="16" sortBy="#{task.state.currentState.name}">
+                        <h:graphicImage id="iconDone" value="#{task.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
+                    </p:column>
+                    
                     <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">
                         <h:outputLabel value="#{task.owner.nameEndElipse}"/>
                     </p:column>
@@ -225,6 +232,11 @@
                     <p:column headerText="#{bundle.Result}" >
                         <h:outputLabel value="#{task.result}"/>
                     </p:column>                 
+                    
+                    <p:column width="15">
+                        <p:commandButton icon="ui-icon-extlink" title="#{bundle.Open}">                            
+                        </p:commandButton>
+                    </p:column>
                     
                 </p:dataTable>
             </p:panelGrid>
@@ -270,10 +282,12 @@
                     </span>
 
                     <p:commandButton title="Load" icon="ui-icon-folder-open"
+                                     disabled="#{processCardBean.isReadOnly()}"
                                      actionListener="#{processCardBean.onLoadModelFromTempl()}"
                                      update="diagramm">
                     </p:commandButton>
                     <p:commandButton title="Clear" icon="ui-icon-closethick"
+                                     disabled="#{processCardBean.isReadOnly()}"
                                      actionListener="#{processCardBean.onClearModel()}"
                                      update="diagramm">
                     </p:commandButton>
@@ -282,9 +296,9 @@
 
                 <f:facet name="right">
                     <p:menuButton value="Options">
-                        <p:menuitem value="Save" actionListener="#{processCardBean.onSaveModelToTempl()}" icon="ui-icon-disk" />
-                        <p:menuitem value="Reload" actionListener="#{processCardBean.onReloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
-                        <p:menuitem value="Clear" actionListener="#{processCardBean.onClearModel()}" update="diagramm" icon="ui-icon-close" />
+                        <p:menuitem value="Save"    actionListener="#{processCardBean.onSaveModelToTempl()}" icon="ui-icon-disk" />
+                        <p:menuitem value="Reload"  actionListener="#{processCardBean.onReloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
+                        <p:menuitem value="Clear"   actionListener="#{processCardBean.onClearModel()}"  update="diagramm" icon="ui-icon-close" />
                     </p:menuButton>
                 </f:facet>
             </p:toolbar>  
@@ -294,10 +308,10 @@
                     <f:facet name="element" >
                         <h:outputLabel value="#{el.caption}" style="display:block;margin:1em;word-wrap:break-word;"/>
                     </f:facet>
-                    <p:ajax event="connect" listener="#{processCardBean.onConnect}" />
-                    <p:ajax event="disconnect" listener="#{processCardBean.onDisconnect}" />
-                    <p:ajax event="connectionChange" listener="#{processCardBean.onConnectionChange}" />                    
-                </p:diagram>                
+                    <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" />
+                    <p:ajax event="disconnect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onDisconnect}" />
+                    <p:ajax event="connectionChange" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnectionChange}" />
+                </p:diagram>
             </p:panelGrid>
         </p:tab>
     </ui:define>

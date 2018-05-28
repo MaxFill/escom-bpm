@@ -16,7 +16,7 @@
             INSERT states (ID, Name, IsActual, Icon) VALUES (6, N'Arhival', 1, N'/resources/icon/doc_storage20.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (7, N'Valid',   1, N'/resources/icon/doc_check20.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (8, N'Edited',  1, N'/resources/icon/doc_lock20.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',  1, N'/resources/icon/arrow_right.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',  1, N'/resources/icon/execute.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (10, N'Сompleted',  1, N'/resources/icon/done.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (11, N'Cancelled',  1, N'/resources/icon/cancel.png');
         </sql>                
@@ -180,7 +180,7 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 11, 5);
         </sql>
 
-        <!-- Доступные состояния объектов метаданных -->
+        <!-- Доступные состояния объектов метаданных (какие состояния доступны объекту)-->
         <sql>
             INSERT objectsStates (ObjId, StateId) VALUES (1, 5);
             INSERT objectsStates (ObjId, StateId) VALUES (1, 6);

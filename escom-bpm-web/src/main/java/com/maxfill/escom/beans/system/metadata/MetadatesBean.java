@@ -11,7 +11,6 @@ import com.maxfill.facade.RightFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.model.users.User;

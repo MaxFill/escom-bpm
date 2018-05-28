@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
+import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
@@ -39,6 +40,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -64,6 +66,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private WFConnectedElem baseElement;
     private String beanId;
     private final Set<Task> editedTasks = new HashSet<>();
+    private Task currentTask;
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();
 
@@ -87,8 +90,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     @Override
     protected void checkItemBeforeSave(Process item, Set<String> errors) {
         super.checkItemBeforeSave(item, errors);
-        workflow.validateScheme(scheme, errors);
-        workflow.packScheme(scheme, errors);
+        Set<String> validateKeysMsg = new HashSet<>();
+        workflow.validateScheme(scheme, validateKeysMsg);        
+        workflow.packScheme(scheme, validateKeysMsg);
+        validateKeysMsg.forEach(key->errors.add(EscomMsgUtils.getMessageLabel(key)));
     }
 
     /**
@@ -128,10 +133,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события запуска процесса на исполнение
      */
     public void onRun(){
-        Set<String> errors = new HashSet<>();
-        workflow.start(getEditedItem(), errors);
-        if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+        onItemChange();
+        if (doSaveItem()){
+            Set<String> errors = new HashSet<>();
+            workflow.start(getEditedItem(), errors);
+            if (!errors.isEmpty()){
+                EscomMsgUtils.showErrorsMsg(errors);            
+            }
         }
     }
     
@@ -190,7 +198,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             AnchorElem anchorTo = connectorElem.getTo();            
             Element toEl = elementMap.get(anchorTo.getOwnerUID());
             EndPoint endPointTo = getEndPointById(toEl, anchorTo.getUid());
-            Connection connection = createConnection(endPointFrom, endPointTo, connectorElem.getCaption());
+            Connection connection = createConnection(endPointFrom, endPointTo, connectorElem);
             connections.add(connection);
         });
         elementMap.forEach((s, element) -> model.addElement(element));
@@ -265,6 +273,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onElementOpen(){
        if (baseElement instanceof TaskElem){
+           TaskElem taskElem = (TaskElem) baseElement;
+           currentTask = (Task) taskElem.getTask();           
            onOpenTask(beanId);
        } 
     }
@@ -552,11 +562,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param anchor
      * @return 
      */
-    private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
+    private EndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
         return createTargetEndPoint(endPoints, anchor, DictWorkflowElem.STYLE_MAIN);
     }
-    private DotEndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
-        DotEndPoint endPoint = new DotEndPoint(anchor);
+    private EndPoint createTargetEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
+        EndPoint endPoint;
+        if (isReadOnly()){
+            endPoint = new BlankEndPoint(anchor);
+        } else {
+            endPoint = new DotEndPoint(anchor);
+        }
         endPoint.setScope("network");
         endPoint.setTarget(true);
         endPoint.setStyle(style);
@@ -570,16 +585,21 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param anchor
      * @return 
      */
-    private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
+    private EndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor) {
         return createSourceEndPoint(endPoints, anchor, DictWorkflowElem.STYLE_MAIN);
     }
-    private RectangleEndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
-        RectangleEndPoint endPoint = new RectangleEndPoint(anchor);
+    private EndPoint createSourceEndPoint(List<EndPoint> endPoints, EndPointAnchor anchor, String style) {
+        EndPoint endPoint;
+        if (isReadOnly()){
+            endPoint = new BlankEndPoint(anchor);
+        } else {
+            endPoint = new RectangleEndPoint(anchor);
+        }
         endPoint.setScope("network");
         endPoint.setSource(true);
         endPoint.setStyle(style);
         endPoint.setHoverStyle("{fillStyle:'#5C738B'}");
-        endPoints.add(endPoint);
+        endPoints.add(endPoint); 
         return endPoint;
     }
 
@@ -590,15 +610,19 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param label
      * @return
      */
-    private Connection createConnection(EndPoint from, EndPoint to, String keyLabel) {
+    private Connection createConnection(EndPoint from, EndPoint to, ConnectorElem connectorElem) {
         if (from == null || to == null) return null;
         Connection conn = new Connection(from, to);
         conn.getOverlays().add(new ArrowOverlay(20, 20, 1, 1));
         String label = "";
+        String keyLabel = connectorElem.getCaption();
         if(StringUtils.isNotBlank(keyLabel)) {                         
             label = EscomMsgUtils.getBandleLabel(keyLabel);
         }
-        conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));        
+        conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));
+        if (connectorElem.isDone()){
+            conn.getConnector().setPaintStyle("{strokeStyle:'#C7B097', lineWidth:3}");
+        }
         return conn;
     }
 
@@ -842,8 +866,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         return sb.toString();
     }
             
+    public boolean isDisableBtnRun(){
+        return isReadOnly() || getEditedItem().isRunning();
+    }
+   
+    public boolean isDisableBtnStop(){
+        return isReadOnly() || !getEditedItem().isRunning();
+    }
+        
     /* GETS & SETS */
-
+    
     public List<Task> getTasks(){
         return scheme.getElements().getTasks().entrySet().stream()
                 .map(tsk->tsk.getValue().getTask())
@@ -869,16 +901,18 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
         
     @Override
-    public Task getTask(){
-        if (baseElement == null) return null;
-        if (baseElement instanceof TaskElem){
-            TaskElem taskElem = (TaskElem) baseElement;
-            Task task = (Task) taskElem.getTask();
-            return task;
-        }
-        return null;
+    public Task getTask(){        
+        return currentTask;
     }
-    
+
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+
+    public void setCurrentTask(Task currentTask) {
+        this.currentTask = currentTask;
+    }
+        
     @Override
     public Boolean isShowExtTaskAtr() {
         return false;

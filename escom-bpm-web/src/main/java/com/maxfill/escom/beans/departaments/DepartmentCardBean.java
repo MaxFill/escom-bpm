@@ -27,6 +27,7 @@ public class DepartmentCardBean extends BaseCardTree<Department>{
     @EJB
     private DepartmentFacade itemsFacade;
 
+    
     @Override
     public List<State> getStateForChild(){
         return staffBean.getMetadatesObj().getStatesList();

@@ -197,7 +197,7 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
-    public void unpackScheme(Scheme scheme, Set <String> errors) {
+    public void unpackScheme(Scheme scheme, Set<String> errors) {
         try {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
@@ -210,13 +210,16 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void validateScheme(Scheme scheme, Set <String> errors) {       
+    public void validateScheme(Scheme scheme, Set<String> errors) {       
         if (scheme.getElements().getExits().isEmpty()){
             errors.add("DiagramNotHaveExit");
         }
         StartElem startElem = scheme.getElements().getStartElem();
         if (startElem == null){
             errors.add("DiagramNotHaveStart");
+        }
+        if (scheme.getElements().getConnectors().isEmpty()){
+            errors.add("DiagramNotHaveConnectors");
         }
         //ToDo!
     }
@@ -243,6 +246,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void start(Process process, Set<String> errors) {        
         Scheme scheme = process.getScheme();
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false)); //сброс признака выполнения у всех коннекторов
         run(scheme, scheme.getElements().getStartElem(), errors);
         if (errors.isEmpty()){
             State state = stateFacade.getRunningState();
@@ -251,10 +255,24 @@ public class WorkflowImpl implements Workflow {
         }
     }
 
+    /**
+     * Прерывание выполнения процесса
+     * @param process
+     * @param errors 
+     */
     @Override
     public void stop(Process process, Set<String> errors) {
-        State state = stateFacade.getCanceledState();
-        process.getState().setCurrentState(state);
+        State stateRun = stateFacade.getRunningState();
+        State stateCancel = stateFacade.getCanceledState();
+        //отмена всех запущенных задач
+        process.getScheme().getTasks().stream()
+                .filter(task->task.getState().getCurrentState().equals(stateRun))
+                .forEach(task->{
+                    task.getState().setCurrentState(stateCancel);
+                    taskFacade.edit(task);
+                });
+        
+        process.getState().setCurrentState(stateCancel);
         processFacade.edit(process);
     }
     

@@ -80,7 +80,7 @@ public class Metadates implements Serializable{
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "Metadates")
     private List<Filter> filters = new ArrayList<>();
-    
+          
     @XmlTransient
     @JoinTable(name = "objectsStates", joinColumns = {
         @JoinColumn(name = "ObjId", referencedColumnName = "Id")}, inverseJoinColumns = {

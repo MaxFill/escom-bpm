@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static javax.persistence.GenerationType.TABLE;
 
@@ -21,6 +22,7 @@ import static javax.persistence.GenerationType.TABLE;
         indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
 public class Task implements Serializable, Dict{
     private static final long serialVersionUID = 2862379210656085637L;
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
 
     @TableGenerator(
             name = "TaskIdGen",
@@ -87,7 +89,12 @@ public class Task implements Serializable, Dict{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<TaskLog> itemLogs = new ArrayList<>();
 
+    @Transient
+    @XmlTransient
+    private Integer tempId;
+     
     public Task() {
+        tempId = COUNT.incrementAndGet();
     }
 
     public String getStyle(){
@@ -209,7 +216,11 @@ public class Task implements Serializable, Dict{
     public void setScheme(Scheme scheme) {
         this.scheme = scheme;
     }
-    
+
+    public Integer getTempId() {
+        return tempId;
+    }
+        
     /* *** *** */
 
     @Override
