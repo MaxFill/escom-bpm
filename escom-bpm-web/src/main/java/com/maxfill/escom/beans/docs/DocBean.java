@@ -229,7 +229,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
                 errors.add(error);
             }
             if (!errors.isEmpty()){
-                EscomMsgUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrors(errors);
                 return;
             }
             onOpenFormLockAttache(attache);
@@ -249,7 +249,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             errors.add(error);
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return;
         }
         sessionBean.openAttacheAddForm(doc);

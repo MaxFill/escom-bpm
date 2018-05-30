@@ -25,7 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
@@ -64,7 +63,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     private T editedItem;                       //редактируемый объект 
     private User owner;
     private State itemCurrentState;
-    private final LayoutOptions cardLayoutOptions = new LayoutOptions();
     private List<Right> rights;
     private boolean isItemChange;               //признак изменения записи
     protected Integer typeAddRight = DictRights.TYPE_GROUP;
@@ -72,7 +70,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     protected User selUser;
     protected UserGroups selUsGroup;
     protected UserGroups selUserRole;
-
     protected abstract BaseDictFacade getFacade();
 
     /**
@@ -116,7 +113,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
                 checkCorrectItemRight(item, errors);
                 item.setDateCreate(new Date());
                 if (!errors.isEmpty()) {
-                   EscomMsgUtils.showErrorsMsg(errors);
+                   EscomMsgUtils.showErrors(errors);
                 }
                 getFacade().addLogEvent(item, getBandleLabel(DictLogEvents.CREATE_EVENT), getCurrentUser());
             }
@@ -130,6 +127,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         }
     }
     
+    @Override
+    public void onAfterFormLoad(){
+        super.onAfterFormLoad();        
+    }
+
     /* Подготовка прав доступа к визуализации */
     protected void prepareRightsForView(T item){
         List<Right> itemRights = item.getRightItem().getRights();
@@ -163,7 +165,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
             Set<String> errors = new LinkedHashSet<>();
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
-                EscomMsgUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrors(errors);
                 return Boolean.FALSE; 
             }
             onBeforeSaveItem(item);
@@ -223,7 +225,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     /* Отмена изменений в объекте  */
     public String onCancelItemSave() {
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
-            RequestContext.getCurrentInstance().execute("PF('confirm').show();");
+            PrimeFaces.current().executeScript("PF('confirm').show();");
         } else {
             return doFinalCancelSave();
         }
@@ -243,7 +245,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     public String onFinalCancelSave() {
         return doFinalCancelSave();
     }
-    
+        
     /* Закрытие формы карточки объекта */
     protected String closeItemForm(Boolean isNeedUpdate) {
         attacheService.deleteTmpFiles(getCurrentUser().getLogin());
@@ -363,7 +365,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
             rights.add(right);
@@ -490,18 +492,18 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         sb.append(": ");
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
-                sb.append(getEditedItem().getCaption());
-                sb.append(" <").append(EscomMsgUtils.getBandleLabel("ReadOnly")).append(">");;
+                sb.append(getEditedItem().getCaption().toUpperCase());
+                sb.append(". <").append(EscomMsgUtils.getBandleLabel("ReadOnly").toUpperCase()).append(">");
                 break;
             }
             case DictEditMode.EDIT_MODE:{
-                sb.append(getEditedItem().getCaption());
-                sb.append(" <").append(EscomMsgUtils.getBandleLabel("Correction")).append(">");
+                sb.append(getEditedItem().getCaption().toUpperCase());
+                sb.append(". <").append(EscomMsgUtils.getBandleLabel("Correction").toUpperCase()).append(">");
                 break;
             }
             case DictEditMode.INSERT_MODE:{
-                sb.append(EscomMsgUtils.getBandleLabel("New"));
-                sb.append(" <").append(EscomMsgUtils.getBandleLabel("Create")).append(">");
+                sb.append(EscomMsgUtils.getBandleLabel("New").toUpperCase());
+                sb.append(". ").append(EscomMsgUtils.getBandleLabel("Mode")).append(": ").append(EscomMsgUtils.getBandleLabel("Create").toUpperCase());
                 break;
             }
         }
@@ -554,20 +556,30 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         return 6;
     }
 
-    /* Возвращает список состояний доступных объекту из его текущего состояния */
-    public List<State> getAvailableStates(){        
+    /* Возвращает список состояний объекта, в которые можно перейти из его текущего состояния */
+    public Set<State> getAvailableStates(){        
         Metadates metaObj = getMetadatesObj();
         List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
-        List<State> result = metadatesStates.stream()
+        Set<State> result = metadatesStates.stream()
                 .filter(metadatesState -> Objects.equals(itemCurrentState, metadatesState.getStateSource()))
+                //ToDo нужно добавить учёт на возможность ручного изменения состояния!
                 .map(metadatesState -> metadatesState.getStateTarget())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         if (!result.contains(itemCurrentState)){
             result.add(itemCurrentState);
         }
         return result;
     }
-
+    
+    @Override
+    public Boolean isWestShow(){
+        return true;
+    }
+    @Override
+    protected boolean isWestInitClosed(){
+        return false;
+    }
+    
     /* GETS & SETS */
 
     @Override
@@ -607,11 +619,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     }
     public void setItemOpenKey(String itemOpenKey) {
         this.itemOpenKey = itemOpenKey;
-    }
-    
-    public LayoutOptions getCardLayoutOptions() {
-        return cardLayoutOptions;
-    }
+    }    
     
     public Integer getTypeEdit() {
         return typeEdit;

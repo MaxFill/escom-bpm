@@ -56,7 +56,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     @Override
     public abstract BaseDictFacade getFacade();
-
+    
     /* Формирование списка детальных данных в таблице обозревателя  */
     public List<T> prepareSetDetails(List<T> sourceItems) {
         return sourceItems.stream()
@@ -130,7 +130,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* Открытие карточки объекта*/
     public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return;
         }
         
@@ -171,7 +171,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         preparePasteItem(pasteItem, sourceItem, recipient);
         prepCreate(pasteItem, null, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return null;
         }        
         changeNamePasteItem(sourceItem, pasteItem);

@@ -43,7 +43,7 @@ public abstract class BaseViewBean implements Serializable{
     private Integer westWidth = 0;
     private Integer centerWidth = 0;
     private Integer eastWidth = 0;
-
+    
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     @PostConstruct
@@ -98,8 +98,12 @@ public abstract class BaseViewBean implements Serializable{
         Double height = event.getHeight();
         switch(o.getId()){
             case "center":{
-                centerHight = height.intValue();
-                centerWidth = width.intValue();
+                centerHight = northHight + southHight + height.intValue();
+                centerWidth = westWidth + eastWidth + width.intValue();
+                westWidth = 0;
+                eastWidth = 0;
+                northHight = 0;
+                southHight = 0;
                 break;
             }
             case "north":{
@@ -150,19 +154,11 @@ public abstract class BaseViewBean implements Serializable{
             layoutOptions.setNorthOptions(north);
         }
 
-        if (isWestShow()) {
-            LayoutOptions west = new LayoutOptions();
-            west.addOption("size", 250);
-            west.addOption("minSize", 150);
-            west.addOption("maxSize", 450);
-            west.addOption("resizable", true);
-            west.addOption("initClosed", isWestInitClosed());
-            layoutOptions.setWestOptions(west);
-        }
+        initWestLayout(layoutOptions);                
 
         if (isEastShow()) {
             LayoutOptions east = new LayoutOptions();;
-            east.addOption("size", 300);
+            east.addOption("size", "20%");
             east.addOption("minSize", 150);
             east.addOption("maxSize", 450);
             east.addOption("resizable", true);
@@ -170,7 +166,7 @@ public abstract class BaseViewBean implements Serializable{
             layoutOptions.setEastOptions(east);
         }
         
-        LayoutOptions center = new LayoutOptions();
+        LayoutOptions center = new LayoutOptions();        
         center.addOption("resizable", true);
         center.addOption("closable", false);
         center.addOption("minWidth", 200);
@@ -178,6 +174,16 @@ public abstract class BaseViewBean implements Serializable{
         layoutOptions.setCenterOptions(center);
     }
 
+    protected void initWestLayout(LayoutOptions layoutOptions){
+        if (isWestShow()) {
+            LayoutOptions west = new LayoutOptions();
+            west.addOption("size", "20%");
+            west.addOption("resizable", true);            
+            west.addOption("initClosed", isWestInitClosed());
+            layoutOptions.setWestOptions(west);
+        }
+    }
+    
     public Boolean isSouthShow(){
         return false;
     }
@@ -200,11 +206,10 @@ public abstract class BaseViewBean implements Serializable{
     protected boolean isWestInitClosed(){
         return true;
     }
-
     protected boolean isNorthInitClosed(){
         return false;
     }
-
+    
     public User getCurrentUser(){
         return sessionBean.getCurrentUser();
     }    

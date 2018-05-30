@@ -210,7 +210,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         if (errors.isEmpty()){
             onItemChange();
         } else {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }    
     }       
     

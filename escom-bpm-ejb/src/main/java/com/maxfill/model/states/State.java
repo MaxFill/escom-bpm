@@ -1,8 +1,5 @@
 package com.maxfill.model.states;
 
-import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.ItemUtils;
-
 import java.io.Serializable;
 import javax.persistence.*;
 

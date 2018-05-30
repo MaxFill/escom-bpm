@@ -118,7 +118,7 @@ public class MetadatesBean implements Serializable{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, selectedObject);
             rights.add(right);
@@ -181,7 +181,7 @@ public class MetadatesBean implements Serializable{
             oldStates.stream().forEach(state->checkStateBeforeDelete(state, errors));
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return;
         }
         oldStates.stream().forEach(state->deleteStateRigts(state));

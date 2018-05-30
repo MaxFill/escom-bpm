@@ -63,7 +63,7 @@ public class Scheme implements Serializable, Dict{
         this.packElements = packElements;
     }
 
-    public List <Task> getTasks() {
+    public List<Task> getTasks() {
         return tasks;
     }
 

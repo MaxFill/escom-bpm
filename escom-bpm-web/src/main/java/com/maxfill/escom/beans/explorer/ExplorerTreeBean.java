@@ -74,7 +74,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }
     }
 
@@ -121,7 +121,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                         errors.add(error);
                     }
                     if (!errors.isEmpty()) {
-                        EscomMsgUtils.showErrorsMsg(errors);
+                        EscomMsgUtils.showErrors(errors);
                     }
                 }
                 return;
@@ -203,7 +203,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                     }
                 }
                 if (!errors.isEmpty()) {
-                    EscomMsgUtils.showErrorsMsg(errors);
+                    EscomMsgUtils.showErrors(errors);
                 }
             }
         } else {
@@ -240,7 +240,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                 treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
             }
             if (!errors.isEmpty()) {
-                EscomMsgUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrors(errors);
             }
         }
         EscomMsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции

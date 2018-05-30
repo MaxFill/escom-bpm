@@ -5,7 +5,6 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.users.groups.UserGroups;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.TABLE;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 

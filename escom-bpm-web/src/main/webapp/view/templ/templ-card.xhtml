@@ -8,8 +8,6 @@
 
     <ui:param name="_frm" value="#{_bean.getFormName()}"/>
 
-    <ui:insert name="scripts" />     
-
     <ui:define name="preRendered">
         <f:metadata>
             <f:event type="preRenderView" listener="#{_bean.onBeforeOpenCard()}"/>
@@ -23,19 +21,22 @@
     <ui:define name="body">       
         <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
-        
         <script type="text/javascript" >
             var itemChange = 0;
+
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
                     document.getElementById(componentName).focus();
                     return;
                 }
-            }            
-
+            }       
+            function init() {
+                onAfterFormLoad();
+            }
+            window.addEventListener("load", init, false);
         </script> 
 
-        <style>
+        <style>  
             .ui-tabs-left>.ui-tabs-nav{
                 width: 15%;
             }
@@ -55,24 +56,27 @@
             }
         </style>
 
-        <pe:layout fullPage="true" options="#{_bean.cardLayoutOptions}">
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" stateCookie="true">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/> 
 
+            <pe:layoutPane id="west" position="west" >
+                <h:form id="westFRM" style="font-size: 90%; height: 100%;"> 
+                    <ui:include src="/view/common/dict-info.xhtml"/>
+                </h:form>
+            </pe:layoutPane>
+            
             <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                   
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
-                                     oncomplete="return itemChange = 0;">            
-                    </p:remoteCommand>
-
+                                     oncomplete="return itemChange = 0;"/>                        
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad()}"/>                    
+                    
                     <ui:insert name="card_scripts"/>
                     
                     <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
-
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                            <p:autoUpdate />
-                        </p:messages>
+                    
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                                                
 
                         <p:menubar styleClass="without-spaces">
                             <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
@@ -126,22 +130,24 @@
                                 <f:param name="isRequired" value="true"/>
                             </p:menuitem>
                             <f:facet name="options">
-                                <ui:insert name="specMenuButtons" />
                                 <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
-                                                 action="#{_bean.onCancelItemSave()}"
-                                                 icon="ui-icon-circle-close"
-                                                 onclick="if (itemChange == 1)
-                                                                 onChangeItem();">
+                                                     action="#{_bean.onCancelItemSave()}"
+                                                     icon="ui-icon-circle-close"
+                                                     onclick="if (itemChange == 1)
+                                                                     onChangeItem();">
                                     <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
-                                </p:commandButton>
+                                </p:commandButton> 
                             </f:facet>
                         </p:menubar>
-
+                        
+                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                            <p:autoUpdate />
+                        </p:messages>
+                        
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding"  >
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
-                            <ui:insert name="childs_rights"/>
-                            <ui:include src="/view/common/dict-info.xhtml"/>
+                            <ui:insert name="childs_rights"/>                            
                             <ui:include src="/view/common/dict-log.xhtml"/> 
                         </p:tabView>                         
                     </p:panelGrid>
@@ -149,6 +155,7 @@
                 </h:form>    
             </pe:layoutPane>
         </pe:layout>
+        
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
         <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>

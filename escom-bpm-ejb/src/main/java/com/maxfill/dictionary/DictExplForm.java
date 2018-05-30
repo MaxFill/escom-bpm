@@ -19,4 +19,7 @@ public final class DictExplForm {
     
     public static final int SING_SELECT_MODE = 0;
     public static final int MULTY_SELECT_MODE = 1;
+    
+    public static final int OPEN_MAXIMIZE = 1;
+    public static final int OPEN_NORMAL = 0;
 }

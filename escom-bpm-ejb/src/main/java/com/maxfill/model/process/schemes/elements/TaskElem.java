@@ -53,7 +53,11 @@ public class TaskElem extends WFConnectedElem{
     
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_TASK;
+        StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_TASK);
+        if (task != null){
+            sb.append(" ").append(task.getStyle());
+        }
+        return sb.toString();
     }
 
     public Task getTask() {

@@ -14,7 +14,7 @@ public final class DictWorkflowElem {
     public static final String STYLE_LOGIC = "ui-diagram-logic";
     public static final String STYLE_EXIT = "ui-diagram-exit";
     public static final String STYLE_ENTER = "ui-diagram-enter";
-    
+    public static final String STYLE_EXECUTED = "ui-diagram-executed";
     public static final String STYLE_YES = "{fillStyle:'#099b05'}";
     public static final String STYLE_NO = "{fillStyle:'#C33730'}";
     public static final String STYLE_MAIN = "{fillStyle:'#98AFC7'}";

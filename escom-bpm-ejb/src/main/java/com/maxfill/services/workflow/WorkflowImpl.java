@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -221,7 +222,11 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getConnectors().isEmpty()){
             errors.add("DiagramNotHaveConnectors");
         }
-        //ToDo!
+        scheme.getElements().getTasks().entrySet().stream()
+                .filter(rec->rec.getValue().getTask().getPlanExecDate() == null)
+                .findFirst()
+                .map(rec->errors.add("TasksNoHaveDeadline"));
+        //ToDo! другие проверки!
     }
 
     @Override
@@ -246,9 +251,12 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void start(Process process, Set<String> errors) {        
         Scheme scheme = process.getScheme();
-        scheme.getElements().getConnectors().forEach(c->c.setDone(false)); //сброс признака выполнения у всех коннекторов
+        validateScheme(scheme, errors);
+        if (!errors.isEmpty()) return;
+        
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false)); //сброс признака выполнения у всех коннекторов                
         run(scheme, scheme.getElements().getStartElem(), errors);
-        if (errors.isEmpty()){
+        if (errors.isEmpty()){                        
             State state = stateFacade.getRunningState();
             process.getState().setCurrentState(state);
             processFacade.edit(process);
@@ -267,11 +275,7 @@ public class WorkflowImpl implements Workflow {
         //отмена всех запущенных задач
         process.getScheme().getTasks().stream()
                 .filter(task->task.getState().getCurrentState().equals(stateRun))
-                .forEach(task->{
-                    task.getState().setCurrentState(stateCancel);
-                    taskFacade.edit(task);
-                });
-        
+                .forEach(task->task.getState().setCurrentState(stateCancel));        
         process.getState().setCurrentState(stateCancel);
         processFacade.edit(process);
     }
@@ -291,8 +295,20 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */
     @Override
-    public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {
-        doRun(startElement.getAnchors(), scheme, errors);
+    public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {   
+        Set<Task> exeTasks = new HashSet<>();
+        doRun(startElement.getAnchors(), scheme, exeTasks, errors);
+        if (errors.isEmpty()){            
+            exeTasks.stream()
+                .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
+                .forEach(task->{
+                    task.setBeginDate(new Date());
+                    task.getState().setCurrentState(stateFacade.getRunningState());
+                });
+            scheme.getTasks().removeAll(exeTasks);
+            scheme.getTasks().addAll(exeTasks);
+            packScheme(scheme, errors);
+        }
     }
     
     /**
@@ -304,7 +320,7 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param errors 
      */
-    private void doRun(Set<AnchorElem> anchors, Scheme scheme, Set<String> errors){
+    private void doRun(Set<AnchorElem> anchors, Scheme scheme, Set<Task> exeTasks, Set<String> errors){
         anchors.stream()
                 .filter(anchor->anchor.isSource())
                 .forEach(anchor->{
@@ -316,20 +332,13 @@ public class WorkflowImpl implements Workflow {
                                 connector.setDone(true);
                                 return connector;
                             })
-                            .collect(Collectors.toList());                                                                             
+                            .collect(Collectors.toList());
                     
                     //запуск задач
                     connectors.stream()
                         .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
                         .filter(element->Objects.nonNull(element))
-                        .forEach(taskElem->{
-                            Task task = taskElem.getTask();
-                            if (!task.getState().getCurrentState().equals(stateFacade.getRunningState())){
-                                task.setBeginDate(new Date());
-                                task.getState().setCurrentState(stateFacade.getRunningState());
-                                taskFacade.edit(task);
-                            }
-                        });
+                        .forEach(taskElem-> exeTasks.add(taskElem.getTask()));
                     
                     //обрабатываем условия
                     Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
@@ -341,7 +350,7 @@ public class WorkflowImpl implements Workflow {
                     
                     //обрабатываем логические элементы
                     Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
-                    targetLogics.forEach(logic-> doRun(logic.getAnchors(), scheme, errors));
+                    targetLogics.forEach(logic-> doRun(logic.getAnchors(), scheme, exeTasks, errors));
                     
                     //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
                     Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());

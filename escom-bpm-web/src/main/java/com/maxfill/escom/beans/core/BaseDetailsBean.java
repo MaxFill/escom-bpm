@@ -1,9 +1,7 @@
 package com.maxfill.escom.beans.core;
 
-import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.users.User;
 import com.maxfill.services.attaches.AttacheService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.TreeNode;
@@ -20,6 +18,7 @@ import java.util.logging.Level;
  * @param <O> - класс владельца
  */
 public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> extends BaseTableBean<T>{
+    private static final long serialVersionUID = 6547409445062031636L;
 
     @EJB
     protected AttacheService attacheService;
@@ -64,7 +63,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         preparePasteItem(pasteItem, sourceItem, recipient);
         prepCreate(pasteItem, pasteItem.getParent(), errors); 
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return null;
         }        
         changeNamePasteItem(sourceItem, pasteItem);

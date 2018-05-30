@@ -231,7 +231,7 @@ public class ExplorerBean implements Serializable {
         }        
         tableBean.checkCanCreateItem(parent, owner, errors, createParams);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return false;
         }
         return true;
@@ -418,7 +418,7 @@ public class ExplorerBean implements Serializable {
                             }
                 });
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else {            
             getDetailItems().removeAll(getCheckedItems());
         }
@@ -457,7 +457,7 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         onMoveContentToTrash(currentItem, errors);
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else {
             removeNodeFromTree(treeSelectedNode);
             reloadDetailsItems();
@@ -1036,7 +1036,7 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         List<BaseDict> rezults = pasteItem(currentItem, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }
         if (!rezults.isEmpty()){
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
@@ -1055,7 +1055,7 @@ public class ExplorerBean implements Serializable {
         }
         List<BaseDict> rezults = pasteItem(parent, errors);
         if (!errors.isEmpty()){            
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return;
         }
         if (!rezults.isEmpty()){
@@ -1248,7 +1248,7 @@ public class ExplorerBean implements Serializable {
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }    
     }
     
@@ -1257,7 +1257,7 @@ public class ExplorerBean implements Serializable {
         Set<String> errors = new HashSet<>();
         checkedItems.stream().forEach(dragItem -> onMoveContentToTrash(dragItem, errors));
         if (!errors.isEmpty()){            
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }
     }
     

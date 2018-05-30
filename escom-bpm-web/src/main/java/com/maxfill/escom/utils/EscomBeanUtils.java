@@ -201,6 +201,7 @@ public final class EscomBeanUtils {
         options.put("width", size.a);
         options.put("height", size.b);
         options.put("maximizable", true);
+        options.put("minimizable", true);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");

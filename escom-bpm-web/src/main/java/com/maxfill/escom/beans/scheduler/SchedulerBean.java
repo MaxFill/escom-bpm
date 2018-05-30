@@ -37,11 +37,7 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
     protected void initBean(){    
         initData();
     };
-    
-    @Override
-    public void onAfterFormLoad(){        
-    }
-            
+               
     private void initData(){
         List<Task> tasks = taskFacade.findTaskByStaff(getCurrentStaff());
         tasks.stream()

@@ -25,8 +25,12 @@ public final class EscomMsgUtils{
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
-    public static void succesMessage(String strMsg) {
-        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, strMsg, "");
+    /**
+     * Вывод сообщения об успехе
+     * @param strMessage - готовая к показу строка
+     */
+    public static void succesMessage(String strMessage) {
+        FacesMessage facesMessage = new FacesMessage(FacesMessage.SEVERITY_INFO, strMessage, "");
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
@@ -53,21 +57,33 @@ public final class EscomMsgUtils{
     }
 
     /**
-     * Отображение 10-ти сообщений об ошибке
+     * Отображение 10-ти сообщений об ошибке. На входе список строк готовых к выводу
      * @param errors
      */
-    public static void showErrorsMsg(Set<String> errors) {
+    public static void showErrors(Set<String> errors) {
         errors.stream().limit(10).forEach(error->errorMessage(error));
     }
 
     /**
-     * Формирование FM сообщения
-     * @param keyMsg - строка-ресурс из msg
+     * Отображение 10-ти сообщений об ошибке. На входе список ключей для ресурса msg
+     * @param errorKeys список ключей для ресурса msg
+     */
+    public static void showErrorsMsg(Set<String> errorKeys){
+         errorKeys.stream().limit(10).forEach(error->errorMsg(error));
+    }
+    
+    /**
+     * Формирование успешного сообщения. На входе ключ для ресурса msg
+     * @param keyMsg - ключ для ресурса msg
      */
     public static void succesMsg(String keyMsg) {
         addFacesMsg(FacesMessage.SEVERITY_INFO, keyMsg, new Object[]{});
     }
 
+    /**
+     * Формирование предупредительного сообщения. На входе ключ для ресурса msg
+     * @param keyMsg - ключ для ресурса msg
+     */    
     public static void warnMsg(String keyMsg) {
         addFacesMsg(FacesMessage.SEVERITY_WARN, keyMsg, new Object[]{});
     }
@@ -112,12 +128,15 @@ public final class EscomMsgUtils{
     /**
      * Формирование FacesMessage сообщения
      */
-    private static FacesMessage makeFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){
-        ResourceBundle bundle = getResourceBundle("msg");
-        String message = MessageFormat.format(bundle.getString(keyMsg), msgParams);
-        return new FacesMessage(type, message, "");
+    private static FacesMessage makeFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){        
+        return new FacesMessage(type, makeFormatMsg(keyMsg, msgParams), "");
     }
 
+    public static String makeFormatMsg(String keyMsg, Object[] msgParams){
+        ResourceBundle bundle = getResourceBundle("msg");
+        return MessageFormat.format(bundle.getString(keyMsg), msgParams);        
+    }
+    
     public static String getFromBundle(String key, String bundleName) {
         ResourceBundle bundle = getResourceBundle(bundleName);
         return bundle.getString(key);

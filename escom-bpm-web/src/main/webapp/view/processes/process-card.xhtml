@@ -8,13 +8,25 @@
     <ui:param name="_bean" value="#{processCardBean}"/>
 
     <ui:define name="customStyleCSS">
-        <style type="text/css">
+        <style type="text/css">         
             .ui-diagram-task {
                 background-color: #9ed4ef;
                 width: 14em;
                 min-height: 4em;                
             }
-
+            
+            .draft {
+            }            
+            .running {
+                border:0.2em dotted #020202 !important;
+            }            
+            .finished {
+                border:0.2em solid #020202 !important;                
+            }
+            .cancelled{
+                border:0.2em dotted #020202 !important;                
+            }
+            
             .ui-diagram-element:hover {
                 background-color: #C7C6C4;
             }
@@ -87,32 +99,15 @@
         
     <ui:define name="specActionMenu" >
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
-                    disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
+                    disabled="#{processCardBean.isReadOnly()}"
                     onclick="document.getElementById('#{_frm}:btnRun').click();"/>
         <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
-                    disabled="#{processCardBean.readOnly or processCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"
+                    disabled="#{processCardBean.isDisableBtnStop()}"
                     onclick="document.getElementById('#{_frm}:btnStop').click();"/>
-    </ui:define>
-    
-    <ui:define name="specMenuButtons" >
-        <p:commandButton id="btnRun" title="#{bundle.Run}" icon="ui-icon-play"
-                         disabled="#{processCardBean.isDisableBtnRun()}"
-                         update="#{_frm}"
-                         actionListener="#{processCardBean.onRun()}">
-        </p:commandButton>
-        <p:commandButton id="btnStop" title="#{bundle.Stop}" icon="ui-icon-stop"
-                         disabled="#{processCardBean.isDisableBtnStop()}"
-                         update="#{_frm}" 
-                         actionListener="#{processCardBean.onStop()}">
-        </p:commandButton>
-        <p:separator />
-    </ui:define>
+    </ui:define>    
     
     <ui:define name="card_scripts">
         <script type="text/javascript"> 
-            function init() {
-                onAfterFormLoad();
-            }
             function addMenu(elementIds){    
                 var menu = [{
                         name: '#{bundle.Properties}',
@@ -183,13 +178,12 @@
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick(processCardBean)}"/>
         <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
-        <p:remoteCommand name="onAfterFormLoad" action="#{processCardBean.onAfterFormLoad()}"/>
         
         <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
             <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
         </p:commandButton>
     </ui:define>
-
+    
     <ui:define name="page_body"> 
         <p:tab title="#{bundle.Process}" > 
             <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
@@ -203,7 +197,7 @@
                          requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />
                 
-                <p:dataTable value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
+                <p:dataTable id="concorderList" value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                              rowKey="#{task.tempId}" selection="#{processCardBean.currentTask}" selectionMode="single"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">
                 
@@ -231,79 +225,83 @@
                     
                     <p:column headerText="#{bundle.Result}" >
                         <h:outputLabel value="#{task.result}"/>
-                    </p:column>                 
-                    
-                    <p:column width="15">
-                        <p:commandButton icon="ui-icon-extlink" title="#{bundle.Open}">                            
-                        </p:commandButton>
-                    </p:column>
+                    </p:column>                    
                     
                 </p:dataTable>
             </p:panelGrid>
         </p:tab>
         
         <p:tab title="#{bundle.Scheme}" >            
-            <p:toolbar styleClass="ui-grid-col-12" >
-                <f:facet name="left">
-                    <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
-                                    disabled="#{processCardBean.isReadOnly()}"
-                                    onstart="PF('statusDialog').show()"
-                                    oncomplete="PF('statusDialog').hide();"
-                                    actionListener="#{staffBean.onManySelectItem()}" >
-                       <p:ajax event="dialogReturn" listener="#{processCardBean.onStaffsSelected}" />
-                    </p:commandButton>
-                    <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddLogicElement('And')}" >
-                    </p:commandButton>
-                    <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddLogicElement('Or')}" >
-                    </p:commandButton>
-                    <p:commandButton  value="If" title="#{bundle.AddCondition}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddConditionElement()}" >
-                    </p:commandButton>
-                    <p:commandButton  value="State" title="#{bundle.AddState}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddStateElement('success')}" >
-                    </p:commandButton>
-                    <p:commandButton  value="Enter" title="#{bundle.AddEnter}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddEnterElement()}" >
-                    </p:commandButton>
-                    <p:commandButton  value="Exit" title="#{bundle.AddExit}"
-                                      disabled="#{processCardBean.isReadOnly()}"
-                                      actionListener="#{processCardBean.onAddExitElement()}" >
-                    </p:commandButton>
-                    
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-
-                    <p:commandButton title="Load" icon="ui-icon-folder-open"
-                                     disabled="#{processCardBean.isReadOnly()}"
-                                     actionListener="#{processCardBean.onLoadModelFromTempl()}"
-                                     update="diagramm">
-                    </p:commandButton>
-                    <p:commandButton title="Clear" icon="ui-icon-closethick"
-                                     disabled="#{processCardBean.isReadOnly()}"
-                                     actionListener="#{processCardBean.onClearModel()}"
-                                     update="diagramm">
-                    </p:commandButton>
-                    <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
-                </f:facet>
-
-                <f:facet name="right">
-                    <p:menuButton value="Options">
-                        <p:menuitem value="Save"    actionListener="#{processCardBean.onSaveModelToTempl()}" icon="ui-icon-disk" />
-                        <p:menuitem value="Reload"  actionListener="#{processCardBean.onReloadModel()}" update="diagramm" icon="ui-icon-arrowrefresh-1-w" />
-                        <p:menuitem value="Clear"   actionListener="#{processCardBean.onClearModel()}"  update="diagramm" icon="ui-icon-close" />
-                    </p:menuButton>
-                </f:facet>
-            </p:toolbar>  
-            
             <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+                <p:toolbar styleClass="ui-grid-col-12" >
+                    <f:facet name="left">
+                        <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
+                                        disabled="#{processCardBean.isReadOnly()}"
+                                        onstart="PF('statusDialog').show()"
+                                        oncomplete="PF('statusDialog').hide();"
+                                        actionListener="#{staffBean.onManySelectItem()}" >
+                           <p:ajax event="dialogReturn" listener="#{processCardBean.onStaffsSelected}" />
+                        </p:commandButton>
+                        <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddLogicElement('And')}" >
+                        </p:commandButton>
+                        <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddLogicElement('Or')}" >
+                        </p:commandButton>
+                        <p:commandButton  value="If" title="#{bundle.AddCondition}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddConditionElement()}" >
+                        </p:commandButton>
+                        <p:commandButton  value="State" title="#{bundle.AddState}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddStateElement('success')}" >
+                        </p:commandButton>
+                        <p:commandButton  value="Enter" title="#{bundle.AddEnter}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddEnterElement()}" >
+                        </p:commandButton>
+                        <p:commandButton  value="Exit" title="#{bundle.AddExit}"
+                                          disabled="#{processCardBean.isReadOnly()}"
+                                          actionListener="#{processCardBean.onAddExitElement()}" >
+                        </p:commandButton>
+
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+
+                        <p:commandButton title="Load" icon="ui-icon-folder-open"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         actionListener="#{processCardBean.onLoadModelFromTempl()}"
+                                         update="diagramm">
+                        </p:commandButton>
+                        <p:commandButton title="Clear" icon="ui-icon-closethick"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         actionListener="#{processCardBean.onClearModel()}"
+                                         update="diagramm">
+                        </p:commandButton>
+                        <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
+                    </f:facet>
+
+                    <f:facet name="right">
+                        <p:commandButton id="btnRun" title="#{bundle.Run}" icon="ui-icon-play"
+                                        disabled="#{processCardBean.isReadOnly()}"
+                                        update="#{_frm} westFRM"
+                                        actionListener="#{processCardBean.onRun()}">
+                        </p:commandButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
+                                        disabled="#{processCardBean.isDisableBtnStop()}"
+                                        update="#{_frm} westFRM" 
+                                        actionListener="#{processCardBean.onStop()}">
+                            <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </f:facet>
+                </p:toolbar>  
+            
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
                     <f:facet name="element" >
                         <h:outputLabel value="#{el.caption}" style="display:block;margin:1em;word-wrap:break-word;"/>

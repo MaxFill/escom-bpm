@@ -40,6 +40,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.primefaces.model.diagram.connector.Connector;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 
 /**
@@ -84,14 +85,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
-        loadModel(getEditedItem().getScheme());
+        onReloadModel();
     }
 
     @Override
     protected void checkItemBeforeSave(Process item, Set<String> errors) {
         super.checkItemBeforeSave(item, errors);
-        Set<String> validateKeysMsg = new HashSet<>();
-        workflow.validateScheme(scheme, validateKeysMsg);        
+        Set<String> validateKeysMsg = new HashSet<>();            
         workflow.packScheme(scheme, validateKeysMsg);
         validateKeysMsg.forEach(key->errors.add(EscomMsgUtils.getMessageLabel(key)));
     }
@@ -124,7 +124,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         
     @Override
     public void onAfterFormLoad() {
-        addContextMenu();
+        super.onAfterFormLoad();
+        if (!isReadOnly()){
+            addContextMenu();
+        }
     }
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
@@ -139,7 +142,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             workflow.start(getEditedItem(), errors);
             if (!errors.isEmpty()){
                 EscomMsgUtils.showErrorsMsg(errors);            
+            } else {                
+                EscomMsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
+            onReloadModel();
         }
     }
     
@@ -151,11 +157,22 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         workflow.stop(getEditedItem(), errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
+        } else {
+            onReloadModel();
+            EscomMsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
     }
     
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
 
+    /**
+     * Обработка события перезагрузки визуальной схемы процесса
+     */
+    public void onReloadModel(){
+        loadModel(getEditedItem().getScheme());
+        modelRefresh();
+    }
+    
     /**
      * Загрузка визуальной схемы процесса
      * @param scheme
@@ -170,12 +187,21 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             if (errors.isEmpty()) {
                 restoreModel();
             } else {
-                EscomMsgUtils.showErrorsMsg(errors);
+                EscomMsgUtils.showErrors(errors);
             }
-        }
-        visualModelRefresh();
+        }        
     }
 
+    /**
+     * Перерисовка модели на странице формы
+     */
+    private void modelRefresh(){
+        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
+        if (!isReadOnly()){
+            addContextMenu();
+        }
+    }
+    
     /**
      * Формирует графическую схему из данных модели процесса
      */
@@ -206,19 +232,12 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Обработка события перезагрузки визуальной схемы процесса
-     */
-    public void onReloadModel(){
-        loadModel(getEditedItem().getScheme());
-    }
-
-    /**
      * Очистка визуальной схемы процесса
      */
     public void onClearModel(){
         scheme = new Scheme(getEditedItem());
         model.clear();
-        visualModelRefresh();
+        modelRefresh();
     }
 
     /**
@@ -229,10 +248,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         workflow.removeElement((WFConnectedElem)selectedElement.getData(), scheme, errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
-            visualModelRefresh();
+            modelRefresh();
             onItemChange();
         } else {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         }
     }
 
@@ -300,7 +319,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             editedTasks.add(taskElem.getTask());            
         }
         onItemChange();
-        visualModelRefresh();        
+        String updateElement = getFormName()+":mainTabView:concorderList";
+        PrimeFaces.current().ajax().update(updateElement);
+        modelRefresh();        
     }
     
     /**
@@ -324,9 +345,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             }
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else { 
-            visualModelRefresh();
+            modelRefresh();
             onItemChange();
         }
     }
@@ -401,7 +422,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     private void finalAddElement(){        
         onItemChange();        
-        visualModelRefresh();
+        modelRefresh();
     }       
     
     /* СОЗДАНИЕ КОМПОНЕНТОВ СХЕМЫ ПРОЦЕССА */
@@ -618,10 +639,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         String keyLabel = connectorElem.getCaption();
         if(StringUtils.isNotBlank(keyLabel)) {                         
             label = EscomMsgUtils.getBandleLabel(keyLabel);
-        }
-        conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));
+        }        
+        conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));       
         if (connectorElem.isDone()){
-            conn.getConnector().setPaintStyle("{strokeStyle:'#C7B097', lineWidth:3}");
+            FlowChartConnector connector = new FlowChartConnector();
+            connector.setPaintStyle("{strokeStyle:'#020202', lineWidth:3}");
+            connector.setCornerRadius(10);           
+            conn.setConnector(connector);
         }
         return conn;
     }
@@ -710,7 +734,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onLoadModelFromTempl(){
         //ToDo !
-        visualModelRefresh();
+        modelRefresh();
     }
     
     /**
@@ -750,14 +774,14 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             Connection connection = findConnection(sourcePoint, targetPoint);
             connection.getOverlays().clear();
             connection.getOverlays().add(new LabelOverlay(EscomMsgUtils.getBandleLabel(label), "flow-label", 0.5));
-            visualModelRefresh();            
+            modelRefresh();            
         }
 
         if (!errors.isEmpty()){
             Connection connection = findConnection(sourcePoint, targetPoint);
             model.disconnect(connection);
-            visualModelRefresh();
-            EscomMsgUtils.showErrorsMsg(errors);
+            modelRefresh();
+            EscomMsgUtils.showErrors(errors);
         }
     }
 
@@ -783,14 +807,6 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         //OriginalTarget = event.getOriginalTargetElement().getData();
         //NewTarget = event.getNewTargetElement().getData();
         onItemChange();
-    }
-
-    /**
-     * Перерисовка модели на странице формы
-     */
-    private void visualModelRefresh(){
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
-        addContextMenu();
     }
 
     /**
@@ -843,7 +859,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события после закрытия карточки поручения
      */
     public void onAfterTaskEdit(){
-        visualModelRefresh();
+        modelRefresh();
     }
 
     public String getTaskStatus(Task task){
@@ -865,15 +881,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         sb.append(" ").append(delta);
         return sb.toString();
     }
-            
-    public boolean isDisableBtnRun(){
-        return isReadOnly() || getEditedItem().isRunning();
-    }
-   
+              
     public boolean isDisableBtnStop(){
-        return isReadOnly() || !getEditedItem().isRunning();
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || !getEditedItem().isRunning();
     }
-        
+    
+    @Override
+    public boolean isReadOnly(){
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning();
+    }
+       
     /* GETS & SETS */
     
     public List<Task> getTasks(){

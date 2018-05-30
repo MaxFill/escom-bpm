@@ -45,7 +45,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         //ToDo может быть это нужно?
         //checkRightsChilds(getEditedItem(), inherit, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
             return;
         }
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
@@ -123,7 +123,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrorsMsg(errors);
+            EscomMsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
             rightsChilds.add(right);

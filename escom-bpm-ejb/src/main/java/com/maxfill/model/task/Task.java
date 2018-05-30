@@ -91,7 +91,7 @@ public class Task implements Serializable, Dict{
 
     @Transient
     @XmlTransient
-    private Integer tempId;
+    private final Integer tempId;
      
     public Task() {
         tempId = COUNT.incrementAndGet();
@@ -111,6 +111,10 @@ public class Task implements Serializable, Dict{
             }
             case DictStates.STATE_COMPLETED : {
                 style = "finished";
+                break;
+            }
+            case DictStates.STATE_CANCELLED : {
+                style = "cancelled";
                 break;
             }
             default:{
