@@ -44,6 +44,8 @@ public abstract class BaseViewBean implements Serializable{
     private Integer centerWidth = 0;
     private Integer eastWidth = 0;
     
+    protected String beanId;
+    
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     @PostConstruct
@@ -71,8 +73,10 @@ public abstract class BaseViewBean implements Serializable{
 
     /**
      * Метод вызывается автоматически после загрузки формы диалога
+     * @param beanId
      */
-    public void onAfterFormLoad(){
+    public void onAfterFormLoad(String beanId){
+        this.beanId = beanId;
     }
 
     /**

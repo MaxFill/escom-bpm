@@ -34,8 +34,8 @@ public class UserSettingsBean extends BaseViewBean{
     private String repeatePassword;
 
     @Override
-    public void onAfterFormLoad() {
-        super.onAfterFormLoad();
+    public void onAfterFormLoad(String beanId) {
+        super.onAfterFormLoad(beanId);
         User user = sessionBean.getCurrentUser();
         if (user.isNeedChangePwl()) {
             EscomMsgUtils.errorMsg("YouNeedChangePassword");

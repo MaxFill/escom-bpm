@@ -70,7 +70,7 @@
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
                                      oncomplete="return itemChange = 0;"/>                        
-                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad()}"/>                    
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/>                    
                     
                     <ui:insert name="card_scripts"/>
                     

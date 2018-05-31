@@ -55,6 +55,7 @@ public class TaskCardBean extends BaseViewBean{
     private boolean readOnly;
     private Task sourceTask = null;
     private ContainsTask sourceBean = null;
+    private String beanName;
     
     @Override
     public void onBeforeOpenCard(){
@@ -62,7 +63,7 @@ public class TaskCardBean extends BaseViewBean{
             FacesContext facesContext = FacesContext.getCurrentInstance();
             Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
             String beanId = params.get(SysParams.PARAM_BEAN_ID);
-            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
+            beanName = params.get(SysParams.PARAM_BEAN_NAME);
             HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
             Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
             for (Object entry : map.values()) {
@@ -80,7 +81,7 @@ public class TaskCardBean extends BaseViewBean{
                 TaskStates taskStates = sourceTask.getState();
                 State state = taskStates.getCurrentState();
                 int id = state.getId();
-                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != id){
+                if (sourceTask.getScheme() != null && DictStates.STATE_RUNNING == id){
                     readOnly = true;
                 }
             }
@@ -206,5 +207,9 @@ public class TaskCardBean extends BaseViewBean{
     public String getFormName() {
         return DictDlgFrmName.FRM_TASK+"-card";
     }
-    
+
+    public String getBeanName() {
+        return beanName;
+    }
+        
 }

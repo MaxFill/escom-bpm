@@ -18,7 +18,7 @@
             .draft {
             }            
             .running {
-                border:0.2em dotted #020202 !important;
+                border:0.2em solid #020202 !important;
             }            
             .finished {
                 border:0.2em solid #020202 !important;                
@@ -176,17 +176,20 @@
         </script>
         
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
-        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick(processCardBean)}"/>
+        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
         <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
         
         <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
             <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
         </p:commandButton>
+        <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{processCardBean.onOpenTask()}">
+            <p:ajax event="dialogReturn" listener="#{processCardBean.onTaskClose}"/>
+        </p:commandButton>
     </ui:define>
     
     <ui:define name="page_body"> 
         <p:tab title="#{bundle.Process}" > 
-            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+            <p:panelGrid columns="1" styleClass="ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                          styleClass="col-padding ui-grid-col-12" 
@@ -198,15 +201,17 @@
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />
                 
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
-                             rowKey="#{task.tempId}" selection="#{processCardBean.currentTask}" selectionMode="single"
-                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">
-                
+                             rowKey="#{task.tempId}" selectionMode="single"
+                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
+                    
                     <p:column width="16" sortBy="#{task.state.currentState.name}">
                         <h:graphicImage id="iconDone" value="#{task.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
                     </p:column>
                     
-                    <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">
-                        <h:outputLabel value="#{task.owner.nameEndElipse}"/>
+                    <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">                        
+                        <p:commandLink value="#{task.owner.nameEndElipse}" title="#{bundle.Open}"
+                                       actionListener="#{processCardBean.setCurrentTask(task)}"
+                                       oncomplete="document.getElementById('#{_frm}:btnOpenTask').click();"/>                        
                     </p:column>
                     
                     <p:column headerText="#{bundle.Term}" width="90" sortBy="#{task.planExecDate}">

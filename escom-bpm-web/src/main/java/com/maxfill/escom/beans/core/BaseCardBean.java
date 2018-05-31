@@ -127,11 +127,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         }
     }
     
-    @Override
-    public void onAfterFormLoad(){
-        super.onAfterFormLoad();        
-    }
-
     /* Подготовка прав доступа к визуализации */
     protected void prepareRightsForView(T item){
         List<Right> itemRights = item.getRightItem().getRights();

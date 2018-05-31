@@ -65,7 +65,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private int defX = 8;
     private int defY = 8;
     private WFConnectedElem baseElement;
-    private String beanId;
+
     private final Set<Task> editedTasks = new HashSet<>();
     private Task currentTask;
     
@@ -123,8 +123,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
         
     @Override
-    public void onAfterFormLoad() {
-        super.onAfterFormLoad();
+    public void onAfterFormLoad(String beanId) {
+        super.onAfterFormLoad(beanId);
         if (!isReadOnly()){
             addContextMenu();
         }
@@ -279,11 +279,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
     /**
      * Обоработка события контекстного меню для открытия карточки свойств визуального компонента 
-     * @param beanId
      */
-    public void onElementOpenClick(String beanId){
-        onElementClicked();
-        this.beanId = beanId;
+    public void onElementOpenClick(){
+        onElementClicked();        
         PrimeFaces.current().executeScript("document.getElementById('process:btnOpenElement').click();");
     }
 
@@ -294,7 +292,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
        if (baseElement instanceof TaskElem){
            TaskElem taskElem = (TaskElem) baseElement;
            currentTask = (Task) taskElem.getTask();           
-           onOpenTask(beanId);
+           onOpenTask();
        } 
     }
     
@@ -303,7 +301,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param beanId 
      */
     @Override
-    public void onOpenTask(String beanId){        
+    public void onOpenTask(String beanId){
+        onOpenTask();
+    }    
+    public void onOpenTask(){   
         String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);        
         sessionBean.openTask(beanId, beanName);
     }
@@ -318,6 +319,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             TaskElem taskElem = (TaskElem)baseElement;
             editedTasks.add(taskElem.getTask());            
         }
+        onItemChange();
+        modelRefresh();        
+    }
+    
+    /**
+     * Обработка события закрытия карточки задачи
+     * @param event
+     */
+    public void onTaskClose(SelectEvent event){
+        if (event.getObject() == null) return;
+        editedTasks.add(currentTask);
         onItemChange();
         String updateElement = getFormName()+":mainTabView:concorderList";
         PrimeFaces.current().ajax().update(updateElement);
