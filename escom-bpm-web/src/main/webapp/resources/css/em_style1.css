@@ -102,10 +102,6 @@ body{
     font-size: 90%;
 }
 
-.bt_command{
-     width: 100% !important;
-}
-
 .btnClear{
     font-size: 90%;
 }
@@ -254,7 +250,6 @@ body{
 .ico_rotateRight{background-image: url('../resources/icon/rotateRight.png') !important;}
 .ico_doc16 {background-image: url('../resources/icon/doc16.png') !important;}
 .ico_doc32 {background-image: url('../resources/icon/doc32.png') !important;}
-.ico_done {background-image: url('../resources/icon/done.png') !important;}
 .ico_add {background-image: url('../resources/icon/add.png') !important;}
 .ico_back {background-image: url('../resources/icon/back.png') !important;}
 .ico_run {background-image: url('../resources/icon/run.png') !important;}
@@ -265,7 +260,14 @@ body{
 .ico_outdoc{background-image: url('../resources/icon/outdoc.png') !important;}
 .ico_look{background-image: url('../resources/icon/look.png') !important;}
 .ico_importante{background-image: url('../resources/icon/importante.png') !important;}
+
+.ico_done {background-image: url('../resources/icon/done.png') !important;}
 .ico_flag_green{background-image: url('../resources/icon/flag_green.png') !important;}
+.ico_flag_red{background-image: url('../resources/icon/flag_red.png') !important;}
+.ico_flag_yelow{background-image: url('../resources/icon/flag_yelow.png') !important;}
+.ico_cancel{background-image: url('../resources/icon/cancel.png') !important; }
+
+.ico_close{background-image: url('../resources/icon/close.png') !important;}
 .ico_control{background-image: url('../resources/icon/control.png') !important;}
 .ico_doc_check{background-image: url('../resources/icon/doc_check.png') !important;}
 .ico_searche{background-image: url('../resources/icon/searche_book.png') !important;}
@@ -276,7 +278,6 @@ body{
 .ico_info{background-image: url('../resources/icon/info.png') !important; }
 .ico_key{background-image: url('../resources/icon/key.png') !important;} 
 .ico_internalDoc {background-image: url('../resources/icon/internalDoc.png') !important;}
-.ico_cancel{background-image: url('../resources/icon/cancel.png') !important; }
 .ico_info{background-image: url('../resources/icon/info.png') !important; }
 .ico_inspector{background-image: url('../resources/icon/inspector.png') !important;} 
 .ico_folder_open{background-image: url('../resources/icon/folder_open.png') !important;} 

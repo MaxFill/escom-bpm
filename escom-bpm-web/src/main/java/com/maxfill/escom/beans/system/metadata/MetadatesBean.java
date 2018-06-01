@@ -264,7 +264,7 @@ public class MetadatesBean implements Serializable{
             List<State> allStates = stateFacade.findAll();
             List<State> objectStates = selectedObject.getStatesList();
             allStates.removeAll(objectStates);
-            states = new DualListModel<State>(allStates, objectStates);
+            states = new DualListModel<>(allStates, objectStates);
         }
         return states;
     }

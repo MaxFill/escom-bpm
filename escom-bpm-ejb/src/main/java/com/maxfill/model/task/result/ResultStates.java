@@ -1,6 +1,7 @@
-package com.maxfill.model.posts;
+package com.maxfill.model.task.result;
 
 import com.maxfill.model.states.BaseStateItem;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -11,22 +12,26 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+/**
+ *
+ * @author maksim
+ */
 @Entity
-@Table(name = "postsStates")
+@Table(name = "resultsStates")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PostStates extends BaseStateItem{
-    private static final long serialVersionUID = -7522919175041212905L;
+public class ResultStates extends BaseStateItem{    
+    private static final long serialVersionUID = -7351016762620651829L;
     
     @TableGenerator(
-        name="PostStatesGen", 
+        name="ResultsStateGen", 
         table="SYS_ID_GEN", 
         pkColumnName="GEN_KEY", 
         valueColumnName="GEN_VALUE", 
-        pkColumnValue="PostStates_ID", allocationSize = 1)
+        pkColumnValue="ResultStates_ID", allocationSize = 1)
         
     @Id
     @Basic(optional = false)
-    @GeneratedValue(strategy=TABLE, generator="PostStatesGen")
+    @GeneratedValue(strategy=TABLE, generator="ResultsStateGen")
     @Column(name = "Id")
     private Integer id;
 
@@ -40,21 +45,27 @@ public class PostStates extends BaseStateItem{
     }
     
     /* *** *** */
-    
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 5;
+        hash = 59 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof PostStates)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        PostStates other = (PostStates) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ResultStates other = (ResultStates) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
@@ -62,6 +73,7 @@ public class PostStates extends BaseStateItem{
 
     @Override
     public String toString() {
-        return "PostStates[ id=" + id + " ]";
+        return "ResultStates{" + "id=" + id + '}';
     }
+        
 }

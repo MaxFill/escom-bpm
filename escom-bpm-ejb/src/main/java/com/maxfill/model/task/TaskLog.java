@@ -79,6 +79,8 @@ public class TaskLog implements Serializable{
         this.userId = userId;
     }
     
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

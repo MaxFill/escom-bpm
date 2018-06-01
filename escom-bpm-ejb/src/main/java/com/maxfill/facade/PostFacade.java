@@ -10,7 +10,6 @@ import com.maxfill.model.posts.PostStates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;

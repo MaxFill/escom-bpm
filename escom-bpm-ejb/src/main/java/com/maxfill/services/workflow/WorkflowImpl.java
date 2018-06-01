@@ -8,6 +8,7 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.task.result.Result;
 import com.maxfill.utils.EscomUtils;
 
 import javax.ejb.EJB;
@@ -18,13 +19,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -63,26 +62,30 @@ public class WorkflowImpl implements Workflow {
     }
 
     /**
-     * Добавление коннектора в схему процесса
-     * @param connector
+     * Создание элемента "Коннектор"
+     * @param from
+     * @param to
      * @param scheme
-     * @param errors 
+     * @param label
+     * @param errors
+     * @return 
      */
     @Override
-    public void addConnector(ConnectorElem connector, Scheme scheme, Set<String> errors) {
-        if (!errors.isEmpty()) return;
-        if (connector.getFrom() == null){
+    public ConnectorElem createConnector(AnchorElem from, AnchorElem to, Scheme scheme, String label, Set<String> errors){
+        if (from == null || to == null){
             errors.add("WorkflowIncorrectData");
+            return null;
         }
-        if (connector.getTo() == null){
-            errors.add("WorkflowIncorrectData");
-        }
-        //ToDO проверить на возможность установки соединения!
-        if (errors.isEmpty()) {
-            scheme.getElements().getConnectors().add(connector);
-        }
-    }
+        
+        if (findConnector(from, to, scheme) != null) return null;
+        
+        ConnectorElem connector = new ConnectorElem(label, from, to);        
 
+        //ToDO проверить на возможность установки соединения!        
+        scheme.getElements().getConnectors().add(connector);
+        return connector;
+    }
+    
     @Override
     public void addCondition(ConditionElem condition, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
@@ -172,9 +175,7 @@ public class WorkflowImpl implements Workflow {
     
     @Override
     public void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors) {
-        ConnectorElem connector = scheme.getElements().getConnectors().stream()
-                .filter(c -> c.getFrom().equals(from) && c.getTo().equals(to))
-                .findFirst().get();
+        ConnectorElem connector = findConnector(from, to, scheme);
         //ToDo проверка на возможность удаления данного соединения!
         if (connector == null){
             String message = MessageFormat.format("ImpossibleRemove", new Object[]{connector.toString()});
@@ -184,6 +185,20 @@ public class WorkflowImpl implements Workflow {
         }
     }
 
+    /**
+     * Выполняет поиск коннектора
+     * @param from
+     * @param to
+     * @param scheme
+     * @return 
+     */
+    private ConnectorElem findConnector(AnchorElem from, AnchorElem to, Scheme scheme){
+        return scheme.getElements().getConnectors().stream()
+                .filter(c -> c.getFrom().equals(from) && c.getTo().equals(to))
+                .findFirst()
+                .orElse(null);
+    }
+    
     @Override
     public void packScheme(Scheme scheme, Set <String> errors) {
         StringWriter sw = new StringWriter();
@@ -206,6 +221,7 @@ public class WorkflowImpl implements Workflow {
             elements.getTasks().forEach((key, task)-> task.setTask(taskFacade.findByLinkUID(key)));
             scheme.setElements(elements);
         } catch (IOException ex) {
+            errors.add("ErrorUnpackingProcessDiagram");
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -229,11 +245,6 @@ public class WorkflowImpl implements Workflow {
         //ToDo! другие проверки!
     }
 
-    @Override
-    public void saveTask(Scheme scheme, Set <String> errors) {
-        scheme.getTasks().stream().forEach(task->taskFacade.create(task));
-    }
-
     /**
      * Удаление соединений у элемента модели процесса
      * @param element
@@ -248,6 +259,29 @@ public class WorkflowImpl implements Workflow {
         }
     }
 
+    /**
+     * Выполнение задачи
+     * @param task
+     * @param result 
+     * @param errors 
+     */
+    @Override
+    public void executeTask(Task task, Result result, Set<String> errors){
+        Scheme scheme = task.getScheme();
+        unpackScheme(scheme, errors);
+        if (errors.isEmpty()){
+            WFConnectedElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
+            run(scheme, startElement, errors);
+            if (errors.isEmpty()){
+                task.setResult(result.getName());
+                task.setIconName(result.getIconName());
+                task.setFactExecDate(new Date());
+                task.getState().setCurrentState(stateFacade.getCompletedState());
+                taskFacade.edit(task);
+            }
+        }
+    }
+    
     @Override
     public void start(Process process, Set<String> errors) {        
         Scheme scheme = process.getScheme();
@@ -298,17 +332,28 @@ public class WorkflowImpl implements Workflow {
     public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {   
         Set<Task> exeTasks = new HashSet<>();
         doRun(startElement.getAnchors(), scheme, exeTasks, errors);
-        if (errors.isEmpty()){            
-            exeTasks.stream()
-                .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
-                .forEach(task->{
-                    task.setBeginDate(new Date());
-                    task.getState().setCurrentState(stateFacade.getRunningState());
-                });
-            scheme.getTasks().removeAll(exeTasks);
-            scheme.getTasks().addAll(exeTasks);
+        if (errors.isEmpty()){
+            startTasks(exeTasks, scheme);            
             packScheme(scheme, errors);
         }
+    }
+    
+    /**
+     * Запуск задач на выполнение
+     * @param tasks
+     * @param scheme 
+     */
+    private void startTasks(Set<Task> tasks, Scheme scheme){
+        if (!tasks.isEmpty()){
+                tasks.stream()
+                    .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
+                    .forEach(task->{
+                        task.setBeginDate(new Date());
+                        task.getState().setCurrentState(stateFacade.getRunningState());
+                    });
+                scheme.getTasks().removeAll(tasks);
+                scheme.getTasks().addAll(tasks);
+            }
     }
     
     /**

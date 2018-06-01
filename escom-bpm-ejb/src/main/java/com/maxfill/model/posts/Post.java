@@ -18,7 +18,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.xml.bind.annotation.XmlTransient;
 
-/* Должность */
+/**
+ * Справочник "Должности"
+ */
 @Entity
 @Table(name = "posts")
 @DiscriminatorColumn(name = "REF_TYPE")
@@ -91,6 +93,7 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
         this.id = id;
     }    
     
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

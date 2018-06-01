@@ -40,8 +40,8 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.primefaces.model.diagram.connector.Connector;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
+import org.primefaces.model.diagram.overlay.Overlay;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -126,7 +126,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public void onAfterFormLoad(String beanId) {
         super.onAfterFormLoad(beanId);
         if (!isReadOnly()){
-            addContextMenu();
+            addElementContextMenu();
         }
     }
     
@@ -198,7 +198,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private void modelRefresh(){
         PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
         if (!isReadOnly()){
-            addContextMenu();
+            addElementContextMenu();
         }
     }
     
@@ -276,7 +276,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             baseElement.setPosY(Integer.valueOf(y));            
         }
     }
-
+   
     /**
      * Обоработка события контекстного меню для открытия карточки свойств визуального компонента 
      */
@@ -285,7 +285,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         PrimeFaces.current().executeScript("document.getElementById('process:btnOpenElement').click();");
     }
 
-     /**
+    /**
      * Обоработка события открытия карточки свойств визуального компонента 
      */
     public void onElementOpen(){
@@ -294,6 +294,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
            currentTask = (Task) taskElem.getTask();           
            onOpenTask();
        } 
+    }
+    
+    /**
+     * Обработка события копирования эемента
+     */
+    public void onElementCopy(){
+     //ToDo!   
     }
     
     /**
@@ -558,17 +565,6 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Создание элемента "Коннектор"
-     * @param from
-     * @param to
-     * @param errors
-     */
-    private void createConnector(AnchorElem from, AnchorElem to, String label, Set<String> errors){
-        ConnectorElem connector = new ConnectorElem(label,  from, to);
-        workflow.addConnector(connector, scheme, errors);
-    }
-
-    /**
      * Добавление workflow элементов в модель процесса
      * @param wfElement
      * @return 
@@ -656,9 +652,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (connectorElem.isDone()){
             FlowChartConnector connector = new FlowChartConnector();
             connector.setPaintStyle("{strokeStyle:'#020202', lineWidth:3}");
-            connector.setCornerRadius(10);           
+            connector.setCornerRadius(10); 
             conn.setConnector(connector);
         }
+        int h = conn.hashCode();
         return conn;
     }
 
@@ -779,14 +776,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
                 break;
             }
         }
-        createConnector(sourceAnchor, targetAnchor, label, errors);
-        onItemChange();
         
-        if (StringUtils.isNotBlank(label)){
-            Connection connection = findConnection(sourcePoint, targetPoint);
-            connection.getOverlays().clear();
-            connection.getOverlays().add(new LabelOverlay(EscomMsgUtils.getBandleLabel(label), "flow-label", 0.5));
-            modelRefresh();            
+        if (workflow.createConnector(sourceAnchor, targetAnchor, scheme, label, errors) != null){  //если коннектор создался
+            onItemChange();
+            if (StringUtils.isNotBlank(label)){
+                Connection connection = findConnection(sourcePoint, targetPoint);
+                connection.getOverlays().clear();
+                Overlay overlay = new LabelOverlay(EscomMsgUtils.getBandleLabel(label), "flow-label", 0.5);
+                connection.getOverlays().add(overlay);
+                modelRefresh();
+            }
         }
 
         if (!errors.isEmpty()){
@@ -824,16 +823,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     /**
      * Добавление контекстного меню к элементам схемы процесса
      */
-    private void addContextMenu(){
-        StringBuilder sb = new StringBuilder("addMenu([");
+    private void addElementContextMenu(){
+        StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
             sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
-        sb.append("])");                
+        sb.append("'jsPlumb_2_63'");
+        sb.append("])");      
         PrimeFaces.current().executeScript(sb.toString());
-    }
+    }    
     
     /* ПРОЧИЕ МЕТОДЫ */    
     

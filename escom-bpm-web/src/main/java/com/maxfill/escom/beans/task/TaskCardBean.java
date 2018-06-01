@@ -8,6 +8,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.metadates.Metadates;
@@ -15,10 +16,13 @@ import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
+import com.maxfill.services.workflow.Workflow;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
 
 import javax.faces.event.ValueChangeEvent;
@@ -26,6 +30,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -33,7 +38,9 @@ import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
+import liquibase.util.StringUtils;
 import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.model.DualListModel;
 
 /**
  * Контролер формы "Поручение"
@@ -45,6 +52,10 @@ public class TaskCardBean extends BaseViewBean{
 
     @EJB
     private TaskFacade taskFacade;
+    @EJB
+    private Workflow workflow;
+    @EJB
+    private ResultFacade resultFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -55,14 +66,16 @@ public class TaskCardBean extends BaseViewBean{
     private boolean readOnly;
     private Task sourceTask = null;
     private ContainsTask sourceBean = null;
-    private String beanName;
+    private String beanName;   
+    private List<Result> taskResults;
+    private DualListModel<Result> results;
     
     @Override
     public void onBeforeOpenCard(){
         if (sourceTask == null){
             FacesContext facesContext = FacesContext.getCurrentInstance();
             Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
-            String beanId = params.get(SysParams.PARAM_BEAN_ID);
+            beanId = params.get(SysParams.PARAM_BEAN_ID);
             beanName = params.get(SysParams.PARAM_BEAN_NAME);
             HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
             Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
@@ -97,6 +110,12 @@ public class TaskCardBean extends BaseViewBean{
     
     @Override
     public String onCloseCard(String param){
+        Set<String> errors = new HashSet<>();
+        validateTask(errors);
+        if (!errors.isEmpty()){
+            EscomMsgUtils.showErrorsMsg(errors);
+            return "";
+        } 
         try {
             BeanUtils.copyProperties(sourceTask, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -104,7 +123,25 @@ public class TaskCardBean extends BaseViewBean{
         }
         return super.onCloseCard(param);
     }
-        
+    
+    private void validateTask(Set<String> errors){
+        if (StringUtils.isEmpty(editedItem.getAvaibleResultsJSON())){
+            errors.add("TaskNoHaveListResult");
+        }
+    }
+    
+    /**
+     * Обработка события выполнения задачи
+     * @param result
+     */
+    public void onExecute(Result result){        
+        Set<String> errors = new HashSet<>();
+        workflow.executeTask(getEditedItem(), result, errors);
+        if (!errors.isEmpty()){
+            EscomMsgUtils.showErrorsMsg(errors);
+        }
+    }
+    
     /**
      * Обработка события открытия карточки процесса 
      */
@@ -210,6 +247,25 @@ public class TaskCardBean extends BaseViewBean{
 
     public String getBeanName() {
         return beanName;
+    }
+
+    public DualListModel<Result> getResults() {
+        if (results == null){
+            List<Result> allResults = resultFacade.findAll();            
+            results = new DualListModel<>(allResults, getTaskResults());
+        }
+        return results;
+    }
+    public void setResults(DualListModel<Result> results) {
+        this.results = results;
+        editedItem.setTaskResults(results.getTarget());                
+    }   
+        
+    public List<Result> getTaskResults() {
+        if (taskResults == null){
+            taskResults = resultFacade.findTaskResults(editedItem);
+        }
+        return taskResults;
     }
         
 }

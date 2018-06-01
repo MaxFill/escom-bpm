@@ -14,6 +14,7 @@ import java.util.Set;
 
 /**
  * Класс определяет методы, для работы с ролями
+ * @param <O>
  */
 public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseDictFacade<T, O, L, S>{
 
@@ -40,6 +41,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     }
 
     /* Проверка вхождения пользователя в роль документа */
+    @Override
     public boolean checkUserInRole(T item, String roleName, User user){
         roleName = roleName.toLowerCase();
         Map<String, Set<Integer>> roles = item.getRoles();

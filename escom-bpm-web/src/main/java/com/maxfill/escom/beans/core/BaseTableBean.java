@@ -117,6 +117,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /**
      * Проверка возможности создания объекта
      * для того чтобы узнать, может ли пользователь создать объект нужно его создать, получить для него права и только затем проверить
+     * @param parent
      * @param errors Метод вернёт непустой errors если у пользователя нет права на создание
      * @param params
      * @return
@@ -197,6 +198,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /**
      * Определяет, нужно ли копировать объект при вставке
      * Некоторые объекты при вставке не нужно копировать!
+     * @param item
      */
     public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
         return true;

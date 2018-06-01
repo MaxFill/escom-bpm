@@ -7,91 +7,6 @@
 
     <ui:param name="_bean" value="#{processCardBean}"/>
 
-    <ui:define name="customStyleCSS">
-        <style type="text/css">         
-            .ui-diagram-task {
-                background-color: #9ed4ef;
-                width: 14em;
-                min-height: 4em;                
-            }
-            
-            .draft {
-            }            
-            .running {
-                border:0.2em solid #020202 !important;
-            }            
-            .finished {
-                border:0.2em solid #020202 !important;                
-            }
-            .cancelled{
-                border:0.2em dotted #020202 !important;                
-            }
-            
-            .ui-diagram-element:hover {
-                background-color: #C7C6C4;
-            }
-
-            .ui-diagram-element {                 
-                text-align: center;
-                color: #ffffff;
-                border-radius: 4px;
-                border:0.1em dotted #E5E4E2;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-            }
-
-            .ui-diagram-logic {
-                width:4em;
-                height:4em;
-                border-radius: 4em;
-                background-color: #099b05;
-                word-wrap: normal !important;
-            }
-
-            .ui-diagram-start {
-                width:3em;
-                height:3em;
-                background-color: #edef04;
-            }
-
-            .ui-diagram-enter {
-                width:3em;
-                height:3em;
-                border-radius: 3em;
-                background-color: blue;
-            }
-            
-            .ui-diagram-exit {
-                width:3em;
-                height:3em;
-                border-radius: 3em;
-                background-color: #000000;
-            }
-
-            .ui-diagram-success-state {
-                width:9em;
-                height:5em;
-                background-color: #02b044;
-            }
-
-            .ui-diagram-fail-state {
-                width:8em;
-                height:5em;
-                background-color: #C33730;
-            }
-
-            .ui-diagram-condition {
-                width:6em;
-                height:6em;
-                background-color: #c306ab;
-            }
-
-            .iw-contextMenu {
-                font-family: Verdana, Helvetica, Arial, sans-serif;
-            }
-            
-        </style>
-    </ui:define>
-
     <ui:define name="customJavaScript">
          <h:outputScript library="contextMenu" name="contextMenu.js" /> 
          <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
@@ -104,90 +19,9 @@
         <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
                     disabled="#{processCardBean.isDisableBtnStop()}"
                     onclick="document.getElementById('#{_frm}:btnStop').click();"/>
-    </ui:define>    
+    </ui:define>        
     
-    <ui:define name="card_scripts">
-        <script type="text/javascript"> 
-            function addMenu(elementIds){    
-                var menu = [{
-                        name: '#{bundle.Properties}',
-                        img: '/escom-bpm-web/resources/images/settings.png',
-                        fun: function () {
-                            elementOpen();
-                        }
-                    },{
-                        name: '#{bundle.Delete}',
-                        img: '/escom-bpm-web/resources/images/delete.png',
-                        fun: function () {
-                            elementDelete();
-                        }
-                    }];
-
-                elementIds.forEach(function(elementId){                  
-                    var component = $(document.getElementById(elementId)); 
-                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
-                });
-            }
-
-            function sendClick(info){
-                    //console.log("elementId="+info.target.id);                    
-                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                    var elementId = info.target.id;
-                    if (elementId == ""){
-                        var parentElement = info.target.parentElement;                              
-                        elementId = $(parentElement).attr('id');
-                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                    }
-                    elementClicked([
-                        {name : 'elementId',value : elementId},
-                        {name : 'posX',     value : xPos},
-                        {name : 'posY',     value : yPos}
-                    ]);
-            }
-            
-            $(document).on('click', '.ui-diagram > .ui-diagram-element', 
-                function(info) {
-                    sendClick(info);
-                });
-            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                    var elementId = info.target.id;
-                    if (elementId == ""){
-                        var parentElement = info.target.parentElement;                              
-                        elementId = $(parentElement).attr('id');
-                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                    }
-                    elementOpen([
-                        {name : 'elementId',value : elementId},
-                        {name : 'posX',     value : xPos},
-                        {name : 'posY',     value : yPos}
-                    ]);
-                });
-            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    sendClick(info);
-                });
-            window.addEventListener("load", init, false);
-        </script>
-        
-        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
-        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
-        <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
-        
-        <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
-            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
-        </p:commandButton>
-        <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{processCardBean.onOpenTask()}">
-            <p:ajax event="dialogReturn" listener="#{processCardBean.onTaskClose}"/>
-        </p:commandButton>
-    </ui:define>
-    
-    <ui:define name="page_body"> 
+    <ui:define name="page_body">        
         <p:tab title="#{bundle.Process}" > 
             <p:panelGrid columns="1" styleClass="ui-grid-col-12" columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
@@ -317,6 +151,178 @@
                 </p:diagram>
             </p:panelGrid>
         </p:tab>
+    </ui:define>
+   
+        <ui:define name="customStyleCSS">
+        <style type="text/css">         
+            .ui-diagram-task {
+                background-color: #9ed4ef;
+                width: 14em;
+                min-height: 4em;                
+            }
+            
+            .draft {
+            }            
+            .running {
+                border:0.2em solid #020202 !important;
+            }            
+            .finished {
+                border:0.2em solid #020202 !important;                
+            }
+            .cancelled{
+                border:0.2em dotted #020202 !important;                
+            }
+            
+            .ui-diagram-element:hover {
+                background-color: #C7C6C4;
+            }
+
+            .ui-diagram-element {                 
+                text-align: center;
+                color: #ffffff;
+                border-radius: 4px;
+                border:0.1em dotted #E5E4E2;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
+            }
+
+            .ui-diagram-logic {
+                width:4em;
+                height:4em;
+                border-radius: 4em;
+                background-color: #099b05;
+                word-wrap: normal !important;
+            }
+
+            .ui-diagram-start {
+                width:3em;
+                height:3em;
+                background-color: #edef04;
+            }
+
+            .ui-diagram-enter {
+                width:3em;
+                height:3em;
+                border-radius: 3em;
+                background-color: blue;
+            }
+            
+            .ui-diagram-exit {
+                width:3em;
+                height:3em;
+                border-radius: 3em;
+                background-color: #000000;
+            }
+
+            .ui-diagram-success-state {
+                width:9em;
+                height:5em;
+                background-color: #02b044;
+            }
+
+            .ui-diagram-fail-state {
+                width:8em;
+                height:5em;
+                background-color: #C33730;
+            }
+
+            .ui-diagram-condition {
+                width:6em;
+                height:6em;
+                background-color: #c306ab;
+            }
+
+            .iw-contextMenu {
+                font-family: Verdana, Helvetica, Arial, sans-serif;
+            }
+            
+        </style>
+    </ui:define>
+    
+    <ui:define name="card_scripts">
+        <script type="text/javascript"> 
+            function addElementMenu(elementIds){    
+                var menu = [{
+                        name: '#{bundle.Properties}',
+                        img: '/escom-bpm-web/resources/images/settings.png',
+                        fun: function () {
+                            elementOpen();
+                        }
+                    },{
+                        name: '#{bundle.Copy}',
+                        img: '/escom-bpm-web/resources/images/copy.png',
+                        fun: function () {
+                            elementCopy();
+                        }
+                    },{
+                        name: '#{bundle.Delete}',
+                        img: '/escom-bpm-web/resources/images/delete.png',
+                        fun: function () {
+                            elementDelete();
+                        }
+                    }];
+
+                elementIds.forEach(function(elementId){                  
+                    var component = $(document.getElementById(elementId)); 
+                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
+                });
+            }
+
+            function sendElementClick(info){
+                    //console.log("elementId="+info.target.id);                    
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    }
+                    elementClicked([
+                        {name : 'elementId',value : elementId},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+            }
+                                        
+            $(document).on('click', '.ui-diagram > .ui-diagram-element', 
+                function(info) {
+                    sendElementClick(info);
+                });
+            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    }
+                    elementOpen([
+                        {name : 'elementId',value : elementId},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+                });
+            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    sendElementClick(info);
+                });            
+        </script>
+        
+        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
+        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
+        <p:remoteCommand name="elementCopy" actionListener="#{processCardBean.onElementCopy()}"/>
+        <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
+        
+        <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
+            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
+        </p:commandButton>
+        <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{processCardBean.onOpenTask()}">
+            <p:ajax event="dialogReturn" listener="#{processCardBean.onTaskClose}"/>
+        </p:commandButton>
     </ui:define>
     
 </ui:composition>

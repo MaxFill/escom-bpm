@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.google.gson.Gson;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.process.schemes.Scheme;
@@ -8,8 +9,10 @@ import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task_;
+import com.maxfill.model.task.result.Result;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
@@ -18,6 +21,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import liquibase.util.StringUtils;
 
 /**
  * Фасад для сущности "Поручения"
@@ -88,5 +92,6 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         return metadatesFacade.find(22);
     }   
     
+       
     
 }

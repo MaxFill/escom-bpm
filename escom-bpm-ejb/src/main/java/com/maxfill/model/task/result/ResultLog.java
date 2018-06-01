@@ -1,6 +1,7 @@
-package com.maxfill.model.posts;
+package com.maxfill.model.task.result;
 
 import com.maxfill.model.BaseLogItems;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -10,21 +11,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ *
+ * @author maksim
+ */
 @Entity
-@Table(name = "postsLog")
+@Table(name = "resultsLog")
 @DiscriminatorColumn(name="REF_TYPE")
-public class PostLog extends BaseLogItems<Post>{
-    private static final long serialVersionUID = 7709134449437875808L;
-
+public class ResultLog extends BaseLogItems<Result>{    
+    private static final long serialVersionUID = 8084169238693243299L;
+    
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;    
-           
-    public PostLog() {
-    }
+    private Integer id; 
 
+    public ResultLog() {
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -35,20 +40,27 @@ public class PostLog extends BaseLogItems<Post>{
     }
     
     /* *** *** */
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof PostLog)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        PostLog other = (PostLog) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ResultLog other = (ResultLog) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
@@ -56,7 +68,7 @@ public class PostLog extends BaseLogItems<Post>{
 
     @Override
     public String toString() {
-        return "PostLog[ id=" + id + " ]";
-    }
+        return "ResultLog{" + "id=" + id + '}';
+    }        
     
 }

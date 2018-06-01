@@ -15,6 +15,7 @@
     </ui:define>
 
     <ui:define name="body">
+        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
         <script type="text/javascript" >
             function init() {
                 onAfterFormLoad();
@@ -64,7 +65,7 @@
                                 <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
                                     <ui:insert name="menuActions" />
                                     <p:separator />
-                                    <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
+                                    <p:menuitem icon="ico_close" value="#{bundle.Close}"
                                                 disabled="#{_canNotClose}" immediate="true" process="@this"
                                                 action="#{_bean.onCloseCard()}">
                                     </p:menuitem>

@@ -1,9 +1,11 @@
 package com.maxfill.model.task;
 
+import com.google.gson.Gson;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.task.result.Result;
 import java.io.Serializable;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
 
@@ -76,6 +79,12 @@ public class Task implements Serializable, Dict{
     @Column(name = "Icon")
     private String iconName;
                 
+    @Column(name = "Comment")
+    private String comment;
+    
+    @Column(name = "AvaibleResults")
+    private String avaibleResultsJSON;    
+    
     /* Категории */
     //ToDo добавить категории
 
@@ -131,6 +140,12 @@ public class Task implements Serializable, Dict{
     public String getStatus(){
         //ToDo 
         return "";
+    }
+    
+    public void setTaskResults(List<Result> taskResults) {
+        Gson gson = new Gson();
+        String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
+        avaibleResultsJSON = json;
     }
     
     /* GETS & SETS */
@@ -221,6 +236,20 @@ public class Task implements Serializable, Dict{
         this.scheme = scheme;
     }
 
+    public String getComment() {
+        return comment;
+    }
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getAvaibleResultsJSON() {
+        return avaibleResultsJSON;
+    }
+    public void setAvaibleResultsJSON(String avaibleResultsJSON) {
+        this.avaibleResultsJSON = avaibleResultsJSON;
+    }        
+    
     public Integer getTempId() {
         return tempId;
     }

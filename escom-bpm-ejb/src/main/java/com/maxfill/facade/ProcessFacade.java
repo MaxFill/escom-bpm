@@ -1,10 +1,8 @@
 package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.facade.base.BaseDictWithRolesFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.ProcessLog;
 import com.maxfill.model.process.ProcessStates;
 import com.maxfill.model.process.Process;
@@ -14,9 +12,7 @@ import com.maxfill.model.users.User;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Фасад для сущности "Процессы"
@@ -59,6 +55,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
 
     /**
      * Получение прав доступа к процессу
+     * @param item
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {

@@ -69,6 +69,7 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', NULL, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 5);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 5);
         </sql>
         
         <!-- Доступные переходы между состояними объектов -->
@@ -178,6 +179,11 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 5, 9);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 9, 11);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(22, 11, 5);
+            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 8, 7);
         </sql>
 
         <!-- Доступные состояния объектов метаданных (какие состояния доступны объекту)-->
@@ -264,6 +270,10 @@
             INSERT objectsStates (ObjId, StateId) VALUES (22, 9);
             INSERT objectsStates (ObjId, StateId) VALUES (22, 10);
             INSERT objectsStates (ObjId, StateId) VALUES (22, 11);
+            
+            INSERT objectsStates (ObjId, StateId) VALUES (23, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (23, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (23, 8);
         </sql>
 
         <!-- Фильтры -->
@@ -919,6 +929,22 @@
 
         <sql>
             INSERT userMessages (Id, DateSent, Name, Sender, Addressee) Values (0, '2018/01/01', 'Добро пожаловать в программу Escom-bpm Web!', 0, 0);
+        </sql>
+        
+        <!-- Результаты выполнения ззадач -->
+        <sql>
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(1, 7, 5);
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(2, 7, 5);
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(3, 7, 5);
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(4, 7, 5);
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
+        </sql>
+        <sql>
+            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, N'Done',               N'done',       1, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, N'Agreed',             N'flag_green', 2, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'AgreedWithComments', N'flag_yelow', 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'Refused',            N'flag_red',   4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'Cancelled',          N'cancel',     5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
     </changeSet>
 </databaseChangeLog> 

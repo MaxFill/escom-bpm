@@ -33,6 +33,7 @@ public class FoldersServlet extends HttpServlet{
 
     /**
      * Запрос на получение ветки дерева
+     * @param request
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {

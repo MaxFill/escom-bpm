@@ -76,6 +76,9 @@
     <class>com.maxfill.model.task.TaskLog</class>
     <class>com.maxfill.model.task.TaskStates</class>
     <class>com.maxfill.model.task.Task</class>
+    <class>com.maxfill.model.task.result.ResultLog</class>
+    <class>com.maxfill.model.task.result.ResultStates</class>
+    <class>com.maxfill.model.task.result.Result</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

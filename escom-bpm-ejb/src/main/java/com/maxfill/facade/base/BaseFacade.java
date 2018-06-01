@@ -70,7 +70,10 @@ public abstract class BaseFacade<T> {
         return (T) getEntityManager().find(entityClass, id);       
     }
     
-    /* Отбирает все записи кроме удалённых в корзину */
+    /**
+     * Отбирает все записи, кроме удалённых в корзину и не актуальных 
+     * @return 
+     */ 
     public List<T> findAll() {                        
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
