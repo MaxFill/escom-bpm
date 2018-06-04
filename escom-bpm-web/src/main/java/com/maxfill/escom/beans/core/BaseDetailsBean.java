@@ -189,13 +189,14 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     /**
     * Определяет доступность кнопки "Создать" на панели обозревателя
     * Если метод возвращает true то кнопка не доступна!
+     * @return 
     */
     @Override
     public boolean canCreateItem(TreeNode treeSelectedNode){
         return getOwnerBean() != null && treeSelectedNode == null;
     }
-
        
     public abstract Class<O> getOwnerClass();
 
+    
 }

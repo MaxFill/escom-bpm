@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
+import com.maxfill.model.metadates.MetadatesStates;
+import com.maxfill.model.states.State;
 
 /**
  * Базовый бин для работы с табличными представлениями объектов (без владельцев)
@@ -199,6 +201,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * Определяет, нужно ли копировать объект при вставке
      * Некоторые объекты при вставке не нужно копировать!
      * @param item
+     * @param recipient
      */
     public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
         return true;
@@ -494,6 +497,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * Замена одного объекта на другой
      * @param oldItem
      * @param newItem
+     * @return 
      */
     public int replaceItem(BaseDict oldItem, BaseDict newItem){
         return getFacade().replaceItem(oldItem, newItem);
@@ -515,5 +519,15 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             metadatesObj = getFacade().getMetadatesObj();
         }
         return metadatesObj;
+    }
+    
+    
+    /**
+     * Возвращает список состояний объекта
+     * @return 
+     */
+    public List<State> getAvailableStates(){        
+        Metadates metaObj = getMetadatesObj();
+        return metaObj.getStatesList();                
     }
 }

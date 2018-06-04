@@ -24,20 +24,7 @@ public class StateFacade extends BaseFacade{
     @Override
     public State find(Object id){
         return getEntityManager().find(State.class, id);
-    }
-    
-    public List<State> findStateDocList(){
-        getEntityManager().getEntityManagerFactory().getCache().evict(State.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<State> cq = builder.createQuery(State.class);
-        Root<State> c = cq.from(State.class);        
-        //Predicate crit1 = builder.isNull(c.get("folders"));
-        //cq.select(c).where(builder.and(crit1));
-        cq.select(c);
-        //cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList(); 
-    }
+    }    
 
     @Override
     public List<State> findAll() {                        

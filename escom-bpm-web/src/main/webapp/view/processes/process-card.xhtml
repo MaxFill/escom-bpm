@@ -143,7 +143,7 @@
             
                 <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
                     <f:facet name="element" >
-                        <h:outputLabel value="#{el.caption}" style="display:block;margin:1em;word-wrap:break-word;"/>
+                        <h:outputLabel value="#{processCardBean.getElementCaption(el)}" style="display:block;margin:1em;word-wrap:break-word;"/>
                     </f:facet>
                     <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" />
                     <p:ajax event="disconnect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onDisconnect}" />
@@ -249,7 +249,7 @@
                         }
                     },{
                         name: '#{bundle.Copy}',
-                        img: '/escom-bpm-web/resources/images/copy.png',
+                        img: '/escom-bpm-web/resources/icon/copy.png',
                         fun: function () {
                             elementCopy();
                         }

@@ -312,6 +312,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     /**
      * Создание документа из e-mail сообщения
      * @param message
+     * @param detailInfo
      */
     public boolean createDocFromEmail(Message message, StringBuilder detailInfo, MailSettings settings) {
         try {

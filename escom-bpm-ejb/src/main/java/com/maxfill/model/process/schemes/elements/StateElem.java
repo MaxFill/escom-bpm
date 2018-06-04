@@ -18,6 +18,9 @@ public class StateElem extends WFConnectedElem{
     @XmlElement(name = "styleType")
     private String styleType;
 
+    @XmlElement(name = "state")
+    private Integer stateId;
+    
     public StateElem() {
     }
 
@@ -28,6 +31,15 @@ public class StateElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    /* Gets & Sets */
+
+    public Integer getStateId() {
+        return stateId;
+    }
+    public void setStateId(Integer stateId) {
+        this.stateId = stateId;
+    }
+        
     @Override
     public String getStyle() {
         return "ui-diagram-" + styleType + "-state";

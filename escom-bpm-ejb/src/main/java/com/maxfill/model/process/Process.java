@@ -6,8 +6,6 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
 import org.apache.commons.lang.StringUtils;
@@ -193,6 +191,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     }
 
     /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

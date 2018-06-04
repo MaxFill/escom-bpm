@@ -5,6 +5,7 @@ import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,16 +16,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ConditionElem extends WFConnectedElem{    
     private static final long serialVersionUID = 7842115174869991399L;
 
+    @XmlElement(name = "conditon")
+    private Integer conditonId;
+    
     public ConditionElem() {
     }
 
-    public ConditionElem(String caption, int x, int y) {
+    public ConditionElem(String caption, Integer conditonId, int x, int y) {
         this.caption = caption;
+        this.conditonId = conditonId;
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
-    }
-
+    }        
+    
     @Override
     public String getStyle() {
         return DictWorkflowElem.STYLE_CONDITION;
@@ -33,7 +38,14 @@ public class ConditionElem extends WFConnectedElem{
     @Override
     public String getBundleKey() {
         return "Condition";
+    }   
+    
+    public Integer getConditonId() {
+        return conditonId;
     }
+    public void setConditonId(Integer conditonId) {
+        this.conditonId = conditonId;
+    }  
     
     /* *** *** */
 

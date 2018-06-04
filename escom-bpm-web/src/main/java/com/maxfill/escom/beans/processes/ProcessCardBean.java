@@ -1,15 +1,19 @@
 package com.maxfill.escom.beans.processes;
 
+import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
@@ -50,7 +54,8 @@ import org.primefaces.model.diagram.overlay.Overlay;
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTask{
     private static final long serialVersionUID = -5558740260204665618L;
-
+    private static final String BEAN_NAME = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
+    
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -59,6 +64,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private StaffFacade staffFacade;
     @EJB
     private TaskFacade taskFacade;
+    @EJB
+    private ConditionFacade conditionFacade;
         
     private Element selectedElement = null;
     private Scheme scheme;
@@ -294,6 +301,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
            currentTask = (Task) taskElem.getTask();           
            onOpenTask();
        } 
+       if (baseElement instanceof ConditionElem){
+            String formName = DictDlgFrmName.FRM_CONDITION;
+            Map<String, List<String>> paramMap = new HashMap<>();
+            List<String> itemIds = new ArrayList<>();
+            itemIds.add(beanId);
+            paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+            List<String> beanNameList = new ArrayList<>();
+            beanNameList.add(BEAN_NAME);
+            paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+            sessionBean.openDialogFrm(formName, paramMap);
+       }
     }
     
     /**
@@ -311,9 +329,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public void onOpenTask(String beanId){
         onOpenTask();
     }    
-    public void onOpenTask(){   
-        String beanName = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);        
-        sessionBean.openTask(beanId, beanName);
+    public void onOpenTask(){                   
+        sessionBean.openTask(beanId, BEAN_NAME);
     }
     
     /**
@@ -408,7 +425,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
         createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createCondition("?", defX, defY, endPoints, new HashSet<>());        
+        createCondition(null, defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
 
@@ -453,12 +470,18 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param errors
      * @return
      */
-    private Element createCondition(String nameCondition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        ConditionElem condition = new ConditionElem(nameCondition, x, y);
-        condition.setAnchors(makeAnchorElems(condition, endPoints));
-        workflow.addCondition(condition, scheme, errors);
+    private Element createCondition(Condition condition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        ConditionElem conditionElem;
+        if (condition != null){            
+            conditionElem = new ConditionElem(getLabelFromBundle(condition.getName()), condition.getId(), x, y);
+        } else {
+            conditionElem = new ConditionElem("???", null, x, y);
+        }
+        
+        conditionElem.setAnchors(makeAnchorElems(conditionElem, endPoints));
+        workflow.addCondition(conditionElem, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(condition);
+            return modelAddElement(conditionElem);
         }
         return null;
     }
@@ -719,8 +742,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
         createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createCondition("Все одобрили?", 28, 18, endPoints, errors);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);        
+        createCondition(conditionFacade.find(1), 28, 18, endPoints, errors);
         endPoints.clear();
 
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -902,7 +925,21 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public boolean isReadOnly(){
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning();
     }
-       
+    
+    /**
+     * Формирует заголовок элемента модели
+     * @param element
+     * @return 
+     */
+    public String getElementCaption(Element element){
+        WFConnectedElem wfElement = (WFConnectedElem) element.getData();
+        if (wfElement instanceof TaskElem){
+            TaskElem taskElem = (TaskElem) wfElement;
+            return taskElem.getCaption();
+        }
+        return getLabelFromBundle(wfElement.getCaption());
+    }
+    
     /* GETS & SETS */
     
     public List<Task> getTasks(){
@@ -937,11 +974,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public Task getCurrentTask() {
         return currentTask;
     }
-
     public void setCurrentTask(Task currentTask) {
         this.currentTask = currentTask;
-    }
-        
+    }    
+    
     @Override
     public Boolean isShowExtTaskAtr() {
         return false;

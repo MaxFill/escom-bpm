@@ -1,9 +1,14 @@
 package com.maxfill.services.workflow;
 
+import com.maxfill.dictionary.DictResults;
+import com.maxfill.facade.ConditionFacade;
+import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.TaskFacade;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.states.State;
@@ -17,6 +22,8 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -38,9 +45,13 @@ public class WorkflowImpl implements Workflow {
     @EJB
     private TaskFacade taskFacade;
     @EJB
+    private DocFacade docFacade;
+    @EJB
     private ProcessFacade processFacade;
     @EJB
     private StateFacade stateFacade;
+    @EJB
+    private ConditionFacade conditionFacade;
     
     /**
      * Добавление поручения в схему процесса
@@ -91,6 +102,7 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;
         if (condition == null){
             errors.add("WorkflowIncorrectData");
+            return;
         }
         //ToDo проверки!
         if (errors.isEmpty()) {
@@ -242,6 +254,14 @@ public class WorkflowImpl implements Workflow {
                 .filter(rec->rec.getValue().getTask().getPlanExecDate() == null)
                 .findFirst()
                 .map(rec->errors.add("TasksNoHaveDeadline"));
+        scheme.getElements().getConditions().entrySet().stream()
+                .filter(rec->rec.getValue().getConditonId() == null)
+                .findFirst()
+                .map(rec->errors.add("IncorrectConditionRouteProcess"));
+        scheme.getElements().getStates().entrySet().stream()
+                .filter(rec->rec.getValue().getStateId() == null)
+                .findFirst()
+                .map(rec->errors.add("ProcedureSettingStateContainsIncorrectValue"));
         //ToDo! другие проверки!
     }
 
@@ -270,16 +290,37 @@ public class WorkflowImpl implements Workflow {
         Scheme scheme = task.getScheme();
         unpackScheme(scheme, errors);
         if (errors.isEmpty()){
-            WFConnectedElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
+            TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
+            startElement.getTask().setResult(result.getName());
+            task.setResult(result.getName());
+            task.setIconName(result.getIconName());
+            task.setFactExecDate(new Date());
             run(scheme, startElement, errors);
             if (errors.isEmpty()){
-                task.setResult(result.getName());
-                task.setIconName(result.getIconName());
-                task.setFactExecDate(new Date());
                 task.getState().setCurrentState(stateFacade.getCompletedState());
                 taskFacade.edit(task);
             }
         }
+    }
+    
+    /**
+     * Запуск задач на выполнение
+     * @param tasks
+     * @param scheme 
+     */
+    private void startTasks(Set<Task> tasks, Scheme scheme){
+        if (!tasks.isEmpty()){
+                tasks.stream()
+                    .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
+                    .forEach(task->{
+                        task.setBeginDate(new Date());
+                        task.setResult(null);
+                        task.setFactExecDate(null);
+                        task.getState().setCurrentState(stateFacade.getRunningState());
+                    });
+                scheme.getTasks().removeAll(tasks);
+                scheme.getTasks().addAll(tasks);
+            }
     }
     
     @Override
@@ -288,7 +329,12 @@ public class WorkflowImpl implements Workflow {
         validateScheme(scheme, errors);
         if (!errors.isEmpty()) return;
         
-        scheme.getElements().getConnectors().forEach(c->c.setDone(false)); //сброс признака выполнения у всех коннекторов                
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов                
+        scheme.getTasks().forEach(task->{
+                task.setFactExecDate(null); //сброс даты выполнения
+                task.setResult(null);       //сброс предудущего результата                
+            });        
+        
         run(scheme, scheme.getElements().getStartElem(), errors);
         if (errors.isEmpty()){                        
             State state = stateFacade.getRunningState();
@@ -339,24 +385,6 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Запуск задач на выполнение
-     * @param tasks
-     * @param scheme 
-     */
-    private void startTasks(Set<Task> tasks, Scheme scheme){
-        if (!tasks.isEmpty()){
-                tasks.stream()
-                    .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
-                    .forEach(task->{
-                        task.setBeginDate(new Date());
-                        task.getState().setCurrentState(stateFacade.getRunningState());
-                    });
-                scheme.getTasks().removeAll(tasks);
-                scheme.getTasks().addAll(tasks);
-            }
-    }
-    
-    /**
      * Обработка движения по исходящим соединениям 
      * Если процесс входит в задание, то оно запускается если оно не запущено, а если задание выполнено, то оно будет запущено повторно.
      * Если процесс входит в состояние, то выполняется код изменения состояния. всякий рах при входе
@@ -387,11 +415,13 @@ public class WorkflowImpl implements Workflow {
                     
                     //обрабатываем условия
                     Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
-                    //Todo
+                    targetConditions.stream()
+                            .filter(condition->checkCondition(condition, scheme, errors))
+                            .forEach(condition->doRun(condition.getAnchors(), scheme, exeTasks, errors));
                     
                     //изменяем изменения состояния документа
                     Set<StateElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
-                    //Todo
+                    targetStates.forEach(stateElem->updateDocState(stateElem, scheme, errors));
                     
                     //обрабатываем логические элементы
                     Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
@@ -458,4 +488,72 @@ public class WorkflowImpl implements Workflow {
                 .collect(Collectors.toSet());
     }    
     
+    /**
+     * Изменение состояния документа
+     * @param stateElem
+     * @param scheme
+     * @param errors 
+     */
+    private void updateDocState(StateElem stateElem, Scheme scheme, Set<String> errors){
+        State state = stateFacade.find(stateElem.getStateId());
+        if (state == null){
+            errors.add("StateProcessRouteNotFound");
+            return;
+        }
+        if (scheme.getProcess().getDoc() != null){
+            Doc doc = docFacade.find(scheme.getProcess().getDoc().getId());
+            if (doc != null){
+                doc.getState().setCurrentState(state);
+                docFacade.edit(doc);
+            }
+        }
+    }            
+        
+    /* *** УСЛОВИЯ *** */
+    
+    /**
+     * Проверка условия
+     * @param condition
+     * @return 
+     */
+    private boolean checkCondition(ConditionElem conditionEl, Scheme scheme, Set<String> errors){
+        Boolean result = false;
+        Condition condition = (Condition)conditionFacade.find(conditionEl.getConditonId());
+        if (condition == null){
+            errors.add("IncorrectConditionRouteProcess");
+            return result;
+        }
+        String methodName = condition.getMethod();        
+        try {
+            Method method = this.getClass().getMethod(methodName);
+            result = (Boolean)method.invoke(this, scheme);      
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(WorkflowImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return result;
+    }
+    
+    /**
+     * Условие "Все одобрили?". Проверяет, есть ли кто-то отклонивший документ
+     * @param scheme
+     * @return 
+     */
+    protected boolean everyoneApproved(Scheme scheme){
+        return scheme.getTasks().stream()
+                .filter(task -> DictResults.RESULT_REFUSED.equals(task.getResult()))
+                .findFirst()
+                .isPresent();
+    }
+    
+    /**
+     * Условие "Все поручения выполнены?". Проверяет, есть ли не выполненные задачи в данном процессе
+     * @param scheme
+     * @return 
+     */
+    protected boolean allFinished(Scheme scheme){
+        return scheme.getTasks().stream()
+                .filter(task -> task.getFactExecDate() == null)
+                .findFirst()
+                .isPresent();
+    }
 }

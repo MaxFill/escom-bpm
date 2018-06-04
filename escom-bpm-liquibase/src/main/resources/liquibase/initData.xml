@@ -946,5 +946,10 @@
             INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'Refused',            N'flag_red',   4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
             INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'Cancelled',          N'cancel',     5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
+        
+        <sql>
+            INSERT conditions(Id, Name, Method) VALUES (1, N'EveryoneApproved', N'everyoneApproved');
+            INSERT conditions(Id, Name, Method) VALUES (2, N'AllTasksFinished', N'allFinished');
+        </sql>
     </changeSet>
 </databaseChangeLog> 

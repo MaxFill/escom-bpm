@@ -88,9 +88,9 @@
                                 requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
                     </p:calendar>
 
-                    <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_FINISHED}"/>
+                    <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}"/>
                     <p:calendar value="#{taskCardBean.editedItem.factExecDate}" disabledWeekends="true" 
-                                rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_FINISHED}"
+                                rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}"
                                 styleClass="without-spaces" 
                                 timeZone="#{TimeZone.getDefault()}"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
