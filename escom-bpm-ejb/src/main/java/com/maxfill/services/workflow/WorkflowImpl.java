@@ -293,6 +293,7 @@ public class WorkflowImpl implements Workflow {
         Scheme scheme = task.getScheme();
         unpackScheme(scheme, errors);
         if (errors.isEmpty()){
+            //Task task = taskFacade.find(sourceTask.getId());
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
             task.setResult(result.getName());

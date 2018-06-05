@@ -111,17 +111,28 @@ public class TaskCardBean extends BaseViewBean{
     @Override
     public String onCloseCard(String param){
         Set<String> errors = new HashSet<>();
-        validateTask(errors);
+        saveTask(errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
         } 
-        try {
-            BeanUtils.copyProperties(sourceTask, editedItem);
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            Logger.getLogger(TaskCardBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
         return super.onCloseCard(param);
+    }
+    
+    /**
+     * Сохранение изменений в задаче
+     * @param errors 
+     */
+    private void saveTask(Set<String> errors){
+        validateTask(errors);
+        if (errors.isEmpty()){            
+            try {
+                BeanUtils.copyProperties(sourceTask, editedItem);
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                errors.add("InternalErrorSavingTask");
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     private void validateTask(Set<String> errors){
@@ -133,13 +144,21 @@ public class TaskCardBean extends BaseViewBean{
     /**
      * Обработка события выполнения задачи
      * @param result
+     * @return 
      */
-    public void onExecute(Result result){        
+    public String onExecute(Result result){        
         Set<String> errors = new HashSet<>();
-        workflow.executeTask(getEditedItem(), result, errors);
+        saveTask(errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
+            return "";
+        } 
+        workflow.executeTask(sourceTask, result, errors);
+        if (!errors.isEmpty()){
+            EscomMsgUtils.showErrorsMsg(errors);
+            return "";
         }
+        return super.onCloseCard("ok");
     }
     
     /**
