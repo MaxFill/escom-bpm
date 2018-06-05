@@ -12,7 +12,7 @@
             <p:ajax event="dialogReturn" listener="#{_bean.onUpdateLinkedDocs()}" update="#{_frm}:mainTabView:tblLinkedDocs"/>
         </p:commandButton>
 
-        <p:panelGrid id="panelLinkedDocs" layout="grid" columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="without-spaces ui-grid-col-12">
+        <p:panelGrid id="panelLinkedDocs" columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
             <p:outputLabel value="#{bundle.MainDoc}:" />
             <ui:include src="/view/common/item-select-btn.xhtml" >
                 <ui:param name="_itemValue" value="#{_bean.editedItem.mainDoc}"/>
@@ -27,67 +27,66 @@
             </ui:include>
 
             <p:outputLabel value="#{bundle.LinkedDoc}:" />
-            <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                <p:dataTable id="tblLinkedDocs" value="#{_bean.editedItem.docsLinks}" var="doc"
-                             emptyMessage="#{bundle.EmptyTable}"
-                             paginator="true" paginatorPosition="bottom" 
-                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                             rowsPerPageTemplate="5, 10, 20, 35" 
-                             currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                             sortBy="#{doc.regNumber}" rowKey="#{doc.id}">
+            <p:dataTable id="tblLinkedDocs" value="#{_bean.editedItem.docsLinks}" var="doc"
+                         emptyMessage="#{bundle.EmptyTable}"
+                         paginator="true" paginatorPosition="bottom" 
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                         rowsPerPageTemplate="5, 10, 20, 35" 
+                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                         sortBy="#{doc.regNumber}" rowKey="#{doc.id}">
 
-                    <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"                                         
-                            oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();"/>
+                <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}"                                         
+                        oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();"/>
 
-                    <p:column width="16" sortBy="#{doc.iconName}">
-                        <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
-                    </p:column>
+                <p:column width="16" sortBy="#{doc.iconName}">
+                    <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
+                </p:column>
 
-                    <p:column width="16" sortBy="#{doc.state.currentState.name}">
-                        <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
-                    </p:column>
+                <p:column width="16" sortBy="#{doc.state.currentState.name}">
+                    <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
+                </p:column>
 
-                    <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" >
-                        <h:outputText value="#{doc.regNumber}"/>
-                    </p:column>
+                <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" >
+                    <h:outputText value="#{doc.regNumber}"/>
+                </p:column>
 
-                    <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.dateDoc}">
-                        <h:outputText value="#{doc.dateDoc}" >
-                            <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                        </h:outputText>
-                    </p:column>
+                <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.dateDoc}">
+                    <h:outputText value="#{doc.dateDoc}" >
+                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                    </h:outputText>
+                </p:column>
 
-                    <p:column headerText="#{bundle.DocTypes}" sortBy="#{doc.docType.name}">
-                        <h:outputText value="#{doc.docType.name}" />
-                    </p:column>
+                <p:column headerText="#{bundle.DocTypes}" sortBy="#{doc.docType.name}">
+                    <h:outputText value="#{doc.docType.name}" />
+                </p:column>
 
-                    <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
-                        <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
-                                       actionListener="#{docsBean.onViewMainAttache(doc)}"
-                                       onstart="PF('statusDialog').show()"
-                                       oncomplete="PF('statusDialog').hide();"/>
-                    </p:column>                       
+                <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
+                    <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
+                                   actionListener="#{docsBean.onViewMainAttache(doc)}"
+                                   onstart="PF('statusDialog').show()"
+                                   oncomplete="PF('statusDialog').hide();"/>
+                </p:column>                       
 
-                    <p:column headerText="#{bundle.Commands}" > 
-                        <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
-                                        actionListener="#{_bean.setLinkedDoc(doc)}"
-                                        oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();">
-                            <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
-                                        process="@this"
-                                        onstart="PF('statusDialog').show()"
-                                        oncomplete="PF('statusDialog').hide();"
-                                        disabled="#{doc.attache == null}"
-                                        actionListener="#{docsBean.onViewMainAttache(doc)}"/>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
-                                        process="@this"
-                                        actionListener="#{docsBean.addInFavorites(doc)}"/>                        
-                        </p:splitButton>
+                <p:column headerText="#{bundle.Commands}" > 
+                    <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
+                                    actionListener="#{_bean.setLinkedDoc(doc)}"
+                                    oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();">
+                        <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
+                                    process="@this"
+                                    onstart="PF('statusDialog').show()"
+                                    oncomplete="PF('statusDialog').hide();"
+                                    disabled="#{doc.attache == null}"
+                                    actionListener="#{docsBean.onViewMainAttache(doc)}"/>
+                        <p:separator />
+                        <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
+                                    process="@this"
+                                    actionListener="#{docsBean.addInFavorites(doc)}"/>                        
+                    </p:splitButton>
 
-                    </p:column>
-                </p:dataTable>
-            </h:panelGrid>
+                </p:column>
+            </p:dataTable>
+
         </p:panelGrid>
     </p:tab>
 </ui:composition>

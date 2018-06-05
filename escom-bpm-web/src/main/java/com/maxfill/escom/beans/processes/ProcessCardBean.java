@@ -10,14 +10,17 @@ import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +69,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private TaskFacade taskFacade;
     @EJB
     private ConditionFacade conditionFacade;
-        
+    @EJB
+    private StatusesDocFacade statusesDocFacade;
+             
     private Element selectedElement = null;
     private Scheme scheme;
     private int defX = 8;
@@ -135,6 +140,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (!isReadOnly()){
             addElementContextMenu();
         }
+    }
+    
+    @Override
+    public boolean doSaveItem(){
+        Boolean result = super.doSaveItem();
+        modelRefresh();
+        return result;
     }
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
@@ -300,18 +312,34 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
            TaskElem taskElem = (TaskElem) baseElement;
            currentTask = (Task) taskElem.getTask();           
            onOpenTask();
+           return;
        } 
        if (baseElement instanceof ConditionElem){
-            String formName = DictDlgFrmName.FRM_CONDITION;
-            Map<String, List<String>> paramMap = new HashMap<>();
-            List<String> itemIds = new ArrayList<>();
-            itemIds.add(beanId);
-            paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-            List<String> beanNameList = new ArrayList<>();
-            beanNameList.add(BEAN_NAME);
-            paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
-            sessionBean.openDialogFrm(formName, paramMap);
+           openElementCard(DictDlgFrmName.FRM_CONDITION);
+           return;
+       } 
+       if (baseElement instanceof StatusElem){
+           openElementCard(DictDlgFrmName.FRM_DOC_STATUS);
+           return;
        }
+       if (baseElement instanceof ExitElem){
+           openElementCard(DictDlgFrmName.FRM_EXIT);           
+       }
+    }
+    
+    /**
+     * Служебный метод открытия карточки формы элемента схемы маршрута
+     * @param formName 
+     */
+    private void openElementCard(String formName){
+        Map<String, List<String>> paramMap = new HashMap<>();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(beanId);
+        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(BEAN_NAME);
+        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        sessionBean.openDialogFrm(formName, paramMap);
     }
     
     /**
@@ -341,8 +369,12 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (event.getObject() == null) return;
         if (baseElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem)baseElement;
-            editedTasks.add(taskElem.getTask());            
+            currentTask = taskElem.getTask();
+            onTaskClose(event);
+            return;
         }
+        Element exit = model.findElement(baseElement.getUid());
+        exit.setStyleClass(baseElement.getStyle());
         onItemChange();
         modelRefresh();        
     }
@@ -390,16 +422,15 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
     /**
      * Обработка события добавления в схему процесса визуального компонента "Логическоe ветвление" 
-     * @param name
+     * @param bundleName
      */
-    public void onAddLogicElement(String name){
+    public void onAddLogicElement(String bundleName){
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        String caption = EscomMsgUtils.getBandleLabel(name);
-        createLogic(caption, defX, defY, endPoints, new HashSet <>());        
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);        
+        createLogic(bundleName, defX, defY, endPoints, new HashSet <>());        
         finalAddElement();
     }
 
@@ -413,7 +444,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        createState("?", "success", defX, defY, endPoints, new HashSet<>());        
+        createState(null, "success", defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
 
@@ -448,7 +479,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         List<EndPoint> endPoints = new ArrayList<>();
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);                
-        createExit(defX, defY, endPoints, new HashSet<>());        
+        createExit(Boolean.TRUE, defX, defY, endPoints, new HashSet<>());        
         finalAddElement();
     }
     
@@ -473,7 +504,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Element createCondition(Condition condition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
         ConditionElem conditionElem;
         if (condition != null){            
-            conditionElem = new ConditionElem(getLabelFromBundle(condition.getName()), condition.getId(), x, y);
+            conditionElem = new ConditionElem(condition.getName(), condition.getId(), x, y);
         } else {
             conditionElem = new ConditionElem("???", null, x, y);
         }
@@ -540,8 +571,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
-    private Element createExit(int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        ExitElem exit = new ExitElem("", x, y);
+    private Element createExit(Boolean finalize, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+        ExitElem exit = new ExitElem("", finalize, x, y);
         exit.setAnchors(makeAnchorElems(exit, endPoints));
         workflow.addExit(exit, scheme, errors);
         if (errors.isEmpty()) {
@@ -576,13 +607,18 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param errors
      * @return
      */
-    private Element createState(String caption, String styleType, int x, int y, List<EndPoint> endPoints, Set<String> errors){
-        StateElem state = new StateElem(caption, x, y);
-        state.setAnchors(makeAnchorElems(state, endPoints));
-        state.setStyleType(styleType);
-        workflow.addState(state, scheme, errors);
+    private Element createState(StatusesDoc docStatus, String styleType, int x, int y, List<EndPoint> endPoints, Set<String> errors){        
+        StatusElem stateEl;
+        if (docStatus != null){
+            stateEl = new StatusElem(docStatus.getBundleName(), docStatus.getId(), x, y);
+        } else {
+            stateEl = new StatusElem("???", null, x, y);
+        }
+        stateEl.setAnchors(makeAnchorElems(stateEl, endPoints));
+        stateEl.setStyleType(styleType);
+        workflow.addState(stateEl, scheme, errors);
         if (errors.isEmpty()) {
-            return modelAddElement(state);
+            return modelAddElement(stateEl);
         }
         return null;
     }
@@ -748,16 +784,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createState("Документ согласован", "success", 36, 26, endPoints, errors);
+        createState(statusesDocFacade.find(4), "success", 36, 26, endPoints, errors);
         endPoints.clear();
 
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createState("Документ не согласован", "fail", 18, 26, endPoints, errors);
+        createState(statusesDocFacade.find(6), "fail", 18, 26, endPoints, errors);
         endPoints.clear();
 
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
-        createExit(50, 35, endPoints, errors);
+        createExit(Boolean.TRUE, 50, 35, endPoints, errors);
       
     }
 
@@ -928,16 +964,30 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     
     /**
      * Формирует заголовок элемента модели
-     * @param element
+     * @param wfElement
      * @return 
      */
-    public String getElementCaption(Element element){
-        WFConnectedElem wfElement = (WFConnectedElem) element.getData();
+    public String getElementCaption(WFConnectedElem wfElement){
+        String bundleName = wfElement.getCaption();
+        if (StringUtils.isEmpty(bundleName)) return "";
+        
         if (wfElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem) wfElement;
             return taskElem.getCaption();
         }
-        return getLabelFromBundle(wfElement.getCaption());
+        return getLabelFromBundle(bundleName);
+    }
+    
+    /**
+     * Обработка события выбора документа из селектора
+     * @param event
+     */
+    public void onDocSelected(SelectEvent event){
+        List<Doc> items = (List<Doc>) event.getObject();
+        if (items.isEmpty()) return;
+        Doc item = items.get(0);
+        onItemChange();
+        getEditedItem().setDoc(item);
     }
     
     /* GETS & SETS */

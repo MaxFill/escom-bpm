@@ -16,14 +16,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Класс сущности "Статусы документов"
+ * Справочник "Статусы документов"
  */
 @Entity
 @Table(name = "statusesDoc")
@@ -46,6 +45,9 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     @Column(name = "ID")
     private Integer id;
 
+    @Column(name = "BundleName")
+    private String bundleName;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<StatusesDocLog> itemLogs = new ArrayList<>();            
     
@@ -54,6 +56,7 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private StatusesDocStates state;
 
+    /* GETS & SETS */
     @Override
     public StatusesDocStates getState() {
         return state;
@@ -72,6 +75,13 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
         this.id = id;
     }
 
+    public String getBundleName() {
+        return bundleName;
+    }
+    public void setBundleName(String bundleName) {
+        this.bundleName = bundleName;
+    }
+    
     @Override
     public List<StatusesDocLog> getItemLogs() {
         return itemLogs;
@@ -81,6 +91,8 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
         this.itemLogs = itemLogs;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -102,7 +114,7 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.docs.docsStatus.StatusDoc[ id=" + id + " ]";
+        return "StatusDoc[ id=" + id + " ]";
     }
     
 }

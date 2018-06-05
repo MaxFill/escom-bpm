@@ -25,8 +25,9 @@
                     <p:selectOneMenu value="#{conditionCardBean.selected}" converter="conditionConvertor"
                                    styleClass="ui-grid-col-12"
                                    required="#{param['isRequired'] == 'true'}" 
-                                   requiredMessage="#{bundle.Field} [#{bundle.Caption}] #{bundle.MustBeFilled}">
+                                   requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{conditionBean.findAll()}" var="item" itemLabel="#{conditionCardBean.getLabelFromBundle(item.getName())}" itemValue="#{item}"/>
+                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                     </p:selectOneMenu>
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="centerFRM"

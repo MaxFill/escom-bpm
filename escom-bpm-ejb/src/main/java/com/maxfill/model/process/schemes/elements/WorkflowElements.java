@@ -40,7 +40,7 @@ public class WorkflowElements implements Serializable{
     private Map<String, LogicElem> logics = new HashMap <>();
 
     @XmlElement(name = "states")
-    private Map<String, StateElem> states = new HashMap <>();
+    private Map<String, StatusElem> states = new HashMap <>();
     
     public WorkflowElements() {
     }
@@ -94,10 +94,10 @@ public class WorkflowElements implements Serializable{
         this.logics = logics;
     }
 
-    public Map<String, StateElem> getStates() {
+    public Map<String, StatusElem> getStates() {
         return states;
     }
-    public void setStates(Map<String, StateElem> states) {
+    public void setStates(Map<String, StatusElem> states) {
         this.states = states;
     }
 

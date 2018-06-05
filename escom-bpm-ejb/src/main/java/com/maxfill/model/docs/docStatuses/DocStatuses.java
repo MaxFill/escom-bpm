@@ -1,15 +1,11 @@
-
 package com.maxfill.model.docs.docStatuses;
 
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 /* Список статусов со своими значениями в документе. Подчинённая таблица к документам */
 @Entity

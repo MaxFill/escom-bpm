@@ -8,24 +8,25 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Сущность "Элемент схемы процесса "Состояние"
+ * Сущность "Элемент схемы процесса "Статус документа"
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StateElem extends WFConnectedElem{
+public class StatusElem extends WFConnectedElem{
     private static final long serialVersionUID = 8873088059837269820L;
 
     @XmlElement(name = "styleType")
     private String styleType;
 
-    @XmlElement(name = "state")
-    private Integer stateId;
+    @XmlElement(name = "status")
+    private Integer docStatusId;
     
-    public StateElem() {
+    public StatusElem() {
     }
 
-    public StateElem(String caption, int x, int y) {
+    public StatusElem(String caption, Integer docStatusId, int x, int y) {
         this.caption = caption;
+        this.docStatusId = docStatusId;
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
@@ -33,11 +34,11 @@ public class StateElem extends WFConnectedElem{
 
     /* Gets & Sets */
 
-    public Integer getStateId() {
-        return stateId;
+    public Integer getDocStatusId() {
+        return docStatusId;
     }
-    public void setStateId(Integer stateId) {
-        this.stateId = stateId;
+    public void setDocStatusId(Integer docStatusId) {
+        this.docStatusId = docStatusId;
     }
         
     @Override
@@ -63,7 +64,7 @@ public class StateElem extends WFConnectedElem{
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        StateElem stateElem = (StateElem) o;
+        StatusElem stateElem = (StatusElem) o;
 
         return uid.equals(stateElem.uid);
     }

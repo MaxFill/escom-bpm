@@ -24,7 +24,20 @@
     <ui:define name="page_body">        
         <p:tab title="#{bundle.Process}" > 
             <p:panelGrid columns="1" styleClass="ui-grid-col-12" columnClasses="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
+                <p:outputLabel value="#{bundle.Doc}:" indicateRequired="true" />
+                <ui:include src="/view/common/item-select-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.doc}"/>
+                    <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_itemPanel" value="mainDocPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Doc}"/>
+                    <ui:param name="_selectorBean" value="#{docsBean}"/>
+                    <ui:param name="_actionClear" value="setDoc"/>
+                    <ui:param name="_actionSelect" value="onDocSelected"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+                
+                <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                          styleClass="col-padding ui-grid-col-12" 
                          onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -124,7 +137,7 @@
                     </f:facet>
 
                     <f:facet name="right">
-                        <p:commandButton id="btnRun" title="#{bundle.Run}" icon="ui-icon-play"
+                        <p:commandButton id="btnRun" title="#{bundle.StartProcess}" icon="ui-icon-play"
                                         disabled="#{processCardBean.isReadOnly()}"
                                         update="#{_frm} westFRM"
                                         actionListener="#{processCardBean.onRun()}">
@@ -213,20 +226,27 @@
                 background-color: #000000;
             }
 
+            .ui-diagram-finish {
+                width:3em;
+                height:3em;
+                border-radius: 0em;
+                background-color: #000000;
+            }
+            
             .ui-diagram-success-state {
                 width:9em;
-                height:5em;
+                height:4em;
                 background-color: #02b044;
             }
 
             .ui-diagram-fail-state {
                 width:8em;
-                height:5em;
+                height:4em;
                 background-color: #C33730;
             }
 
             .ui-diagram-condition {
-                width:6em;
+                width:7em;
                 height:6em;
                 background-color: #c306ab;
             }

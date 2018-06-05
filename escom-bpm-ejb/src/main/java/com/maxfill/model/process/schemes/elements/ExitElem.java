@@ -5,6 +5,7 @@ import com.maxfill.utils.EscomUtils;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,20 +16,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExitElem extends WFConnectedElem{
     private static final long serialVersionUID = 8512962777531919513L;
-
+    
+    @XmlElement(name = "finalize")
+    private Boolean finalize = true;
+    
     public ExitElem() {
     }
 
-    public ExitElem(String caption, int x, int y) {
+    public ExitElem(String caption, Boolean finalize, int x, int y) {
         this.caption = caption;
+        this.finalize = finalize;
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
     }
 
+    public Boolean getFinalize() {
+        return finalize;
+    }
+    public void setFinalize(Boolean finalize) {
+        this.finalize = finalize;
+    }
+    
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_EXIT;
+        return finalize ? DictWorkflowElem.STYLE_FINISH : DictWorkflowElem.STYLE_EXIT;        
     }
 
     @Override

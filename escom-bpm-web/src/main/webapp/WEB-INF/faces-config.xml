@@ -96,6 +96,10 @@
             <to-view-id>/view/processes/elements/logic-card.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>doc-status-card</from-outcome>
+            <to-view-id>/view/processes/elements/doc-status-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>state-card</from-outcome>
             <to-view-id>/view/processes/elements/state-card.xhtml</to-view-id>
         </navigation-case>

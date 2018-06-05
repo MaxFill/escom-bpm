@@ -5,13 +5,16 @@ import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StateFacade;
+import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.states.State;
+import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.utils.EscomUtils;
@@ -22,8 +25,6 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -52,6 +53,8 @@ public class WorkflowImpl implements Workflow {
     private StateFacade stateFacade;
     @EJB
     private ConditionFacade conditionFacade;
+    @EJB
+    private StatusesDocFacade statusesFacade;
     
     /**
      * Добавление поручения в схему процесса
@@ -123,7 +126,7 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void addState(StateElem state, Scheme scheme, Set<String> errors) {
+    public void addState(StatusElem state, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
         if (state == null){
             errors.add("WorkflowIncorrectData");
@@ -175,7 +178,7 @@ public class WorkflowImpl implements Workflow {
             scheme.getElements().getEnters().remove(element.getUid());
         } else if (element instanceof ExitElem){
             scheme.getElements().getExits().remove(element.getUid());
-        } else if (element instanceof StateElem){
+        } else if (element instanceof StatusElem){
             scheme.getElements().getStates().remove(element.getUid());
         } else if (element instanceof ConditionElem){
             scheme.getElements().getConditions().remove(element.getUid());
@@ -259,7 +262,7 @@ public class WorkflowImpl implements Workflow {
                 .findFirst()
                 .map(rec->errors.add("IncorrectConditionRouteProcess"));
         scheme.getElements().getStates().entrySet().stream()
-                .filter(rec->rec.getValue().getStateId() == null)
+                .filter(rec->rec.getValue().getDocStatusId() == null)
                 .findFirst()
                 .map(rec->errors.add("ProcedureSettingStateContainsIncorrectValue"));
         //ToDo! другие проверки!
@@ -360,10 +363,22 @@ public class WorkflowImpl implements Workflow {
         processFacade.edit(process);
     }
     
-    private void finish(Process process) {
-        State state = stateFacade.getCompletedState();
-        process.getState().setCurrentState(state);
-        processFacade.edit(process);
+    /**
+     * Обработка выхода из процесса
+     * @param scheme
+     * @param exitElem 
+     */
+    private void finish(Scheme scheme, ExitElem exitElem, Set<String> errors) {
+        if (exitElem.getFinalize()){
+            State state = stateFacade.getCompletedState();
+            Process process = processFacade.find(scheme.getProcess().getId());
+            if (process != null){
+                process.getState().setCurrentState(state);
+                processFacade.edit(process);
+            } else {
+                errors.add("IncorrectLinkProcess");
+            }
+        }
     }
 
     /**
@@ -416,12 +431,20 @@ public class WorkflowImpl implements Workflow {
                     //обрабатываем условия
                     Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
                     targetConditions.stream()
-                            .filter(condition->checkCondition(condition, scheme, errors))
-                            .forEach(condition->doRun(condition.getAnchors(), scheme, exeTasks, errors));
+                            .forEach(condition->{
+                                if (checkCondition(condition, scheme, errors)){
+                                    doRun(condition.getSecussAnchors(), scheme, exeTasks, errors);
+                                } else {
+                                    doRun(condition.getFailAnchors(), scheme, exeTasks, errors);
+                                }
+                            });
                     
-                    //изменяем изменения состояния документа
-                    Set<StateElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
-                    targetStates.forEach(stateElem->updateDocState(stateElem, scheme, errors));
+                    //изменяем изменения статусы документа
+                    Set<StatusElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
+                    targetStates.forEach(stateElem->{
+                                updateDocState(stateElem, scheme, errors);
+                                doRun(stateElem.getAnchors(), scheme, exeTasks, errors);
+                            });
                     
                     //обрабатываем логические элементы
                     Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
@@ -429,7 +452,7 @@ public class WorkflowImpl implements Workflow {
                     
                     //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
                     Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
-                    //Todo!
+                    targetExits.forEach(exitElem->finish(scheme, exitElem, errors));
                 });
     }    
     
@@ -481,7 +504,7 @@ public class WorkflowImpl implements Workflow {
      * Находит состояния процесса к которым идут коннекторы
      * @return 
      */    
-    private Set<StateElem> findTargetStates(List<ConnectorElem> connectors, Map<String, StateElem> elements){
+    private Set<StatusElem> findTargetStates(List<ConnectorElem> connectors, Map<String, StatusElem> elements){
         return connectors.stream()
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .filter(element->Objects.nonNull(element))
@@ -494,16 +517,20 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @param errors 
      */
-    private void updateDocState(StateElem stateElem, Scheme scheme, Set<String> errors){
-        State state = stateFacade.find(stateElem.getStateId());
-        if (state == null){
+    private void updateDocState(StatusElem stateElem, Scheme scheme, Set<String> errors){
+        StatusesDoc status = statusesFacade.find(stateElem.getDocStatusId());
+        if (status == null){
             errors.add("StateProcessRouteNotFound");
             return;
         }
         if (scheme.getProcess().getDoc() != null){
             Doc doc = docFacade.find(scheme.getProcess().getDoc().getId());
             if (doc != null){
-                doc.getState().setCurrentState(state);
+                DocStatuses docStatus = new DocStatuses(doc, status);
+                docStatus.setValue(Boolean.TRUE);
+                docStatus.setDateStatus(new Date());
+                //doc.getDocsStatusList().remove(docStatus);
+                doc.getDocsStatusList().add(docStatus);
                 docFacade.edit(doc);
             }
         }
@@ -523,13 +550,16 @@ public class WorkflowImpl implements Workflow {
             errors.add("IncorrectConditionRouteProcess");
             return result;
         }
-        String methodName = condition.getMethod();        
-        try {
-            Method method = this.getClass().getMethod(methodName);
-            result = (Boolean)method.invoke(this, scheme);      
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-            Logger.getLogger(WorkflowImpl.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        switch (condition.getMethod()){
+            case "everyoneApproved":{
+                result = everyoneApproved(scheme);
+                break;
+            }
+            case "allFinished":{
+                result = allFinished(scheme);
+                break;
+            }
+        }
         return result;
     }
     
@@ -538,11 +568,22 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    protected boolean everyoneApproved(Scheme scheme){
+    public boolean everyoneApproved(Scheme scheme){
+        Boolean result = true;
+        for (Task task : scheme.getTasks()){
+            String taskResult = task.getResult();
+            if (DictResults.RESULT_REFUSED.equals(taskResult)){
+                result = false;
+                break;
+            }
+        }
+        return result;
+        /*
         return scheme.getTasks().stream()
                 .filter(task -> DictResults.RESULT_REFUSED.equals(task.getResult()))
                 .findFirst()
                 .isPresent();
+        */
     }
     
     /**
@@ -550,7 +591,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    protected boolean allFinished(Scheme scheme){
+    public boolean allFinished(Scheme scheme){
         return scheme.getTasks().stream()
                 .filter(task -> task.getFactExecDate() == null)
                 .findFirst()

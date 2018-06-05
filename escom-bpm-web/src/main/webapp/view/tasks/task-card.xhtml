@@ -15,14 +15,22 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="centerFRM"
+                        action="#{taskCardBean.onCloseCard('save')}">
+           <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
         <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
             <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                              icon="#{result.getIconName()}"
                              update="centerFRM"
-                             action="#{taskCardBean.onExecute(result)}" style="float: right;">
+                             action="#{taskCardBean.onExecute(result)}">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
-        </ui:repeat> 
+        </ui:repeat>        
+
     </ui:define>    
     
     <ui:define name="centerFormContent">       
@@ -88,9 +96,9 @@
                                 requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
                     </p:calendar>
 
-                    <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}"/>
+                    <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"/>
                     <p:calendar value="#{taskCardBean.editedItem.factExecDate}" disabledWeekends="true" 
-                                rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}"
+                                rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"
                                 styleClass="without-spaces" 
                                 timeZone="#{TimeZone.getDefault()}"
                                 showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
@@ -117,18 +125,13 @@
                                     rendered="#{taskCardBean.editedItem.scheme != null}"
                                     actionListener="#{taskCardBean.onViewDocument()}"/>
                         
-                    <p:separator/>
-                    <h:panelGroup>
-                        <p:commandButton value="#{bundle.Delete}" 
-                                         rendered="#{taskCardBean.isShowExtTaskAtr()}"
-                                         disabled="#{taskCardBean.readOnly}"
-                                         action="#{taskCardBean.onCloseCard('delete')}">                    
-                        </p:commandButton>
-                        <p:commandButton value="#{bundle.Save}" update="centerFRM"
-                                         action="#{taskCardBean.onCloseCard('save')}" style="float: right;">
-                            <f:param name="isRequired" value="true"/>
-                        </p:commandButton>
-                    </h:panelGroup>
+                    <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
+                    <p:commandButton value="#{bundle.Delete}" 
+                                     rendered="#{taskCardBean.isShowExtTaskAtr()}"
+                                     disabled="#{taskCardBean.readOnly}"
+                                     action="#{taskCardBean.onCloseCard('delete')}">                    
+                    </p:commandButton>
+
                 </p:panelGrid>
             </p:tab>
             

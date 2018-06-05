@@ -4,13 +4,10 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.facade.ConditionFacade;
-import com.maxfill.model.process.conditions.Condition;
-import com.maxfill.model.process.schemes.elements.ConditionElem;
+import com.maxfill.model.process.schemes.elements.ExitElem;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
-import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -18,19 +15,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * Контролер формы "Свойства условия процесса"
+ * Контролер формы "Свойства элемента процесса "Выход"
  */
 @Named
 @ViewScoped
-public class ConditionCardBean extends BaseViewBean{    
-    private static final long serialVersionUID = -5186880746110498838L;
-    
-    @EJB
-    private ConditionFacade conditionFacade;
-    
-    private Condition selected = null;
-    private ConditionElem sourceItem = null;
-    private ConditionElem editedItem = new ConditionElem();
+public class ExitCardBean extends BaseViewBean{
+    private static final long serialVersionUID = 5642232515643258977L;
+        
+    private ExitElem editedItem = new ExitElem();
+    private ExitElem sourceItem;
     private ProcessCardBean sourceBean;
     
     @Override
@@ -53,10 +46,7 @@ public class ConditionCardBean extends BaseViewBean{
               }
             }
             if (sourceBean != null){
-                sourceItem = (ConditionElem)sourceBean.getBaseElement(); 
-                if (sourceItem.getConditonId() != null){
-                    selected = conditionFacade.find(sourceItem.getConditonId());
-                }
+                sourceItem = (ExitElem)sourceBean.getBaseElement();                 
             }
             if (sourceItem != null){
                 try {
@@ -71,8 +61,6 @@ public class ConditionCardBean extends BaseViewBean{
     @Override
     public String onCloseCard(String param){
         try {
-            editedItem.setConditonId(selected.getId());
-            editedItem.setCaption(selected.getName());
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -82,24 +70,14 @@ public class ConditionCardBean extends BaseViewBean{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_CONDITION;
-    }     
+        return DictDlgFrmName.FRM_EXIT;
+    } 
 
-    /* GETS & SETS */
-    
-    public Condition getSelected() {
-        return selected;
-    }
-    public void setSelected(Condition selected) {
-        this.selected = selected;
-    }
-
-    public ConditionElem getEditedItem() {
+    public ExitElem getEditedItem() {
         return editedItem;
     }
-    public void setEditedItem(ConditionElem editedItem) {
+    public void setEditedItem(ExitElem editedItem) {
         this.editedItem = editedItem;
     }
-
-    
+        
 }

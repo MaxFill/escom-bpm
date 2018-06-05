@@ -2,6 +2,8 @@ package com.maxfill.model.process.schemes.elements;
 
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -47,6 +49,18 @@ public class ConditionElem extends WFConnectedElem{
         this.conditonId = conditonId;
     }  
     
+    public Set<AnchorElem> getSecussAnchors(){
+        return getAnchors().stream()
+                .filter(a->DictWorkflowElem.STYLE_YES.equals(a.getStyle()))
+                .collect(Collectors.toSet());
+    }
+    
+    public Set<AnchorElem> getFailAnchors(){
+        return getAnchors().stream()
+                .filter(a->DictWorkflowElem.STYLE_NO.equals(a.getStyle()))
+                .collect(Collectors.toSet());
+    }
+        
     /* *** *** */
 
     @Override

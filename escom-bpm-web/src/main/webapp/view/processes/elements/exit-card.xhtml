@@ -1,7 +1,40 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
-                 template="/view/processes/elements/element.xhtml">
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+     <ui:param name="_bean" value="#{exitCardBean}"/>
+
+    <ui:define name="title">
+        #{bundle.ElementExit}
+    </ui:define>
+    
+    <ui:define name="menuActions" >
+    </ui:define>
+
+    <ui:define name="toolbarComponents" >
+    </ui:define>    
+    
+    <ui:define name="centerFormContent">       
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
+            <p:tab title="#{bundle.Properties}"  >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:outputLabel value="#{bundle.CompletePprocess}" />
+                    <p:selectBooleanCheckbox value="#{_bean.editedItem.finalize}" title="#{bundle.CompletePprocess}">                
+                    </p:selectBooleanCheckbox>
+                    
+                    <p:separator/>
+                    <p:commandButton value="#{bundle.Save}" update="centerFRM"
+                                     action="#{_bean.onCloseCard('save')}" style="float: right;">
+                        <f:param name="isRequired" value="true"/>
+                    </p:commandButton>
+                </p:panelGrid>
+            </p:tab>
+            
+            <p:tab title="#{bundle.Settings}" >            
+            </p:tab>
+        </p:tabView>
+    </ui:define>
 
 </ui:composition>

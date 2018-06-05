@@ -8,7 +8,6 @@ import com.maxfill.model.statuses.StatusesDoc;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import java.util.List;
 
 /* Сервисный бин "Статусы документов" */
 @SessionScoped

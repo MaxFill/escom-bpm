@@ -4,9 +4,9 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.facade.ConditionFacade;
-import com.maxfill.model.process.conditions.Condition;
-import com.maxfill.model.process.schemes.elements.ConditionElem;
+import com.maxfill.facade.StatusesDocFacade;
+import com.maxfill.model.process.schemes.elements.StatusElem;
+import com.maxfill.model.statuses.StatusesDoc;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -18,19 +18,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
- * Контролер формы "Свойства условия процесса"
+ * Контролер формы "Карточка элемента процесса "Статус документа""
  */
 @Named
 @ViewScoped
-public class ConditionCardBean extends BaseViewBean{    
-    private static final long serialVersionUID = -5186880746110498838L;
-    
+public class DocStatusCardBean extends BaseViewBean{    
+    private static final long serialVersionUID = -5286296381383874923L;
+
     @EJB
-    private ConditionFacade conditionFacade;
+    private StatusesDocFacade statuseFacade;
     
-    private Condition selected = null;
-    private ConditionElem sourceItem = null;
-    private ConditionElem editedItem = new ConditionElem();
+    private StatusesDoc selected = null;
+    private final StatusElem editedItem = new StatusElem();
+    private StatusElem sourceItem;
     private ProcessCardBean sourceBean;
     
     @Override
@@ -53,9 +53,10 @@ public class ConditionCardBean extends BaseViewBean{
               }
             }
             if (sourceBean != null){
-                sourceItem = (ConditionElem)sourceBean.getBaseElement(); 
-                if (sourceItem.getConditonId() != null){
-                    selected = conditionFacade.find(sourceItem.getConditonId());
+                sourceItem = (StatusElem)sourceBean.getBaseElement(); 
+                
+                if (sourceItem.getDocStatusId() != null){
+                    selected = statuseFacade.find(sourceItem.getDocStatusId());
                 }
             }
             if (sourceItem != null){
@@ -71,8 +72,8 @@ public class ConditionCardBean extends BaseViewBean{
     @Override
     public String onCloseCard(String param){
         try {
-            editedItem.setConditonId(selected.getId());
-            editedItem.setCaption(selected.getName());
+            editedItem.setDocStatusId(selected.getId());
+            editedItem.setCaption(selected.getBundleName());
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -82,24 +83,16 @@ public class ConditionCardBean extends BaseViewBean{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_CONDITION;
-    }     
+        return DictDlgFrmName.FRM_STATE;
+    }
 
-    /* GETS & SETS */
-    
-    public Condition getSelected() {
+    public StatusesDoc getSelected() {
         return selected;
     }
-    public void setSelected(Condition selected) {
+    public void setSelected(StatusesDoc selected) {
         this.selected = selected;
     }
 
-    public ConditionElem getEditedItem() {
-        return editedItem;
-    }
-    public void setEditedItem(ConditionElem editedItem) {
-        this.editedItem = editedItem;
-    }
 
-    
+        
 }

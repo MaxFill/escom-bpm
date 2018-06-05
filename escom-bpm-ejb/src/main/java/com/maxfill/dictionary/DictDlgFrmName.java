@@ -16,7 +16,8 @@ public final class DictDlgFrmName {
     public static final String FRM_TASK = "task";
     public static final String FRM_CONDITION = "condition-card";
     public static final String FRM_STATE = "state-card";
-
+    public static final String FRM_DOC_STATUS = "doc-status-card";
+    public static final String FRM_EXIT = "exit-card";
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 
     public static final String FRM_OBJECT_ADMIN = "object-admin";
