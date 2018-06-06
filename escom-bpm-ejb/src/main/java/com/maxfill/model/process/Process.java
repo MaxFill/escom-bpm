@@ -81,7 +81,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     }
 
     public boolean isRunning(){
-        return state.getCurrentState().getId().equals(DictStates.STATE_RUNNING);
+        return DictStates.STATE_RUNNING == state.getCurrentState().getId();
+    }
+    
+    public boolean isCompleted(){
+        return DictStates.STATE_COMPLETED == state.getCurrentState().getId();
     }
     
     /* GETS & SETS */

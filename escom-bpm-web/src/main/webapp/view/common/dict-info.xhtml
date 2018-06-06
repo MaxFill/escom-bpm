@@ -2,28 +2,29 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"      >
-      
-    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12" >        
+     
+    <p:tab title="#{bundle.Info}">
+    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >        
         <p:outputLabel value="#{bundle.State}:"/>
         <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
                        disabled="#{_bean.isReadOnly()}"
-                       styleClass="ui-grid-col-6"
+                       styleClass="ui-grid-col-2"
                        required="#{param['isRequired'] == 'true'}" 
                        requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
             <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
-            <p:ajax event="change" listener="#{_bean.onStateChange()}" update="#{_frm} westFRM" oncomplete="return itemChange = 1;"/>
+            <p:ajax event="change" listener="#{_bean.onStateChange()}" update="#{_frm}" oncomplete="return itemChange = 1;"/>
         </p:selectOneMenu>
 
         <p:outputLabel value="#{bundle.DateCreate}:" />                            
         <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
-                     styleClass="ui-grid-col-6"
+                     styleClass="ui-grid-col-2"
                      onkeypress="checkEsc(#{_bean.cancelBtnName});">
             <f:convertDateTime parent="dd.mm.yy"/>
         </p:inputText>
 
         <p:outputLabel value="#{bundle.DateChange}:" />
         <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
-                     styleClass="ui-grid-col-6"
+                     styleClass="ui-grid-col-2"
                      onkeypress="checkEsc(#{_bean.cancelBtnName});">
             <f:convertDateTime parent="dd.mm.yy"/>
         </p:inputText>
@@ -45,7 +46,7 @@
 
         <p:outputLabel value="Id:" />
         <p:inputText value="#{_bean.editedItem.id}" readonly="true"
-                     styleClass="ui-grid-col-6"
+                     styleClass="ui-grid-col-2"
                      onkeypress="checkEsc(#{_bean.cancelBtnName});">
         </p:inputText>
         
@@ -59,4 +60,5 @@
         </p:selectBooleanCheckbox>
 
     </p:panelGrid>
+    </p:tab>
 </ui:composition>

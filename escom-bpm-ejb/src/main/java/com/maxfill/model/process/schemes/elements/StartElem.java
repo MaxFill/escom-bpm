@@ -27,7 +27,11 @@ public class StartElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_START;
+        StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_START);
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.TaskFacade;
@@ -94,7 +95,7 @@ public class TaskCardBean extends BaseViewBean{
                 TaskStates taskStates = sourceTask.getState();
                 State state = taskStates.getCurrentState();
                 int id = state.getId();
-                if (sourceTask.getScheme() != null && DictStates.STATE_RUNNING == id){
+                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != id){
                     readOnly = true;
                 }
             }
@@ -153,12 +154,13 @@ public class TaskCardBean extends BaseViewBean{
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
         } 
-        workflow.executeTask(sourceTask, result, errors);
+        ProcessCardBean bean = (ProcessCardBean)sourceBean;
+        workflow.executeTask(bean.getEditedItem(), sourceTask, result, errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
         }
-        return super.onCloseCard("ok");
+        return super.onCloseCard("run");
     }
     
     /**

@@ -24,8 +24,8 @@ public interface Workflow {
     void packScheme(Scheme scheme, Set <String> errors);
     void unpackScheme(Scheme scheme, Set <String> errors);
     void validateScheme(Scheme scheme, Set<String> errors);
-    void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors);
+    void run(Process process, WFConnectedElem startElement, Set<String> errors);
     void stop(Process process, Set<String> errors);
     void start(Process process, Set<String> errors);
-    void executeTask(Task task, Result result, Set<String> errors);
+    void executeTask(Process process, Task task, Result result, Set<String> errors);
 }

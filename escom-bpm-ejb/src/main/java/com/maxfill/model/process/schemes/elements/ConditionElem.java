@@ -34,7 +34,11 @@ public class ConditionElem extends WFConnectedElem{
     
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_CONDITION;
+        StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_CONDITION);
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
     }
 
     @Override

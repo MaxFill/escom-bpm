@@ -29,7 +29,11 @@ public class EnterElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_ENTER;
+        StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_ENTER);
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
     }
 
     @Override

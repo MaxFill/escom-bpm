@@ -21,7 +21,11 @@ public class LogicElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {
-        return DictWorkflowElem.STYLE_LOGIC;
+        StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_LOGIC);
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
     }
 
     @Override

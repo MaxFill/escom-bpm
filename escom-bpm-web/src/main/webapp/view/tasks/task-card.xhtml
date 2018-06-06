@@ -12,17 +12,23 @@
     </ui:define>
     
     <ui:define name="menuActions" >
+        <p:menuitem icon="ui-icon-disk" value="#{bundle.SaveAndClose}"
+                disabled="#{_bean.isReadOnly()}"
+                onclick="document.getElementById('centerFRM:btnSaveOnly').click();">
+        </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="centerFRM"
-                        action="#{taskCardBean.onCloseCard('save')}">
+        <p:commandButton id="btnSaveOnly" value="#{bundle.Save}" icon="ui-icon-disk" title="#{bundle.SaveAndClose}" 
+                         update="centerFRM"
+                         disabled="#{_bean.isReadOnly()}"
+                         action="#{taskCardBean.onCloseCard('save')}">
            <f:param name="isRequired" value="true"/>
        </p:commandButton>
-        <span class="ui-separator">
-            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-        </span>
         <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
+            <span class="ui-separator" >
+                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+            </span>
             <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                              icon="#{result.getIconName()}"
                              update="centerFRM"
@@ -36,7 +42,7 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{taskCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Task}"  >
-                <p:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" />
                     <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" >
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -157,7 +163,9 @@
             <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
                 <p:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12" >                   
                     <p:outputLabel value="#{bundle.Comment}"/>
-                    <p:textEditor value="#{taskCardBean.editedItem.comment}" height="300" styleClass="ui-grid-col-12"/>                                                           
+                    <p:textEditor value="#{taskCardBean.editedItem.comment}" 
+                                  readonly="#{taskCardBean.readOnly}"
+                                  height="300" styleClass="ui-grid-col-12"/>                                                           
                 </p:panelGrid>
             </p:tab>
             

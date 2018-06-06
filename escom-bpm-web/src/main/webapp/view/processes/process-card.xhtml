@@ -14,16 +14,38 @@
         
     <ui:define name="specActionMenu" >
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
-                    disabled="#{processCardBean.isReadOnly()}"
+                    disabled="#{processCardBean.isReadOnly()}"                    
                     onclick="document.getElementById('#{_frm}:btnRun').click();"/>
         <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
                     disabled="#{processCardBean.isDisableBtnStop()}"
                     onclick="document.getElementById('#{_frm}:btnStop').click();"/>
     </ui:define>        
     
+    <ui:define name="specSubMenu" >
+    </ui:define>
+    
+    <ui:define name="specToolButtons">
+        <h:outputLabel value="#{bundle.State}: "/>
+        <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
+        <p:spacer width="15"/>
+        <p:commandButton id="btnRun" value="#{bundle.Run}" title="#{bundle.StartProcess}" icon="ui-icon-play"
+                        disabled="#{processCardBean.isReadOnly()}"
+                        update="#{_frm}"
+                        actionListener="#{processCardBean.onRun()}">
+        </p:commandButton>
+        <p:spacer width="2"/>
+        <p:commandButton id="btnStop" value="#{bundle.Stop}" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
+                        disabled="#{processCardBean.isDisableBtnStop()}"
+                        update="#{_frm}" 
+                        actionListener="#{processCardBean.onStop()}">
+            <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
+        </p:commandButton>
+        <p:spacer width="10"/>
+    </ui:define>
+    
     <ui:define name="page_body">        
         <p:tab title="#{bundle.Process}" > 
-            <p:panelGrid columns="1" styleClass="ui-grid-col-12" columnClasses="ui-grid-col-12">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                 <p:outputLabel value="#{bundle.Doc}:" indicateRequired="true" />
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.doc}"/>
@@ -44,9 +66,9 @@
                          onchange="return itemChange = 1;"
                          disabled="#{processCardBean.isReadOnly()}"
                          required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
-                <p:outputLabel value="#{bundle.ApprovalSheet}" />
+                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                
                 
+                <p:outputLabel value="#{bundle.ApprovalSheet}" />                
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                              rowKey="#{task.tempId}" selectionMode="single"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
@@ -76,15 +98,15 @@
                     </p:column>
                     
                     <p:column headerText="#{bundle.Result}" >
-                        <h:outputLabel value="#{task.result}"/>
-                    </p:column>                    
+                        <h:outputLabel value="#{processCardBean.getLabelFromBundle(task.result)}"/>
+                    </p:column>
                     
                 </p:dataTable>
             </p:panelGrid>
         </p:tab>
         
         <p:tab title="#{bundle.Scheme}" >            
-            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces" >
                 <p:toolbar styleClass="ui-grid-col-12" >
                     <f:facet name="left">
                         <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
@@ -137,20 +159,7 @@
                     </f:facet>
 
                     <f:facet name="right">
-                        <p:commandButton id="btnRun" title="#{bundle.StartProcess}" icon="ui-icon-play"
-                                        disabled="#{processCardBean.isReadOnly()}"
-                                        update="#{_frm} westFRM"
-                                        actionListener="#{processCardBean.onRun()}">
-                        </p:commandButton>
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-                        <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
-                                        disabled="#{processCardBean.isDisableBtnStop()}"
-                                        update="#{_frm} westFRM" 
-                                        actionListener="#{processCardBean.onStop()}">
-                            <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
-                        </p:commandButton>
+                        
                     </f:facet>
                 </p:toolbar>  
             
@@ -166,7 +175,7 @@
         </p:tab>
     </ui:define>
    
-        <ui:define name="customStyleCSS">
+    <ui:define name="customStyleCSS">
         <style type="text/css">         
             .ui-diagram-task {
                 background-color: #9ed4ef;

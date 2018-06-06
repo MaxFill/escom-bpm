@@ -20,6 +20,9 @@ public abstract class WFElement implements Serializable{
     @XmlElement(name = "caption")
     protected String caption;
 
+    @XmlElement
+    private boolean done;
+        
     public String getCaption() {
         return caption;
     }
@@ -34,6 +37,17 @@ public abstract class WFElement implements Serializable{
         this.uid = uid;
     }
 
+    /**
+     * Признак того, что маршрут прошёл через элемент
+     * @return 
+     */
+    public boolean isDone() {
+        return done;
+    }
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+    
     public abstract String getStyle();
     public abstract String getBundleKey();
 }

@@ -57,13 +57,7 @@
         </style>
 
         <pe:layout fullPage="true" options="#{_bean.layoutOptions}" stateCookie="true">
-            <p:ajax event="resize" listener="#{_bean.handleResize}"/> 
-
-            <pe:layoutPane id="west" position="west" >
-                <h:form id="westFRM" style="font-size: 90%; height: 100%;"> 
-                    <ui:include src="/view/common/dict-info.xhtml"/>
-                </h:form>
-            </pe:layoutPane>
+            <p:ajax event="resize" listener="#{_bean.handleResize}"/>            
             
             <pe:layoutPane id="center" position="center" resizable="true">
                 <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                   
@@ -130,6 +124,7 @@
                                 <f:param name="isRequired" value="true"/>
                             </p:menuitem>
                             <f:facet name="options">
+                                <ui:insert name="specToolButtons"/>
                                 <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
                                                      action="#{_bean.onCancelItemSave()}"
                                                      icon="ui-icon-circle-close"
@@ -147,7 +142,8 @@
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding"  >
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
-                            <ui:insert name="childs_rights"/>                            
+                            <ui:insert name="childs_rights"/> 
+                            <ui:include src="/view/common/dict-info.xhtml"/>
                             <ui:include src="/view/common/dict-log.xhtml"/> 
                         </p:tabView>                         
                     </p:panelGrid>

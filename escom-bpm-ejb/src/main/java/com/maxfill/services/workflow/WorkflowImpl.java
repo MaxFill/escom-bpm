@@ -284,28 +284,27 @@ public class WorkflowImpl implements Workflow {
 
     /**
      * Выполнение задачи
+     * @param process
      * @param task
      * @param result 
      * @param errors 
      */
     @Override
-    public void executeTask(Task task, Result result, Set<String> errors){
-        Scheme scheme = task.getScheme();
+    public void executeTask(Process process, Task task, Result result, Set<String> errors){
+        Scheme scheme = process.getScheme();
         unpackScheme(scheme, errors);
         if (errors.isEmpty()){
-            //Task task = taskFacade.find(sourceTask.getId());
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
             task.setResult(result.getName());
-            task.setIconName(result.getIconName());
+            task.setIconName(result.getIcon());
             task.setFactExecDate(new Date());
-            run(scheme, startElement, errors);
-            if (errors.isEmpty()){
-                task.getState().setCurrentState(stateFacade.getCompletedState());
-                taskFacade.edit(task);
-            }
+            task.getState().setCurrentState(stateFacade.getCompletedState());
+            scheme.getTasks().remove(task);
+            scheme.getTasks().add(task);
+            run(process, startElement, errors);            
         }
-    }
+    }    
     
     /**
      * Запуск задач на выполнение
@@ -330,6 +329,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void start(Process process, Set<String> errors) {        
         Scheme scheme = process.getScheme();
+        unpackScheme(scheme, errors);
         validateScheme(scheme, errors);
         if (!errors.isEmpty()) return;
         
@@ -338,13 +338,10 @@ public class WorkflowImpl implements Workflow {
                 task.setFactExecDate(null); //сброс даты выполнения
                 task.setResult(null);       //сброс предудущего результата                
             });        
-        
-        run(scheme, scheme.getElements().getStartElem(), errors);
-        if (errors.isEmpty()){                        
-            State state = stateFacade.getRunningState();
-            process.getState().setCurrentState(state);
-            processFacade.edit(process);
-        }
+        process.getState().setCurrentState(stateFacade.getRunningState());
+        WFConnectedElem startElement = scheme.getElements().getStartElem();
+        startElement.setDone(true);
+        run(process, startElement, errors);                
     }
 
     /**
@@ -354,11 +351,9 @@ public class WorkflowImpl implements Workflow {
      */
     @Override
     public void stop(Process process, Set<String> errors) {
-        State stateRun = stateFacade.getRunningState();
         State stateCancel = stateFacade.getCanceledState();
         //отмена всех запущенных задач
-        process.getScheme().getTasks().stream()
-                .filter(task->task.getState().getCurrentState().equals(stateRun))
+        process.getScheme().getTasks().stream()                
                 .forEach(task->task.getState().setCurrentState(stateCancel));        
         process.getState().setCurrentState(stateCancel);
         processFacade.edit(process);
@@ -369,16 +364,9 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @param exitElem 
      */
-    private void finish(Scheme scheme, ExitElem exitElem, Set<String> errors) {
+    private void finish(Process process, ExitElem exitElem, Set<String> errors) {
         if (exitElem.getFinalize()){
-            State state = stateFacade.getCompletedState();
-            Process process = processFacade.find(scheme.getProcess().getId());
-            if (process != null){
-                process.getState().setCurrentState(state);
-                processFacade.edit(process);
-            } else {
-                errors.add("IncorrectLinkProcess");
-            }
+            process.getState().setCurrentState(stateFacade.getCompletedState());          
         }
     }
 
@@ -386,17 +374,18 @@ public class WorkflowImpl implements Workflow {
      * Выполняет движение процесса по маршруту от указанного начального элемента
      * по всем исходящим из него переходам (connectors)
      * и останавливается после запуска всех актуальных задач и/или достижения конца процесса
-     * @param scheme
+     * @param process
      * @param startElement
      * @param errors 
      */
     @Override
-    public void run(Scheme scheme, WFConnectedElem startElement, Set<String> errors) {   
+    public void run(Process process, WFConnectedElem startElement, Set<String> errors) {   
         Set<Task> exeTasks = new HashSet<>();
-        doRun(startElement.getAnchors(), scheme, exeTasks, errors);
+        doRun(startElement.getAnchors(), process, exeTasks, errors);
         if (errors.isEmpty()){
-            startTasks(exeTasks, scheme);            
-            packScheme(scheme, errors);
+            startTasks(exeTasks, process.getScheme());            
+            packScheme(process.getScheme(), errors);
+            processFacade.edit(process);   
         }
     }
     
@@ -409,7 +398,8 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param errors 
      */
-    private void doRun(Set<AnchorElem> anchors, Scheme scheme, Set<Task> exeTasks, Set<String> errors){
+    private void doRun(Set<AnchorElem> anchors, Process process, Set<Task> exeTasks, Set<String> errors){
+        Scheme scheme = process.getScheme();
         anchors.stream()
                 .filter(anchor->anchor.isSource())
                 .forEach(anchor->{
@@ -423,37 +413,47 @@ public class WorkflowImpl implements Workflow {
                             })
                             .collect(Collectors.toList());
                     
-                    //запуск задач
-                    connectors.stream()
-                        .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
-                        .filter(element->Objects.nonNull(element))
-                        .forEach(taskElem-> exeTasks.add(taskElem.getTask()));
-                    
-                    //обрабатываем условия
-                    Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
-                    targetConditions.stream()
-                            .forEach(condition->{
-                                if (checkCondition(condition, scheme, errors)){
-                                    doRun(condition.getSecussAnchors(), scheme, exeTasks, errors);
-                                } else {
-                                    doRun(condition.getFailAnchors(), scheme, exeTasks, errors);
-                                }
+                    if (!connectors.isEmpty()){
+                        //запуск задач
+                        connectors.stream()
+                            .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
+                            .filter(element->Objects.nonNull(element))
+                            .forEach(taskElem-> exeTasks.add(taskElem.getTask()));
+
+                        //обрабатываем условия
+                        Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
+                        targetConditions.stream()
+                                .forEach(condition->{
+                                    condition.setDone(true);
+                                    if (checkCondition(condition, scheme, errors)){
+                                        doRun(condition.getSecussAnchors(), process, exeTasks, errors);
+                                    } else {
+                                        doRun(condition.getFailAnchors(), process, exeTasks, errors);
+                                    }
+                                });
+
+                        //изменяем изменения статусы документа
+                        Set<StatusElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
+                        targetStates.forEach(stateElem->{
+                                    stateElem.setDone(true);
+                                    updateDocState(stateElem, scheme, errors);
+                                    doRun(stateElem.getAnchors(), process, exeTasks, errors);
+                                });
+
+                        //обрабатываем логические элементы
+                        Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
+                        targetLogics.forEach(logic-> {
+                                    logic.setDone(true);
+                                    doRun(logic.getAnchors(), process, exeTasks, errors);
+                                });
+
+                        //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
+                        Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
+                        targetExits.forEach(exitElem->{
+                                exitElem.setDone(true);
+                                finish(process, exitElem, errors);
                             });
-                    
-                    //изменяем изменения статусы документа
-                    Set<StatusElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
-                    targetStates.forEach(stateElem->{
-                                updateDocState(stateElem, scheme, errors);
-                                doRun(stateElem.getAnchors(), scheme, exeTasks, errors);
-                            });
-                    
-                    //обрабатываем логические элементы
-                    Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
-                    targetLogics.forEach(logic-> doRun(logic.getAnchors(), scheme, exeTasks, errors));
-                    
-                    //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
-                    Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
-                    targetExits.forEach(exitElem->finish(scheme, exitElem, errors));
+                    }
                 });
     }    
     
@@ -579,12 +579,6 @@ public class WorkflowImpl implements Workflow {
             }
         }
         return result;
-        /*
-        return scheme.getTasks().stream()
-                .filter(task -> DictResults.RESULT_REFUSED.equals(task.getResult()))
-                .findFirst()
-                .isPresent();
-        */
     }
     
     /**
@@ -593,9 +587,13 @@ public class WorkflowImpl implements Workflow {
      * @return 
      */
     public boolean allFinished(Scheme scheme){
-        return scheme.getTasks().stream()
-                .filter(task -> task.getFactExecDate() == null)
-                .findFirst()
-                .isPresent();
+        boolean result = true;
+        for(Task task : scheme.getTasks()){
+            if (task.getFactExecDate() == null){
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
 }

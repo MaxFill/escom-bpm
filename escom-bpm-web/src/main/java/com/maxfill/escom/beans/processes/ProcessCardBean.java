@@ -164,6 +164,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             } else {                
                 EscomMsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
+            setItemCurrentState(getEditedItem().getState().getCurrentState());
             onReloadModel();
         }
     }
@@ -215,7 +216,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Перерисовка модели на странице формы
      */
     private void modelRefresh(){
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
+        PrimeFaces.current().ajax().update("process");
+        //PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
         if (!isReadOnly()){
             addElementContextMenu();
         }
@@ -309,7 +311,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onElementOpen(){
        if (baseElement instanceof TaskElem){
-           TaskElem taskElem = (TaskElem) baseElement;
+           TaskElem taskElem = (TaskElem) baseElement;           
            currentTask = (Task) taskElem.getTask();           
            onOpenTask();
            return;
@@ -385,11 +387,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onTaskClose(SelectEvent event){
         if (event.getObject() == null) return;
-        editedTasks.add(currentTask);
-        onItemChange();
-        String updateElement = getFormName()+":mainTabView:concorderList";
-        PrimeFaces.current().ajax().update(updateElement);
-        modelRefresh();        
+        String result = (String) event.getObject();
+        if ("run".equals(result)){
+            setItemCurrentState(getEditedItem().getState().getCurrentState());
+            onReloadModel();
+        } else {
+            editedTasks.add(currentTask);           
+            String updateElement = getFormName()+":mainTabView:concorderList";
+            PrimeFaces.current().ajax().update(updateElement);
+            modelRefresh();
+            onItemChange();
+        }
     }
     
     /**
@@ -933,23 +941,29 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         modelRefresh();
     }
 
+    /**
+     * Формирование статуса задачи в зависимости отеё выполнения
+     * @param task
+     * @return 
+     */
     public String getTaskStatus(Task task){
         if (task == null) return "";
         if (task.getBeginDate() == null) return EscomMsgUtils.getBandleLabel("NotStarted");
         StringBuilder sb = new StringBuilder();
-        Date dateStart;
-        if (task.getFactExecDate() == null){
-            dateStart = DateUtils.today();                  
-        } else {
-            dateStart = task.getFactExecDate();            
-        }
-        String delta = DateUtils.differenceDays(dateStart.toInstant(), task.getPlanExecDate().toInstant()); 
-        if (dateStart.before(task.getPlanExecDate())){
-            sb.append(EscomMsgUtils.getBandleLabel("Remained"));
-        } else {
-            sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On"));
-        }
-        sb.append(" ").append(delta);
+        
+        if (getEditedItem().isRunning()){
+            Date dateStart = DateUtils.today();            
+            if (dateStart.before(task.getPlanExecDate())){
+                sb.append(EscomMsgUtils.getBandleLabel("Remained"));    //осталось ...
+            } else {
+                sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On")); //просрочено на ...
+            }
+            String delta = DateUtils.differenceDays(dateStart.toInstant(), task.getPlanExecDate().toInstant()); 
+            sb.append(" ").append(delta);
+        } else 
+            if (getEditedItem().isCompleted()){
+                sb.append(EscomMsgUtils.getBandleLabel("Сompleted"));  
+            }
         return sb.toString();
     }
               
@@ -959,7 +973,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     
     @Override
     public boolean isReadOnly(){
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning();
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning() || getEditedItem().isCompleted() ;
     }
     
     /**

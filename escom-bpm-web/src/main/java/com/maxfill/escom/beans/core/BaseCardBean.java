@@ -564,16 +564,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
             result.add(itemCurrentState);
         }
         return result;
-    }
-    
-    @Override
-    public Boolean isWestShow(){
-        return true;
-    }
-    @Override
-    protected boolean isWestInitClosed(){
-        return false;
-    }
+    }    
     
     /* GETS & SETS */
 
@@ -658,6 +649,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
         this.editedItem = item;
     }
 
+    public State getItemCurrentState() {
+        return itemCurrentState;
+    }
+    public void setItemCurrentState(State itemCurrentState) {
+        this.itemCurrentState = itemCurrentState;
+    }
+
+    
     /* Получение ссылки на объект метаданных  */
     public Metadates getMetadatesObj() {
         if (metadatesObj == null) {

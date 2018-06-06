@@ -43,7 +43,11 @@ public class StatusElem extends WFConnectedElem{
         
     @Override
     public String getStyle() {
-        return "ui-diagram-" + styleType + "-state";
+        StringBuilder sb = new StringBuilder("ui-diagram-" + styleType + "-state");
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
     }
 
     public void setStyleType(String styleType) {

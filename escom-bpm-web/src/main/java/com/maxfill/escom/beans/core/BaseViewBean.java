@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import org.codehaus.plexus.util.StringUtils;
 
 import org.primefaces.extensions.component.layout.LayoutPane;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -229,7 +230,9 @@ public abstract class BaseViewBean implements Serializable{
     }
 
     public String getLabelFromBundle(String key){
-        return EscomMsgUtils.getBandleLabel(key);
+        if (StringUtils.isEmpty(key)) return "";
+        
+        return EscomMsgUtils.getBandleLabel(key);        
     }
 
 }
