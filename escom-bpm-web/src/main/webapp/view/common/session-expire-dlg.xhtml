@@ -7,7 +7,7 @@
     <p:dialog header="#{msg.SessionExpired}" widgetVar="updatePageDlg" closable="false" resizable="false" modal="true">
         <h:form>
             <p:outputPanel style="width: 350px;">
-                <p:panelGrid columns="1" layout="grid" columnClasses="colAuto">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                     <p:outputLabel value="#{msg.SessionTimeoutError}"/>
                     <p:outputLabel value="#{msg.NeedUpdatePage}"/>
                     <p:commandButton icon="ui-icon-refresh"

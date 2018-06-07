@@ -2,11 +2,15 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.task.Task;
+import java.util.Date;
 import org.primefaces.model.TreeNode;
 
 import javax.ejb.EJB;
@@ -53,5 +57,17 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     @Override
     public boolean canCreateItem(TreeNode treeSelectedNode){
         return treeSelectedNode == null || ((BaseDict)treeSelectedNode.getData()).getId() == 0;
+    }
+    
+    /**
+     * Формирование статуса задачи в зависимости от её выполнения
+     * @param task
+     * @return 
+     */
+    public String getTaskStatus(Task task){
+        if (task == null) return "";
+        if (task.getBeginDate() == null) return EscomMsgUtils.getBandleLabel("NotStarted");
+        if (task.isCompleted()) return EscomMsgUtils.getBandleLabel("Сompleted");        
+        return EscomBeanUtils.makeDateDiffStatus(new Date(), task.getPlanExecDate());
     }
 }

@@ -68,6 +68,7 @@
                     </f:facet>
 
                     <h:form id="#{_frmExpl}" style="font-size: 80%;">
+                        <ui:include src="/view/common/exeption-handler.xhtml"/>
                         <p:remoteCommand name="dropToTree"  actionListener="#{_explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
                         <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           

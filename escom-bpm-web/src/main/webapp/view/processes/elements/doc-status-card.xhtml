@@ -19,7 +19,7 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
             <p:tab title="#{bundle.Status}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.Status}" />
                     <p:selectOneMenu value="#{docStatusCardBean.selected}" converter="statusesDocConvertor"                           
                            styleClass="ui-grid-col-12"

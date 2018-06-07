@@ -31,22 +31,21 @@
                          style="float: right; display: none;"
                          actionListener="#{userSettingsBean.saveSettings()}"/>
 
-        <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding"
-                         styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{msg.PasswordSecurityInfo}:"/>
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{msg.PasswordSecurityInfo}"/>
             </p:panelGrid>
         </p:panelGrid>
 
-        <p:panelGrid columns="2" layout="grid" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
+        <p:panelGrid columns="2" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
                      columnClasses="col-padding"
                      styleClass="ui-grid-col-5 ui-panelgrid-blank col-padding">
-            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
                 <p:outputLabel value="#{bundle.CurrentPassword}:"/>
                 <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
                             required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
             </p:panelGrid>
-            <p:panelGrid columns="1" layout="grid" columnClasses="col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
                 <p:outputLabel value="#{bundle.NewPassword}:"/>
                 <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
                             feedback="true" promptLabel="#{bundle.InputNewPassword}"

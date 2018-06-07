@@ -3,11 +3,15 @@ package com.maxfill.escom.utils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +24,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
@@ -268,6 +273,29 @@ public final class EscomBeanUtils {
         StringBuilder sb = new StringBuilder();
         sb.append(itemKey).append("_").append(openMode).append("_").append(user.getId());
         return sb.toString();
-    }   
+    }  
     
+    /**
+     * Формирует информацию о том сколько осталось или на сколько просрочено
+     * @param dateStart
+     * @param datePlan
+     * @return 
+     */
+    public static String makeDateDiffStatus(Date dateStart, Date datePlan){        
+        StringBuilder sb = new StringBuilder();
+        if (dateStart.before(datePlan)){
+            sb.append(EscomMsgUtils.getBandleLabel("Remained"));    //осталось ...
+        } else {
+            sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On")); //просрочено на ...
+        }
+
+        Duration duration = Duration.between(dateStart.toInstant(), datePlan.toInstant());              
+
+        StringBuilder dr = new StringBuilder();
+        dr.append("d").append("дн.").append("H").append("ч.").append("mm").append("м.").append("ss").append("c.");
+
+        String delta = DurationFormatUtils.formatDuration(duration.toMillis(), dr.toString(), true);
+        sb.append(" ").append(delta);
+        return sb.toString();
+    }    
 }

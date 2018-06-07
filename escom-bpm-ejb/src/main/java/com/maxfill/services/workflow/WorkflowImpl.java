@@ -406,7 +406,7 @@ public class WorkflowImpl implements Workflow {
                     //получаем список коннекторов, исходящих из якоря
                     List<ConnectorElem> connectors = 
                             scheme.getElements().getConnectors().stream()
-                            .filter(connector->connector.getFrom().equals(anchor) && !connector.isDone())                            
+                            .filter(connector->connector.getFrom().equals(anchor))                            
                             .map(connector->{
                                 connector.setDone(true);
                                 return connector;
@@ -442,7 +442,9 @@ public class WorkflowImpl implements Workflow {
 
                         //обрабатываем логические элементы
                         Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
-                        targetLogics.forEach(logic-> {
+                        targetLogics.stream()
+                                .filter(logic-> canExeLogic(logic, scheme))
+                                .forEach(logic-> {
                                     logic.setDone(true);
                                     doRun(logic.getAnchors(), process, exeTasks, errors);
                                 });
@@ -536,7 +538,32 @@ public class WorkflowImpl implements Workflow {
             }
         }
     }            
+    
+    /* *** ВЕТВЛЕНИЯ *** */
+    
+    /**
+     * Проверяет возможность выполнения условного ветвления
+     * @param logic
+     * @return 
+     */
+    private boolean canExeLogic(LogicElem logic, Scheme scheme){
+        if ("OR".equals(logic.getCaption().toUpperCase())) return true;
         
+        List<AnchorElem> anchors = logic.getAnchors().stream()
+                .filter(anchor->anchor.isTarget())
+                .collect(Collectors.toList());
+        Boolean result = true;
+        for (AnchorElem anchorElem : anchors){            
+            for (ConnectorElem connector : scheme.getElements().getConnectors()){
+                if (connector.getTo().equals(anchorElem) && !connector.isDone()){
+                    result = false;
+                    break;
+                }
+            }            
+        }
+        return result;
+    }
+            
     /* *** УСЛОВИЯ *** */
     
     /**

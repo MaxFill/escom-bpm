@@ -16,11 +16,11 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.ProcessType}">
-            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-grid-col-12"
+            <p:panelGrid columns="1"  styleClass="ui-panelgrid-blank ui-grid-col-12"
                          columnClasses="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Name}"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
-                             styleClass="ui-grid-col-12 col-padding"
+                             styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              onchange="return itemChange = 1;"
                              disabled="#{_bean.isReadOnly()}"

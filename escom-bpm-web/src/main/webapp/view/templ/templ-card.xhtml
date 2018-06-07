@@ -60,7 +60,8 @@
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>            
             
             <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                   
+                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;"> 
+                    <ui:include src="/view/common/exeption-handler.xhtml"/>
                     <p:remoteCommand name="onChangeItem" immediate="true" 
                                      actionListener="#{_bean.onItemChange()}"
                                      oncomplete="return itemChange = 0;"/>                        

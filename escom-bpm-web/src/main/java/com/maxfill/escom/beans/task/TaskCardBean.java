@@ -288,5 +288,8 @@ public class TaskCardBean extends BaseViewBean{
         }
         return taskResults;
     }
-        
+    
+    public String getTaskStatus(){
+        return processBean.getTaskStatus(editedItem);
+    }
 }

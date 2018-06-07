@@ -21,10 +21,10 @@ public final class DateUtils {
     public final static Integer WEEKLY_REPEAT = 1;
     public final static Integer MONTHLY_REPEAT = 2;
     
-    static final int MINUTES_PER_HOUR = 60;
-    static final int HOURS_PER_DAY = 24;
-    static final int SECONDS_PER_MINUTE = 60;
-    static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+    public static final int MINUTES_PER_HOUR = 60;
+    public static final int HOURS_PER_DAY = 24;
+    public static final int SECONDS_PER_MINUTE = 60;
+    public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
     
     private DateUtils() { }
 
@@ -121,6 +121,10 @@ public final class DateUtils {
         return cal.getTime();
     }
     
+    /** 
+     * Формирует текущую дату с нулевым временем!
+     * @return 
+     */
     public static Date today() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
@@ -163,13 +167,13 @@ public final class DateUtils {
      * Возвращает разницу между двумя датами в днях
      * @param dateStart
      * @param dateEnd
-     * @return
+     * @return 
      */
     public static String differenceDays(Instant dateStart, Instant dateEnd) {
         Duration duration = Duration.between(dateStart, dateEnd);
         return String.valueOf(duration.toDays());
     }
-
+     
     /* Возвращает разницу между двумя датами в виде времени в часах:минутах:секундах */
     public static String differenceTime(Date dateStart, Date dateEnd) {        
         LocalDateTime ldStart = toLocalDateTime(dateStart);

@@ -18,7 +18,7 @@
 
     <ui:define name="page_body">
         <p:tab title="#{_bean.editedItem.case ? bundle.Case : bundle.Folder}">
-            <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
                 <p:outputLabel value="#{bundle.Header}"/>
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
@@ -50,7 +50,7 @@
         </p:tab>
 
         <p:tab title="#{bundle.AutoFillDocuments}">
-            <p:panelGrid id="gridAutoFill" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+            <p:panelGrid id="gridAutoFill" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
 
                 <p:outputLabel value="#{bundle.Company}:"/>
                 <p:inputSwitch value="#{_bean.editedItem.inheritCompany}" showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">

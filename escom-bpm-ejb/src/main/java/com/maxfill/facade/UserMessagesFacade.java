@@ -85,8 +85,10 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         message.setName(subject);
         message.setAddressee(addressee);
         message.setDateSent(new Date());        
-        message.setDocument((Doc)tuple.a);
-        message.setTask((Task)tuple.b);
+        if (tuple != null){
+            message.setDocument((Doc)tuple.a);
+            message.setTask((Task)tuple.b);
+        }
         message.setSender(senderName);
         message.setImportance(1);
         create(message);

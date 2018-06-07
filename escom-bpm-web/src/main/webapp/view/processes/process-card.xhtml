@@ -61,7 +61,7 @@
                 
                 <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
-                         styleClass="col-padding ui-grid-col-12" 
+                         styleClass="ui-grid-col-12" 
                          onkeypress="checkEsc(#{_bean.cancelBtnName});"
                          onchange="return itemChange = 1;"
                          disabled="#{processCardBean.isReadOnly()}"
@@ -69,7 +69,7 @@
                          requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                
                 
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />                
-                <p:dataTable id="concorderList" value="#{processCardBean.getTasks()}" var="task" emptyMessage="#{bundle.EmptyTable}"
+                <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                              rowKey="#{task.tempId}" selectionMode="single"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
                     

@@ -66,14 +66,14 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces">
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
+        <p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
                     <p:outputLabel value="#{bundle.ActualRelease}" />
                     <p:separator/>
                 </h:panelGroup>
 
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
                     <h:outputLabel value="#{bundle.Version}:" />
                     <p:inputText value="#{checkReleaseBean.versionRelease}" readonly="true"/>
 
@@ -91,13 +91,13 @@
                 </p:panelGrid>
             </p:panelGrid>
 
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <h:panelGroup>
                     <p:outputLabel value="#{bundle.CurrentRelease}" />
                     <p:separator/>
                 </h:panelGroup>
 
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
                     <h:outputLabel value="#{bundle.Version}:" />
                     <p:inputText value="#{checkReleaseBean.release.versionNumber}" readonly="true" />
 

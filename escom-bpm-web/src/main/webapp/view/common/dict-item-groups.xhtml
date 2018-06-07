@@ -4,7 +4,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">    
 
-    <h:panelGroup id="panelGroups" styleClass="ui-grid-col-12 col-padding">        
+    <p:panelGrid id="panelGroups" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">        
         <p:outputLabel value="#{bundle.MainGroup}" rendered="#{_showOwner}"/>
         <p:inputText id="mainGroup" value="#{_bean.editedItem.owner.name}"
                      disabled="#{_bean.isReadOnly()}"
@@ -70,6 +70,6 @@
                 </p:commandButton>
             </f:facet>
         </p:dataTable>
-    </h:panelGroup>
+    </p:panelGrid>
 
 </ui:composition>

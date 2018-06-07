@@ -13,7 +13,7 @@
     <ui:param name="_bean" value="#{authLogBean}"/>
 
     <ui:define name="leftFormContent" >
-        <p:panelGrid columns="1" layout="grid" >
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
             <p:outputLabel value="#{bundle.ExportIn}"/>
 
             <h:panelGroup>
@@ -78,8 +78,8 @@
 
     <ui:define name="centerFormContent">
         <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" widgetVar="panel" styleClass="ui-grid-col-12 ">
-            <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="ui-grid-col-12 without-spaces">
-                <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
+            <p:panelGrid columns="2" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="2" styleClass="without-spaces">
                     <p:panelGrid columns="2" styleClass="without-spaces">
                         #{bundle.With}
                         <p:calendar value="#{authLogBean.dateStart}" id="dateStart"

@@ -56,7 +56,7 @@
             </ui:repeat>
         </p:panelGrid>
 
-        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" style="padding: 0px;">        
+        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" style="padding: 0px;">        
             <p:selectOneRadio value="#{_explorerBean.model.searcheInGroups}" layout="pageDirection" rendered="#{_explorerBean.treeBean != null}">
                 <f:selectItem itemLabel="#{bundle.SearcheWitchOutGroup}" itemValue="#{false}" />
                 <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{true}" />
@@ -114,7 +114,7 @@
             </p:selectBooleanCheckbox>   
 
             <h:panelGroup id="pnDateCreateSearche"> 
-                <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
+                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" 
                              rendered="#{_explorerBean.model.dateCreateSearche}">
                     #{bundle.With}
                     <p:calendar value="#{_explorerBean.model.dateCreateStart}" id="dateCreateStart" 
@@ -126,7 +126,7 @@
                                 disabled="#{!_explorerBean.model.dateCreateSearche}">
                     </p:calendar>
                 </p:panelGrid>
-                <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
+                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" 
                              rendered="#{_explorerBean.model.dateCreateSearche}">
                     #{bundle.At}
                     <p:calendar value="#{_explorerBean.model.dateCreateEnd}" id="dateCreateEnd" 
@@ -148,7 +148,7 @@
             </p:selectBooleanCheckbox> 
 
             <h:panelGroup id="pnDateChangeSearche">          
-                <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_explorerBean.model.dateChangeSearche}">
+                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" rendered="#{_explorerBean.model.dateChangeSearche}">
                     #{bundle.With}
                     <p:calendar value="#{_explorerBean.model.dateChangeStart}" id="dateChangeStart"
                                 widgetVar="dateChangeStartSearche"
@@ -159,7 +159,7 @@
                                 disabled="#{!_explorerBean.model.dateChangeSearche}">
                     </p:calendar>
                 </p:panelGrid>
-                <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" rendered="#{_explorerBean.model.dateChangeSearche}">
+                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" rendered="#{_explorerBean.model.dateChangeSearche}">
                     #{bundle.At}
                     <p:calendar value="#{_explorerBean.model.dateChangeEnd}" id="dateChangeEnd"
                                 widgetVar="dateChangeEndSearche"

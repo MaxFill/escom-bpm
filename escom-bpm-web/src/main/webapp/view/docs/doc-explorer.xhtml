@@ -59,7 +59,7 @@
         </p:selectBooleanCheckbox>   
         
         <h:panelGroup id="pnDateDocSearche"> 
-            <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
+            <p:panelGrid columns="2" columnClasses="col10r ui-grid-col-1" 
                          rendered="#{_explorerBean.model.dateDocSearche}">
                 #{bundle.With}
                 <p:calendar value="#{_explorerBean.model.dateDocStart}" id="dateDocStart" 
@@ -71,7 +71,7 @@
                             disabled="#{!_explorerBean.model.dateDocSearche}">
                 </p:calendar>
             </p:panelGrid>
-            <p:panelGrid columns="2" layout="grid" columnClasses="col10r ui-grid-col-1" 
+            <p:panelGrid columns="2" columnClasses="col10r ui-grid-col-1" 
                          rendered="#{_explorerBean.model.dateDocSearche}">
                 #{bundle.At}
                 <p:calendar value="#{_explorerBean.model.dateDocEnd}" id="dateDocEnd"

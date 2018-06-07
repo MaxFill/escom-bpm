@@ -237,7 +237,7 @@ public class ExplorerBean implements Serializable {
         return true;
     }
         
-    /* КАРТОЧКИ: обработка после закрытия карточки  */
+    /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
     public void onUpdateAfterCloseForm(SelectEvent event){
         Tuple<Boolean, String> tuple = (Tuple) event.getObject();
         Boolean isNeedUdate = tuple.a;

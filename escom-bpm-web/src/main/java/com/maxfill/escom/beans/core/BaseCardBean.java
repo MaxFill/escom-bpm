@@ -172,7 +172,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
                     break;
                 }
                 case DictEditMode.INSERT_MODE:{
-                    getFacade().create(item);
+                    getFacade().create(item); 
+                    setTypeEdit(DictEditMode.EDIT_MODE);
                     break;
                 }
             }

@@ -68,58 +68,70 @@
                                  disabled="#{taskCardBean.readOnly}"
                                  requiredMessage="#{bundle.Field} [#{bundle.Task}] #{bundle.MustBeFilled}"/>
 
-                    <p:outputLabel value="#{bundle.DateBegin}:" indicateRequired="true" rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
-                    <p:calendar value="#{taskCardBean.editedItem.beginDate}" disabledWeekends="true" 
-                                styleClass="without-spaces" rendered="#{taskCardBean.isShowExtTaskAtr()}"
-                                required="#{param['isRequired'] == 'true'}" 
-                                disabled="#{taskCardBean.readOnly}"
-                                locale="#{sessionBean.locale}" 
-                                timeZone="#{TimeZone.getDefault()}" 
-                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                navigator="true" yearRange="c-120:c+20"                     
-                                requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
-                    </p:calendar>
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-6 without-spaces, ui-grid-col-6 without-spaces" styleClass="ui-grid-col-12 without-spaces">
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                            <p:outputLabel value="#{bundle.DateBegin}:" indicateRequired="true" rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
+                            <p:calendar value="#{taskCardBean.editedItem.beginDate}" disabledWeekends="true" 
+                                        styleClass="without-spaces" rendered="#{taskCardBean.isShowExtTaskAtr()}"
+                                        required="#{param['isRequired'] == 'true'}" 
+                                        disabled="#{taskCardBean.readOnly}"
+                                        locale="#{sessionBean.locale}" 
+                                        timeZone="#{TimeZone.getDefault()}" 
+                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                        navigator="true" yearRange="c-120:c+20"                     
+                                        requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
+                            </p:calendar>
 
-                    <p:outputLabel value="#{bundle.DateAppointment}:" rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"/>
-                    <p:calendar value="#{taskCardBean.editedItem.beginDate}" disabledWeekends="true" styleClass="without-spaces" 
-                                rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"                                
-                                disabled="true"
-                                locale="#{sessionBean.locale}" 
-                                timeZone="#{TimeZone.getDefault()}" 
-                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                navigator="true" yearRange="c-120:c+20">
-                    </p:calendar>
-                                        
-                    <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>
-                    <p:calendar value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
-                                styleClass="without-spaces" 
-                                timeZone="#{TimeZone.getDefault()}"
-                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                required="#{param['isRequired'] == 'true'}" 
-                                disabled="#{taskCardBean.readOnly}"
-                                locale="#{sessionBean.locale}"
-                                navigator="true" yearRange="c-120:c+20"                                
-                                requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
-                    </p:calendar>
+                            <p:outputLabel value="#{bundle.DateAppointment}:" rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"/>
+                            <p:calendar value="#{taskCardBean.editedItem.beginDate}" disabledWeekends="true" styleClass="without-spaces" 
+                                        rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"                                
+                                        disabled="true"
+                                        locale="#{sessionBean.locale}" 
+                                        timeZone="#{TimeZone.getDefault()}" 
+                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                        navigator="true" yearRange="c-120:c+20">
+                            </p:calendar>
 
-                    <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"/>
-                    <p:calendar value="#{taskCardBean.editedItem.factExecDate}" disabledWeekends="true" 
-                                rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"
-                                styleClass="without-spaces" 
-                                timeZone="#{TimeZone.getDefault()}"
-                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                disabled="#{taskCardBean.readOnly}"
-                                locale="#{sessionBean.locale}"
-                                navigator="true" yearRange="c-120:c+20">                                
-                    </p:calendar>
-                     
-                    <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
-                    <p:selectOneMenu value="#{taskCardBean.editedItem.state.currentState}" converter="stateConvertor"                           
-                                   disabled="#{taskCardBean.editedItem.scheme != null}"                                   
-                                   required="#{param['isRequired'] == 'true'}" 
-                                   requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
-                    </p:selectOneMenu>
+                            <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>
+                            <p:calendar value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
+                                        styleClass="without-spaces" 
+                                        timeZone="#{TimeZone.getDefault()}"
+                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                        required="#{param['isRequired'] == 'true'}" 
+                                        disabled="#{taskCardBean.readOnly}"
+                                        locale="#{sessionBean.locale}"
+                                        navigator="true" yearRange="c-120:c+20"                                
+                                        requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
+                            </p:calendar>
+
+                            <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"/>
+                            <p:calendar value="#{taskCardBean.editedItem.factExecDate}" disabledWeekends="true" 
+                                        rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"
+                                        styleClass="without-spaces" 
+                                        timeZone="#{TimeZone.getDefault()}"
+                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                        disabled="#{taskCardBean.readOnly}"
+                                        locale="#{sessionBean.locale}"
+                                        navigator="true" yearRange="c-120:c+20">                                
+                            </p:calendar>
+                        </p:panelGrid>
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                            <p:outputLabel value="#{bundle.Status}:" />
+                            <p:inputText value="#{taskCardBean.getTaskStatus()}" 
+                                         styleClass="ui-grid-col-12"
+                                         disabled="true"/>
+                            
+                             <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
+                            <p:selectOneMenu value="#{taskCardBean.editedItem.state.currentState}" converter="stateConvertor"                           
+                                           disabled="#{taskCardBean.editedItem.scheme != null}"
+                                           styleClass="ui-grid-col-12"
+                                           required="#{param['isRequired'] == 'true'}" 
+                                           requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                                <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <p:separator/>                   
 
                     <p:commandLink  value="#{bundle.GoToProcess}"
                                     rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'processCardBean'}"
@@ -143,7 +155,7 @@
             
             <p:tab title="#{bundle.Settings}" rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_DRAFT}">
                 <!-- Настройка напоминаний и настройка результатов -->
-                <p:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12" >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.ListResults}" indicateRequired="true"/>
                     <p:separator style="margin-top: 0em;"/>
                     <p:pickList id="pickList" value="#{taskCardBean.results}" var="result" converter="resultConverter"
@@ -161,7 +173,7 @@
             </p:tab>
             
             <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
-                <p:panelGrid columns="1" styleClass="ui-grid-col-12 without-spaces" columnClasses="ui-grid-col-12" >                   
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                   
                     <p:outputLabel value="#{bundle.Comment}"/>
                     <p:textEditor value="#{taskCardBean.editedItem.comment}" 
                                   readonly="#{taskCardBean.readOnly}"

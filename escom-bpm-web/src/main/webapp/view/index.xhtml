@@ -11,7 +11,6 @@
     </ui:define>
     
     <ui:define name="body">
-        <ui:include src="/view/common/error-dlg.xhtml"/>
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />
@@ -40,6 +39,7 @@
         <f:event listener="#{sessionBean.showNotification()}" type="preRenderView" />
 
         <h:form id="mainFRM">
+            <ui:include src="/view/common/exeption-handler.xhtml"/>
             <style type="text/css">
                 .ui-dashboard-column {
                     width: 300px !important;
@@ -108,13 +108,13 @@
                 <p:autoUpdate />
             </p:growl>
                             
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >              
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >              
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
 
                     <p:panel id="admObjects" header="#{bundle.Administation}" 
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
                             <p:commandLink value="#{bundle.Users}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -142,7 +142,7 @@
                     <p:panel id="loggers" header="#{bundle.Logging}"
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
                             <p:commandLink value="#{bundle.Authentication}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -153,7 +153,7 @@
                     <p:panel id="services" header="#{bundle.Services}" 
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
                             <p:commandLink value="#{bundle.MailService}"                                            
                                            actionListener="#{sessionBean.openMailSenderService()}"/>
                             <p:commandLink value="#{bundle.ServiceReaderEmail}"
@@ -168,7 +168,7 @@
                     <p:panel id="processes" header="#{bundle.Processes}"
                              rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
                             <p:commandLink value="#{bundle.Processes}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -181,7 +181,7 @@
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                             
@@ -203,7 +203,7 @@
                     </p:panel>
 
                     <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank without-spaces" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank without-spaces" >
                             <p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-1" styleClass="ui-grid-col-12 ui-panelgrid-blank without-spaces" >
                                 <p:commandLink value="#{bundle.CountNewMessages}"
                                                onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
@@ -216,7 +216,7 @@
                     </p:panel>
 
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.DocsExplorer}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -233,7 +233,7 @@
                     </p:panel>
 
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:commandLink value="#{bundle.Posts}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -246,7 +246,7 @@
                     </p:panel>
 
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:commandLink value="#{bundle.Partners}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -266,12 +266,13 @@
         </h:form>
     </ui:define>
 
-    <ui:define name="dialogs">        
+    <ui:define name="dialogs"> 
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgAbout">
             <h:form id="logFRM">
                 <p:outputPanel id="aboutPanel" style="width: 600px; height: 400px;">
-                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                    <p:panelGrid columns="2"  columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <p:outputLabel value="#{bundle.LicenceNumber}"/>
                             <p:inputText value="#{applicationBean.licence.number}" readonly="true" styleClass="ui-grid-col-12"/>
                             
@@ -287,7 +288,7 @@
                             </p:inputText>
                         </p:panelGrid>
 
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
                             <p:outputLabel value="#{bundle.LicenceTypeName}"/>
                             <p:inputText value="#{sessionBean.licenseLocalName}" readonly="true" styleClass="ui-grid-col-12"/>
                             
@@ -303,8 +304,8 @@
                             </p:inputText>
                         </p:panelGrid>
                     </p:panelGrid>
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
                             <h:panelGroup styleClass="ui-grid-col-12">
                                 <p:outputLabel value="#{bundle.Licensor}: "/>
                                 <h:outputLabel value="#{applicationBean.licence.licensor}" />

@@ -29,7 +29,7 @@
 
     <ui:define name="centerFormContent">
         <h:panelGroup id="msgPanel">
-            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
+            <p:panelGrid columns="2"  columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Subject}" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText value="#{mailMessageBean.selected.subject}" id="subject" title="#{bundle.Subject}"

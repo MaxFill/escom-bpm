@@ -22,7 +22,6 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.services.workflow.Workflow;
-import com.maxfill.utils.DateUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -47,6 +46,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
 
@@ -58,6 +58,9 @@ import org.primefaces.model.diagram.overlay.Overlay;
 public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTask{
     private static final long serialVersionUID = -5558740260204665618L;
     private static final String BEAN_NAME = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
+    
+    @Inject
+    private ProcessBean processBean;
     
     @EJB
     private ProcessFacade processFacade;
@@ -73,7 +76,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private StatusesDocFacade statusesDocFacade;
              
     private Element selectedElement = null;
-    private Scheme scheme;
+
     private int defX = 8;
     private int defY = 8;
     private WFConnectedElem baseElement;
@@ -104,7 +107,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     protected void checkItemBeforeSave(Process item, Set<String> errors) {
         super.checkItemBeforeSave(item, errors);
         Set<String> validateKeysMsg = new HashSet<>();            
-        workflow.packScheme(scheme, validateKeysMsg);
+        workflow.packScheme(getScheme(), validateKeysMsg);
         validateKeysMsg.forEach(key->errors.add(EscomMsgUtils.getMessageLabel(key)));
     }
 
@@ -113,27 +116,20 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param item
      */
     @Override
-    protected void onBeforeSaveItem(Process item) {      
-        if (getEditedItem().getScheme() != null){
-            List<Task> liveTask = getTasks();
-            List<Task> forRemove = new ArrayList<>();
-            forRemove.addAll(getEditedItem().getScheme().getTasks());
-            forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
-            if (!forRemove.isEmpty()){
-                scheme.getTasks().removeAll(forRemove);
-                editedTasks.removeAll(forRemove);
-            }
-        }    
-        getEditedItem().setScheme(scheme);
+    protected void onBeforeSaveItem(Process item){       
+        List<Task> liveTask = getTasksFromModel();        
+        List<Task> forRemove = new ArrayList<>();
+        forRemove.addAll(getScheme().getTasks());
+        forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
+        if (!forRemove.isEmpty()){
+            getScheme().getTasks().removeAll(forRemove);
+            editedTasks.removeAll(forRemove);
+        }
+        getScheme().getTasks().removeAll(editedTasks);
+        getScheme().getTasks().addAll(editedTasks);
         super.onBeforeSaveItem(item);
     }
 
-    @Override
-    protected void onAfterSaveItem(Process item){
-        if (editedTasks.isEmpty()) return;        
-        editedTasks.forEach(task -> taskFacade.edit(task));
-    }
-        
     @Override
     public void onAfterFormLoad(String beanId) {
         super.onAfterFormLoad(beanId);
@@ -199,11 +195,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void loadModel(Scheme scheme){
         if (scheme == null){
-            createScheme();
+            createScheme();            
         } else {
             Set<String> errors = new HashSet <>();
             workflow.unpackScheme(scheme, errors);
-            this.scheme = scheme;
             if (errors.isEmpty()) {
                 restoreModel();
             } else {
@@ -216,8 +211,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Перерисовка модели на странице формы
      */
     private void modelRefresh(){
-        PrimeFaces.current().ajax().update("process");
-        //PrimeFaces.current().ajax().update("process:mainTabView:diagramm");        
+        PrimeFaces.current().ajax().update("process");               
         if (!isReadOnly()){
             addElementContextMenu();
         }
@@ -228,17 +222,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     private void restoreModel(){        
         model.clear();
-        Map<String, Element> elementMap = new HashMap <>();
-        scheme.getElements().getTasks().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
-        scheme.getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
-        StartElem startElem = scheme.getElements().getStartElem();
+        Map<String, Element> elementMap = new HashMap <>();        
+        getScheme().getElements().getTasks().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
+        StartElem startElem = getScheme().getElements().getStartElem();
         elementMap.put(startElem.getUid(), createElement(startElem));
         List<Connection> connections = new ArrayList <>();
-        scheme.getElements().getConnectors().stream().forEach(connectorElem->{
+        getScheme().getElements().getConnectors().stream().forEach(connectorElem->{
             AnchorElem anchorFrom = connectorElem.getFrom();            
             Element fromEl = elementMap.get(anchorFrom.getOwnerUID());
             EndPoint endPointFrom = getEndPointById(fromEl, anchorFrom.getUid());
@@ -255,8 +249,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     /**
      * Очистка визуальной схемы процесса
      */
-    public void onClearModel(){
-        scheme = new Scheme(getEditedItem());
+    public void onClearModel(){        
+        Scheme scheme = new Scheme(getEditedItem());
+        getEditedItem().setScheme(scheme);
         model.clear();
         modelRefresh();
     }
@@ -266,7 +261,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onElementDelete(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement((WFConnectedElem)selectedElement.getData(), scheme, errors);
+        workflow.removeElement((WFConnectedElem)selectedElement.getData(), getScheme(), errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             modelRefresh();
@@ -393,11 +388,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             onReloadModel();
         } else {
             editedTasks.add(currentTask);           
-            String updateElement = getFormName()+":mainTabView:concorderList";
-            PrimeFaces.current().ajax().update(updateElement);
-            modelRefresh();
             onItemChange();
         }
+        modelRefresh();
     }
     
     /**
@@ -518,7 +511,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         }
         
         conditionElem.setAnchors(makeAnchorElems(conditionElem, endPoints));
-        workflow.addCondition(conditionElem, scheme, errors);
+        workflow.addCondition(conditionElem, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(conditionElem);
         }
@@ -534,7 +527,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Element createLogic(String name, int x, int y, List<EndPoint> endPoints, Set<String> errors){
         LogicElem logic = new LogicElem(name, x, y);
         logic.setAnchors(makeAnchorElems(logic, endPoints));
-        workflow.addLogic(logic, scheme, errors);
+        workflow.addLogic(logic, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(logic);
         }
@@ -550,7 +543,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Element createEnter(int x, int y, List<EndPoint> endPoints, Set<String> errors){
         EnterElem enter = new EnterElem("", x, y);
         enter.setAnchors(makeAnchorElems(enter, endPoints));
-        workflow.addEnter(enter, scheme, errors);
+        workflow.addEnter(enter, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(enter);            
         }
@@ -566,7 +559,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Element createStart(int x, int y, List<EndPoint> endPoints, Set<String> errors){
         StartElem start = new StartElem("", x, y);
         start.setAnchors(makeAnchorElems(start, endPoints));
-        workflow.addStart(start, scheme, errors);
+        workflow.addStart(start, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(start);            
         }
@@ -582,7 +575,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Element createExit(Boolean finalize, int x, int y, List<EndPoint> endPoints, Set<String> errors){
         ExitElem exit = new ExitElem("", finalize, x, y);
         exit.setAnchors(makeAnchorElems(exit, endPoints));
-        workflow.addExit(exit, scheme, errors);
+        workflow.addExit(exit, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(exit);
         }
@@ -597,10 +590,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     private Element createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = taskFacade.createTask(taskName, executor, scheme, taskElem.getUid());
+        Task task = taskFacade.createTask(taskName, executor, getScheme(), taskElem.getUid());
         taskElem.setTask(task);
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
-        workflow.addTask(taskElem, scheme, errors);
+        workflow.addTask(taskElem, getScheme(), errors);
         if (errors.isEmpty()){
             return modelAddElement(taskElem);         
         } 
@@ -624,7 +617,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         }
         stateEl.setAnchors(makeAnchorElems(stateEl, endPoints));
         stateEl.setStyleType(styleType);
-        workflow.addState(stateEl, scheme, errors);
+        workflow.addState(stateEl, getScheme(), errors);
         if (errors.isEmpty()) {
             return modelAddElement(stateEl);
         }
@@ -768,7 +761,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @return
      */
     private void createScheme(){
-        scheme = new Scheme(getEditedItem());
+        Scheme scheme = new Scheme(getEditedItem());
+        getEditedItem().setScheme(scheme);
         model.clear();
         Staff staff = staffFacade.findStaffByUser(getCurrentUser());
         Set<String> errors = new HashSet <>();
@@ -802,7 +796,6 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
         createExit(Boolean.TRUE, 50, 35, endPoints, errors);
-      
     }
 
     /**
@@ -844,7 +837,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
             }
         }
         
-        if (workflow.createConnector(sourceAnchor, targetAnchor, scheme, label, errors) != null){  //если коннектор создался
+        if (workflow.createConnector(sourceAnchor, targetAnchor, getScheme(), label, errors) != null){  //если коннектор создался
             onItemChange();
             if (StringUtils.isNotBlank(label)){
                 Connection connection = findConnection(sourcePoint, targetPoint);
@@ -875,7 +868,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         Set<String> errors = new HashSet <>();
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
         AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
-        workflow.removeConnector(sourceAnchor, targetAnchor, scheme, errors);
+        workflow.removeConnector(sourceAnchor, targetAnchor, getScheme(), errors);
         onItemChange();
     }
 
@@ -942,29 +935,12 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     /**
-     * Формирование статуса задачи в зависимости отеё выполнения
+     * Формирование статуса задачи в зависимости от её выполнения
      * @param task
      * @return 
      */
-    public String getTaskStatus(Task task){
-        if (task == null) return "";
-        if (task.getBeginDate() == null) return EscomMsgUtils.getBandleLabel("NotStarted");
-        StringBuilder sb = new StringBuilder();
-        
-        if (getEditedItem().isRunning()){
-            Date dateStart = DateUtils.today();            
-            if (dateStart.before(task.getPlanExecDate())){
-                sb.append(EscomMsgUtils.getBandleLabel("Remained"));    //осталось ...
-            } else {
-                sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On")); //просрочено на ...
-            }
-            String delta = DateUtils.differenceDays(dateStart.toInstant(), task.getPlanExecDate().toInstant()); 
-            sb.append(" ").append(delta);
-        } else 
-            if (getEditedItem().isCompleted()){
-                sb.append(EscomMsgUtils.getBandleLabel("Сompleted"));  
-            }
-        return sb.toString();
+    public String getTaskStatus(Task task){             
+        return processBean.getTaskStatus(task);
     }
               
     public boolean isDisableBtnStop(){
@@ -1006,10 +982,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     
     /* GETS & SETS */
     
-    public List<Task> getTasks(){
-        return scheme.getElements().getTasks().entrySet().stream()
+    public List<Task> getTasksFromModel(){
+        return getScheme().getElements().getTasks().entrySet().stream()
                 .map(tsk->tsk.getValue().getTask())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());       
     }
     
     /**
@@ -1045,5 +1021,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     @Override
     public Boolean isShowExtTaskAtr() {
         return false;
+    }
+    
+    public Scheme getScheme(){
+        return getEditedItem().getScheme();
     }
 }

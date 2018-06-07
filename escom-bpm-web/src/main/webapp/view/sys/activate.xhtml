@@ -59,8 +59,8 @@
                     <p:autoUpdate />
                 </p:messages>
 
-                <p:panelGrid id="mainPanel" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">
-                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="ui-panelgrid-blank">
+                <p:panelGrid id="mainPanel" columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">
+                    <p:panelGrid columns="2"  columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="ui-panelgrid-blank">
                         <p:graphicImage name="/images/escom_logo.jpg"  />
                         <h:panelGroup styleClass="ui-grid-col-12 ui-panelgrid-blank">
                             <h2>
@@ -78,7 +78,6 @@
                         <p:commandButton value="#{bundle.EnterProgram}"
                                          actionListener="#{activateAppBean.onEnterApp()}"/>
                     </p:panelGrid>
-                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 right-aligment, ui-grid-col-8" rendered="#{applicationBean.licence == null}">
                         <p:outputLabel value="#{bundle.LicenceNumber}:" />
                         <p:inputMask value="#{activateAppBean.licNumber}"
                                      mask="999-999-999.9999"

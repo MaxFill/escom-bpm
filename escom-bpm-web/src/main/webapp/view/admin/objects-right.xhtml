@@ -7,12 +7,12 @@
 
     <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
 
-    <p:panelGrid id="mainGrid" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
+    <p:panelGrid id="mainGrid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
         <h3 style="margin-top: 0">#{bundle.SettigsObject}: #{metadatesBean.selectedObject == null ? bundle.EmptySelData : metadatesBean.getBundleName(metadatesBean.selectedObject)}</h3>
 
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true" rendered="#{metadatesBean.selectedObject != null}">
             <p:tab title="#{bundle.States}">
-                <p:panelGrid columns="1" layout="grid" styleClass="ui-grid-col-12 col-padding">
+                <p:panelGrid columns="1" styleClass="ui-grid-col-12 col-padding">
 
                     <p:pickList id="pickList" value="#{metadatesBean.states}" var="state" converter="stateConvertor"
                                 showCheckbox="true"
@@ -48,7 +48,7 @@
                     </p:headerRow>
 
                     <p:column headerText="#{bundle.RightOwner}" >
-                        <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank">
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" styleClass="ui-panelgrid-blank">
                             <h:graphicImage value="/resources/icon/#{right.icon}.png"/>
                             <h:outputText value="#{right.name}"/>
                         </p:panelGrid>

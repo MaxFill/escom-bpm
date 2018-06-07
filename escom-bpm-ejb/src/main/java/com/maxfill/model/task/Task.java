@@ -132,14 +132,12 @@ public class Task implements Serializable, Dict{
         }
         return style;
     }
-    
-    /**
-     * Возвращает статус задачи: просрочно на, осталось, 
-     * @return 
-     */
-    public String getStatus(){
-        //ToDo 
-        return "";
+        
+    public boolean isRunning(){
+        return DictStates.STATE_RUNNING == state.getCurrentState().getId();
+    }   
+    public boolean isCompleted(){
+        return DictStates.STATE_COMPLETED == state.getCurrentState().getId();
     }
     
     public void setTaskResults(List<Result> taskResults) {
