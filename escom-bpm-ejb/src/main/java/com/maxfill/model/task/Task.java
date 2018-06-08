@@ -69,6 +69,12 @@ public class Task implements Serializable, Dict{
     @Temporal(TemporalType.TIMESTAMP)
     private Date factExecDate;
     
+    @Column(name="DeltaDeadLine")
+    private Integer deltaDeadLine; //срок исполения в секундах
+    
+    @Column(name="DeadLineType")
+    private String deadLineType; //вид установки срока исполнения
+            
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TaskLinkUID")
     private String taskLinkUID;
@@ -206,6 +212,20 @@ public class Task implements Serializable, Dict{
         this.planExecDate = planExecDate;
     }
 
+    public Integer getDeltaDeadLine() {
+        return deltaDeadLine;
+    }
+    public void setDeltaDeadLine(Integer deltaDeadLine) {
+        this.deltaDeadLine = deltaDeadLine;
+    }
+
+    public String getDeadLineType() {
+        return deadLineType;
+    }
+    public void setDeadLineType(String deadLineType) {
+        this.deadLineType = deadLineType;
+    }
+    
     public Date getFactExecDate() {
         return factExecDate;
     }

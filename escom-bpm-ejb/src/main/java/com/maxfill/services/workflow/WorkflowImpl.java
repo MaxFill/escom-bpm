@@ -257,10 +257,16 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getConnectors().isEmpty()){
             errors.add("DiagramNotHaveConnectors");
         }
-        scheme.getElements().getTasks().entrySet().stream()
-                .filter(rec->rec.getValue().getTask().getPlanExecDate() == null)
-                .findFirst()
-                .map(rec->errors.add("TasksNoHaveDeadline"));
+        
+        for(Task task : scheme.getTasks()){            
+            if (task.getPlanExecDate() == null){
+                errors.add("TasksNoHaveDeadline");
+            }
+            if (task.getPlanExecDate().before(new Date())){
+                errors.add("DeadlineSpecifiedInPastTime");
+            }
+        }
+
         scheme.getElements().getConditions().entrySet().stream()
                 .filter(rec->rec.getValue().getConditonId() == null)
                 .findFirst()

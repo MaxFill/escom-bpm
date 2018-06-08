@@ -60,7 +60,25 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
 
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
+     
+    @Column(name = "BeginDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date beginDate;
 
+    @Column(name = "PlanExecDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date planExecDate;
+
+    @Column(name = "FactExecDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date factExecDate;
+    
+    @Column(name="DeltaDeadLine")
+    private Integer deltaDeadLine; //срок исполения в секундах
+    
+    @Column(name="DeadLineType")
+    private String deadLineType; //вид установки срока исполнения
+    
     /* Состояние */
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -129,6 +147,41 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.doc = doc;
     }
 
+    public Date getBeginDate() {
+        return beginDate;
+    }
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    public Date getPlanExecDate() {
+        return planExecDate;
+    }
+    public void setPlanExecDate(Date planExecDate) {
+        this.planExecDate = planExecDate;
+    }
+
+    public Date getFactExecDate() {
+        return factExecDate;
+    }
+    public void setFactExecDate(Date factExecDate) {
+        this.factExecDate = factExecDate;
+    }
+
+    public Integer getDeltaDeadLine() {
+        return deltaDeadLine;
+    }
+    public void setDeltaDeadLine(Integer deltaDeadLine) {
+        this.deltaDeadLine = deltaDeadLine;
+    }
+
+    public String getDeadLineType() {
+        return deadLineType;
+    }
+    public void setDeadLineType(String deadLineType) {
+        this.deadLineType = deadLineType;
+    }
+    
     public Scheme getScheme() {
         return scheme;
     }

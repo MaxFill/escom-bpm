@@ -95,7 +95,7 @@ public class TaskCardBean extends BaseViewBean{
                 TaskStates taskStates = sourceTask.getState();
                 State state = taskStates.getCurrentState();
                 int id = state.getId();
-                if (sourceTask.getScheme() != null && DictStates.STATE_DRAFT != id){
+                if (sourceTask.getScheme() != null && (DictStates.STATE_RUNNING == id || DictStates.STATE_COMPLETED == id)){
                     readOnly = true;
                 }
             }

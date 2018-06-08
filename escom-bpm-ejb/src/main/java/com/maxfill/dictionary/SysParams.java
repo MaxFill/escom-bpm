@@ -38,4 +38,7 @@ public final class SysParams {
     public static final int MODE_UNLOCK_CREATE_VERSION = 0;
     public static final int MODE_UNLOCK_DONT_CREATE_VERSION = 1;
     public static final int MODE_UNLOCK_DONT_SAVE_CHANGE = 2;
+    
+    public static final String DEADLINE_DELTA = "delta";
+    public static final String DEADLINE_DATE = "date";
 }
