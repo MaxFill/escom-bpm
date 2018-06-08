@@ -292,7 +292,7 @@ public final class EscomBeanUtils {
         Duration duration = Duration.between(dateStart.toInstant(), datePlan.toInstant());              
 
         StringBuilder dr = new StringBuilder();
-        dr.append("d").append("дн.").append("H").append("ч.").append("mm").append("м.").append("ss").append("c.");
+        dr.append("d").append("дн.").append("H").append("ч.").append("mm").append("м.");
 
         String delta = DurationFormatUtils.formatDuration(duration.toMillis(), dr.toString(), true);
         sb.append(" ").append(delta);

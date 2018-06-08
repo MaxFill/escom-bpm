@@ -272,7 +272,8 @@ public class TaskCardBean extends BaseViewBean{
 
     public DualListModel<Result> getResults() {
         if (results == null){
-            List<Result> allResults = resultFacade.findAll();            
+            List<Result> allResults = resultFacade.findAll();
+            allResults.removeAll(getTaskResults());
             results = new DualListModel<>(allResults, getTaskResults());
         }
         return results;

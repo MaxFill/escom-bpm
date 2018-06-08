@@ -6,7 +6,6 @@ import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
-import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
@@ -43,8 +42,6 @@ import java.util.stream.Collectors;
 public class WorkflowImpl implements Workflow {
     protected static final Logger LOGGER = Logger.getLogger(WorkflowImpl.class.getName());
 
-    @EJB
-    private TaskFacade taskFacade;
     @EJB
     private DocFacade docFacade;
     @EJB
@@ -215,7 +212,7 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
-    public void packScheme(Scheme scheme, Set <String> errors) {
+    public void packScheme(Scheme scheme) {
         StringWriter sw = new StringWriter();
         JAXB.marshal(scheme.getElements(), sw);
         String xml = sw.toString();
@@ -228,15 +225,22 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
-    public void unpackScheme(Scheme scheme, Set<String> errors) {
+    public void unpackScheme(Scheme scheme) {
         try {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            elements.getTasks().forEach((key, task)-> task.setTask(taskFacade.findByLinkUID(key)));
+            elements.getTasks().forEach((key, taskEl)-> {
+                for(Task task : scheme.getTasks()){
+                    if (task.getTaskLinkUID().equals(key)){
+                        taskEl.setTask(task);
+                        break;
+                    }
+                }
+               });
             scheme.setElements(elements);
         } catch (IOException ex) {
-            errors.add("ErrorUnpackingProcessDiagram");
+            //errors.add("ErrorUnpackingProcessDiagram");
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -292,7 +296,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void executeTask(Process process, Task task, Result result, Set<String> errors){
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme, errors);
+        unpackScheme(scheme);
         if (errors.isEmpty()){
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
@@ -321,15 +325,15 @@ public class WorkflowImpl implements Workflow {
                         task.setFactExecDate(null);
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     });
-                scheme.getTasks().removeAll(tasks);
-                scheme.getTasks().addAll(tasks);
+                //scheme.getTasks().removeAll(tasks);
+                //scheme.getTasks().addAll(tasks);
             }
     }
     
     @Override
     public void start(Process process, Set<String> errors) {        
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme, errors);
+        unpackScheme(scheme);
         validateScheme(scheme, errors);
         if (!errors.isEmpty()) return;
         
@@ -384,8 +388,8 @@ public class WorkflowImpl implements Workflow {
         doRun(startElement.getAnchors(), process, exeTasks, errors);
         if (errors.isEmpty()){
             startTasks(exeTasks, process.getScheme());            
-            packScheme(process.getScheme(), errors);
-            processFacade.edit(process);   
+            packScheme(process.getScheme());
+            processFacade.edit(process);
         }
     }
     

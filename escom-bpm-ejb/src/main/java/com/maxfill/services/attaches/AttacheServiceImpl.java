@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.io.FilenameUtils;
@@ -35,6 +36,10 @@ public class AttacheServiceImpl implements AttacheService{
 
     /**
      * Загрузка файла на сервер с созданием Attaches
+     * @param params
+     * @param inputStream
+     * @return 
+     * @throws java.io.IOException
      */
     @Override
     public Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException{
@@ -98,6 +103,7 @@ public class AttacheServiceImpl implements AttacheService{
     }
     
     @Override
+    @Asynchronous
     public void deleteTmpFiles(String login){
         try {
             String deleteDirectory = configuration.getTempFolder();

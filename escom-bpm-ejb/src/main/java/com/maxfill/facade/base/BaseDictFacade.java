@@ -28,7 +28,6 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -649,6 +648,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /**
      * Стандартная проверка вхождения пользователя в роль
      * @param item
+     * @param roleName
      * @param user
      */
     protected boolean checkUserInRole(T item, String roleName, User user){

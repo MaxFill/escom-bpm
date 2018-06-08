@@ -10,6 +10,7 @@ import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
@@ -74,6 +75,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private ConditionFacade conditionFacade;
     @EJB
     private StatusesDocFacade statusesDocFacade;
+    @EJB
+    private StateFacade stateFacade;
              
     private Element selectedElement = null;
 
@@ -101,15 +104,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
         onReloadModel();
-    }
-
-    @Override
-    protected void checkItemBeforeSave(Process item, Set<String> errors) {
-        super.checkItemBeforeSave(item, errors);
-        Set<String> validateKeysMsg = new HashSet<>();            
-        workflow.packScheme(getScheme(), validateKeysMsg);
-        validateKeysMsg.forEach(key->errors.add(EscomMsgUtils.getMessageLabel(key)));
-    }
+    }    
 
     /**
      * Перед сохранением процесса
@@ -119,14 +114,14 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     protected void onBeforeSaveItem(Process item){       
         List<Task> liveTask = getTasksFromModel();        
         List<Task> forRemove = new ArrayList<>();
-        forRemove.addAll(getScheme().getTasks());
+        List<Task> schemeTasks = getScheme().getTasks();
+        forRemove.addAll(schemeTasks);
         forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
         if (!forRemove.isEmpty()){
             getScheme().getTasks().removeAll(forRemove);
             editedTasks.removeAll(forRemove);
-        }
-        getScheme().getTasks().removeAll(editedTasks);
-        getScheme().getTasks().addAll(editedTasks);
+        }       
+        workflow.packScheme(getScheme());
         super.onBeforeSaveItem(item);
     }
 
@@ -143,7 +138,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         Boolean result = super.doSaveItem();
         modelRefresh();
         return result;
-    }
+    }   
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     
@@ -151,9 +146,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события запуска процесса на исполнение
      */
     public void onRun(){
+        getEditedItem().getState().setCurrentState(stateFacade.getRunningState());
         onItemChange();
         if (doSaveItem()){
-            Set<String> errors = new HashSet<>();
+            Set<String> errors = new HashSet<>();            
             workflow.start(getEditedItem(), errors);
             if (!errors.isEmpty()){
                 EscomMsgUtils.showErrorsMsg(errors);            
@@ -161,7 +157,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
                 EscomMsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
             setItemCurrentState(getEditedItem().getState().getCurrentState());
-            onReloadModel();
+            loadModel(getScheme());
+            PrimeFaces.current().ajax().update("process");
         }
     }
     
@@ -185,7 +182,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события перезагрузки визуальной схемы процесса
      */
     public void onReloadModel(){
-        loadModel(getEditedItem().getScheme());
+        loadModel(getScheme());
         modelRefresh();
     }
     
@@ -197,21 +194,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (scheme == null){
             createScheme();            
         } else {
-            Set<String> errors = new HashSet <>();
-            workflow.unpackScheme(scheme, errors);
-            if (errors.isEmpty()) {
-                restoreModel();
-            } else {
-                EscomMsgUtils.showErrors(errors);
-            }
-        }        
+            workflow.unpackScheme(scheme);
+            restoreModel();            
+        }
     }
 
     /**
      * Перерисовка модели на странице формы
      */
     private void modelRefresh(){
-        PrimeFaces.current().ajax().update("process");               
+        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");               
         if (!isReadOnly()){
             addElementContextMenu();
         }
@@ -385,16 +377,20 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         String result = (String) event.getObject();
         if ("run".equals(result)){
             setItemCurrentState(getEditedItem().getState().getCurrentState());
-            onReloadModel();
+            loadModel(getScheme());
+            PrimeFaces.current().ajax().update("process");
         } else {
             editedTasks.add(currentTask);           
             onItemChange();
-        }
-        modelRefresh();
+            modelRefresh();
+            PrimeFaces.current().ajax().update("process:mainTabView:concorderList");
+        }        
     }
     
+    /* ДОБАВЛЕНИЕ ЭЛЕМЕНТОВ НА СХЕМУ ПРОЦЕССА С ПАНЕЛИ КОМПОНЕНТ */
+    
     /**
-     * Обработка события добавления в схему процесса одного или нескольких визуальных компонентов "Задача" из выбранных в селекторе штатных единиц
+     * Обработка события добавления в компонентов "Задача" из выбранных в селекторе штатных единиц
      * @param event
      */
     public void onStaffsSelected(SelectEvent event){
@@ -975,9 +971,12 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public void onDocSelected(SelectEvent event){
         List<Doc> items = (List<Doc>) event.getObject();
         if (items.isEmpty()) return;
-        Doc item = items.get(0);
+        Doc doc = items.get(0);
         onItemChange();
-        getEditedItem().setDoc(item);
+        getEditedItem().setDoc(doc);
+        StringBuilder sb = new StringBuilder(getEditedItem().getName());
+        sb.append(" документа ").append(doc.getFullName());
+        getEditedItem().setName(sb.toString());
     }
     
     /* GETS & SETS */

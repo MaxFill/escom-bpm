@@ -32,6 +32,7 @@
                         disabled="#{processCardBean.isReadOnly()}"
                         update="#{_frm}"
                         actionListener="#{processCardBean.onRun()}">
+            <f:param name="isRequired" value="true"/>
         </p:commandButton>
         <p:spacer width="2"/>
         <p:commandButton id="btnStop" value="#{bundle.Stop}" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
@@ -56,7 +57,7 @@
                     <ui:param name="_selectorBean" value="#{docsBean}"/>
                     <ui:param name="_actionClear" value="setDoc"/>
                     <ui:param name="_actionSelect" value="onDocSelected"/>
-                    <ui:param name="_update" value=""/>
+                    <ui:param name="_update" value="#{_frm}:mainTabView:nameItem"/>
                 </ui:include>
                 
                 <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />

@@ -87,7 +87,7 @@
                         <p:commandButton id="editCardBtn" actionListener="#{_explorerBean.onViewContentItem()}"
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
-                                         update="" style="display: none;">
+                                         style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}"
                                     oncomplete="initDND()"/>
@@ -96,7 +96,7 @@
                         <p:commandButton id="editDocument" actionListener="#{_explorerBean.onEditDocument()}"
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
-                                         update="" style="display: none;">
+                                         style="display: none;">
                             <p:ajax event="dialogReturn" 
                                     update="#{_frmExpl}" listener="#{_explorerBean.onUpdateAfterChangeItem}"
                                     oncomplete="initDND()"/>

@@ -262,11 +262,10 @@ public class ExplorerBean implements Serializable {
                     } else {                        
                         newNode = addNewItemInTree(editItem, treeSelectedNode);
                     }
-                    onSelectInTree(newNode);
+                    onSelectInTree(newNode);                    
                     break;
                 }
-            }
-            EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{editItem.getName()});
+            }            
         }
         createParams.clear();
         onSetCurrentItem(editItem);
