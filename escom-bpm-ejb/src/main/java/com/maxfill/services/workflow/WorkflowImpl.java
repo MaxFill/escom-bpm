@@ -16,6 +16,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 
 import javax.ejb.EJB;
@@ -258,13 +259,18 @@ public class WorkflowImpl implements Workflow {
             errors.add("DiagramNotHaveConnectors");
         }
         
+        Date planEndDate = scheme.getProcess().getPlanExecDate();
+        
         for(Task task : scheme.getTasks()){            
             if (task.getPlanExecDate() == null){
                 errors.add("TasksNoHaveDeadline");
-            }
-            if (task.getPlanExecDate().before(new Date())){
-                errors.add("DeadlineSpecifiedInPastTime");
-            }
+            } else 
+                if (task.getPlanExecDate().before(new Date())){
+                    errors.add("DeadlineSpecifiedInPastTime");
+                } else 
+                    if (task.getPlanExecDate().after(planEndDate)) { 
+                        errors.add("TaskExecTimeLongerThanProcessDeadLine");
+                    }
         }
 
         scheme.getElements().getConditions().entrySet().stream()
@@ -329,6 +335,10 @@ public class WorkflowImpl implements Workflow {
                         task.setBeginDate(new Date());
                         task.setResult(null);
                         task.setFactExecDate(null);
+                        if ("delta".equals(task.getDeadLineType())){
+                            task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
+                        }
+                        //TODO если вычисленный срок исполнения задачи оказался выше срока процесса то нужно отправить уведомление менеджеру процесса
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     });
                 //scheme.getTasks().removeAll(tasks);

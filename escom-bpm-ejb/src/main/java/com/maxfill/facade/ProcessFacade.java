@@ -58,13 +58,14 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {
         ProcessType processType = process.getOwner();
-        process.setName(processType.getName());
+        //process.setName(processType.getName());
     }
 
     /**
      * Получение прав доступа к процессу
      * @param item
      * @param user
+     * @return 
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {

@@ -1,7 +1,9 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-explorer.xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- стандарный обозреватель/селектор -->
 
@@ -22,8 +24,10 @@
     
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.TermApproval}" >
-            
+         <p:column headerText="#{bundle.TermApproval}" width="90" priority="3" sortBy="#{item.planExecDate}">
+            <h:outputLabel value="#{item.planExecDate}">
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputLabel>
         </p:column>
     </ui:define>
 

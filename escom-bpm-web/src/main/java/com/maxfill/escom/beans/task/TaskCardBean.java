@@ -22,7 +22,9 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.DateUtils;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
 
@@ -70,7 +72,9 @@ public class TaskCardBean extends BaseViewBean{
     private String beanName;   
     private List<Result> taskResults;
     private DualListModel<Result> results;
-    
+    private int deadLineDeltaDay;
+    private int deadLineDeltaHour;
+            
     @Override
     public void onBeforeOpenCard(){
         if (sourceTask == null){
@@ -101,11 +105,12 @@ public class TaskCardBean extends BaseViewBean{
             }
             if (sourceTask != null){
                 try {
-                    BeanUtils.copyProperties(editedItem, sourceTask);
+                    BeanUtils.copyProperties(editedItem, sourceTask);                                        
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     Logger.getLogger(TaskCardBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            initDateFields(editedItem);
         }
     }
     
@@ -125,9 +130,10 @@ public class TaskCardBean extends BaseViewBean{
      * @param errors 
      */
     private void saveTask(Set<String> errors){
+        saveDateFields(editedItem);
         validateTask(errors);
         if (errors.isEmpty()){            
-            try {
+            try {                
                 BeanUtils.copyProperties(sourceTask, editedItem);
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 errors.add("InternalErrorSavingTask");
@@ -137,9 +143,27 @@ public class TaskCardBean extends BaseViewBean{
     }
     
     private void validateTask(Set<String> errors){
-        if (StringUtils.isEmpty(editedItem.getAvaibleResultsJSON())){
+        Task task = editedItem;
+        if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add("TaskNoHaveListResult");
         }
+        switch (task.getDeadLineType()){
+            case "delta":{
+                if (task.getDeltaDeadLine() == 0){
+                   errors.add("DeadlineIncorrect");
+                }       
+                break;
+            }
+            case "data":{
+                if (task.getPlanExecDate() == null ){
+                    errors.add("DeadlineIncorrect");
+                } else 
+                    if (task.getPlanExecDate().before(new Date())){
+                        errors.add("DeadlineSpecifiedInPastTime");
+                    }
+            }
+        }
+        
     }
     
     /**
@@ -243,8 +267,43 @@ public class TaskCardBean extends BaseViewBean{
         return result;
     }
     
+    private void initDateFields(Task task){        
+        long deltaSec = task.getDeltaDeadLine();
+        Date test = DateUtils.calculateDate(new Date(), deltaSec);
+        
+        long hoursInMilli = 3600;
+        long daysInMilli = hoursInMilli * 24;
+
+        Long elapsedDays = deltaSec / daysInMilli;
+        deadLineDeltaDay = elapsedDays.intValue();
+        deltaSec = deltaSec % daysInMilli;
+
+        Long elapsedHours = deltaSec / hoursInMilli;
+        deadLineDeltaHour = elapsedHours.intValue();          
+    }
+    
+    private void saveDateFields(Task task){
+        int seconds = deadLineDeltaDay * 86400;
+        seconds = seconds + deadLineDeltaHour * 3600;
+        task.setDeltaDeadLine(seconds);
+    }    
+    
     /* GETS & SETS */
 
+    public int getDeadLineDeltaDay() {
+        return deadLineDeltaDay;
+    }
+    public void setDeadLineDeltaDay(int deadLineDeltaDay) {
+        this.deadLineDeltaDay = deadLineDeltaDay;
+    }
+
+    public int getDeadLineDeltaHour() {
+        return deadLineDeltaHour;
+    }
+    public void setDeadLineDeltaHour(int deadLineDeltaHour) {
+        this.deadLineDeltaHour = deadLineDeltaHour;
+    }
+    
     public Task getEditedItem() {
         return editedItem;
     }

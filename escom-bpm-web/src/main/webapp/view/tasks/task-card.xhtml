@@ -92,18 +92,39 @@
                                         navigator="true" yearRange="c-120:c+20">
                             </p:calendar>
 
-                            <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>
-                            <p:calendar value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
-                                        styleClass="without-spaces" 
-                                        timeZone="#{TimeZone.getDefault()}"
-                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                        required="#{param['isRequired'] == 'true'}" 
-                                        disabled="#{taskCardBean.readOnly}"
-                                        locale="#{sessionBean.locale}"
-                                        navigator="true" yearRange="c-120:c+20"                                        
-                                        requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
-                                <f:validator validatorId="deadlineValidator" />
-                            </p:calendar>
+                            <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" layout="custom">
+                                <f:selectItem itemLabel="" itemValue="delta" />
+                                <f:selectItem itemLabel="" itemValue="data" />   
+                                <p:ajax update="centerFRM:mainTabView:planEndDate centerFRM:mainTabView:deltaDay centerFRM:mainTabView:deltaHour" event="valueChange"/>
+                            </p:selectOneRadio>
+                            
+                            <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/> 
+                            
+                            <h:panelGrid columns="2" cellpadding="3" >
+                                <p:radioButton id="typeDelta" for="typeDatePlan" itemIndex="0" disabled="#{taskCardBean.readOnly}"/>                                                            
+                                <h:panelGroup>
+                                    <p:spinner id="deltaDay" value="#{taskCardBean.deadLineDeltaDay}" min="0" max="999" 
+                                               suffix="#{bundle.DayShort}" size="3" 
+                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
+                                    </p:spinner>
+                                    <p:spinner id="deltaHour" value="#{taskCardBean.deadLineDeltaHour}" min="0" max="99" 
+                                               suffix="#{bundle.HourShort}" size="2"
+                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
+                                    </p:spinner>
+                                </h:panelGroup>
+                                
+                                <p:radioButton id="typeData" for="typeDatePlan" itemIndex="1" disabled="#{taskCardBean.readOnly}"/>  
+                                <p:calendar id="planEndDate" value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
+                                            styleClass="without-spaces" 
+                                            timeZone="#{TimeZone.getDefault()}"
+                                            showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                            disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'delta'}"
+                                            locale="#{sessionBean.locale}"
+                                            navigator="true" yearRange="c-120:c+20"                                        
+                                            requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
+                                    <f:validator validatorId="deadlineValidator" />
+                                </p:calendar>
+                            </h:panelGrid>
 
                             <p:outputLabel value="#{bundle.ActualEndDate}:" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_COMPLETED}"/>
                             <p:calendar value="#{taskCardBean.editedItem.factExecDate}" disabledWeekends="true" 
@@ -116,6 +137,7 @@
                                         navigator="true" yearRange="c-120:c+20">                                
                             </p:calendar>
                         </p:panelGrid>
+                        
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                             <p:outputLabel value="#{bundle.Status}:" />
                             <p:inputText value="#{taskCardBean.getTaskStatus()}" 
@@ -154,7 +176,7 @@
                 </p:panelGrid>
             </p:tab>
             
-            <p:tab title="#{bundle.Settings}" rendered="#{taskCardBean.isReadOnly()}">
+            <p:tab title="#{bundle.Settings}" rendered="#{!taskCardBean.isReadOnly()}">
                 <!-- Настройка напоминаний и настройка результатов -->
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.ListResults}" indicateRequired="true"/>

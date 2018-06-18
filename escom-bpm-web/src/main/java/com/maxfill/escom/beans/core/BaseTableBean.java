@@ -120,6 +120,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * Проверка возможности создания объекта
      * для того чтобы узнать, может ли пользователь создать объект нужно его создать, получить для него права и только затем проверить
      * @param parent
+     * @param owner
      * @param errors Метод вернёт непустой errors если у пользователя нет права на создание
      * @param params
      * @return
@@ -244,8 +245,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      */
     public List<List<?>> doGetDependency(T item){
         return null;
-    }           
-    
+    }              
 
     protected void checkLockItem(T item, Set<String> errors){
         String itemKey = item.getItemKey();
@@ -256,7 +256,6 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             errors.add(error);
         }
     }
-
 
     protected void actualizeRightForDropItem(BaseDict dropItem){
         getFacade().actualizeRightItem(dropItem, getCurrentUser());

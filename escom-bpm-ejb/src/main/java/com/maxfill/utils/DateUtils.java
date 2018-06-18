@@ -25,6 +25,7 @@ public final class DateUtils {
     public static final int HOURS_PER_DAY = 24;
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+    public static final int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
     
     private DateUtils() { }
 
@@ -192,5 +193,20 @@ public final class DateUtils {
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(date); 
         return calendar;
+    }
+    
+    /**
+     * Вычисление даты по смещению, указанному в секундах
+     * @param dateBegin
+     * @param deltaSeconds
+     * @return 
+     */
+    public static Date calculateDate(Date dateBegin, long deltaSeconds){
+        Long elapsedDays = deltaSeconds / SECONDS_PER_DAY;
+        dateBegin = addDays(dateBegin, elapsedDays.intValue());        
+        deltaSeconds = deltaSeconds % SECONDS_PER_DAY;
+        Long elapsedHours = deltaSeconds / SECONDS_PER_HOUR;        
+        dateBegin = addHour(dateBegin, elapsedHours.intValue());
+        return dateBegin;
     }
 }

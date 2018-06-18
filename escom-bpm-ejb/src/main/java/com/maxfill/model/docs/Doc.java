@@ -209,10 +209,10 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     public String getFullName(){        
         StringBuilder builder = new StringBuilder();
         if (docType != null && StringUtils.isNotBlank(docType.getName())){
-            builder.append(docType.getName()).append(" ");
+            builder.append(docType.getName()).append(" '");
         }
         if (StringUtils.isNotBlank(regNumber)){
-            builder.append(regNumber).append(" ");
+            builder.append(regNumber).append("' ");
         }    
         builder.append(getNameEndElipse());
         return builder.toString();

@@ -126,6 +126,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     }
 
     @Override
+    protected void checkItemBeforeSave(Process process, Set<String> errors){        
+        if (process.getPlanExecDate() == null ){
+                errors.add("DeadlineIncorrect");
+        } else 
+            if (process.getPlanExecDate().before(new Date())){
+                errors.add("DeadlineSpecifiedInPastTime");
+            }
+        super.checkItemBeforeSave(process, errors);
+    }
+    
+    @Override
     public void onAfterFormLoad(String beanId) {
         super.onAfterFormLoad(beanId);
         if (!isReadOnly()){
@@ -974,10 +985,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         Doc doc = items.get(0);
         onItemChange();
         getEditedItem().setDoc(doc);
-        StringBuilder sb = new StringBuilder(getEditedItem().getName());
-        sb.append(" документа ").append(doc.getFullName());
+        StringBuilder sb = new StringBuilder(getEditedItem().getOwner().getName());
+        sb.append(" документа <").append(doc.getFullName()).append(">");
         getEditedItem().setName(sb.toString());
-    }
+    }    
     
     /* GETS & SETS */
     

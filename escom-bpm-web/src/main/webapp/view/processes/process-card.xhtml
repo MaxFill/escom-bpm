@@ -69,6 +69,20 @@
                          required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                
                 
+                <p:outputLabel value="#{bundle.TermApproval}:" indicateRequired="true"/> 
+                <p:calendar value="#{processCardBean.editedItem.planExecDate}" disabledWeekends="true" 
+                            styleClass="without-spaces" 
+                            timeZone="#{TimeZone.getDefault()}"
+                            showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                            disabled="#{processCardBean.isReadOnly()}"
+                            locale="#{sessionBean.locale}"
+                            required="#{param['isRequired'] == 'true'}"
+                            navigator="true" yearRange="c-10:c+20"
+                            requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">
+                    <f:validator validatorId="deadlineValidator" />
+                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                </p:calendar>
+                
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />                
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                              rowKey="#{task.tempId}" selectionMode="single"

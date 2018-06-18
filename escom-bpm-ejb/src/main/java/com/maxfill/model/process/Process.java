@@ -74,10 +74,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     private Date factExecDate;
     
     @Column(name="DeltaDeadLine")
-    private Integer deltaDeadLine; //срок исполения в секундах
+    private Integer deltaDeadLine = 0; //срок исполения в секундах
     
     @Column(name="DeadLineType")
-    private String deadLineType; //вид установки срока исполнения
+    private String deadLineType = "delta"; //вид установки срока исполнения
     
     /* Состояние */
     @XmlTransient

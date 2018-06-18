@@ -70,11 +70,17 @@ public class Task implements Serializable, Dict{
     private Date factExecDate;
     
     @Column(name="DeltaDeadLine")
-    private Integer deltaDeadLine; //срок исполения в секундах
+    private Integer deltaDeadLine = 0; //срок исполнения в секундах
     
     @Column(name="DeadLineType")
-    private String deadLineType; //вид установки срока исполнения
-            
+    private String deadLineType = "delta"; //вид установки срока исполнения
+    
+    @Column(name="ReminderType")
+    private String reminderType = "once"; //вид установки напоминания
+        
+    @Column(name="DeltaReminder")
+    private Integer deltaReminder = 0;  //срок напоминания в секундах
+    
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TaskLinkUID")
     private String taskLinkUID;
