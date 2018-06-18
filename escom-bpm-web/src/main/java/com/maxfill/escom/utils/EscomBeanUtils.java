@@ -281,13 +281,14 @@ public final class EscomBeanUtils {
      */
     public static String makeDateDiffStatus(Date dateStart, Date datePlan){        
         StringBuilder sb = new StringBuilder();
+        Duration duration;
         if (dateStart.before(datePlan)){
             sb.append(EscomMsgUtils.getBandleLabel("Remained"));    //осталось ...
+            duration = Duration.between(dateStart.toInstant(), datePlan.toInstant());
         } else {
             sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On")); //просрочено на ...
+            duration = Duration.between(datePlan.toInstant(), dateStart.toInstant());
         }
-
-        Duration duration = Duration.between(dateStart.toInstant(), datePlan.toInstant());              
 
         StringBuilder dr = new StringBuilder();
         dr.append("d").append("дн.").append("H").append("ч.").append("mm").append("м.");

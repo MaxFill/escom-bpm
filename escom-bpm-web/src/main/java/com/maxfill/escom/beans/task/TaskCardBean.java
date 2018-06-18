@@ -74,6 +74,9 @@ public class TaskCardBean extends BaseViewBean{
     private DualListModel<Result> results;
     private int deadLineDeltaDay;
     private int deadLineDeltaHour;
+    private int reminderDeltaDay;
+    private int reminderDeltaHour;
+    private int reminderDeltaMinute;
             
     @Override
     public void onBeforeOpenCard(){
@@ -290,6 +293,27 @@ public class TaskCardBean extends BaseViewBean{
     
     /* GETS & SETS */
 
+    public int getReminderDeltaDay() {
+        return reminderDeltaDay;
+    }
+    public void setReminderDeltaDay(int reminderDeltaDay) {
+        this.reminderDeltaDay = reminderDeltaDay;
+    }
+
+    public int getReminderDeltaHour() {
+        return reminderDeltaHour;
+    }
+    public void setReminderDeltaHour(int reminderDeltaHour) {
+        this.reminderDeltaHour = reminderDeltaHour;
+    }
+
+    public int getReminderDeltaMinute() {
+        return reminderDeltaMinute;
+    }
+    public void setReminderDeltaMinute(int reminderDeltaMinute) {
+        this.reminderDeltaMinute = reminderDeltaMinute;
+    }
+    
     public int getDeadLineDeltaDay() {
         return deadLineDeltaDay;
     }

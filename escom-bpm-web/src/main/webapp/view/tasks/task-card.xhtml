@@ -154,7 +154,7 @@
                             </p:selectOneMenu>
                         </p:panelGrid>
                     </p:panelGrid>
-                    <p:separator/>                   
+                    <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
 
                     <p:commandLink  value="#{bundle.GoToProcess}"
                                     rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'processCardBean'}"
@@ -177,7 +177,6 @@
             </p:tab>
             
             <p:tab title="#{bundle.Settings}" rendered="#{!taskCardBean.isReadOnly()}">
-                <!-- Настройка напоминаний и настройка результатов -->
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                     <p:outputLabel value="#{bundle.ListResults}" indicateRequired="true"/>
                     <p:separator style="margin-top: 0em;"/>
@@ -189,9 +188,58 @@
                         <f:facet name="sourceCaption">#{bundle.AvailableResults}</f:facet>
                         <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
                     </p:pickList>
+                </p:panelGrid>
+            </p:tab>
+            
+            <p:tab title="#{bundle.Reminder}" rendered="#{!taskCardBean.isReadOnly()}">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                    <p:selectBooleanCheckbox value="#{true}" disabled="true" 
+                                             itemLabel="#{bundle.ReminderAssigningEvent}"
+                                             rendered="#{taskCardBean.editedItem.scheme != null}"> 
+                    </p:selectBooleanCheckbox>
                     
-                    <p:outputLabel value="#{bundle.Reminder}"/>
-                    <p:separator style="margin-top: 0em;"/>
+                    <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="custom">
+                        <f:selectItem itemLabel="#{bundle.No}" itemValue="no" />
+                        <f:selectItem itemLabel="#{bundle.Single}" itemValue="singl" />
+                        <f:selectItem itemLabel="#{bundle.Repeat}" itemValue="repeat" /> 
+                        <p:ajax update="centerFRM:mainTabView:remDeltaDay centerFRM:mainTabView:remDeltaHour centerFRM:mainTabView:remDeltaMinute centerFRM:mainTabView:pnRemainderRepeat" event="valueChange"/>
+                    </p:selectOneRadio>
+                    
+                    <h:panelGrid columns="3" cellpadding="3">
+                         <p:radioButton for="ReminderType" itemIndex="0" />
+                         <p:outputLabel value="#{bundle.No}"/>
+                         <p:spacer/>
+                         
+                         <p:radioButton for="ReminderType" itemIndex="1" />
+                         <h:panelGroup>
+                             <h:outputLabel value="#{bundle.Before}"/>
+                             <p:spinner id="remDeltaDay" value="#{taskCardBean.reminderDeltaDay}" min="0" max="999" 
+                                        suffix="#{bundle.DayShort}" size="3" 
+                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                             </p:spinner>
+                             <p:spinner id="remDeltaHour" value="#{taskCardBean.reminderDeltaHour}" min="0" max="99" 
+                                        suffix="#{bundle.HourShort}" size="2"
+                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                             </p:spinner>
+                             <p:spinner id="remDeltaMinute" value="#{taskCardBean.reminderDeltaMinute}" min="0" max="99" 
+                                        suffix="#{bundle.Minute}" size="2"
+                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                             </p:spinner>
+                        </h:panelGroup>
+                        <p:outputLabel value="#{bundle.BeforeDeadline}"/>
+                         
+                        <p:radioButton for="ReminderType" itemIndex="2" />
+                        <p:outputLabel value="#{bundle.Repeat}"/>
+                    </h:panelGrid>
+                    <h:panelGroup id="pnRemainderRepeat" >
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" rendered="#{taskCardBean.editedItem.reminderType eq 'repeat'}">
+                            <p:spacer/>
+                            <p:selectOneRadio id="remainderRepeatType" value="#{taskCardBean.editedItem.reminderRepeatType}" layout="grid" columns="1">
+                                    <f:selectItem itemLabel="#{bundle.EveryDay}" itemValue="everyday" />
+                                    <f:selectItem itemLabel="#{bundle.EveryWeek}" itemValue="everyweek" />                            
+                            </p:selectOneRadio>
+                        </p:panelGrid>
+                    </h:panelGroup>
                 </p:panelGrid>
             </p:tab>
             

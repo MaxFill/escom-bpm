@@ -76,10 +76,13 @@ public class Task implements Serializable, Dict{
     private String deadLineType = "delta"; //вид установки срока исполнения
     
     @Column(name="ReminderType")
-    private String reminderType = "once"; //вид установки напоминания
+    private String reminderType = "singl"; //вид установки напоминания
         
+    @Column(name="ReminderRepeatType")
+    private String reminderRepeatType = "everyday"; //вид повтора напоминания
+    
     @Column(name="DeltaReminder")
-    private Integer deltaReminder = 0;  //срок напоминания в секундах
+    private Integer deltaReminder = 0;  //срок напоминания в секундах до срока исполнения
     
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TaskLinkUID")
@@ -273,15 +276,60 @@ public class Task implements Serializable, Dict{
     public void setAvaibleResultsJSON(String avaibleResultsJSON) {
         this.avaibleResultsJSON = avaibleResultsJSON;
     }        
-    
+
+    public String getReminderType() {
+        return reminderType;
+    }
+    public void setReminderType(String reminderType) {
+        this.reminderType = reminderType;
+    }
+
+    public String getReminderRepeatType() {
+        return reminderRepeatType;
+    }
+    public void setReminderRepeatType(String reminderRepeatType) {
+        this.reminderRepeatType = reminderRepeatType;
+    }
+
+    public Integer getDeltaReminder() {
+        return deltaReminder;
+    }
+    public void setDeltaReminder(Integer deltaReminder) {
+        this.deltaReminder = deltaReminder;
+    }
+
+     
     public Integer getTempId() {
         return tempId;
     }
         
     /* *** *** */
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Task other = (Task) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
     @Override
     public String toString() {
         return "Task [ id=" + id + " ] [" + name + "]";
