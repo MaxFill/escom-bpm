@@ -20,7 +20,7 @@
                     </h:outputLabel>
                 </p:column>
                 <p:column headerText="#{bundle.Event}" sortBy="#{log.event}">
-                    <h:outputLabel value="#{log.event}" />
+                    <h:outputLabel value="#{_bean.getFormatLabelFromBundle(log.event, log.params)}" />
                 </p:column>
                 <p:column headerText="#{bundle.Author}" sortBy="#{log.userId.shortFIO}" width="180">
                     <h:outputLabel value="#{log.userId.shortFIO}" />

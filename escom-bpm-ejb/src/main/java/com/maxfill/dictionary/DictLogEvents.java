@@ -16,4 +16,8 @@ public final class DictLogEvents {
 
     public static final String ENTER_EVENT = "UserEnter";
     public static final String EXIT_EVENT = "UserExit";
+    
+    public static final String PROCESS_START = "ProcessStarted";
+    public static final String PROCESS_CANCELED = "ProcessСanceled";
+    
 }

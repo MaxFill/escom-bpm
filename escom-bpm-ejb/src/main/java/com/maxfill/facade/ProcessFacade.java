@@ -10,17 +10,10 @@ import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 
 /**
  * Фасад для сущности "Процессы"

@@ -32,10 +32,13 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable{
     private Integer id;
     
     @XmlTransient
-    @Size(min = 1, max = 256)
     @Column(name = "Event")
     private String event;
 
+    @XmlTransient
+    @Column(name = "Params")
+    private String params;
+    
     @XmlTransient
     @JoinColumn(name = "Item", referencedColumnName = "ID")
     @ManyToOne(optional = false)
@@ -86,4 +89,11 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable{
         this.userId = userId;
     }     
 
+    public String getParams() {
+        return params;
+    }
+    public void setParams(String params) {
+        this.params = params;
+    }
+    
 }

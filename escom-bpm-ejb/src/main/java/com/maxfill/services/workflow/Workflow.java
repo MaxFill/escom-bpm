@@ -5,6 +5,7 @@ import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
+import com.maxfill.model.users.User;
 
 import javax.ejb.Local;
 import java.util.Set;
@@ -25,7 +26,7 @@ public interface Workflow {
     void unpackScheme(Scheme scheme);
     void validateScheme(Scheme scheme, Set<String> errors);
     void run(Process process, WFConnectedElem startElement, Set<String> errors);
-    void stop(Process process, Set<String> errors);
-    void start(Process process, Set<String> errors);
-    void executeTask(Process process, Task task, Result result, Set<String> errors);
+    void stop(Process process, User user, Set<String> errors);
+    void start(Process process, User user, Set<String> errors);
+    void executeTask(Process process, Task task, Result result, User user, Set<String> errors);
 }

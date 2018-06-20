@@ -24,6 +24,11 @@ import com.maxfill.model.task.TaskStates;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.lang.reflect.InvocationTargetException;
+import java.time.DayOfWeek;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
@@ -32,6 +37,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -77,7 +83,9 @@ public class TaskCardBean extends BaseViewBean{
     private int reminderDeltaDay;
     private int reminderDeltaHour;
     private int reminderDeltaMinute;
-            
+    private String[] reminderDays;
+    private List<String> sourceDays;
+    
     @Override
     public void onBeforeOpenCard(){
         if (sourceTask == null){
@@ -147,9 +155,11 @@ public class TaskCardBean extends BaseViewBean{
     
     private void validateTask(Set<String> errors){
         Task task = editedItem;
+        ///проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add("TaskNoHaveListResult");
         }
+        //проверка для срока исполнения
         switch (task.getDeadLineType()){
             case "delta":{
                 if (task.getDeltaDeadLine() == 0){
@@ -166,7 +176,21 @@ public class TaskCardBean extends BaseViewBean{
                     }
             }
         }
-        
+        //проверка для напоминания
+        switch (task.getReminderType()){
+            case "everyday":{
+                if (task.getReminderTime() == null){
+                    errors.add("ReminderTimeNotSet");
+                }
+                break;
+            }
+            case "everyweek":{
+                if (reminderDays == null){
+                    errors.add("ReminderPeriodIncorrect");
+                }
+                break;
+            }
+        }
     }
     
     /**
@@ -182,7 +206,7 @@ public class TaskCardBean extends BaseViewBean{
             return "";
         } 
         ProcessCardBean bean = (ProcessCardBean)sourceBean;
-        workflow.executeTask(bean.getEditedItem(), sourceTask, result, errors);
+        workflow.executeTask(bean.getEditedItem(), sourceTask, result, getCurrentUser(), errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
@@ -271,9 +295,8 @@ public class TaskCardBean extends BaseViewBean{
     }
     
     private void initDateFields(Task task){        
-        long deltaSec = task.getDeltaDeadLine();
-        Date test = DateUtils.calculateDate(new Date(), deltaSec);
-        
+        long deltaSec = task.getDeltaDeadLine();               
+            
         long hoursInMilli = 3600;
         long daysInMilli = hoursInMilli * 24;
 
@@ -282,14 +305,31 @@ public class TaskCardBean extends BaseViewBean{
         deltaSec = deltaSec % daysInMilli;
 
         Long elapsedHours = deltaSec / hoursInMilli;
-        deadLineDeltaHour = elapsedHours.intValue();          
+        deadLineDeltaHour = elapsedHours.intValue();        
+
+        if (StringUtils.isNotEmpty(task.getReminderDays())){
+            reminderDays = task.getReminderDays().split(",");
+        }
     }
     
     private void saveDateFields(Task task){
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         task.setDeltaDeadLine(seconds);
-    }    
+        if (reminderDays != null){
+            task.setReminderDays(String.join(",", reminderDays));
+        }
+    }
+    
+    /**
+     * Формирует локализованное наименование дня недели по его значению
+     * @param day
+     * @return 
+     */
+    public String getDayWeekName(Integer day){
+        DayOfWeek dayOfWeek = DayOfWeek.of(day);
+        return getLabelFromBundle(dayOfWeek.name());
+    }
     
     /* GETS & SETS */
 
@@ -335,6 +375,23 @@ public class TaskCardBean extends BaseViewBean{
         this.editedItem = editedItem;
     }
 
+    public String[] getReminderDays() {
+        return reminderDays;
+    }
+    public void setReminderDays(String[] reminderDays) {
+        this.reminderDays = reminderDays;
+    }
+
+    public List<String> getSourceDays() {
+        if (sourceDays == null){
+            sourceDays = new ArrayList<>();
+            for (DayOfWeek dayOfWeek : Arrays.asList(DayOfWeek.values())){
+                sourceDays.add(String.valueOf(dayOfWeek.getValue()));
+            }
+        }
+        return sourceDays;
+    }  
+    
     public boolean isReadOnly() {
         return readOnly;
     }

@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -359,28 +358,21 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         addLogEvent(item, msgKey, "", user);
     }
     
-    public void addLogEvent(T item, String template, String parameter, User user) {
-        Object[] params = new Object[]{parameter};
-        Date dateEvent = new Date();        
-        String msgEvent = MessageFormat.format(template, params);
-        BaseLogItems itemLog = createLogEvent(item, dateEvent, msgEvent, user);
-        item.getItemLogs().add(itemLog);
-    }
-    
     /* Создание записи лога  */
-    public L createLogEvent(T item, Date dateEvent, String msgEvent, User user){
+    public void addLogEvent(T item, String template, String parameter, User user) {     
         try {
             L logEvent = logClass.newInstance();
-            logEvent.setEvent(msgEvent);
-            logEvent.setDateEvent(dateEvent);
+            logEvent.setEvent(template);
+            logEvent.setParams(parameter);
+            logEvent.setDateEvent(new Date());
             logEvent.setUserId(user);
             logEvent.setItem(item);
-            return logEvent;
+            item.getItemLogs().add(logEvent);
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return null;
-    }
+        
+    }          
 
     /* ПОИСК из формы поиска */
 

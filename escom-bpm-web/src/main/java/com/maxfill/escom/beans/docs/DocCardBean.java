@@ -174,7 +174,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
                     .filter(docsStatus -> docsStatus.getId() != null)
                     .forEach(docsStatus -> {
                         docStatusFacade.remove(docsStatus);
-                        getFacade().addLogEvent(getEditedItem(), EscomMsgUtils.getBandleLabel("DeletedDocStatus"), docsStatus.toString(), getCurrentUser());
+                        getFacade().addLogEvent(getEditedItem(), "DeletedDocStatus", docsStatus.toString(), getCurrentUser());
                     });
         }        
     }     
@@ -374,7 +374,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
         }
         docsStatus.setAuthor(getCurrentUser());
         //String statusName = docsStatus.getStatus().getName() + " = " + EscomBeanUtils.getBandleLabel(docsStatus.getValueBundleKey());
-        //getFacade().addLogEvent(getEditedItem(), EscomBeanUtils.getBandleLabel("ChangeDocStatus"), statusName, getCurrentUser());
+        //getFacade().addLogEvent(getEditedItem(), "ChangeDocStatus", statusName, getCurrentUser());
         onItemChange();
     }
     

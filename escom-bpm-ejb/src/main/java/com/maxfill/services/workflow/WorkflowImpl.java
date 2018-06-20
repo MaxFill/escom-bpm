@@ -1,11 +1,14 @@
 package com.maxfill.services.workflow;
 
+import com.maxfill.Configuration;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictResults;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
+import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
@@ -16,8 +19,11 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
+import com.maxfill.model.users.User;
+import com.maxfill.services.notification.NotificationService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -29,6 +35,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -53,6 +60,12 @@ public class WorkflowImpl implements Workflow {
     private ConditionFacade conditionFacade;
     @EJB
     private StatusesDocFacade statusesFacade;
+    @EJB
+    private TaskFacade taskFacade;
+    @EJB
+    private NotificationService notificationService;
+    @EJB
+    private Configuration config;
     
     /**
      * Добавление поручения в схему процесса
@@ -261,16 +274,26 @@ public class WorkflowImpl implements Workflow {
         
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         
-        for(Task task : scheme.getTasks()){            
-            if (task.getPlanExecDate() == null){
-                errors.add("TasksNoHaveDeadline");
-            } else 
-                if (task.getPlanExecDate().before(new Date())){
-                    errors.add("DeadlineSpecifiedInPastTime");
-                } else 
-                    if (task.getPlanExecDate().after(planEndDate)) { 
-                        errors.add("TaskExecTimeLongerThanProcessDeadLine");
+        for(Task task : scheme.getTasks()){ 
+            switch (task.getDeadLineType()){
+                case "data":{
+                    if (task.getPlanExecDate() == null){
+                        errors.add("TasksNoHaveDeadline");
+                    } else 
+                        if (task.getPlanExecDate().before(new Date())){
+                            errors.add("DeadlineSpecifiedInPastTime");
+                        } else 
+                            if (task.getPlanExecDate().after(planEndDate)) { 
+                                errors.add("TaskExecTimeLongerThanProcessDeadLine");
+                            }
+                    break;
+                }
+                case "delta":{
+                    if (task.getDeltaDeadLine() == null || task.getDeltaDeadLine() == 0){
+                        errors.add("TasksNoHaveDeadline");
                     }
+                }        
+            }           
         }
 
         scheme.getElements().getConditions().entrySet().stream()
@@ -303,10 +326,11 @@ public class WorkflowImpl implements Workflow {
      * @param process
      * @param task
      * @param result 
+     * @param user 
      * @param errors 
      */
     @Override
-    public void executeTask(Process process, Task task, Result result, Set<String> errors){
+    public void executeTask(Process process, Task task, Result result, User user, Set<String> errors){
         Scheme scheme = process.getScheme();
         unpackScheme(scheme);
         if (errors.isEmpty()){
@@ -318,6 +342,8 @@ public class WorkflowImpl implements Workflow {
             task.getState().setCurrentState(stateFacade.getCompletedState());
             scheme.getTasks().remove(task);
             scheme.getTasks().add(task);
+            //TODO раскомментровать после приведения задачи к BaseDict!
+            //taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
             run(process, startElement, errors);            
         }
     }    
@@ -334,20 +360,28 @@ public class WorkflowImpl implements Workflow {
                     .forEach(task->{
                         task.setBeginDate(new Date());
                         task.setResult(null);
-                        task.setFactExecDate(null);
+                        task.setFactExecDate(null);                        
                         if ("delta".equals(task.getDeadLineType())){
                             task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
                         }
-                        //TODO если вычисленный срок исполнения задачи оказался выше срока процесса то нужно отправить уведомление менеджеру процесса
+                        StringBuilder msg = new StringBuilder();
+                        msg.append(ItemUtils.getMessageLabel("YouReceivedNewTask", config.getServerLocale()));
+                        msg.append(" <").append(task.getName()).append(">!");
+                        notificationService.makeNotification(task, msg.toString()); //уведомление о назначении задачи
+                        taskFacade.makeReminder(task);                        
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     });
-                //scheme.getTasks().removeAll(tasks);
-                //scheme.getTasks().addAll(tasks);
             }
     }
     
+    /**
+     * Запуск процесса на выполнение
+     * @param process
+     * @param user
+     * @param errors 
+     */
     @Override
-    public void start(Process process, Set<String> errors) {        
+    public void start(Process process, User user, Set<String> errors) {        
         Scheme scheme = process.getScheme();
         unpackScheme(scheme);
         validateScheme(scheme, errors);
@@ -360,22 +394,25 @@ public class WorkflowImpl implements Workflow {
             });        
         process.getState().setCurrentState(stateFacade.getRunningState());
         WFConnectedElem startElement = scheme.getElements().getStartElem();
-        startElement.setDone(true);
-        run(process, startElement, errors);                
+        startElement.setDone(true);        
+        processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, user);
+        run(process, startElement, errors); 
     }
 
     /**
      * Прерывание выполнения процесса
      * @param process
+     * @param user
      * @param errors 
      */
     @Override
-    public void stop(Process process, Set<String> errors) {
+    public void stop(Process process, User user, Set<String> errors) {
         State stateCancel = stateFacade.getCanceledState();
         //отмена всех запущенных задач
         process.getScheme().getTasks().stream()                
                 .forEach(task->task.getState().setCurrentState(stateCancel));        
-        process.getState().setCurrentState(stateCancel);
+        process.getState().setCurrentState(stateCancel);        
+        processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, user);
         processFacade.edit(process);
     }
     
@@ -643,4 +680,5 @@ public class WorkflowImpl implements Workflow {
         }
         return result;
     }
+        
 }

@@ -76,13 +76,22 @@ public class Task implements Serializable, Dict{
     private String deadLineType = "delta"; //вид установки срока исполнения
     
     @Column(name="ReminderType")
-    private String reminderType = "singl"; //вид установки напоминания
+    private String reminderType = "no";     //вид установки напоминания
         
     @Column(name="ReminderRepeatType")
     private String reminderRepeatType = "everyday"; //вид повтора напоминания
     
     @Column(name="DeltaReminder")
     private Integer deltaReminder = 0;  //срок напоминания в секундах до срока исполнения
+    
+    @Column(name="ReminderDateTime")
+    private Date reminderTime;  //время напоминания 
+    
+    @Column(name="ReminderDays")
+    private String reminderDays; //Дни напоминания
+    
+    @Column(name="NextReminder")
+    private Date nextReminder;  //дата:время следующего напоминания 
     
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TaskLinkUID")
@@ -298,7 +307,27 @@ public class Task implements Serializable, Dict{
         this.deltaReminder = deltaReminder;
     }
 
-     
+    public Date getReminderTime() {
+        return reminderTime;
+    }
+    public void setReminderTime(Date reminderTime) {
+        this.reminderTime = reminderTime;
+    }
+
+    public String getReminderDays() {
+        return reminderDays;
+    }
+    public void setReminderDays(String reminderDays) {
+        this.reminderDays = reminderDays;
+    }
+
+    public Date getNextReminder() {
+        return nextReminder;
+    }
+    public void setNextReminder(Date nextReminder) {
+        this.nextReminder = nextReminder;
+    }
+          
     public Integer getTempId() {
         return tempId;
     }

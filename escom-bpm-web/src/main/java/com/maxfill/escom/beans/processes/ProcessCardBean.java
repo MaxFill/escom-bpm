@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
@@ -157,19 +158,20 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события запуска процесса на исполнение
      */
     public void onRun(){
-        getEditedItem().getState().setCurrentState(stateFacade.getRunningState());
         onItemChange();
         if (doSaveItem()){
-            Set<String> errors = new HashSet<>();            
-            workflow.start(getEditedItem(), errors);
+            Set<String> errors = new HashSet<>();
+            workflow.start(getEditedItem(), getCurrentUser(), errors);
             if (!errors.isEmpty()){
-                EscomMsgUtils.showErrorsMsg(errors);            
-            } else {                
+                EscomMsgUtils.showErrorsMsg(errors);
+            } else {
+                getEditedItem().getState().setCurrentState(stateFacade.getRunningState());
+                //processFacade.addLogEvent(getEditedItem(), DictLogEvents., getCurrentUser());
+                setItemCurrentState(getEditedItem().getState().getCurrentState());
                 EscomMsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
-            setItemCurrentState(getEditedItem().getState().getCurrentState());
             loadModel(getScheme());
-            PrimeFaces.current().ajax().update("process");
+            PrimeFaces.current().ajax().update(getFormName());
         }
     }
     
@@ -178,7 +180,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     public void onStop(){
         Set<String> errors = new HashSet<>();
-        workflow.stop(getEditedItem(), errors);
+        workflow.stop(getEditedItem(), getCurrentUser(), errors);
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
         } else {

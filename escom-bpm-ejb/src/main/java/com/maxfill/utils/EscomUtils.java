@@ -29,6 +29,7 @@ public final class EscomUtils {
      * не используется потому что к серверу по ssl не удалось подключиться. Нужно установить сертификат сервера, к которму коннектишься
      * в хранилище java. Это гемор, так как придётся после устаревания сертификата обновлять сертификат у всех клиентов.
      * Код оставлен для примера.
+     * @param licenceNumber
      */
     public static String getReleaseInfo(String licenceNumber){
         String result= "";

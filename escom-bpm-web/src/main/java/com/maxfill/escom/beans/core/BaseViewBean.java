@@ -11,6 +11,7 @@ import com.maxfill.model.users.User;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.text.MessageFormat;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -57,7 +58,7 @@ public abstract class BaseViewBean implements Serializable{
 
     @PreDestroy
     protected void destroy(){
-        System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
+        //System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
     }
 
     protected void initBean(){};
@@ -223,16 +224,24 @@ public abstract class BaseViewBean implements Serializable{
         return staffFacade.findStaffByUser(getCurrentUser());
     }
     
-    /* GETS & SETS */
-
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }
-
+    /* *** ПРОЧИЕ *** */
+    
     public String getLabelFromBundle(String key){
         if (StringUtils.isEmpty(key)) return "";
         
         return EscomMsgUtils.getBandleLabel(key);        
     }
+    
+    public String getFormatLabelFromBundle(String key, String param){
+        if (StringUtils.isEmpty(key)) return "";
+        Object[] params = new Object[]{param};        
+        return MessageFormat.format(EscomMsgUtils.getBandleLabel(key), params);                
+    }
+    
+    /* GETS & SETS */
+
+    public LayoutOptions getLayoutOptions() {
+        return layoutOptions;
+    }    
 
 }

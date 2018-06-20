@@ -115,7 +115,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
                 if (!errors.isEmpty()) {
                    EscomMsgUtils.showErrors(errors);
                 }
-                getFacade().addLogEvent(item, getBandleLabel(DictLogEvents.CREATE_EVENT), getCurrentUser());
+                getFacade().addLogEvent(item, DictLogEvents.CREATE_EVENT, getCurrentUser());
             }
 
             prepareRightsForView(item);
@@ -167,7 +167,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
             owner = item.getAuthor();
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {                    
-                    getFacade().addLogEvent(item, EscomMsgUtils.getBandleLabel(DictLogEvents.SAVE_EVENT), getCurrentUser());
+                    getFacade().addLogEvent(item, DictLogEvents.SAVE_EVENT, getCurrentUser());
                     getFacade().edit(item);
                     break;
                 }

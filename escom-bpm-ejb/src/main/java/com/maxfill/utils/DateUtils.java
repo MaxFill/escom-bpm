@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -130,8 +131,8 @@ public final class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
         return calendar.getTime();
-    }
-        
+    }         
+    
     /* Добавление к дате указанного числа часов */
     public static Date addHour(Date date, int hour) {
         Calendar cal = Calendar.getInstance();
@@ -209,4 +210,25 @@ public final class DateUtils {
         dateBegin = addHour(dateBegin, elapsedHours.intValue());
         return dateBegin;
     }
+    
+    /**
+     * Находит ближайшую предстоящую дату на основании данных из списка дней недели
+     * @param days
+     * @param current
+     * @return 
+     */
+    public static Date getNextDateByDays(String[] days, Date current){
+        LocalDate ld = toLocalDate(current);
+        DayOfWeek curentDay = ld.getDayOfWeek();
+        DayOfWeek nextDay = DayOfWeek.SATURDAY;
+        for (String strDay : days) {  
+            int day = Integer.parseInt(strDay);
+            if (day > curentDay.getValue() && day <= nextDay.getValue()){
+                nextDay = DayOfWeek.of(day);
+            }
+
+        }
+        ld = ld.with(TemporalAdjusters.next(nextDay));
+        return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }        
 }

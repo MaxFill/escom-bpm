@@ -225,13 +225,13 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
         intervalTypes.add(new SelectItem(DateUtils.MINUTE_TYPE, getBandleLabel("Minute")));
         intervalTypes.add(new SelectItem(DateUtils.HOUR_TYPE, getBandleLabel("Hour")));
         daysOfWeek = new ArrayList<>();
-        daysOfWeek.add(new SelectItem("Sun", getBandleLabel("Sunday")));
-        daysOfWeek.add(new SelectItem("Mon", getBandleLabel("Monday")));
-        daysOfWeek.add(new SelectItem("Tue", getBandleLabel("Tuesday")));
-        daysOfWeek.add(new SelectItem("Wed", getBandleLabel("Wednesday")));
-        daysOfWeek.add(new SelectItem("Thu", getBandleLabel("Thursday")));
-        daysOfWeek.add(new SelectItem("Fri", getBandleLabel("Friday")));
-        daysOfWeek.add(new SelectItem("Sat", getBandleLabel("Saturday")));
+        daysOfWeek.add(new SelectItem("Sun", getBandleLabel("SUNDAY")));
+        daysOfWeek.add(new SelectItem("Mon", getBandleLabel("MONDAY")));
+        daysOfWeek.add(new SelectItem("Tue", getBandleLabel("TUESDAY")));
+        daysOfWeek.add(new SelectItem("Wed", getBandleLabel("WEDNESDAY")));
+        daysOfWeek.add(new SelectItem("Thu", getBandleLabel("THURSDAY")));
+        daysOfWeek.add(new SelectItem("Fri", getBandleLabel("FRIDAY")));
+        daysOfWeek.add(new SelectItem("Sat", getBandleLabel("SATURDAY")));
     }
 
     public ServicesFacade getServicesFacade() {

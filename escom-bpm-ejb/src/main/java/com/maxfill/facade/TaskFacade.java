@@ -10,7 +10,13 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task_;
 import com.maxfill.model.task.result.Result;
+import com.maxfill.utils.DateUtils;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -92,6 +98,63 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         return metadatesFacade.find(22);
     }   
     
-       
+    /**
+     * Формирование даты следующего напоминания для задачи 
+     * @param task 
+     */
+    public void makeNextReminder(Task task){
+        switch (task.getReminderType()){
+            case "singl":{
+                task.setNextReminder(null);
+                break;
+            }
+            case "repeat":{
+                makeReminder(task);
+                break;
+            }
+        }        
+    }  
     
+    /**
+     * Формирование даты напоминания для задачи 
+     * @param task 
+     */
+    public void makeReminder(Task task){
+        boolean isChange = false;
+        Date nextReminder = null;
+        switch (task.getReminderType()){
+            case "no":{                
+                break;
+            }
+            case "singl":{                
+                nextReminder = DateUtils.addSeconds(task.getPlanExecDate(), -1 * task.getDeltaReminder()); //вычисляем дату напоминания                    
+                isChange = true;                 
+                break;
+            }
+            case "repeat":{
+                switch (task.getReminderRepeatType()){
+                    case "everyday":{
+                        nextReminder = DateUtils.addDays(DateUtils.today(), 1);
+                        nextReminder = DateUtils.addSeconds(nextReminder, task.getDeltaReminder());
+                        isChange = true;
+                        break;
+                    }
+                    case "everyweek":{
+                        if (StringUtils.isNotEmpty(task.getReminderDays())){
+                            String[] days = task.getReminderDays().split(",");
+                            nextReminder = DateUtils.getNextDateByDays(days, DateUtils.today());
+                            isChange = true;
+                        }
+                        break; 
+                    }
+                }                    
+                break;
+            }
+        }
+        if (isChange){
+            Task source = find(task.getId());
+            source.setNextReminder(nextReminder);
+            edit(source);
+        }
+    }
 }

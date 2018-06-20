@@ -212,9 +212,9 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
             builder.append(docType.getName()).append(" '");
         }
         if (StringUtils.isNotBlank(regNumber)){
-            builder.append(regNumber).append("' ");
+            builder.append(regNumber);
         }    
-        builder.append(getNameEndElipse());
+        builder.append(getNameEndElipse()).append("' ");
         return builder.toString();
     }    
      
