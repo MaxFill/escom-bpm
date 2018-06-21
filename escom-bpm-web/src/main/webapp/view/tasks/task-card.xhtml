@@ -35,9 +35,9 @@
                              action="#{taskCardBean.onExecute(result)}">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
-        </ui:repeat>        
+        </ui:repeat>
 
-    </ui:define>    
+    </ui:define>
     
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{taskCardBean.editedItem != null}" >
@@ -189,80 +189,8 @@
                     </p:pickList>
                 </p:panelGrid>
             </p:tab>
-            
-            <p:tab title="#{bundle.Reminder}" rendered="#{!taskCardBean.isReadOnly()}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                    <p:selectBooleanCheckbox value="#{true}" disabled="true" 
-                                             itemLabel="#{bundle.ReminderAssigningEvent}"
-                                             rendered="#{taskCardBean.editedItem.scheme != null}"> 
-                    </p:selectBooleanCheckbox>
-                    
-                    <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="custom">
-                        <f:selectItem itemLabel="#{bundle.No}" itemValue="no" />
-                        <f:selectItem itemLabel="#{bundle.Single}" itemValue="singl" />
-                        <f:selectItem itemLabel="#{bundle.Repeat}" itemValue="repeat" /> 
-                        <p:ajax update="centerFRM:mainTabView:remDeltaDay centerFRM:mainTabView:remDeltaHour centerFRM:mainTabView:remDeltaMinute centerFRM:mainTabView:pnReminderRepeat" event="valueChange"/>
-                    </p:selectOneRadio>
-                    
-                    <h:panelGrid columns="3">
-                         <p:radioButton for="ReminderType" itemIndex="0" />
-                         <p:outputLabel value="#{bundle.No}"/>
-                         <p:spacer/>
-                         
-                         <p:radioButton for="ReminderType" itemIndex="1" />
-                         <h:panelGroup>
-                             <p:outputLabel value="#{bundle.Before}"/>
-                             <p:spinner id="remDeltaDay" value="#{taskCardBean.reminderDeltaDay}" min="0" max="999" 
-                                        suffix="#{bundle.DayShort}" size="3" 
-                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
-                             </p:spinner>
-                             <p:spinner id="remDeltaHour" value="#{taskCardBean.reminderDeltaHour}" min="0" max="99" 
-                                        suffix="#{bundle.HourShort}" size="2"
-                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
-                             </p:spinner>
-                             <p:spinner id="remDeltaMinute" value="#{taskCardBean.reminderDeltaMinute}" min="0" max="99" 
-                                        suffix="#{bundle.Minute}" size="2"
-                                        disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
-                             </p:spinner>
-                        </h:panelGroup>
-                        <p:outputLabel value="#{bundle.BeforeDeadline}"/>
-                         
-                        <p:radioButton for="ReminderType" itemIndex="2" />
-                        <p:outputLabel value="#{bundle.Repeat}"/>
-                    </h:panelGrid>
-                    <h:panelGroup id="pnReminderRepeat" >
-                        <h:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" rendered="#{taskCardBean.editedItem.reminderType eq 'repeat'}" styleClass="ui-grid-col-12 without-spaces">
-                            <p:selectOneRadio id="reminderRepeatType" value="#{taskCardBean.editedItem.reminderRepeatType}" layout="custom" >
-                                    <f:selectItem itemLabel="" itemValue="everyday" />
-                                    <f:selectItem itemLabel="" itemValue="everyweek" />  
-                                    <p:ajax update="centerFRM:mainTabView:reminderDayTime centerFRM:mainTabView:pnWeekRepeat" event="valueChange"/>
-                            </p:selectOneRadio>
-                            <h:panelGrid columns="3" >
-                                <p:radioButton for="reminderRepeatType" itemIndex="0" />
-                                <p:outputLabel value="#{bundle.EveryDay}"/>
-                                <p:calendar id="reminderDayTime" label="#{bundle.Time}" value="#{taskCardBean.editedItem.reminderTime}" 
-                                            disabled="#{taskCardBean.editedItem.reminderRepeatType ne 'everyday'}"
-                                            pattern="HH:mm" timeOnly="true" >
-                                </p:calendar>
-                                
-                                <p:radioButton for="reminderRepeatType" itemIndex="1" />
-                                <p:outputLabel value="#{bundle.EveryWeek}"/>                                
-                            </h:panelGrid>
-                        </h:panelGrid>                        
-                        <h:panelGrid id="pnWeekRepeat" columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11">
-                            <p:spacer/>
-                            <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.reminderRepeatType eq 'everyweek'}">
-                                <p:outputLabel value="#{bundle.Days}"/>
-                                <p:selectManyCheckbox id="reminderWeekDays" value="#{taskCardBean.reminderDays}" layout="grid" columns="4">
-                                    <f:selectItems value="#{taskCardBean.sourceDays}" var="day" itemLabel="#{taskCardBean.getDayWeekName(day)}" itemValue="#{day}" />
-                                </p:selectManyCheckbox>
-                                <p:outputLabel value="#{bundle.Time}"/>
-                                <p:calendar id="reminderWeekTime" value="#{taskCardBean.editedItem.reminderTime}" pattern="HH:mm" timeOnly="true" />
-                            </h:panelGrid>
-                        </h:panelGrid>                       
-                    </h:panelGroup>
-                </p:panelGrid>
-            </p:tab>
+                        
+            <ui:include src="/view/tasks/task-remaind.xhtml"/>
             
             <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                   

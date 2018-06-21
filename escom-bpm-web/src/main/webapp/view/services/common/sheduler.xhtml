@@ -5,31 +5,33 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-        <p:toolbar styleClass="ui-grid-col-12">
-             <p:commandButton title="#{bundle.RunOnSchedule}" icon="ui-icon-circle-triangle-e"
-                          disabled="#{_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
-                          actionListener="#{_bean.onStartService()}"
-                          update="westFRM"
-                          onclick="document.getElementById('eastFRM:btnEastSaves').click();">
-                 <f:param name="isRequired" value="true"/>
-             </p:commandButton>
-             <p:commandButton title="#{bundle.Stop}" icon="ui-icon-circle-close"
-                          disabled="#{!_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
-                          actionListener="#{_bean.onStopService()}"
-                          update="westFRM, centerFRM">
-                 <f:param name="isRequired" value="true"/>
-             </p:commandButton>
-             <span class="ui-separator">
-                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
-             </span>
-             <p:commandButton icon="ui-icon-play" title="#{bundle.StartImmediately}"
-                          actionListener="#{_bean.doRunService()}"
-                          onclick="document.getElementById('eastFRM:btnEastSave').click();"
-                          onstart="PF('statusDialog').show()"
-                          oncomplete="PF('statusDialog').hide();"
-                          update="centerFRM, logFRM:logDetailPanel">
-             </p:commandButton>
+    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">    
+        <p:toolbar>
+            <f:facet name="left">
+                <p:commandButton title="#{bundle.RunOnSchedule}" icon="ui-icon-circle-triangle-e"
+                             disabled="#{_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
+                             actionListener="#{_bean.onStartService()}"
+                             update="westFRM"
+                             onclick="document.getElementById('eastFRM:btnEastSaves').click();">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
+                <p:commandButton title="#{bundle.Stop}" icon="ui-icon-circle-close"
+                             disabled="#{!_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
+                             actionListener="#{_bean.onStopService()}"
+                             update="westFRM, centerFRM">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>
+                <span class="ui-separator">
+                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                </span>
+                <p:commandButton icon="ui-icon-play" title="#{bundle.StartImmediately}"
+                             actionListener="#{_bean.doRunService()}"
+                             onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                             onstart="PF('statusDialog').show()"
+                             oncomplete="PF('statusDialog').hide();"
+                             update="centerFRM, logFRM:logDetailPanel">
+                </p:commandButton>
+            </f:facet>
          </p:toolbar>
         
         <p:selectBooleanCheckbox value="#{_bean.scheduler.autoStart}" 

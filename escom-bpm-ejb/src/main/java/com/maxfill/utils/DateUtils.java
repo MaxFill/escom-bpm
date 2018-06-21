@@ -166,6 +166,17 @@ public final class DateUtils {
     }
     
     /**
+     * Добавление времени к дате 
+     * @param source
+     * @param timeAdd
+     * @return 
+     */
+    public static Date addTime(Date source, Date timeAdd){
+        Long seconds = timeAdd.getTime()/1000;  
+        return addSeconds(source, seconds.intValue());
+    }
+    
+    /**
      * Возвращает разницу между двумя датами в днях
      * @param dateStart
      * @param dateEnd

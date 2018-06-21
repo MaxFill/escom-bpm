@@ -95,7 +95,7 @@
             </pe:layoutPane>
 
             <pe:layoutPane id="north" position="north" rendered="#{_bean.isNorthShow()}">>
-                <h:form id="northFRM" >
+                <h:form id="northFRM" style="font-size: 90%;">
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="northFormContent" />
                     </p:outputPanel>
@@ -103,7 +103,7 @@
             </pe:layoutPane>
 
             <pe:layoutPane id="south" position="south" rendered="#{_bean.isSouthShow()}">
-                <h:form id="southFRM" >
+                <h:form id="southFRM" style="font-size: 90%;">
                     <p:outputPanel styleClass="ui-grid-col-12 btn-group">
                         <ui:insert name="southFormContent" />
                     </p:outputPanel>
@@ -112,14 +112,14 @@
 
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}">
                 <ui:insert name="leftFacet"/>
-                <h:form id="westFRM" >
+                <h:form id="westFRM" style="font-size: 90%;">
                     <ui:insert name="leftFormContent"/>
                 </h:form>
             </pe:layoutPane>
             
             <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}">
                 <ui:insert name="rightFacet"/>
-                <h:form id="eastFRM" >
+                <h:form id="eastFRM" style="font-size: 90%;">
                     <ui:insert name="rightFormContent"/>
                 </h:form>
             </pe:layoutPane>

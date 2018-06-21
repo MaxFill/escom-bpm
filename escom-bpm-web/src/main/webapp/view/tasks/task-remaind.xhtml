@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<p:tab title="#{bundle.Reminder}">    
+    <p:panelGrid id="pnRemainder" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+        <p:selectOneRadio id="reminderRepeatType" value="#{taskCardBean.editedItem.reminderRepeatType}" layout="custom" >
+                <f:selectItem itemLabel="#{bundle.EveryDay}" itemValue="everyday" />
+                <f:selectItem itemLabel="#{bundle.EveryWeek}" itemValue="everyweek" />  
+                <p:ajax update="reminderDayTime reminderWeekTime reminderWeekDays" event="valueChange"/>
+        </p:selectOneRadio>
+        
+        <p:selectBooleanCheckbox value="#{true}" disabled="true" 
+                                 itemLabel="#{bundle.ReminderAssigningEvent}"
+                                 rendered="#{taskCardBean.editedItem.scheme != null}"> 
+        </p:selectBooleanCheckbox>
+
+        <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="custom">
+            <f:selectItem itemLabel="#{bundle.No}" itemValue="no" />
+            <f:selectItem itemLabel="#{bundle.Single}" itemValue="singl" />
+            <f:selectItem itemLabel="#{bundle.Repeat}" itemValue="repeat" /> 
+            <p:ajax update="pnRemainder" event="valueChange"/>
+        </p:selectOneRadio>
+
+        <h:panelGrid columns="3">
+             <p:radioButton for="ReminderType" itemIndex="0" />
+             <p:outputLabel value="#{bundle.No}"/>
+             <p:spacer/>
+
+             <p:radioButton for="ReminderType" itemIndex="1" />
+             <h:panelGroup>
+                 <p:outputLabel value="#{bundle.Before}: "/>
+                 <p:spinner id="remDeltaDay" value="#{taskCardBean.reminderDeltaDay}" min="0" max="999" 
+                            suffix="#{bundle.DayShort}" size="3" 
+                            disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                 </p:spinner>
+                 <p:spinner id="remDeltaHour" value="#{taskCardBean.reminderDeltaHour}" min="0" max="99" 
+                            suffix="#{bundle.HourShort}" size="2"
+                            disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                 </p:spinner>
+                 <p:spinner id="remDeltaMinute" value="#{taskCardBean.reminderDeltaMinute}" min="0" max="99" 
+                            suffix="#{bundle.Minute}" size="2"
+                            disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                 </p:spinner>
+            </h:panelGroup>
+            <p:outputLabel value="#{bundle.BeforeDeadline}"/>
+
+            <p:radioButton for="ReminderType" itemIndex="2" />
+            <p:outputLabel value="#{bundle.Repeat}:"/> 
+        </h:panelGrid>        
+        
+        <p:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="without-spaces">
+            <p:spacer width="5"/>
+            <h:panelGrid columns="3">
+                <p:radioButton for="reminderRepeatType" itemIndex="0" disabled="#{taskCardBean.editedItem.reminderType ne 'repeat'}"/>
+                 <p:outputLabel value="#{bundle.EveryDay}" />
+                 <p:calendar id="reminderDayTime" label="#{bundle.Time}" value="#{taskCardBean.editedItem.reminderTime}"
+                             disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyday'}"
+                             pattern="HH:mm" timeOnly="true" >
+                </p:calendar>
+
+                <p:radioButton for="reminderRepeatType" itemIndex="1" disabled="#{taskCardBean.editedItem.reminderType ne 'repeat'}"/>
+                <p:outputLabel value="#{bundle.EveryWeek}:" />                    
+            </h:panelGrid>
+        </p:panelGrid>
+        
+        <p:panelGrid columns="2" columnClasses="ui-grid-col-2 ui-grid-col-10" styleClass="without-spaces">
+            <p:spacer width="10"/>
+            <p:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.Days}:"/>
+                    <p:selectManyCheckbox id="reminderWeekDays" value="#{taskCardBean.reminderDays}" layout="grid" columns="3"
+                                          disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
+                        <f:selectItems value="#{taskCardBean.sourceDays}" var="day" itemLabel="#{taskCardBean.getDayWeekName(day)}" itemValue="#{day}" />
+                    </p:selectManyCheckbox>
+                    <p:outputLabel value="#{bundle.Time}:"/>
+                    <p:calendar id="reminderWeekTime" value="#{taskCardBean.editedItem.reminderTime}" pattern="HH:mm" timeOnly="true" 
+                                disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}"/>
+            </p:panelGrid>
+        </p:panelGrid>
+
+        <p:separator rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
+        <p:outputLabel value="#{''.concat(bundle.NextReminder).concat(' ').concat(bundle.AtTime)}" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
+        <p:calendar value="#{taskCardBean.editedItem.nextReminder}" disabledWeekends="true" 
+                    rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"
+                    styleClass="without-spaces" 
+                    timeZone="#{TimeZone.getDefault()}"
+                    showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"                                
+                    locale="#{sessionBean.locale}"
+                    navigator="true" yearRange="c-0:c+20">            
+        </p:calendar>
+    </p:panelGrid>
+</p:tab>
+</ui:composition>

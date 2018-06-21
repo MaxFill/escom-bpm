@@ -1,6 +1,5 @@
 package com.maxfill.facade;
 
-import com.google.gson.Gson;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.process.schemes.Scheme;
@@ -9,16 +8,10 @@ import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task_;
-import com.maxfill.model.task.result.Result;
 import com.maxfill.utils.DateUtils;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
@@ -85,13 +78,14 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         CriteriaQuery<Task> cq = builder.createQuery(Task.class);
         Root<Task> root = cq.from(Task.class); 
         List<Predicate> criteries = new ArrayList<>();
-        criteries.add(builder.equal(root.get(Task_.owner), staff));        
+        criteries.add(builder.equal(root.get(Task_.owner), staff));
         criteries.add(root.get("state").get("currentState").in(states));        
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(root).where(builder.and(predicates));
         TypedQuery<Task> q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        List<Task> results = q.getResultList();
+        return results;
     }
         
     public Metadates getMetadatesObj() {
@@ -123,7 +117,7 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         boolean isChange = false;
         Date nextReminder = null;
         switch (task.getReminderType()){
-            case "no":{                
+            case "no":{
                 break;
             }
             case "singl":{                
@@ -133,10 +127,16 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
             }
             case "repeat":{
                 switch (task.getReminderRepeatType()){
-                    case "everyday":{
-                        nextReminder = DateUtils.addDays(DateUtils.today(), 1);
-                        nextReminder = DateUtils.addSeconds(nextReminder, task.getDeltaReminder());
+                    case "everyday":{                        
+                        Date today = DateUtils.addTime(DateUtils.today(), task.getReminderTime());
+                        if (today.after(new Date())){
+                            nextReminder = today;
+                            isChange = true;
+                        } else {
+                            nextReminder = DateUtils.addDays(DateUtils.today(), 1);                        
+                            nextReminder = DateUtils.addTime(nextReminder, task.getReminderTime());
                         isChange = true;
+                        }
                         break;
                     }
                     case "everyweek":{
@@ -145,16 +145,16 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
                             nextReminder = DateUtils.getNextDateByDays(days, DateUtils.today());
                             isChange = true;
                         }
-                        break; 
+                        break;
                     }
-                }                    
+                }
                 break;
             }
         }
         if (isChange){
-            Task source = find(task.getId());
-            source.setNextReminder(nextReminder);
-            edit(source);
+            //Task source = find(task.getId());
+            task.setNextReminder(nextReminder);
+            //edit(source);
         }
     }
 }

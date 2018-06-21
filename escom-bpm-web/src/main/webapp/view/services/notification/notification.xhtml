@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-service.xhtml">
+                template="/view/templ/templ-service.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{notificationBean}"/>
     
@@ -9,6 +11,14 @@
     </ui:define>   
     
     <ui:define name="serviceParams">
+        <p:commandButton icon="ui-icon-check"
+                        value="#{bundle.Test}" title="#{bundle.CheckConnect}"
+                        actionListener="#{notificationBean.onCheckServices()}"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
+                        update="centerFRM eastFRM">
+                <f:param name="isRequired" value="true"/>
+        </p:commandButton>
     </ui:define>
 
 </ui:composition>

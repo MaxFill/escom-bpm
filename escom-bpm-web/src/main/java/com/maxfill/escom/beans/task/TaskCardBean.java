@@ -22,13 +22,10 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.services.workflow.Workflow;
-import com.maxfill.utils.DateUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.time.DayOfWeek;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
@@ -37,7 +34,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -179,6 +175,9 @@ public class TaskCardBean extends BaseViewBean{
         //проверка для напоминания
         switch (task.getReminderType()){
             case "everyday":{
+                if (task.getReminderRepeatType() == null){
+                    errors.add("InternalErrorSavingTask");
+                }
                 if (task.getReminderTime() == null){
                     errors.add("ReminderTimeNotSet");
                 }

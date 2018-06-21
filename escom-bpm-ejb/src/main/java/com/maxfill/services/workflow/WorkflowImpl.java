@@ -409,11 +409,15 @@ public class WorkflowImpl implements Workflow {
     public void stop(Process process, User user, Set<String> errors) {
         State stateCancel = stateFacade.getCanceledState();
         //отмена всех запущенных задач
+        String msg = ItemUtils.getMessageLabel("TaskCancelled", config.getServerLocale());
         process.getScheme().getTasks().stream()                
-                .forEach(task->task.getState().setCurrentState(stateCancel));        
+                .forEach(task->{
+                        task.getState().setCurrentState(stateCancel);
+                        notificationService.makeNotification(task, msg); //уведомление об аннулировании задачи
+                    });        
         process.getState().setCurrentState(stateCancel);        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, user);
-        processFacade.edit(process);
+        processFacade.edit(process);        
     }
     
     /**

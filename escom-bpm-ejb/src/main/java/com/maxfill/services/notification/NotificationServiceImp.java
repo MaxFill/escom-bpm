@@ -43,7 +43,7 @@ public class NotificationServiceImp implements NotificationService{
     public void makeNotifications() {
         List<State> states = new ArrayList<>();
         states.add(stateFacade.getRunningState());
-        staffFacade.findActualStaff().parallelStream()
+        staffFacade.findActualStaff().stream()
                 .forEach(staff->{
                     taskFacade.findTaskByStaffStates(staff, states)
                             .stream()
@@ -60,10 +60,12 @@ public class NotificationServiceImp implements NotificationService{
         msg.append(" <").append(task.getName()).append(">");
         makeNotification(task, msg.toString());
         taskFacade.makeNextReminder(task);
+        taskFacade.edit(task);
     }
     
     /**
      * Формирование напоминания по задаче
+     * Вызывается так же из маршрута процесса
      * @param task 
      * @param msg 
      */
