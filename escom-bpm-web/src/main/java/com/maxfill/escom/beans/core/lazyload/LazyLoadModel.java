@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
+    private static final long serialVersionUID = 7191520294306205834L;
 
     private List<T> datasource;
     private LazyLoadBean bean;

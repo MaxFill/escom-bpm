@@ -13,8 +13,7 @@
     <ui:param name="_bean" value="#{userMsgBean}"/>
 
     <ui:define name="menuActions" >
-        <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
-                    disabled="#{userMsgBean.getLazyDataModel().dataEmpty}"
+        <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                    
                     onclick="document.getElementById('centerFRM:btnMarkAllAsRead').click();">
         </p:menuitem>
         <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
@@ -23,8 +22,7 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"
-                         disabled="#{userMsgBean.checkedItems.isEmpty()}"
+        <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                         
                          update="centerFRM"
                          actionListener="#{userMsgBean.markAsRead()}">
         </p:commandButton>
@@ -69,21 +67,20 @@
         </p:panel>
 
         <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
-                     emptyMessage="#{bundle.EmptyTable}"
+                     emptyMessage="#{bundle.EmptyTable}" 
                      paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,25,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
                      var="item" sortBy="#{item.dateSent}" sortOrder="descending"
+                     rowKey="#{item.id}"
                      selection="#{userMsgBean.checkedItems}">
 
-            <p:ajax event="rowSelectCheckbox" update="centerFRM:btnMarkAllAsRead" />
-            <p:ajax event="rowUnselectCheckbox" update="centerFRM:btnMarkAllAsRead" />
-            <p:ajax event="toggleSelect" update="centerFRM:btnMarkAllAsRead"/>
-
-            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-
+            <p:column width="16" sortBy="#{task.iconName}" >
+                <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
+            </p:column>
+            
             <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}">
                 <h:outputLabel value="#{item.dateSent}">
                     <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>

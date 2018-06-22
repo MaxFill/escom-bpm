@@ -18,7 +18,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 @ViewScoped
 @Named
@@ -59,21 +63,20 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
     }
     
     /* установка отметки о прочтении на выделенных сообщениях */
-    public void markAsRead(){
-        if (checkedItemsEmpty()) return;
-        checkedItems.stream().forEach(message -> markAsRead((UserMessages)message));
-        checkedItems.clear();
+    public void markAsRead(){         
+        List<UserMessages> msgs = messagesFacade.findItemsByFilters("", "", makeFilters(new HashMap<>()));
+        msgs.stream()
+                .filter(message->message.getDateReading() == null)
+                .forEach(message->markAsRead((UserMessages)message)); 
     }
 
     /**
      * Установка отметки о прочтении сообщения
      * @param message
      */
-    public void markAsRead(UserMessages message){
-        if (message.getDateReading() == null) {
-            message.setDateReading(new Date());
-            messagesFacade.edit(message);
-        }
+    public void markAsRead(UserMessages message){       
+        message.setDateReading(new Date());
+        messagesFacade.edit(message);
         if (showOnlyUnread) {
             removeItemFromData(message);
         }
@@ -113,7 +116,7 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
         }
         return filters;
     }
-
+    
     /* GETS & SETS */
     
     public boolean isShowOnlyUnread() {

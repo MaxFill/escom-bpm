@@ -164,6 +164,7 @@
                     <p:commandLink  value="#{bundle.ViewDoc}"
                                     rendered="#{taskCardBean.editedItem.scheme != null}"
                                     actionListener="#{taskCardBean.onViewDocument()}"/>
+
                         
                     <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                     <p:commandButton value="#{bundle.Delete}" 
@@ -190,7 +191,9 @@
                 </p:panelGrid>
             </p:tab>
                         
-            <ui:include src="/view/tasks/task-remaind.xhtml"/>
+            <p:tab title="#{bundle.Reminder}">   
+                <ui:include src="/view/tasks/task-remaind.xhtml"/>
+            </p:tab>
             
             <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                   

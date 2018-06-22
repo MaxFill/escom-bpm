@@ -60,6 +60,31 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
     }
 
     /**
+     * Отбор записей объектов по критериям с сортировкой
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @return
+     */
+    public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters) {
+        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(entityClass);
+        Root<T> root = cq.from(entityClass);
+        cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
+        if (StringUtils.isNotBlank(sortField)){ //если задано по какому полю сортировать
+            if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+                cq.orderBy(builder.asc(root.get(sortField)));
+            } else {
+                cq.orderBy(builder.desc(root.get(sortField)));
+            }
+        }
+        Query query = getEntityManager().createQuery(cq);
+        List<T> result = query.getResultList();
+        return result;
+    }
+    
+    /**
      * Очистка журнала за указанный период времени
      * @param filters
      * @return 

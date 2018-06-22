@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;

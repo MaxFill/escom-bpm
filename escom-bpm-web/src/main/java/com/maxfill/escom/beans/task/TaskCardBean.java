@@ -149,6 +149,10 @@ public class TaskCardBean extends BaseViewBean{
         }
     }
     
+    /**
+     * Проверка корректности задачи
+     * @param errors 
+     */
     private void validateTask(Set<String> errors){
         Task task = editedItem;
         ///проверка наличия результатов
@@ -174,21 +178,32 @@ public class TaskCardBean extends BaseViewBean{
         }
         //проверка для напоминания
         switch (task.getReminderType()){
-            case "everyday":{
-                if (task.getReminderRepeatType() == null){
-                    errors.add("InternalErrorSavingTask");
-                }
-                if (task.getReminderTime() == null){
-                    errors.add("ReminderTimeNotSet");
+            case "repeat":{
+                switch (task.getReminderType()){
+                    case "everyday":{
+                        if (task.getReminderRepeatType() == null){
+                            errors.add("InternalErrorSavingTask");
+                        }
+                        if (task.getReminderTime() == null){
+                            errors.add("ReminderTimeNotSet");
+                        }
+                        break;
+                    }
+                    case "everyweek":{
+                        if (reminderDays == null){
+                            errors.add("ReminderPeriodIncorrect");
+                        }
+                        break;
+                    }
+                    default:{
+                        errors.add("ReminderPeriodIncorrect");
+                    }
                 }
                 break;
             }
-            case "everyweek":{
-                if (reminderDays == null){
-                    errors.add("ReminderPeriodIncorrect");
-                }
+            case "singl":{
                 break;
-            }
+            }            
         }
     }
     

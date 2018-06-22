@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.core.lazyload;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
+import java.util.ArrayList;
 import org.apache.commons.collections.CollectionUtils;
 import org.primefaces.model.SortOrder;
 
@@ -19,8 +20,8 @@ import java.util.Map;
 public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean{
 
     protected LazyLoadModel<T> lazyModel;
-    protected List<T> checkedItems;
-
+    protected List<T> checkedItems = new ArrayList<>();
+    
     /* Атрибуты для фильтра */
     protected Date dateStart;
     protected Date dateEnd;
@@ -60,7 +61,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean{
         }
         return lazyModel;
     }
-
+    
     protected Map<String,Object> makeFilters(Map<String, Object> filters){
         return filters;
     }
