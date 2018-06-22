@@ -74,11 +74,11 @@ public class TaskCardBean extends BaseViewBean{
     private String beanName;   
     private List<Result> taskResults;
     private DualListModel<Result> results;
-    private int deadLineDeltaDay;
-    private int deadLineDeltaHour;
-    private int reminderDeltaDay;
-    private int reminderDeltaHour;
-    private int reminderDeltaMinute;
+    private int deadLineDeltaDay = 0;
+    private int deadLineDeltaHour = 0;
+    private int reminderDeltaDay = 0;
+    private int reminderDeltaHour = 0;
+    private int reminderDeltaMinute = 0;
     private String[] reminderDays;
     private List<String> sourceDays;
     
@@ -178,12 +178,9 @@ public class TaskCardBean extends BaseViewBean{
         }
         //проверка для напоминания
         switch (task.getReminderType()){
-            case "repeat":{
-                switch (task.getReminderType()){
+            case "repeat":{                
+                switch (task.getReminderRepeatType()){
                     case "everyday":{
-                        if (task.getReminderRepeatType() == null){
-                            errors.add("InternalErrorSavingTask");
-                        }
                         if (task.getReminderTime() == null){
                             errors.add("ReminderTimeNotSet");
                         }
@@ -196,7 +193,7 @@ public class TaskCardBean extends BaseViewBean{
                         break;
                     }
                     default:{
-                        errors.add("ReminderPeriodIncorrect");
+                        errors.add("InternalErrorSavingTask");
                     }
                 }
                 break;
@@ -309,18 +306,34 @@ public class TaskCardBean extends BaseViewBean{
     }
     
     private void initDateFields(Task task){        
-        long deltaSec = task.getDeltaDeadLine();               
-            
+        //восстанавливаем срок задачи в формате дни часы
         long hoursInMilli = 3600;
         long daysInMilli = hoursInMilli * 24;
+        if (task.getDeltaDeadLine() > 0){
+            long deltaSec = task.getDeltaDeadLine();
 
-        Long elapsedDays = deltaSec / daysInMilli;
-        deadLineDeltaDay = elapsedDays.intValue();
-        deltaSec = deltaSec % daysInMilli;
+            Long elapsedDays = deltaSec / daysInMilli;
+            deadLineDeltaDay = elapsedDays.intValue();
+            deltaSec = deltaSec % daysInMilli;
 
-        Long elapsedHours = deltaSec / hoursInMilli;
-        deadLineDeltaHour = elapsedHours.intValue();        
+            Long elapsedHours = deltaSec / hoursInMilli;
+            deadLineDeltaHour = elapsedHours.intValue();        
+        }
+        //восстанавливаем время напоминания в формате дни часы минуты
+        if (task.getDeltaReminder() >0){
+            long remDeltaSec = task.getDeltaReminder();
+            Long remDays = remDeltaSec / daysInMilli;
+            reminderDeltaDay = remDays.intValue();
+            remDeltaSec = remDeltaSec % daysInMilli;
 
+            Long remHour = remDeltaSec / hoursInMilli;
+            reminderDeltaHour = remHour.intValue();
+            remDeltaSec = remDeltaSec % hoursInMilli;
+            
+            Long remMinute = remDeltaSec / 60;
+            reminderDeltaMinute = remMinute.intValue();            
+        } 
+        
         if (StringUtils.isNotEmpty(task.getReminderDays())){
             reminderDays = task.getReminderDays().split(",");
         }
@@ -332,6 +345,12 @@ public class TaskCardBean extends BaseViewBean{
         task.setDeltaDeadLine(seconds);
         if (reminderDays != null){
             task.setReminderDays(String.join(",", reminderDays));
+        }
+        if ("singl".equals(task.getReminderType())){
+            int sec = reminderDeltaDay * 86400;
+            sec = sec + reminderDeltaHour * 3600;
+            sec = sec + reminderDeltaMinute * 60;
+            task.setDeltaReminder(sec);
         }
     }
     
