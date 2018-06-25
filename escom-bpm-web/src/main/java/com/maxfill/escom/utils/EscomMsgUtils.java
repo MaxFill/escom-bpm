@@ -1,8 +1,6 @@
 package com.maxfill.escom.utils;
 
 import com.maxfill.dictionary.DictBundles;
-import org.apache.commons.lang.StringUtils;
-import org.primefaces.context.RequestContext;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -34,8 +32,13 @@ public final class EscomMsgUtils{
         FacesContext.getCurrentInstance().addMessage(null, facesMessage);
     }
 
-    public static void succesFormatMsg(String msg, Object[] msgParams) {
-        addFacesMsg(FacesMessage.SEVERITY_INFO, msg, msgParams);
+    /**
+     * Формирование успешного форматированного сообщения.
+     * @param keyMsg - ключ для ресурса msg, содержащий вставки типа {0}, {1}
+     * @param msgParams - new Object[]{param1, param2}
+     */
+    public static void succesFormatMsg(String keyMsg, Object[] msgParams) {
+        addFacesMsg(FacesMessage.SEVERITY_INFO, keyMsg, msgParams);
     }
 
     public static void warnFormatMsg(String msg, Object[] msgParams) {
@@ -51,6 +54,10 @@ public final class EscomMsgUtils{
         return makeFacesMsg(FacesMessage.SEVERITY_ERROR, key, msgParams);
     }
 
+    /**
+     * Вывод нескольких сообщений об успешном выполнении.
+     * @param messages - Set(FacesMessage)
+     */
     public static void showFacesMessages(Set<FacesMessage> messages){
         FacesContext ctx = FacesContext.getCurrentInstance();
         messages.stream().limit(10).forEach(message -> ctx.addMessage(null, message));
@@ -112,7 +119,10 @@ public final class EscomMsgUtils{
     }
 
     /**
-     * Формирование и вывод FacesMessage сообщения
+     * Формирование и вывод сообщения заданного типа.
+     * @param type
+     * @param keyMsg - ключ для ресурса msg
+     * @param msgParams 
      */
     private static void addFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){
         addMessage(makeFacesMsg(type, keyMsg, msgParams));
@@ -126,7 +136,11 @@ public final class EscomMsgUtils{
     }
 
     /**
-     * Формирование FacesMessage сообщения
+     * Формирование FacesMessage сообщения. 
+     * @param type
+     * @param keyMsg - ключ для ресурса msg
+     * @param msgParams
+     * @return 
      */
     private static FacesMessage makeFacesMsg(FacesMessage.Severity type, String keyMsg, Object[] msgParams){        
         return new FacesMessage(type, makeFormatMsg(keyMsg, msgParams), "");

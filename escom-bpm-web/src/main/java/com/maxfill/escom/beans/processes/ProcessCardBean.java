@@ -23,6 +23,7 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.services.workflow.Workflow;
+import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -46,8 +47,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
 
@@ -83,6 +87,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private int defX = 8;
     private int defY = 8;
     private WFConnectedElem baseElement;
+    private WFConnectedElem copiedElement;
 
     private final Set<Task> editedTasks = new HashSet<>();
     private Task currentTask;
@@ -346,8 +351,64 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     /**
      * Обработка события копирования эемента
      */
-    public void onElementCopy(){
-     //ToDo!   
+    public void onElementCopy(){ 
+        if (baseElement instanceof TaskElem){
+            doCopyElement(new TaskElem());
+        } else 
+            if (baseElement instanceof ConditionElem){
+                doCopyElement(new ConditionElem());
+            } else 
+                if (baseElement instanceof StatusElem){           
+                    doCopyElement(new StatusElem());
+                } else {
+                    EscomMsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
+                }                                 
+    }
+    
+    private void doCopyElement(WFConnectedElem elem){
+        try { 
+            copiedElement = elem;
+            BeanUtils.copyProperties(copiedElement, baseElement);
+            PrimeFaces.current().executeScript("refreshContextMenu('process:mainTabView:diagramm');");
+            EscomMsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);        
+        }  
+    }
+    
+    /**
+     * Обработка события вставки скопированного элемента
+     */
+    public void onElementPaste(){
+        try {
+            if (baseElement instanceof TaskElem){           
+                Element newElement = createTask(null, "", defX, defY, new HashSet<>());
+                TaskElem newTaskElem = (TaskElem)newElement.getData();
+                Task newTask = newTaskElem.getTask();
+                TaskElem sourceTaskElem = (TaskElem) baseElement;
+                Task sourceTask = sourceTaskElem.getTask();
+                BeanUtils.copyProperties(newTask, sourceTask); 
+                newTask.setTaskLinkUID(newTaskElem.getUid()); 
+                StringBuilder sb = new StringBuilder();
+                sb.append(EscomMsgUtils.getBandleLabel("Copy")).append(" ").append(sourceTask.getName());                
+                newTask.setName(sb.toString());
+                finalAddElement();
+            } else 
+                if (baseElement instanceof ConditionElem){
+                    ConditionElem sourceElem = (ConditionElem) baseElement;
+                    Condition condition = conditionFacade.find(sourceElem.getConditonId());
+                    createCondition(condition, defX, defY, new HashSet<>());
+                    finalAddElement();
+                } else  
+                    if (baseElement instanceof StatusElem){
+                        StatusElem sourceElem = (StatusElem) baseElement;                        
+                        StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
+                        createState(docStatus, sourceElem.getStyleType(), defX, defY, new HashSet<>());
+                        finalAddElement();
+                    }
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -411,12 +472,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         Set<String> errors = new HashSet<>();
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
-            List<EndPoint> endPoints = new ArrayList<>();
-            createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-            createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-            createTask(executor, "Согласовать документ!", defX, defY, endPoints, metodErr);
+            createTask(executor, "Согласовать документ!", defX, defY, metodErr); 
             defX = defX + 5;
-            defY = defY + 5;         
+            defY = defY + 5;
             if (!metodErr.isEmpty()){
                 errors.addAll(metodErr);
             }
@@ -424,22 +482,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrors(errors);
         } else { 
-            modelRefresh();
-            onItemChange();
+            finalAddElement();
         }
-    }
-
+    }   
+    
     /**
      * Обработка события добавления в схему процесса визуального компонента "Логическоe ветвление" 
      * @param bundleName
      */
-    public void onAddLogicElement(String bundleName){
-        List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);        
-        createLogic(bundleName, defX, defY, endPoints, new HashSet <>());        
+    public void onAddLogicElement(String bundleName){              
+        createLogic(bundleName, defX, defY, new HashSet <>());        
         finalAddElement();
     }
 
@@ -448,12 +500,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param name
      */
     public void onAddStateElement(String name){
-        List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        createState(null, "success", defX, defY, endPoints, new HashSet<>());        
+        createState(null, "success", defX, defY, new HashSet<>());        
         finalAddElement();
     }
 
@@ -461,34 +508,23 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события добавления в схему процесса визуального компонента "Условие" 
      */
     public void onAddConditionElement(){
-        List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
-        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createCondition(null, defX, defY, endPoints, new HashSet<>());        
+        createCondition(null, defX, defY, new HashSet<>());
         finalAddElement();
     }
 
     /**
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
-    public void onAddEnterElement(){
-        List<EndPoint> endPoints = new ArrayList<>();
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
-        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createEnter(defX, defY, endPoints, new HashSet<>());        
+    public void onAddEnterElement(){       
+        createEnter(defX, defY, new HashSet<>());        
         finalAddElement();
     }
     
     /**
      * Обработка события добавления в схему процесса визуального компонента "Выход" 
      */
-    public void onAddExitElement(){
-        List<EndPoint> endPoints = new ArrayList<>();
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);                
-        createExit(Boolean.TRUE, defX, defY, endPoints, new HashSet<>());        
+    public void onAddExitElement(){               
+        createExit(Boolean.TRUE, defX, defY, new HashSet<>());        
         finalAddElement();
     }
     
@@ -499,7 +535,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private void finalAddElement(){        
         onItemChange();        
         modelRefresh();
-    }       
+    }
     
     /* СОЗДАНИЕ КОМПОНЕНТОВ СХЕМЫ ПРОЦЕССА */
 
@@ -510,14 +546,17 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param errors
      * @return
      */
-    private Element createCondition(Condition condition, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createCondition(Condition condition, int x, int y, Set<String> errors){
         ConditionElem conditionElem;
         if (condition != null){            
             conditionElem = new ConditionElem(condition.getName(), condition.getId(), x, y);
         } else {
             conditionElem = new ConditionElem("???", null, x, y);
         }
-        
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
+        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP); 
         conditionElem.setAnchors(makeAnchorElems(conditionElem, endPoints));
         workflow.addCondition(conditionElem, getScheme(), errors);
         if (errors.isEmpty()) {
@@ -532,8 +571,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
-    private Element createLogic(String name, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createLogic(String name, int x, int y, Set<String> errors){
         LogicElem logic = new LogicElem(name, x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT); 
         logic.setAnchors(makeAnchorElems(logic, endPoints));
         workflow.addLogic(logic, getScheme(), errors);
         if (errors.isEmpty()) {
@@ -548,8 +592,12 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
-    private Element createEnter(int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createEnter(int x, int y, Set<String> errors){
         EnterElem enter = new EnterElem("", x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         enter.setAnchors(makeAnchorElems(enter, endPoints));
         workflow.addEnter(enter, getScheme(), errors);
         if (errors.isEmpty()) {
@@ -564,8 +612,11 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
-    private Element createStart(int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createStart(int x, int y, Set<String> errors){
         StartElem start = new StartElem("", x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         start.setAnchors(makeAnchorElems(start, endPoints));
         workflow.addStart(start, getScheme(), errors);
         if (errors.isEmpty()) {
@@ -580,8 +631,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param y
      * @param errors
      */
-    private Element createExit(Boolean finalize, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createExit(Boolean finalize, int x, int y, Set<String> errors){
         ExitElem exit = new ExitElem("", finalize, x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
         exit.setAnchors(makeAnchorElems(exit, endPoints));
         workflow.addExit(exit, getScheme(), errors);
         if (errors.isEmpty()) {
@@ -596,10 +649,13 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param x
      * @param y
      */
-    private Element createTask(Staff executor, String taskName, int x, int y, List<EndPoint> endPoints, Set<String> errors){
+    private Element createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
         Task task = taskFacade.createTask(taskName, executor, getScheme(), taskElem.getUid());
         taskElem.setTask(task);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
         workflow.addTask(taskElem, getScheme(), errors);
         if (errors.isEmpty()){
@@ -616,13 +672,18 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * @param errors
      * @return
      */
-    private Element createState(StatusesDoc docStatus, String styleType, int x, int y, List<EndPoint> endPoints, Set<String> errors){        
+    private Element createState(StatusesDoc docStatus, String styleType, int x, int y, Set<String> errors){        
         StatusElem stateEl;
         if (docStatus != null){
             stateEl = new StatusElem(docStatus.getBundleName(), docStatus.getId(), x, y);
         } else {
             stateEl = new StatusElem("???", null, x, y);
         }
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         stateEl.setAnchors(makeAnchorElems(stateEl, endPoints));
         stateEl.setStyleType(styleType);
         workflow.addState(stateEl, getScheme(), errors);
@@ -774,36 +835,18 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         model.clear();
         Staff staff = staffFacade.findStaffByUser(getCurrentUser());
         Set<String> errors = new HashSet <>();
-        List<EndPoint> endPoints = new ArrayList<>();
         
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createStart(2, 4, endPoints, errors);        
-        endPoints.clear();                
+        createStart(2, 4, errors);                     
 
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        createTask(staff, "Согласовать документ!", 10, 2, endPoints, errors);
-        endPoints.clear();
+        createTask(staff, "Согласовать документ!", 10, 2, errors);
+      
+        createCondition(conditionFacade.find(1), 28, 18, errors);
 
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT, DictWorkflowElem.STYLE_YES);
-        createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);        
-        createCondition(conditionFacade.find(1), 28, 18, endPoints, errors);
-        endPoints.clear();
-
-        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createState(statusesDocFacade.find(4), "success", 36, 26, endPoints, errors);
-        endPoints.clear();
-
-        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createState(statusesDocFacade.find(6), "fail", 18, 26, endPoints, errors);
-        endPoints.clear();
-
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
-        createExit(Boolean.TRUE, 50, 35, endPoints, errors);
+        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
+        
+        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
+        
+        createExit(Boolean.TRUE, 50, 35, errors);
     }
 
     /**
@@ -892,15 +935,16 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
+         PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
             sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
-        sb.append("'jsPlumb_2_63'");
         sb.append("])");      
         PrimeFaces.current().executeScript(sb.toString());
+       
     }    
     
     /* ПРОЧИЕ МЕТОДЫ */    
@@ -1028,7 +1072,11 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public void setCurrentTask(Task currentTask) {
         this.currentTask = currentTask;
     }    
-    
+
+    public WFConnectedElem getCopiedElement() {
+        return copiedElement;
+    }
+        
     @Override
     public Boolean isShowExtTaskAtr() {
         return false;

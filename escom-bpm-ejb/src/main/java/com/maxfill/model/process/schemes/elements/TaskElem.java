@@ -22,6 +22,7 @@ public class TaskElem extends WFConnectedElem{
     private Task task;
     
     public TaskElem() {
+        this.uid = EscomUtils.generateGUID();
     }
 
     public TaskElem(String caption, int x, int y) {

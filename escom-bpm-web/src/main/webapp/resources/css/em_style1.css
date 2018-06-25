@@ -267,6 +267,8 @@ body{
 .ico_flag_yelow{background-image: url('../resources/icon/flag_yelow.png') !important;}
 .ico_cancel{background-image: url('../resources/icon/cancel.png') !important; }
 
+.ico_paste{background-image: url('../resources/icon/paste.png')!important;}
+.icon_clear{background-image: url('../resources/icon/clear.png')!important;}
 .ico_close{background-image: url('../resources/icon/close.png') !important;}
 .ico_control{background-image: url('../resources/icon/control.png') !important;}
 .ico_doc_check{background-image: url('../resources/icon/doc_check.png') !important;}

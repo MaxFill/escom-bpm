@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
-import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.states.State;
 
 /**

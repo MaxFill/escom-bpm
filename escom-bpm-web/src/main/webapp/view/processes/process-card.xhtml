@@ -191,7 +191,7 @@
     </ui:define>
    
     <ui:define name="customStyleCSS">
-        <style type="text/css">         
+        <style type="text/css">
             .ui-diagram-task {
                 background-color: #9ed4ef;
                 width: 14em;
@@ -199,7 +199,7 @@
             }
             
             .draft {
-            }            
+            }
             .running {
                 border:0.2em solid #020202 !important;
             }            
@@ -283,7 +283,24 @@
     </ui:define>
     
     <ui:define name="card_scripts">
-        <script type="text/javascript"> 
+        <script type="text/javascript">        
+            function addContextMenu(componentId){    
+                var menu = [{
+                        name: '#{bundle.Paste}',
+                        img: '/escom-bpm-web/resources/icon/paste.png',
+                        disable: true,
+                        fun: function () {
+                            elementPaste();
+                        }
+                    },{
+                        name: '#{bundle.Cancel}',
+                        img: '/escom-bpm-web/resources/icon/cancel.png'                        
+                    }];
+                
+                var component = $(document.getElementById(componentId)); 
+                component.contextMenu('menu', menu, {});                
+            }
+            
             function addElementMenu(elementIds){    
                 var menu = [{
                         name: '#{bundle.Properties}',
@@ -312,7 +329,7 @@
             }
 
             function sendElementClick(info){
-                    //console.log("elementId="+info.target.id);                    
+                    console.log("elementId="+info.target.id);                    
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
                     var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
                     var elementId = info.target.id;
@@ -333,6 +350,11 @@
                 function(info) {
                     sendElementClick(info);
                 });
+                                
+            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    sendElementClick(info);                    
+            });
             $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
                 function(info) {
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
@@ -350,15 +372,30 @@
                         {name : 'posY',     value : yPos}
                     ]);
                 });
-            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    sendElementClick(info);
-                });            
+ 
+             function refreshContextMenu(componentId){
+                console.log("refresh componentId="+componentId);
+                 var menu = [{
+                        name: '#{bundle.Paste}',
+                        img: '/escom-bpm-web/resources/images/paste.png',
+                        disable: false,
+                        fun: function () {
+                            elementPaste();
+                        }
+                    },{
+                        name: '#{bundle.Cancel}',
+                        img: '/escom-bpm-web/resources/icon/cancel.png',                        
+                    }];
+                
+                var component = $(document.getElementById(componentId)); 
+                component.contextMenu('update', menu, {});  
+            }
         </script>
         
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
         <p:remoteCommand name="elementCopy" actionListener="#{processCardBean.onElementCopy()}"/>
+        <p:remoteCommand name="elementPaste" actionListener="#{processCardBean.onElementPaste()}"/>
         <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
         
         <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">

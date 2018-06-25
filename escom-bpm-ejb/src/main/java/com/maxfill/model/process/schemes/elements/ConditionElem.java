@@ -22,6 +22,7 @@ public class ConditionElem extends WFConnectedElem{
     private Integer conditonId;
     
     public ConditionElem() {
+        this.uid = EscomUtils.generateGUID();
     }
 
     public ConditionElem(String caption, Integer conditonId, int x, int y) {
