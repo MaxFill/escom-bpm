@@ -1,20 +1,24 @@
 package com.maxfill.model.process.types;
 
+import com.google.gson.Gson;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.Results;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.task.result.Result;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
 
 @Entity
 @Table(name = "processesTypes")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, ProcessTypeLog, ProcessTypeStates>{
+public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, ProcessTypeLog, ProcessTypeStates> implements Results{
     private static final long serialVersionUID = 3021369175241244174L;
 
     @TableGenerator(
@@ -30,6 +34,9 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Column(name = "Id")
     private Integer id;
 
+    @Column(name = "AvaibleResults")
+    private String avaibleResultsJSON;
+        
     /* Процессы */
     @OneToMany
     @JoinColumn(name = "owner")
@@ -83,6 +90,22 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         this.itemLogs = itemLogs;
     }
 
+    @Override
+    public void setResults(List<Result> taskResults) {
+        Gson gson = new Gson();
+        String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
+        avaibleResultsJSON = json;
+    }
+    
+    @Override
+    public String getAvaibleResultsJSON() {
+        return avaibleResultsJSON;
+    }
+    @Override
+    public void setAvaibleResultsJSON(String avaibleResultsJSON) {
+        this.avaibleResultsJSON = avaibleResultsJSON;
+    } 
+    
     /* *** *** */
 
     @Override

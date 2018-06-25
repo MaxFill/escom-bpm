@@ -3,6 +3,7 @@ package com.maxfill.model.task;
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.Dict;
+import com.maxfill.model.Results;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.result.Result;
@@ -23,7 +24,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "tasks",
         indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
-public class Task implements Serializable, Dict{
+public class Task implements Serializable, Dict, Results{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final AtomicInteger COUNT = new AtomicInteger(0);
 
@@ -164,7 +165,8 @@ public class Task implements Serializable, Dict{
         return DictStates.STATE_COMPLETED == state.getCurrentState().getId();
     }
     
-    public void setTaskResults(List<Result> taskResults) {
+    @Override
+    public void setResults(List<Result> taskResults) {
         Gson gson = new Gson();
         String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
         avaibleResultsJSON = json;
@@ -279,9 +281,11 @@ public class Task implements Serializable, Dict{
         this.comment = comment;
     }
 
+    @Override
     public String getAvaibleResultsJSON() {
         return avaibleResultsJSON;
     }
+    @Override
     public void setAvaibleResultsJSON(String avaibleResultsJSON) {
         this.avaibleResultsJSON = avaibleResultsJSON;
     }        

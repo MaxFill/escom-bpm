@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.model.Results;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.task.result.ResultLog;
@@ -49,8 +50,8 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
         return DictObjectName.RESULT.toLowerCase();
     }
     
-    public List<Result> findTaskResults(Task task) {
-        String json = task.getAvaibleResultsJSON();
+    public List<Result> findTaskResults(Results item) {
+        String json = item.getAvaibleResultsJSON();
         if (StringUtils.isEmpty(json)) return new ArrayList<>();
         
         Gson gson = new Gson();

@@ -453,7 +453,7 @@ public class TaskCardBean extends BaseViewBean{
     }
     public void setResults(DualListModel<Result> results) {
         this.results = results;
-        editedItem.setTaskResults(results.getTarget());                
+        editedItem.setResults(results.getTarget());                
     }   
         
     public List<Result> getTaskResults() {

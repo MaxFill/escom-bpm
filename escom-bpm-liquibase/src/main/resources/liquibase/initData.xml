@@ -642,8 +642,8 @@
 
             INSERT processesTypes (Id, Owner, Parent, Name, State, IsDeleted, IsInherits, IsActual, Author, IsInheritsAccessChilds, DateCreate, DateChange)
             VALUES (0, NULL, NULL, N'Виды процессов', 1, 0, 1, 1, 0, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT processesTypes (Id, Owner, Parent, Name, State, IsDeleted, IsInherits, IsActual, Author, IsInheritsAccessChilds, DateCreate, DateChange)
-            VALUES (1, NULL, 0, N'Согласование', 1, 0, 1, 1, 0, 1, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT processesTypes (Id, Owner, Parent, Name, State, IsDeleted, IsInherits, IsActual, Author, IsInheritsAccessChilds, AvaibleResults, DateCreate, DateChange)
+            VALUES (1, NULL, 0, N'Согласование', 1, 0, 1, 1, 0, 1, N'[2,3,4]',CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
 
         <!-- Виды документов -->

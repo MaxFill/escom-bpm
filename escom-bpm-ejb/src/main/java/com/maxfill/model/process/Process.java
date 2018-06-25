@@ -187,7 +187,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     }
     public void setScheme(Scheme scheme) {
         this.scheme = scheme;
-    }
+    }    
     
     @Override
     public List<Process> getDetailItems() {

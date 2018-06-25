@@ -9,6 +9,7 @@ import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
+import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
@@ -22,6 +23,7 @@ import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.task.result.Result;
 import com.maxfill.services.workflow.Workflow;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
@@ -52,6 +54,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
 
@@ -81,7 +84,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private StatusesDocFacade statusesDocFacade;
     @EJB
     private StateFacade stateFacade;
-             
+        
     private Element selectedElement = null;
 
     private int defX = 8;
@@ -1065,7 +1068,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public Task getTask(){        
         return currentTask;
     }
-
+        
     public Task getCurrentTask() {
         return currentTask;
     }

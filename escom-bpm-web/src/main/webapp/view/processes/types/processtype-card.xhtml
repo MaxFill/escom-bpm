@@ -1,7 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml">
+                template="/view/templ/templ-card.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{processTypesCardBean}"/>
 
@@ -26,6 +27,21 @@
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+            </p:panelGrid>
+        </p:tab>
+        <p:tab title="#{bundle.Settings}">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{bundle.ListResults}" indicateRequired="true"/>
+                <p:separator style="margin-top: 0em;"/>
+                <p:pickList id="pickList" value="#{processTypesCardBean.results}" var="result" converter="resultConverter"
+                            disabled="#{processTypesCardBean.isReadOnly()}"
+                            showCheckbox="true"
+                            required="#{param['isRequired'] == 'true'}"
+                            requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"                                
+                            itemLabel="#{resultBean.getLabelFromBundle(result.getName())}" itemValue="#{result}">
+                    <f:facet name="sourceCaption">#{bundle.AvailableResults}</f:facet>
+                    <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
+                </p:pickList>
             </p:panelGrid>
         </p:tab>
     </ui:define>
