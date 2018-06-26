@@ -74,6 +74,7 @@
         
         <!-- Доступные переходы между состояними объектов -->
         <sql>
+            <!-- Documents -->
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 8);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 7);            
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 8);
@@ -266,6 +267,7 @@
             INSERT objectsStates (ObjId, StateId) VALUES (21, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (21, 8);
             
+            <!-- Task -->
             INSERT objectsStates (ObjId, StateId) VALUES (22, 5);
             INSERT objectsStates (ObjId, StateId) VALUES (22, 9);
             INSERT objectsStates (ObjId, StateId) VALUES (22, 10);
@@ -488,17 +490,25 @@
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 19, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
             <!-- Process -->
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 20, 1, 1, 1, 1, 0, 1, 0, 0, 5);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 0, 0, 1, 0, 0, 9);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                   VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                   VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                   VALUES (2, 16, 20, 1, 1, 1, 1, 0, 1, 0, 0, 5);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                   VALUES (0, 2,  20, 1, 1, 1, 0, 0, 1, 0, 0, 9);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 9);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 20, 1, 1, 0, 0, 0, 0, 0, 0, 9);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 20, 1, 0, 0, 0, 0, 0, 0, 0, 9);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 10);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 10);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 11);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 11);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 10);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 10);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  20, 1, 0, 0, 0, 0, 0, 0, 0, 11);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  20, 1, 1, 1, 1, 0, 1, 0, 0, 11);
 
             <!-- ProcessesTypes -->
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 0, 0, 1, 0, 0, 8);
@@ -509,18 +519,30 @@
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 1, 0, 1, 0, 0, 6);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  21, 1, 0, 0, 0, 0, 0, 0, 0, 7);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  21, 1, 1, 1, 1, 0, 1, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 21, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 21, 1, 1, 1, 1, 0, 1, 0, 0, 7);
 
             <!-- Tasks -->
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  22, 1, 1, 1, 0, 0, 1, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 15, 22, 1, 1, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 22, 1, 0, 0, 0, 0, 0, 0, 0, 8);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  22, 1, 1, 1, 1, 0, 1, 0, 0, 6);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (0, 2,  22, 1, 1, 1, 1, 0, 1, 0, 0, 7);
-            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) VALUES (2, 16, 22, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  22, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 15, 22, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 22, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  22, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  22, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  22, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 22, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 17, 22, 1, 1, 1, 1, 0, 1, 0, 0, 7);
         </sql>
         
         <!-- Группы пользователей -->
@@ -532,6 +554,7 @@
             INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
             INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);
             INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);
+            INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(8, 7, 5);
         </sql>
         <sql>
             INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
@@ -548,6 +571,8 @@
             VALUES (15, 0, NULL, N'Редактор',                  NULL, 1, 1, 0, 6, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Editor");
             INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
             VALUES (16, 0, NULL, N'Владелец',                  NULL, 1, 1, 0, 7, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Owner");
+            INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+            VALUES (17, 0, NULL, N'Исполнитель',               NULL, 1, 1, 0, 8, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Executor");
         </sql>        
         
         <!-- Пользователи в группах -->
@@ -946,11 +971,11 @@
             INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(5, 7, 5);
         </sql>
         <sql>
-            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, N'Done',               N'done',       1, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, N'Agreed',             N'flag_green', 2, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'AgreedWithComments', N'flag_yelow', 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'Refused',            N'flag_red',   4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
-            INSERT results (Id, Name, Icon, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'Cancelled',          N'cancel',     5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (1, N'Done',               N'done',       1, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (2, N'Agreed',             N'flag_green', 2, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (3, N'AgreedWithComments', N'flag_yelow', 3, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (4, N'Refused',            N'flag_red',   4, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) VALUES (5, N'Cancelled',          N'cancel',     5, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
         </sql>
         
         <sql>

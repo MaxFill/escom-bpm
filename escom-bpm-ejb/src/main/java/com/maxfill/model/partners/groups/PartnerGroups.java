@@ -21,7 +21,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -114,9 +113,8 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     }
     
     @Override
-    public String getIconName() {
-        iconName = "folder_open";
-        return iconName;
+    public String getIconName() {        
+        return "folder_open";
     }
     
     @Override

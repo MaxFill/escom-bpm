@@ -1,18 +1,20 @@
 package com.maxfill.facade;
 
-import com.maxfill.facade.base.BaseLazyLoadFacade;
-import com.maxfill.model.metadates.Metadates;
+import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.facade.base.BaseDictWithRolesFacade;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
+import com.maxfill.model.task.TaskLog;
 import com.maxfill.model.task.Task_;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -26,13 +28,10 @@ import liquibase.util.StringUtils;
  * Фасад для сущности "Поручения"
  */
 @Stateless
-public class TaskFacade extends BaseLazyLoadFacade<Task>{
-
-    @EJB
-    private MetadatesFacade metadatesFacade; 
+public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, TaskStates>{
     
     public TaskFacade() {
-        super(Task.class);
+        super(Task.class, TaskLog.class, TaskStates.class);
     }
 
     public Task createTask(String taskName, Staff owner){
@@ -86,11 +85,7 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
         TypedQuery<Task> q = getEntityManager().createQuery(cq);
         List<Task> results = q.getResultList();
         return results;
-    }
-        
-    public Metadates getMetadatesObj() {
-        return metadatesFacade.find(22);
-    }   
+    }        
     
     /**
      * Формирование даты следующего напоминания для задачи 
@@ -156,5 +151,37 @@ public class TaskFacade extends BaseLazyLoadFacade<Task>{
             task.setNextReminder(nextReminder);
             //edit(source);
         }
+    }
+
+    /**
+     * Проверка на наличие дубликата задачи. Отключена
+     * @param item
+     * @return 
+     */
+    @Override
+    public Tuple findDublicateExcludeItem(Task item){
+        return new Tuple(false, null);
+    }
+    
+    /* *** ПРОЧЕЕ *** */
+    
+    @Override
+    public Class<Task> getItemClass() {
+        return Task.class;
+    }
+
+    @Override
+    public int replaceItem(Task oldItem, Task newItem) {
+        return 0;
+    }
+
+    @Override
+    protected Integer getMetadatesObjId() {
+        return DictMetadatesIds.OBJ_TASK;
+    }
+
+    @Override
+    public String getFRM_NAME() {
+        return DictObjectName.TASK.toLowerCase();
     }
 }

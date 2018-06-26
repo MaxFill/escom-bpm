@@ -28,6 +28,7 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     @EJB
     private StaffFacade itemFacade;
 
+    
     @Override
     public StaffFacade getFacade() {
         return itemFacade;

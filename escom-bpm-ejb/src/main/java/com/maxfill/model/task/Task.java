@@ -2,6 +2,7 @@ package com.maxfill.model.task;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictStates;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.Dict;
 import com.maxfill.model.Results;
 import com.maxfill.model.process.schemes.Scheme;
@@ -24,7 +25,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "tasks",
         indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
-public class Task implements Serializable, Dict, Results{
+public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements Serializable, Dict, Results{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final AtomicInteger COUNT = new AtomicInteger(0);
 
@@ -50,10 +51,6 @@ public class Task implements Serializable, Dict, Results{
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Scheme scheme;
-
-    @Size(max = 255)
-    @Column(name = "Name")
-    private String name;
 
     /* Дата выдачи (назначения) поручения */
     @Column(name = "BeginDate")
@@ -99,10 +96,7 @@ public class Task implements Serializable, Dict, Results{
     private String taskLinkUID;
     
     @Column(name = "Result")
-    private String result;
-    
-    @Column(name = "Icon")
-    private String iconName;
+    private String result;    
                 
     @Column(name = "Comment")
     private String comment;
@@ -183,18 +177,38 @@ public class Task implements Serializable, Dict, Results{
 
     }
 
+    @Override
+    public Staff getOwner() {
+        return owner;
+    }
+    @Override
+    public void setOwner(Staff owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public TaskStates getState() {
+        return state;
+    }
+    @Override
+    public void setState(TaskStates state) {
+        this.state = state;
+    }
+
+    @Override
+    public List <TaskLog> getItemLogs() {
+        return itemLogs;
+    }
+    @Override
+    public void setItemLogs(List <TaskLog> itemLogs) {
+        this.itemLogs = itemLogs;
+    }
+    
     public String getResult() {
         return result;
     }
     public void setResult(String result) {
         this.result = result;
-    }
-
-    public String getIconName() {
-        return iconName;
-    }
-    public void setIconName(String iconName) {
-        this.iconName = iconName;
     }
     
     public String getTaskLinkUID() {
@@ -202,20 +216,6 @@ public class Task implements Serializable, Dict, Results{
     }
     public void setTaskLinkUID(String taskLinkUID) {
         this.taskLinkUID = taskLinkUID;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Staff getOwner() {
-        return owner;
-    }
-    public void setOwner(Staff owner) {
-        this.owner = owner;
     }
 
     public Date getBeginDate() {
@@ -251,20 +251,6 @@ public class Task implements Serializable, Dict, Results{
     }
     public void setFactExecDate(Date factExecDate) {
         this.factExecDate = factExecDate;
-    }
-
-    public TaskStates getState() {
-        return state;
-    }
-    public void setState(TaskStates state) {
-        this.state = state;
-    }
-
-    public List <TaskLog> getItemLogs() {
-        return itemLogs;
-    }
-    public void setItemLogs(List <TaskLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
 
     public Scheme getScheme() {
@@ -365,7 +351,7 @@ public class Task implements Serializable, Dict, Results{
     
     @Override
     public String toString() {
-        return "Task [ id=" + id + " ] [" + name + "]";
+        return "Task [ id=" + id + " ]";
     }
 
 }

@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.core;
 
 import com.maxfill.Configuration;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -12,9 +13,15 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 import org.codehaus.plexus.util.StringUtils;
 
 import org.primefaces.extensions.component.layout.LayoutPane;
@@ -24,8 +31,9 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
  * Базовый бин для работы с формами и диалогами
  * Реализует методы обработки событий открытия и закрытия диалогов,
  * сохранения изменений размеров форм
+ * @param <T>
  */
-public abstract class BaseViewBean implements Serializable{
+public abstract class BaseViewBean<T extends BaseView> implements Serializable{
     protected static final Logger LOGGER = Logger.getLogger(BaseViewBean.class.getName());
     private static final long serialVersionUID = -255630654257638984L;
 
@@ -46,10 +54,20 @@ public abstract class BaseViewBean implements Serializable{
     private Integer centerWidth = 0;
     private Integer eastWidth = 0;
     
-    protected String beanId;
+    protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
+    
+    protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).
     
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
+    /**
+     * Возвращает имя этого бина. (Использется для передачи имени бина в качестве параметра в дочерний бин)
+     * @return - String имя бина
+     */
+    public String getBeanName(){
+        return this.getClass().getSimpleName().substring(0, 1).toLowerCase() + this.getClass().getSimpleName().substring(1);        
+    }
+    
     @PostConstruct
     protected void init(){
         initLayotOptions();
@@ -70,9 +88,30 @@ public abstract class BaseViewBean implements Serializable{
     /**
      * Метод вызывается автоматически при открытии формы диалога
      */
-    public void onBeforeOpenCard(){
+    public void onBeforeOpenCard(){        
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();        
+        if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
+            String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
+            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
+            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
+            for (Object entry : map.values()) {
+              if (entry instanceof Map) {
+                Map viewScopes = (Map) entry;
+                if (viewScopes.containsKey(beanName)) {
+                    setSourceBean((T) viewScopes.get(beanName));
+                    String id = sourceBean.toString();
+                    if (sourceBeanId.equals(id)) break;
+                }
+              }
+            }
+        }
+        doBeforeOpenCard(params);
     }
 
+    public void doBeforeOpenCard(Map<String, String> params){};
+    
     /**
      * Метод вызывается автоматически после загрузки формы диалога
      * @param beanId
@@ -238,10 +277,39 @@ public abstract class BaseViewBean implements Serializable{
         return MessageFormat.format(EscomMsgUtils.getBandleLabel(key), params);                
     }
     
+    /**
+     * Формирует набор параметров для передачи его в открываемый бин
+     * @return 
+     */
+    public Map<String, List<String>> getParamsMap(){
+        Map<String, List<String>> paramsMap = new HashMap<>();
+        List<String> itemIds = new ArrayList<>();
+        itemIds.add(beanId);
+        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        List<String> beanNameList = new ArrayList<>();
+        beanNameList.add(getBeanName());
+        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        return paramsMap;
+    }
+    
     /* GETS & SETS */
 
     public LayoutOptions getLayoutOptions() {
         return layoutOptions;
     }    
+   
+    public String getBeanId() {
+        return beanId;
+    }
+    public void setBeanId(String beanId) {
+        this.beanId = beanId;
+    }
 
+    public T getSourceBean() {
+        return sourceBean;
+    }
+    public void setSourceBean(T sourceBean) {
+        this.sourceBean = sourceBean;
+    }
+    
 }

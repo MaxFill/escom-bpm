@@ -337,7 +337,7 @@ public class WorkflowImpl implements Workflow {
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
             task.setResult(result.getName());
-            task.setIconName(result.getIcon());
+            task.setIconName(result.getIconName());
             task.setFactExecDate(new Date());
             task.getState().setCurrentState(stateFacade.getCompletedState());
             scheme.getTasks().remove(task);

@@ -25,7 +25,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -142,12 +141,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     @XmlTransient
     @Column(name = "Number")
-    private Integer number;        
+    private Integer number;            
     
-    @Transient
-    @XmlTransient   
-    protected String iconName;
-    
+    @XmlTransient
+    @Column(name = "IconName")
+    private String iconName;
+        
     @Transient
     @XmlTransient           
     protected String iconTree;    
@@ -377,18 +376,16 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setNumber(Integer number) {
         this.number = number;
     }
-
+     
     public String getIconName() {
-        if (owner != null){
+        if (iconName == null){
             iconName = "doc16";
-        } else {
-            iconName = "folder_open";
         }
         return iconName;
     }
     public void setIconName(String iconName) {
         this.iconName = iconName;
-    }     
+    }
     
     public Map<String, Set<Integer>> getRoles() {
         if (roles == null){

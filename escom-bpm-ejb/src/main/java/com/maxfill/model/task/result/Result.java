@@ -40,10 +40,7 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     @Basic(optional = false)
     @GeneratedValue(strategy = TABLE, generator = "IdResultGen")
     @Column(name = "Id")
-    private Integer id;
-    
-    @Column(name = "Icon")
-    private String icon;
+    private Integer id;    
       
     @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
@@ -54,12 +51,7 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private ResultStates state;
 
-    /* Gets & Sets */
-
-    @Override
-    public String getIconName() {
-        return "ico_" + icon; 
-    }
+    /* *** GETS & SETS *** */
         
     @Override
     public Integer getId() {
@@ -69,13 +61,6 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     public void setId(Integer id) {
         this.id = id;
     }  
-
-    public String getIcon() {
-        return icon;
-    }
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
     
     @Override
     public ResultStates getState() {
@@ -94,8 +79,7 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     public void setItemLogs(List<ResultLog> itemLogs) {
         this.itemLogs = itemLogs;
     }
-     
-    
+         
     /* *** *** */
 
     @Override

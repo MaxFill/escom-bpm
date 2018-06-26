@@ -26,7 +26,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.commons.lang3.StringUtils;
@@ -195,13 +194,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     }
     public void setType(PartnerTypes type) {
         this.type = type;
-    }
-    
-    @Override
-    public String getIconName() {
-        iconName = "doc16";
-        return iconName;
-    }
+    }    
     
     @Override
     public PartnerGroups getOwner() {

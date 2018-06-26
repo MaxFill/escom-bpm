@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.scheduler;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
@@ -11,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.ScheduleEntryMoveEvent;
@@ -29,7 +31,9 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
 
     @EJB
     private TaskFacade taskFacade;
-        
+    @Inject
+    private TaskBean taskBean;    
+            
     private final ScheduleModel eventModel = new DefaultScheduleModel();
     private SchedulerTask schedulerTask = new SchedulerTask();
     
@@ -59,8 +63,7 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
     
     @Override
     public void onOpenTask(String beanId){        
-        String beanName = SchedulerBean.class.getSimpleName().substring(0, 1).toLowerCase() + SchedulerBean.class.getSimpleName().substring(1);        
-        sessionBean.openTask(beanId, beanName);        
+        taskBean.prepEditItem(getTask(), getParamsMap());
     }
     
     /**

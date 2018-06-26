@@ -206,12 +206,12 @@ public class SessionBean implements Serializable{
     
     public BaseDict prepEditItem(BaseDict item){
         BaseTableBean bean = getItemBean(item);
-        return bean.prepEditItem(item);
+        return bean.prepEditItem(item, bean.getParamsMap());
     }
     
     public BaseDict prepViewItem(BaseDict item){
         BaseTableBean bean = getItemBean(item);
-        return bean.prepViewItem(item, new HashSet<>());
+        return bean.prepViewItem(item, bean.getParamsMap(), new HashSet<>());
     }    
     
     public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
@@ -412,23 +412,6 @@ public class SessionBean implements Serializable{
      */
     public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
         EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
-    }
-
-    /**
-     * Открытие формы задачи 
-     * @param beanId 
-     * @param beanName 
-     */
-    public void openTask(String beanId, String beanName) {
-        String formName = DictDlgFrmName.FRM_TASK + "-card";
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemIds = new ArrayList<>();
-        itemIds.add(beanId);
-        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(beanName);
-        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
-        openDialogFrm(formName.toLowerCase(), paramMap);        
     }
 
     /**

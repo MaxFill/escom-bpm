@@ -43,11 +43,6 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         super(Staff.class, StaffLog.class, StaffStates.class);
     }
 
-    @Override
-    public Class<Staff> getItemClass() {
-        return Staff.class;
-    }
-
     /* Дополнения при выполнении поиска через форму поиска */
     @Override
     protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
@@ -101,12 +96,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
                 .collect(Collectors.toList());
         return result;
     }
-
-    @Override
-    protected Integer getMetadatesObjId() {
-        return DictMetadatesIds.OBJ_STAFFS;
-    }   
-        
+       
     /* Создание новой штатной единицы  */
     public Staff createStaff(Department department, Post post, User user){
         if (department == null || post == null || user == null){
@@ -245,6 +235,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         return q.getResultList();
     }
 
+    /* ***  ПРОЧЕЕ * *** */
+    
     /**
      * Замена штатной единицы в связанных объектах
      * @param oldItem
@@ -258,7 +250,17 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
 
     @Override
+    public Class<Staff> getItemClass() {
+        return Staff.class;
+    }
+    
+    @Override
     public String getFRM_NAME() {
         return DictObjectName.STAFF.toLowerCase();
     }
+    
+    @Override
+    protected Integer getMetadatesObjId() {
+        return DictMetadatesIds.OBJ_STAFFS;
+    }   
 }

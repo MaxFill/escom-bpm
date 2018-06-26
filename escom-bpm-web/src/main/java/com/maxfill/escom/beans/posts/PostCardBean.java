@@ -20,7 +20,7 @@ public class PostCardBean extends BaseCardBean<Post>{
     private PostFacade itemsFacade;
         
     @Override
-    public PostFacade getFacade() {
+    public PostFacade getFacade() {        
         return itemsFacade;
     }
 

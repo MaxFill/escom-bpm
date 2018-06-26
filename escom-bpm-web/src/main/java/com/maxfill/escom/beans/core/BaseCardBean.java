@@ -10,7 +10,6 @@ import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.users.User;
@@ -27,7 +26,6 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import java.text.MessageFormat;
@@ -41,7 +39,7 @@ import org.apache.commons.beanutils.BeanUtils;
  * Реализует бызовые функции создания, редактирования, валидации и сохранения объектов на карточках
  * @param <T>
  */
-public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
+public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 6864719383155087328L;
 
     @Inject
@@ -73,12 +71,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
     protected abstract BaseDictFacade getFacade();
 
     /**
-     * При открытии карточки объекта
+     * Общий метод для всех бинов карточек, вызываемый автоматически перед открытием карточки
+     * @param params 
      */
     @Override
-    public void onBeforeOpenCard(){
+    public void doBeforeOpenCard(Map<String, String> params){
         if (getEditedItem() == null){
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             openInDialog = params.containsKey("openInDialog");
             itemOpenKey = params.get("itemId");
             T item;
@@ -125,10 +123,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean{
             }
             doPrepareOpen(item);
         }
-    }
+    }    
+
     
     /* Подготовка прав доступа к визуализации */
-    protected void prepareRightsForView(T item){
+    protected void prepareRightsForView(T item) {
         List<Right> itemRights = item.getRightItem().getRights();
         rightsBean.prepareRightsForView(itemRights);
     }

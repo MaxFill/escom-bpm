@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
+import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.facade.UserMessagesFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.docs.Doc;
@@ -20,9 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
-import org.primefaces.event.UnselectEvent;
 
 @ViewScoped
 @Named
@@ -34,6 +32,8 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
 
     @Inject
     private DocBean docBean;
+    @Inject
+    private TaskBean taskBean;
     
     @EJB
     private UserMessagesFacade messagesFacade;
@@ -96,8 +96,8 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
     public void onGoToDocument(){
         if (selectedMessages == null) return;
         Doc doc = selectedMessages.getDocument();
-        if (doc == null) return;
-        docBean.prepEditItem(doc);
+        if (doc == null) return;                
+        docBean.prepEditItem(doc, getParamsMap());
     }    
     
     @Override
@@ -137,9 +137,8 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
     }
 
     @Override
-    public void onOpenTask(String beanId) {        
-        String beanName = UserMsgBean.class.getSimpleName().substring(0, 1).toLowerCase() + UserMsgBean.class.getSimpleName().substring(1);        
-        sessionBean.openTask(beanId, beanName);
+    public void onOpenTask(String beanId) {               
+        taskBean.prepEditItem(getTask(), getParamsMap());
     }
     
 }

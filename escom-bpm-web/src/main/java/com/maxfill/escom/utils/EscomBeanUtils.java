@@ -8,7 +8,6 @@ import com.maxfill.utils.Tuple;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
@@ -192,33 +191,7 @@ public final class EscomBeanUtils {
             }
         }
         return result;
-    }
-    
-    /* Открытие карточки объекта  */
-    public static void openItemForm(String formName, String itemOpenKey,  Tuple<Integer, Integer> size) {
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("minWidth", 450);
-        options.put("minHeight", 300);
-        options.put("width", size.a);
-        options.put("height", size.b);
-        options.put("maximizable", true);
-        options.put("minimizable", true);
-        options.put("closable", false);
-        options.put("closeOnEscape", false);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        //options.put("headerElement", formName + ":customheader");
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemKeyList = new ArrayList<>();
-        List<String> openInDialogList = new ArrayList<>();
-        openInDialogList.add("true");
-        itemKeyList.add(itemOpenKey);
-        paramMap.put("itemId", itemKeyList);
-        paramMap.put("openInDialog", openInDialogList);
-        PrimeFaces.current().dialog().openDynamic(formName + "-card", options, paramMap);
-    }    
+    }     
     
     /* Открытие карточки диалога */
     public static void openDlgFrm(String dlgName, Map<String, List<String>> paramMap, Tuple<Integer, Integer> size) {

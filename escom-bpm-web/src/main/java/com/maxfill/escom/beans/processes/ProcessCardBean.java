@@ -6,10 +6,10 @@ import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
-import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
@@ -23,7 +23,6 @@ import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
-import com.maxfill.model.task.result.Result;
 import com.maxfill.services.workflow.Workflow;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
@@ -50,11 +49,9 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
-import org.primefaces.model.DualListModel;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
 
@@ -64,11 +61,12 @@ import org.primefaces.model.diagram.overlay.Overlay;
 @Named
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTask{
-    private static final long serialVersionUID = -5558740260204665618L;
-    private static final String BEAN_NAME = ProcessCardBean.class.getSimpleName().substring(0, 1).toLowerCase() + ProcessCardBean.class.getSimpleName().substring(1);
+    private static final long serialVersionUID = -5558740260204665618L;    
     
     @Inject
     private ProcessBean processBean;
+    @Inject
+    private TaskBean taskBean;
     
     @EJB
     private ProcessFacade processFacade;
@@ -96,7 +94,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     private Task currentTask;
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();
-
+    
     @Override
     protected BaseDictFacade getFacade() {
         return processFacade;
@@ -346,7 +344,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         itemIds.add(beanId);
         paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
         List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(BEAN_NAME);
+        beanNameList.add(getBeanName());
         paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         sessionBean.openDialogFrm(formName, paramMap);
     }
@@ -422,8 +420,8 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public void onOpenTask(String beanId){
         onOpenTask();
     }    
-    public void onOpenTask(){                   
-        sessionBean.openTask(beanId, BEAN_NAME);
+    public void onOpenTask(){ 
+        taskBean.prepEditItem(currentTask, getParamsMap());
     }
     
     /**
@@ -1088,4 +1086,6 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     public Scheme getScheme(){
         return getEditedItem().getScheme();
     }
+    
+   
 }

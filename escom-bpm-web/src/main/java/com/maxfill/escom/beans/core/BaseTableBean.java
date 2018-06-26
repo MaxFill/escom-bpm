@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
+import com.maxfill.utils.Tuple;
 
 /**
  * Базовый бин для работы с табличными представлениями объектов (без владельцев)
@@ -68,7 +69,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
     /* Подготовка к просмотру объекта на карточке */
-    public T prepViewItem(T item, Set<String> errors){
+    public T prepViewItem(T item, Map<String, List<String>> paramsMap, Set<String> errors){
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
         getFacade().makeRightItem(editItem, getCurrentUser());
@@ -77,12 +78,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
             errors.add(error);
         }
-        openItemCard(editItem, DictEditMode.VIEW_MODE, errors);
+        openItemCard(editItem, DictEditMode.VIEW_MODE, paramsMap, errors);
         return editItem;
     }
     
     /* Подготовка к редактированию объекта на карточке  */      
-    public T prepEditItem(T item){        
+    public T prepEditItem(T item, Map<String, List<String>> paramsMap){        
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для редактирования 
@@ -91,9 +92,9 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
-            return prepViewItem(item, errors);
+            return prepViewItem(item, paramsMap, errors);
         }
-        openItemCard(editItem, DictEditMode.EDIT_MODE, errors);
+        openItemCard(editItem, DictEditMode.EDIT_MODE, paramsMap, errors);
         return editItem;
     } 
     
@@ -101,7 +102,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> params){
         Set<String> errors = new HashSet<>();
         T newItem = checkCanCreateItem(parent, owner, errors, params);
-        openItemCard(newItem, DictEditMode.INSERT_MODE, errors);
+        openItemCard(newItem, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
         return newItem;
     }
 
@@ -130,8 +131,14 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         return newItem;
     }
     
-    /* Открытие карточки объекта*/
-    public void openItemCard(BaseDict item, Integer editMode, Set<String> errors){       
+    /**
+     * Открытие карточки объекта в заданном режиме редактирования
+     * @param item - открываемый объект
+     * @param editMode - режим открытия DictEditMode
+     * @param paramsMap - передаваемые в открываемый бин параметры
+     * @param errors - список ошибок
+     */
+    private void openItemCard(BaseDict item, Integer editMode, Map<String, List<String>> paramsMap, Set<String> errors){       
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrors(errors);
             return;
@@ -149,8 +156,32 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         }
 
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
-        String cardName = getFormName();
-        EscomBeanUtils.openItemForm(cardName, itemOpenKey, sessionBean.getFormSize(cardName));
+        List<String> itemKeyList = new ArrayList<>();
+        itemKeyList.add(itemOpenKey);
+        paramsMap.put("itemId", itemKeyList);
+        
+        List<String> openInDialogList = new ArrayList<>();
+        openInDialogList.add("true");
+        paramsMap.put("openInDialog", openInDialogList);  
+        
+        String formName = getFormName();
+        Tuple<Integer, Integer> size = sessionBean.getFormSize(formName);
+        
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("minWidth", 450);
+        options.put("minHeight", 300);
+        options.put("width", size.a);
+        options.put("height", size.b);
+        options.put("maximizable", true);
+        options.put("minimizable", true);
+        options.put("closable", false);
+        options.put("closeOnEscape", false);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");                           
+
+        PrimeFaces.current().dialog().openDynamic(formName + "-card", options, paramsMap);
     }  
     
     /* Действия перед созданием объекта */

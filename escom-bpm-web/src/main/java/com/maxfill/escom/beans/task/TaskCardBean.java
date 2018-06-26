@@ -2,18 +2,16 @@ package com.maxfill.escom.beans.task;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictStates;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ContainsTask;
-import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.TaskFacade;
+import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.task.Task;
@@ -34,15 +32,10 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
 import liquibase.util.StringUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.DualListModel;
@@ -52,7 +45,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-public class TaskCardBean extends BaseViewBean{
+public class TaskCardBean extends BaseCardBean<Task>{
     private static final long serialVersionUID = -2860068605023348908L;
 
     @EJB
@@ -66,12 +59,9 @@ public class TaskCardBean extends BaseViewBean{
     private ProcessBean processBean;
     @Inject
     private DocBean docBean;
-            
-    private Task editedItem = new Task();
+
     private boolean readOnly;
-    private Task sourceTask = null;
-    private ContainsTask sourceBean = null;
-    private String beanName;   
+    private Task sourceTask = null;  
     private List<Result> taskResults;
     private DualListModel<Result> results;
     private int deadLineDeltaDay = 0;
@@ -83,26 +73,10 @@ public class TaskCardBean extends BaseViewBean{
     private List<String> sourceDays;
     
     @Override
-    public void onBeforeOpenCard(){
-        if (sourceTask == null){
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
-            beanId = params.get(SysParams.PARAM_BEAN_ID);
-            beanName = params.get(SysParams.PARAM_BEAN_NAME);
-            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
-            for (Object entry : map.values()) {
-              if (entry instanceof Map) {
-                Map viewScopes = (Map) entry;
-                if (viewScopes.containsKey(beanName)) {
-                    sourceBean = (ContainsTask) viewScopes.get(beanName);
-                    String id = sourceBean.toString();
-                    if (beanId.equals(id)) break;
-                }
-              }
-            }
+    public void doPrepareOpen(Task task){
+        if (sourceTask == null){     
             if (sourceBean != null){
-                sourceTask = sourceBean.getTask();
+                sourceTask = ((ContainsTask)sourceBean).getTask();
                 TaskStates taskStates = sourceTask.getState();
                 State state = taskStates.getCurrentState();
                 int id = state.getId();
@@ -112,49 +86,24 @@ public class TaskCardBean extends BaseViewBean{
             }
             if (sourceTask != null){
                 try {
-                    BeanUtils.copyProperties(editedItem, sourceTask);                                        
+                    BeanUtils.copyProperties(task, sourceTask);                                        
                 } catch (IllegalAccessException | InvocationTargetException ex) {
-                    Logger.getLogger(TaskCardBean.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
-            initDateFields(editedItem);
+            initDateFields(getEditedItem());
         }
-    }
-    
+    }    
+      
+    /**
+     * Проверка корректности задачи 
+     * @param task
+     * @param errors 
+     */
     @Override
-    public String onCloseCard(String param){
-        Set<String> errors = new HashSet<>();
-        saveTask(errors);
-        if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
-            return "";
-        } 
-        return super.onCloseCard(param);
-    }
-    
-    /**
-     * Сохранение изменений в задаче
-     * @param errors 
-     */
-    private void saveTask(Set<String> errors){
-        saveDateFields(editedItem);
-        validateTask(errors);
-        if (errors.isEmpty()){            
-            try {                
-                BeanUtils.copyProperties(sourceTask, editedItem);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
-                errors.add("InternalErrorSavingTask");
-                LOGGER.log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-    
-    /**
-     * Проверка корректности задачи
-     * @param errors 
-     */
-    private void validateTask(Set<String> errors){
-        Task task = editedItem;
+    protected void checkItemBeforeSave(Task task, Set<String> errors) {
+        saveDateFields(task);
+        super.checkItemBeforeSave(task, errors);
         ///проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add("TaskNoHaveListResult");
@@ -202,6 +151,14 @@ public class TaskCardBean extends BaseViewBean{
                 break;
             }            
         }
+        if (errors.isEmpty()){            
+            try {                
+                BeanUtils.copyProperties(sourceTask, getEditedItem());
+            } catch (IllegalAccessException | InvocationTargetException ex) {
+                errors.add("InternalErrorSavingTask");
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
     /**
@@ -211,7 +168,7 @@ public class TaskCardBean extends BaseViewBean{
      */
     public String onExecute(Result result){        
         Set<String> errors = new HashSet<>();
-        saveTask(errors);
+        checkItemBeforeSave(getEditedItem(), errors); 
         if (!errors.isEmpty()){
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
@@ -231,7 +188,7 @@ public class TaskCardBean extends BaseViewBean{
     public void onOpenProcess(){        
         Process process = getProcess();
         if (process != null){
-            processBean.prepEditItem(process);
+            processBean.prepEditItem(process, getParamsMap());
         } else {
             EscomMsgUtils.errorMsg("LinkProcessIncorrect");
         }
@@ -245,7 +202,7 @@ public class TaskCardBean extends BaseViewBean{
         if (process != null){ 
             Doc doc = process.getDoc();
             if (doc != null){
-               docBean.prepEditItem(doc);
+               docBean.prepEditItem(doc, getParamsMap());
             } else {
                EscomMsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             }
@@ -272,7 +229,7 @@ public class TaskCardBean extends BaseViewBean{
     }
     
     private Process getProcess(){
-        Scheme scheme = editedItem.getScheme();
+        Scheme scheme = getEditedItem().getScheme();
         if (scheme == null) return null;
         return scheme.getProcess();
     }
@@ -284,25 +241,15 @@ public class TaskCardBean extends BaseViewBean{
     public void onExecutorChanged(SelectEvent event){
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()) return;
-        editedItem.setOwner(items.get(0));
+        getEditedItem().setOwner(items.get(0));
     }
     public void onExecutorChanged(ValueChangeEvent event){
-         editedItem.setOwner((Staff) event.getNewValue());
+         getEditedItem().setOwner((Staff) event.getNewValue());
     }
     
     public Boolean isShowExtTaskAtr(){
         if (sourceBean == null) return false;
-        return sourceBean.isShowExtTaskAtr();
-    }
-
-    /* Возвращает список состояний доступных объекту из его текущего состояния */
-    public List<State> getAvailableStates(){        
-        Metadates metaObj = getMetadatesObj();
-        List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
-        List<State> result = metadatesStates.stream()
-                .map(metadatesState -> metadatesState.getStateTarget())
-                .collect(Collectors.toList());        
-        return result;
+        return ((ContainsTask) sourceBean).isShowExtTaskAtr();
     }
     
     private void initDateFields(Task task){        
@@ -399,14 +346,7 @@ public class TaskCardBean extends BaseViewBean{
     }
     public void setDeadLineDeltaHour(int deadLineDeltaHour) {
         this.deadLineDeltaHour = deadLineDeltaHour;
-    }
-    
-    public Task getEditedItem() {
-        return editedItem;
-    }
-    public void setEditedItem(Task editedItem) {
-        this.editedItem = editedItem;
-    }
+    }    
 
     public String[] getReminderDays() {
         return reminderDays;
@@ -428,20 +368,6 @@ public class TaskCardBean extends BaseViewBean{
     public boolean isReadOnly() {
         return readOnly;
     }
-    
-    /* Получение ссылки на объект метаданных  */
-    public Metadates getMetadatesObj() {        
-        return taskFacade.getMetadatesObj();        
-    }
-    
-    @Override
-    public String getFormName() {
-        return DictDlgFrmName.FRM_TASK+"-card";
-    }
-
-    public String getBeanName() {
-        return beanName;
-    }
 
     public DualListModel<Result> getResults() {
         if (results == null){
@@ -453,17 +379,27 @@ public class TaskCardBean extends BaseViewBean{
     }
     public void setResults(DualListModel<Result> results) {
         this.results = results;
-        editedItem.setResults(results.getTarget());                
+        getEditedItem().setResults(results.getTarget());                
     }   
         
     public List<Result> getTaskResults() {
         if (taskResults == null){
-            taskResults = resultFacade.findTaskResults(editedItem);
+            taskResults = resultFacade.findTaskResults(getEditedItem());
         }
         return taskResults;
     }
     
     public String getTaskStatus(){
-        return processBean.getTaskStatus(editedItem);
+        return processBean.getTaskStatus(getEditedItem());
+    }
+
+    @Override
+    public String getFormName() {
+        return DictDlgFrmName.FRM_TASK+"-card";
+    }
+    
+    @Override
+    protected BaseDictFacade getFacade() {
+        return taskFacade;
     }
 }

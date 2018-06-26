@@ -1,8 +1,6 @@
 package com.maxfill.escom.beans.system.admObj;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -12,7 +10,6 @@ import org.primefaces.event.SelectEvent;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +37,7 @@ public class AdmObjectBean extends BaseViewBean{
             sourceItem = itemBean.findItem(itemId);
         }
     }
-
+    
     /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
