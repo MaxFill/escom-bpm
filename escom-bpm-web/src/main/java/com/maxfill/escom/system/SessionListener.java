@@ -17,7 +17,7 @@ public class SessionListener implements HttpSessionListener {
     @Override
     public void sessionCreated(HttpSessionEvent event) {
         //LOG.log(Level.INFO, "Session is created!");
-        event.getSession().setAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS_SIZE, 50);
+        event.getSession().setAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS_SIZE, 100);
     }
 
     @Override

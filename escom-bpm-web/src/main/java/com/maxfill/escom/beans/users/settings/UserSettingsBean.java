@@ -16,8 +16,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.primefaces.PrimeFaces;
-
 /* Персональные настройки пользователя  */
 @Named
 @ViewScoped
@@ -44,8 +42,7 @@ public class UserSettingsBean extends BaseViewBean{
     
     /* Сохранение настроек пользователя  */
     public void saveSettings(){
-        //RequestContext.getCurrentInstance().closeDialog(null);
-        PrimeFaces.current().dialog().closeDynamic(null);
+        onCloseCard();
     }
     
     /* Изменение пароля пользователя */

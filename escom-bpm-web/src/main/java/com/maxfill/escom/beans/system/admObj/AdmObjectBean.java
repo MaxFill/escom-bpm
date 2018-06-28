@@ -2,13 +2,13 @@ package com.maxfill.escom.beans.system.admObj;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.model.BaseDict;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.HashMap;
@@ -19,29 +19,23 @@ import java.util.Set;
 /* Контролер формы администрирования объекта */
 @Named
 @ViewScoped
-public class AdmObjectBean extends BaseViewBean{
+public class AdmObjectBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -7160350484665477991L;    
     
     private BaseDict replaceItem;
-    private BaseDict sourceItem;
+
     private Map<String, Integer> rezultUpdate;
     private BaseTableBean itemBean;
 
     @Override
-    public void onBeforeOpenCard(){
-        if (sourceItem == null){
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-            String beanName = params.get("beanName");
-            itemBean = sessionBean.getItemBeanByClassName(beanName);
-            Integer itemId = Integer.valueOf(params.get("itemId"));
-            sourceItem = itemBean.findItem(itemId);
-        }
+    public void doBeforeOpenCard(Map<String, String> params){
+
     }
     
     /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
-        itemBean.doGetCountUsesItem(sourceItem, rezult);
+        itemBean.doGetCountUsesItem(getSourceItem(), rezult);
         return rezult.entrySet();
     }
     
@@ -57,7 +51,7 @@ public class AdmObjectBean extends BaseViewBean{
     /* Обработка события замены объекта в связанных объектах  */
     public void onReplaceItem(){ 
         if (replaceItem != null) {
-            int count = itemBean.replaceItem(sourceItem, replaceItem);
+            int count = itemBean.replaceItem(getSourceItem(), replaceItem);
             EscomMsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
             PrimeFaces.current().ajax().update("centerFRM");
         } else {
@@ -73,10 +67,6 @@ public class AdmObjectBean extends BaseViewBean{
 
     public BaseDict getReplaceItem() {
         return replaceItem;
-    }
-
-    public BaseDict getSourceItem() {
-        return sourceItem;
     }
 
     @Override

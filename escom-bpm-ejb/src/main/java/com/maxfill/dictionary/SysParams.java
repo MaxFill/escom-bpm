@@ -32,6 +32,7 @@ public final class SysParams {
      
     public static final String PARAM_BEAN_ID = "beanId";
     public static final String PARAM_BEAN_NAME = "beanName";
+    public static final String PARAM_EXIT_RESULT = "result";
     
     public static final int DEFAULT_DOC_TYPE_ID = 1;
     
@@ -41,4 +42,8 @@ public final class SysParams {
     
     public static final String DEADLINE_DELTA = "delta";
     public static final String DEADLINE_DATE = "date";
+    
+    public static final String EXIT_NEED_UPDATE = "needUpdate";
+    public static final String EXIT_NOTHING_TODO = "nothingtodo";
+    public static final String EXIT_EXECUTE = "execute";
 }

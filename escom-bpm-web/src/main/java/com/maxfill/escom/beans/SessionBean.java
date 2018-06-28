@@ -313,12 +313,6 @@ public class SessionBean implements Serializable{
         onSessionExit();
     }
 
-    /* Закрытие диалога */
-    public String closeDialog(Object param){
-        PrimeFaces.current().dialog().closeDynamic(param);
-        return goToIndex();
-    }
-
     /* Переход на начальную страницу программы */
     public String goToIndex(){
         return "/view/index?faces-redirect=true";

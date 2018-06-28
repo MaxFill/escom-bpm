@@ -402,7 +402,7 @@
             <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
         </p:commandButton>
         <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{processCardBean.onOpenTask()}">
-            <p:ajax event="dialogReturn" listener="#{processCardBean.onTaskClose}"/>
+            <p:ajax event="dialogReturn" listener="#{processCardBean.onAfterTaskClose}"/>
         </p:commandButton>
     </ui:define>
     

@@ -8,10 +8,6 @@
     <ui:param name="_bean" value="#{taskCardBean}"/>
    
     <ui:define name="specActionMenu" >
-        <p:menuitem icon="ui-icon-disk" value="#{bundle.SaveAndClose}"
-                disabled="#{_bean.isReadOnly()}"
-                onclick="document.getElementById('centerFRM:btnSaveOnly').click();">
-        </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
@@ -64,6 +60,7 @@
                              styleClass="ui-grid-col-12"                                                          
                              required="#{param['isRequired'] == 'true'}"
                              disabled="#{taskCardBean.readOnly}"
+                             onchange="return itemChange = 1;"
                              requiredMessage="#{bundle.Field} [#{bundle.Task}] #{bundle.MustBeFilled}"/>
 
                 <p:panelGrid columns="2" columnClasses="ui-grid-col-6 without-spaces, ui-grid-col-6 without-spaces" styleClass="ui-grid-col-12 without-spaces">
@@ -78,6 +75,7 @@
                                     showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                     navigator="true" yearRange="c-120:c+20"                     
                                     requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
 
                         <p:outputLabel value="#{bundle.DateAppointment}:" rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}"/>
@@ -88,25 +86,28 @@
                                     timeZone="#{TimeZone.getDefault()}" 
                                     showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                     navigator="true" yearRange="c-120:c+20">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
 
                         <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" layout="custom">
-                            <f:selectItem itemLabel="" itemValue="delta" />
-                            <f:selectItem itemLabel="" itemValue="data" />   
-                            <p:ajax update="centerFRM:mainTabView:planEndDate centerFRM:mainTabView:deltaDay centerFRM:mainTabView:deltaHour" event="valueChange"/>
+                            <f:selectItem itemLabel="" itemValue="delta"/>
+                            <f:selectItem itemLabel="" itemValue="data" />
+                            <p:ajax update="planEndDate deltaDay deltaHour" event="valueChange" onstart="itemChange = 1;"/>
                         </p:selectOneRadio>
 
                         <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/> 
 
                         <h:panelGrid columns="2" cellpadding="3" >
-                            <p:radioButton id="typeDelta" for="typeDatePlan" itemIndex="0" disabled="#{taskCardBean.readOnly}"/>                                                            
+                            <p:radioButton id="typeDelta" for="typeDatePlan" itemIndex="0" disabled="#{taskCardBean.readOnly}"/>
                             <h:panelGroup>
                                 <p:spinner id="deltaDay" value="#{taskCardBean.deadLineDeltaDay}" min="0" max="999" 
                                            suffix="#{bundle.DayShort}" size="3" 
+                                           onchange="return itemChange = 1;"
                                            disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
                                 </p:spinner>
                                 <p:spinner id="deltaHour" value="#{taskCardBean.deadLineDeltaHour}" min="0" max="99" 
                                            suffix="#{bundle.HourShort}" size="2"
+                                           onchange="return itemChange = 1;"
                                            disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
                                 </p:spinner>
                             </h:panelGroup>
@@ -118,8 +119,9 @@
                                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                         disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'delta'}"
                                         locale="#{sessionBean.locale}"
-                                        navigator="true" yearRange="c-120:c+20"                                        
+                                        navigator="true" yearRange="c-1:c+20" timeInput="true" 
                                         requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
+                                <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                             </p:calendar>
                         </h:panelGrid>
 
@@ -131,7 +133,8 @@
                                     showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                     disabled="#{taskCardBean.readOnly}"
                                     locale="#{sessionBean.locale}"
-                                    navigator="true" yearRange="c-120:c+20">                                
+                                    navigator="true" yearRange="c-120:c+20">
+                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
                     </p:panelGrid>
 
@@ -141,13 +144,14 @@
                                      styleClass="ui-grid-col-12"
                                      disabled="true"/>
 
-                         <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
+                        <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
                         <p:selectOneMenu value="#{taskCardBean.editedItem.state.currentState}" converter="stateConvertor"                           
                                        disabled="#{taskCardBean.editedItem.scheme != null}"
                                        styleClass="ui-grid-col-12"
                                        required="#{param['isRequired'] == 'true'}" 
                                        requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-                            <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
+                            <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
+                            <p:ajax event="change" oncomplete="return itemChange = 1;"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </p:panelGrid>

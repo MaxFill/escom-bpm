@@ -4,7 +4,6 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -60,7 +59,7 @@ import org.primefaces.model.diagram.overlay.Overlay;
  */
 @Named
 @ViewScoped
-public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTask{
+public class ProcessCardBean extends BaseCardBean<Process> {
     private static final long serialVersionUID = -5558740260204665618L;    
     
     @Inject
@@ -415,13 +414,9 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
     /**
      * Открытие карточки задачи
      * @param beanId 
-     */
-    @Override
-    public void onOpenTask(String beanId){
-        onOpenTask();
-    }    
+     */  
     public void onOpenTask(){ 
-        taskBean.prepEditItem(currentTask, getParamsMap());
+        taskBean.prepEditChildItem(currentTask, getParamsMap());
     }
     
     /**
@@ -433,7 +428,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
         if (baseElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem)baseElement;
             currentTask = taskElem.getTask();
-            onTaskClose(event);
+            onAfterTaskClose(event);
             return;
         }
         Element exit = model.findElement(baseElement.getUid());
@@ -446,21 +441,30 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      * Обработка события закрытия карточки задачи
      * @param event
      */
-    public void onTaskClose(SelectEvent event){
+    public void onAfterTaskClose(SelectEvent event){
         if (event.getObject() == null) return;
-        String result = (String) event.getObject();
-        if ("run".equals(result)){
-            setItemCurrentState(getEditedItem().getState().getCurrentState());
-            loadModel(getScheme());
-            PrimeFaces.current().ajax().update("process");
-        } else {
-            editedTasks.add(currentTask);           
-            onItemChange();
-            modelRefresh();
-            PrimeFaces.current().ajax().update("process:mainTabView:concorderList");
-        }        
+        Map<String, Object> exits = (Map)event.getObject();
+        String result = (String) exits.get(SysParams.PARAM_EXIT_RESULT);
+        switch (result){
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+            case SysParams.EXIT_NEED_UPDATE:{
+                editedTasks.add(currentTask);           
+                onItemChange();
+                modelRefresh();
+                PrimeFaces.current().ajax().update("process:mainTabView:concorderList");      
+                break;
+            }
+            case SysParams.EXIT_EXECUTE:{
+                setItemCurrentState(getEditedItem().getState().getCurrentState());
+                loadModel(getScheme());
+                PrimeFaces.current().ajax().update("process");
+                break;
+            }
+        }         
     }
-    
+        
     /* ДОБАВЛЕНИЕ ЭЛЕМЕНТОВ НА СХЕМУ ПРОЦЕССА С ПАНЕЛИ КОМПОНЕНТ */
     
     /**
@@ -652,7 +656,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
      */
     private Element createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = taskFacade.createTask(taskName, executor, getScheme(), taskElem.getUid());
+        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getScheme(), taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -1060,10 +1064,10 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
     public WFConnectedElem getBaseElement() {
         return baseElement;
-    }
+    }        
         
     @Override
-    public Task getTask(){        
+    public Task getSourceItem(){        
         return currentTask;
     }
         
@@ -1076,12 +1080,7 @@ public class ProcessCardBean extends BaseCardBean<Process> implements ContainsTa
 
     public WFConnectedElem getCopiedElement() {
         return copiedElement;
-    }
-        
-    @Override
-    public Boolean isShowExtTaskAtr() {
-        return false;
-    }
+    }        
     
     public Scheme getScheme(){
         return getEditedItem().getScheme();

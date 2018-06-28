@@ -22,7 +22,6 @@ import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;
@@ -55,7 +54,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
 
     private Metadates metadatesObj;             //объект метаданных
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
-    private Boolean openInDialog;
     private String itemOpenKey;
     private Integer typeEdit;                   //режим редактирования записи
     private T editedItem;                       //редактируемый объект 
@@ -77,7 +75,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
         if (getEditedItem() == null){
-            openInDialog = params.containsKey("openInDialog");
             itemOpenKey = params.get("itemId");
             T item;
             if (params.containsKey("openMode")){ //only if enter from url
@@ -95,9 +92,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                    }
                }
             } else { //only if enter from bean
-                Tuple<Integer, BaseDict> tuple = appBean.getOpenedItemTuple(itemOpenKey);
+                Tuple<Integer, BaseDict> tuple = appBean.getOpenedItemTuple(itemOpenKey); //получаем объект для редактирования из буфера
                 item = (T) tuple.b;
-                typeEdit = tuple.a;     
+                typeEdit = tuple.a;
             }
             
             setEditedItem(item);
@@ -124,7 +121,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             doPrepareOpen(item);
         }
     }    
-
     
     /* Подготовка прав доступа к визуализации */
     protected void prepareRightsForView(T item) {
@@ -141,12 +137,17 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         //переопределяется в бине с группами
     }
     
-    /* Подготовка к сохранению объекта  */
+    /** 
+     * Начало сохранения объекта
+     * @return 
+     */
     public String prepSaveItemAndClose() { 
         if (!doSaveItem()){
             return "";
         }
-        return closeItemForm(Boolean.TRUE);
+        Map<String, Object> exits = new HashMap<>();
+        exits.put(SysParams.PARAM_EXIT_RESULT, SysParams.EXIT_NEED_UPDATE);
+        return closeItemForm(exits);
     }
     
     public String prepSaveItemAndPublic(){
@@ -173,6 +174,16 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 case DictEditMode.INSERT_MODE:{
                     getFacade().create(item); 
                     setTypeEdit(DictEditMode.EDIT_MODE);
+                    break;
+                }
+                case DictEditMode.CHILD_MODE:{
+                    try { 
+                        BaseDict sourceItem = sourceBean.getSourceItem();                        
+                        BeanUtils.copyProperties(sourceItem, getEditedItem());
+                    } catch (IllegalAccessException | InvocationTargetException ex) {
+                        errors.add("InternalErrorSavingTask");
+                        LOGGER.log(Level.SEVERE, null, ex);
+                    }
                     break;
                 }
             }
@@ -227,42 +238,36 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return "";
     }
 
+    /**
+     * Обработка события отмены изменений по кнопке в диалоге предупреждения о сохранении изменений
+     * @return 
+     */ 
+    public String onFinalCancelSave() {
+        return doFinalCancelSave();
+    }
+    
     /* Отмена изменений в объекте, завершающие действия  */
     protected String doFinalCancelSave() {
         if (Boolean.TRUE.equals(isItemRegisted)) {
             numeratorService.doRollBackRegistred(getEditedItem());
             isItemRegisted = false;
         }
-        return closeItemForm(false);  //закрыть форму объекта
-    }
-        
-    /* Отмена пользователем изменений из диалога сохранения*/
-    public String onFinalCancelSave() {
-        return doFinalCancelSave();
-    }
+        Map<String, Object> exits = new HashMap<>();
+        exits.put(SysParams.PARAM_EXIT_RESULT, SysParams.EXIT_NOTHING_TODO);
+        return closeItemForm(exits);  //закрыть форму объекта
+    }        
         
     /* Закрытие формы карточки объекта */
-    protected String closeItemForm(Boolean isNeedUpdate) {
+    protected String closeItemForm(Map<String, Object> exits) {
         attacheService.deleteTmpFiles(getCurrentUser().getLogin());
         clearLockItem();
-        if (openInDialog){
-            PrimeFaces.current().dialog().closeDynamic(new Tuple(isNeedUpdate, itemOpenKey));
-        }
-        return "/view/index?faces-redirect=true";
-    }
-
-    /* Закрытие прочих служебных диалогов, открываемых с формы */
-    public String onClose() {
-        RequestContext.getCurrentInstance().closeDialog(null);        
-        return "/view/index?faces-redirect=true";
-    }
+        return finalCloseDlg(exits);        
+    }        
     
     /* Сброс блокировок объекта  */
-    private void clearLockItem(){
-        T item = getEditedItem();
-        appBean.deleteOpenedItem(itemOpenKey);  //удаление из буфера открытых объектов
-        String itemKey = item.getItemKey();
-        appBean.deleteLockItem(itemKey);        //удаление из буфера заблокированных объектов
+    private void clearLockItem(){        
+        appBean.deleteOpenedItem(itemOpenKey);                  //удаление из буфера открытых объектов        
+        appBean.deleteLockItem(getEditedItem().getItemKey());   //удаление из буфера заблокированных объектов
     }
 
     /* Обработка события изменения состояния */

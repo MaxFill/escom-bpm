@@ -35,7 +35,6 @@
         <script type="text/javascript" >            
             function init() {
                 onAfterFormLoad();
-                onSetBeanId();
             }
             window.addEventListener("load", init, false);             
         </script>
@@ -132,7 +131,6 @@
                         <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
                     </ui:include>
                     <p:remoteCommand name="onAfterFormLoad" action="#{_explorerBean.onAfterFormLoad()}"/>
-                    <p:remoteCommand name="onSetBeanId" action="#{_detailBean.onAfterFormLoad(_detailBean)}"/>
                 </h:form>
             </pe:layoutPane>
 

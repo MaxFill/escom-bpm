@@ -10,11 +10,14 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskLog;
 import com.maxfill.model.task.Task_;
+import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -34,18 +37,15 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         super(Task.class, TaskLog.class, TaskStates.class);
     }
 
-    public Task createTask(String taskName, Staff owner){
-        return createTask(taskName, owner, null, null);
+    public Task createTask(String taskName, Staff owner, User author){
+        return createTask(taskName, owner, author, null, null);
     }   
-    public Task createTask(String taskName, Staff owner, Scheme scheme, String taskLinkUID){
-        Task task = new Task();
-        TaskStates taskStates = new TaskStates();        
-        taskStates.setCurrentState(getMetadatesObj().getStateForNewObj());
-        task.setState(taskStates);
+    public Task createTask(String taskName, Staff owner, User author, Scheme scheme, String taskLinkUID){
+        Task task = createItem(author, owner, new HashMap<>());        
         task.setName(taskName);
-        task.setOwner(owner);
         task.setScheme(scheme);
         task.setTaskLinkUID(taskLinkUID);
+        task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());
         return task; 
     }
     

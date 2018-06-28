@@ -6,7 +6,6 @@ import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.facade.UserFacade;
@@ -34,6 +33,7 @@ import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
+import java.util.logging.Logger;
 
 /**
  * Базовый бин для работы с табличными представлениями объектов (без владельцев)
@@ -86,8 +86,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public T prepEditItem(T item, Map<String, List<String>> paramsMap){        
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getFacade();
-        T editItem = findItem(item.getId());   //получаем копию объекта для редактирования 
-        getFacade().makeRightItem(editItem, getCurrentUser());
+        T editItem = findItem(item.getId());  //получаем копию объекта для редактирования            
+        facade.makeRightItem(editItem, getCurrentUser());
         if (!facade.isHaveRightEdit(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
@@ -95,9 +95,38 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             return prepViewItem(item, paramsMap, errors);
         }
         openItemCard(editItem, DictEditMode.EDIT_MODE, paramsMap, errors);
-        return editItem;
+        return editItem;        
     } 
     
+    /**
+     * Используется для открытия на редактирование дочерних объектов (у них может не быть ID!), которые сохраняются вместе с родительским 
+     * @param item
+     * @param paramsMap
+     * @return 
+     */
+    public T prepEditChildItem(T item, Map<String, List<String>> paramsMap){        
+        Set<String> errors = new HashSet<>();
+        BaseDictFacade facade = getFacade();
+        try {            
+            T editItem =  createItem(item.getOwner(), getCurrentUser(), new HashMap<>()); //создаём копию объекта
+            BeanUtils.copyProperties(editItem, item);
+            if (editItem.getRightItem() == null){
+                facade.makeRightItem(editItem, getCurrentUser());
+            }
+            if (!facade.isHaveRightEdit(editItem)){
+                String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
+                String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
+                errors.add(error);
+                return prepViewItem(item, paramsMap, errors);
+            }
+            openItemCard(editItem, DictEditMode.CHILD_MODE, paramsMap, errors);
+            return editItem;
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+                Logger.getLogger(BaseTableBean.class.getName()).log(Level.SEVERE, null, ex);
+                throw new RuntimeException(ex);
+        }
+    }
+
     /* СОЗДАНИЕ: Создание объекта с открытием карточки */
     public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> params){
         Set<String> errors = new HashSet<>();

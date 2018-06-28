@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.system.messages;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.task.TaskBean;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 @ViewScoped
 @Named
-public class UserMsgBean extends LazyLoadBean implements ContainsTask{
+public class UserMsgBean extends LazyLoadBean {
     private static final long serialVersionUID = -7376087892834532742L;
 
     private Boolean showOnlyUnread;
@@ -127,18 +126,12 @@ public class UserMsgBean extends LazyLoadBean implements ContainsTask{
     }
 
     @Override
-    public Task getTask() {
+    public Task getSourceItem() {
         return selectedMessages.getTask();
     }
 
-    @Override
-    public Boolean isShowExtTaskAtr() {
-        return getTask().getScheme() == null;        
-    }
-
-    @Override
     public void onOpenTask(String beanId) {               
-        taskBean.prepEditItem(getTask(), getParamsMap());
+        taskBean.prepEditItem(selectedMessages.getTask(), getParamsMap());
     }
     
 }

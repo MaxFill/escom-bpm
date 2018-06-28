@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.beans.ContainsTask;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.facade.TaskFacade;
@@ -26,7 +25,7 @@ import org.primefaces.model.ScheduleModel;
  */
 @Named
 @ViewScoped
-public class SchedulerBean extends BaseViewBean implements ContainsTask{
+public class SchedulerBean extends BaseViewBean {
     private static final long serialVersionUID = -2515586022679502172L;
 
     @EJB
@@ -54,14 +53,13 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
      * @param beanId
      */
     public void onCreateTask(String beanId){
-        Task task = taskFacade.createTask("", getCurrentStaff());
+        Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser());
         task.setBeginDate(schedulerTask.getStartDate());
         task.setPlanExecDate(schedulerTask.getEndDate());
         schedulerTask.setTask(task);        
         onOpenTask(beanId);
     }
     
-    @Override
     public void onOpenTask(String beanId){        
         taskBean.prepEditItem(getTask(), getParamsMap());
     }
@@ -147,15 +145,13 @@ public class SchedulerBean extends BaseViewBean implements ContainsTask{
     public ScheduleModel getEventModel() {
         return eventModel;
     }
-
-    @Override
-    public Task getTask() {
-        return schedulerTask.getTask();
-    }
-
-    @Override
-    public Boolean isShowExtTaskAtr() {
-        return true;
+    
+    private Task getTask(){
+        return getSourceItem();
     }
     
+    @Override
+    public Task getSourceItem() {
+        return schedulerTask.getTask();
+    }
 }

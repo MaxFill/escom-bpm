@@ -6,8 +6,10 @@ import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
+import com.sun.faces.application.view.ViewScopeManager;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.codehaus.plexus.util.StringUtils;
+import org.primefaces.PrimeFaces;
 
 import org.primefaces.extensions.component.layout.LayoutPane;
 import org.primefaces.extensions.model.layout.LayoutOptions;
@@ -33,7 +36,7 @@ import org.primefaces.extensions.model.layout.LayoutOptions;
  * сохранения изменений размеров форм
  * @param <T>
  */
-public abstract class BaseViewBean<T extends BaseView> implements Serializable{
+public abstract class BaseViewBean<T extends BaseView> implements Serializable, BaseView{
     protected static final Logger LOGGER = Logger.getLogger(BaseViewBean.class.getName());
     private static final long serialVersionUID = -255630654257638984L;
 
@@ -53,7 +56,9 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
     private Integer westWidth = 0;
     private Integer centerWidth = 0;
     private Integer eastWidth = 0;
+    private BaseDict sourceItem;
     
+    protected Boolean openInDialog;
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
     
     protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).
@@ -64,6 +69,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
      * Возвращает имя этого бина. (Использется для передачи имени бина в качестве параметра в дочерний бин)
      * @return - String имя бина
      */
+    @Override
     public String getBeanName(){
         return this.getClass().getSimpleName().substring(0, 1).toLowerCase() + this.getClass().getSimpleName().substring(1);        
     }
@@ -76,11 +82,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
 
     @PreDestroy
     protected void destroy(){
-        //System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
+        System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
     }
 
     protected void initBean(){};
 
+    @Override
     public SessionBean getSessionBean() {
         return sessionBean;
     }
@@ -89,27 +96,31 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
      * Метод вызывается автоматически при открытии формы диалога
      */
     public void onBeforeOpenCard(){        
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();        
-        if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
-            String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
-            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
-            for (Object entry : map.values()) {
-              if (entry instanceof Map) {
-                Map viewScopes = (Map) entry;
-                if (viewScopes.containsKey(beanName)) {
-                    setSourceBean((T) viewScopes.get(beanName));
-                    String id = sourceBean.toString();
-                    if (sourceBeanId.equals(id)) break;
+        if (openInDialog == null){
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+            openInDialog = params.containsKey("openInDialog");
+            if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
+                String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
+                String beanName = params.get(SysParams.PARAM_BEAN_NAME);
+                HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+                Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
+                for (Object entry : map.values()) {
+                  if (entry instanceof Map) {
+                    Map viewScopes = (Map) entry;
+                    if (viewScopes.containsKey(beanName)) {
+                        setSourceBean((T) viewScopes.get(beanName));
+                        String id = sourceBean.toString();
+                        if (sourceBeanId.equals(id)) break;
+                    }
+                  }
                 }
-              }
             }
+            doBeforeOpenCard(params);
         }
-        doBeforeOpenCard(params);
     }
 
+    @Override
     public void doBeforeOpenCard(Map<String, String> params){};
     
     /**
@@ -125,15 +136,46 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
      * @return
      */
     public String onCloseCard(){
-        return onFinalCloseCard(null);
+        return onCloseCard(SysParams.EXIT_NOTHING_TODO);
     }
 
-    public String onCloseCard(String param){
-        return onFinalCloseCard(param);
+    public String onCloseCard(String result){
+        Map<String, Object> exits = new HashMap<>();
+        exits.put(SysParams.PARAM_EXIT_RESULT, result);
+        return finalCloseDlg(exits);
     }
 
-    private String onFinalCloseCard(Object param){
-        return sessionBean.closeDialog(param);
+    /**
+     * Завершающая стадия закрытия диалога с удалением view bean из viewMap 
+     * @param params
+     * @return 
+     */
+    protected String finalCloseDlg(Map<String, Object> params){    
+        String beanName = getBeanName();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
+        for (Object mapEntry : map.entrySet()){
+            if (mapEntry instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) mapEntry;
+                if (entry.getValue() instanceof Map) {
+                    Map viewScopes = (Map) entry.getValue();
+                    if (viewScopes.containsKey(beanName)) {
+                        BaseView bean = ((BaseView) viewScopes.get(beanName));
+                        String id = bean.toString();
+                        if (beanId.equals(id)) {
+                            map.remove(entry.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (openInDialog){            
+            PrimeFaces.current().dialog().closeDynamic(params);
+            return "";
+        }
+        return "/view/index?faces-redirect=true";        
     }
 
     /* Обработка cобытия изменения размеров формы */
@@ -311,5 +353,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable{
     public void setSourceBean(T sourceBean) {
         this.sourceBean = sourceBean;
     }
-    
+
+    public BaseDict getSourceItem() {
+        return sourceItem;
+    }
+    public void setSourceItem(BaseDict sourceItem) {
+        this.sourceItem = sourceItem;
+    }
+        
 }

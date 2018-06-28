@@ -16,6 +16,7 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -55,6 +56,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.SessionScoped;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
@@ -239,9 +241,9 @@ public class ExplorerBean implements Serializable {
         
     /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
     public void onUpdateAfterCloseForm(SelectEvent event){
-        Tuple<Boolean, String> tuple = (Tuple) event.getObject();
-        Boolean isNeedUdate = tuple.a;
-        if (isNeedUdate) {
+        Map<String, Object> exits = (Map)event.getObject();
+        String exitResult = (String) exits.get(SysParams.PARAM_EXIT_RESULT);
+        if (SysParams.EXIT_NEED_UPDATE.equals(exitResult)) {
             switch (typeEdit){
                 case DictEditMode.EDIT_MODE: {                    
                     try {                    
@@ -272,13 +274,15 @@ public class ExplorerBean implements Serializable {
     }
     
     public void onUpdateAfterChangeItem(SelectEvent event){
+        //TODO возможно что тут нужно вызывать удаление вью бина!
+        // EscomBeanUtils.killViewBean(exits);
         editItem = sessionBean.reloadItem(currentItem);
         try {                    
             BeanUtils.copyProperties(currentItem, editItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         } 
-    }
+    }    
     
     public boolean isItemDetailType(BaseDict item){
         return Objects.equals(typeDetail, item.getClass().getSimpleName());
@@ -1599,6 +1603,7 @@ public class ExplorerBean implements Serializable {
     public void setRootBean(BaseTreeBean rootBean) {
         this.rootBean = rootBean;
         this.typeRoot = rootBean.getFacade().getItemClass().getSimpleName();
+        rootBean.setBeanId(rootBean.toString());
     }
     public BaseTreeBean getRootBean() {
         return rootBean;
@@ -1610,11 +1615,13 @@ public class ExplorerBean implements Serializable {
     public void setTreeBean(BaseTreeBean treeBean) {
         this.treeBean = treeBean;
         this.typeTree = treeBean.getFacade().getItemClass().getSimpleName();
+        treeBean.setBeanId(treeBean.toString());
     }
     
     public void setTableBean(BaseTableBean tableBean) {
         this.tableBean = tableBean; 
         this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
+        tableBean.setBeanId(tableBean.toString());
     }
     public BaseTableBean getTableBean() {
         return tableBean;

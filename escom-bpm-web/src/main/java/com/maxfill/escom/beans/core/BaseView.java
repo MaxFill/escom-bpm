@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.core;
 
 import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.model.BaseDict;
 import java.util.Map;
 
 /**
@@ -10,4 +11,5 @@ public interface BaseView {
     SessionBean getSessionBean();
     String getBeanName();
     void doBeforeOpenCard(Map<String, String> params);
+    BaseDict getSourceItem();
 }

@@ -8,6 +8,7 @@ import com.maxfill.utils.Tuple;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
@@ -194,7 +195,7 @@ public final class EscomBeanUtils {
     }     
     
     /* Открытие карточки диалога */
-    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramMap, Tuple<Integer, Integer> size) {
+    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramsMap, Tuple<Integer, Integer> size) {
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
@@ -207,8 +208,11 @@ public final class EscomBeanUtils {
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
+        List<String> openInDialogList = new ArrayList<>();
+        openInDialogList.add("true");
+        paramsMap.put("openInDialog", openInDialogList);
         //options.put("headerElement", "centerFRM:customheader");
-        PrimeFaces.current().dialog().openDynamic(dlgName, options, paramMap);
+        PrimeFaces.current().dialog().openDynamic(dlgName, options, paramsMap);
     }    
     
     /* Формирует ссылку URL для объекта  */
@@ -269,5 +273,5 @@ public final class EscomBeanUtils {
         String delta = DurationFormatUtils.formatDuration(duration.toMillis(), dr.toString(), true);
         sb.append(" ").append(delta);
         return sb.toString();
-    }    
+    }  
 }

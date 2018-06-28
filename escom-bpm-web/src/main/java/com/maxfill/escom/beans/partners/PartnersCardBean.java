@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.partners;
 
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
+import org.primefaces.PrimeFaces;
 
 /* Контрагенты */
 @Named
@@ -89,14 +91,10 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     }
     
     /* Обновление после закрытия формы документа, открытой из карточки контрагента */
-    public void onUpdateAfterCloseDocForm(SelectEvent event){
-        Tuple<Boolean, Doc> tuple = (Tuple) event.getObject();
-        Boolean isNeedUdate = tuple.a;
-        if (isNeedUdate){
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.update("itemCard:mainTabView:tblDocs");
-            Doc item = tuple.b;
-            EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{item.getName()});
+    public void onUpdateAfterCloseDocForm(SelectEvent event){        
+        Tuple<String, String> tuple = (Tuple) event.getObject();
+        if (SysParams.EXIT_NEED_UPDATE.equals(tuple.a)){
+            PrimeFaces.current().ajax().update("itemCard:mainTabView:tblDocs");            
         }
     }
 
