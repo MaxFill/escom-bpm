@@ -2,6 +2,7 @@ package com.maxfill.escom.system.services.mail;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -17,9 +18,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
-import javax.faces.context.Flash;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import javax.mail.internet.AddressException;
@@ -35,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Named
 @ViewScoped
-public class MailMessageBean extends BaseViewBean{
+public class MailMessageBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 9011875090040784420L;
     private static final Logger LOG = Logger.getLogger(MailMessageBean.class.getName());
     private static final String ADRESS_SEPARATOR = ",";
@@ -56,9 +54,8 @@ public class MailMessageBean extends BaseViewBean{
     private String content;
 
     @Override
-    public void onBeforeOpenCard(){
-        if (modeSentAttache != null) return;
-        Map<String,String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+    public void doBeforeOpenCard(Map<String,String> params){
+        if (modeSentAttache != null) return;        
         modeSentAttache = params.get("modeSendAttache");        
         List<String> strDocIds = EscomUtils.SplitString(params.get("docIds"), ",");
                 

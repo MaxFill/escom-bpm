@@ -13,6 +13,7 @@ import javax.inject.Named;
 public class CompanyExplBean extends ExplorerTreeBean{
     private static final long serialVersionUID = 4688543715184790711L;
 
+    @Override
     protected void initBean() {
         typeRoot = "Company";
     }

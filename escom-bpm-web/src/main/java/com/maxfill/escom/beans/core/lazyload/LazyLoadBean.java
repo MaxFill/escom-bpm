@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.core.lazyload;
 
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
@@ -17,7 +18,8 @@ import java.util.Map;
  * с фильтрацией
  * @param <T>
  */
-public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean{
+public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView>{
+    private static final long serialVersionUID = 8355055695644413851L;
 
     protected LazyLoadModel<T> lazyModel;
     protected List<T> checkedItems = new ArrayList<>();
@@ -28,7 +30,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean{
     protected Map<String,Object> filters = new HashMap <>();
 
     protected abstract BaseLazyLoadFacade getFacade();
-
+    
     public int countItems(){
         return getFacade().countItems(makeFilters(filters));
     }

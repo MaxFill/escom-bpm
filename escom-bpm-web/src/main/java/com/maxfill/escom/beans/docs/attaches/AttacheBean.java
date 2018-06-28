@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.docs.attaches;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
@@ -17,7 +18,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.model.DefaultStreamedContent;
@@ -27,7 +27,7 @@ import org.primefaces.model.UploadedFile;
 /* Версии вложений, работа с прикреплёнными файлами  */
 @Named
 @SessionScoped
-public class AttacheBean extends BaseViewBean{
+public class AttacheBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -5107683464380454618L;
     
     @EJB
@@ -67,8 +67,7 @@ public class AttacheBean extends BaseViewBean{
     }        
     
     @Override
-    public void onBeforeOpenCard(){
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+    public void doBeforeOpenCard(Map<String, String> params){        
         String path = null;
         if (params.containsKey("itemId")){
             Integer docId = Integer.valueOf(params.get("itemId"));

@@ -12,7 +12,6 @@ import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
 
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,11 +46,10 @@ public class UserMsgBean extends LazyLoadBean {
     protected BaseLazyLoadFacade getFacade() {
         return messagesFacade;
     }
-
+    
     @Override
-    public void onBeforeOpenCard(){
+    public void doBeforeOpenCard(Map params){
         if (showOnlyUnread == null){
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
             showOnlyUnread = params.get("typeMsg").equals("newMsg");
         }
     }

@@ -16,6 +16,7 @@
                 <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
                     <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                                      icon="#{result.getIconName()}"
+                                     disabled="#{!taskCardBean.haveRightExec}"
                                      update="#{_frm}"
                                      action="#{taskCardBean.onExecute(result)}">
                         <f:param name="isRequired" value="true"/>

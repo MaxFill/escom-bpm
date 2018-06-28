@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.processes.elements;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.facade.StatusesDocFacade;
@@ -11,10 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -22,7 +20,7 @@ import org.apache.commons.beanutils.BeanUtils;
  */
 @Named
 @ViewScoped
-public class DocStatusCardBean extends BaseViewBean{    
+public class DocStatusCardBean extends BaseViewBean<BaseView>{    
     private static final long serialVersionUID = -5286296381383874923L;
 
     @EJB
@@ -31,29 +29,12 @@ public class DocStatusCardBean extends BaseViewBean{
     private StatusesDoc selected = null;
     private final StatusElem editedItem = new StatusElem();
     private StatusElem sourceItem;
-    private ProcessCardBean sourceBean;
     
     @Override
-    public void onBeforeOpenCard(){
-        if (sourceItem == null){
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
-            beanId = params.get(SysParams.PARAM_BEAN_ID);
-            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
-            for (Object entry : map.values()) {
-              if (entry instanceof Map) {
-                Map viewScopes = (Map) entry;
-                if (viewScopes.containsKey(beanName)) {
-                    sourceBean = (ProcessCardBean) viewScopes.get(beanName);
-                    String id = sourceBean.toString();
-                    if (beanId.equals(id)) break;
-                }
-              }
-            }
+    public void doBeforeOpenCard(Map<String, String> params){
+        if (sourceItem == null){            
             if (sourceBean != null){
-                sourceItem = (StatusElem)sourceBean.getBaseElement(); 
+                sourceItem = (StatusElem)((ProcessCardBean)sourceBean).getBaseElement(); 
                 
                 if (sourceItem.getDocStatusId() != null){
                     selected = statuseFacade.find(sourceItem.getDocStatusId());
@@ -70,7 +51,7 @@ public class DocStatusCardBean extends BaseViewBean{
     }
     
     @Override
-    public String onCloseCard(String param){
+    public String onCloseCard(Object param){
         try {
             editedItem.setDocStatusId(selected.getId());
             editedItem.setCaption(selected.getBundleName());

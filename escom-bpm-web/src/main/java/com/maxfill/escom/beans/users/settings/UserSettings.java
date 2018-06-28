@@ -27,10 +27,7 @@ public class UserSettings implements Serializable{
 
     @XmlElement(name = "FormSize")
     private ConcurrentHashMap<String, Tuple<Integer, Integer>> formsSize = new ConcurrentHashMap<>();
-    
-    @XmlElement(name = "ExplFormSize")
-    private ConcurrentHashMap<String, String> explFormParam = new ConcurrentHashMap<>();
-        
+            
     @XmlElement(name = "ReportsSettings")
     private ConcurrentHashMap<String, UserReportsSettings> reportSetting = new ConcurrentHashMap<>();
     
@@ -63,13 +60,6 @@ public class UserSettings implements Serializable{
     }
     public void setFormsSize(ConcurrentHashMap<String, Tuple<Integer, Integer>> formsSize) {
         this.formsSize = formsSize;
-    }
-
-    public ConcurrentHashMap<String, String> getExplFormParam() {
-        return explFormParam;
-    }
-    public void setExplFormParam(ConcurrentHashMap<String, String> explFormParam) {
-        this.explFormParam = explFormParam;
     }
 
     public ConcurrentHashMap<String, UserReportsSettings> getReportSetting() {

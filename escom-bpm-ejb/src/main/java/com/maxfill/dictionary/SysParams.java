@@ -32,7 +32,6 @@ public final class SysParams {
      
     public static final String PARAM_BEAN_ID = "beanId";
     public static final String PARAM_BEAN_NAME = "beanName";
-    public static final String PARAM_EXIT_RESULT = "result";
     
     public static final int DEFAULT_DOC_TYPE_ID = 1;
     

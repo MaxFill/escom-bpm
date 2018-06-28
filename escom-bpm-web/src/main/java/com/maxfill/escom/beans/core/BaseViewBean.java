@@ -76,13 +76,13 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     @PostConstruct
     protected void init(){
-        initLayotOptions();
+        initLayoutOptions();
         initBean();
     }
 
     @PreDestroy
     protected void destroy(){
-        System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
+        //System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
     }
 
     protected void initBean(){};
@@ -139,18 +139,16 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         return onCloseCard(SysParams.EXIT_NOTHING_TODO);
     }
 
-    public String onCloseCard(String result){
-        Map<String, Object> exits = new HashMap<>();
-        exits.put(SysParams.PARAM_EXIT_RESULT, result);
-        return finalCloseDlg(exits);
+    public String onCloseCard(Object result){        
+        return finalCloseDlg(result);
     }
 
     /**
      * Завершающая стадия закрытия диалога с удалением view bean из viewMap 
-     * @param params
+     * @param exitParam
      * @return 
      */
-    protected String finalCloseDlg(Map<String, Object> params){    
+    protected String finalCloseDlg(Object exitParam){    
         String beanName = getBeanName();
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
@@ -172,12 +170,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             }
         }
         if (openInDialog){            
-            PrimeFaces.current().dialog().closeDynamic(params);
+            PrimeFaces.current().dialog().closeDynamic(exitParam);
             return "";
         }
         return "/view/index?faces-redirect=true";        
     }
-
+    
     /* Обработка cобытия изменения размеров формы */
     public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
         LayoutPane o = (LayoutPane)event.getSource();
@@ -215,9 +213,11 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         sessionBean.saveFormSize(getFormName(), widthSum + 25, heightSum + 25);
     }
 
+/* *** НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ *** */
+
     public abstract String getFormName();
     
-    protected void initLayotOptions(){        
+    protected void initLayoutOptions(){        
         LayoutOptions panes = new LayoutOptions();
         panes.addOption("slidable", false);
         panes.addOption("resizable", true);
@@ -297,6 +297,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         return false;
     }
     
+/* *** ПРОЧИЕ *** */
+    
     public User getCurrentUser(){
         return sessionBean.getCurrentUser();
     }    
@@ -304,8 +306,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public Staff getCurrentStaff(){
         return staffFacade.findStaffByUser(getCurrentUser());
     }
-    
-    /* *** ПРОЧИЕ *** */
     
     public String getLabelFromBundle(String key){
         if (StringUtils.isEmpty(key)) return "";
@@ -354,6 +354,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         this.sourceBean = sourceBean;
     }
 
+    @Override
     public BaseDict getSourceItem() {
         return sourceItem;
     }

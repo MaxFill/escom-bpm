@@ -436,7 +436,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         }
     } 
 
-    /* CЕЛЕКТОР ОБЪЕКТОВ */
+/* *** CЕЛЕКТОР ОБЪЕКТОВ *** */
     
     /* CЕЛЕКТОР: Открытие формы селектора для выбора единичного объекта */
     public void onOneSelectItem() {
@@ -451,7 +451,6 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* СЕЛЕКТОР: открытие формы выбора */
     private void openItemSelector(Integer selectMode) {
         Map<String, Object> options = new HashMap<>();
-        //options.put("headerElement", "explorer_south");
         options.put("resizable", true);
         options.put("modal", true);
         options.put("width", 1350);
@@ -461,15 +460,18 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        Map<String, List<String>> paramMap = new HashMap<>();     
+        Map<String, List<String>> paramsMap = new HashMap<>();
         List<String> paramList = new ArrayList<>();
         paramList.add(selectMode.toString());
-        paramMap.put("selectMode", paramList);
+        paramsMap.put("selectMode", paramList);
+        List<String> openInDialogList = new ArrayList<>();
+        openInDialogList.add("true");
+        paramsMap.put("openInDialog", openInDialogList);
         String frmName = getFacade().getFRM_NAME() + "-explorer";
-        PrimeFaces.current().dialog().openDynamic(frmName, options, paramMap);
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);
     }        
     
-    /* ИЗБРАННОЕ */
+/* *** ИЗБРАННОЕ *** */
     
     /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
     public List<T> findFavorites() {        

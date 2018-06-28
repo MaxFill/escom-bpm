@@ -442,9 +442,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param event
      */
     public void onAfterTaskClose(SelectEvent event){
-        if (event.getObject() == null) return;
-        Map<String, Object> exits = (Map)event.getObject();
-        String result = (String) exits.get(SysParams.PARAM_EXIT_RESULT);
+        if (event.getObject() == null) return;        
+        String result = (String) event.getObject();
         switch (result){
             case SysParams.EXIT_NOTHING_TODO:{
                 break;

@@ -144,10 +144,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     public String prepSaveItemAndClose() { 
         if (!doSaveItem()){
             return "";
-        }
-        Map<String, Object> exits = new HashMap<>();
-        exits.put(SysParams.PARAM_EXIT_RESULT, SysParams.EXIT_NEED_UPDATE);
-        return closeItemForm(exits);
+        }    
+        return closeItemForm(SysParams.EXIT_NEED_UPDATE);
     }
     
     public String prepSaveItemAndPublic(){
@@ -251,14 +249,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         if (Boolean.TRUE.equals(isItemRegisted)) {
             numeratorService.doRollBackRegistred(getEditedItem());
             isItemRegisted = false;
-        }
-        Map<String, Object> exits = new HashMap<>();
-        exits.put(SysParams.PARAM_EXIT_RESULT, SysParams.EXIT_NOTHING_TODO);
-        return closeItemForm(exits);  //закрыть форму объекта
+        }        
+        return closeItemForm(SysParams.EXIT_NOTHING_TODO);  //закрыть форму объекта
     }        
         
     /* Закрытие формы карточки объекта */
-    protected String closeItemForm(Map<String, Object> exits) {
+    protected String closeItemForm(Object exits) {
         attacheService.deleteTmpFiles(getCurrentUser().getLogin());
         clearLockItem();
         return finalCloseDlg(exits);        
@@ -296,6 +292,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return !getCurrentUser().equals(owner);
     }
     
+/* *** ПЕЧАТЬ *** */
+    
     /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
         Map<String, Object> params = prepareReportParams();
@@ -332,6 +330,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return parameters;
     }
 
+/* *** ПРАВА ДОСТУПА *** */    
+    
     /**
      * Обработка события добавления права в права объекта
      */
@@ -436,6 +436,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return getFacade().isHaveRightEdit(editedItem);
     }        
     
+    /**
+     * Проверяет наличие права на выполнение (нажатие на кнопку)
+     * @return 
+     */
+    public boolean isHaveRightExec() {
+        return getFacade().isHaveRightEdit(editedItem);
+    }  
+    
     /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
     public String getInheritsAccessChildName(){
         if (editedItem.isInheritsAccessChilds()){
@@ -453,7 +461,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return inheritsRightName;
     }
         
-    /* ПРОЧИЕ МЕТОДЫ */
+/* *** ПРОЧИЕ МЕТОДЫ *** */
 
     /* При изменении в карточке объекта опции "Наследование прав"  */
     public void onInheritsChange(ValueChangeEvent event) {

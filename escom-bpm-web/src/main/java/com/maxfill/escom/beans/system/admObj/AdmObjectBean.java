@@ -41,7 +41,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     
     /* Выбор в селекторе элемента для замены   */
     public void onSelectChangeItem(SelectEvent event) {
-        if (event.getObject() == null){ return;}
+        if (event.getObject() == null) return;
         List<BaseDict> selectedItems = (List<BaseDict>) event.getObject();
         if (!selectedItems.isEmpty()){
             replaceItem = selectedItems.get(0);

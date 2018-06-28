@@ -18,7 +18,7 @@
             <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
                              title="#{bundle.Refresh}"                                  
                              actionListener="#{_explorerBean.reloadDetailsItems()}"
-                             update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                             update="centerFRM centerHeaderLabel #{_updates}"
                              oncomplete="initDND()"/> 
             
             <span class="ui-separator">
@@ -29,7 +29,7 @@
                              actionListener="#{_explorerBean.onGotoUpLevelContent()}"
                              disabled="#{_explorerBean.treeSelectedNode == null or _explorerBean.isSelectRootItem()}"
                              rendered="#{_treeBean != null}"
-                             update="centerHeaderLabel #{_frmExpl} #{_frmTree} "
+                             update="centerHeaderLabel centerFRM westFRM "
                              oncomplete="initDND()"/>
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -37,7 +37,7 @@
 
             <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
                             disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                            update="#{_frmExpl}:explToolBar"
+                            update="centerFRM:explToolBar"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND();"
                             actionListener="#{_explorerBean.onCopySelectedItem()}"/>
@@ -46,7 +46,7 @@
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide();"
                             actionListener="#{_explorerBean.onPasteItemToTable()}"
-                            update="#{_frmExpl} #{_frmTree}"/>
+                            update="centerFRM westFRM"/>
 
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -60,7 +60,7 @@
                              style="#{_explorerBean.selectorViewMode ? 'display: none;' : ''}"
                              actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
-                        update="#{_frmExpl}"
+                        update="centerFRM"
                         listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
 
@@ -69,7 +69,7 @@
                              rendered="#{_treeBean != null and _explorerBean.isShowTree()}"
                              actionListener="#{_explorerBean.onCreateTreeItem()}">
                 <p:ajax event="dialogReturn" 
-                        update="#{_frmTree} #{_frmExpl}" 
+                        update="westFRM centerFRM" 
                         listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
             <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-plus" 
@@ -77,7 +77,7 @@
                              rendered="#{!_explorerBean.isTrashSelected() and _explorerBean.selectorViewMode}"
                              actionListener="#{_explorerBean.onCreateDetailItem()}">
                 <p:ajax event="dialogReturn"
-                        update="#{_frmExpl}"
+                        update="centerFRM"
                         listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
             </p:commandButton>
             <ui:insert name="addMenuCreates" />
@@ -96,7 +96,7 @@
                            rendered="#{!_explorerBean.isTrashSelected()}">
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
                             disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                            update="#{_frmTree} #{_frmExpl}"
+                            update="westFRM centerFRM"
                             actionListener="#{_explorerBean.onMoveCheckedContentToTrash()}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
@@ -110,7 +110,7 @@
                 <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteCheckedFromFavorites}" title="#{bundle.DeleteFromFavorites}"
                             disabled="#{_explorerBean.checkedItems.isEmpty()}"
                             rendered="#{_explorerBean.isFavoriteSelected()}"
-                            update="#{_frmExpl}"
+                            update="centerFRM"
                             oncomplete="initDND()"
                             actionListener="#{_explorerBean.onDelCheckedFromFavorites()}"/>
                 <p:separator />
@@ -123,13 +123,13 @@
                            rendered="#{sessionBean.userAdmin and _explorerBean.isTrashSelected()}">
                 <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
                             disabled="#{_explorerBean.detailItems.isEmpty()}"
-                            update="#{_frmExpl}"
+                            update="centerFRM"
                             actionListener="#{_explorerBean.onClearTrash()}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 </p:menuitem>
                 <p:menuitem value="#{bundle.ClearCheckedTrash}" icon="ui-icon-close"                                                 
-                            update="#{_frmExpl}"
+                            update="centerFRM"
                             disabled="#{_explorerBean.checkedItems.isEmpty()}"
                             actionListener="#{_explorerBean.onClearCheckedContentTrash()}"
                             oncomplete="initDND()">
@@ -137,7 +137,7 @@
                 </p:menuitem> 
                 <p:separator/>
                 <p:menuitem value="#{bundle.RestoreChecked}" icon="ui-icon-arrowreturnthick-1-w"                                                 
-                            update="#{_frmExpl}"
+                            update="centerFRM"
                             disabled="#{_explorerBean.checkedItems.isEmpty()}"
                             actionListener="#{_explorerBean .onRestoreCheckedContentTrash()}"
                             oncomplete="initDND()">

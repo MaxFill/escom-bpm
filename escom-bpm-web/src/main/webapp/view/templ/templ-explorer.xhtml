@@ -27,51 +27,52 @@
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{_explorerBean.onOpenExplorer()}"/>
+            <f:event type="preRenderView" listener="#{_explorerBean.onBeforeOpenCard()}"/>
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
+        <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 
+        <h:outputScript library="js" name="drag-drop.js" />  
+        
         <script type="text/javascript" >            
             function init() {
                 onAfterFormLoad();
             }
-            window.addEventListener("load", init, false);             
+            window.addEventListener("load", init, false);  
         </script>
 
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
 
         <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
+            <p:ajax event="resize" listener="#{_explorerBean.handleResize}"/>                        
             
-            <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 
-            <h:outputScript library="js" name="drag-drop.js" />  
-            
-            <pe:layoutPane position="west" resizable="true">
+            <pe:layoutPane id="west" position="west" resizable="true">
                 <f:facet name="header">
                     <p:outputLabel value="#{bundle.Sections}" />
                 </f:facet>
-                <h:form id="#{_frmTree}" style="font-size: 90%;"> 
+                <h:form id="westFRM" style="font-size: 90%;"> 
                     <style>
                         .ui-accordion .ui-accordion-content {
                             padding: 0px !important;
                         }
                     </style>
-                    <p:focus context="#{_frmTree}" for="#{_frmTree}:accord:nameSearche"/>
+                    <p:focus context="westFRM" for="westFRM:accord:nameSearche"/>
                     <ui:include src="/view/templ/tree/tree.xhtml" />                    
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane position="center" resizable="true">
+            <pe:layoutPane id="center" position="center" resizable="true">
                 <pe:layoutPane position="center">
                     <f:facet name="header">
                         <p:outputLabel id="centerHeaderLabel" value="#{_explorerBean.jurnalHeader}" />
                     </f:facet>
 
-                    <h:form id="#{_frmExpl}" style="font-size: 80%;">
+                    <h:form id="centerFRM" style="font-size: 80%;">
                         <ui:include src="/view/common/exeption-handler.xhtml"/>
-                        <p:remoteCommand name="dropToTree"  actionListener="#{_explorerBean.dropToTree}"  update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="#{_frmTree} #{_frmExpl}" oncomplete="initDND()"/>                           
+                        <p:remoteCommand name="dropToTree"  actionListener="#{_explorerBean.dropToTree}"  update="westFRM centerFRM" oncomplete="initDND()"/>
+                        <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="westFRM centerFRM" oncomplete="initDND()"/>
+                        <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="westFRM centerFRM" oncomplete="initDND()"/>                           
 
                         <ui:insert name="btnDisplayNone" />
 
@@ -80,7 +81,7 @@
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">
                             <p:ajax event="dialogReturn" listener="#{_explorerBean.onUpdateAfterCloseForm}"
-                                    update="#{_frmExpl} #{_frmTree}"
+                                    update="centerFRM westFRM"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
@@ -89,7 +90,7 @@
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">
                             <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl}"
+                                    update="centerFRM"
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
@@ -98,7 +99,7 @@
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">
                             <p:ajax event="dialogReturn" 
-                                    update="#{_frmExpl}" listener="#{_explorerBean.onUpdateAfterChangeItem}"
+                                    update="centerFRM" listener="#{_explorerBean.onUpdateAfterChangeItem}"
                                     oncomplete="initDND()"/>
                         </p:commandButton>                                                 
                         
@@ -122,15 +123,15 @@
                 </pe:layoutPane> 
             </pe:layoutPane>
 
-            <pe:layoutPane position="east" resizable="true" >
+            <pe:layoutPane id="east" position="east" resizable="true" >
                 <f:facet name="header">  
                     <p:outputLabel value="#{bundle.Searche}" />
                 </f:facet> 
-                <h:form style="font-size: 80%;" id="#{_frmExpl}_east"> 
+                <h:form style="font-size: 80%;" id="eastFRM"> 
                     <ui:include src="/view/templ/templ-searche.xhtml">
-                        <ui:param name="_tblUpdate" value="#{_frmExpl} #{_frmTree} centerHeaderLabel #{_updates}"/>
+                        <ui:param name="_tblUpdate" value="centerFRM westFRM centerHeaderLabel #{_updates}"/>
                     </ui:include>
-                    <p:remoteCommand name="onAfterFormLoad" action="#{_explorerBean.onAfterFormLoad()}"/>
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_explorerBean.onAfterFormLoad(_explorerBean)}"/>
                 </h:form>
             </pe:layoutPane>
 

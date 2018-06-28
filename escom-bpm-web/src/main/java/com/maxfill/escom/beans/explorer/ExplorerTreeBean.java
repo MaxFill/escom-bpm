@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
-    private static final String TREE_ITEMS_NAME  = "explorer_west:accord:tree:";
-    private static final String TREE_FILTERS_NAME = "explorer_west:accord:filtersTree:";
+    private static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
+    private static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
 
-    private static final String TABLE_NAME = "explorer:tblDetail:";
-    private static final String NAVIG_NAME = "explorer:navigator";
+    private static final String TABLE_NAME = "centerFRM:tblDetail:";
+    private static final String NAVIG_NAME = "centerFRM:navigator";
 
     private static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
     private static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
@@ -284,6 +284,7 @@ public class ExplorerTreeBean extends ExplorerBean{
         getDetailItems().removeAll(checkedItems);
     }
 
+    @Override
     public BaseDetailsBean getTableBean() {
         return tableBean;
     }

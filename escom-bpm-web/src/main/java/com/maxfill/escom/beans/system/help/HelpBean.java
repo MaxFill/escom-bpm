@@ -1,9 +1,11 @@
 package com.maxfill.escom.beans.system.help;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -13,13 +15,13 @@ import org.primefaces.model.StreamedContent;
 
 @Named
 @SessionScoped
-public class HelpBean extends BaseViewBean{
+public class HelpBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -740004080013527296L; 
     private static final String HELP_FILE = "UserManual_Storage.pdf";        
     private StreamedContent content;
     
     @Override
-    public void onBeforeOpenCard(){
+    public void doBeforeOpenCard(Map<String, String> params){
         if (content != null) return;
         String separator = File.separator;
         StringBuilder sb = new StringBuilder(conf.getServerPath());

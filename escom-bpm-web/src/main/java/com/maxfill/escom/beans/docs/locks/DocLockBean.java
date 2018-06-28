@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.docs.locks;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomMsgUtils;
 import com.maxfill.facade.AttacheFacade;
@@ -26,7 +27,7 @@ import java.util.Objects;
  */
 @Named
 @ViewScoped
-public class DocLockBean extends BaseViewBean{
+public class DocLockBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 81770245606034024L;
 
     @EJB
@@ -49,9 +50,8 @@ public class DocLockBean extends BaseViewBean{
     }
 
     @Override
-    public void onBeforeOpenCard(){
+    public void doBeforeOpenCard(Map<String, String> params){
         if (attache != null) return;
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         Integer attacheId = Integer.valueOf(params.get("attache"));        
         attache = attacheFacade.find(attacheId);
         if (attache.getPlanUnlockDate() == null){

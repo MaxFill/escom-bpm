@@ -26,7 +26,8 @@ public class FolderExplBean extends ExplorerTreeBean{
     }
 
     @Override
-    public void onAfterFormLoad(){
+    public void onAfterFormLoad(String beanId){
+        super.onAfterFormLoad(beanId);
         if (getFilterId() != null) {
             Filter filter = filtersFacade.find(getFilterId());
             if (filter != null) {

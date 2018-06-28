@@ -21,6 +21,7 @@ import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
@@ -39,8 +40,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     private FoldersFacade folderFacade;
 
     @Override
-    public void onBeforeOpenCard() {
-        super.onBeforeOpenCard();
+    public void doBeforeOpenCard(Map<String, String> params) {
         if (getTypeEdit().equals(DictEditMode.EDIT_MODE)){
             password = "**********";
         }

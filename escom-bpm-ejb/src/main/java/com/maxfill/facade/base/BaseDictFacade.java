@@ -495,7 +495,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
 
-    /* *** ПРАВА ДОСТУПА *** */
+/* *** ПРАВА ДОСТУПА *** */
 
     /* ПРАВА ДОСТУПА: Установка и проверка прав объекта для пользователя при загрузке объекта */
     public Boolean preloadCheckRightView(BaseDict item, User user) {
@@ -566,6 +566,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_CHANGE_RIGHT);
     }
 
+    /**
+     * Проверяет наличе у текущего пользователя права на выполнение
+     * @param item
+     * @return 
+     */
+    public boolean isHaveRightExec(T item) {
+        return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EXECUTE);
+    }
+    
     /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
     public Integer getAccessMask(T item, Rights sourcesRight, User user) {
         State currentState = item.getState().getCurrentState();
@@ -602,19 +611,19 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
     /* ПРАВА ДОСТУПА: формирование битовой маски доступа */
-    private Integer makeAccessMask(Right right, Integer accessMask) {
+    private Integer makeAccessMask(Right right, Integer accessMask) {        
         if (right.isRead()) {
             accessMask = accessMask | DictRights.RIGHT_VIEW;
-        }
+        } 
         if (right.isUpdate()) {
             accessMask = accessMask | DictRights.RIGHT_EDIT;
-        }
+        } 
         if (right.isCreate()) {
             accessMask = accessMask | DictRights.RIGHT_CREATE;
-        }
+        } 
         if (right.isDelete()) {
             accessMask = accessMask | DictRights.RIGHT_DELETE;
-        }
+        } 
         if (right.isChangeRight()) {
             accessMask = accessMask | DictRights.RIGHT_CHANGE_RIGHT;
         }
@@ -624,27 +633,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         if (right.isAddDetail()) {
             accessMask = accessMask | DictRights.RIGHT_ADD_DETAIL;
         }
+        if (right.isExecute()){
+            accessMask = accessMask | DictRights.RIGHT_EXECUTE;
+        }
         return accessMask;
-    }
-
-    /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в роль
-    * Todo перенести в RoleFacade!
-    */
-    private boolean checkUserRole(T item, Integer groupId, User user) {
-        UserGroups group = roleFacade.find(groupId);
-        String roleName = group.getRoleFieldName();
-        if (StringUtils.isBlank(roleName)) return false;
-        return checkUserInRole(item, roleName, user);
-    }
-
-    /**
-     * Стандартная проверка вхождения пользователя в роль
-     * @param item
-     * @param roleName
-     * @param user
-     */
-    protected boolean checkUserInRole(T item, String roleName, User user){
-        return "owner".equals(roleName.toLowerCase()) && Objects.equals(item.getAuthor(), user);
     }
 
     /* ПРАВА ДОСТУПА: проверяет вхождение текущего пользователя в группу */
@@ -760,5 +752,32 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             }
         }
         return actualRight;
+    }
+
+/* *** РОЛИ *** */
+    
+    /**
+     * Проверяет вхождение текущего пользователя в роль
+     * @param item
+     * @param groupId
+     * @param user
+     * @return 
+     */    
+    private boolean checkUserRole(T item, Integer groupId, User user) {
+        UserGroups group = roleFacade.find(groupId);
+        String roleName = group.getRoleFieldName();
+        if (StringUtils.isBlank(roleName)) return false;
+        return checkUserInRole(item, roleName, user);
+    }    
+    
+    /**
+     * Стандартная проверка вхождения пользователя в роль
+     * @param item
+     * @param roleName
+     * @param user
+     * @return 
+     */
+    protected boolean checkUserInRole(T item, String roleName, User user){
+        return "owner".equals(roleName.toLowerCase()) && Objects.equals(item.getAuthor(), user);
     }
 }

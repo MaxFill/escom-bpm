@@ -99,8 +99,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
      * @param event
      */
     public void onAfterSendDocToEmail(SelectEvent event){
-        if (event.getObject() != null) {
-            String message = (String)event.getObject();
+        if (event.getObject() != null) {                        
+            String message = (String) event.getObject();
             EscomMsgUtils.succesMessage(message);
         }
     }

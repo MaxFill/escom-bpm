@@ -1,7 +1,5 @@
 package com.maxfill.escom.beans;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.*;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -77,7 +75,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -811,35 +808,6 @@ public class SessionBean implements Serializable{
     
     public void saveTheme(AjaxBehaviorEvent ajax) {
         primefacesTheme = ((String) ((ThemeSwitcher)ajax.getSource()).getValue());
-    }
-
-    public LayoutOptions getExplLayoutOptions(String formName) {
-        LayoutOptions layoutOptions = new LayoutOptions();
-        Map<String, String> explFormMap = userSettings.getExplFormParam();
-        if (explFormMap.containsKey(formName)){
-            try {
-                ObjectMapper mapper = new ObjectMapper();
-                String jsonStr = explFormMap.get(formName);                                    
-                layoutOptions = mapper.readValue(jsonStr, LayoutOptions.class);
-            } catch (IOException ex) {
-                Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            EscomBeanUtils.initLayoutOptions(layoutOptions);
-            EscomBeanUtils.initAddLayoutOptions(layoutOptions);
-        }
-        return layoutOptions;
-    }
-
-    public void saveLayoutOptions(LayoutOptions layoutOptions, String frmName) {
-        if (layoutOptions.getCenterOptions() == null) return;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String paneOptions = mapper.writeValueAsString(layoutOptions);
-            userSettings.getExplFormParam().put(frmName, paneOptions);
-        } catch (JsonProcessingException ex) {
-            Logger.getLogger(SessionBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**

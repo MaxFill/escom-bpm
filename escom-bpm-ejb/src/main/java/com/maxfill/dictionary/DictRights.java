@@ -16,6 +16,7 @@ public final class DictRights {
     public static final int RIGHT_CREATE = 128;
     public static final int RIGHT_ADD_CHILDS = 256;
     public static final int RIGHT_ADD_DETAIL = 512;
+    public static final int RIGHT_EXECUTE = 1024;
     
     public static final int TYPE_GROUP = 0;
     public static final int TYPE_USER = 1;

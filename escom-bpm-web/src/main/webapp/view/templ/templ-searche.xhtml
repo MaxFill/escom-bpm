@@ -16,7 +16,7 @@
         }
     </script> 
 
-    <p:defaultCommand target="#{_frmExpl}_east:searcheBtn" />
+    <p:defaultCommand target="eastFRM:searcheBtn" />
         
     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
         <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses="ui-grid-col-12 col-padding, ui-grid-col-12 col-padding">
@@ -185,7 +185,7 @@
                 </p:commandButton>
                 <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"
                                  title="#{bundle.ResetSearcheCriteria}">
-                    <p:ajax update="#{_frmExpl}_east" oncomplete="clearSearche();"/>
+                    <p:ajax update="eastFRM" oncomplete="clearSearche();"/>
                 </p:commandButton>
             </h:panelGroup>
 

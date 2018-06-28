@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.processes.elements;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.facade.ConditionFacade;
@@ -11,10 +11,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.beanutils.BeanUtils;
 
 /**
@@ -22,7 +20,7 @@ import org.apache.commons.beanutils.BeanUtils;
  */
 @Named
 @ViewScoped
-public class ConditionCardBean extends BaseViewBean{    
+public class ConditionCardBean extends BaseViewBean<BaseView>{    
     private static final long serialVersionUID = -5186880746110498838L;
     
     @EJB
@@ -30,30 +28,13 @@ public class ConditionCardBean extends BaseViewBean{
     
     private Condition selected = null;
     private ConditionElem sourceItem = null;
-    private ConditionElem editedItem = new ConditionElem();
-    private ProcessCardBean sourceBean;
+    private ConditionElem editedItem = new ConditionElem();    
     
     @Override
-    public void onBeforeOpenCard(){
-        if (sourceItem == null){
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();            
-            beanId = params.get(SysParams.PARAM_BEAN_ID);
-            String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-            HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-            Map map = (Map) session.getAttribute("com.sun.faces.application.view.activeViewMaps");          
-            for (Object entry : map.values()) {
-              if (entry instanceof Map) {
-                Map viewScopes = (Map) entry;
-                if (viewScopes.containsKey(beanName)) {
-                    sourceBean = (ProcessCardBean) viewScopes.get(beanName);
-                    String id = sourceBean.toString();
-                    if (beanId.equals(id)) break;
-                }
-              }
-            }
+    public void doBeforeOpenCard(Map<String, String> params){
+        if (sourceItem == null){                        
             if (sourceBean != null){
-                sourceItem = (ConditionElem)sourceBean.getBaseElement(); 
+                sourceItem = (ConditionElem)((ProcessCardBean)sourceBean).getBaseElement(); 
                 if (sourceItem.getConditonId() != null){
                     selected = conditionFacade.find(sourceItem.getConditonId());
                 }
@@ -69,7 +50,7 @@ public class ConditionCardBean extends BaseViewBean{
     }
     
     @Override
-    public String onCloseCard(String param){
+    public String onCloseCard(Object param){
         try {
             editedItem.setConditonId(selected.getId());
             editedItem.setCaption(selected.getName());

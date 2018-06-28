@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.task;
 
-import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
@@ -158,9 +157,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             EscomMsgUtils.showErrorsMsg(errors);
             return "";
         }
-        Map<String, Object> exits = new HashMap<>();
-        exits.put(SysParams.PARAM_EXIT_RESULT, SysParams.EXIT_EXECUTE);
-        return closeItemForm(exits);
+        return closeItemForm(SysParams.EXIT_EXECUTE);
     }
     
     /**
@@ -349,6 +346,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return sourceDays;
     }  
     
+    @Override
     public boolean isReadOnly() {
         return readOnly;
     }

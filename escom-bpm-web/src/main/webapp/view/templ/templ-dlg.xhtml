@@ -44,7 +44,7 @@
             }
         </style>
 
-        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;">
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;" stateCookie="true">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>
 
             <pe:layoutPane id="center" position="center" resizable="true">

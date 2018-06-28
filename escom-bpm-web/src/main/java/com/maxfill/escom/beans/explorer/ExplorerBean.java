@@ -9,7 +9,6 @@ import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.folders.FolderNavigation;
-import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictEditMode;
@@ -17,6 +16,8 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseView;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -26,7 +27,6 @@ import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
-import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.api.UIColumn;
@@ -47,16 +47,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.SessionScoped;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
@@ -64,12 +59,9 @@ import org.primefaces.model.UploadedFile;
 /* Контролер формы обозревателя */
 @Named
 @ViewScoped
-public class ExplorerBean implements Serializable {
+public class ExplorerBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 5230153127233924868L;   
-    static final protected Logger LOGGER = Logger.getGlobal();
 
-    @Inject
-    protected SessionBean sessionBean;
     @Inject
     private DocBean docBean;
     @Inject
@@ -117,8 +109,7 @@ public class ExplorerBean implements Serializable {
     private SearcheModel model;
     private String treeSearcheKey; 
     
-    /* *** ПОЛЯ ОБОЗРЕВАТЕЛЯ *** */
-    private LayoutOptions layoutOptions; 
+    /* *** ПОЛЯ ОБОЗРЕВАТЕЛЯ *** */    
     private Boolean layoutState = true;
     private String jurnalHeader;
     private String selectorHeader;
@@ -135,24 +126,10 @@ public class ExplorerBean implements Serializable {
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
 
-    @PostConstruct
-    private void init() {
-        initBean();
-       // System.out.println("Создан explorerBean="+ this.toString());
-    }
-
-    protected void initBean(){};
-
-    @PreDestroy
-    private void destroy(){
-        //sessionBean.saveLayoutOptions(layoutOptions, getFrmName());
-        //System.out.println("Удалён explorerBean="+ this.toString());
-    }
-    
     /* Cобытие при открытии формы обозревателя/селектора  */
-    public void onOpenExplorer(){
-        if (viewMode == null){
-            Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+    @Override
+    public void doBeforeOpenCard(Map<String, String> params){
+        if (viewMode == null){            
             if (params.containsKey("selectMode")){
                 selectMode = Integer.valueOf(params.get("selectMode"));
                 viewMode = DictExplForm.SELECTOR_MODE;
@@ -161,16 +138,26 @@ public class ExplorerBean implements Serializable {
                 if (params.containsKey("filterId")) {
                     filterId = Integer.valueOf(params.get("filterId"));
                 }
-            }            
+            } 
         }    
     }
 
-    /**
-     * Обработка события после открытия формы
-     */
-    public void onAfterFormLoad(){
-    }
+    @Override
+    protected void initLayoutOptions() {
+        super.initLayoutOptions();
+        
+        LayoutOptions center = layoutOptions.getCenterOptions();        
+        center.addOption("size", 950);
 
+        LayoutOptions childCenterOptions = new LayoutOptions();
+        center.setChildOptions(childCenterOptions);
+        
+        LayoutOptions centerSouth = new LayoutOptions();
+        centerSouth.addOption("size", "15%");
+        childCenterOptions = center.getChildOptions();
+        childCenterOptions.setSouthOptions(centerSouth);
+    }
+    
     /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
@@ -240,9 +227,8 @@ public class ExplorerBean implements Serializable {
     }
         
     /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
-    public void onUpdateAfterCloseForm(SelectEvent event){
-        Map<String, Object> exits = (Map)event.getObject();
-        String exitResult = (String) exits.get(SysParams.PARAM_EXIT_RESULT);
+    public void onUpdateAfterCloseForm(SelectEvent event){        
+        String exitResult = (String) event.getObject();
         if (SysParams.EXIT_NEED_UPDATE.equals(exitResult)) {
             switch (typeEdit){
                 case DictEditMode.EDIT_MODE: {                    
@@ -273,9 +259,8 @@ public class ExplorerBean implements Serializable {
         onSetCurrentItem(editItem);
     }
     
+    /* TODO Нашёл что вызов данного метода есть в обозревателе документов (doc-explorer) Возможно что просто устаревший...*/
     public void onUpdateAfterChangeItem(SelectEvent event){
-        //TODO возможно что тут нужно вызывать удаление вью бина!
-        // EscomBeanUtils.killViewBean(exits);
         editItem = sessionBean.reloadItem(currentItem);
         try {                    
             BeanUtils.copyProperties(currentItem, editItem);
@@ -1273,7 +1258,7 @@ public class ExplorerBean implements Serializable {
         });    
     }
             
-    /* СЕЛЕКТОР */
+/* *** СЕЛЕКТОР *** */
     
     /* СЕЛЕКТОР: определяет режим множественного выбора в селекторе  */
     public boolean isMultySelectMode(){
@@ -1301,24 +1286,19 @@ public class ExplorerBean implements Serializable {
         if (item == null){return "";}
         getCheckedItems().clear();
         getCheckedItems().add(item);        
-        return doClose(getCheckedItems());
+        return onCloseCard(getCheckedItems());
     }
     
-    /* СЕЛЕКТОР: закрытие формы селектора  */
-    private String doClose(List<BaseDict> selected){
-        RequestContext.getCurrentInstance().closeDialog(selected);
-        return "/view/index?faces-redirect=true";
-    }
     
     /* СЕЛЕКТОР: закрытие селектора без выбора объектов  */
     public String onClose() {
         getCheckedItems().clear();        
-        return doClose(getCheckedItems());
+        return onCloseCard(getCheckedItems());
     }
     
     /* СЕЛЕКТОР: действие по нажатию кнопки множественного выбора для списка  */
     public String onMultySelect() {        
-        return doClose(getCheckedItems());
+        return onCloseCard(getCheckedItems());
     }        
         
     /* СЕЛЕКТОР: обработка действия в селекторе объектов при выборе элемента в дереве   */
@@ -1328,7 +1308,7 @@ public class ExplorerBean implements Serializable {
         }        
         List<BaseDict> groups = new ArrayList<>();
         groups.add(currentItem);
-        return doClose(groups);
+        return onCloseCard(groups);
     }
     
     /* ДОКУМЕНТЫ И ВЛОЖЕНИЯ */    
@@ -1414,7 +1394,7 @@ public class ExplorerBean implements Serializable {
     /* ПЕЧАТЬ : Открытие на предпросмотр журнала документов */
     public void openDocJournalReport() {
         Map<String, Object> params = new HashMap<>();
-        params.put("USER_LOGIN", sessionBean.getCurrentUser().getLogin());
+        params.put("USER_LOGIN", getCurrentUser().getLogin());
         params.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel("DocJournal"));
         List<Doc> docs = new ArrayList<>();
         detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
@@ -1483,19 +1463,15 @@ public class ExplorerBean implements Serializable {
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
     public void onPageChange(PageEvent event) {
         setCurrentPage(((DataTable) event.getSource()).getFirst());
-    }   
-    
-    public String getLabelFromBundle(String key){
-        return EscomMsgUtils.getBandleLabel(key);
-    }
+    }       
             
     /* Построение объекта для сортировки таблицы обозревателя  */
     public List<SortMeta> getSortOrder() {
         if (sortOrder == null){
             sortOrder = new ArrayList<>();
             UIViewRoot viewRoot =  FacesContext.getCurrentInstance().getViewRoot();
-            UIComponent columnIcon = viewRoot.findComponent("explorer:tblDetail:colIcon"); 
-            UIComponent columnName = viewRoot.findComponent("explorer:tblDetail:shortName"); 
+            UIComponent columnIcon = viewRoot.findComponent("centerFRM:tblDetail:colIcon"); 
+            UIComponent columnName = viewRoot.findComponent("centerFRM:tblDetail:shortName"); 
             SortMeta sm1 = new SortMeta();
             sm1.setSortBy((UIColumn)columnIcon);
             sm1.setSortField("iconName");
@@ -1746,20 +1722,6 @@ public class ExplorerBean implements Serializable {
     public SearcheModel getModel() {
         return model;
     }
-
-    public LayoutOptions getLayoutOptions() {
-        if (layoutOptions == null){
-            layoutOptions = sessionBean.getExplLayoutOptions(getFrmName());
-        }
-        return layoutOptions;
-    }
-
-    private String getFrmName(){         
-        if (isSelectorViewMode()){
-            return typeDetail + "-selector";
-        }
-        return typeDetail + "-explorer";
-    }
     
     public Boolean getLayoutState() {
         return layoutState;
@@ -1773,5 +1735,33 @@ public class ExplorerBean implements Serializable {
     }
     public void setSelectedDocId(Integer selectedDocId) {
         this.selectedDocId = selectedDocId;
+    }
+
+    @Override
+    protected boolean isWestInitClosed(){
+        return false;
+    }
+    
+    @Override
+    public Boolean isEastShow(){
+        return true;
+    }
+    
+    @Override
+    public Boolean isSouthShow(){
+        return true;
+    }
+    
+    @Override
+    public Boolean isWestShow(){
+        return true;
+    }
+    
+    @Override
+    public String getFormName() {
+        if (isSelectorViewMode()){
+            return typeDetail + "-selector";
+        }
+        return typeDetail + "-explorer";
     }
 }

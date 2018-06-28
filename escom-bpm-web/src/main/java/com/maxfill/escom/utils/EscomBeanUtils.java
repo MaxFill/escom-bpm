@@ -37,69 +37,7 @@ public final class EscomBeanUtils {
         String[] abcCyr = {"а","б","в","г","д","е","ё", "ж", "з","и","й","к","л","м","н","о","п","р","с","т","у","ч","ф","х","ц","ш","щ","ы","э","ю","я"};
         String[] abcLat = {"a","b","v","g","d","e","jo","zh","z","i","j","k","l","m","n","o","p","r","s","t","u","ch","f","h","ts","sh","sch","","e","ju","ja"};
         return StringUtils.replaceEach(text, abcCyr, abcLat);
-    }
-    
-    /* Инициализация областей обозревателя */
-    public static void initLayoutOptions(LayoutOptions layoutOptions){
-        LayoutOptions north = new LayoutOptions();
-        north.addOption("resizable", false);
-        north.addOption("closable", false);
-        north.addOption("size", 40);
-        layoutOptions.setNorthOptions(north);
-
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 42);
-        layoutOptions.setSouthOptions(south);
-
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 255);
-        west.addOption("minSize", 150);
-        west.addOption("maxSize", 500);
-        west.addOption("resizable", true);
-        west.addOption("initClosed", false);
-        layoutOptions.setWestOptions(west);
-
-        LayoutOptions east = new LayoutOptions();
-        east.addOption("size", 300);
-        east.addOption("minSize", 150);
-        east.addOption("maxSize", 450);
-        east.addOption("resizable", true);
-        east.addOption("initClosed", false);
-        layoutOptions.setEastOptions(east);
-
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("minSize", 400);
-        center.addOption("size", 950);
-        center.addOption("minWidth", 400);
-        center.addOption("minHeight", 200);
-        layoutOptions.setCenterOptions(center);        
-    }
-    
-    public static void initAddLayoutOptions(LayoutOptions layoutOptions){
-        /*
-        LayoutOptions east = layoutOptions.getEastOptions();
-        LayoutOptions childOptions = new LayoutOptions();
-        east.setChildOptions(childOptions);
-
-        LayoutOptions searcheABC = new LayoutOptions();
-        searcheABC.addOption("size", 85);
-        searcheABC.addOption("minSize", 85);
-        searcheABC.addOption("maxSize", 85);
-        childOptions.setWestOptions(searcheABC); 
-        */
-        LayoutOptions center = layoutOptions.getCenterOptions();
-        LayoutOptions childCenterOptions = new LayoutOptions();
-        center.setChildOptions(childCenterOptions);
-        
-        LayoutOptions centerSouth = new LayoutOptions();
-        centerSouth.addOption("size", "15%");
-        childCenterOptions = layoutOptions.getCenterOptions().getChildOptions();
-        childCenterOptions.setSouthOptions(centerSouth);
-    }    
+    }         
     
     /* Получение bean по его имени */
     @SuppressWarnings("unchecked")

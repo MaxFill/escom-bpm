@@ -12,7 +12,7 @@
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="#{_frmTree} #{_frmExpl}"
+                update="westFRM centerFRM"
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
     <p:commandButton id="createRootCardBtn" action="#{_explorerBean.onCreateRootItem()}" 
@@ -20,7 +20,7 @@
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="#{_frmTree} #{_frmExpl}"
+                update="westFRM centerFRM"
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
@@ -28,7 +28,7 @@
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="#{_frmTree} #{_frmExpl}"
+                update="westFRM centerFRM"
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
@@ -41,7 +41,7 @@
 
     <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_explorerBean.currentTab}" >
         <p:ajax event="tabChange" listener="#{_explorerBean.onTreeTabChange}"
-                update="#{_frmExpl} centerHeaderLabel #{_updates}"
+                update="centerFRM centerHeaderLabel #{_updates}"
                 oncomplete="initDND()"/>
 
         <p:tab id="tabTree" title="#{bundle.Groups}" rendered="#{_treeBean != null}">
@@ -60,10 +60,10 @@
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{_explorerBean.onTreeNodeSelect}"
-                        update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmTree}:accord:menuTree #{_frmExpl} #{_updates}"
+                        update="centerHeaderLabel westFRM:accord:toolbarTree westFRM:accord:menuTree centerFRM #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="contextMenu" listener="#{_explorerBean.onTreeNodeSelect}"
-                        update="centerHeaderLabel #{_frmTree}:accord:toolbarTree #{_frmExpl} #{_updates}"
+                        update="centerHeaderLabel westFRM:accord:toolbarTree centerFRM #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="expand"  listener="#{_explorerBean.onNodeExpand}" />
                 <p:ajax event="collapse" listener="#{_explorerBean.onNodeCollapse}" />
@@ -75,21 +75,21 @@
                             action="#{_explorerBean.onSelectTreeItem()}"/>
                 <p:separator rendered="#{_explorerBean.selectorViewMode}"/>
                 <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
-                            oncomplete="document.getElementById('#{_frmTree}:createRootCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:createRootCardBtn').click();"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
-                            oncomplete="document.getElementById('#{_frmTree}:createTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>
                 <p:separator />
                 <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
-                            update="#{_frmTree}" oncomplete="initDND()"
+                            update="westFRM" oncomplete="initDND()"
                             actionListener="#{_explorerBean.onExpandNode()}"/>
                 <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
-                            update="#{_frmTree}" oncomplete="initDND()"
+                            update="westFRM" oncomplete="initDND()"
                             actionListener="#{_explorerBean.onCollapseNode()}"/>                
                 <p:separator />
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            oncomplete="document.getElementById('#{_frmTree}:viewTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:viewTreeCardBtn').click();"/>
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            oncomplete="document.getElementById('#{_frmTree}:openTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
                 <p:separator />                
 
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
