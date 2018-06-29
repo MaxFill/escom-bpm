@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.Validator;
 
 import com.maxfill.dictionary.DictBundles;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import org.primefaces.validate.ClientValidator;
 
 public abstract class AbstractValidator implements Validator, ClientValidator {

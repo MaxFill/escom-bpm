@@ -68,6 +68,8 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         return filters;
     }
 
+    /* *** GETS & SETS *** */
+    
     public Date getDateStart() {
         return dateStart;
     }

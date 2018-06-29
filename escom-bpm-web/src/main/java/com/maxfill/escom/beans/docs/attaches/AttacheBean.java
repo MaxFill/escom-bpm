@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.attaches.Attaches;
@@ -79,7 +79,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();
             } else {
-                EscomMsgUtils.warnMsg("RightViewNo");
+                MsgUtils.warnMsg("RightViewNo");
             }    
         } else {
             path = params.get("path");

@@ -4,7 +4,7 @@ import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.BaseDict;
@@ -119,7 +119,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         super.checkAllowedDeleteItem(user, errors);
         if(!staffFacade.findStaffsByUser(user).isEmpty()) {
             Object[] messageParameters = new Object[]{user.getShortFIO()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
             errors.add(error);
         }
     }

@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.core;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.BaseDict;

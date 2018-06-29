@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomFileUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
@@ -251,9 +251,9 @@ public class SessionBean implements Serializable{
     public void addInFavorites(BaseDict item, Metadates metadates){
         Object[] params = new Object[]{item.getName()};
         if (favoriteService.addInFavorites(item, metadates, getCurrentUser())){
-            EscomMsgUtils.succesFormatMsg("ObjectAddedToFavorites", params);
+            MsgUtils.succesFormatMsg("ObjectAddedToFavorites", params);
         } else {
-            EscomMsgUtils.warnFormatMsg("ObjectAlreadyAddedFavorites", params);
+            MsgUtils.warnFormatMsg("ObjectAlreadyAddedFavorites", params);
         }
     }
 
@@ -263,9 +263,9 @@ public class SessionBean implements Serializable{
         Boolean needUpadateSystem = appBean.getNeedUpadateSystem();
         notifMessages.clear();
         if (needUpadateSystem) {
-            String urlCaption = EscomMsgUtils.getMessageLabel("GetInfoAboutNewversion");
+            String urlCaption = MsgUtils.getMessageLabel("GetInfoAboutNewversion");
             String url = "https://escom-archive.ru/news";
-            String msg = EscomMsgUtils.getMessageLabel("NeedUpdateSystem");
+            String msg = MsgUtils.getMessageLabel("NeedUpdateSystem");
             notifMessages.add(new NotifMsg(msg, url, urlCaption));
         }
 
@@ -273,9 +273,9 @@ public class SessionBean implements Serializable{
             String dateExpire = getLicenseExpireAsString();
             String licensee = appBean.getLicensee();
             String remainedDays = DateUtils.differenceDays(Instant.now(), appBean.getLicenseExpireDate().toInstant());
-            String msg = MessageFormat.format(EscomMsgUtils.getMessageLabel("LicenseExpired"), new Object[]{licensee, dateExpire, remainedDays});
+            String msg = MessageFormat.format(MsgUtils.getMessageLabel("LicenseExpired"), new Object[]{licensee, dateExpire, remainedDays});
             String url = "https://escom-archive.ru/faqs/";
-            String urlCaption = EscomMsgUtils.getMessageLabel("UpdateInformation");
+            String urlCaption = MsgUtils.getMessageLabel("UpdateInformation");
             notifMessages.add(new NotifMsg(msg, url, urlCaption));
         }
         if (!notifMessages.isEmpty()){
@@ -370,7 +370,7 @@ public class SessionBean implements Serializable{
     public void checkUnReadMessages(){
         Integer countUnreadMessage = getCountUnreadMessage();
         if (countUnreadMessage > 0){
-            EscomMsgUtils.succesFormatMsg("YouHaveUnreadMessage", new Object[]{countUnreadMessage});
+            MsgUtils.succesFormatMsg("YouHaveUnreadMessage", new Object[]{countUnreadMessage});
         }
     }
     
@@ -399,10 +399,26 @@ public class SessionBean implements Serializable{
     /**
      * Открытие формы диалога
      * @param frmName
-     * @param paramMap
+     * @param paramsMap
      */
-    public void openDialogFrm(String frmName, Map<String, List<String>> paramMap){
-        EscomBeanUtils.openDlgFrm(frmName, paramMap, getFormSize(frmName));
+    public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
+        Tuple formSize = getFormSize(frmName);
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", formSize.a);
+        options.put("height", formSize.b);
+        options.put("minWidth", 600);
+        options.put("minHeight", 400);
+        options.put("maximizable", true);
+        options.put("closable", false);
+        options.put("closeOnEscape", false);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        List<String> openInDialogList = new ArrayList<>();
+        openInDialogList.add("true");
+        paramsMap.put("openInDialog", openInDialogList);
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
     }
 
     /**
@@ -417,6 +433,14 @@ public class SessionBean implements Serializable{
         return url;
     }
 
+    /**
+     * Открытие формы монитора контроля процессов
+     */
+    public void openMonitor(){
+        Map<String, List<String>> paramMap = new HashMap<>();
+        openDialogFrm(DictDlgFrmName.FRM_MONITOR, paramMap);
+    }
+    
     /**
      * Открытие обозревателя документов
      * @param filterId
@@ -677,7 +701,7 @@ public class SessionBean implements Serializable{
     /* GETS & SETS */
             
     public String getLicenseLocalName(){
-        return EscomMsgUtils.getBandleLabel(appBean.getLicenseBundleName());
+        return MsgUtils.getBandleLabel(appBean.getLicenseBundleName());
     }
 
     /* Проверяет, истекает ли срок лицензии в течении месяца */
@@ -819,7 +843,7 @@ public class SessionBean implements Serializable{
         if (countMsg > 0){
             return countMsg.toString();
         } else {
-            return EscomMsgUtils.getBandleLabel("No");
+            return MsgUtils.getBandleLabel("No");
         }
     }
 

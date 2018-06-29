@@ -6,7 +6,7 @@ import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.facade.base.BaseDictFacade;
@@ -29,8 +29,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
+import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
 import java.util.logging.Logger;
@@ -169,7 +169,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      */
     private void openItemCard(BaseDict item, Integer editMode, Map<String, List<String>> paramsMap, Set<String> errors){       
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return;
         }
         
@@ -179,7 +179,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             User user = appBean.whoLockedItem(itemKey); //узнаём, заблокирован ли уже объект        
             if (user != null){
                 String objName = user.getName();
-                EscomMsgUtils.errorFormatMsg("ObjectAlreadyOpened", new Object[]{objName});
+                MsgUtils.errorFormatMsg("ObjectAlreadyOpened", new Object[]{objName});
                 return;
             }
         }
@@ -219,8 +219,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         if (getFacade().isHaveRightCreate(newItem)) {
             setSpecAtrForNewItem(newItem);
         } else {
-            String objName = EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName());
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
+            String objName = MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName());
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
             errors.add(error);
         }
     }
@@ -234,7 +234,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         preparePasteItem(pasteItem, sourceItem, recipient);
         prepCreate(pasteItem, null, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return null;
         }        
         changeNamePasteItem(sourceItem, pasteItem);
@@ -324,7 +324,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {
         getFacade().actualizeRightItem(dragItem, getCurrentUser());
         if (!getFacade().isHaveRightDelete(dragItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -335,7 +335,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
         getFacade().actualizeRightItem(dragItem, getCurrentUser());
         if (!getFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -429,9 +429,9 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 }
             }
         } else {
-            String metadateName = EscomMsgUtils.getBandleLabel(getMetadatesObj().getBundleName());
+            String metadateName = MsgUtils.getBandleLabel(getMetadatesObj().getBundleName());
             Object[] msgParams = new Object[]{metadateName, item.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightDeleteNo"), msgParams);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("RightDeleteNo"), msgParams);
             errors.add(error);
         }
     } 

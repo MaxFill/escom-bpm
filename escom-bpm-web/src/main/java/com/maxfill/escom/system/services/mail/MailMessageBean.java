@@ -5,7 +5,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.model.attaches.Attaches;
@@ -151,7 +151,7 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
             String fileName = sendDocs.get(0).getName();
             sb.append(fileName);
         } else {
-            sb.append(EscomMsgUtils.getBandleLabel("Newsletter"));
+            sb.append(MsgUtils.getBandleLabel("Newsletter"));
         }        
         return sb.toString();
     }
@@ -159,11 +159,11 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
     private StringBuilder prepareDocLinks(Doc doc){        
         StringBuilder links = new StringBuilder();
         String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/document");
-        links.append(EscomMsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
+        links.append(MsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         String urlViewDoc = EscomBeanUtils.doGetItemURL(doc, "docs/doc-viewer");
-        links.append(EscomMsgUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
+        links.append(MsgUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
         links.append("<a href=").append(urlViewDoc).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
@@ -172,7 +172,7 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
     private StringBuilder prepareDocCardLinks(Doc doc){
         StringBuilder links = new StringBuilder();
         String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/doc-card");
-        links.append(EscomMsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
+        links.append(MsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append("&openMode=0").append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
@@ -195,10 +195,10 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
                 }
             }    
             mailBoxFacade.create(selected);
-            String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("MessageSaveAndPutInMailBoxService"), new Object[]{selected.getAddresses()});
+            String message = MessageFormat.format(MsgUtils.getMessageLabel("MessageSaveAndPutInMailBoxService"), new Object[]{selected.getAddresses()});
             return onCloseCard(message);
         } else {
-            EscomMsgUtils.errorMsg("IncorrectMailAdress");
+            MsgUtils.errorMsg("IncorrectMailAdress");
             return "";
         }
     }

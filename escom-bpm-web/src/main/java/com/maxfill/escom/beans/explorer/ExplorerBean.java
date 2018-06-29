@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.explorer;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.facade.FiltersFacade;
@@ -220,7 +220,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }        
         tableBean.checkCanCreateItem(parent, owner, errors, createParams);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return false;
         }
         return true;
@@ -406,7 +406,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                             }
                 });
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else {            
             getDetailItems().removeAll(getCheckedItems());
         }
@@ -445,7 +445,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         Set<String> errors = new HashSet<>();
         onMoveContentToTrash(currentItem, errors);
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else {
             removeNodeFromTree(treeSelectedNode);
             reloadDetailsItems();
@@ -545,7 +545,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             newNode.setExpanded(true);
         }
 
-        String bundleName = EscomMsgUtils.getBandleLabel(nodeName);
+        String bundleName = MsgUtils.getBandleLabel(nodeName);
         item.setName(bundleName);
 
         List<Filter> childs = filtersFacade.findChildsFilters((Filter)item, metadate);
@@ -963,7 +963,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     /* КОПИРОВАНИЕ: вызов копирования отмеченных объектов в таблице */
     public void onCopySelectedItem() {
         if (checkedItems.isEmpty()){
-            EscomMsgUtils.warnMsg("NoCheckedItems");
+            MsgUtils.warnMsg("NoCheckedItems");
             return;
         }
         doCopyItems(checkedItems);
@@ -978,7 +978,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public void onCopyItem(BaseDict item) {
         if (item == null){return;}
         if (item.getId() == 0){
-            EscomMsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{item.getName()});
+            MsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{item.getName()});
             return;
         }
         List<BaseDict> sourceItems = new ArrayList<>();
@@ -989,7 +989,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
         copiedItems = sourceItems.stream().map(copyItem -> sessionBean.prepCopyItem(copyItem)).collect(Collectors.toSet());         
-        copiedItems.stream().forEach(item-> EscomMsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{item.getName()}));
+        copiedItems.stream().forEach(item-> MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{item.getName()}));
     }
 
     /**
@@ -1024,13 +1024,13 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         Set<String> errors = new HashSet<>();
         List<BaseDict> rezults = pasteItem(currentItem, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }
         if (!rezults.isEmpty()){
             rezults.stream().filter(item-> isItemRootType(item) || isItemTreeType(item))
                 .forEach(item -> addNewItemInTree(item, treeSelectedNode));
             reloadDetailsItems();
-            EscomMsgUtils.succesMsg("PasteCopiedObjectDone");
+            MsgUtils.succesMsg("PasteCopiedObjectDone");
         }
     }
 
@@ -1043,11 +1043,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }
         List<BaseDict> rezults = pasteItem(parent, errors);
         if (!errors.isEmpty()){            
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return;
         }
         if (!rezults.isEmpty()){
-            EscomMsgUtils.succesMsg("PasteCopiedObjectDone");
+            MsgUtils.succesMsg("PasteCopiedObjectDone");
             reloadDetailsItems();
         }
     }
@@ -1077,11 +1077,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     /* Обработка действия по нажатию кнопки Поиск */
     public void onSearcheItem() {
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
-            EscomMsgUtils.errorMsg("NO_SEARCHE_GROUPS");
+            MsgUtils.errorMsg("NO_SEARCHE_GROUPS");
         } else {
             doSearcheItems();
             if (getDetailItems().isEmpty()) {
-                EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
+                MsgUtils.warnMsg("NO_SEARCHE_FIND");
                 return;
             }
             switch (currentTab) {
@@ -1182,7 +1182,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();
-        makeJurnalHeader(EscomMsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), EscomMsgUtils.getBandleLabel("SearcheResult"));
+        makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"));
         navigator = null;
     }
 
@@ -1193,7 +1193,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             List<TreeNode> rezult = new ArrayList<>();
             doSearcheInTree(tree, rezult);
             if (rezult.isEmpty()){
-                EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
+                MsgUtils.warnMsg("NO_SEARCHE_FIND");
                 return;
             }
             if (rezult.size() == 1){
@@ -1236,7 +1236,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }    
     }
     
@@ -1245,7 +1245,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         Set<String> errors = new HashSet<>();
         checkedItems.stream().forEach(dragItem -> onMoveContentToTrash(dragItem, errors));
         if (!errors.isEmpty()){            
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }
     }
     
@@ -1361,7 +1361,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (!checked.isEmpty()){
             sessionBean.openMailMsgForm(mode, checked);
         } else {
-            EscomMsgUtils.warnMsg("NO_SELECT_DOCS");
+            MsgUtils.warnMsg("NO_SELECT_DOCS");
         }
     } 
     
@@ -1395,7 +1395,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public void openDocJournalReport() {
         Map<String, Object> params = new HashMap<>();
         params.put("USER_LOGIN", getCurrentUser().getLogin());
-        params.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel("DocJournal"));
+        params.put("REPORT_TITLE", MsgUtils.getBandleLabel("DocJournal"));
         List<Doc> docs = new ArrayList<>();
         detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
 

@@ -4,7 +4,7 @@ package com.maxfill.escom.beans.system.numPuttern;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.NumeratorPatternFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -30,8 +30,8 @@ public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern>{
     @Override
     public void initBean() {
         super.initBean();
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, EscomMsgUtils.getBandleLabel("Auto")));
-        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, EscomMsgUtils.getBandleLabel("ManualInput")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_AUTO, MsgUtils.getBandleLabel("Auto")));
+        numPatternTypes.add(new SelectItem(DictNumerator.TYPE_MANUAL, MsgUtils.getBandleLabel("ManualInput")));
     }
             
     public String getLabel(String typeCode){

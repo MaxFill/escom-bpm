@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.ValidatorException;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -36,8 +36,8 @@ public class EmailValidator extends AbstractValidator {
         }
 
         if (!pattern.matcher(value.toString()).matches()) {
-            String invalidEmail = EscomMsgUtils.getValidateLabel("INVALID_EMAIL");
-            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+            String invalidEmail = MsgUtils.getValidateLabel("INVALID_EMAIL");
+            String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, invalidEmail, checkError));
         }
     }

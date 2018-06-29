@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.core;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.services.attaches.AttacheService;
 import org.apache.commons.beanutils.BeanUtils;
@@ -37,7 +37,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
             getOwnerBean().getFacade().actualizeRightItem(owner, getCurrentUser());
             isAllowedEditOwner = getFacade().isHaveRightAddDetail(owner); //можно ли создавать подчинённые объекты?
             if (!isAllowedEditOwner){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
@@ -45,7 +45,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
             getFacade().actualizeRightItem(parent, getCurrentUser());
             isAllowedEditParent = getFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
             if (!isAllowedEditParent){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
@@ -63,7 +63,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         preparePasteItem(pasteItem, sourceItem, recipient);
         prepCreate(pasteItem, pasteItem.getParent(), errors); 
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return null;
         }        
         changeNamePasteItem(sourceItem, pasteItem);
@@ -97,13 +97,13 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
         getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
         if (!getFacade().isHaveRightAddChild(dropItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
         getFacade().actualizeRightItem(dragItem, getCurrentUser());
         if (!getFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -115,7 +115,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
         getFacade().actualizeRightItem(dragItem, getCurrentUser());
         if (!getFacade().isHaveRightEdit(dragItem)){
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
         }
@@ -123,7 +123,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         actualizeRightForDropItem(dropItem);
 
         if (!getFacade().isHaveRightAddChild(dropItem)){
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }

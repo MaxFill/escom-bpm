@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.facade.TaskFacade;
@@ -38,15 +39,11 @@ public class SchedulerBean extends BaseViewBean {
     
     @Override
     protected void initBean(){    
-        initData();
-    };
-               
-    private void initData(){
         List<Task> tasks = taskFacade.findTaskByStaff(getCurrentStaff());
         tasks.stream()
                 .filter(task-> task.getBeginDate() != null && task.getPlanExecDate() != null)
                 .forEach(task-> eventModel.addEvent(new SchedulerTask(task)));
-    }
+    };    
   
     /**
      * Обработка события создания нового поручения
@@ -54,14 +51,14 @@ public class SchedulerBean extends BaseViewBean {
      */
     public void onCreateTask(String beanId){
         Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser());
-        task.setBeginDate(schedulerTask.getStartDate());
+        task.setBeginDate(new Date());
         task.setPlanExecDate(schedulerTask.getEndDate());
-        schedulerTask.setTask(task);        
+        schedulerTask.setTask(task);
         onOpenTask(beanId);
     }
     
     public void onOpenTask(String beanId){        
-        taskBean.prepEditItem(getTask(), getParamsMap());
+        taskBean.prepEditChildItem(getTask(), getParamsMap());
     }
     
     /**
@@ -72,23 +69,18 @@ public class SchedulerBean extends BaseViewBean {
         if (event.getObject() == null) return;        
         String action = (String) event.getObject();
         Task task = getTask();
-        switch (action){
-            case "delete":{
-                if (task.getId() != null){
-                    taskFacade.remove(task);
-                    eventModel.deleteEvent(schedulerTask);
-                }
-                break;
+        if ("delete".equals(action)){
+            if (task.getId() != null){
+                taskFacade.remove(task);
+                eventModel.deleteEvent(schedulerTask);
             }
-            case "save": {                
-                schedulerTask.setStyleClass(task.getStyle());
-                if (task.getId() == null){
-                    taskFacade.create(getTask());
-                    eventModel.addEvent(schedulerTask);
-                } else {
-                    taskFacade.edit(getTask());
-                }
-                break;
+        } else {
+            schedulerTask.setStyleClass(task.getStyle());
+            if (task.getId() == null){                
+                taskFacade.create(getTask());
+                eventModel.addEvent(schedulerTask);
+            } else {
+                taskFacade.edit(getTask());
             }
         }
         modelRefresh();

@@ -14,7 +14,9 @@ import java.util.Set;
 
 /**
  * Класс определяет методы, для работы с ролями
+ * @param <T>
  * @param <O>
+ * @param <S>
  */
 public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseDictFacade<T, O, L, S>{
 

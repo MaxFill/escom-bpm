@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
@@ -66,8 +66,8 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
      */
     public String getTaskStatus(Task task){
         if (task == null) return "";
-        if (task.getBeginDate() == null) return EscomMsgUtils.getBandleLabel("NotStarted");
-        if (task.isCompleted()) return EscomMsgUtils.getBandleLabel("Сompleted");        
+        if (task.getBeginDate() == null) return MsgUtils.getBandleLabel("NotStarted");
+        if (task.isCompleted()) return MsgUtils.getBandleLabel("Сompleted");        
         return EscomBeanUtils.makeDateDiffStatus(new Date(), task.getPlanExecDate());
     }
 }

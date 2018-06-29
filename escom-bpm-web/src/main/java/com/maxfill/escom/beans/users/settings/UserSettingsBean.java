@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.users.settings;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
@@ -36,7 +36,7 @@ public class UserSettingsBean extends BaseViewBean{
         super.onAfterFormLoad(beanId);
         User user = sessionBean.getCurrentUser();
         if (user.isNeedChangePwl()) {
-            EscomMsgUtils.errorMsg("YouNeedChangePassword");
+            MsgUtils.errorMsg("YouNeedChangePassword");
         }
     }
     
@@ -52,7 +52,7 @@ public class UserSettingsBean extends BaseViewBean{
         checkPwl(newPwl, repeatePassword.trim(), oldPassword, errors);
 
         if(!errors.isEmpty()) {
-            EscomMsgUtils.showFacesMessages(errors);
+            MsgUtils.showFacesMessages(errors);
             return;
         }
 
@@ -64,7 +64,7 @@ public class UserSettingsBean extends BaseViewBean{
         setNewPassword(null);
         setOldPassword(null);
         setRepeatePassword(null);
-        EscomMsgUtils.succesMsg("PasswordIsChange");
+        MsgUtils.succesMsg("PasswordIsChange");
     }
 
     /**
@@ -77,30 +77,30 @@ public class UserSettingsBean extends BaseViewBean{
     private void checkPwl(String newPwl, String repPwl, String curPwl, Set<FacesMessage> errors){
         // проверка что новый пароль и его повтор совпадают
         if (!Objects.equals(newPwl, repPwl)){
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("PasswordsNotMatch", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("PasswordsNotMatch", new Object[]{}));
         }
 
         // проверка на то что введён правильный текущий пароль
         String oldPwlMD5 = EscomUtils.encryptPassword(curPwl);          //введённый текущий пароль
         String curPwlMD5 = sessionBean.getCurrentUser().getPassword();  //пароль, сохранённый в карточке пользователя
         if (!Objects.equals(curPwlMD5, oldPwlMD5)){
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("PasswordIncorrect", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("PasswordIncorrect", new Object[]{}));
         }
 
         // проверка на длину пароля
         if (newPwl.length() < 8 ){
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("PasswordLengthIncorrect", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("PasswordLengthIncorrect", new Object[]{}));
         }
 
         // проверка на то что новый пароль отличается от старого
         String newPwlMd5 = EscomUtils.encryptPassword(newPwl);
         if (Objects.equals(newPwlMd5, oldPwlMD5)) {
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("PassordMustDifferent", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("PassordMustDifferent", new Object[]{}));
         }
 
         // проверка на требования по сложности пароля
         if (!isStrong(newPwl)) {
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("PasswordSecurityRequirements", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("PasswordSecurityRequirements", new Object[]{}));
         }
     }
 

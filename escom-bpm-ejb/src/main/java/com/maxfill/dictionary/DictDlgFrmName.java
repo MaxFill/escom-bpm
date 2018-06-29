@@ -42,6 +42,7 @@ public final class DictDlgFrmName {
 
     public static final String FRM_PROCESS_EXPL = "process-explorer";
     public static final String FRM_SCHEDULER = "scheduler";
+    public static final String FRM_MONITOR = "monitor";
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     public static final String REP_DOC_JOURNAL = "doc-journal";

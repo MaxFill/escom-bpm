@@ -3,7 +3,7 @@ package com.maxfill.escom.system.services.mail;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
@@ -42,9 +42,9 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
             String adress = getSettings().getAdressSender();
             Session session = mailService.getSessionSender(getSettings());
             mailService.sendMultiMessage(session, adress, adress, "", content, subject, conf.getEncoding(), new HashMap<>());
-            EscomMsgUtils.succesFormatMsg("MessageSent",  new Object[]{adress});
+            MsgUtils.succesFormatMsg("MessageSent",  new Object[]{adress});
         } catch (RuntimeException | MessagingException | UnsupportedEncodingException ex) {
-            EscomMsgUtils.errorMessage(ex.getMessage());
+            MsgUtils.errorMessage(ex.getMessage());
             LOG.log(Level.SEVERE, null, ex);
         }
     }

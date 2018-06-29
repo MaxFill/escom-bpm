@@ -145,7 +145,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     
     @XmlTransient
     @Column(name = "IconName")
-    private String iconName;
+    protected String iconName;
         
     @Transient
     @XmlTransient           

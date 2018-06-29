@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.validator;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -23,7 +23,7 @@ public class DeadLineValidator extends AbstractValidator{
         Date checkDate = (Date) value;
         
         if (checkDate.before(new Date())) {
-            String msg = EscomMsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime");            
+            String msg = MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime");            
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, msg, ""));
         }
     }

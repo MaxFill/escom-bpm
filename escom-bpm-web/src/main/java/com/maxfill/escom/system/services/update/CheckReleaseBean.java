@@ -2,7 +2,7 @@ package com.maxfill.escom.system.services.update;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.core.Release;
 import com.maxfill.model.licence.Licence;
 import com.maxfill.services.update.UpdateInfo;
@@ -72,7 +72,7 @@ public class CheckReleaseBean extends BaseViewBean{
      * Вывод сообщения об успешном подключении к серверу
      */
      public void onServerConnect(){
-         EscomMsgUtils.succesMsg("ConnectionEstablished");
+         MsgUtils.succesMsg("ConnectionEstablished");
          PrimeFaces.current().executeScript("doSend('" + licence.getNumber() +"')");
      }
 
@@ -80,7 +80,7 @@ public class CheckReleaseBean extends BaseViewBean{
      * Вывод сообщения в случае неудачного соединения
      */
     public void onErrorConnect(){
-        EscomMsgUtils.errorMsg("NoGetRealiseInfo");
+        MsgUtils.errorMsg("NoGetRealiseInfo");
     }
 
     /**
@@ -89,7 +89,7 @@ public class CheckReleaseBean extends BaseViewBean{
      */
     public void updateReleaseInfo(){      
         if (StringUtils.isBlank(strDateRelease)){
-            EscomMsgUtils.errorMsg("NoGetRealiseInfo");
+            MsgUtils.errorMsg("NoGetRealiseInfo");
             return;
         }
         dateRelease = DateUtils.convertStrToDate(strDateRelease, sessionBean.getLocale());
@@ -97,14 +97,14 @@ public class CheckReleaseBean extends BaseViewBean{
             return;
         }
         if (dateRelease.compareTo(release.getReleaseDate()) > 0){
-            EscomMsgUtils.warnMsg("NeedUpdateSystem");
+            MsgUtils.warnMsg("NeedUpdateSystem");
             if (!appBean.getNeedUpadateSystem()) {
                 appBean.setNeedUpadateSystem(Boolean.TRUE);
                 sessionBean.setCanShowNotifBar(Boolean.TRUE);
             }
         }
         if (dateRelease.compareTo(release.getReleaseDate()) == 0){
-            EscomMsgUtils.succesMsg("UsedActualVersion");
+            MsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
         PrimeFaces.current().ajax().update("centerFRM");

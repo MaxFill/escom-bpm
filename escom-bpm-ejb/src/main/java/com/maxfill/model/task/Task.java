@@ -11,13 +11,13 @@ import com.maxfill.model.task.result.Result;
 import java.io.Serializable;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
+import liquibase.util.StringUtils;
 
 /**
  * Сущность "Элемент схемы процесса "Поручение"
@@ -165,6 +165,15 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
         avaibleResultsJSON = json;
     }
+
+    @Override
+    public String getIconName() {
+        if (StringUtils.isNotEmpty(iconName)){
+            return iconName; 
+        } else {
+            return "newtask";
+        }
+    }  
     
     /* GETS & SETS */
 

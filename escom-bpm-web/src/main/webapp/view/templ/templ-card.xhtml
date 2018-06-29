@@ -60,13 +60,7 @@
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>            
             
             <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;"> 
-                    <ui:include src="/view/common/exeption-handler.xhtml"/>
-                    <p:remoteCommand name="onChangeItem" immediate="true" 
-                                     actionListener="#{_bean.onItemChange()}"
-                                     oncomplete="return itemChange = 0;"/>                        
-                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/>                    
-                    
+                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                                        
                     <ui:insert name="card_scripts"/>
                     
                     <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
@@ -118,7 +112,7 @@
                                         rendered="#{!_bean.isReadOnly()}"
                                         icon="ui-icon-circle-check"
                                         update="#{_frm}"
-                                        action="#{_bean.prepSaveItemAndClose()}"
+                                        actionListener="#{_bean.prepSaveItemAndClose()}"
                                         onclick="if (itemChange == 1) {
                                                     onChangeItem();
                                                 }">
@@ -127,7 +121,7 @@
                             <f:facet name="options">
                                 <ui:insert name="specToolButtons"/>
                                 <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
-                                                     action="#{_bean.onCancelItemSave()}"
+                                                     actionListener="#{_bean.onCancelItemSave()}"
                                                      icon="ui-icon-circle-close"
                                                      onclick="if (itemChange == 1)
                                                                      onChangeItem();">
@@ -148,7 +142,14 @@
                             <ui:include src="/view/common/dict-log.xhtml"/> 
                         </p:tabView>                         
                     </p:panelGrid>
+
+                    <ui:include src="/view/common/exeption-handler.xhtml"/>
                     <ui:include src="/view/common/confirm-dlg.xhtml" />
+                    <p:remoteCommand name="onChangeItem" immediate="true" 
+                                     actionListener="#{_bean.onItemChange()}"
+                                     oncomplete="return itemChange = 0;"/>
+                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/> 
+                    
                 </h:form>    
             </pe:layoutPane>
         </pe:layout>

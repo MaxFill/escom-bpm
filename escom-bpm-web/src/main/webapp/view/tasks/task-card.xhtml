@@ -18,18 +18,10 @@
                                      icon="#{result.getIconName()}"
                                      disabled="#{!taskCardBean.haveRightExec}"
                                      update="#{_frm}"
-                                     action="#{taskCardBean.onExecute(result)}">
+                                     actionListener="#{taskCardBean.onExecute(result)}">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </ui:repeat>
-            </f:facet>
-
-            <f:facet name="right">
-                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                 title="#{bundle.Close}" immediate="true" process="@this"
-                                 disabled="#{_canNotClose}"
-                                 action="#{_bean.onCloseCard()}">
-                </p:commandButton>
             </f:facet>
         </p:toolbar>       
 
@@ -115,7 +107,7 @@
 
                             <p:radioButton id="typeData" for="typeDatePlan" itemIndex="1" disabled="#{taskCardBean.readOnly}"/>  
                             <p:calendar id="planEndDate" value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
-                                        styleClass="without-spaces" 
+                                        styleClass="without-spaces" pages="3"
                                         timeZone="#{TimeZone.getDefault()}"
                                         showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                                         disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'delta'}"
@@ -173,7 +165,7 @@
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
                                  disabled="#{taskCardBean.readOnly}"
-                                 action="#{taskCardBean.onCloseCard('delete')}">                    
+                                 actionListener="#{taskCardBean.onCloseCard('delete')}">                    
                 </p:commandButton>
 
             </p:panelGrid>

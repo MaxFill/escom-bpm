@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -36,7 +36,7 @@ public abstract class BaseReportBean extends BaseViewBean{
     protected Map<String, Object> prepareReportParams(Map<String, Object> parameters){     
         parameters.put("USER_LOGIN", getCurrentUser().getLogin());
         String key = getReportBandleKey();
-        parameters.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel(key));
+        parameters.put("REPORT_TITLE", MsgUtils.getBandleLabel(key));
         return parameters;
     }
     

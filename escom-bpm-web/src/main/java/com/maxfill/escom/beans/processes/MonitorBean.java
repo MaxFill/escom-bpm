@@ -1,0 +1,200 @@
+package com.maxfill.escom.beans.processes;
+
+import com.maxfill.model.process.Process;
+import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.escom.beans.core.BaseView;
+import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.task.TaskBean;
+import com.maxfill.facade.ProcessFacade;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.task.Task;
+import com.maxfill.model.users.User;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
+
+/**
+ * Контролер формы "Монитор исполнения процессов"
+ * @author maksim
+ */
+@Named
+@ViewScoped
+public class MonitorBean extends BaseViewBean<BaseView>{    
+    private static final long serialVersionUID = 3695442325119569465L;
+    
+    private TreeNode root;
+    private TreeNode selectedNode;
+    private BaseDict currentItem;
+    
+    /* Атрибуты фильтра */
+    private Date dateStart;
+    private Date dateEnd;
+    private User initiator;
+    
+    @EJB
+    private ProcessFacade processFacade;
+    @Inject
+    private ProcessBean processBean;
+    @Inject
+    private TaskBean taskBean;
+    
+    /**
+     * Обновление данных журнала процессов
+     */
+    public void onRefreshData(){
+        root = null;
+    }
+    
+    @Override
+    public void doBeforeOpenCard(Map<String, String> params) {                
+    }    
+    
+    /**
+     * Обработка события открытия карточки процесса или задачи
+     */
+    public void onOpenItem(){
+        if (currentItem == null) return;
+        if (currentItem instanceof Process){
+            processBean.prepEditItem((Process)currentItem, getParamsMap());
+        } else {
+            taskBean.prepEditItem((Task)currentItem, getParamsMap());
+        }
+    }        
+    
+    private void loadTree(){
+        List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()));
+        processes.forEach(process->{
+            TreeNode processNode = new DefaultTreeNode(process, root);
+            process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
+        });
+    }
+    
+    protected Map<String, Object> makeFilters(Map filters) {
+        //filters.put("addressee", sessionBean.getCurrentUser());        
+        //filters.put("dateReading", null);        
+        if(dateStart != null || dateEnd != null) {
+            Map <String, Date> dateFilters = new HashMap <>();
+            dateFilters.put("startDate", dateStart);        //дата начала периода отбора
+            dateFilters.put("endDate", dateEnd);            //дата конца периода отбора
+            filters.put("planExecDate", dateFilters);       //поле по которому отбираем
+        } 
+        if (initiator != null){
+            filters.put("author", initiator);
+        }
+        return filters;
+    }
+    
+    /**
+     * Формирует статус для записи в таблице монитора
+     * @param item
+     * @return 
+     */
+    public String onGetItemStatus(BaseDict item){
+        if (item instanceof Task){
+            Task task = (Task) item;
+            return processBean.getTaskStatus(task);
+        } else {
+            return ""; //TODO что вывести для процесса?  
+        }        
+    }
+     
+    /**
+     * Формирует данные результата для записи в таблице монитора
+     * @param item
+     * @return 
+     */
+    public String onGetItemResult(BaseDict item){
+        if (item instanceof Task){
+            Task task = (Task) item;
+            return getLabelFromBundle(task.getResult());
+        } else {
+            return ""; //TODO что можно вывести для исполняеющего процесса? 
+        }
+    }
+    
+    /**
+     * Формирует заголовок для записи в таблице монитора
+     * @param item
+     * @return 
+     */
+    public String onGetItemTitle(BaseDict item){
+        if (item instanceof Task){
+            return item.getOwner().getNameEndElipse();
+        } else {
+            return item.getAuthor().getNameEndElipse();
+        }        
+    }
+    
+    /**
+     * Обработка собфтия изменения инициатора в фильтре на форме
+     * @param event 
+     */
+    public void onChangeInitiator(SelectEvent event){
+        List<User> users = (List<User>) event.getObject();
+        if (users.isEmpty()) return;
+        initiator = users.get(0);
+    }
+    public void onChangeInitiator(ValueChangeEvent event){
+        initiator = (User) event.getNewValue();
+    }
+    
+    /* *** GETS & SETS *** */
+
+    public User getInitiator() {
+        return initiator;
+    }
+    public void setInitiator(User initiator) {
+        this.initiator = initiator;
+    }
+    
+    public TreeNode getSelectedNode() {
+        return selectedNode;
+    }
+    public void setSelectedNode(TreeNode selectedNode) {
+        this.selectedNode = selectedNode;
+    }
+
+    public BaseDict getCurrentItem() {
+        return currentItem;
+    }
+    public void setCurrentItem(BaseDict currentItem) {
+        this.currentItem = currentItem;
+    }
+        
+    public TreeNode getRoot() {
+        if (root == null){
+            root = new DefaultTreeNode(null, null);
+            loadTree();
+        }
+        return root;
+    }   
+
+    @Override
+    public String getFormName() {
+        return DictDlgFrmName.FRM_MONITOR;
+    }
+    
+    public Date getDateStart() {
+        return dateStart;
+    }
+    public void setDateStart(Date dateStart) {
+        this.dateStart = dateStart;
+    }
+
+    public Date getDateEnd() {
+        return dateEnd;
+    }
+    public void setDateEnd(Date dateEnd) {
+        this.dateEnd = dateEnd;
+    }
+    
+}

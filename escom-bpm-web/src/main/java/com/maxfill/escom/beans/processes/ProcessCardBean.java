@@ -6,7 +6,7 @@ import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.task.TaskBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.StaffFacade;
@@ -167,12 +167,12 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             Set<String> errors = new HashSet<>();
             workflow.start(getEditedItem(), getCurrentUser(), errors);
             if (!errors.isEmpty()){
-                EscomMsgUtils.showErrorsMsg(errors);
+                MsgUtils.showErrorsMsg(errors);
             } else {
                 getEditedItem().getState().setCurrentState(stateFacade.getRunningState());
                 //processFacade.addLogEvent(getEditedItem(), DictLogEvents., getCurrentUser());
                 setItemCurrentState(getEditedItem().getState().getCurrentState());
-                EscomMsgUtils.succesMsg("ProcessSuccessfullyLaunched");
+                MsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
             loadModel(getScheme());
             PrimeFaces.current().ajax().update(getFormName());
@@ -186,10 +186,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         Set<String> errors = new HashSet<>();
         workflow.stop(getEditedItem(), getCurrentUser(), errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            MsgUtils.showErrorsMsg(errors);
         } else {
             onReloadModel();
-            EscomMsgUtils.warnMsg("ProcessExecutionInterrupted");
+            MsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
     }
     
@@ -276,7 +276,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             modelRefresh();
             onItemChange();
         } else {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }
     }
 
@@ -361,7 +361,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 if (baseElement instanceof StatusElem){           
                     doCopyElement(new StatusElem());
                 } else {
-                    EscomMsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
+                    MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
                 }                                 
     }
     
@@ -370,7 +370,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             copiedElement = elem;
             BeanUtils.copyProperties(copiedElement, baseElement);
             PrimeFaces.current().executeScript("refreshContextMenu('process:mainTabView:diagramm');");
-            EscomMsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
+            MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);        
         }  
@@ -390,7 +390,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 BeanUtils.copyProperties(newTask, sourceTask); 
                 newTask.setTaskLinkUID(newTaskElem.getUid()); 
                 StringBuilder sb = new StringBuilder();
-                sb.append(EscomMsgUtils.getBandleLabel("Copy")).append(" ").append(sourceTask.getName());                
+                sb.append(MsgUtils.getBandleLabel("Copy")).append(" ").append(sourceTask.getName());                
                 newTask.setName(sb.toString());
                 finalAddElement();
             } else 
@@ -484,7 +484,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             }
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else { 
             finalAddElement();
         }
@@ -779,7 +779,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         String label = "";
         String keyLabel = connectorElem.getCaption();
         if(StringUtils.isNotBlank(keyLabel)) {                         
-            label = EscomMsgUtils.getBandleLabel(keyLabel);
+            label = MsgUtils.getBandleLabel(keyLabel);
         }        
         conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));       
         if (connectorElem.isDone()){
@@ -897,7 +897,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             if (StringUtils.isNotBlank(label)){
                 Connection connection = findConnection(sourcePoint, targetPoint);
                 connection.getOverlays().clear();
-                Overlay overlay = new LabelOverlay(EscomMsgUtils.getBandleLabel(label), "flow-label", 0.5);
+                Overlay overlay = new LabelOverlay(MsgUtils.getBandleLabel(label), "flow-label", 0.5);
                 connection.getOverlays().add(overlay);
                 modelRefresh();
             }
@@ -907,7 +907,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             Connection connection = findConnection(sourcePoint, targetPoint);
             model.disconnect(connection);
             modelRefresh();
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }
     }
 

@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.posts;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.PostFacade;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
@@ -40,7 +40,7 @@ public class PostBean extends BaseTableBean<Post>{
         super.checkAllowedDeleteItem(item, errors);
         if (!staffFacade.findStaffByPost(item).isEmpty()){
             Object[] messageParameters = new Object[]{item.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PostUsedInStaffs"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("PostUsedInStaffs"), messageParameters);
             errors.add(error);
         }
     }    

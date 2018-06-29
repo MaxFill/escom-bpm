@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.folders;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
@@ -64,9 +64,9 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     @Override
     public String getInheritsAccessChildName(){
         if (getEditedItem().isInheritsAccessChilds()){
-            return EscomMsgUtils.getMessageLabel("RightsInheritedForChildDocs");
+            return MsgUtils.getMessageLabel("RightsInheritedForChildDocs");
         } else {
-            return EscomMsgUtils.getMessageLabel("DocumentsHaveSpecRights");
+            return MsgUtils.getMessageLabel("DocumentsHaveSpecRights");
         }
     }
 
@@ -78,9 +78,9 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     public String makeCardHeader() {
         StringBuilder sb = new StringBuilder();
         if (getEditedItem().isCase()){
-            sb.append(EscomMsgUtils.getBandleLabel("Case"));
+            sb.append(MsgUtils.getBandleLabel("Case"));
         } else {
-            sb.append(EscomMsgUtils.getBandleLabel("Folder"));
+            sb.append(MsgUtils.getBandleLabel("Folder"));
         }
         return makeHeader(sb);
     }

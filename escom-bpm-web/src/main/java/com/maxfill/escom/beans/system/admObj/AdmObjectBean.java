@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -52,10 +52,10 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     public void onReplaceItem(){ 
         if (replaceItem != null) {
             int count = itemBean.replaceItem(getSourceItem(), replaceItem);
-            EscomMsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
+            MsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
             PrimeFaces.current().ajax().update("centerFRM");
         } else {
-            EscomMsgUtils.errorMsg("DoNotSpecifyValueReplacement");
+            MsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }
     }
 

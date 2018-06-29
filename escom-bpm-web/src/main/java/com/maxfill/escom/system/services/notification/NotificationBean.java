@@ -3,7 +3,7 @@ package com.maxfill.escom.system.services.notification;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.notification.NotificationSettings;
@@ -55,6 +55,6 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
      */
     public void onCheckServices(){
         notificationService.makeNotifications();
-        EscomMsgUtils.succesMsg("Successfully");
+        MsgUtils.succesMsg("Successfully");
     }
 }

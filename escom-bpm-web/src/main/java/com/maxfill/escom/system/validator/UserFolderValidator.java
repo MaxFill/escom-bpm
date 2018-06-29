@@ -2,7 +2,7 @@ package com.maxfill.escom.system.validator;
 
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
@@ -30,8 +30,8 @@ public class UserFolderValidator extends AbstractValidator{
         User currentUser = foldersBean.getCurrentUser();
         FoldersFacade folderFacade = foldersBean.getFacade();
         if(!folderFacade.checkRightAddDetail(folder, currentUser)) {
-            String errMsg = EscomMsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
-            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+            String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
+            String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
         }
     }

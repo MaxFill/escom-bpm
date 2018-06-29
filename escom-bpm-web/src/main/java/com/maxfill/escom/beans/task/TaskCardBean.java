@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
@@ -23,7 +23,6 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
 
@@ -31,7 +30,6 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -92,22 +90,22 @@ public class TaskCardBean extends BaseCardBean<Task>{
         super.checkItemBeforeSave(task, errors);
         ///проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
-            errors.add("TaskNoHaveListResult");
+            errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
         }
         //проверка для срока исполнения
         switch (task.getDeadLineType()){
             case "delta":{
                 if (task.getDeltaDeadLine() == 0){
-                   errors.add("DeadlineIncorrect");
+                   errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
                 }       
                 break;
             }
             case "data":{
                 if (task.getPlanExecDate() == null ){
-                    errors.add("DeadlineIncorrect");
+                    errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
                 } else 
                     if (task.getPlanExecDate().before(new Date())){
-                        errors.add("DeadlineSpecifiedInPastTime");
+                        errors.add(MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime"));
                     }
             }
         }
@@ -117,18 +115,18 @@ public class TaskCardBean extends BaseCardBean<Task>{
                 switch (task.getReminderRepeatType()){
                     case "everyday":{
                         if (task.getReminderTime() == null){
-                            errors.add("ReminderTimeNotSet");
+                            errors.add(MsgUtils.getMessageLabel("ReminderTimeNotSet"));
                         }
                         break;
                     }
                     case "everyweek":{
                         if (reminderDays == null){
-                            errors.add("ReminderPeriodIncorrect");
+                            errors.add(MsgUtils.getMessageLabel("ReminderPeriodIncorrect"));
                         }
                         break;
                     }
                     default:{
-                        errors.add("InternalErrorSavingTask");
+                        errors.add(MsgUtils.getMessageLabel("InternalErrorSavingTask"));
                     }
                 }
                 break;
@@ -148,13 +146,13 @@ public class TaskCardBean extends BaseCardBean<Task>{
         Set<String> errors = new HashSet<>();
         checkItemBeforeSave(getEditedItem(), errors); 
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            MsgUtils.showErrors(errors);
             return "";
         } 
         ProcessCardBean bean = (ProcessCardBean)sourceBean;
         workflow.executeTask(bean.getEditedItem(), getEditedItem(), result, getCurrentUser(), errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrorsMsg(errors);
+            MsgUtils.showErrorsMsg(errors);
             return "";
         }
         return closeItemForm(SysParams.EXIT_EXECUTE);
@@ -168,7 +166,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (process != null){
             processBean.prepEditItem(process, getParamsMap());
         } else {
-            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+            MsgUtils.errorMsg("LinkProcessIncorrect");
         }
     }
     
@@ -182,10 +180,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
             if (doc != null){
                docBean.prepEditItem(doc, getParamsMap());
             } else {
-               EscomMsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+               MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             }
         } else {
-            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+            MsgUtils.errorMsg("LinkProcessIncorrect");
         }
     }
     
@@ -199,10 +197,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
             if (doc != null){
                docBean.onViewMainAttache(doc);
             } else {
-               EscomMsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+               MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             }
         } else {
-            EscomMsgUtils.errorMsg("LinkProcessIncorrect");
+            MsgUtils.errorMsg("LinkProcessIncorrect");
         }
     }
     

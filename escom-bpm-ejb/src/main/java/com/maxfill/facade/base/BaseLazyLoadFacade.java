@@ -1,7 +1,6 @@
 package com.maxfill.facade.base;
 
 import org.apache.commons.lang3.StringUtils;
-
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.util.*;
@@ -58,7 +57,7 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
         List<T> result = query.getResultList();
         return result;
     }
-
+    
     /**
      * Отбор записей объектов по критериям с сортировкой
      * @param sortField

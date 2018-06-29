@@ -4,7 +4,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.FontFactory;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.facade.base.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
@@ -79,7 +79,7 @@ public class AuthLogBean extends LazyLoadBean{
 
     public String getBundleName(String keyBundle){
         if (keyBundle == null) return null;
-        return EscomMsgUtils.getBandleLabel(keyBundle);
+        return MsgUtils.getBandleLabel(keyBundle);
     }
 
     /**
@@ -119,7 +119,7 @@ public class AuthLogBean extends LazyLoadBean{
      */
     public void onClearData(){
         Integer countDelete = deleteItems();
-        EscomMsgUtils.succesFormatMsg("RemovedEntries", new Object[]{countDelete});
+        MsgUtils.succesFormatMsg("RemovedEntries", new Object[]{countDelete});
     }
 
     /**
@@ -128,7 +128,7 @@ public class AuthLogBean extends LazyLoadBean{
      */
     public String clearEventsConfirmMsg(){
         Object[] params = new Object[]{countItems()};
-        return MessageFormat.format(EscomMsgUtils.getBandleLabel("WillBeDeleted"), params);
+        return MessageFormat.format(MsgUtils.getBandleLabel("WillBeDeleted"), params);
     }
 
     public void onChangeOrientation(){

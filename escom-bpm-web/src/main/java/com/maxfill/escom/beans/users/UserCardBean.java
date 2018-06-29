@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.model.folders.Folder;
@@ -83,8 +83,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
      */
     public void checkFolder(Folder folder){
         if(!folderFacade.checkRightAddDetail(folder, getCurrentUser())) {
-            String errMsg = EscomMsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
-            String checkError = EscomMsgUtils.getValidateLabel("CHECK_ERROR");
+            String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
+            String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
             UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:item");
             input.setValid(false);
@@ -150,10 +150,10 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         Integer userId = user.getId();
         List<User> existUsers = getFacade().findByLoginExcludeId(login, userId);
         if (!existUsers.isEmpty()) {
-            errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("UserLoginIsExsist"), new Object[]{login}));
+            errors.add(MessageFormat.format(MsgUtils.getMessageLabel("UserLoginIsExsist"), new Object[]{login}));
         }
         if (user.isDoubleFactorAuth() && StringUtils.isBlank(user.getMobilePhone())){
-            errors.add(MessageFormat.format(EscomMsgUtils.getMessageLabel("NeedSetMobilePhone"), new Object[]{}));
+            errors.add(MessageFormat.format(MsgUtils.getMessageLabel("NeedSetMobilePhone"), new Object[]{}));
         }
     }
 
@@ -172,7 +172,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
     @Override
     protected void onAfterSaveItem(User user) {
         if (user.isNeedChangePwl()){
-            String msg = EscomMsgUtils.getMessageLabel("YouNeedChangePassword");
+            String msg = MsgUtils.getMessageLabel("YouNeedChangePassword");
             getFacade().sendSystemMsg(user, msg);
         }
         super.onAfterSaveItem(user);

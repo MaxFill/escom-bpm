@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.docs.docsTypes;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -71,12 +71,12 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
         super.checkAllowedDeleteItem(docType, errors);
         if (!docFacade.findDocsByDocTyper(docType).isEmpty()){
             Object[] messageParameters = new Object[]{docType.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("DocTypeUsedInDocs"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("DocTypeUsedInDocs"), messageParameters);
             errors.add(error);
         }
         if (!foldersFacade.findFoldersByDocTyper(docType).isEmpty()){
             Object[] messageParameters = new Object[]{docType.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("DocTypeUsedInFolders"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("DocTypeUsedInFolders"), messageParameters);
             errors.add(error);
         }
     }

@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.core;
 
 import com.maxfill.dictionary.*;
 import com.maxfill.escom.beans.system.rights.RightsBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
@@ -108,7 +108,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 checkCorrectItemRight(item, errors);
                 item.setDateCreate(new Date());
                 if (!errors.isEmpty()) {
-                   EscomMsgUtils.showErrors(errors);
+                   MsgUtils.showErrors(errors);
                 }
                 getFacade().addLogEvent(item, DictLogEvents.CREATE_EVENT, getCurrentUser());
             }
@@ -158,7 +158,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             Set<String> errors = new LinkedHashSet<>();
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
-                EscomMsgUtils.showErrors(errors);
+                MsgUtils.showErrors(errors);
                 return Boolean.FALSE; 
             }
             onBeforeSaveItem(item);
@@ -188,7 +188,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             onAfterSaveItem(item);
             setIsItemChange(Boolean.FALSE);
         }
-        EscomMsgUtils.succesMsg("ChangesSaved");
+        MsgUtils.succesMsg("ChangesSaved");
         return Boolean.TRUE;
     }
     
@@ -221,7 +221,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         if (isFind) {
             T findItem = tuple.b;            
             Object[] messageParameters = new Object[]{item.getName(), findItem.getId()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("ObjectIsExsist"), messageParameters);
             errors.add(error);
         }                           
     }
@@ -326,7 +326,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         parameters.put("BARCODE", getBarCode(editedItem));
         parameters.put("USER_LOGIN", getCurrentUser().getLogin());
         String key = getMetadatesObj().getBundleName();
-        parameters.put("REPORT_TITLE", EscomMsgUtils.getBandleLabel(key));
+        parameters.put("REPORT_TITLE", MsgUtils.getBandleLabel(key));
         return parameters;
     }
 
@@ -341,7 +341,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         switch(typeAddRight){
             case DictRights.TYPE_GROUP :{
                 if (selUsGroup == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserGroupNotSet"));
                 } else {
                     obj = selUsGroup;
                 }
@@ -349,7 +349,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
             case DictRights.TYPE_USER :{
                 if (selUser == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserNotSet"));
                 } else {
                     obj = selUser;
                 }
@@ -357,7 +357,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
             case DictRights.TYPE_ROLE :{
                 if (selUserRole == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("RoleNotSet"));
                 } else {
                     obj = selUserRole;
                 }
@@ -365,7 +365,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
             rights.add(right);
@@ -389,7 +389,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
         }        
         StringBuilder sb = new StringBuilder();
-        sb.append(EscomMsgUtils.getMessageLabel("ObjectDontHaveRightEdit")).append(EscomMsgUtils.getMessageLabel("CheckRights"));
+        sb.append(MsgUtils.getMessageLabel("ObjectDontHaveRightEdit")).append(MsgUtils.getMessageLabel("CheckRights"));
         errors.add(sb.toString());
     }    
     
@@ -403,7 +403,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
         }        
         StringBuilder sb = new StringBuilder();
-        sb.append(EscomMsgUtils.getMessageLabel("ObjectDontHaveRightView")).append(EscomMsgUtils.getMessageLabel("CheckRights"));
+        sb.append(MsgUtils.getMessageLabel("ObjectDontHaveRightView")).append(MsgUtils.getMessageLabel("CheckRights"));
         errors.add(sb.toString());
     }
     
@@ -447,16 +447,16 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     /* Возвращает название для заголовка наследования дефолтных прав дочерних объектов */
     public String getInheritsAccessChildName(){
         if (editedItem.isInheritsAccessChilds()){
-            return EscomMsgUtils.getMessageLabel("RightsInheritedForChilds");
+            return MsgUtils.getMessageLabel("RightsInheritedForChilds");
         } else {
-            return EscomMsgUtils.getMessageLabel("RightsNotInheritedForChilds");
+            return MsgUtils.getMessageLabel("RightsNotInheritedForChilds");
         }
     }
     
     public String getInheritsRightName(){
-        String inheritsRightName = EscomMsgUtils.getMessageLabel("RightIsInherits");
+        String inheritsRightName = MsgUtils.getMessageLabel("RightIsInherits");
         if (!editedItem.isInherits()){
-            inheritsRightName = EscomMsgUtils.getMessageLabel("RightNotInherits");
+            inheritsRightName = MsgUtils.getMessageLabel("RightNotInherits");
         }
         return inheritsRightName;
     }
@@ -478,7 +478,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 editedItem.setInherits(Boolean.FALSE);
                 editedItem.setRightItem(newRight);
                 rightsBean.prepareRightsForView(newRight.getRights());
-                EscomMsgUtils.succesMsg("RightIsParentCopy");
+                MsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
@@ -492,7 +492,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
 
     /* Формирует заголовок карточки объекта. Вызов с экранной формы  */
     public String makeCardHeader() {
-        StringBuilder sb = new StringBuilder(EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName()));
+        StringBuilder sb = new StringBuilder(MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName()));
         return makeHeader(sb);
     }
 
@@ -501,17 +501,17 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
                 sb.append(getEditedItem().getCaption().toUpperCase());
-                sb.append(". <").append(EscomMsgUtils.getBandleLabel("ReadOnly").toUpperCase()).append(">");
+                sb.append(". <").append(MsgUtils.getBandleLabel("ReadOnly").toUpperCase()).append(">");
                 break;
             }
             case DictEditMode.EDIT_MODE:{
                 sb.append(getEditedItem().getCaption().toUpperCase());
-                sb.append(". <").append(EscomMsgUtils.getBandleLabel("Correction").toUpperCase()).append(">");
+                sb.append(". <").append(MsgUtils.getBandleLabel("Correction").toUpperCase()).append(">");
                 break;
             }
             case DictEditMode.INSERT_MODE:{
-                sb.append(EscomMsgUtils.getBandleLabel("New").toUpperCase());
-                sb.append(". ").append(EscomMsgUtils.getBandleLabel("Mode")).append(": ").append(EscomMsgUtils.getBandleLabel("Create").toUpperCase());
+                sb.append(MsgUtils.getBandleLabel("New").toUpperCase());
+                sb.append(". ").append(MsgUtils.getBandleLabel("Mode")).append(": ").append(MsgUtils.getBandleLabel("Create").toUpperCase());
                 break;
             }
         }
@@ -522,9 +522,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     public String getActualInfo() {
         String msg;
         if (getEditedItem().isActual()) {
-            msg = EscomMsgUtils.getBandleLabel("ActualInfo");
+            msg = MsgUtils.getBandleLabel("ActualInfo");
         } else {
-            msg = EscomMsgUtils.getBandleLabel("NoActualInfo");
+            msg = MsgUtils.getBandleLabel("NoActualInfo");
         }
         return msg;
     }
@@ -535,7 +535,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
 
     /* Возвращает название для заголовка для вкладки "Права доступа к объекту" */
     public String getRightsForObjectTitle(){
-        return EscomMsgUtils.getBandleLabel("Rights");
+        return MsgUtils.getBandleLabel("Rights");
     }
 
     public String getBarCode(T item){

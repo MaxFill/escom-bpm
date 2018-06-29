@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.states;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.model.states.State;
 
@@ -30,7 +30,7 @@ public class StateBean implements Serializable{
 
     public String getBundleName(State state){
         if (state == null) return null;
-        return EscomMsgUtils.getBandleLabel(state.getName());
+        return MsgUtils.getBandleLabel(state.getName());
     }
      
 }

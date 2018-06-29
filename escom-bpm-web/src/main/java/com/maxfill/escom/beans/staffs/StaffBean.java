@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -52,7 +52,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             companyBean.getFacade().actualizeRightItem(company, getCurrentUser());
             Boolean isAllowedAddDetail = companyBean.getFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
             if (!isAllowedAddDetail){
-                String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), EscomMsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }

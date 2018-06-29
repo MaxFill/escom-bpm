@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.treelike.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.core.BaseTreeBean;
@@ -135,7 +135,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     } 
     
     public String getTypeName(Folder folder){
-        return EscomMsgUtils.getBandleLabel("FolderType");
+        return MsgUtils.getBandleLabel("FolderType");
     }
         
     /* GETS & SETS */

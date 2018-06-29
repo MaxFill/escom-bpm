@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
@@ -80,7 +80,7 @@ public class DocLockBean extends BaseViewBean<BaseView>{
     
     public void changeDatePlanLock(){
         remainder.changeTimer(attache, sessionBean.getCurrentUser(), lockDate);                       
-        EscomMsgUtils.succesMsg("TimerRestarted");
+        MsgUtils.succesMsg("TimerRestarted");
     }
     
     public void onChangeDateLock(SelectEvent event){

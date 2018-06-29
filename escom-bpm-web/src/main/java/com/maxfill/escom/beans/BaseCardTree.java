@@ -3,7 +3,7 @@ package com.maxfill.escom.beans;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
@@ -45,7 +45,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         //ToDo может быть это нужно?
         //checkRightsChilds(getEditedItem(), inherit, errors);
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return;
         }
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
@@ -59,7 +59,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
                 }
                 getEditedItem().setRightForChild(childRights);
                 rightsBean.prepareRightsForView(childRights.getRights());
-                EscomMsgUtils.succesMsg("RightIsParentCopy");
+                MsgUtils.succesMsg("RightIsParentCopy");
             } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }                         
@@ -99,7 +99,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         switch(typeAddRight){
             case DictRights.TYPE_GROUP :{
                 if (selUsGroup == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserGroupNotSet"));
                 } else {
                     obj = selUsGroup;
                 }
@@ -107,7 +107,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             }
             case DictRights.TYPE_USER :{
                 if (selUser == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserNotSet"));
                 } else {
                     obj = selUser;
                 }
@@ -115,7 +115,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             }
             case DictRights.TYPE_ROLE :{
                 if (selUserRole == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("RoleNotSet"));
                 } else {
                     obj = selUserRole;
                 }
@@ -123,7 +123,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, null);
             rightsChilds.add(right);

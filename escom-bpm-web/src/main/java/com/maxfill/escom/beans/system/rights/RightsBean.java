@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.RightFacade;
 import com.maxfill.facade.UserFacade;
 import com.maxfill.facade.treelike.UserGroupsFacade;
@@ -77,11 +77,11 @@ public class RightsBean implements Serializable{
         //хардкодные проверки
         if (StringUtils.isBlank(accessorName)) {
             if(right.getObjId() == 0 && right.getObjType() == DictRights.TYPE_GROUP) {
-                accessorName = EscomMsgUtils.getBandleLabel("All");
+                accessorName = MsgUtils.getBandleLabel("All");
             } else if(DictRights.GROUP_ADMIN_ID.equals(right.getObjId()) && right.getObjType().equals(DictRights.TYPE_GROUP)) {
-                accessorName = EscomMsgUtils.getBandleLabel("Administrators");
+                accessorName = MsgUtils.getBandleLabel("Administrators");
             } else if(DictRights.USER_ADMIN_ID.equals(right.getObjId()) && right.getObjType().equals(DictRights.TYPE_USER)) {
-                accessorName = EscomMsgUtils.getBandleLabel("Administrator");
+                accessorName = MsgUtils.getBandleLabel("Administrator");
             } else { //тогда ищем названия в базе
                 if (right.getObjType() == DictRights.TYPE_USER ){
                     User user = userFacade.find(right.getObjId());

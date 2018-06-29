@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.partners.types;
 
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -45,7 +45,7 @@ public class PartnerTypesBean extends BaseTableBean<PartnerTypes>{
         super.checkAllowedDeleteItem(partnerTypes, errors);
         if (!partnersFacade.findByType(partnerTypes).isEmpty()){
             Object[] messageParameters = new Object[]{partnerTypes.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerTypesUsed"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerTypesUsed"), messageParameters);
             errors.add(error);
         }        
     }

@@ -5,7 +5,7 @@ import com.maxfill.escom.beans.BaseReportBean;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.escom.beans.system.reports.ReportPieData;
 import com.maxfill.escom.beans.users.settings.UserReportsSettings;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.utils.DateUtils;
@@ -14,6 +14,18 @@ import java.util.GregorianCalendar;
 import java.util.List;import java.util.Map;
 ;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.Tuple;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.primefaces.model.TreeNode;
+import org.primefaces.model.chart.PieChartModel;import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -78,7 +90,7 @@ public class DocReportBean extends BaseReportBean{
     
     public void makeReport(){
         if (selectedNodes == null || selectedNodes.length == 0){
-            EscomMsgUtils.errorMsg("NeedSelectOneGroup");
+            MsgUtils.errorMsg("NeedSelectOneGroup");
             return;
         }
                 
@@ -90,7 +102,7 @@ public class DocReportBean extends BaseReportBean{
         
         List<Tuple> docTypes = docFacade.countDocByDocTypeGroups(docTypeGroups, getDateStart(), getDateEnd(), docTypeGroups);
         if (docTypes.isEmpty()){
-            EscomMsgUtils.warnMsg("NO_SEARCHE_FIND");
+            MsgUtils.warnMsg("NO_SEARCHE_FIND");
             pieModel = null;
             return;
         }
@@ -99,7 +111,7 @@ public class DocReportBean extends BaseReportBean{
         
         pieModel = new PieChartModel();
         docTypes.stream().forEach(tuple -> pieModel.set((String)tuple.get(0), (Long)tuple.get(1)));
-        pieModel.setTitle(EscomMsgUtils.getBandleLabel("DocReportCountTypes"));
+        pieModel.setTitle(MsgUtils.getBandleLabel("DocReportCountTypes"));
         pieModel.setLegendPosition("w");
         pieModel.setShowDataLabels(true); 
     }

@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.partners;
 
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -50,14 +50,14 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         if (!existPartner.isEmpty()) {
             String partnerName = existPartner.get(0).getName();
             Object[] params = new Object[]{partnerName, code};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerCodeIsExsist"), params);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerCodeIsExsist"), params);
             errors.add(error);
         }
         
         existPartner = getFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
         if (!existPartner.isEmpty()) {
             Object[] params = new Object[]{getTitleName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerIsExsist"), params);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerIsExsist"), params);
             errors.add(error);
         }
     }

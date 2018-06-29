@@ -9,7 +9,7 @@ import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.facade.StaffFacade;
 
 import java.text.MessageFormat;

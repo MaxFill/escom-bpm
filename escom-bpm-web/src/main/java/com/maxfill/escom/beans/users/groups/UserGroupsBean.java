@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.treelike.UserGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
@@ -93,7 +93,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     protected void checkAllowedDeleteItem(UserGroups userGroups, Set<String> errors){
         if (!rightFacade.findRightsByGroupId(userGroups.getId()).isEmpty()){
             Object[] messageParameters = new Object[]{userGroups.getName()};
-            String message = EscomMsgUtils.getMessageLabel("UserGroupsUsedInRights");
+            String message = MsgUtils.getMessageLabel("UserGroupsUsedInRights");
             String error = MessageFormat.format(message, messageParameters);
             errors.add(error);
         }       

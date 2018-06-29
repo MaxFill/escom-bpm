@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.partners;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -99,7 +99,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         super.checkAllowedDeleteItem(partner, errors);
         if (!docFacade.findDocsByPartner(partner).isEmpty()){
             Object[] messageParameters = new Object[]{partner.getName()};
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("PartnerUsedInDocs"), messageParameters);
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerUsedInDocs"), messageParameters);
             errors.add(error);
         }
     }           
@@ -138,7 +138,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
             builder.append(partner);
         }
         if (builder.length() == 0){
-            builder.append(EscomMsgUtils.getBandleLabel("NewPartner"));
+            builder.append(MsgUtils.getBandleLabel("NewPartner"));
         }
         return builder.toString();
     }

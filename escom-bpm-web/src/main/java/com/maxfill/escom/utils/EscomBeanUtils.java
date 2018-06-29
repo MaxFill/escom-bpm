@@ -4,16 +4,12 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.Tuple;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,8 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.primefaces.PrimeFaces;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
 /* Утилиты, вызываемые из CDI бинов */
@@ -130,28 +124,7 @@ public final class EscomBeanUtils {
             }
         }
         return result;
-    }     
-    
-    /* Открытие карточки диалога */
-    public static void openDlgFrm(String dlgName, Map<String, List<String>> paramsMap, Tuple<Integer, Integer> size) {
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", size.a);
-        options.put("height", size.b);
-        options.put("minWidth", 600);
-        options.put("minHeight", 400);
-        options.put("maximizable", true);
-        options.put("closable", false);
-        options.put("closeOnEscape", false);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        List<String> openInDialogList = new ArrayList<>();
-        openInDialogList.add("true");
-        paramsMap.put("openInDialog", openInDialogList);
-        //options.put("headerElement", "centerFRM:customheader");
-        PrimeFaces.current().dialog().openDynamic(dlgName, options, paramsMap);
-    }    
+    }       
     
     /* Формирует ссылку URL для объекта  */
     public static String doGetItemURL(BaseDict item, String page){
@@ -198,10 +171,10 @@ public final class EscomBeanUtils {
         StringBuilder sb = new StringBuilder();
         Duration duration;
         if (dateStart.before(datePlan)){
-            sb.append(EscomMsgUtils.getBandleLabel("Remained"));    //осталось ...
+            sb.append(MsgUtils.getBandleLabel("Remained"));    //осталось ...
             duration = Duration.between(dateStart.toInstant(), datePlan.toInstant());
         } else {
-            sb.append(EscomMsgUtils.getBandleLabel("Overdue")).append(" ").append(EscomMsgUtils.getBandleLabel("On")); //просрочено на ...
+            sb.append(MsgUtils.getBandleLabel("Overdue")).append(" ").append(MsgUtils.getBandleLabel("On")); //просрочено на ...
             duration = Duration.between(datePlan.toInstant(), dateStart.toInstant());
         }
 

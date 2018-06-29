@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.system.login;
 
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.AuthLogFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.facade.UserFacade;
@@ -88,20 +88,20 @@ public class LoginBean implements Serializable{
         RequestContext context = RequestContext.getCurrentInstance();
 
         if (!Objects.equals(pinCode, generatePinCode)){   //оба кода должны быть равны (null если не требуется ввод кода)
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
             makeCountErrLogin(context, errors);
-            EscomMsgUtils.showFacesMessages(errors);
+            MsgUtils.showFacesMessages(errors);
             return;
         }
 
         //проверка на просроченность лицензии
         if(appBean.isLicenseExpire()) {
             String dateTerm = sessionBean.getLicenseExpireAsString();
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
+            errors.add(MsgUtils.prepFormatErrorMsg("ErrorExpireLicence", new Object[]{dateTerm}));
         }
 
         if(appBean.isNoAvailableLicence()) {
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
         }
 
         if (user == null) {
@@ -109,23 +109,23 @@ public class LoginBean implements Serializable{
         }
 
         if(user == null) {
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("BadUserOrPassword", new Object[]{}));
         }
 
         if(!errors.isEmpty()) {
             makeCountErrLogin(context, errors);
-            EscomMsgUtils.showFacesMessages(errors);
+            MsgUtils.showFacesMessages(errors);
             return;
         }
 
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
             generatePinCode = smsService.generatePinCode();
-            String message = MessageFormat.format(EscomMsgUtils.getFromBundle("YourAccessCode", "msg"), new Object[]{generatePinCode});
+            String message = MessageFormat.format(MsgUtils.getFromBundle("YourAccessCode", "msg"), new Object[]{generatePinCode});
             String smsResult = smsService.sendAccessCode(user.getMobilePhone(), message);
 
             if(StringUtils.isNotBlank(smsResult) && !smsResult.contains("error")) {
                 context.update("loginFRM");
-                EscomMsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
+                MsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
                 return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
             } else {
                 System.out.println("ERROR_SMS: " + smsResult == null ? "no data." : smsResult);
@@ -177,7 +177,7 @@ public class LoginBean implements Serializable{
         countErrLogin++;
         if (isLoginLock()){
             context.execute("PF('poll').start();");
-            errors.add(EscomMsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
+            errors.add(MsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
         } 
     }
     

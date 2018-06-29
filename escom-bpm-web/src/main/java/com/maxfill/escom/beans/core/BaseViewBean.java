@@ -4,7 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
@@ -310,13 +310,13 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public String getLabelFromBundle(String key){
         if (StringUtils.isEmpty(key)) return "";
         
-        return EscomMsgUtils.getBandleLabel(key);        
+        return MsgUtils.getBandleLabel(key);        
     }
     
     public String getFormatLabelFromBundle(String key, String param){
         if (StringUtils.isEmpty(key)) return "";
         Object[] params = new Object[]{param};        
-        return MessageFormat.format(EscomMsgUtils.getBandleLabel(key), params);                
+        return MessageFormat.format(MsgUtils.getBandleLabel(key), params);                
     }
     
     /**

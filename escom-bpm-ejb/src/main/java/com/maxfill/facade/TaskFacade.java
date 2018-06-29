@@ -42,10 +42,14 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     }   
     public Task createTask(String taskName, Staff owner, User author, Scheme scheme, String taskLinkUID){
         Task task = createItem(author, owner, new HashMap<>());        
-        task.setName(taskName);
-        task.setScheme(scheme);
+        task.setName(taskName);        
         task.setTaskLinkUID(taskLinkUID);
-        task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());
+        if (scheme != null){
+            task.setScheme(scheme);
+            task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());   
+        } else {
+            task.setAvaibleResultsJSON("[1]");
+        }
         return task; 
     }
     

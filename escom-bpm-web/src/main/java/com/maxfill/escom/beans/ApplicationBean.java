@@ -3,7 +3,7 @@ package com.maxfill.escom.beans;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.core.Release;
 import com.maxfill.model.licence.Licence;
@@ -61,7 +61,7 @@ public class ApplicationBean implements Serializable{
 
     @PostConstruct
     public void init() {
-        appName = EscomMsgUtils.getBandleLabel(SysParams.APP_NAME);
+        appName = MsgUtils.getBandleLabel(SysParams.APP_NAME);
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         release.setVersionNumber(ec.getInitParameter("VersionNumber"));

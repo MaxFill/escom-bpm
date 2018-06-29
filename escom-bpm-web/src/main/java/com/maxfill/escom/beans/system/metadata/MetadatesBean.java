@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.system.metadata;
 
 import com.maxfill.RightsDef;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.MetadatesFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.metadates.Metadates;
@@ -94,7 +94,7 @@ public class MetadatesBean implements Serializable{
         switch(typeAddRight){
             case DictRights.TYPE_GROUP :{
                 if (selUsGroup == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserGroupNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserGroupNotSet"));
                 } else {
                     obj = selUsGroup;
                 }
@@ -102,7 +102,7 @@ public class MetadatesBean implements Serializable{
             }
             case DictRights.TYPE_USER :{
                 if (selUser == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("UserNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("UserNotSet"));
                 } else {
                     obj = selUser;
                 }
@@ -110,7 +110,7 @@ public class MetadatesBean implements Serializable{
             }
             case DictRights.TYPE_ROLE :{
                 if (selUserRole == null){
-                    errors.add(EscomMsgUtils.getMessageLabel("RoleNotSet"));
+                    errors.add(MsgUtils.getMessageLabel("RoleNotSet"));
                 } else {
                     obj = selUserRole;
                 }
@@ -118,7 +118,7 @@ public class MetadatesBean implements Serializable{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         } else {
             Right right = rightsBean.createRight(typeAddRight, obj.getId(), obj.getName(), selState, selectedObject);
             rights.add(right);
@@ -137,11 +137,11 @@ public class MetadatesBean implements Serializable{
      */
     private void checkStateBeforeDelete(State state,  Set<String> errors){
         if (Objects.equals(state, startState)){
-            errors.add(EscomMsgUtils.getMessageLabel("CantDeleteStartState"));
+            errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
         }
         BaseTableBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
         if (bean != null && bean.getFacade().countItemsByState(state) > 0){
-            String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
+            String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
             errors.add(message);
         }
     }
@@ -172,7 +172,7 @@ public class MetadatesBean implements Serializable{
         oldStates.removeAll(newStates);     //определяем, какие состояния нужно удалить
         Set<String> errors = new HashSet<>();
         if (!newStates.contains(startState)){
-            String message = MessageFormat.format(EscomMsgUtils.getMessageLabel("StartStateNotPresentinListsStates"), new Object[]{startState.getName()});
+            String message = MessageFormat.format(MsgUtils.getMessageLabel("StartStateNotPresentinListsStates"), new Object[]{startState.getName()});
             errors.add(message);
         } else {
             selectedObject.setStateForNewObj(startState);
@@ -181,7 +181,7 @@ public class MetadatesBean implements Serializable{
             oldStates.stream().forEach(state->checkStateBeforeDelete(state, errors));
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return;
         }
         oldStates.stream().forEach(state->deleteStateRigts(state));
@@ -189,7 +189,7 @@ public class MetadatesBean implements Serializable{
         metadatesFacade.edit(selectedObject);
         rightsDef.reloadDefaultRight(selectedObject);
         rights = null;
-        EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{getBundleName(selectedObject)});
+        MsgUtils.succesFormatMsg("DataIsSaved", new Object[]{getBundleName(selectedObject)});
     }
 
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
@@ -247,7 +247,7 @@ public class MetadatesBean implements Serializable{
       
     public String getBundleName(Metadates metadate){
         if (metadate == null || StringUtils.isBlank(metadate.getBundleName())) return null;
-        return EscomMsgUtils.getBandleLabel(metadate.getBundleName());
+        return MsgUtils.getBandleLabel(metadate.getBundleName());
     }
 
     /* *** GETS & SETS *** */

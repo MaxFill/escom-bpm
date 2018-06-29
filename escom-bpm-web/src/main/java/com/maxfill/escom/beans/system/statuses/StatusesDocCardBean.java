@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.statuses;
 
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.escom.beans.core.BaseCardBean;
@@ -27,7 +27,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
 
     @Override
     public String getRightsForObjectTitle() {
-        return EscomMsgUtils.getBandleLabel("RightsForObject");
+        return MsgUtils.getBandleLabel("RightsForObject");
     }
 
     public void onAddStatusInTypeDocs(){
@@ -43,7 +43,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
                 docTypeBean.getFacade().edit(docType);
             }
         });
-        EscomMsgUtils.succesMsg("AddStatusInSelectedDocumentTypes");
+        MsgUtils.succesMsg("AddStatusInSelectedDocumentTypes");
     }
     
     @Override

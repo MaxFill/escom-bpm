@@ -284,3 +284,6 @@ body{
 .ico_inspector{background-image: url('../resources/icon/inspector.png') !important;} 
 .ico_folder_open{background-image: url('../resources/icon/folder_open.png') !important;} 
 .ico_editor{background-image: url('../resources/icon/editor.png') !important;} 
+
+.ico_process{background-image: url('../resources/icon/process.png') !important;}
+.ico_task{background-image: url('../resources/icon/newtask.png') !important;}

@@ -36,17 +36,14 @@
         <filter-name>RedirectFilter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
     </filter-mapping>
-
     <listener>
         <listener-class>com.maxfill.escom.system.SessionListener</listener-class>
     </listener>
-
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>/faces/*</url-pattern>
@@ -63,9 +60,8 @@
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
-
     <session-config>
-        <session-timeout>45</session-timeout>
+        <session-timeout>0</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>/faces/login.xhtml</welcome-file>

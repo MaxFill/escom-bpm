@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.dictionary.DictStates;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
@@ -11,8 +11,8 @@ import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
-import static com.maxfill.escom.utils.EscomMsgUtils.getMessageLabel;
+import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.facade.AttacheFacade;
 import com.maxfill.model.BaseDict;
@@ -101,7 +101,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void onAfterSendDocToEmail(SelectEvent event){
         if (event.getObject() != null) {                        
             String message = (String) event.getObject();
-            EscomMsgUtils.succesMessage(message);
+            MsgUtils.succesMessage(message);
         }
     }
 
@@ -116,7 +116,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             builder.append(doc.getNameEndElipse());
             return builder.toString();
         } else {
-            return EscomMsgUtils.getBandleLabel("DocIsNotRegistred");
+            return MsgUtils.getBandleLabel("DocIsNotRegistred");
         }
     }
     
@@ -214,7 +214,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = attacheBean.uploadAtache(uploadedFile);
         //Doc doc = (Doc) event.getComponent().getAttributes().get("item");
         attacheFacade.addAttacheInDoc(doc, attache);
-        EscomMsgUtils.succesMsg("VersionAdded");
+        MsgUtils.succesMsg("VersionAdded");
         return attache;
     }            
     
@@ -229,12 +229,12 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
                 errors.add(error);
             }
             if (!errors.isEmpty()){
-                EscomMsgUtils.showErrors(errors);
+                MsgUtils.showErrors(errors);
                 return;
             }
             onOpenFormLockAttache(attache);
         } else {
-            EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
+            MsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
         }        
     }
 
@@ -249,7 +249,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             errors.add(error);
         }
         if (!errors.isEmpty()){
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
             return;
         }
         sessionBean.openAttacheAddForm(doc);
@@ -273,10 +273,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 attacheDownLoadPDF(attache);
             } else {
-                EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
+                MsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomMsgUtils.warnMsg("RightViewNo");
+            MsgUtils.warnMsg("RightViewNo");
         }
     }
 
@@ -289,10 +289,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             if (attache != null) {
                 onViewAttache(attache);
             } else {
-                EscomMsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
+                MsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
             }
         } else {
-            EscomMsgUtils.warnMsg("RightViewNo");
+            MsgUtils.warnMsg("RightViewNo");
         }
     }
 

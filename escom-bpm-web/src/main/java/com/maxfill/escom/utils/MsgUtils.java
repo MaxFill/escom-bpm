@@ -11,8 +11,8 @@ import java.util.Set;
 /**
  * Утилиты для работы с сообщениями JSF
  */
-public final class EscomMsgUtils{
-    private EscomMsgUtils() {}
+public final class MsgUtils{
+    private MsgUtils() {}
 
     /**
      * Вывод сообщения об ошибке. Текст ошибки (error) уже ранее должен быть подготовлен!

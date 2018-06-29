@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.system;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.licenses.ActivateApp;
 import org.primefaces.PrimeFaces;
 
@@ -62,12 +62,12 @@ public class ActivateAppBean implements Serializable{
     public void activateLicence(){
         //ToDo получили строку - нужно создать лицензионный файл
         if (licenseData.contains("ERROR")){
-            EscomMsgUtils.errorMessage(licenseData);
+            MsgUtils.errorMessage(licenseData);
             return;
         }
         if (activateApp.activate(licNumber,licenseData)){
             appBean.initLicense();
-            EscomMsgUtils.succesMsg("ApplicationIsActivate");
+            MsgUtils.succesMsg("ApplicationIsActivate");
             PrimeFaces.current().ajax().update("activateFRM:mainPanel");
         }
     }
@@ -76,7 +76,7 @@ public class ActivateAppBean implements Serializable{
      * Вывод сообщения об успешном подключении к серверу
      */
     public void onServerConnect(){
-        EscomMsgUtils.succesMsg("ConnectionEstablished");
+        MsgUtils.succesMsg("ConnectionEstablished");
         sendActivateRequest();
     }
 
@@ -84,7 +84,7 @@ public class ActivateAppBean implements Serializable{
      * Вывод сообщения в случае неудачного соединения
      */
     public void onErrorConnect(){
-        EscomMsgUtils.errorMsg("ConnectServerFailed");
+        MsgUtils.errorMsg("ConnectServerFailed");
     }
 
     public void onEnterApp(){

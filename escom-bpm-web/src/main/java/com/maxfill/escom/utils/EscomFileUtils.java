@@ -73,7 +73,7 @@ public final class EscomFileUtils {
         try {
             int length = file.getContents().length;
             if (length > MAX_FILE_SIZE) {
-                String message = EscomMsgUtils.getBandleLabel("INVALID_FILE_SIZE");
+                String message = MsgUtils.getBandleLabel("INVALID_FILE_SIZE");
                 throw new Exception(message);
             }
             return file;

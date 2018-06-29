@@ -1,9 +1,9 @@
 package com.maxfill.escom.system.services;
 
-import static com.maxfill.escom.utils.EscomMsgUtils.getBandleLabel;
+import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
@@ -95,7 +95,7 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
             service.setDateNextStart(timer.getNextTimeout());
             service.setStarted(Boolean.TRUE);
             servicesFacade.edit(service);
-            EscomMsgUtils.succesMsg("ServiceRunSchedule");
+            MsgUtils.succesMsg("ServiceRunSchedule");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -122,10 +122,10 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
                 service.setStarted(Boolean.FALSE);
                 service.setDateNextStart(null);
                 servicesFacade.edit(service);
-                EscomMsgUtils.succesMsg("ServiceStopped");
+                MsgUtils.succesMsg("ServiceStopped");
                 LOG.log(Level.INFO, "Timer for service {0} is cancelled!", service.getName()); 
             }  catch (NoSuchObjectLocalException | IOException | ClassNotFoundException exception) {
-                EscomMsgUtils.errorMessage(exception.getMessage());
+                MsgUtils.errorMessage(exception.getMessage());
                 throw new RuntimeException(exception);
             }
         }
@@ -136,9 +136,9 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
      */
     public void onSaveSettings(){
         if (doSaveSettings()) {
-            EscomMsgUtils.succesFormatMsg("DataIsSaved", new Object[]{service.getName()});
+            MsgUtils.succesFormatMsg("DataIsSaved", new Object[]{service.getName()});
         } else {
-            EscomMsgUtils.errorFormatMsg("ErrorSaveSettings", new Object[]{service.getName()});
+            MsgUtils.errorFormatMsg("ErrorSaveSettings", new Object[]{service.getName()});
         }
     }
     

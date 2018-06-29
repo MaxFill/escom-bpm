@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.EscomMsgUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
@@ -74,7 +74,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             }
         }
         if (!errors.isEmpty()) {
-            EscomMsgUtils.showErrors(errors);
+            MsgUtils.showErrors(errors);
         }
     }
 
@@ -117,11 +117,11 @@ public class ExplorerTreeBean extends ExplorerBean{
                             onShowMovedDlg("MoveTreeDlg");
                         }
                     } else {
-                        String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
+                        String error = MessageFormat.format(MsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
                         errors.add(error);
                     }
                     if (!errors.isEmpty()) {
-                        EscomMsgUtils.showErrors(errors);
+                        MsgUtils.showErrors(errors);
                     }
                 }
                 return;
@@ -163,7 +163,7 @@ public class ExplorerTreeBean extends ExplorerBean{
 
     private boolean checkPossibilityMoving(BaseDict dropItem, BaseDict dragItem, Set<String> errors){
         if (isItemDetailType(dropItem)){
-            String error = MessageFormat.format(EscomMsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("MoveItemNotAvailable"), new Object[]{dragItem.getName(), dropItem.getName()});
             errors.add(error);
             return false;
         }
@@ -203,11 +203,11 @@ public class ExplorerTreeBean extends ExplorerBean{
                     }
                 }
                 if (!errors.isEmpty()) {
-                    EscomMsgUtils.showErrors(errors);
+                    MsgUtils.showErrors(errors);
                 }
             }
         } else {
-            EscomMsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
+            MsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
         }
     }
 
@@ -240,10 +240,10 @@ public class ExplorerTreeBean extends ExplorerBean{
                 treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
             }
             if (!errors.isEmpty()) {
-                EscomMsgUtils.showErrors(errors);
+                MsgUtils.showErrors(errors);
             }
         }
-        EscomMsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
+        MsgUtils.errorMsg("ErrUnableDetermineID"); //не удалось определить идентификатор получателя операции
     }
 
     /* DRAG & DROP добавление объекта в группу */
@@ -255,7 +255,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                 .filter(dragItem -> !isItemRootType(dragItem))
                 .forEach(dragItem -> {
                     if (sessionBean.prepAddItemToGroup(dragItem, dropItem)){
-                        EscomMsgUtils.succesFormatMsg("AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
+                        MsgUtils.succesFormatMsg("AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });
     }

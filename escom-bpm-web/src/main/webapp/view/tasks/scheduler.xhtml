@@ -37,15 +37,13 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <h:panelGrid columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" ignoreTimezone="false"
-                        timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  scrollTime="09:00:00" 
-                        locale="#{sessionBean.locale}" >
-                <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />
-                <p:ajax event="eventSelect" listener="#{schedulerBean.onEventSelect}"  />
-                <p:ajax event="eventMove" listener="#{schedulerBean.onEventMove}"  />
-                <p:ajax event="eventResize" listener="#{schedulerBean.onEventResize}" />
-            </p:schedule>  
-        </h:panelGrid>
+        <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" ignoreTimezone="false"
+                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  scrollTime="09:00:00"                         
+                    locale="#{sessionBean.locale}" >
+            <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />
+            <p:ajax event="eventSelect" listener="#{schedulerBean.onEventSelect}"  />
+            <p:ajax event="eventMove" listener="#{schedulerBean.onEventMove}"  />
+            <p:ajax event="eventResize" listener="#{schedulerBean.onEventResize}" />
+        </p:schedule>  
     </ui:define>
 </ui:composition>
