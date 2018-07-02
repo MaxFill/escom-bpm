@@ -45,8 +45,13 @@ public final class MsgUtils{
         addFacesMsg(FacesMessage.SEVERITY_WARN, msg, msgParams);
     }
 
-    public static void errorFormatMsg(String msg, Object[] msgParams) {
-        addFacesMsg(FacesMessage.SEVERITY_ERROR, msg, msgParams);
+    /**
+     * Вывод сообщения об ошибке.
+     * @param keyMsg - ключ ресурса msg
+     * @param msgParams 
+     */
+    public static void errorFormatMsg(String keyMsg, Object[] msgParams) {
+        addFacesMsg(FacesMessage.SEVERITY_ERROR, keyMsg, msgParams);
     }
 
     /* Формирует и возвращает FacesMessage c текстом ошибки */

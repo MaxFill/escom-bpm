@@ -19,8 +19,9 @@
     </ui:define>
 
     <ui:define name="body">       
-        <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
-        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
+        <p:importConstants type="com.maxfill.dictionary.DictRights"   var="DictRights" />
+        <p:importConstants type="com.maxfill.dictionary.DictStates"   var="DictStates" />
+        <p:importConstants type="com.maxfill.dictionary.DictEditMode" var="DictEditMode" />
         <script type="text/javascript" >
             var itemChange = 0;
 
@@ -75,10 +76,6 @@
                                             disabled="#{_bean.editedItem.id == null}"
                                             actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
                                 <p:separator />
-                                <p:menuitem icon="ui-icon-disk" value="#{bundle.Save}"
-                                        rendered="#{!_bean.isReadOnly()}"
-                                        onclick="document.getElementById('#{_frm}:btnSaveOnly').click();">
-                                </p:menuitem>
                                 <p:menuitem value="#{bundle.SaveClose}"
                                             rendered="#{!_bean.isReadOnly()}"
                                             icon="ui-icon-circle-check"
@@ -98,16 +95,6 @@
                                             actionListener="#{_bean.onPreViewBarcode()}"/>
                             </p:submenu>
                             <ui:insert name="specSubMenu" />
-                            <p:menuitem id="btnSaveOnly" icon="ui-icon-disk" value="#{bundle.Save}"
-                                        rendered="#{!_bean.isReadOnly()}"
-                                        update="#{_frm}"
-                                        actionListener="#{_bean.doSaveItem()}"
-                                        onclick="if (itemChange == 1) {
-                                                    onChangeItem();
-                                                }"
-                                        oncomplete="return itemChange = 0;">
-                                <f:param name="isRequired" value="true"/>
-                            </p:menuitem>
                             <p:menuitem id="btnSaveClose" value="#{bundle.SaveClose}"
                                         rendered="#{!_bean.isReadOnly()}"
                                         icon="ui-icon-circle-check"
@@ -120,6 +107,7 @@
                             </p:menuitem>
                             <f:facet name="options">
                                 <ui:insert name="specToolButtons"/>
+                                <p:spacer width="10" />
                                 <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
                                                      actionListener="#{_bean.onCancelItemSave()}"
                                                      icon="ui-icon-circle-close"

@@ -45,4 +45,5 @@ public final class SysParams {
     public static final String EXIT_NEED_UPDATE = "needUpdate";
     public static final String EXIT_NOTHING_TODO = "nothingtodo";
     public static final String EXIT_EXECUTE = "execute";
+    public static final String EXIT = "exit";
 }

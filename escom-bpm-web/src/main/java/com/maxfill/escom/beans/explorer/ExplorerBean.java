@@ -229,7 +229,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
     public void onUpdateAfterCloseForm(SelectEvent event){        
         String exitResult = (String) event.getObject();
-        if (SysParams.EXIT_NEED_UPDATE.equals(exitResult)) {
+        if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
             switch (typeEdit){
                 case DictEditMode.EDIT_MODE: {                    
                     try {                    

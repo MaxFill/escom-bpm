@@ -91,6 +91,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
 
     private final Set<Task> editedTasks = new HashSet<>();
     private Task currentTask;
+    private String exitParam = SysParams.EXIT_NOTHING_TODO;
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();
     
@@ -156,6 +157,16 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return result;
     }   
     
+    /**
+     * Переопределение метода закрытия формы. Передаём параметр закрытия, 
+     * который устанавливается в зависимости от того, был ли запущен/остановлен процесс
+     * @return 
+     */
+    @Override
+    public String doFinalCancelSave() {  
+        return closeItemForm(exitParam);  //закрыть форму объекта
+    }
+    
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     
     /**
@@ -175,6 +186,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 MsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
             loadModel(getScheme());
+            exitParam = SysParams.EXIT_EXECUTE;
             PrimeFaces.current().ajax().update(getFormName());
         }
     }
@@ -189,6 +201,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             MsgUtils.showErrorsMsg(errors);
         } else {
             onReloadModel();
+            exitParam = SysParams.EXIT_EXECUTE;
             MsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
     }
@@ -989,15 +1002,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onAfterTaskEdit(){
         modelRefresh();
     }
-
-    /**
-     * Формирование статуса задачи в зависимости от её выполнения
-     * @param task
-     * @return 
-     */
-    public String getTaskStatus(Task task){             
-        return processBean.getTaskStatus(task);
-    }
               
     public boolean isDisableBtnStop(){
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || !getEditedItem().isRunning();
@@ -1084,6 +1088,5 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public Scheme getScheme(){
         return getEditedItem().getScheme();
     }
-    
    
 }

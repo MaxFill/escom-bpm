@@ -61,6 +61,7 @@ body{
 
 .error-info {
     color: red;
+    font-weight: bold;
 }
 
 .colTblCenter{

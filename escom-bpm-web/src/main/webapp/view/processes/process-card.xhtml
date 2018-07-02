@@ -31,14 +31,16 @@
         <p:commandButton id="btnRun" value="#{bundle.Run}" title="#{bundle.StartProcess}" icon="ui-icon-play"
                         disabled="#{processCardBean.isReadOnly()}"
                         update="#{_frm}"
-                        actionListener="#{processCardBean.onRun()}">
+                        actionListener="#{processCardBean.onRun()}"
+                        oncomplete="return itemChange = 0;">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
         <p:spacer width="2"/>
         <p:commandButton id="btnStop" value="#{bundle.Stop}" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
                         disabled="#{processCardBean.isDisableBtnStop()}"
                         update="#{_frm}" 
-                        actionListener="#{processCardBean.onStop()}">
+                        actionListener="#{processCardBean.onStop()}"
+                        oncomplete="return itemChange = 0;">
             <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
         </p:commandButton>
         <p:spacer width="10"/>
@@ -71,7 +73,7 @@
                 
                 <p:outputLabel value="#{bundle.TermApproval}:" indicateRequired="true"/> 
                 <p:calendar value="#{processCardBean.editedItem.planExecDate}" disabledWeekends="true" 
-                            styleClass="without-spaces" 
+                            styleClass="without-spaces" pages="2"
                             timeZone="#{TimeZone.getDefault()}"
                             showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                             disabled="#{processCardBean.isReadOnly()}"
@@ -105,7 +107,7 @@
                     </p:column>
                     
                     <p:column headerText="#{bundle.Status}" >
-                        <h:outputLabel value="#{processCardBean.getTaskStatus(task)}"/>
+                        <h:outputLabel value="#{sessionBean.getItemStatus(task)}"/>
                     </p:column>
                     
                     <p:column width="16" sortBy="#{task.iconName}" >

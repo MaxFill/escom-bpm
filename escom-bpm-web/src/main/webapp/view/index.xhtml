@@ -267,59 +267,56 @@
     </ui:define>
 
     <ui:define name="dialogs"> 
-        <ui:include src="/view/common/error-dlg.xhtml"/>
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgAbout">
-            <h:form id="logFRM">
-                <p:outputPanel id="aboutPanel" style="width: 600px; height: 400px;">
-                    <p:panelGrid columns="2"  columnClasses="ui-grid-col-12, ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                            <p:outputLabel value="#{bundle.LicenceNumber}"/>
-                            <p:inputText value="#{applicationBean.licence.number}" readonly="true" styleClass="ui-grid-col-12"/>
-                            
-                            <p:outputLabel value="#{bundle.Version}"/>
-                            <p:inputText value="#{applicationBean.release.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+            <h:form id="logFRM">                
+                <p:panelGrid id="aboutPanel" columns="2"  columnClasses="ui-grid-col-6 ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                        <p:outputLabel value="#{bundle.LicenceNumber}"/>
+                        <p:inputText value="#{applicationBean.licence.number}" readonly="true" styleClass="ui-grid-col-12"/>
 
-                            <p:outputLabel value="#{bundle.Release}"/>
-                            <p:inputText value="#{applicationBean.release.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
+                        <p:outputLabel value="#{bundle.Version}"/>
+                        <p:inputText value="#{applicationBean.release.versionNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
-                            <p:outputLabel value="#{bundle.DateRelease}"/>
-                            <p:inputText value="#{applicationBean.release.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
-                                <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                            </p:inputText>
-                        </p:panelGrid>
+                        <p:outputLabel value="#{bundle.Release}"/>
+                        <p:inputText value="#{applicationBean.release.releaseNumber}" readonly="true" styleClass="ui-grid-col-12"/>
 
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
-                            <p:outputLabel value="#{bundle.LicenceTypeName}"/>
-                            <p:inputText value="#{sessionBean.licenseLocalName}" readonly="true" styleClass="ui-grid-col-12"/>
-                            
-                            <p:outputLabel value="#{bundle.LicenceTotal}"/>
-                            <p:inputText value="#{applicationBean.licence.total}" readonly="true" styleClass="ui-grid-col-12"/>
-                            
-                            <p:outputLabel value="#{bundle.LicenceBusy}"/>
-                            <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
-                            
-                            <p:outputLabel value="#{bundle.TermLicense}"/>
-                            <p:inputText value="#{applicationBean.licence.dateTerm}" readonly="true" styleClass="ui-grid-col-12">
-                                <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                            </p:inputText>
-                        </p:panelGrid>
+                        <p:outputLabel value="#{bundle.DateRelease}"/>
+                        <p:inputText value="#{applicationBean.release.releaseDate}" readonly="true" styleClass="ui-grid-col-12">
+                            <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                        </p:inputText>
                     </p:panelGrid>
-                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
-                            <h:panelGroup styleClass="ui-grid-col-12">
-                                <p:outputLabel value="#{bundle.Licensor}: "/>
-                                <h:outputLabel value="#{applicationBean.licence.licensor}" />
-                            </h:panelGroup>
-                            <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/>
-                            <p:separator />
-                            <h:panelGrid columns="2" styleClass="ui-grid-col-12">
-                                <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"
-                                                 actionListener="#{sessionBean.openLicenseForm()}"/>
-                                <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
-                            </h:panelGrid>
-                        </p:panelGrid>
+
+                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >                        
+                        <p:outputLabel value="#{bundle.LicenceTypeName}"/>
+                        <p:inputText value="#{sessionBean.licenseLocalName}" readonly="true" styleClass="ui-grid-col-12"/>
+
+                        <p:outputLabel value="#{bundle.LicenceTotal}"/>
+                        <p:inputText value="#{applicationBean.licence.total}" readonly="true" styleClass="ui-grid-col-12"/>
+
+                        <p:outputLabel value="#{bundle.LicenceBusy}"/>
+                        <p:inputText value="#{applicationBean.basyLicence}" readonly="true" styleClass="ui-grid-col-12"/>
+
+                        <p:outputLabel value="#{bundle.TermLicense}"/>
+                        <p:inputText value="#{applicationBean.licence.dateTerm}" readonly="true" styleClass="ui-grid-col-12">
+                            <f:convertDateTime type="date" dateStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                        </p:inputText>
                     </p:panelGrid>
-                </p:outputPanel>
+                </p:panelGrid>
+                <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <h:panelGroup styleClass="ui-grid-col-12">
+                            <p:outputLabel value="#{bundle.Licensor}: "/>
+                            <h:outputLabel value="#{applicationBean.licence.licensor}" />
+                        </h:panelGroup>
+                        <p:inputText value="#{bundle.DeveloperInfo}" styleClass="ui-grid-col-12" readonly="true"/>
+                        <p:separator />
+                        <h:panelGrid columns="2" styleClass="ui-grid-col-12">
+                            <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"
+                                             actionListener="#{sessionBean.openLicenseForm()}"/>
+                            <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
+                        </h:panelGrid>
+                    </p:panelGrid>
+                </p:panelGrid>
             </h:form>
         </p:dialog>
     </ui:define>

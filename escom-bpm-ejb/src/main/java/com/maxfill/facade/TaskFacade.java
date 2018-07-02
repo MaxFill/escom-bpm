@@ -2,6 +2,7 @@ package com.maxfill.facade;
 
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.base.BaseDictWithRolesFacade;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.task.Task;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -167,6 +167,16 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return new Tuple(false, null);
     }
     
+    /**
+     * Установка роли Исполнитель значением указаного пользователя
+     * @param task
+     * @param user 
+     */
+    public void inicializeExecutor(Task task, User user){
+        task.doSetSingleRole(DictRoles.ROLE_EXECUTOR, user);
+        doSaveRoleToJson(task);
+    }
+            
     /* *** ПРОЧЕЕ *** */
     
     @Override

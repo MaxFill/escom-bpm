@@ -1,31 +1,27 @@
 package com.maxfill.escom.beans.system.license;
 
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import java.io.File;
-import java.util.Locale;
-import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
-import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 @Named
 @SessionScoped
 public class LicenseBean extends BaseViewBean{
-    private static final long serialVersionUID = -740004080013527296L; 
-    private static final String LICENSE_FILE = "License_";        
+    private static final long serialVersionUID = -740004080013527296L;       
     private StreamedContent content;
-        
+
     /**
      * Принятие соглашения пользователем
      */
     public void onAcceptAndClose(){
        sessionBean.getUserSettings().setAgreeLicense(true);
-       onCloseCard();
+       onCloseCard(SysParams.EXIT_NEED_UPDATE);
     }
 
     /**
@@ -33,7 +29,7 @@ public class LicenseBean extends BaseViewBean{
      * @return
      */
     public void onExitProgram(){
-        onCloseCard("exit");
+        onCloseCard(SysParams.EXIT);
     }
 
     public StreamedContent getContent() {
@@ -49,9 +45,9 @@ public class LicenseBean extends BaseViewBean{
     }
     
     @Override
-    public String onCloseCard() {
+    public String onCloseCard(Object result) {
         content = null;
-        return super.onCloseCard();
+        return super.onCloseCard(result);
     }
 
     @Override

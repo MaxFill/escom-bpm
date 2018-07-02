@@ -399,15 +399,16 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
 
     /* установка (перезапись) одиночной роли */
     public void doSetSingleRole(String roleName, User user){
+        if (user == null) return;
+        
         Set<Integer> usersId = new HashSet<>();
-        if (user != null){
-            usersId.add(user.getId());
-        }
+        usersId.add(user.getId());
+
         doSetMultyRole(roleName, usersId);
     }
     
     /* установка (перезапись) списковой роли */
-    public void doSetMultyRole(String roleName, Set<Integer> usersId){
+    private void doSetMultyRole(String roleName, Set<Integer> usersId){
         getRoles().put(roleName, usersId);
     }
 

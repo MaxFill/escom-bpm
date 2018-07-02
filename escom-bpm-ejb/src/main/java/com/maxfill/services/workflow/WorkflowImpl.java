@@ -3,6 +3,7 @@ package com.maxfill.services.workflow;
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictResults;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
@@ -357,10 +358,10 @@ public class WorkflowImpl implements Workflow {
         if (!tasks.isEmpty()){
                 tasks.stream()
                     .filter(task->!task.getState().getCurrentState().equals(stateFacade.getRunningState()))
-                    .forEach(task->{
+                    .forEach(task->{                        
                         task.setBeginDate(new Date());
+                        task.setFactExecDate(null);
                         task.setResult(null);
-                        task.setFactExecDate(null);                        
                         if ("delta".equals(task.getDeadLineType())){
                             task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
                         }
@@ -368,7 +369,8 @@ public class WorkflowImpl implements Workflow {
                         msg.append(ItemUtils.getMessageLabel("YouReceivedNewTask", config.getServerLocale()));
                         msg.append(" <").append(task.getName()).append(">!");
                         notificationService.makeNotification(task, msg.toString()); //уведомление о назначении задачи
-                        taskFacade.makeReminder(task);                        
+                        taskFacade.makeReminder(task); 
+                        taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     });
             }
@@ -393,6 +395,7 @@ public class WorkflowImpl implements Workflow {
                 task.setResult(null);       //сброс предудущего результата                
             });        
         process.getState().setCurrentState(stateFacade.getRunningState());
+        process.setBeginDate(new Date());
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, user);
@@ -429,6 +432,7 @@ public class WorkflowImpl implements Workflow {
         if (exitElem.getFinalize()){
             process.getState().setCurrentState(stateFacade.getCompletedState());          
         }
+        process.setFactExecDate(new Date());
     }
 
     /**

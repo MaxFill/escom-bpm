@@ -7,6 +7,7 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
+import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.ResultFacade;
 import com.maxfill.facade.TaskFacade;
 import com.maxfill.facade.base.BaseDictFacade;
@@ -50,6 +51,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private Workflow workflow;
     @EJB
     private ResultFacade resultFacade;
+    @EJB
+    private ProcessFacade processFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -149,8 +152,16 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.showErrors(errors);
             return "";
         } 
-        ProcessCardBean bean = (ProcessCardBean)sourceBean;
-        workflow.executeTask(bean.getEditedItem(), getEditedItem(), result, getCurrentUser(), errors);
+        
+        Task task = getEditedItem();
+        Process process;
+        if (sourceBean instanceof ProcessCardBean){
+            process = ((ProcessCardBean)sourceBean).getEditedItem();
+        } else {
+            process = processFacade.find(task.getScheme().getProcess().getId());
+        }
+                
+        workflow.executeTask(process, task, result, getCurrentUser(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return "";
@@ -370,7 +381,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     public String getTaskStatus(){
-        return processBean.getTaskStatus(getEditedItem());
+        return sessionBean.getItemStatus(getEditedItem());
     }
     
     @Override

@@ -13,6 +13,15 @@
     </ui:define>
 
     <ui:define name="menuActions" >
+        <p:menuitem icon="ui-icon-circle-check"
+                    rendered="#{!sessionBean.userSettings.agreeLicense}"
+                    value="#{bundle.Accept}"
+                    actionListener="#{licenseBean.onAcceptAndClose()}">
+        </p:menuitem>
+        <p:menuitem value="#{bundle.Refuse}" icon="ui-icon-close" title="#{bundle.ExitProgramm}"
+                    rendered="#{!sessionBean.userSettings.agreeLicense}"
+                    action="#{licenseBean.onExitProgram()}">
+        </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
@@ -30,7 +39,7 @@
             <p:commandButton id="btnConfirm" icon="ui-icon-circle-check"
                              rendered="#{!sessionBean.userSettings.agreeLicense}"
                              value="#{bundle.Accept}"
-                             action="#{licenseBean.onAcceptAndClose()}">
+                             actionListener="#{licenseBean.onAcceptAndClose()}">
             </p:commandButton>
             <p:commandButton id="btnExit"
                              value="#{bundle.Refuse}" icon="ui-icon-close" title="#{bundle.ExitProgramm}"

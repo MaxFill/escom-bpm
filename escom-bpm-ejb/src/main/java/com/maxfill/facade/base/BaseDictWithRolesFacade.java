@@ -1,10 +1,9 @@
 package com.maxfill.facade.base;
 
 import com.google.gson.Gson;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogItems;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.process.Process;
 import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.model.users.User;
 
@@ -36,6 +35,10 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         super(itemClass, logClass, stateClass);
     }
 
+    /**
+     * Сохранение ролей в строку для записи в базу
+     * @param item 
+     */
     public void doSaveRoleToJson(T item){
         Gson gson = new Gson();
         String attacheJson = gson.toJson(item.getRoles());
@@ -53,7 +56,12 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         return usersId.contains(user.getId());
     }
 
-    /* Возвращает имя исполнителя роли */
+    /**
+     * Возвращает имя пользователя - исполнителя указанной роли
+     * @param item
+     * @param roleName
+     * @return 
+     */
     public String getActorName(T item, String roleName){
         Map<String, Set<Integer>> roles = item.getRoles();
         if (roles.isEmpty() || !roles.containsKey(roleName)) return null;
@@ -68,4 +76,5 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         });
         return names.toString();
     }
+    
 }

@@ -1,19 +1,23 @@
 package com.maxfill.model.task;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.Dict;
 import com.maxfill.model.Results;
+import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.result.Result;
-import java.io.Serializable;
+import java.io.IOException;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
@@ -25,7 +29,7 @@ import liquibase.util.StringUtils;
 @Entity
 @Table(name = "tasks",
         indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
-public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements Serializable, Dict, Results{
+public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements Results, WithDatesPlans{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final AtomicInteger COUNT = new AtomicInteger(0);
 
@@ -104,6 +108,9 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @Column(name = "AvaibleResults")
     private String avaibleResultsJSON;    
     
+    @Column(name = "RoleJson", length = 2048)
+    private String roleJson;
+        
     /* Категории */
     //ToDo добавить категории
 
@@ -150,14 +157,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
             }
         }
         return style;
-    }
-        
-    public boolean isRunning(){
-        return DictStates.STATE_RUNNING == state.getCurrentState().getId();
-    }   
-    public boolean isCompleted(){
-        return DictStates.STATE_COMPLETED == state.getCurrentState().getId();
-    }
+    }        
     
     @Override
     public void setResults(List<Result> taskResults) {
@@ -171,9 +171,25 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         if (StringUtils.isNotEmpty(iconName)){
             return iconName; 
         } else {
-            return "newtask";
+            return "task";
         }
     }  
+    
+    @Override
+    public Map<String, Set<Integer>> getRoles() {
+        if (roles == null){
+            roles = new HashMap<>();
+            if (org.apache.commons.lang.StringUtils.isBlank(getRoleJson())) return roles;
+            try {
+                ObjectMapper mapper = new ObjectMapper();            
+                roles = mapper.readValue(roleJson, new TypeReference<HashMap<String, HashSet<Integer>>>() {});
+                setRoles(roles);
+            } catch (IOException ex) {
+                Logger.getLogger(com.maxfill.model.process.Process.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return roles;
+    }
     
     /* GETS & SETS */
 
@@ -186,6 +202,15 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
 
     }
 
+    @Override
+    public String getRoleJson() {
+        return roleJson;
+    }
+    @Override
+    public void setRoleJson(String roleJson) {
+        this.roleJson = roleJson;
+    }
+    
     @Override
     public Staff getOwner() {
         return owner;
@@ -227,16 +252,20 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.taskLinkUID = taskLinkUID;
     }
 
+    @Override
     public Date getBeginDate() {
         return beginDate;
     }
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
 
+    @Override
     public Date getPlanExecDate() {
         return planExecDate;
     }
+    @Override
     public void setPlanExecDate(Date planExecDate) {
         this.planExecDate = planExecDate;
     }
@@ -255,9 +284,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.deadLineType = deadLineType;
     }
     
+    @Override
     public Date getFactExecDate() {
         return factExecDate;
     }
+    @Override
     public void setFactExecDate(Date factExecDate) {
         this.factExecDate = factExecDate;
     }

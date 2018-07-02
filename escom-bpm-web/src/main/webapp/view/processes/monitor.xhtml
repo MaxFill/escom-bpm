@@ -13,14 +13,17 @@
 
     <ui:define name="menuActions" >
         <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="centerFRM" actionListener="#{monitorBean.onRefreshData()}">
+                    update="centerFRM:monitorTable" actionListener="#{monitorBean.onRefreshData()}">
         </p:menuitem>
     </ui:define>   
     
     <ui:define name="customStyleCSS">
     </ui:define>
     
-    <ui:define name="toolbarComponents" >        
+    <ui:define name="toolbarComponents" >  
+        <p:commandButton icon="ui-icon-refresh" value="#{bundle.Refresh}"
+                    update="centerFRM:monitorTable" actionListener="#{monitorBean.onRefreshData()}">
+        </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
@@ -77,18 +80,19 @@
         </p:panel>
         
         <p:treeTable id="monitorTable" value="#{monitorBean.root}" var="item" 
-                     selectionMode="single" selection="#{monitorBean.selectedNode}"
+                     selectionMode="single" 
                      emptyMessage="#{bundle.EmptyTable}" 
                      paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,25,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
                      sortBy="#{item.planExecDate}" sortOrder="descending"
+                     rowStyleClass="#{sessionBean.isItemDelay(item) ? 'error-info' : null}"
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
 
             <p:column width="20" sortBy="#{item.iconName}" >
                 <p:graphicImage value="/resources/icon/#{item.iconName}20.png" /> 
-            </p:column>            
+            </p:column>
 
             <p:column headerText="#{''.concat(bundle.Initiator).concat(' / ').concat(bundle.Executor)}">
                 <h:outputLabel value="#{monitorBean.onGetItemTitle(item)}"/>
@@ -113,11 +117,11 @@
             </p:column>
 
             <p:column headerText="#{bundle.Status}" >
-                <h:outputLabel value="#{monitorBean.onGetItemStatus(item)}"/>
+                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
             </p:column>
 
             <p:column width="16" sortBy="#{item.state.currentState.icon}">
-                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
+                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>
             </p:column>
             
             <p:column headerText="#{bundle.Result}" >
@@ -128,7 +132,7 @@
         
         <p:commandButton id="btnOpenItem" style="display: none;"
                          actionListener="#{monitorBean.onOpenItem()}">
-            <p:ajax event="dialogReturn" update="monitorTable"/>
+            <p:ajax event="dialogReturn" update="monitorTable" listener="#{monitorBean.onAfterItemCloseForm}"/>
         </p:commandButton>
         
     </ui:define>

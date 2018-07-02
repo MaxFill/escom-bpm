@@ -72,6 +72,10 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public T prepViewItem(T item, Map<String, List<String>> paramsMap, Set<String> errors){
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
+        if (editItem == null){
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getId()});
+            return null;
+        }
         getFacade().makeRightItem(editItem, getCurrentUser());
         if (!facade.isHaveRightView(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
@@ -86,7 +90,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public T prepEditItem(T item, Map<String, List<String>> paramsMap){        
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getFacade();
-        T editItem = findItem(item.getId());  //получаем копию объекта для редактирования            
+        T editItem = findItem(item.getId());  //получаем копию объекта для редактирования 
+        if (editItem == null){
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getId()});
+            return null;
+        }
+        
         facade.makeRightItem(editItem, getCurrentUser());
         if (!facade.isHaveRightEdit(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();

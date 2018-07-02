@@ -37,7 +37,9 @@ import com.maxfill.facade.StaffFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.task.Task;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
@@ -243,7 +245,30 @@ public class SessionBean implements Serializable{
     
     public boolean prepAddItemToGroup(BaseDict item, BaseDict targetGroup){ 
         return ((BaseDetailsBean)getItemBean(item)).addItemToGroup(item, targetGroup);
-    }                  
+    }            
+    
+    /**
+     * Определяет, просрочен ли объект
+     * @param item
+     * @return 
+     */
+    public boolean isItemDelay(WithDatesPlans item){
+        if (item == null || item.getBeginDate() == null || item.getPlanExecDate() == null) return false;        
+        return item.getBeginDate().after(item.getPlanExecDate());
+    }
+        
+    /**
+     * Формирование статуса объекта в зависимости от его выполнения
+     * @param item
+     * @return 
+     */
+    public String getItemStatus(WithDatesPlans item){
+        if (item == null) return "";
+        if (item.getBeginDate() == null) return MsgUtils.getBandleLabel("NotStarted");
+        if (item.isCompleted()) return MsgUtils.getBandleLabel("Сompleted");
+        if (item.isCanceled()) return MsgUtils.getBandleLabel("Cancelled");
+        return EscomBeanUtils.makeDateDiffStatus(new Date(), item.getPlanExecDate());
+    }
     
     /* ПРОЧИЕ МЕТОДЫ */
 
@@ -306,8 +331,8 @@ public class SessionBean implements Serializable{
      * @param event
      */
     public void onAfterCloseLicenseDlg(SelectEvent event){
-        if (event.getObject() == null) return;
-        onSessionExit();
+        String result = (String) event.getObject();
+        if (SysParams.EXIT.equals(result)) onSessionExit();
     }
 
     /* Переход на начальную страницу программы */
@@ -846,8 +871,6 @@ public class SessionBean implements Serializable{
             return MsgUtils.getBandleLabel("No");
         }
     }
-
-    /* Gets & Sets */
 
     public DashboardModel getDashboardModel() {
         return dashboardModel;

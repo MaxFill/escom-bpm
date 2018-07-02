@@ -12,7 +12,7 @@
         </p:selectBooleanCheckbox>      
         
         <h:panelGrid columns="2" styleClass="without-spaces">
-            <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="grid" columns="1">
+            <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="grid" columns="1" >
                 <f:selectItem itemLabel="#{bundle.No}" itemValue="no" />
                 <f:selectItem itemLabel="#{bundle.Single}" itemValue="singl" />
                 <f:selectItem itemLabel="#{bundle.Repeat}" itemValue="repeat" /> 

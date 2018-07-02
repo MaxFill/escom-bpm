@@ -2,17 +2,22 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.model.process.Process;
 import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.EscomUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
@@ -70,11 +75,21 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
     }        
     
-    private void loadTree(){
+    private void loadTree(){        
         List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()));
-        processes.forEach(process->{
-            TreeNode processNode = new DefaultTreeNode(process, root);
-            process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
+        processes.forEach(proc->{
+            TreeNode processNode = new DefaultTreeNode(proc, root);
+            proc.getScheme().getTasks().forEach(task->{
+                    TreeNode taskNode = new DefaultTreeNode(task, processNode);
+                    if (Objects.equals(selectedNode, taskNode)){
+                        taskNode.setSelected(true);
+                        processNode.setExpanded(true);
+                    }
+                });
+            if (Objects.equals(selectedNode, processNode)){
+                processNode.setSelected(true);
+                processNode.setExpanded(selectedNode.isExpanded());               
+            }
         });
     }
     
@@ -92,21 +107,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
         return filters;
     }
-    
-    /**
-     * Формирует статус для записи в таблице монитора
-     * @param item
-     * @return 
-     */
-    public String onGetItemStatus(BaseDict item){
-        if (item instanceof Task){
-            Task task = (Task) item;
-            return processBean.getTaskStatus(task);
-        } else {
-            return ""; //TODO что вывести для процесса?  
-        }        
-    }
-     
+         
     /**
      * Формирует данные результата для записи в таблице монитора
      * @param item
@@ -128,14 +129,15 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      */
     public String onGetItemTitle(BaseDict item){
         if (item instanceof Task){
-            return item.getOwner().getNameEndElipse();
+            Staff staff = (Staff)item.getOwner();
+            return staff.getEmployee().getNameEndElipse();
         } else {
             return item.getAuthor().getNameEndElipse();
         }        
     }
     
     /**
-     * Обработка собфтия изменения инициатора в фильтре на форме
+     * Обработка события изменения инициатора в фильтре на форме
      * @param event 
      */
     public void onChangeInitiator(SelectEvent event){
@@ -145,8 +147,15 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     public void onChangeInitiator(ValueChangeEvent event){
         initiator = (User) event.getNewValue();
-    }
+    }        
     
+    public void onAfterItemCloseForm(SelectEvent event){
+        String result = (String) event.getObject();
+        if (!SysParams.EXIT_NOTHING_TODO.equals(result) ){
+            onRefreshData();
+        }
+    }
+            
     /* *** GETS & SETS *** */
 
     public User getInitiator() {
@@ -168,8 +177,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     public void setCurrentItem(BaseDict currentItem) {
         this.currentItem = currentItem;
+        selectedNode = EscomBeanUtils.findTreeNode(root, currentItem);
     }
-        
+
     public TreeNode getRoot() {
         if (root == null){
             root = new DefaultTreeNode(null, null);

@@ -322,6 +322,7 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         this.id = id;
     }
     
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

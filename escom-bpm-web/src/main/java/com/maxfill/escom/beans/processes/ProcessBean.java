@@ -59,15 +59,4 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
         return treeSelectedNode == null || ((BaseDict)treeSelectedNode.getData()).getId() == 0;
     }
     
-    /**
-     * Формирование статуса задачи в зависимости от её выполнения
-     * @param task
-     * @return 
-     */
-    public String getTaskStatus(Task task){
-        if (task == null) return "";
-        if (task.getBeginDate() == null) return MsgUtils.getBandleLabel("NotStarted");
-        if (task.isCompleted()) return MsgUtils.getBandleLabel("Сompleted");        
-        return EscomBeanUtils.makeDateDiffStatus(new Date(), task.getPlanExecDate());
-    }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
@@ -24,7 +25,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "processes")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates>{
+public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates> implements WithDatesPlans{
     private static final long serialVersionUID = 8735448948976387594L;
 
     @TableGenerator(
@@ -97,14 +98,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
 
     public Process() {
     }
-
-    public boolean isRunning(){
-        return DictStates.STATE_RUNNING == state.getCurrentState().getId();
-    }
-    
-    public boolean isCompleted(){
-        return DictStates.STATE_COMPLETED == state.getCurrentState().getId();
-    }
     
     /* GETS & SETS */
 
@@ -147,23 +140,29 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.doc = doc;
     }
 
+    @Override
     public Date getBeginDate() {
         return beginDate;
     }
+    @Override
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }
 
+    @Override
     public Date getPlanExecDate() {
         return planExecDate;
     }
+    @Override
     public void setPlanExecDate(Date planExecDate) {
         this.planExecDate = planExecDate;
     }
 
+    @Override
     public Date getFactExecDate() {
         return factExecDate;
     }
+    @Override
     public void setFactExecDate(Date factExecDate) {
         this.factExecDate = factExecDate;
     }

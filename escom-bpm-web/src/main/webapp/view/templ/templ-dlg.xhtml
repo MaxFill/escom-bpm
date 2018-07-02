@@ -58,34 +58,36 @@
                     <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
                         <p:autoUpdate />
                     </p:messages>
-
-                    <p:toolbar>
-                        <f:facet name="left">
-                            <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
-                                <ui:insert name="menuActions" />
-                                <p:separator />
-                                <p:menuitem icon="ico_close" value="#{bundle.Close}"
-                                            disabled="#{_canNotClose}" immediate="true" process="@this"
-                                            action="#{_bean.onCloseCard()}">
-                                </p:menuitem>
-                            </p:menuButton>
-                            <span class="ui-separator">
-                                <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                            </span>
-                            <ui:insert name="toolbarComponents"/>
-                        </f:facet>
-
-                        <f:facet name="right">
-                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                             title="#{bundle.Close}" immediate="true" 
-                                             disabled="#{_canNotClose}"                                             
-                                             actionListener="#{_bean.onCloseCard()}">
-                            </p:commandButton>
-                        </f:facet>
-                    </p:toolbar>
                     
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
-                        <ui:insert name="centerFormContent"/>
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                        <p:toolbar>
+                            <f:facet name="left">
+                                <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                    <ui:insert name="menuActions" />
+                                    <p:separator />
+                                    <p:menuitem icon="ico_close" value="#{bundle.Close}"
+                                                disabled="#{_canNotClose}" immediate="true" process="@this"
+                                                action="#{_bean.onCloseCard()}">
+                                    </p:menuitem>
+                                </p:menuButton>
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                </span>
+                                <ui:insert name="toolbarComponents"/>
+                            </f:facet>
+
+                            <f:facet name="right">
+                                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
+                                                 title="#{bundle.Close}" immediate="true" 
+                                                 disabled="#{_canNotClose}"                                             
+                                                 actionListener="#{_bean.onCloseCard()}">
+                                </p:commandButton>
+                            </f:facet>
+                        </p:toolbar>
+                    
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
+                            <ui:insert name="centerFormContent"/>
+                        </p:panelGrid>
                     </p:panelGrid>
 
                     <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/>
