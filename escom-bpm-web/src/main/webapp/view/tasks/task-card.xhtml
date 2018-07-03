@@ -192,10 +192,17 @@
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 
                               readonly="#{taskCardBean.typeEdit eq DictEditMode.VIEW_MODE
                                           or !taskCardBean.haveRightExec
-                                          or taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_STATE_RUNNING }"
-                              height="300" styleClass="ui-grid-col-12"/>                                                           
+                                          or taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_RUNNING }"
+                              height="300" styleClass="ui-grid-col-12"/> 
+                <ui:include src="/view/tasks/exec_reports.xhtml"/>
             </p:panelGrid>
         </p:tab>
             
+    </ui:define>
+    
+     <ui:define name="extColumnsRights">
+        <p:column headerText="#{bundle.Execution}" styleClass="colRight">
+            <p:selectBooleanCheckbox value="#{right.execute}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+        </p:column>        
     </ui:define>
 </ui:composition>

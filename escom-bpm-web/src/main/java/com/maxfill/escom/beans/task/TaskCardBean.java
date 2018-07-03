@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.task;
 
+import com.maxfill.dictionary.DictResults;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
@@ -14,6 +15,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.reports.ProcExeReport;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
@@ -70,6 +72,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private int reminderDeltaMinute = 0;
     private String[] reminderDays;
     private List<String> sourceDays;
+    
+    private ProcExeReport currentReport;
     
     @Override
     public void doPrepareOpen(Task task){              
@@ -141,6 +145,31 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     /**
+     * Проверка задачи перед её выполнением
+     * @param task
+     * @param result
+     * @param errors 
+     */
+    private void checkTaskBeforeExecute(Task task, Result result, Set<String> errors ){
+        if (StringUtils.isEmpty(task.getComment()) || task.getComment().length() < 3){
+            switch (result.getName()){
+                case DictResults.RESULT_CANCELLED :{
+                    errors.add("ReportIsNotFilled");
+                    break;
+                }
+                case DictResults.RESULT_REFUSED :{
+                    errors.add("ReportIsNotFilled");
+                    break;
+                }
+                case DictResults.RESULT_AGREE_WITH_REMARK :{
+                    errors.add("ReportIsNotFilled");
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
      * Обработка события выполнения задачи
      * @param result
      * @return 
@@ -148,6 +177,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     public String onExecute(Result result){        
         Set<String> errors = new HashSet<>();
         checkItemBeforeSave(getEditedItem(), errors); 
+        checkTaskBeforeExecute(getEditedItem(), result, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return "";
@@ -303,6 +333,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
     
     /* GETS & SETS */
 
+    @Override
+    public Integer getRightColSpan(){
+        return 7;
+    }
+        
     public int getReminderDeltaDay() {
         return reminderDeltaDay;
     }
@@ -354,7 +389,14 @@ public class TaskCardBean extends BaseCardBean<Task>{
         }
         return sourceDays;
     }  
-    
+
+    public ProcExeReport getCurrentReport() {
+        return currentReport;
+    }
+    public void setCurrentReport(ProcExeReport currentReport) {
+        this.currentReport = currentReport;
+    }
+        
     @Override
     public boolean isReadOnly() {
         return readOnly;

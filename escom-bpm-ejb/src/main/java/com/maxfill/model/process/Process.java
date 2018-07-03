@@ -2,11 +2,11 @@ package com.maxfill.model.process;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.process.reports.ProcExeReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
 import org.apache.commons.lang.StringUtils;
@@ -96,6 +96,9 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcessLog> itemLogs = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "process")
+    private List<ProcExeReport> reports = new ArrayList<>();
+    
     public Process() {
     }
     
@@ -232,6 +235,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.itemLogs = itemLogs;
     }
 
+    public List<ProcExeReport> getReports() {
+        return reports;
+    }
+    public void setReports(List<ProcExeReport> reports) {
+        this.reports = reports;
+    }
+    
     public String getRegNumber() {
         return regNumber;
     }

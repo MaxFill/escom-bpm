@@ -2,8 +2,8 @@ package com.maxfill.services.workflow;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictLogEvents;
+import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
-import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.DocFacade;
 import com.maxfill.facade.ProcessFacade;
@@ -14,6 +14,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
+import com.maxfill.model.process.reports.ProcExeReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.states.State;
@@ -36,7 +37,6 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -343,11 +343,13 @@ public class WorkflowImpl implements Workflow {
             task.getState().setCurrentState(stateFacade.getCompletedState());
             scheme.getTasks().remove(task);
             scheme.getTasks().add(task);
-            //TODO раскомментровать после приведения задачи к BaseDict!
-            //taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
-            run(process, startElement, errors);            
+            taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
+            ProcExeReport report = new ProcExeReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
+            process.getReports().add(report);
+            task.getReports().add(report);
+            run(process, startElement, errors);
         }
-    }    
+    }
     
     /**
      * Запуск задач на выполнение
@@ -362,6 +364,7 @@ public class WorkflowImpl implements Workflow {
                         task.setBeginDate(new Date());
                         task.setFactExecDate(null);
                         task.setResult(null);
+                        task.setComment(null);
                         if ("delta".equals(task.getDeadLineType())){
                             task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
                         }
@@ -371,6 +374,7 @@ public class WorkflowImpl implements Workflow {
                         notificationService.makeNotification(task, msg.toString()); //уведомление о назначении задачи
                         taskFacade.makeReminder(task); 
                         taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
+                        taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
                         task.getState().setCurrentState(stateFacade.getRunningState());
                     });
             }
@@ -417,6 +421,7 @@ public class WorkflowImpl implements Workflow {
                 .forEach(task->{
                         task.getState().setCurrentState(stateCancel);
                         notificationService.makeNotification(task, msg); //уведомление об аннулировании задачи
+                        taskFacade.addLogEvent(task, DictLogEvents.TASK_CANCELLED, user);
                     });        
         process.getState().setCurrentState(stateCancel);        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, user);

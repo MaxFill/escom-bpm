@@ -8,11 +8,13 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.facade.ProcessFacade;
+import com.maxfill.facade.StateFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.EscomUtils;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +46,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private Date dateStart;
     private Date dateEnd;
     private User initiator;
-    
+    private List<State> states = new ArrayList<>();
+            
     @EJB
     private ProcessFacade processFacade;
+    @EJB
+    private StateFacade stateFacade;
+    
     @Inject
     private ProcessBean processBean;
     @Inject
@@ -60,7 +66,8 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     
     @Override
-    public void doBeforeOpenCard(Map<String, String> params) {                
+    public void doBeforeOpenCard(Map<String, String> params) { 
+        states.add(stateFacade.getRunningState());
     }    
     
     /**
@@ -104,6 +111,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         } 
         if (initiator != null){
             filters.put("author", initiator);
+        }
+        if (!states.isEmpty()){
+            filters.put("states", states);
         }
         return filters;
     }
@@ -158,6 +168,13 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             
     /* *** GETS & SETS *** */
 
+    public List<State> getStates() {
+        return states;
+    }
+    public void setStates(List<State> states) {
+        this.states = states;
+    }
+    
     public User getInitiator() {
         return initiator;
     }

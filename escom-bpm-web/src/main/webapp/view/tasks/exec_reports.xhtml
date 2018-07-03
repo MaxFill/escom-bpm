@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">      
+        
+
+    <p:dataTable var="report" value="#{_bean.editedItem.reports}" 
+                 rowKey="#{report.id}" selectionMode="single" selection="#{_bean.currentReport}"
+                 emptyMessage="#{bundle.EmptyTable}"
+                 paginator="true" paginatorPosition="bottom"  
+                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5, 10, 20, 35, 50"  rows="10"
+                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                 sortBy="#{report.dateCreate}" sortOrder="descending">
+                
+        <p:column headerText="#{bundle.Author}" sortBy="#{report.author.shortFIO}" width="180">
+            <h:outputLabel value="#{report.author.shortFIO}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.DateCreate}" sortBy="#{report.dateCreate}" style="text-align: center;" width="100">
+            <h:outputLabel value="#{report.dateCreate}">
+                <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+            </h:outputLabel>
+        </p:column>
+        
+        <p:column headerText="#{bundle.Content}" >
+            <h:outputLabel value="#{report.content}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.Content}" sortBy="#{report.status}">
+            <h:outputLabel value="#{_bean.getLabelFromBundle(report.status)}" />
+        </p:column>
+       
+        <p:column width="16" >
+            <p:commandButton title="#{bundle.Open}" icon="ui-icon-document"
+                             update="#{_frm}:mainTabView:reportFRM"
+                             onclick="PF('dlgReport').show();">
+            </p:commandButton>
+        </p:column>
+    </p:dataTable>
+
+    <p:dialog header="#{bundle.Report}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgReport">
+        <h:form id="reportFRM">
+            <p:panelGrid id="reportPanel" columns="1" styleClass="ui-grid-col-12 without-spaces" rendered="#{_bean.currentReport != null }" >                
+                <p:outputLabel value="#{bundle.Comment}"/>
+                <p:textEditor value="#{_bean.currentReport.content}" 
+                              readonly="true"
+                              height="300" styleClass="ui-grid-col-12"/>                 
+            </p:panelGrid>                   
+        </h:form>
+    </p:dialog>
+</ui:composition>

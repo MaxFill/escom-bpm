@@ -7,6 +7,7 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.Results;
 import com.maxfill.model.WithDatesPlans;
+import com.maxfill.model.process.reports.ProcExeReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.result.Result;
@@ -110,6 +111,9 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
+       
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    private List<ProcExeReport> reports = new ArrayList<>();
         
     /* Категории */
     //ToDo добавить категории
@@ -252,6 +256,13 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.taskLinkUID = taskLinkUID;
     }
 
+    public List<ProcExeReport> getReports() {
+        return reports;
+    }
+    public void setReports(List<ProcExeReport> reports) {
+        this.reports = reports;
+    }
+    
     @Override
     public Date getBeginDate() {
         return beginDate;

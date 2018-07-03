@@ -1,5 +1,6 @@
 package com.maxfill.facade.base;
 
+import com.maxfill.model.states.State;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
@@ -115,13 +116,18 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
                     Map <String, Date> dateFilters = (Map) filterValue;
                     if (dateFilters.containsKey("startDate")){
                         criteries.add(builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate")));
-                    }
-                    if (dateFilters.containsKey("endDate")){
-                        criteries.add(builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate")));
-                    }
-                } else {
+                    } else 
+                        if (dateFilters.containsKey("endDate")){
+                            criteries.add(builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate")));
+                        }
+                } else {                    
                     if(filterValue != null) {
-                        criteries.add(builder.equal(root.get(filterProperty), filterValue));
+                        if ("states".equals(filterProperty)){
+                            Predicate predicate = root.get("state").get("currentState").in((List<State>) filterValue);
+                            criteries.add(predicate);
+                        } else {
+                            criteries.add(builder.equal(root.get(filterProperty), filterValue));
+                        }
                     } else {
                         criteries.add(builder.isNull(root.get(filterProperty)));
                     }

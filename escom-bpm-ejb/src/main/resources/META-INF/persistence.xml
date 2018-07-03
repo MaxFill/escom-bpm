@@ -80,6 +80,7 @@
     <class>com.maxfill.model.task.result.ResultStates</class>
     <class>com.maxfill.model.task.result.Result</class>
     <class>com.maxfill.model.process.conditions.Condition</class>
+    <class>com.maxfill.model.process.reports.ProcExeReport</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

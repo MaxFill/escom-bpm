@@ -16,9 +16,18 @@ public final class DictResults {
     
     public static final String RESULT_DONE = "Done";                    //ВЫПОЛНЕНО
     public static final String RESULT_AGREED = "Agreed";                  //СОГЛАСОВАНО
-    public static final String RESULT_AGREE_WITH_REMARK = "AgreedWithComments";       //СОГЛАСОВАНО С ЗАМЕЧАНИЕМ
-    public static final String RESULT_REFUSED = "Refused";                 //ОТКЛОНЕНО
-    public static final String RESULT_CANCELLED = "Cancelled";               //ОТМЕНЕНО
+    /**
+     * СОГЛАСОВАНО С ЗАМЕЧАНИЕМ
+     */
+    public static final String RESULT_AGREE_WITH_REMARK = "AgreedWithComments";      
+    /**
+     * ОТКЛОНЕНО
+     */
+    public static final String RESULT_REFUSED = "Refused";
+    /**
+     * ОТМЕНЕНО
+     */
+    public static final String RESULT_CANCELLED = "Cancelled";
     
     
 }

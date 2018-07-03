@@ -12,6 +12,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import org.primefaces.model.TreeNode;
 
 @Named
 @SessionScoped
@@ -46,5 +47,10 @@ public class ProcessTypesBean extends BaseTreeBean<ProcessType,ProcessType> {
     @Override
     public Class <ProcessType> getOwnerClass() {
         return null;
+    }
+    
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
     }
 }

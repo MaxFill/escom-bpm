@@ -9,7 +9,6 @@ import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
-import com.maxfill.facade.StaffFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.facade.TaskFacade;
@@ -17,6 +16,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
+import com.maxfill.model.process.reports.ProcExeReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.task.Task;
@@ -72,8 +72,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     @EJB
     private Workflow workflow;
     @EJB
-    private StaffFacade staffFacade;
-    @EJB
     private TaskFacade taskFacade;
     @EJB
     private ConditionFacade conditionFacade;
@@ -92,7 +90,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private final Set<Task> editedTasks = new HashSet<>();
     private Task currentTask;
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
-    
+    private ProcExeReport currentReport;
     private final DefaultDiagramModel model = new DefaultDiagramModel();
     
     @Override
@@ -668,7 +666,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     private Element createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getScheme(), taskElem.getUid());
+        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getScheme(), taskElem.getUid());        
+        task.setDeadLineType("data");
+        task.setPlanExecDate(getEditedItem().getPlanExecDate());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -850,12 +850,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         Scheme scheme = new Scheme(getEditedItem());
         getEditedItem().setScheme(scheme);
         model.clear();
-        Staff staff = staffFacade.findStaffByUser(getCurrentUser());
         Set<String> errors = new HashSet <>();
         
-        createStart(2, 4, errors);                     
-
-        createTask(staff, "Согласовать документ!", 10, 2, errors);
+        createStart(2, 4, errors);
       
         createCondition(conditionFacade.find(1), 28, 18, errors);
 
@@ -1044,6 +1041,13 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }    
     
     /* GETS & SETS */
+    
+    public ProcExeReport getCurrentReport() {
+        return currentReport;
+    }
+    public void setCurrentReport(ProcExeReport currentReport) {
+        this.currentReport = currentReport;
+    }
     
     public List<Task> getTasksFromModel(){
         return getScheme().getElements().getTasks().entrySet().stream()

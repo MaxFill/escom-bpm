@@ -64,7 +64,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         TreeNode rezNode = null;
         if (getFacade().preloadCheckRightView(item, getCurrentUser())) {
             TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
-
+            doExpandTreeNode(newNode);
             List<T> childs = getFacade().findActualChilds(item);
             childs.stream()
                     .forEach(itemChild -> addItemInTree(newNode, itemChild, typeNode)
@@ -73,6 +73,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         }
         return rezNode;
     }              
+    
+    protected void doExpandTreeNode(TreeNode node){}
     
     /* Удаление подчинённых (связанных) объектов */
     @Override

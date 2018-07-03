@@ -189,7 +189,13 @@
                     <p:ajax event="connectionChange" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnectionChange}" />
                 </p:diagram>
             </p:panelGrid>
-        </p:tab>        
+        </p:tab>
+        
+        <p:tab title="#{bundle.ReportsExe}">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                <ui:include src="/view/tasks/exec_reports.xhtml"/>
+            </p:panelGrid>
+        </p:tab>
     </ui:define>
    
     <ui:define name="customStyleCSS">
