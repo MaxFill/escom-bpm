@@ -70,6 +70,7 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 5);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (24, N'ProcessTemplate', N'ProcessTemplate', N'ProcessTemplate', 0, N'ui-icon-clipboard', NULL, 5);
         </sql>
         
         <!-- Доступные переходы между состояними объектов -->
@@ -185,6 +186,11 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 7, 6);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 6, 7);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(23, 8, 7);
+            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(24, 7, 8);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(24, 7, 6);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(24, 6, 7);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(24, 8, 7);
         </sql>
 
         <!-- Доступные состояния объектов метаданных (какие состояния доступны объекту)-->
@@ -276,6 +282,11 @@
             INSERT objectsStates (ObjId, StateId) VALUES (23, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (23, 7);
             INSERT objectsStates (ObjId, StateId) VALUES (23, 8);
+            
+            <!-- Process Template -->
+            INSERT objectsStates (ObjId, StateId) VALUES (24, 6);
+            INSERT objectsStates (ObjId, StateId) VALUES (24, 7);
+            INSERT objectsStates (ObjId, StateId) VALUES (24, 8);
         </sql>
 
         <!-- Фильтры -->

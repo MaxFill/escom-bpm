@@ -3,8 +3,8 @@ package com.maxfill.model.process.types;
 import com.google.gson.Gson;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.Results;
-import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.templates.ProcTempl;
 import com.maxfill.model.task.result.Result;
 
 import javax.persistence.*;
@@ -36,7 +36,11 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
 
     @Column(name = "AvaibleResults")
     private String avaibleResultsJSON;
-        
+
+    /* Список шаблонов */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
+    private List<ProcTempl> templates = new ArrayList<>();
+
     /* Процессы */
     @OneToMany
     @JoinColumn(name = "owner")
@@ -54,6 +58,13 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
 
     /* GETS & SETS */
 
+    public List<ProcTempl> getTemplates() {
+        return templates;
+    }
+    public void setTemplates(List<ProcTempl> templates) {
+        this.templates = templates;
+    }
+    
     @Override
     public Integer getId() {
         return id;

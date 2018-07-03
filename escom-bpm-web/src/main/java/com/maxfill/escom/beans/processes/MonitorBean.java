@@ -100,9 +100,12 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         });
     }
     
-    protected Map<String, Object> makeFilters(Map filters) {
-        //filters.put("addressee", sessionBean.getCurrentUser());        
-        //filters.put("dateReading", null);        
+    /**
+     * Формирование фильтров для запроса
+     * @param filters
+     * @return 
+     */
+    protected Map<String, Object> makeFilters(Map filters) {      
         if(dateStart != null || dateEnd != null) {
             Map <String, Date> dateFilters = new HashMap <>();
             dateFilters.put("startDate", dateStart);        //дата начала периода отбора

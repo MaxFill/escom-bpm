@@ -188,13 +188,15 @@
 
         <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                   
-                <p:outputLabel value="#{bundle.Comment}"/>
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 
                               readonly="#{taskCardBean.typeEdit eq DictEditMode.VIEW_MODE
                                           or !taskCardBean.haveRightExec
                                           or taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_RUNNING }"
                               height="300" styleClass="ui-grid-col-12"/> 
-                <ui:include src="/view/tasks/exec_reports.xhtml"/>
+                <h:panelGroup rendered="#{taskCardBean.editedItem.reports.size() > 1}" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.ReportsExe}:"/>
+                    <ui:include src="/view/tasks/reports.xhtml" />
+                </h:panelGroup>
             </p:panelGrid>
         </p:tab>
             
@@ -204,5 +206,9 @@
         <p:column headerText="#{bundle.Execution}" styleClass="colRight">
             <p:selectBooleanCheckbox value="#{right.execute}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
         </p:column>        
+    </ui:define>
+    
+    <ui:define name="dialogs">
+        <ui:include src="/view/tasks/report.xhtml"/>
     </ui:define>
 </ui:composition>

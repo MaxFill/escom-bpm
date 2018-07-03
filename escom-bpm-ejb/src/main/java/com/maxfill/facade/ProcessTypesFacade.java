@@ -3,7 +3,6 @@ package com.maxfill.facade;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.types.ProcessTypeLog;
 import com.maxfill.model.process.types.ProcessTypeStates;

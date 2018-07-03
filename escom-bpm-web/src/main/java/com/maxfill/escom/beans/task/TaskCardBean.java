@@ -15,7 +15,7 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
-import com.maxfill.model.process.reports.ProcExeReport;
+import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
@@ -73,7 +73,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private String[] reminderDays;
     private List<String> sourceDays;
     
-    private ProcExeReport currentReport;
+    private ProcReport currentReport;
     
     @Override
     public void doPrepareOpen(Task task){              
@@ -154,15 +154,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (StringUtils.isEmpty(task.getComment()) || task.getComment().length() < 3){
             switch (result.getName()){
                 case DictResults.RESULT_CANCELLED :{
-                    errors.add("ReportIsNotFilled");
+                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
                     break;
                 }
                 case DictResults.RESULT_REFUSED :{
-                    errors.add("ReportIsNotFilled");
+                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
                     break;
                 }
                 case DictResults.RESULT_AGREE_WITH_REMARK :{
-                    errors.add("ReportIsNotFilled");
+                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
                     break;
                 }
             }
@@ -331,6 +331,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return getLabelFromBundle(dayOfWeek.name());
     }
     
+    public void onOpenExeReport(ProcReport report){
+        currentReport = report;
+    }
+    
     /* GETS & SETS */
 
     @Override
@@ -390,10 +394,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return sourceDays;
     }  
 
-    public ProcExeReport getCurrentReport() {
+    public ProcReport getCurrentReport() {
         return currentReport;
     }
-    public void setCurrentReport(ProcExeReport currentReport) {
+    public void setCurrentReport(ProcReport currentReport) {
         this.currentReport = currentReport;
     }
         

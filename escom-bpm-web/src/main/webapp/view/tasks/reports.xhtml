@@ -6,7 +6,7 @@
         
 
     <p:dataTable var="report" value="#{_bean.editedItem.reports}" 
-                 rowKey="#{report.id}" selectionMode="single" selection="#{_bean.currentReport}"
+                 rowKey="#{report.tempId}" selectionMode="single" selection="#{_bean.currentReport}"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom"  
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
@@ -26,7 +26,7 @@
         </p:column>
         
         <p:column headerText="#{bundle.Content}" >
-            <h:outputLabel value="#{report.content}" />
+            <h:outputLabel escape="false" value="#{report.content}" />
         </p:column>
         
         <p:column headerText="#{bundle.Content}" sortBy="#{report.status}">
@@ -35,20 +35,11 @@
        
         <p:column width="16" >
             <p:commandButton title="#{bundle.Open}" icon="ui-icon-document"
-                             update="#{_frm}:mainTabView:reportFRM"
+                             update="reportFRM"
+                             actionListener="#{_bean.onOpenExeReport(report)}"
                              onclick="PF('dlgReport').show();">
             </p:commandButton>
         </p:column>
     </p:dataTable>
 
-    <p:dialog header="#{bundle.Report}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgReport">
-        <h:form id="reportFRM">
-            <p:panelGrid id="reportPanel" columns="1" styleClass="ui-grid-col-12 without-spaces" rendered="#{_bean.currentReport != null }" >                
-                <p:outputLabel value="#{bundle.Comment}"/>
-                <p:textEditor value="#{_bean.currentReport.content}" 
-                              readonly="true"
-                              height="300" styleClass="ui-grid-col-12"/>                 
-            </p:panelGrid>                   
-        </h:form>
-    </p:dialog>
 </ui:composition>

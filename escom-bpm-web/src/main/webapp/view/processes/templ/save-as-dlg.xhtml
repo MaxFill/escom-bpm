@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">                
+
+    <p:dialog header="#{bundle.SaveAsTemlate}" width="500" height="300" position="center" modal="true" 
+              closeOnEscape="true" resizable="true" widgetVar="SaveAsTemplDLG">
+        <h:form id="SaveAsTemplFRM">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:messages showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                    <p:autoUpdate />
+                </p:messages>
+                
+                <p:outputLabel value="#{bundle.NameTemplate}:" indicateRequired="true"/>
+                <p:inputText value="#{processCardBean.nameTemplate}" styleClass="ui-grid-col-12"
+                             required="true"
+                             requiredMessage="#{bundle.Field} [#{bundle.NameTemplate}] #{bundle.MustBeFilled}">
+                </p:inputText>
+                <p:spacer height="5"/>
+                <p:separator/>
+                <p:commandButton value="#{bundle.Save}"                                  
+                                 update="SaveAsTemplFRM"
+                                 actionListener="#{processCardBean.onSaveModelAsTempl()}"/>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+    
+</ui:composition>

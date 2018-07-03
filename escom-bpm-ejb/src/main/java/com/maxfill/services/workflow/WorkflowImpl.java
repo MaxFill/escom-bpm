@@ -14,7 +14,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
-import com.maxfill.model.process.reports.ProcExeReport;
+import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.states.State;
@@ -344,7 +344,7 @@ public class WorkflowImpl implements Workflow {
             scheme.getTasks().remove(task);
             scheme.getTasks().add(task);
             taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
-            ProcExeReport report = new ProcExeReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
+            ProcReport report = new ProcReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
             process.getReports().add(report);
             task.getReports().add(report);
             run(process, startElement, errors);

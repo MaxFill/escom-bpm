@@ -9,6 +9,8 @@ import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ConditionFacade;
 import com.maxfill.facade.ProcessFacade;
+import com.maxfill.facade.ProcessTemplFacade;
+import com.maxfill.facade.ProcessTypesFacade;
 import com.maxfill.facade.StateFacade;
 import com.maxfill.facade.StatusesDocFacade;
 import com.maxfill.facade.TaskFacade;
@@ -16,13 +18,16 @@ import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
-import com.maxfill.model.process.reports.ProcExeReport;
+import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
+import com.maxfill.model.process.templates.ProcTempl;
+import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -63,12 +68,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private static final long serialVersionUID = -5558740260204665618L;    
     
     @Inject
-    private ProcessBean processBean;
-    @Inject
     private TaskBean taskBean;
     
     @EJB
     private ProcessFacade processFacade;
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
+    @EJB
+    private ProcessTemplFacade processTemplFacade;
     @EJB
     private Workflow workflow;
     @EJB
@@ -90,8 +97,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private final Set<Task> editedTasks = new HashSet<>();
     private Task currentTask;
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
-    private ProcExeReport currentReport;
+    private ProcReport currentReport;
     private final DefaultDiagramModel model = new DefaultDiagramModel();
+    private String nameTemplate;
     
     @Override
     protected BaseDictFacade getFacade() {
@@ -843,42 +851,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     /**
-     * Создание новой схемы процесса
-     * @return
-     */
-    private void createScheme(){
-        Scheme scheme = new Scheme(getEditedItem());
-        getEditedItem().setScheme(scheme);
-        model.clear();
-        Set<String> errors = new HashSet <>();
-        
-        createStart(2, 4, errors);
-      
-        createCondition(conditionFacade.find(1), 28, 18, errors);
-
-        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
-        
-        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
-        
-        createExit(Boolean.TRUE, 50, 35, errors);
-    }
-
-    /**
-     * Загрузка визуальной схемы процесса из шаблона
-     */
-    public void onLoadModelFromTempl(){
-        //ToDo !
-        modelRefresh();
-    }
-    
-    /**
-     * Сохранение модели процесса в шаблон
-     */
-    public void onSaveModelToTempl(){
-        //ToDo !
-    }
-
-    /**
      * Обработка события соединения объектов визуальной модели
      * @param event 
      */
@@ -961,6 +933,67 @@ public class ProcessCardBean extends BaseCardBean<Process> {
        
     }    
     
+    /* ШАБЛОНЫ ПРОЦЕССА */
+    
+    /**
+     * Создание новой схемы процесса
+     * @return
+     */
+    private void createScheme(){
+        Scheme scheme = new Scheme(getEditedItem());
+        getEditedItem().setScheme(scheme);
+        model.clear();
+        Set<String> errors = new HashSet <>();
+        
+        createStart(2, 4, errors);
+      
+        createCondition(conditionFacade.find(1), 28, 18, errors);
+
+        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
+        
+        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
+        
+        createExit(Boolean.TRUE, 50, 35, errors);
+    }
+
+    /**
+     * Загрузка визуальной схемы процесса из шаблона
+     */
+    public void onLoadModelFromTempl(){        
+        onClearModel();
+        //ToDo !
+        modelRefresh();
+    }
+    
+    /**
+     * Сохранение модели процесса в шаблон
+     */
+    public void onSaveModelAsTempl(){        
+        ProcessType owner = getEditedItem().getOwner();        
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", nameTemplate);
+        ProcTempl procTempl = processTemplFacade.createItem(getCurrentUser(), owner, params);
+        Set<String> errors = new HashSet<>();
+        Scheme scheme = getScheme();
+        workflow.validateScheme(scheme, errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        workflow.packScheme(scheme);
+        procTempl.setElements(scheme.getPackElements());
+        Tuple result = processTemplFacade.findDublicateExcludeItem(procTempl);
+        if ((Boolean)result.a){
+            MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
+            return;
+        }
+        ProcessType processType = processTypesFacade.find(owner.getId());
+        processType.getTemplates().add(procTempl);
+        processTypesFacade.edit(processType);
+        PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
+        MsgUtils.succesMsg("Saved");
+    }
+    
     /* ПРОЧИЕ МЕТОДЫ */    
     
     /**
@@ -1040,12 +1073,23 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         getEditedItem().setName(sb.toString());
     }    
     
+    public void onOpenExeReport(ProcReport report){
+        currentReport = report;
+    }
+        
     /* GETS & SETS */
-    
-    public ProcExeReport getCurrentReport() {
+
+    public String getNameTemplate() {
+        return nameTemplate;
+    }
+    public void setNameTemplate(String nameTemplate) {
+        this.nameTemplate = nameTemplate;
+    }
+        
+    public ProcReport getCurrentReport() {
         return currentReport;
     }
-    public void setCurrentReport(ProcExeReport currentReport) {
+    public void setCurrentReport(ProcReport currentReport) {
         this.currentReport = currentReport;
     }
     

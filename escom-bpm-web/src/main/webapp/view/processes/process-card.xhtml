@@ -162,16 +162,25 @@
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
                         </span>
 
-                        <p:commandButton title="Load" icon="ui-icon-folder-open"
+                        <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
                                          disabled="#{processCardBean.isReadOnly()}"
                                          actionListener="#{processCardBean.onLoadModelFromTempl()}"
                                          update="diagramm">
                         </p:commandButton>
+                        <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         update="SaveAsTemplFRM"
+                                         onclick="PF('SaveAsTemplDLG').show();">
+                        </p:commandButton>
+                        
                         <p:commandButton title="Clear" icon="ui-icon-closethick"
                                          disabled="#{processCardBean.isReadOnly()}"
                                          actionListener="#{processCardBean.onClearModel()}"
                                          update="diagramm">
                         </p:commandButton>
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>                          
                         <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
                     </f:facet>
 
@@ -193,7 +202,7 @@
         
         <p:tab title="#{bundle.ReportsExe}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <ui:include src="/view/tasks/exec_reports.xhtml"/>
+                <ui:include src="/view/tasks/reports.xhtml"/>
             </p:panelGrid>
         </p:tab>
     </ui:define>
@@ -414,4 +423,8 @@
         </p:commandButton>
     </ui:define>
     
+    <ui:define name="dialogs">
+        <ui:include src="/view/tasks/report.xhtml"/>
+        <ui:include src="/view/processes/templ/save-as-dlg.xhtml"/>
+    </ui:define>
 </ui:composition>

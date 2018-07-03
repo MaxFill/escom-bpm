@@ -1,8 +1,6 @@
 package com.maxfill.model.process.types;
 
 import com.maxfill.model.BaseLogItems;
-import com.maxfill.model.posts.Post;
-
 import javax.persistence.*;
 
 @Entity
@@ -20,6 +18,8 @@ public class ProcessTypeLog extends BaseLogItems<ProcessType>{
     public ProcessTypeLog() {
     }
 
+    /* GETS & SETS */
+    
     @Override
     public Integer getId() {
         return id;
@@ -29,6 +29,7 @@ public class ProcessTypeLog extends BaseLogItems<ProcessType>{
         this.id = id;
     }
     
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

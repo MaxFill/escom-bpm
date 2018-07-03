@@ -7,6 +7,7 @@ import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -25,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "processReports")
-public class ProcExeReport implements Serializable, Dict{
+public class ProcReport implements Serializable, Dict{
     private static final long serialVersionUID = 6494874383764066822L;
 
     @Id
@@ -62,10 +64,18 @@ public class ProcExeReport implements Serializable, Dict{
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreate;
 
-    public ProcExeReport() {
+    @Transient
+    @XmlTransient
+    private Integer tempId;
+    
+    private static final AtomicInteger COUNT = new AtomicInteger(0);
+        
+    public ProcReport() {
+        tempId = COUNT.incrementAndGet();
     }
 
-    public ProcExeReport(String content, String status, User author, Process process, Task task) {
+    public ProcReport(String content, String status, User author, Process process, Task task) {        
+        this();
         this.content = content;
         this.status = status;
         this.author = author;
@@ -126,7 +136,11 @@ public class ProcExeReport implements Serializable, Dict{
     public void setTask(Task task) {
         this.task = task;
     }
-    
+
+    public Integer getTempId() {
+        return tempId;
+    }
+        
     /* *** *** */
 
     @Override
@@ -147,7 +161,7 @@ public class ProcExeReport implements Serializable, Dict{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ProcExeReport other = (ProcExeReport) obj;
+        final ProcReport other = (ProcReport) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }

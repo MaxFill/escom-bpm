@@ -1,9 +1,7 @@
 package com.maxfill.model.process.types;
 
 import com.maxfill.model.states.BaseStateItem;
-
 import javax.persistence.*;
-
 import static javax.persistence.GenerationType.TABLE;
 
 @Entity
@@ -25,6 +23,11 @@ public class ProcessTypeStates extends BaseStateItem{
     @Column(name = "Id")
     private Integer id;
 
+    public ProcessTypeStates() {
+    }
+    
+    /* GETS & SETS */
+    
     @Override
     public Integer getId() {
         return id;
@@ -34,6 +37,8 @@ public class ProcessTypeStates extends BaseStateItem{
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

@@ -6,7 +6,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.process.reports.ProcExeReport;
+import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
 import org.apache.commons.lang.StringUtils;
@@ -96,8 +96,9 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcessLog> itemLogs = new ArrayList<>();
 
+    /* Отчёты по исполнению */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "process")
-    private List<ProcExeReport> reports = new ArrayList<>();
+    private List<ProcReport> reports = new ArrayList<>();
     
     public Process() {
     }
@@ -235,10 +236,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.itemLogs = itemLogs;
     }
 
-    public List<ProcExeReport> getReports() {
+    public List<ProcReport> getReports() {
         return reports;
     }
-    public void setReports(List<ProcExeReport> reports) {
+    public void setReports(List<ProcReport> reports) {
         this.reports = reports;
     }
     

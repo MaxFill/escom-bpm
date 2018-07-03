@@ -25,6 +25,11 @@ public class ProcessStates extends BaseStateItem{
     @Column(name = "Id")
     private Integer id;
 
+    public ProcessStates() {
+    }
+    
+    /* GETS & SETS */
+    
     @Override
     public Integer getId() {
         return id;
@@ -34,6 +39,8 @@ public class ProcessStates extends BaseStateItem{
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;
