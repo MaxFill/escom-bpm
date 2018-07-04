@@ -1,7 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:h="http://xmlns.jcp.org/jsf/html">                
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
     <p:dialog header="#{bundle.SaveAsTemlate}" width="500" height="300" position="center" modal="true" 
               closeOnEscape="true" resizable="true" widgetVar="SaveAsTemplDLG">
@@ -11,14 +12,24 @@
                     <p:autoUpdate />
                 </p:messages>
                 
-                <p:outputLabel value="#{bundle.NameTemplate}:" indicateRequired="true"/>
-                <p:inputText value="#{processCardBean.nameTemplate}" styleClass="ui-grid-col-12"
-                             required="true"
-                             requiredMessage="#{bundle.Field} [#{bundle.NameTemplate}] #{bundle.MustBeFilled}">
+                <p:outputLabel value="#{bundle.NameTemplate}:" indicateRequired="true" rendered="#{processCardBean.selectedTempl == null}"/>
+                <p:inputText id="nameTempl" value="#{processCardBean.nameTemplate}" styleClass="ui-grid-col-12"
+                             rendered="#{processCardBean.selectedTempl == null}"
+                             required="true" requiredMessage="#{bundle.Field} [#{bundle.NameTemplate}] #{bundle.MustBeFilled}">
                 </p:inputText>
+                <p:outputLabel value="#{bundle.Select}:"/>
+                <p:selectOneMenu value="#{processCardBean.selectedTempl}" title="#{bundle.ProcessTemplate}" 
+                                 styleClass="ui-grid-col-12"
+                                 valueChangeListener="#{processCardBean.onTemplSelector}" converter="procTemplConverter"
+                                 filter="true" filterMatchMode="startsWith">
+                    <p:ajax update="SaveAsTemplFRM" partialSubmit="true" />
+                    <f:selectItems value="#{processCardBean.templates}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
+                    <f:selectItem itemValue="#{null}" itemLabel="#{'='.concat(bundle.CreateNewTemplate).concat('=')}"/>                    
+                </p:selectOneMenu>
                 <p:spacer height="5"/>
                 <p:separator/>
-                <p:commandButton value="#{bundle.Save}"                                  
+                <p:commandButton id="btnAction" 
+                                 value="#{processCardBean.selectedTempl == null ? bundle.Create : bundle.Rewrite}"                                  
                                  update="SaveAsTemplFRM"
                                  actionListener="#{processCardBean.onSaveModelAsTempl()}"/>
             </p:panelGrid>

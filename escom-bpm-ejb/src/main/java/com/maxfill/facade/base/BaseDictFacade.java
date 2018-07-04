@@ -227,7 +227,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
         Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        List<T> result = q.getResultList();
+        return result;
     }
 
     /**

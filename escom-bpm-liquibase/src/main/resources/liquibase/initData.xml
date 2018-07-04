@@ -69,20 +69,20 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', NULL, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 5);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (24, N'ProcessTemplate', N'ProcessTemplate', N'ProcessTemplate', 0, N'ui-icon-clipboard', NULL, 5);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (24, N'ProcTempl', N'ProcessTemplate', N'ProcessTemplate', 0, N'ui-icon-clipboard', NULL, 7);
         </sql>
         
         <!-- Доступные переходы между состояними объектов -->
         <sql>
             <!-- Documents -->
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 8);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 7);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 5, 7);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 8);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 6);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 5);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 7, 5);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 6, 7);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 6, 5);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 6, 5);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 8, 5);
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(1, 8, 7);
 
@@ -564,6 +564,26 @@
                     VALUES (2, 16, 22, 1, 1, 1, 0, 0, 1, 0, 0, 9);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
                     VALUES (2, 17, 22, 1, 1, 1, 0, 0, 1, 0, 0, 9);
+                    
+<!-- Process templates -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  24, 1, 1, 1, 0, 0, 1, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  24, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 15, 24, 1, 1, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 24, 1, 0, 0, 0, 0, 0, 0, 0, 8);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  24, 1, 0, 0, 0, 0, 0, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  24, 1, 1, 1, 1, 0, 1, 0, 0, 6);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  24, 1, 0, 0, 0, 0, 0, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  24, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 24, 1, 1, 1, 1, 0, 1, 0, 0, 7);
         </sql>
         
         <!-- Группы пользователей -->

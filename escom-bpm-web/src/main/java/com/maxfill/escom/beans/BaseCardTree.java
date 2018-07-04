@@ -22,8 +22,8 @@ import org.apache.commons.beanutils.BeanUtils;
 /* Базовый бин карточек древовидных объектов */
 public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     private static final long serialVersionUID = 1711235249835675543L;
-    private static final int TYPE_RIGHT_CHILDS = 1; //права для дочерних
-    private static final int TYPE_RIGHT_ITEM = 0;   //права для самого объекта
+    //private static final int TYPE_RIGHT_CHILDS = 1; //права для дочерних
+    //private static final int TYPE_RIGHT_ITEM = 0;   //права для самого объекта
         
     protected abstract BaseTreeBean getTreeBean();
     private List<Right> rightsChilds;

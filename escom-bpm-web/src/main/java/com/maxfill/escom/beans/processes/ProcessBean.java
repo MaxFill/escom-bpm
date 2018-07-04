@@ -2,15 +2,11 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ProcessFacade;
 import com.maxfill.facade.base.BaseDictFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;
-import com.maxfill.model.task.Task;
-import java.util.Date;
 import org.primefaces.model.TreeNode;
 
 import javax.ejb.EJB;

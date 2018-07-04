@@ -40,6 +40,7 @@ import java.util.logging.Logger;
  * @param <T> - класс объекта
  */
 public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
+    private static final long serialVersionUID = -3085033375091696717L;
 
     @EJB
     protected PrintService printService;
@@ -285,7 +286,18 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     public List<T> findAll(){        
         return (List<T>) getFacade().findAll().stream()
                     .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
-                    .collect(Collectors.toList());             
+                    .collect(Collectors.toList());
+    }
+    
+    /**
+     * Формирует список дочерних объектов, доступных текущему пользователю
+     * @param owner
+     * @return 
+     */
+    public List<T> findDetailItems(BaseDict owner){
+        return (List<T>) getFacade().findActualDetailItems(owner).stream()
+                .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
+                .collect(Collectors.toList());
     }
     
     /* Копирование объекта */
@@ -298,7 +310,6 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         }
         return newItem;
     }
-
     
     /* Изменение имени вставляемого объекта */
     protected void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){

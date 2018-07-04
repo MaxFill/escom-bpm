@@ -42,7 +42,6 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
         return itemsFacade;
     }
 
-
     @Override
     protected BaseTreeBean getTreeBean() {
         return processTypesBean;
@@ -71,5 +70,12 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     public void setResults(DualListModel<Result> results) {
         this.results = results;
         getEditedItem().setResults(results.getTarget());                
-    }   
+    }  
+
+    @Override
+    public ProcessType getEditedItem() {
+        return super.getEditedItem(); 
+    }
+    
+    
 }

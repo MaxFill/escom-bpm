@@ -5,6 +5,7 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.ConditionFacade;
@@ -54,6 +55,7 @@ import javax.inject.Named;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
@@ -69,6 +71,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     
     @Inject
     private TaskBean taskBean;
+    @Inject
+    private ProcTemplBean procTemplBean;
     
     @EJB
     private ProcessFacade processFacade;
@@ -99,7 +103,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;
     private final DefaultDiagramModel model = new DefaultDiagramModel();
+    
     private String nameTemplate;
+    private ProcTempl selectedTempl;
+    private List<ProcTempl> templates;
     
     @Override
     protected BaseDictFacade getFacade() {
@@ -968,11 +975,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     /**
      * Сохранение модели процесса в шаблон
      */
-    public void onSaveModelAsTempl(){        
-        ProcessType owner = getEditedItem().getOwner();        
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", nameTemplate);
-        ProcTempl procTempl = processTemplFacade.createItem(getCurrentUser(), owner, params);
+    public void onSaveModelAsTempl(){
         Set<String> errors = new HashSet<>();
         Scheme scheme = getScheme();
         workflow.validateScheme(scheme, errors);
@@ -980,18 +983,34 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             MsgUtils.showErrorsMsg(errors);
             return;
         }
-        workflow.packScheme(scheme);
-        procTempl.setElements(scheme.getPackElements());
-        Tuple result = processTemplFacade.findDublicateExcludeItem(procTempl);
-        if ((Boolean)result.a){
-            MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
-            return;
+        workflow.packScheme(scheme);        
+
+        ProcessType processType = processTypesFacade.find(getEditedItem().getOwner().getId());
+        List<ProcTempl> templs = processType.getTemplates();        
+        
+        if (selectedTempl == null) {        //то создаём новый шаблон       
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", nameTemplate);        
+            selectedTempl = processTemplFacade.createItem(getCurrentUser(), processType, params);                        
+            Tuple result = processTemplFacade.findDublicateExcludeItem(selectedTempl);
+            if ((Boolean)result.a){
+                MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
+                return;
+            }
+            processTemplFacade.addLogEvent(selectedTempl, "ObjectCreate", getCurrentUser());
+            selectedTempl.setElements(scheme.getPackElements());            
+            
+            templs.add(selectedTempl);
+            processTypesFacade.edit(processType);
+        } else {    //перезаписываем схему в существующий шаблон            
+            selectedTempl.setElements(scheme.getPackElements());
+            processTemplFacade.addLogEvent(selectedTempl, "ObjectModified", getCurrentUser());
+            processTemplFacade.edit(selectedTempl);            
         }
-        ProcessType processType = processTypesFacade.find(owner.getId());
-        processType.getTemplates().add(procTempl);
-        processTypesFacade.edit(processType);
+        templates = null; 
+        getEditedItem().setOwner(processType);
         PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
-        MsgUtils.succesMsg("Saved");
+        MsgUtils.succesMsg("TemplateSaved");
     }
     
     /* ПРОЧИЕ МЕТОДЫ */    
@@ -1076,9 +1095,37 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onOpenExeReport(ProcReport report){
         currentReport = report;
     }
-        
+     
+    /**
+     * Обработка события выбора шаблона из выпадающего списка
+     * @param event 
+     */
+    public void onTemplSelector(ValueChangeEvent event){
+        selectedTempl = (ProcTempl) event.getNewValue();
+        if (selectedTempl != null){
+            nameTemplate = selectedTempl.getName();
+        } 
+    }
+    
     /* GETS & SETS */
 
+    public List<ProcTempl> getTemplates() {
+        if (templates == null){            
+            templates = procTemplBean.findDetailItems(getEditedItem().getOwner());            
+        }
+        return templates;
+    }
+    public void setTemplates(List<ProcTempl> templates) {
+        this.templates = templates;
+    }
+        
+    public ProcTempl getSelectedTempl() {
+        return selectedTempl;
+    }
+    public void setSelectedTempl(ProcTempl selectedTempl) {
+        this.selectedTempl = selectedTempl;
+    }
+    
     public String getNameTemplate() {
         return nameTemplate;
     }
