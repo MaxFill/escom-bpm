@@ -219,6 +219,83 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
     }
     
+    /* ШАБЛОНЫ ПРОЦЕССА */
+    
+    /**
+     * Создание новой схемы процесса
+     * @return
+     */
+    private void createScheme(){
+        Scheme scheme = new Scheme(getEditedItem());
+        getEditedItem().setScheme(scheme);
+        model.clear();
+        Set<String> errors = new HashSet <>();
+        
+        createStart(2, 4, errors);
+      
+        createCondition(conditionFacade.find(1), 28, 18, errors);
+
+        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
+        
+        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
+        
+        createExit(Boolean.TRUE, 50, 35, errors);
+    }
+
+    /**
+     * Загрузка визуальной схемы процесса из шаблона
+     */
+    public void onLoadModelFromTempl(){        
+        Scheme scheme = new Scheme(getEditedItem());        
+        scheme.setPackElements(selectedTempl.getElements());                 
+        workflow.unpackScheme(scheme);        
+        getEditedItem().setScheme(scheme);
+        restoreModel();
+        onItemChange();        
+        modelRefresh();
+    }
+    
+    /**
+     * Сохранение модели процесса в шаблон
+     */
+    public void onSaveModelAsTempl(){
+        Set<String> errors = new HashSet<>();
+        Scheme scheme = getScheme();
+        workflow.validateScheme(scheme, errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        workflow.packScheme(scheme);        
+
+        ProcessType processType = processTypesFacade.find(getEditedItem().getOwner().getId());
+        List<ProcTempl> templs = processType.getTemplates();        
+        
+        if (selectedTempl == null) {        //то создаём новый шаблон       
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", nameTemplate);        
+            selectedTempl = processTemplFacade.createItem(getCurrentUser(), processType, params);                        
+            Tuple result = processTemplFacade.findDublicateExcludeItem(selectedTempl);
+            if ((Boolean)result.a){
+                MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
+                return;
+            }
+            processTemplFacade.addLogEvent(selectedTempl, "ObjectCreate", getCurrentUser());
+            selectedTempl.setElements(scheme.getPackElements());            
+            
+            templs.add(selectedTempl);
+            processTypesFacade.edit(processType);
+        } else {    //перезаписываем схему в существующий шаблон            
+            selectedTempl.setElements(scheme.getPackElements());
+            processTemplFacade.addLogEvent(selectedTempl, "ObjectModified", getCurrentUser());
+            processTemplFacade.edit(selectedTempl);            
+        }
+        templates = null; 
+        getEditedItem().setOwner(processType);
+        PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
+        MsgUtils.succesMsg("TemplateSaved");
+    }
+    
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
 
     /**
@@ -258,7 +335,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private void restoreModel(){        
         model.clear();
         Map<String, Element> elementMap = new HashMap <>();        
-        getScheme().getElements().getTasks().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getTasks().forEach((k, taskEl)->{             
+            if (taskEl.getTask() == null){
+                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), null, getCurrentUser(), getEditedItem().getPlanExecDate(), getScheme(), taskEl.getUid());
+                taskEl.setTask(task);
+                getScheme().getTasks().add(task);
+            }
+            elementMap.put(k, createElement(taskEl));
+        });
         getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
@@ -502,7 +586,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         Set<String> errors = new HashSet<>();
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
-            createTask(executor, "Согласовать документ!", defX, defY, metodErr); 
+            createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), defX, defY, metodErr); 
             defX = defX + 5;
             defY = defY + 5;
             if (!metodErr.isEmpty()){
@@ -681,9 +765,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     private Element createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getScheme(), taskElem.getUid());        
-        task.setDeadLineType("data");
-        task.setPlanExecDate(getEditedItem().getPlanExecDate());
+        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getEditedItem().getPlanExecDate(), getScheme(), taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -938,80 +1020,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         sb.append("])");      
         PrimeFaces.current().executeScript(sb.toString());
        
-    }    
-    
-    /* ШАБЛОНЫ ПРОЦЕССА */
-    
-    /**
-     * Создание новой схемы процесса
-     * @return
-     */
-    private void createScheme(){
-        Scheme scheme = new Scheme(getEditedItem());
-        getEditedItem().setScheme(scheme);
-        model.clear();
-        Set<String> errors = new HashSet <>();
-        
-        createStart(2, 4, errors);
-      
-        createCondition(conditionFacade.find(1), 28, 18, errors);
-
-        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
-        
-        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
-        
-        createExit(Boolean.TRUE, 50, 35, errors);
-    }
-
-    /**
-     * Загрузка визуальной схемы процесса из шаблона
-     */
-    public void onLoadModelFromTempl(){        
-        onClearModel();
-        //ToDo !
-        modelRefresh();
-    }
-    
-    /**
-     * Сохранение модели процесса в шаблон
-     */
-    public void onSaveModelAsTempl(){
-        Set<String> errors = new HashSet<>();
-        Scheme scheme = getScheme();
-        workflow.validateScheme(scheme, errors);
-        if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
-            return;
-        }
-        workflow.packScheme(scheme);        
-
-        ProcessType processType = processTypesFacade.find(getEditedItem().getOwner().getId());
-        List<ProcTempl> templs = processType.getTemplates();        
-        
-        if (selectedTempl == null) {        //то создаём новый шаблон       
-            Map<String, Object> params = new HashMap<>();
-            params.put("name", nameTemplate);        
-            selectedTempl = processTemplFacade.createItem(getCurrentUser(), processType, params);                        
-            Tuple result = processTemplFacade.findDublicateExcludeItem(selectedTempl);
-            if ((Boolean)result.a){
-                MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
-                return;
-            }
-            processTemplFacade.addLogEvent(selectedTempl, "ObjectCreate", getCurrentUser());
-            selectedTempl.setElements(scheme.getPackElements());            
-            
-            templs.add(selectedTempl);
-            processTypesFacade.edit(processType);
-        } else {    //перезаписываем схему в существующий шаблон            
-            selectedTempl.setElements(scheme.getPackElements());
-            processTemplFacade.addLogEvent(selectedTempl, "ObjectModified", getCurrentUser());
-            processTemplFacade.edit(selectedTempl);            
-        }
-        templates = null; 
-        getEditedItem().setOwner(processType);
-        PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
-        MsgUtils.succesMsg("TemplateSaved");
-    }
+    }        
     
     /* ПРОЧИЕ МЕТОДЫ */    
     
@@ -1141,9 +1150,11 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     public List<Task> getTasksFromModel(){
-        return getScheme().getElements().getTasks().entrySet().stream()
+         List<Task> result = getScheme().getElements().getTasks().entrySet().stream()
+                .filter(tsk->tsk.getValue().getTask() != null)
                 .map(tsk->tsk.getValue().getTask())
-                .collect(Collectors.toList());       
+                .collect(Collectors.toList());
+         return result;
     }
     
     /**

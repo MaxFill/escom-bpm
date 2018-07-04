@@ -28,8 +28,9 @@ import liquibase.util.StringUtils;
  * Сущность "Элемент схемы процесса "Поручение"
  */
 @Entity
-@Table(name = "tasks",
-        indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
+@Table(name = "tasks"
+    //, indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)}
+)
 public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements Results, WithDatesPlans{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final AtomicInteger COUNT = new AtomicInteger(0);
@@ -145,7 +146,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
                 break;
             }
             case DictStates.STATE_DRAFT : {
-                style = "draft";
+                if (owner == null){
+                    style = "noExecutor";
+                } else {
+                    style = "draft";
+                }
                 break;
             }
             case DictStates.STATE_COMPLETED : {

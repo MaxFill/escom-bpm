@@ -28,7 +28,7 @@
                 </p:selectOneMenu>
                 <p:spacer height="5"/>
                 <p:separator/>
-                <p:commandButton id="btnAction" 
+                <p:commandButton id="btnAction" style="float: right;"
                                  value="#{processCardBean.selectedTempl == null ? bundle.Create : bundle.Rewrite}"                                  
                                  update="SaveAsTemplFRM"
                                  actionListener="#{processCardBean.onSaveModelAsTempl()}"/>

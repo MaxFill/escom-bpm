@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">                
+
+    <p:dialog header="#{bundle.LoadFromTemlate}" width="500" height="300" position="center" modal="true" 
+              closeOnEscape="true" resizable="true" widgetVar="LoadFromTemplDLG">
+        <h:form id="LoadFromTemplFRM">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:messages showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                    <p:autoUpdate />
+                </p:messages>
+                                
+                <p:outputLabel value="#{bundle.Select}:" indicateRequired="true"/>
+                <p:selectOneMenu value="#{processCardBean.selectedTempl}" title="#{bundle.ProcessTemplate}" 
+                                 styleClass="ui-grid-col-12"
+                                 rendered="true"
+                                 requiredMessage="#{bundle.Field} [#{bundle.ProcessTemplate}] #{bundle.MustBeFilled}"
+                                 valueChangeListener="#{processCardBean.onTemplSelector}" converter="procTemplConverter"
+                                 filter="true" filterMatchMode="startsWith">
+                    <p:ajax update="LoadFromTemplFRM" partialSubmit="true" />
+                    <f:selectItems value="#{processCardBean.templates}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>                    
+                </p:selectOneMenu>
+                <p:spacer height="5"/>
+                <p:separator/>
+                <p:commandButton id="btnAction" style="float: right;"
+                                 value="#{bundle.Load}"
+                                 onclick="PF('LoadFromTemplDLG').hide();"
+                                 actionListener="#{processCardBean.onLoadModelFromTempl()}">
+                        <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+                </p:commandButton>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+    
+</ui:composition>

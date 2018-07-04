@@ -89,7 +89,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     /* Схема процесса */
     @XmlTransient
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval=true)
     private Scheme scheme;
     
     /* Лог */

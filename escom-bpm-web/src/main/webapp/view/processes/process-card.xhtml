@@ -87,7 +87,7 @@
                 
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />                
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
-                             rowKey="#{task.tempId}" selectionMode="single"
+                             rowKey="#{task.tempId}" selectionMode="single" 
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
                     
                     <p:column width="16" sortBy="#{task.state.currentState.name}">
@@ -163,9 +163,9 @@
                         </span>
 
                         <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         actionListener="#{processCardBean.onLoadModelFromTempl()}"
-                                         update="diagramm">
+                                         disabled="#{processCardBean.isReadOnly()}"                                         
+                                         onclick="PF('LoadFromTemplDLG').show();"
+                                         update="LoadFromTemplFRM">                           
                         </p:commandButton>
                         <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
                                          disabled="#{processCardBean.isReadOnly()}"
@@ -177,6 +177,7 @@
                                          disabled="#{processCardBean.isReadOnly()}"
                                          actionListener="#{processCardBean.onClearModel()}"
                                          update="diagramm">
+                            <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
                         </p:commandButton>
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -215,6 +216,9 @@
                 min-height: 4em;                
             }
             
+            .noExecutor {
+                border: 0.2em solid #C33730 !important;                
+            }
             .draft {
             }
             .running {
@@ -426,5 +430,6 @@
     <ui:define name="dialogs">
         <ui:include src="/view/tasks/report.xhtml"/>
         <ui:include src="/view/processes/templ/save-as-dlg.xhtml"/>
+        <ui:include src="/view/processes/templ/load-from-templ-dlg.xhtml"/>
     </ui:define>
 </ui:composition>

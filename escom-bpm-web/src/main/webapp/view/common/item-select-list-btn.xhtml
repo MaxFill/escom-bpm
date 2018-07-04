@@ -29,7 +29,7 @@
                                  valueChangeListener="#{_bean[_actionSelect]}"
                                  required="#{param['isRequired'] == _required}"
                                  requiredMessage="#{bundle.Field} [#{_titleItem}] #{bundle.MustBeFilled}"
-                                 filter="true"
+                                 filter="true" onchange="itemChange = 1;"
                                  filterMatchMode="startsWith">
                     <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
                     <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>

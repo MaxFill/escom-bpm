@@ -245,6 +245,7 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
+            //перелинковка элементов с объектами
             elements.getTasks().forEach((key, taskEl)-> {
                 for(Task task : scheme.getTasks()){
                     if (task.getTaskLinkUID().equals(key)){

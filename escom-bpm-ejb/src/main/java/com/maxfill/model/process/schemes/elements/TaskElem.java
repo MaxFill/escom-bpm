@@ -45,8 +45,11 @@ public class TaskElem extends WFConnectedElem{
                 if (owner.getEmployee() != null){
                     sb.append(owner.getEmployee().getShortFIO());
                 }
+            } else {
+                sb.append("< ? >");
             }
-            return sb.toString();
+            caption = sb.toString();
+            return caption;
         } else {
             return super.getCaption(); //To change body of generated methods, choose Tools | Templates.
         }

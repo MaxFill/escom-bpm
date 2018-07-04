@@ -37,13 +37,15 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         super(Task.class, TaskLog.class, TaskStates.class);
     }
 
-    public Task createTask(String taskName, Staff owner, User author){
-        return createTask(taskName, owner, author, null, null);
+    public Task createTask(String taskName, Staff owner, User author, Date planDate){
+        return createTask(taskName, owner, author, planDate, null, null);
     }   
-    public Task createTask(String taskName, Staff owner, User author, Scheme scheme, String taskLinkUID){
+    public Task createTask(String taskName, Staff owner, User author, Date planDate, Scheme scheme, String taskLinkUID){
         Task task = createItem(author, owner, new HashMap<>());        
-        task.setName(taskName);        
+        task.setName(taskName);
+        task.setDeadLineType("data");
         task.setTaskLinkUID(taskLinkUID);
+        task.setPlanExecDate(planDate);
         if (scheme != null){
             task.setScheme(scheme);
             task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());   
@@ -51,17 +53,6 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
             task.setAvaibleResultsJSON("[1]");
         }
         return task; 
-    }
-    
-    public Task findByLinkUID(String linkUID){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
-        Root<Task> c = cq.from(Task.class);        
-        Predicate crit1 = builder.equal(c.get(Task_.taskLinkUID), linkUID);        
-        cq.select(c).where(builder.and(crit1));
-        TypedQuery<Task> q = getEntityManager().createQuery(cq);       
-        return q.getResultList().stream().findFirst().orElse(null); 
     }
     
     public List<Task> findTaskByStaff(Staff staff){

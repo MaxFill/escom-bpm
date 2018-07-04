@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictDlgFrmName;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.facade.TaskFacade;
@@ -50,9 +49,8 @@ public class SchedulerBean extends BaseViewBean {
      * @param beanId
      */
     public void onCreateTask(String beanId){
-        Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser());
+        Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser(), schedulerTask.getEndDate());
         task.setBeginDate(new Date());
-        task.setPlanExecDate(schedulerTask.getEndDate());
         schedulerTask.setTask(task);
         onOpenTask(beanId);
     }

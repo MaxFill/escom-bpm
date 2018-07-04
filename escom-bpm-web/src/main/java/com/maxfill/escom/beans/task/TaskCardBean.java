@@ -259,6 +259,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()) return;
         getEditedItem().setOwner(items.get(0));
+        onItemChange();
     }
     public void onExecutorChanged(ValueChangeEvent event){
          getEditedItem().setOwner((Staff) event.getNewValue());
