@@ -30,6 +30,11 @@ public class UserStates extends BaseStateItem{
     @Column(name = "Id")
     private Integer id; 
 
+    public UserStates() {
+    }
+    
+    /* GETS & SETS */
+    
     @Override
     public Integer getId() {
         return id;
@@ -39,6 +44,8 @@ public class UserStates extends BaseStateItem{
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

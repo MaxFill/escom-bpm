@@ -3,7 +3,7 @@ package com.maxfill.escom.system.validator;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.treelike.FoldersFacade;
+import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 

@@ -2,7 +2,6 @@ package com.maxfill.services;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.facade.ServicesFacade;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.history.ServicesEventsFacade;
 import com.maxfill.services.common.sheduler.Sheduler;

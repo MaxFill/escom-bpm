@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.core.lazyload;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.facade.base.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyLoadFacade;
 import java.util.ArrayList;
 import org.apache.commons.collections.CollectionUtils;
 import org.primefaces.model.SortOrder;

@@ -1,7 +1,7 @@
 package com.maxfill;
 
-import com.maxfill.facade.MetadatesFacade;
-import com.maxfill.facade.RightFacade;
+import com.maxfill.model.metadates.MetadatesFacade;
+import com.maxfill.model.rights.RightFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Rights;
 

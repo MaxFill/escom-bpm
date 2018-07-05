@@ -4,19 +4,19 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.favorites.FavoriteObj;
+import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.model.users.groups.UserGroups;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.*;
-
 import static javax.persistence.GenerationType.TABLE;
-
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
-/* Пользователи */
+/**
+ * Сущность "Пользователь"
+ */
 @Entity
 @Table(name = "users")
 @DiscriminatorColumn(name="REF_TYPE")
@@ -93,19 +93,28 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @OneToMany(cascade = { CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "userId")
     private List<FavoriteObj> favoriteObjList;        
     
-    @JoinTable(name = "usersInGroup", joinColumns = {
+    @JoinTable(name = "usersInGroup", 
+            joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")}, 
+            inverseJoinColumns = {@JoinColumn(name = "GroupId", referencedColumnName = "Id")}
+    )
+    @ManyToMany
+    private List<UserGroups> usersGroupsList = new ArrayList<>();
+              
+    @JoinTable(name = "usersInAssist", joinColumns = {
         @JoinColumn(name = "UserId", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
     @ManyToMany
-    private List<UserGroups> usersGroupsList = new ArrayList<>();
-               
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.DETACH}, mappedBy = "employee")
-    private List<Staff> staffsList;            
+    private List<Assistant> assistants = new ArrayList<>();               
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserLog> itemLogs = new ArrayList<>();
         
-    @XmlTransient
+    /* Должность */
+    @JoinColumn(name = "Staff", referencedColumnName = "Id")
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    private Staff staff;
+     
+    /* Состояние */
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private UserStates state;
@@ -122,7 +131,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public User() {
         tempId = COUNT.incrementAndGet();
     }
-        
+    
+    /* GETS & SETS */    
+    
     @Override
     public UserStates getState() {
         return state;
@@ -235,20 +246,20 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.gender = gender;
     }
 
-    public List<Staff> getStaffsList() {
-        return staffsList;
-    }
-    public void setStaffsList(List<Staff> staffsList) {
-        this.staffsList = staffsList;
-    }
-
     public List<UserGroups> getUsersGroupsList() {
         return usersGroupsList;
     }
     public void setUsersGroupsList(List<UserGroups> usersGroupsList) {
         this.usersGroupsList = usersGroupsList;
-    }   
+    }
 
+    public List<Assistant> getAssistants() {
+        return assistants;
+    }
+    public void setAssistants(List<Assistant> assistants) {
+        this.assistants = assistants;
+    }
+    
     public byte[] getUserSettings() {
         return userSettings;
     }
@@ -331,6 +342,8 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.id = id;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

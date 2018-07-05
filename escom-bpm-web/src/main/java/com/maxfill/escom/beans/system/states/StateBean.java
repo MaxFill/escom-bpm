@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.system.states;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.StateFacade;
+import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.states.State;
 
 import java.io.Serializable;

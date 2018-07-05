@@ -2,9 +2,9 @@ package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.RightFacade;
-import com.maxfill.facade.UserFacade;
-import com.maxfill.facade.treelike.UserGroupsFacade;
+import com.maxfill.model.rights.RightFacade;
+import com.maxfill.model.users.UserFacade;
+import com.maxfill.model.users.groups.UserGroupsFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;

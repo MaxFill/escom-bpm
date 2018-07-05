@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.scheduler;
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
-import com.maxfill.facade.TaskFacade;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
 import java.time.ZonedDateTime;

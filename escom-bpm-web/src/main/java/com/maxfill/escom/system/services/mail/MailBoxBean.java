@@ -2,7 +2,7 @@ package com.maxfill.escom.system.services.mail;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.facade.MailBoxFacade;
+import com.maxfill.services.mail.MailBoxFacade;
 import com.maxfill.services.mail.Mailbox;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.treelike.UserGroupsFacade;
+import com.maxfill.model.users.groups.UserGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
 

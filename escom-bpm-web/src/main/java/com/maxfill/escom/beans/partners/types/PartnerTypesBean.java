@@ -2,10 +2,10 @@ package com.maxfill.escom.beans.partners.types;
 
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.PartnerTypesFacade;
+import com.maxfill.model.partners.types.PartnerTypesFacade;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.facade.PartnersFacade;
+import com.maxfill.model.partners.PartnersFacade;
 
 import javax.ejb.EJB;
 import javax.inject.Named;

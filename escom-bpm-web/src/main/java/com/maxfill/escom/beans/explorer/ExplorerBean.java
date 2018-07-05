@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
-import com.maxfill.facade.FiltersFacade;
+import com.maxfill.model.filters.FiltersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.dictionary.DictDetailSource;

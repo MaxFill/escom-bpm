@@ -84,6 +84,9 @@
     <class>com.maxfill.model.process.templates.ProcTempl</class>
     <class>com.maxfill.model.process.templates.ProcTemplLog</class>
     <class>com.maxfill.model.process.templates.ProcTemplStates</class>
+    <class>com.maxfill.model.users.assistants.Assistant</class>
+    <class>com.maxfill.model.users.assistants.AssistantLog</class>
+    <class>com.maxfill.model.users.assistants.AssistantStates</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

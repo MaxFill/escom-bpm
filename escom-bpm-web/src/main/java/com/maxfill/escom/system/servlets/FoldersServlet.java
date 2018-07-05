@@ -1,8 +1,8 @@
 package com.maxfill.escom.system.servlets;
 
 import com.google.gson.Gson;
-import com.maxfill.facade.treelike.FoldersFacade;
-import com.maxfill.facade.UserFacade;
+import com.maxfill.model.folders.FoldersFacade;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import org.apache.commons.lang3.StringUtils;

@@ -2,13 +2,13 @@ package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.facade.treelike.PartnersGroupsFacade;
+import com.maxfill.model.partners.groups.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
-import com.maxfill.facade.PartnersFacade;
+import com.maxfill.model.partners.PartnersFacade;
 
 import java.util.*;
 import javax.ejb.EJB;

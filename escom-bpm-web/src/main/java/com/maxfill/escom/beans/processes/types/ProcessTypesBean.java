@@ -3,8 +3,8 @@ package com.maxfill.escom.beans.processes.types;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
-import com.maxfill.facade.ProcessTypesFacade;
-import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.model.process.types.ProcessTypesFacade;
+import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.process.types.ProcessType;
 
 import javax.ejb.EJB;

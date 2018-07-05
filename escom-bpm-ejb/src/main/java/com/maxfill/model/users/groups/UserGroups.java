@@ -1,7 +1,6 @@
 package com.maxfill.model.users.groups;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.departments.Department;
 import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +9,7 @@ import javax.persistence.*;
 
 import static javax.persistence.GenerationType.TABLE;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
-import org.eclipse.persistence.jpa.config.Cascade;
 
 /**
  * Класс сущности "Группы пользователей"

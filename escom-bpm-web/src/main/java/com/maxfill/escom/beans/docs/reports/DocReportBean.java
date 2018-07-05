@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.escom.beans.system.reports.ReportPieData;
 import com.maxfill.escom.beans.users.settings.UserReportsSettings;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;

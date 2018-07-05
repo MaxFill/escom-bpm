@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Элемент схемы процесса "Поручение"
@@ -188,7 +188,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public Map<String, Set<Integer>> getRoles() {
         if (roles == null){
             roles = new HashMap<>();
-            if (org.apache.commons.lang.StringUtils.isBlank(getRoleJson())) return roles;
+            if (StringUtils.isBlank(getRoleJson())) return roles;
             try {
                 ObjectMapper mapper = new ObjectMapper();            
                 roles = mapper.readValue(roleJson, new TypeReference<HashMap<String, HashSet<Integer>>>() {});

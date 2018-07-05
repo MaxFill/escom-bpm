@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes.elements;
 
-import com.maxfill.facade.ConditionFacade;
+import com.maxfill.model.process.conditions.ConditionFacade;
 import com.maxfill.model.process.conditions.Condition;
 import java.io.Serializable;
 import java.util.List;

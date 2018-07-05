@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.model.BaseDict;
@@ -16,8 +16,8 @@ import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.facade.AttacheFacade;
-import com.maxfill.facade.DocStatusFacade;
+import com.maxfill.model.attaches.AttacheFacade;
+import com.maxfill.model.docs.docStatuses.DocStatusFacade;
 import com.maxfill.model.companies.Company;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import org.apache.commons.lang3.StringUtils;

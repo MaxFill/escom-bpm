@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.treelike.FoldersFacade;
+import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;

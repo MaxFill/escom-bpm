@@ -4,7 +4,7 @@ import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.ServicesFacade;
+import com.maxfill.services.ServicesFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;

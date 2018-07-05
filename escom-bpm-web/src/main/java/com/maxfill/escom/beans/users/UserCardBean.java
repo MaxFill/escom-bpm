@@ -2,8 +2,8 @@ package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.treelike.FoldersFacade;
-import com.maxfill.facade.UserFacade;
+import com.maxfill.model.folders.FoldersFacade;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
@@ -68,6 +68,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
 
     /**
      * Обработка события выбора дефолтной папки
+     * @param event
      */
     public void onInboxSelected(SelectEvent event){
         List<Folder> items = (List<Folder>) event.getObject();
@@ -80,6 +81,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
 
     /**
      * Проверка выбранной папки
+     * @param folder
      */
     public void checkFolder(Folder folder){
         if(!folderFacade.checkRightAddDetail(folder, getCurrentUser())) {

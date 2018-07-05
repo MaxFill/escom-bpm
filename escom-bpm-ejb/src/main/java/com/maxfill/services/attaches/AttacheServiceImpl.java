@@ -1,7 +1,7 @@
 package com.maxfill.services.attaches;
 
 import com.maxfill.Configuration;
-import com.maxfill.facade.AttacheFacade;
+import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;

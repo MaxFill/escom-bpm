@@ -33,6 +33,8 @@ public abstract class BaseStateItem implements Serializable{
         this.previousState = previousState;
     }
 
+    /* GETS & SETS */
+    
     public Integer getId() {
         return id;
     }

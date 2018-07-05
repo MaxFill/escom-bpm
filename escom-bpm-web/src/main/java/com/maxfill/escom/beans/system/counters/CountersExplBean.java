@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.system.counters;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.facade.CounterFacade;
+import com.maxfill.model.numPuttern.counter.CounterFacade;
 import com.maxfill.model.numPuttern.counter.Counter;
 import java.util.List;
 import java.util.Objects;

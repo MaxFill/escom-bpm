@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.system.statuses;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.facade.StatusesDocFacade;
+import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 
 import javax.ejb.EJB;

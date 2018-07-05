@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.partners;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.PartnersFacade;
+import com.maxfill.model.partners.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.docs.Doc;

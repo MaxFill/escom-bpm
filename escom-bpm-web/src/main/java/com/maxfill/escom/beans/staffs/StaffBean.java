@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;

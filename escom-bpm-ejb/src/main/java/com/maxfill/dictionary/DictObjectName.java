@@ -28,6 +28,6 @@ public final class DictObjectName {
     public static final String PROCESS_TEMPLATE = "ProcessTemplate";
     public static final String TASK = "Task";
     public static final String RESULT = "Result";
-   
+    public static final String ASSISTANT = "Assistant";   
    
 }

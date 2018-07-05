@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.companies;
 
 import com.maxfill.model.companies.Company;
-import com.maxfill.facade.treelike.CompanyFacade;
+import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;

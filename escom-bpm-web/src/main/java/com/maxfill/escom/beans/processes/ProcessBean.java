@@ -2,8 +2,8 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
-import com.maxfill.facade.ProcessFacade;
-import com.maxfill.facade.base.BaseDictFacade;
+import com.maxfill.model.process.ProcessFacade;
+import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;

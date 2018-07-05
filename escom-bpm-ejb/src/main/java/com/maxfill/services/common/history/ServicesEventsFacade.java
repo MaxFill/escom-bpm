@@ -1,6 +1,6 @@
 package com.maxfill.services.common.history;
 
-import com.maxfill.facade.base.BaseFacade;
+import com.maxfill.facade.BaseFacade;
 import javax.ejb.Stateless;
 
 /**

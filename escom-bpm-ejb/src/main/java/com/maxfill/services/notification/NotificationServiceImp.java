@@ -1,10 +1,10 @@
 package com.maxfill.services.notification;
 
 import com.maxfill.Configuration;
-import com.maxfill.facade.StaffFacade;
-import com.maxfill.facade.StateFacade;
-import com.maxfill.facade.TaskFacade;
-import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.model.staffs.StaffFacade;
+import com.maxfill.model.states.StateFacade;
+import com.maxfill.model.task.TaskFacade;
+import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task;

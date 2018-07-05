@@ -1,14 +1,14 @@
 package com.maxfill.escom.beans.docs.docsTypes;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.DocTypeFacade;
+import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
-import com.maxfill.facade.treelike.FoldersFacade;
+import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.BaseDict;
 
 import javax.ejb.EJB;

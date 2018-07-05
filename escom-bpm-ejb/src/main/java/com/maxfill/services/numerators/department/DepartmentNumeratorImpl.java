@@ -1,6 +1,6 @@
 package com.maxfill.services.numerators.department;
 
-import com.maxfill.facade.treelike.DepartmentFacade;
+import com.maxfill.model.departments.DepartmentFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;

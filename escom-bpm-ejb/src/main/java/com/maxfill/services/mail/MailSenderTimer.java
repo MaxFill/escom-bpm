@@ -1,7 +1,6 @@
 package com.maxfill.services.mail;
 
 import com.google.gson.Gson;
-import com.maxfill.facade.MailBoxFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;

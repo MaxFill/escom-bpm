@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
-import com.maxfill.facade.StatusesDocFacade;
+import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.process.schemes.elements.StatusElem;
 import com.maxfill.model.statuses.StatusesDoc;
 import java.lang.reflect.InvocationTargetException;

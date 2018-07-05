@@ -2,11 +2,11 @@ package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.treelike.FoldersFacade;
+import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import org.primefaces.model.DefaultTreeNode;

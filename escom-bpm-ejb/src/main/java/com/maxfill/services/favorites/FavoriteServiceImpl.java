@@ -1,6 +1,5 @@
 package com.maxfill.services.favorites;
 
-import com.maxfill.facade.FavoriteObjFacade;
 import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.metadates.Metadates;

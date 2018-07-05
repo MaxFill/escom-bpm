@@ -1,6 +1,6 @@
 package com.maxfill.services.mail;
 
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;

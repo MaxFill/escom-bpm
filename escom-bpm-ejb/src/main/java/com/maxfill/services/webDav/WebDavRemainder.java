@@ -2,9 +2,9 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.facade.AttacheFacade;
-import com.maxfill.facade.DocFacade;
-import com.maxfill.facade.UserMessagesFacade;
+import com.maxfill.model.attaches.AttacheFacade;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;

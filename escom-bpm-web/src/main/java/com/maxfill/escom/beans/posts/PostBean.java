@@ -3,8 +3,8 @@ package com.maxfill.escom.beans.posts;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.PostFacade;
-import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.posts.PostFacade;
+import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.posts.Post;
 
 import javax.ejb.EJB;

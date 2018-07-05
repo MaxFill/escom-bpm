@@ -1,9 +1,9 @@
 package com.maxfill.escom.system.servlets;
 
 import com.maxfill.Configuration;
-import com.maxfill.facade.DocFacade;
-import com.maxfill.facade.treelike.FoldersFacade;
-import com.maxfill.facade.UserFacade;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.folders.FoldersFacade;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;

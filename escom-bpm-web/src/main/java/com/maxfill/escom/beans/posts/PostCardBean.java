@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.posts;
 
-import com.maxfill.facade.PostFacade;
+import com.maxfill.model.posts.PostFacade;
 import com.maxfill.model.posts.Post;
 import com.maxfill.escom.beans.core.BaseCardBean;
 

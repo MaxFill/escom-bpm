@@ -1,12 +1,12 @@
 package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.facade.treelike.DocTypeGroupsFacade;
+import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.facade.DocTypeFacade;
+import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 
 import javax.ejb.EJB;
 import javax.inject.Named;

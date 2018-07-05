@@ -39,6 +39,7 @@ public class DocTypeStates extends BaseStateItem{
         this.id = id;
     }
 
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

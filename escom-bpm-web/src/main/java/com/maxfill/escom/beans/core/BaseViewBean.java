@@ -5,7 +5,7 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;

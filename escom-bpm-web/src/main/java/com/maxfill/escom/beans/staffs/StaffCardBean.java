@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.staffs;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.StaffFacade;
+import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;

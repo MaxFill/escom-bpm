@@ -1,14 +1,14 @@
 package com.maxfill.escom.beans.partners;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.PartnersFacade;
+import com.maxfill.model.partners.PartnersFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.facade.DocFacade;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
