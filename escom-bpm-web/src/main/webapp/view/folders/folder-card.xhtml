@@ -76,6 +76,7 @@
                 <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{false}" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritDocType}"/>
                         <ui:param name="_converter" value="docsTypesConvertor" />
@@ -97,6 +98,7 @@
                 <h:panelGroup id="panelPartner" styleClass="ui-grid-col-12" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{false}" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.inheritPartner}"/>
                         <ui:param name="_converter" value="partnersConvertor" />

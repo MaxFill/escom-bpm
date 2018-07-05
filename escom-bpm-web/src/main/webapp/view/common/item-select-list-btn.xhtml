@@ -32,7 +32,7 @@
                                  filter="true" onchange="itemChange = 1;"
                                  filterMatchMode="startsWith">
                     <p:ajax update="#{_itemPanel} #{_update}" partialSubmit="true" oncomplete="itemChange = 1;"/>
-                    <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>
+                    <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item[_itemLabel]}"/>
                     <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                     <f:converter converterId="#{_converter}" />
                     <f:ajax event="change" render="#{_itemPanel}" />

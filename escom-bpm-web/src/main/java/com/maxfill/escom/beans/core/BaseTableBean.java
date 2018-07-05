@@ -87,8 +87,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         return editItem;
     }
     
+    
     /* Подготовка к редактированию объекта на карточке  */      
-    public T prepEditItem(T item, Map<String, List<String>> paramsMap){        
+    public T prepEditItem(T item){
+        return prepEditItem(item, new HashMap<>());
+    }
+    public T prepEditItem(T item, Map<String, List<String>> paramsMap){
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());  //получаем копию объекта для редактирования 

@@ -33,6 +33,7 @@
                     <p:outputLabel value="#{bundle.Initiator}:" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{false}"/>
                         <ui:param name="_disabled" value="#{false}"/>
                         <ui:param name="_converter" value="usersConvertor" />

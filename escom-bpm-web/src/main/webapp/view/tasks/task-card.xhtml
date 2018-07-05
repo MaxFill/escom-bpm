@@ -30,6 +30,7 @@
                 <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{taskCardBean.editedItem.owner}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
                         <ui:param name="_disabled" value="#{taskCardBean.readOnly}"/>
                         <ui:param name="_converter" value="staffConvertor" />

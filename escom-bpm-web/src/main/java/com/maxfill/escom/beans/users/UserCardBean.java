@@ -1,14 +1,22 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
+import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.core.interfaces.WithDetails;
+import com.maxfill.escom.beans.users.assistants.AssistantBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.model.BaseDict;
+import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.users.assistants.Assistant;
+import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -20,27 +28,37 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
+import javax.inject.Inject;
 import org.apache.commons.lang.WordUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 /* Контроллер формы "Карточка пользователя */
 @Named
 @ViewScoped
-public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{            
+public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implements WithDetails{            
     private static final long serialVersionUID = 2031203859450836271L;
 
     private String password;
 
     @EJB
     private FoldersFacade folderFacade;
-
+    @EJB
+    private AssistantFacade assistantFacade;
+    @Inject
+    private AssistantBean assistantBean;
+    
+    private List<Assistant> checkedDetails;
+    private Assistant selectedDetail;
+    
     @Override
-    public void doBeforeOpenCard(Map<String, String> params) {
+    public void doPrepareOpen(User item) {
         if (getTypeEdit().equals(DictEditMode.EDIT_MODE)){
             password = "**********";
         }
@@ -192,4 +210,87 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups>{
         this.password = password;
     }
 
+    /**
+     * Обработка события изменения на форме штатной единицы
+     * @param event 
+     */
+    public void onChangeStaff(SelectEvent event){
+        List<Staff> items = (List<Staff>)event.getObject();
+        if (items.isEmpty()) return;
+        Staff staff = items.get(0);
+        onItemChange();
+        getEditedItem().setStaff(staff);
+    }
+    public void onChangeStaff(ValueChangeEvent event){
+        Staff staff = (Staff) event.getNewValue();
+        getEditedItem().setStaff(staff);
+    }
+    
+    /* Details implementation */
+    
+    @Override
+    public List<Assistant> getDetails(){
+        return getEditedItem().getAssistants();
+    }
+
+    @Override
+    public List<Assistant> getCheckedDetails() {
+        return checkedDetails;
+    }
+    @Override
+    public void setCheckedDetails(List checkedDetails) {
+        this.checkedDetails = checkedDetails;
+    }
+
+    @Override
+    public void onDeleteDetail(BaseDict item) {
+        getDetails().remove((Assistant)item);
+        onItemChange();
+    }    
+    
+    @Override
+    public void onDeleteCheckedDetails(){
+        getDetails().removeAll(checkedDetails);
+        onItemChange();
+    }
+    
+    @Override
+    public void onCreateDetail(){
+        selectedDetail = assistantFacade.createItem(getCurrentUser(), getEditedItem(), new HashMap<>());        
+        onOpenDetail(selectedDetail);
+    }
+    
+    @Override
+    public void onOpenDetail(BaseDict item){
+        setSourceItem(item);        
+        assistantBean.prepEditChildItem((Assistant)item, getParamsMap());
+    }
+    
+    @Override
+    public void afterCloseDetailItem(SelectEvent event){
+        if (event.getObject() == null) return;        
+        switch ((String) event.getObject()){
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+            case SysParams.EXIT_NEED_UPDATE:{                
+                if (selectedDetail.getId() == null){
+                    getDetails().add(selectedDetail);
+                }
+                onItemChange();
+                break;
+            }
+        }         
+    }           
+
+    @Override
+    public Assistant getSelectedDetail() {
+        return selectedDetail;
+    }
+    @Override
+    public void setSelectedDetail(BaseDict selectedDetail) {
+        this.selectedDetail = (Assistant)selectedDetail;
+    }
+    
+    /* *** *** */
 }

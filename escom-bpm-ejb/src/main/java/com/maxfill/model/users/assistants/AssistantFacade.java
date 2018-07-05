@@ -33,7 +33,7 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
 
     @Override
     public String getFRM_NAME() {
-        return DictObjectName.USER.toLowerCase();
+        return DictObjectName.ASSISTANT.toLowerCase();
     }
     
 }

@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-card.xhtml">
+
+    <ui:param name="_bean" value="#{assistantCardBean}"/>
+
+    <ui:define name="page_body">
+        <p:tab id="cardTab" title="#{bundle.Assistant}">  
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                
+                <p:outputLabel value="#{bundle.Chief}:"/>
+                <p:inputText id="nameItem" value="#{assistantCardBean.editedItem.owner.fullName}"
+                             styleClass="ui-grid-col-12"
+                             readonly="true">
+                </p:inputText>
+                
+                <p:outputLabel value="#{bundle.Assistant}:" indicateRequired="true"/>
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{assistantCardBean.editedItem.user}"/>
+                    <ui:param name="_itemLabel" value="fullName"/>
+                    <ui:param name="_required" value="#{true}" />
+                    <ui:param name="_disabled" value="#{assistantCardBean.readOnly}"/>
+                    <ui:param name="_converter" value="usersConvertor" />
+                    <ui:param name="_itemPanel" value="assistPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Assistant}"/>
+                    <ui:param name="_selectorBean" value="#{userBean}"/>
+                    <ui:param name="_items" value="#{userBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setUser"/>
+                    <ui:param name="_actionSelect" value="onChangeAssistant"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>  
+                
+                <h:panelGrid columns="2" styleClass="without-spaces">
+                    <p:selectOneRadio id="ReminderType" value="#{_bean.editedItem.substitutionType}" layout="grid" columns="1" >
+                        <f:selectItem itemLabel="#{bundle.Always}" itemValue="always" />
+                        <f:selectItem itemLabel="#{bundle.Period}" itemValue="period" />
+                        <p:ajax update="dateStart dateEnd" event="valueChange" onstart="itemChange = 1;"/>
+                    </p:selectOneRadio> 
+                    <p:spacer/><p:spacer/>
+                    <h:panelGrid columns="4" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.With}"/>
+                        <p:calendar value="#{assistantCardBean.editedItem.beginDate}" id="dateStart"
+                                    showHour="true" showMinute="true"
+                                    navigator="true" yearRange="c-120:c+20"
+                                    disabled="#{assistantCardBean.readOnly or _bean.editedItem.substitutionType ne 'period'}"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.DateBegin}  #{bundle.MustBeFilled}">
+                        </p:calendar>
+                        <p:outputLabel value="#{bundle.At}"/>
+                        <p:calendar value="#{assistantCardBean.editedItem.endDate}" id="dateEnd"  
+                                    navigator="true" yearRange="c-120:c+20"
+                                    showHour="true" showMinute="true"
+                                    disabled="#{assistantCardBean.readOnly or _bean.editedItem.substitutionType ne 'period'}"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss"
+                                    required="#{param['isRequired'] == 'true' and _bean.editedItem.substitutionType eq 'period'}"
+                                    requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                        </p:calendar>
+                    </h:panelGrid>
+                </h:panelGrid>
+                
+            </p:panelGrid>
+        </p:tab>
+
+    </ui:define>
+</ui:composition>

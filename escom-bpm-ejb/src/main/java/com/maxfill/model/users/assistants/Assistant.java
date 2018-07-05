@@ -12,12 +12,10 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -52,11 +50,7 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     
     @JoinColumn(name = "User", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private User user;    
-    
-    @XmlTransient
-    @ManyToMany(mappedBy = "assistants", fetch = FetchType.EAGER)
-    private List<User> chiefs = new ArrayList<>();
+    private User user;        
             
     /* Вид замещения */
     @Column(name="SubstitutionType")
@@ -88,7 +82,17 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     public Assistant() {
         tempId = COUNT.incrementAndGet();
     }
+
+    @Override
+    public String getFullName() {
+        if (user != null){
+            return user.getFullName();
+        } else {
+            return super.getFullName(); 
+        }    
+    }
         
+    
     /* GETS & SETS */
     
     @Override
@@ -98,13 +102,6 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public List<User> getChiefs() {
-        return chiefs;
-    }
-    public void setChiefs(List<User> chiefs) {
-        this.chiefs = chiefs;
     }
     
     public Date getBeginDate() {

@@ -279,6 +279,11 @@
         </navigation-case>  
         
         <navigation-case>
+            <from-outcome>assistant-card</from-outcome>
+            <to-view-id>/view/users/assistants/assistant-card.xhtml</to-view-id>
+        </navigation-case>  
+        
+        <navigation-case>
             <from-outcome>user-settings</from-outcome>
             <to-view-id>/view/users/user-settings.xhtml</to-view-id>
         </navigation-case>       

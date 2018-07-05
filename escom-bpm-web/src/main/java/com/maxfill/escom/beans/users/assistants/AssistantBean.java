@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.users.assistants;
 
-import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.users.UserBean;
@@ -19,22 +18,17 @@ import javax.inject.Named;
  */
 @Named
 @SessionScoped
-public class AssistantBean extends BaseExplBeanGroups<Assistant, User>{    
+public class AssistantBean extends BaseDetailsBean<Assistant, User>{    
     private static final long serialVersionUID = -5283581947435927447L;
 
     @EJB
     private AssistantFacade assistantFacade;
     @Inject
-    private UserBean userBean;
-    
-    @Override
-    public BaseDetailsBean getGroupBean() {
-        return userBean;
-    }
+    private UserBean userBean;    
 
     @Override
     public List<User> getGroups(Assistant item) {
-        return item.getChiefs();
+        return null;
     }
 
     @Override

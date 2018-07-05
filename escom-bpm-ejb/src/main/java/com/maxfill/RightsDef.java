@@ -42,6 +42,8 @@ public class RightsDef{
     /**
      * Возвращает дефолтные права доступа
      * metadateId - имя класса сущности
+     * @param metadateId
+     * @return 
      */
     public Rights getDefaultRights(String metadateId){
         Rights rights = defRights.get(metadateId);
@@ -53,6 +55,7 @@ public class RightsDef{
 
     /**
      * Перезагружает дефолтные права объекта метаданных
+     * @param metadatesObj
      * @param metadateId
      */
     public void reloadDefaultRight(Metadates metadatesObj){

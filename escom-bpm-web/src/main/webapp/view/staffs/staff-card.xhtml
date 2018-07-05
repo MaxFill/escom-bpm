@@ -18,6 +18,7 @@
                 <p:outputLabel value="#{bundle.Post}"/>
                 <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.post}"/>
+                    <ui:param name="_itemLabel" value="nameEndElipse"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                     <ui:param name="_converter" value="postConverter" />
@@ -27,12 +28,13 @@
                     <ui:param name="_items" value="#{postBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setPost"/>
                     <ui:param name="_actionSelect" value="onPostSelected"/>
-                    <ui:param name="_update" value="staffGroup"/>
+                    <ui:param name="_update" value="#{_frm}:mainTabView:staffGroup"/>
                 </ui:include>
 
                 <p:outputLabel value="#{bundle.Employee}"/>
                 <ui:include src="/view/common/item-select-list-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.employee}"/>
+                    <ui:param name="_itemLabel" value="nameEndElipse"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                     <ui:param name="_converter" value="usersConvertor" />
@@ -42,20 +44,19 @@
                     <ui:param name="_items" value="#{userBean.findAll()}"/>
                     <ui:param name="_actionClear" value="setEmployee"/>
                     <ui:param name="_actionSelect" value="onEmployeeSelected"/>
-                    <ui:param name="_update" value="staffGroup"/>
+                    <ui:param name="_update" value="#{_frm}:mainTabView:staffGroup"/>
                 </ui:include>
                 
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true"/>
                 <h:panelGroup id="staffGroup" styleClass="ui-grid-col-12">
-                    <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}" 
-                                    styleClass="ui-grid-col-12"
-                                    rows="1" autoResize="true"
+                    <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
+                                    styleClass="ui-grid-col-12"                                 
                                     disabled="#{_bean.isReadOnly()}"
                                     onkeypress="checkEsc(#{_bean.cancelBtnName});"
                                     onchange="return itemChange = 1;"
                                     required="#{param['isRequired'] == 'true'}"                                         
                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                    </p:inputTextarea>
+                    </p:inputText>
 
                     <p:commandButton value="#{bundle.ToForm}" title="#{bundle.MakeName}"
                                      update="staffGroup"

@@ -100,16 +100,16 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @ManyToMany
     private List<UserGroups> usersGroupsList = new ArrayList<>();
               
-    @JoinTable(name = "usersInAssist", joinColumns = {
-        @JoinColumn(name = "UserId", referencedColumnName = "Id")}, inverseJoinColumns = {
-        @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval=true)
     private List<Assistant> assistants = new ArrayList<>();               
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Assistant> chiefs = new ArrayList<>();
+     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<UserLog> itemLogs = new ArrayList<>();
         
-    /* Должность */
+    /* Штатная единица */
     @JoinColumn(name = "Staff", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private Staff staff;
@@ -133,6 +133,15 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     }
     
     /* GETS & SETS */    
+
+    @Override
+    public String getFullName() {
+        if (staff != null){
+            return staff.getNameEndElipse();
+        } else {
+            return super.getFullName(); //To change body of generated methods, choose Tools | Templates.
+        }
+    }
     
     @Override
     public UserStates getState() {
@@ -190,6 +199,20 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.needChangePwl = needChangePwl;
     }
 
+    public Staff getStaff() {
+        return staff;
+    }
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
+    public List<Assistant> getChiefs() {
+        return chiefs;
+    }
+    public void setChiefs(List<Assistant> chiefs) {
+        this.chiefs = chiefs;
+    }
+    
     public Folder getInbox() {
         return inbox;
     }

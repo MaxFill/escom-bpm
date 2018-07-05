@@ -5,13 +5,10 @@ import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.model.departments.DepartmentFacade;
 import com.maxfill.model.users.groups.UserGroupsFacade;
-import com.maxfill.model.users.UserLog;
-import com.maxfill.model.users.User;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.posts.Post;
-import com.maxfill.model.users.User_;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
@@ -20,7 +17,7 @@ import com.maxfill.model.posts.PostFacade;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.users.UserStates;
+import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.services.users.UsersService;
@@ -421,8 +418,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      */
     public boolean checkAssistant(Integer chiefId, User checkUser){
         User chief = find(chiefId);
-        if (chief == null) return false;
-        return chief.getAssistants().contains(checkUser);        
+        if (chief == null || checkUser == null) return false;
+        Assistant assistant = chief.getAssistants().stream()
+                .filter(assist->checkUser.equals(assist.getUser()))
+                .findFirst().orElse(null);
+        return assistant != null;
     }
     
     /* *** *** */

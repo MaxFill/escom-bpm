@@ -32,6 +32,7 @@
         <p:outputLabel value="#{bundle.Owner}:" />
         <ui:include src="/view/common/item-select-list-btn.xhtml" >
                 <ui:param name="_itemValue" value="#{_bean.editedItem.author}"/>
+                <ui:param name="_itemLabel" value="fullName"/>
                 <ui:param name="_required" value="#{true}" />
                 <ui:param name="_disabled" value="#{_bean.lockChangeOwner()}"/>
                 <ui:param name="_converter" value="usersConvertor" />
