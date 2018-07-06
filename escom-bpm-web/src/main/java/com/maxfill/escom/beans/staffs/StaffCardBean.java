@@ -18,6 +18,8 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import org.primefaces.PrimeFaces;
 
 /* Контролер формы "Штатная единица" */
 @Named
@@ -27,13 +29,24 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
 
     @EJB
     private StaffFacade itemFacade;
-
+    @Inject
+    private StaffBean staffBean;
     
     @Override
     public StaffFacade getFacade() {
         return itemFacade;
     }
 
+    @Override
+    protected void onAfterSaveItem(Staff item){
+        User user = getEditedItem().getEmployee();
+        if (user == null) return;
+        if (user.getStaff() == null){
+            user.setStaff(getEditedItem());
+        }
+        userFacade.edit(user);        
+    }
+     
     /* Печать карточки объекта */
     @Override
     protected void doPreViewItemCard(ArrayList <Object> dataReport, Map <String, Object> parameters, String reportName) {
@@ -44,26 +57,30 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     public void onEmployeeSelected(SelectEvent event) {
         List <User> items = (List <User>) event.getObject();
         if(items.isEmpty()) return;
-        User item = items.get(0);
-        onItemChange();
-        getEditedItem().setEmployee(item);
-        makeName();
+        User user = items.get(0);
+        checkUserStaff(user);        
     }
     public void onEmployeeSelected(ValueChangeEvent event) {
         User user = (User) event.getNewValue();
+        checkUserStaff(user);        
+    }
+
+    /**
+     * Проверка пользователя на заполненность ссылки на Staff. Если ссылка не заполнена, то она заполняется
+     * @param user
+     * @param staff 
+     */
+    private void checkUserStaff(User user){
         getEditedItem().setEmployee(user);
         makeName();
     }
-
+    
     /* Событие изменение на форме поля выбора должности  */
     public void onPostSelected(SelectEvent event) {
         List <Post> items = (List <Post>) event.getObject();
-        if(items.isEmpty()) {
-            return;
-        }
-        Post item = items.get(0);
-        ;
-        if(item != null) {
+        if(items.isEmpty()) return;
+        Post item = items.get(0);        
+        if (item != null) {
             getEditedItem().setPost(item);
             onItemChange();
         }
@@ -76,21 +93,9 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     }
 
     /* Формирование наименования шт. единицы */
-    public void makeName() {
-        Staff staff = getEditedItem();
-        Post post = staff.getPost();
-        StringBuilder staffName = new StringBuilder();
-        if(post != null && StringUtils.isNoneBlank(post.getName())) {
-            staffName.append(post.getName());
-            User user = staff.getEmployee();
-            if(user != null && StringUtils.isNoneBlank(user.getShortFIO())) {
-                staffName.append(" ").append(user.getShortFIO());
-            }
-        } else {
-            staffName.append(MsgUtils.getBandleLabel("Vacant"));
-        }
-        getEditedItem().setName(staffName.toString());
-        onItemChange();
+    private void makeName() {        
+        staffBean.makeName(getEditedItem());        
+        onItemChange();         
     }
 
     @Override

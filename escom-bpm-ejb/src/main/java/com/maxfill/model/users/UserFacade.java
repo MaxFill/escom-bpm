@@ -99,6 +99,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
     
     private void updateUserInfoInRealm(User user){
+        if (user == null) return;
         String login = user.getLogin();
         String pwl = user.getPwl();
         if (StringUtils.isNotBlank(login) && StringUtils.isNotBlank(pwl)){
@@ -117,12 +118,28 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);
-        Predicate crit1 = builder.equal(c.get("email"), email);
+        Predicate crit1 = builder.equal(c.get(User_.email), email);
         cq.select(c).where(builder.and(crit1));
         TypedQuery<User> q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }
 
+    /**
+     * Поиск пользователей по Main Staff    
+     * @param mainStaff
+     * @return 
+     */
+    public List<User> findUserByMainStaff(Staff mainStaff){        
+        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<User> cq = builder.createQuery(User.class);
+        Root<User> c = cq.from(User.class);
+        Predicate crit1 = builder.equal(c.get(User_.staff), mainStaff);
+        cq.select(c).where(builder.and(crit1));
+        TypedQuery<User> q = getEntityManager().createQuery(cq);
+        return q.getResultList();
+    }
+    
     /**
      * Ищет пользователя по login
      * @param login

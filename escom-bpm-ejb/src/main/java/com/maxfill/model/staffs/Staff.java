@@ -112,7 +112,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String getNameEndElipse() {
-        return StringUtils.abbreviate(getStaffFIO(), SysParams.LENGHT_NAME_ELIPSE);
+        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);
     }    
     
     /* Формирует наименование Компания + Подразделение   */

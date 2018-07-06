@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.staffs;
 
-import com.maxfill.dictionary.DictDlgFrmName;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.staffs.Staff;
@@ -12,6 +11,8 @@ import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
+import com.maxfill.model.posts.Post;
+import com.maxfill.model.users.User;
 
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.apache.commons.lang3.StringUtils;
 
 import org.primefaces.model.TreeNode;
 
@@ -127,6 +129,11 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Override
     protected void checkAllowedDeleteItem(Staff staff, Set<String> errors){
         super.checkAllowedDeleteItem(staff, errors);
+         if(!userFacade.findUserByMainStaff(staff).isEmpty()) {
+            Object[] messageParameters = new Object[]{staff.getName()};
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("StaffUsedInUsers"), messageParameters);
+            errors.add(error);
+        }
     }
     
     @Override
@@ -159,4 +166,19 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         return new StaffsSearche();
     }
 
+    public void makeName(Staff staff){
+        Post post = staff.getPost();
+        StringBuilder staffName = new StringBuilder();
+        if (post != null && StringUtils.isNoneBlank(post.getName())) {
+            staffName.append(post.getName());
+            User user = staff.getEmployee();
+            if (user != null && StringUtils.isNotEmpty(user.getShortFIO())) {
+                staffName.append(" ").append(user.getShortFIO());
+            } else {
+                staffName.append(" (").append(MsgUtils.getBandleLabel("Vacant")).append(")");
+            }
+        } 
+        staff.setName(staffName.toString());
+    }
+            
 }

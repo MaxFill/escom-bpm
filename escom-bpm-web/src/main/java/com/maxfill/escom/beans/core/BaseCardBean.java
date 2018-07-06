@@ -204,8 +204,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
 
     /* Действия сразу после сохранения объекта перед закрытием его карточки */
-    protected void onAfterSaveItem(T item){      
-    }
+    protected void onAfterSaveItem(T item){}
 
     /**
      * Проверка корректности полей объекта перед сохранением

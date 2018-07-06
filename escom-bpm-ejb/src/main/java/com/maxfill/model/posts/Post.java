@@ -115,7 +115,7 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
 
     @Override
     public String toString() {
-        return "Posts[ id=" + id + " ]";
+        return "Posts[ id=" + id + " ] [" + getName() + "]";
     }
 
 }

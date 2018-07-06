@@ -35,7 +35,7 @@
                     <f:selectItems value="#{_items}" var="item" itemValue="#{item}" itemLabel="#{item[_itemLabel]}"/>
                     <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                     <f:converter converterId="#{_converter}" />
-                    <f:ajax event="change" render="#{_itemPanel}" />
+                    <f:ajax event="change" render="#{_itemPanel}" />                    
                 </p:selectOneMenu>
 
                 <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"

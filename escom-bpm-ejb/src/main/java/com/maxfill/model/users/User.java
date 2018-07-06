@@ -110,8 +110,8 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     private List<UserLog> itemLogs = new ArrayList<>();
         
     /* Штатная единица */
+    @OneToOne(optional = false)
     @JoinColumn(name = "Staff", referencedColumnName = "Id")
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
     private Staff staff;
      
     /* Состояние */
@@ -152,7 +152,10 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.state = state;
     }
         
-    //возвращает сокращённое ФИО сотрудника
+    /** 
+     * Формирует сокращённое ФИО сотрудника
+     * @return 
+     */ 
     @XmlTransient
     public String getShortFIO(){       
         String f = "";
@@ -171,6 +174,25 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         return String.format("%s %s.%s.", f,s,l); 
     }
 
+    /** 
+     * Формирует сокращённое ФИО сотрудника
+     * @return 
+     */ 
+    @XmlTransient
+    public String getFullFIO(){
+        StringBuilder sb = new StringBuilder();
+        if (secondName != null){
+            sb.append(secondName).append((" "));
+        }
+        if (firstName != null){
+            sb.append(firstName).append((" "));
+        }
+        if (lastName != null){
+            sb.append(lastName);
+        }
+        return sb.toString();
+    }
+    
     public Integer getTempId() {
         return tempId;
     }

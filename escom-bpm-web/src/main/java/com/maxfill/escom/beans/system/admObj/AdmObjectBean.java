@@ -25,7 +25,6 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     private BaseDict replaceItem;
 
     private Map<String, Integer> rezultUpdate;
-    private BaseTableBean itemBean;
 
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -35,7 +34,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
-        itemBean.doGetCountUsesItem(getSourceItem(), rezult);
+        getItemBean().doGetCountUsesItem(getSourceItem(), rezult);
         return rezult.entrySet();
     }
     
@@ -51,7 +50,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     /* Обработка события замены объекта в связанных объектах  */
     public void onReplaceItem(){ 
         if (replaceItem != null) {
-            int count = itemBean.replaceItem(getSourceItem(), replaceItem);
+            int count = getItemBean().replaceItem(getSourceItem(), replaceItem);
             MsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
             PrimeFaces.current().ajax().update("centerFRM");
         } else {
@@ -61,8 +60,8 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
 
     /* gets & sets */
 
-    public BaseTableBean getItemBean() {
-        return itemBean;
+    public BaseTableBean getItemBean() {        
+        return (BaseTableBean)getSourceBean();
     }
 
     public BaseDict getReplaceItem() {

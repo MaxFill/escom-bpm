@@ -29,11 +29,11 @@
     <ui:define name="specDetailColumns">       
         <p:column headerText="#{bundle.Employee}" sortBy="#{item.employee.shortFIO}" 
                   rendered="#{_explorerBean.isNowShowDetail()}">
-            #{item.employee.shortFIO}
+            <h:outputLabel value="#{item.employee.shortFIO}"/>
         </p:column>
         <p:column headerText="#{bundle.Post}" sortBy="#{item.post.name}" 
                   rendered="#{_explorerBean.isNowShowDetail()}">
-            #{item.post.name}
+            <h:outputLabel value="#{item.post.name}"/>
         </p:column>
     </ui:define> 
     

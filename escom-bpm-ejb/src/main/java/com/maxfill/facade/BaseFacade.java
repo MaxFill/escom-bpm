@@ -43,7 +43,6 @@ public abstract class BaseFacade<T> {
     }
     
     public void create(T entity) {
-
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity);

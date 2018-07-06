@@ -8,13 +8,14 @@ import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.core.interfaces.WithDetails;
+import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.escom.beans.users.assistants.AssistantBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.utils.EscomUtils;
@@ -30,9 +31,9 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.lang.WordUtils;
@@ -51,19 +52,31 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     private FoldersFacade folderFacade;
     @EJB
     private AssistantFacade assistantFacade;
+    @EJB
+    private StaffFacade staffFacade;
     @Inject
     private AssistantBean assistantBean;
+    @Inject
+    private StaffBean staffBean;
     
     private List<Assistant> checkedDetails;
     private Assistant selectedDetail;
+    private Staff oldStaffvalue;
     
     @Override
-    public void doPrepareOpen(User item) {
+    public void doPrepareOpen(User user) {
         if (getTypeEdit().equals(DictEditMode.EDIT_MODE)){
             password = "**********";
         }
+        oldStaffvalue = user.getStaff();       
     }
 
+    @Override
+    public void onAfterFormLoad(String beanId){
+        super.onAfterFormLoad(beanId);
+        validateStaff(oldStaffvalue);
+    }
+    
     /**
      * Обработка события изменения телефона
      * @param event
@@ -106,7 +119,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
             String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
-            UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:item");
+            UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:folderPanel_item");
             input.setValid(false);
             context.addMessage(input.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
             context.validationFailed();
@@ -191,11 +204,22 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
 
     @Override
     protected void onAfterSaveItem(User user) {
+        super.onAfterSaveItem(user);
         if (user.isNeedChangePwl()){
             String msg = MsgUtils.getMessageLabel("YouNeedChangePassword");
             getFacade().sendSystemMsg(user, msg);
         }
-        super.onAfterSaveItem(user);
+        User employee = getEditedItem();
+        Staff staff = getEditedItem().getStaff();
+        if (staff == null && oldStaffvalue != null){
+            employee = null;
+            staff = oldStaffvalue;
+        }
+        if (staff == null) return;
+        staff = staffFacade.find(staff.getId());
+        staff.setEmployee(employee);
+        staffBean.makeName(staff);
+        staffFacade.edit(staff);
     }
 
     @Override
@@ -217,13 +241,27 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     public void onChangeStaff(SelectEvent event){
         List<Staff> items = (List<Staff>)event.getObject();
         if (items.isEmpty()) return;
-        Staff staff = items.get(0);
+        Staff staff = items.get(0);        
+        validateStaff(staff);
         onItemChange();
         getEditedItem().setStaff(staff);
-    }
-    public void onChangeStaff(ValueChangeEvent event){
-        Staff staff = (Staff) event.getNewValue();
-        getEditedItem().setStaff(staff);
+    }    
+    
+    public void validateStaff(Staff staff){
+        if (staff == null) return;
+        
+        if (staff.getEmployee() != null){
+            if (!Objects.equals(staff.getEmployee(), getEditedItem())){
+                FacesContext context = FacesContext.getCurrentInstance();
+                UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:staffPanel_item");            
+                input.setValid(false);
+                String errMsg = MsgUtils.getMessageLabel("StaffAlreadyAssociated");
+                String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
+                context.addMessage(input.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_WARN, errMsg, checkError));
+                context.validationFailed();
+                onItemChange();
+            }
+        }
     }
     
     /* Details implementation */
