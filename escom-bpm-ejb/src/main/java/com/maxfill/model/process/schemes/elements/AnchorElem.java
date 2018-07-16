@@ -22,6 +22,7 @@ public class AnchorElem extends WFElement{
     private String ownerUID;
 
     public AnchorElem() {
+        this.uid = EscomUtils.generateGUID();
     }
 
     public AnchorElem(String caption, String position, Boolean type, String ownerUID) {

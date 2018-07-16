@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -200,6 +201,20 @@ public class WorkflowImpl implements Workflow {
         removeConnectors(element, scheme);        
     }
     
+    /**
+     * Удаление соединений у элемента модели процесса
+     * @param element
+     * @param scheme
+     */
+    private void removeConnectors(WFConnectedElem element, Scheme scheme){
+        for (AnchorElem anchor : element.getAnchors()){ //сначала нужно удалить все соединения связанные с этим элементом!
+            List<ConnectorElem> connectors = scheme.getElements().getConnectors().stream()
+                    .filter(c -> c.getFrom().equals(anchor) || c.getTo().equals(anchor))
+                    .collect(Collectors.toList());            
+            scheme.getElements().getConnectors().removeAll(connectors);
+        }
+    }
+    
     @Override
     public void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors) {
         ConnectorElem connector = findConnector(from, to, scheme);
@@ -262,7 +277,7 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
-    public void validateScheme(Scheme scheme, Set<String> errors) {       
+    public void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors) {       
         if (scheme.getElements().getExits().isEmpty()){
             errors.add("DiagramNotHaveExit");
         }
@@ -275,27 +290,28 @@ public class WorkflowImpl implements Workflow {
         }
         
         Date planEndDate = scheme.getProcess().getPlanExecDate();
-        
-        for(Task task : scheme.getTasks()){ 
-            switch (task.getDeadLineType()){
-                case "data":{
-                    if (task.getPlanExecDate() == null){
-                        errors.add("TasksNoHaveDeadline");
-                    } else 
-                        if (task.getPlanExecDate().before(new Date())){
-                            errors.add("DeadlineSpecifiedInPastTime");
+        if (checkTasks){
+            for(Task task : scheme.getTasks()){ 
+                switch (task.getDeadLineType()){
+                    case "data":{
+                        if (task.getPlanExecDate() == null){
+                            errors.add("TasksNoHaveDeadline");
                         } else 
-                            if (task.getPlanExecDate().after(planEndDate)) { 
-                                errors.add("TaskExecTimeLongerThanProcessDeadLine");
-                            }
-                    break;
-                }
-                case "delta":{
-                    if (task.getDeltaDeadLine() == null || task.getDeltaDeadLine() == 0){
-                        errors.add("TasksNoHaveDeadline");
+                            if (task.getPlanExecDate().before(new Date())){
+                                errors.add("DeadlineSpecifiedInPastTime");
+                            } else 
+                                if (task.getPlanExecDate().after(planEndDate)) { 
+                                    errors.add("TaskExecTimeLongerThanProcessDeadLine");
+                                }
+                        break;
                     }
-                }        
-            }           
+                    case "delta":{
+                        if (task.getDeltaDeadLine() == null || task.getDeltaDeadLine() == 0){
+                            errors.add("TasksNoHaveDeadline");
+                        }
+                    }        
+                }           
+            }
         }
 
         scheme.getElements().getConditions().entrySet().stream()
@@ -307,20 +323,6 @@ public class WorkflowImpl implements Workflow {
                 .findFirst()
                 .map(rec->errors.add("ProcedureSettingStateContainsIncorrectValue"));
         //ToDo! другие проверки!
-    }
-
-    /**
-     * Удаление соединений у элемента модели процесса
-     * @param element
-     * @param scheme
-     */
-    private void removeConnectors(WFConnectedElem element, Scheme scheme){
-        for (AnchorElem anchor : element.getAnchors()){ //сначала нужно удалить все соединения связанные с этим элементом!
-            List<ConnectorElem> connectors = scheme.getElements().getConnectors().stream()
-                    .filter(c -> c.getFrom().equals(anchor) || c.getTo().equals(anchor))
-                    .collect(Collectors.toList());
-            scheme.getElements().getConnectors().removeAll(connectors);
-        }
     }
 
     /**
@@ -391,7 +393,7 @@ public class WorkflowImpl implements Workflow {
     public void start(Process process, User user, Set<String> errors) {        
         Scheme scheme = process.getScheme();
         unpackScheme(scheme);
-        validateScheme(scheme, errors);
+        validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return;
         
         scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов                

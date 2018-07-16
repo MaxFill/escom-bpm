@@ -41,7 +41,7 @@
     </factory>
 
     <navigation-rule>
-        <from-view-id>*</from-view-id>        
+        <from-view-id>*</from-view-id>         
         
         <navigation-case>
             <from-outcome>counters</from-outcome>

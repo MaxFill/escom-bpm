@@ -143,6 +143,13 @@
     </ui:define>    
     
     <ui:define name="addItemMenu">
+        <p:submenu icon="ico_process" label="#{bundle.Processes}" icon="ui-icon-contact">
+            <p:menuitem value="#{bundle.Concorded}"
+                        actionListener="#{_explorerBean.onCreateConcorderProc(item)}"                        
+                        rendered="#{item.getClass().getSimpleName() == 'Doc'}">
+            </p:menuitem>
+            
+        </p:submenu>
         <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
                     actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                     disabled="#{item.mainAttache == null}"

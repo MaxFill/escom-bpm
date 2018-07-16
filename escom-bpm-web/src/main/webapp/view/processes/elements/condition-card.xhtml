@@ -31,7 +31,7 @@
                     </p:selectOneMenu>
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="centerFRM"
-                                    action="#{conditionCardBean.onCloseCard('save')}" style="float: right;">
+                                     actionListener="#{conditionCardBean.onCloseCard('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>

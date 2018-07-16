@@ -40,9 +40,13 @@ public final class DictDlgFrmName {
     public static final String FRM_COUNTERS = "counters";
     public static final String FRM_AUTH_LOG = "authlog";
 
-    public static final String FRM_PROCESS_EXPL = "process-explorer";
     public static final String FRM_SCHEDULER = "scheduler";
+    
+    /* ПРОЦЕССЫ */
+    public static final String FRM_PROC_TEMPL_SELECTOR = "templ-selector";
     public static final String FRM_MONITOR = "monitor";
+    public static final String FRM_PROCESS_EXPL = "process-explorer";    
+    
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
     public static final String REP_DOC_JOURNAL = "doc-journal";

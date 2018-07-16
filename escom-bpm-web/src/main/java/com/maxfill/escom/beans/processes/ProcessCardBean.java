@@ -125,6 +125,19 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         onReloadModel();
     }    
 
+    @Override
+    public void onAfterFormLoad(String beanId) {
+        super.onAfterFormLoad(beanId);
+        if (getEditedItem().getScheme() == null){
+            Scheme scheme = new Scheme(getEditedItem());
+            getEditedItem().setScheme(scheme);
+            PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
+        }
+        if (!isReadOnly()){
+            addElementContextMenu();
+        }
+    }
+    
     /**
      * Перед сохранением процесса
      * @param item
@@ -153,15 +166,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 errors.add("DeadlineSpecifiedInPastTime");
             }
         super.checkItemBeforeSave(process, errors);
-    }
-    
-    @Override
-    public void onAfterFormLoad(String beanId) {
-        super.onAfterFormLoad(beanId);
-        if (!isReadOnly()){
-            addElementContextMenu();
-        }
-    }
+    }    
     
     @Override
     public boolean doSaveItem(){
@@ -219,28 +224,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
     }
     
-    /* ШАБЛОНЫ ПРОЦЕССА */
-    
-    /**
-     * Создание новой схемы процесса
-     * @return
-     */
-    private void createScheme(){
-        Scheme scheme = new Scheme(getEditedItem());
-        getEditedItem().setScheme(scheme);
-        model.clear();
-        Set<String> errors = new HashSet <>();
-        
-        createStart(2, 4, errors);
-      
-        createCondition(conditionFacade.find(1), 28, 18, errors);
-
-        createState(statusesDocFacade.find(4), "success", 36, 26,  errors);
-        
-        createState(statusesDocFacade.find(6), "fail", 18, 26, errors);
-        
-        createExit(Boolean.TRUE, 50, 35, errors);
-    }
+    /* ШАБЛОНЫ ПРОЦЕССА */    
 
     /**
      * Загрузка визуальной схемы процесса из шаблона
@@ -261,12 +245,12 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onSaveModelAsTempl(){
         Set<String> errors = new HashSet<>();
         Scheme scheme = getScheme();
-        workflow.validateScheme(scheme, errors);
+        workflow.validateScheme(scheme, false, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
         }
-        workflow.packScheme(scheme);        
+        workflow.packScheme(scheme);
 
         ProcessType processType = processTypesFacade.find(getEditedItem().getOwner().getId());
         List<ProcTempl> templs = processType.getTemplates();        
@@ -302,21 +286,19 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обработка события перезагрузки визуальной схемы процесса
      */
     public void onReloadModel(){
-        loadModel(getScheme());
-        modelRefresh();
+        if (getScheme() != null){
+            loadModel(getScheme());
+            modelRefresh();
+        }
     }
     
     /**
      * Загрузка визуальной схемы процесса
      * @param scheme
      */
-    public void loadModel(Scheme scheme){
-        if (scheme == null){
-            createScheme();            
-        } else {
-            workflow.unpackScheme(scheme);
-            restoreModel();            
-        }
+    public void loadModel(Scheme scheme){       
+        workflow.unpackScheme(scheme);
+        restoreModel();        
     }
 
     /**
@@ -380,7 +362,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     public void onElementDelete(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement((WFConnectedElem)selectedElement.getData(), getScheme(), errors);
+        workflow.removeElement(baseElement, getScheme(), errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             modelRefresh();
@@ -492,8 +474,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onElementPaste(){
         try {
             if (baseElement instanceof TaskElem){           
-                Element newElement = createTask(null, "", defX, defY, new HashSet<>());
-                TaskElem newTaskElem = (TaskElem)newElement.getData();
+                TaskElem newTaskElem = createTask(null, "", defX, defY, new HashSet<>());                
                 Task newTask = newTaskElem.getTask();
                 TaskElem sourceTaskElem = (TaskElem) baseElement;
                 Task sourceTask = sourceTaskElem.getTask();
@@ -523,7 +504,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     
     /**
      * Открытие карточки задачи
-     * @param beanId 
      */  
     public void onOpenTask(){ 
         taskBean.prepEditChildItem(currentTask, getParamsMap());
@@ -541,10 +521,16 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             onAfterTaskClose(event);
             return;
         }
-        Element exit = model.findElement(baseElement.getUid());
-        exit.setStyleClass(baseElement.getStyle());
+        if (baseElement instanceof ExitElem){
+            Element exit = model.findElement(baseElement.getUid());
+            exit.setStyleClass(baseElement.getStyle());
+        }
+        if (baseElement instanceof StatusElem){
+            Element status = model.findElement(baseElement.getUid());
+            status.setStyleClass(baseElement.getStyle());
+        }
         onItemChange();
-        modelRefresh();        
+        modelRefresh();
     }
     
     /**
@@ -561,8 +547,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             case SysParams.EXIT_NEED_UPDATE:{
                 editedTasks.add(currentTask);           
                 onItemChange();
-                modelRefresh();
+                Element task = model.findElement(baseElement.getUid());
+                task.setStyleClass(baseElement.getStyle());
                 PrimeFaces.current().ajax().update("process:mainTabView:concorderList");      
+                modelRefresh();
                 break;
             }
             case SysParams.EXIT_EXECUTE:{
@@ -571,7 +559,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 PrimeFaces.current().ajax().update("process");
                 break;
             }
-        }         
+        }
     }
         
     /* ДОБАВЛЕНИЕ ЭЛЕМЕНТОВ НА СХЕМУ ПРОЦЕССА С ПАНЕЛИ КОМПОНЕНТ */
@@ -586,7 +574,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         Set<String> errors = new HashSet<>();
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
-            createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), defX, defY, metodErr); 
+            baseElement = createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), defX, defY, metodErr); 
             defX = defX + 5;
             defY = defY + 5;
             if (!metodErr.isEmpty()){
@@ -605,7 +593,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param bundleName
      */
     public void onAddLogicElement(String bundleName){              
-        createLogic(bundleName, defX, defY, new HashSet <>());        
+        baseElement = createLogic(bundleName, defX, defY, new HashSet <>());        
         finalAddElement();
     }
 
@@ -614,15 +602,15 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param name
      */
     public void onAddStateElement(String name){
-        createState(null, "success", defX, defY, new HashSet<>());        
-        finalAddElement();
+        baseElement = createState(null, "success", defX, defY, new HashSet<>());        
+        finalAddElement();        
     }
 
     /**
      * Обработка события добавления в схему процесса визуального компонента "Условие" 
      */
     public void onAddConditionElement(){
-        createCondition(null, defX, defY, new HashSet<>());
+        baseElement = createCondition(null, defX, defY, new HashSet<>());
         finalAddElement();
     }
 
@@ -630,15 +618,27 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
     public void onAddEnterElement(){       
-        createEnter(defX, defY, new HashSet<>());        
+        baseElement = createEnter(defX, defY, new HashSet<>());
         finalAddElement();
+    }
+    
+    /**
+     * Обработка события добавления в схему процесса визуального компонента "Вход" 
+     */
+    public void onAddStartElement(){       
+        if (getScheme().getElements().getStartElem() == null){
+            baseElement = createStart(defX, defY, new HashSet<>());        
+            finalAddElement();            
+        } else {
+            MsgUtils.errorMsg("SchemeCanBeOnlyOneStartElement");
+        }
     }
     
     /**
      * Обработка события добавления в схему процесса визуального компонента "Выход" 
      */
     public void onAddExitElement(){               
-        createExit(Boolean.TRUE, defX, defY, new HashSet<>());        
+        baseElement = createExit(Boolean.TRUE, defX, defY, new HashSet<>());        
         finalAddElement();
     }
     
@@ -646,9 +646,12 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Завершает добавление элемента к визуальной схеме 
      * @param elementId 
      */
-    private void finalAddElement(){        
+    private void finalAddElement(){
+        defX = defX + 3;
+        defY = defY + 3;
         onItemChange();        
         modelRefresh();
+        onElementOpen();
     }
     
     /* СОЗДАНИЕ КОМПОНЕНТОВ СХЕМЫ ПРОЦЕССА */
@@ -660,7 +663,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param errors
      * @return
      */
-    private Element createCondition(Condition condition, int x, int y, Set<String> errors){
+    private ConditionElem createCondition(Condition condition, int x, int y, Set<String> errors){
         ConditionElem conditionElem;
         if (condition != null){            
             conditionElem = new ConditionElem(condition.getName(), condition.getId(), x, y);
@@ -674,7 +677,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         conditionElem.setAnchors(makeAnchorElems(conditionElem, endPoints));
         workflow.addCondition(conditionElem, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(conditionElem);
+            modelAddElement(conditionElem);
+            return conditionElem;
         }
         return null;
     }
@@ -685,7 +689,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param y
      * @param errors
      */
-    private Element createLogic(String name, int x, int y, Set<String> errors){
+    private LogicElem createLogic(String name, int x, int y, Set<String> errors){
         LogicElem logic = new LogicElem(name, x, y);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
@@ -695,7 +699,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         logic.setAnchors(makeAnchorElems(logic, endPoints));
         workflow.addLogic(logic, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(logic);
+            modelAddElement(logic);
+            return logic;
         }
         return null;
     }
@@ -706,7 +711,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param y
      * @param errors
      */
-    private Element createEnter(int x, int y, Set<String> errors){
+    private EnterElem createEnter(int x, int y, Set<String> errors){
         EnterElem enter = new EnterElem("", x, y);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -715,7 +720,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         enter.setAnchors(makeAnchorElems(enter, endPoints));
         workflow.addEnter(enter, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(enter);            
+            modelAddElement(enter);
+            return enter;
         }
         return null;
     }
@@ -726,15 +732,16 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param y
      * @param errors
      */
-    private Element createStart(int x, int y, Set<String> errors){
+    private StartElem createStart(int x, int y, Set<String> errors){
         StartElem start = new StartElem("", x, y);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         start.setAnchors(makeAnchorElems(start, endPoints));
         workflow.addStart(start, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(start);            
+            modelAddElement(start);
+            return start;
         }
         return null;
     }
@@ -745,14 +752,17 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param y
      * @param errors
      */
-    private Element createExit(Boolean finalize, int x, int y, Set<String> errors){
+    private ExitElem createExit(Boolean finalize, int x, int y, Set<String> errors){
         ExitElem exit = new ExitElem("", finalize, x, y);
         List<EndPoint> endPoints = new ArrayList<>();
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP, DictWorkflowElem.STYLE_MAIN);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM, DictWorkflowElem.STYLE_MAIN);
         exit.setAnchors(makeAnchorElems(exit, endPoints));
         workflow.addExit(exit, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(exit);
+            modelAddElement(exit);
+            return exit;
         }
         return null;
     }
@@ -763,17 +773,20 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param x
      * @param y
      */
-    private Element createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
+    private TaskElem createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
         Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), getEditedItem().getPlanExecDate(), getScheme(), taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
         workflow.addTask(taskElem, getScheme(), errors);
         if (errors.isEmpty()){
-            return modelAddElement(taskElem);         
+            modelAddElement(taskElem);
+            return taskElem;
         } 
         return null;
     }
@@ -786,7 +799,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param errors
      * @return
      */
-    private Element createState(StatusesDoc docStatus, String styleType, int x, int y, Set<String> errors){        
+    private StatusElem createState(StatusesDoc docStatus, String styleType, int x, int y, Set<String> errors){        
         StatusElem stateEl;
         if (docStatus != null){
             stateEl = new StatusElem(docStatus.getBundleName(), docStatus.getId(), x, y);
@@ -802,7 +815,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         stateEl.setStyleType(styleType);
         workflow.addState(stateEl, getScheme(), errors);
         if (errors.isEmpty()) {
-            return modelAddElement(stateEl);
+            modelAddElement(stateEl);
+            return stateEl;
         }
         return null;
     }
@@ -1010,7 +1024,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-         PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
+        PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
@@ -1018,11 +1032,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("])");      
-        PrimeFaces.current().executeScript(sb.toString());
-       
-    }        
+        PrimeFaces.current().executeScript(sb.toString());       
+    }
     
-    /* ПРОЧИЕ МЕТОДЫ */    
+    /* ПРОЧИЕ МЕТОДЫ */
     
     /**
      * Возвращает якорь компонента по ID якоря
@@ -1060,7 +1073,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onAfterTaskEdit(){
         modelRefresh();
     }
-              
+
     public boolean isDisableBtnStop(){
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || !getEditedItem().isRunning();
     }
@@ -1149,12 +1162,20 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         this.currentReport = currentReport;
     }
     
+    /**
+     * Загрузка списка задач в лист согласования
+     * @return 
+     */
     public List<Task> getTasksFromModel(){
-         List<Task> result = getScheme().getElements().getTasks().entrySet().stream()
+        Scheme scheme = getScheme(); 
+        List<Task> result = new ArrayList<>();
+        if (scheme != null){
+            result = getScheme().getElements().getTasks().entrySet().stream()
                 .filter(tsk->tsk.getValue().getTask() != null)
                 .map(tsk->tsk.getValue().getTask())
                 .collect(Collectors.toList());
-         return result;
+        }
+        return result;
     }
     
     /**

@@ -8,18 +8,18 @@
     <ui:param name="_bean" value="#{processCardBean}"/>
 
     <ui:define name="customJavaScript">
-         <h:outputScript library="contextMenu" name="contextMenu.js" /> 
+         <h:outputScript library="contextMenu" name="contextMenu.js" />
          <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
     </ui:define>
         
-    <ui:define name="specActionMenu" >
+    <ui:define name="specActionMenu">
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
-                    disabled="#{processCardBean.isReadOnly()}"                    
+                    disabled="#{processCardBean.isReadOnly()}"
                     onclick="document.getElementById('#{_frm}:btnRun').click();"/>
         <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
                     disabled="#{processCardBean.isDisableBtnStop()}"
                     onclick="document.getElementById('#{_frm}:btnStop').click();"/>
-    </ui:define>        
+    </ui:define>
     
     <ui:define name="specSubMenu" >
     </ui:define>
@@ -46,11 +46,11 @@
         <p:spacer width="10"/>
     </ui:define>
     
-    <ui:define name="page_body">        
-        <p:tab title="#{bundle.Process}" > 
+    <ui:define name="page_body">
+        <p:tab title="#{bundle.Process}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                 <p:outputLabel value="#{bundle.Doc}:" indicateRequired="true" />
-                <ui:include src="/view/common/item-select-btn.xhtml" >
+                <ui:include src="/view/common/item-select-btn.xhtml">
                     <ui:param name="_itemValue" value="#{_bean.editedItem.doc}"/>
                     <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
@@ -144,19 +144,31 @@
                         <p:commandButton  value="If" title="#{bundle.AddCondition}"
                                           disabled="#{processCardBean.isReadOnly()}"
                                           actionListener="#{processCardBean.onAddConditionElement()}" >
+                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
                         </p:commandButton>
+                        
                         <p:commandButton  value="State" title="#{bundle.AddState}"
                                           disabled="#{processCardBean.isReadOnly()}"
                                           actionListener="#{processCardBean.onAddStateElement('success')}" >
+                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
                         </p:commandButton>
-                        <p:commandButton  value="Enter" title="#{bundle.AddEnter}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddEnterElement()}" >
+                        
+                        <p:commandButton value="Start" title="#{bundle.AddStart}"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         actionListener="#{processCardBean.onAddStartElement()}" >
+                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
                         </p:commandButton>
-                        <p:commandButton  value="Exit" title="#{bundle.AddExit}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddExitElement()}" >
+                        <p:commandButton value="Enter" title="#{bundle.AddEnter}"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         actionListener="#{processCardBean.onAddEnterElement()}" >
+                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
                         </p:commandButton>
+                        <p:commandButton value="Exit" title="#{bundle.AddExit}"
+                                        disabled="#{processCardBean.isReadOnly()}"
+                                        actionListener="#{processCardBean.onAddExitElement()}" >
+                                <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
+                        </p:commandButton>
+                        
 
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -217,18 +229,18 @@
             }
             
             .noExecutor {
-                border: 0.2em solid #C33730 !important;                
+                border: 0.1em solid #C33730 !important;              
             }
             .draft {
             }
             .running {
-                border:0.2em solid #020202 !important;
+                border:0.1em solid #020202 !important;
             }            
             .finished {
-                border:0.2em solid #020202 !important;                
+                border:0.1em solid #020202 !important;                
             }
             .cancelled{
-                border:0.2em dotted #020202 !important;                
+                border:0.1em dotted #020202 !important;                
             }
             
             .ui-diagram-element:hover {
@@ -279,17 +291,23 @@
             }
             
             .ui-diagram-success-state {
-                width:9em;
-                height:4em;
+                width:10em;
+                height:5em;
                 background-color: #02b044;
             }
 
             .ui-diagram-fail-state {
-                width:8em;
-                height:4em;
+                width:10em;
+                height:5em;
                 background-color: #C33730;
             }
 
+            .ui-diagram-completed-state {
+                width:10em;
+                height:5em;
+                background-color: darkgray;
+            }
+            
             .ui-diagram-condition {
                 width:7em;
                 height:6em;

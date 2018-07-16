@@ -28,10 +28,17 @@
                 </p:selectOneMenu>
                 <p:spacer height="5"/>
                 <p:separator/>
-                <p:commandButton id="btnAction" style="float: right;"
-                                 value="#{processCardBean.selectedTempl == null ? bundle.Create : bundle.Rewrite}"                                  
-                                 update="SaveAsTemplFRM"
-                                 actionListener="#{processCardBean.onSaveModelAsTempl()}"/>
+                <h:panelGroup>
+                    <p:commandButton style="float: right;"
+                                         value="#{bundle.Cancel}"
+                                         onclick="PF('SaveAsTemplDLG').hide();">      
+                    </p:commandButton>
+                    <p:commandButton id="btnAction" style="float: right;"
+                                     value="#{processCardBean.selectedTempl == null ? bundle.Create : bundle.Rewrite}"
+                                     update="SaveAsTemplFRM"
+                                     actionListener="#{processCardBean.onSaveModelAsTempl()}">
+                    </p:commandButton>
+                </h:panelGroup>
             </p:panelGrid>
         </h:form>
     </p:dialog>

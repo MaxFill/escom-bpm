@@ -19,7 +19,7 @@ public class WorkflowElements implements Serializable{
     private static final long serialVersionUID = 5898399111315803093L;
 
     @XmlElement(name = "start")
-    private StartElem startElem = new StartElem();
+    private StartElem startElem ;
         
     @XmlElement(name = "tasks")
     private Map<String, TaskElem> tasks = new HashMap <>();

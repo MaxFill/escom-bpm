@@ -24,7 +24,7 @@ public interface Workflow {
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme);
-    void validateScheme(Scheme scheme, Set<String> errors);
+    void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
     void run(Process process, WFConnectedElem startElement, Set<String> errors);
     void stop(Process process, User user, Set<String> errors);
     void start(Process process, User user, Set<String> errors);

@@ -74,7 +74,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
         if (editItem == null){
-            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getId()});
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getClass().getSimpleName() , item.getId()});
             return null;
         }
         getFacade().makeRightItem(editItem, getCurrentUser());
@@ -97,7 +97,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         BaseDictFacade facade = getFacade();
         T editItem = findItem(item.getId());  //получаем копию объекта для редактирования 
         if (editItem == null){
-            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getId()});
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getClass().getSimpleName(), item.getId()});
             return null;
         }
         

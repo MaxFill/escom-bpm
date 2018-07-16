@@ -29,6 +29,7 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
     private StatusesDoc selected = null;
     private final StatusElem editedItem = new StatusElem();
     private StatusElem sourceItem;
+    private String style = "success";
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -46,21 +47,22 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
-            }
+            } 
+            style = sourceItem.getStyleType();
         }
     }
     
-    @Override
-    public String onCloseCard(Object param){
-        try {
+    public String onSaveAndClose(Object param){
+         try {
             editedItem.setDocStatusId(selected.getId());
             editedItem.setCaption(selected.getBundleName());
+            editedItem.setStyleType(style);
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
-    }
+        return onCloseCard(param);
+    }    
     
     @Override
     public String getFormName() {
@@ -74,6 +76,12 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         this.selected = selected;
     }
 
+    public String getStyle() {
+        return style;
+    }
+    public void setStyle(String style) {
+        this.style = style;
+    }
 
         
 }

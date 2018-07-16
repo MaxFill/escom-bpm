@@ -8,7 +8,7 @@
 
     <ui:define name="title">
         #{bundle.SetDocStatus}
-    </ui:define>
+    </ui:define>s
     
     <ui:define name="menuActions" >
     </ui:define>
@@ -17,10 +17,10 @@
     </ui:define>    
     
     <ui:define name="centerFormContent">       
-        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding"  >
             <p:tab title="#{bundle.Status}"  >
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Status}" />
+                    <p:outputLabel value="#{bundle.Status}:" indicateRequired="true"/>
                     <p:selectOneMenu value="#{docStatusCardBean.selected}" converter="statusesDocConvertor"                           
                            styleClass="ui-grid-col-12"
                            required="#{param['isRequired'] == 'true'}" 
@@ -28,9 +28,18 @@
                         <f:selectItems value="#{statusesDocBean.findAll()}" var="status" itemLabel="#{docStatusCardBean.getLabelFromBundle(status.bundleName)}" itemValue="#{status}" />
                         <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                     </p:selectOneMenu>
+                    
+                    <p:outputLabel value="#{bundle.Color}:" />
+                    <p:selectOneMenu value="#{docStatusCardBean.style}"
+                                     required="#{param['isRequired'] == 'true'}" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Status}] #{bundle.MustBeFilled}">
+                        <f:selectItem itemValue="success" itemLabel="#{bundle.Green}"/>
+                        <f:selectItem itemValue="fail" itemLabel="#{bundle.Red}"/>
+                        <f:selectItem itemValue="completed" itemLabel="#{bundle.Gray}"/>
+                    </p:selectOneMenu>
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="centerFRM"
-                                     action="#{_bean.onCloseCard('save')}" style="float: right;">
+                                     actionListener="#{_bean.onSaveAndClose('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>
