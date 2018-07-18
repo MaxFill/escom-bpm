@@ -45,7 +45,8 @@ public final class DictDlgFrmName {
     /* ПРОЦЕССЫ */
     public static final String FRM_PROC_TEMPL_SELECTOR = "templ-selector";
     public static final String FRM_MONITOR = "monitor";
-    public static final String FRM_PROCESS_EXPL = "process-explorer";    
+    public static final String FRM_PROCESS_EXPL = "process-explorer"; 
+    public static final String FRM_PROCESS_TEMPL_EXPL = "proctempl-explorer"; 
     
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";

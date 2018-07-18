@@ -363,9 +363,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         this.parent = parent;
     }   
     
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

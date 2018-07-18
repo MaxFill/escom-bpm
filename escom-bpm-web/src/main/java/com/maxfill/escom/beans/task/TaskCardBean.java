@@ -38,6 +38,7 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import liquibase.util.StringUtils;
 import org.primefaces.model.DualListModel;
+import org.springframework.util.CollectionUtils;
 
 /**
  * Контролер формы "Поручение"
@@ -216,16 +217,17 @@ public class TaskCardBean extends BaseCardBean<Task>{
      */
     public void onOpenDocument(){        
         Process process = getProcess();        
-        if (process != null){ 
-            Doc doc = process.getDoc();
-            if (doc != null){
-               docBean.prepEditItem(doc, getParamsMap());
-            } else {
-               MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
-            }
-        } else {
+        if (process == null){ 
             MsgUtils.errorMsg("LinkProcessIncorrect");
+            return;
         }
+        List<Doc> docs = process.getDocs();
+        if (CollectionUtils.isEmpty(docs)){
+            MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+            return;
+        }
+        Doc doc = docs.get(0);        
+        docBean.prepEditItem(doc, getParamsMap());                
     }
     
     /**
@@ -233,16 +235,18 @@ public class TaskCardBean extends BaseCardBean<Task>{
      */
     public void onViewDocument(){
         Process process = getProcess();
-        if (process != null){ 
-            Doc doc = process.getDoc();
-            if (doc != null){
-               docBean.onViewMainAttache(doc);
-            } else {
-               MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
-            }
-        } else {
+        if (process == null){ 
             MsgUtils.errorMsg("LinkProcessIncorrect");
+            return;
         }
+        
+        List<Doc> docs = process.getDocs();
+        if (CollectionUtils.isEmpty(docs)){
+            MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+            return;
+        }
+        Doc doc = docs.get(0);
+        docBean.onViewMainAttache(doc);
     }
     
     private Process getProcess(){

@@ -3,9 +3,6 @@ package com.maxfill.model.process.templates;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.process.templates.ProcTempl;
-import com.maxfill.model.process.templates.ProcTemplLog;
-import com.maxfill.model.process.templates.ProcTemplStates;
 import com.maxfill.model.process.types.ProcessType;
 import javax.ejb.Stateless;
 

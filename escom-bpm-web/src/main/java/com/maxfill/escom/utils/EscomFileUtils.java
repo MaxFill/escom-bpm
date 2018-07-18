@@ -64,7 +64,7 @@ public final class EscomFileUtils {
         }
     }
     
-    /* Обработка действия загрузки файла  */
+    /* Обработка события загрузки файла  */
     public static UploadedFile handleUploadFile(FileUploadEvent event) {
         UploadedFile file = event.getFile();
         if (file == null) {

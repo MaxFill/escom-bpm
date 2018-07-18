@@ -181,7 +181,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @param paramsMap - передаваемые в открываемый бин параметры
      * @param errors - список ошибок
      */
-    private void openItemCard(BaseDict item, Integer editMode, Map<String, List<String>> paramsMap, Set<String> errors){       
+    public void openItemCard(BaseDict item, Integer editMode, Map<String, List<String>> paramsMap, Set<String> errors){       
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return;

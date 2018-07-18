@@ -170,11 +170,11 @@
         </p:tab>
 
         <p:tab title="#{bundle.Other}">
-            <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-panelgrid-blank">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                 <p:outputLabel value="#{bundle.Folder}" />
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.inbox}"/>
-                    <ui:param name="_itemLabel" value="nameEndElipse"/>
+                    <ui:param name="_itemLabel" value="fullName"/>
                     <ui:param name="_required" value="#{false}" />
                     <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                     <ui:param name="_itemPanel" value="folderPanel"/>
@@ -186,9 +186,7 @@
                     <ui:param name="_validateAction" value="checkFolder"/>
                     <ui:param name="_update" value=""/>
                 </ui:include>
-            </p:panelGrid>
 
-            <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-panelgrid-blank">
                 <p:outputLabel value="#{bundle.EmailSign}" />
                 <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
                               height="200" readonly="#{_bean.isReadOnly()}">

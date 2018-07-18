@@ -33,11 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.lang.WordUtils;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 /* Контроллер формы "Карточка пользователя */

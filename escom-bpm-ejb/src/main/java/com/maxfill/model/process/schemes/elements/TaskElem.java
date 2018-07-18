@@ -21,6 +21,8 @@ public class TaskElem extends WFConnectedElem{
     @XmlTransient
     private Task task;
     
+    private Integer staffId;
+    
     public TaskElem() {
         this.uid = EscomUtils.generateGUID();
     }
@@ -32,6 +34,15 @@ public class TaskElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    /* GETS & SETS */
+
+    public Integer getStaffId() {
+        return staffId;
+    }
+    public void setStaffId(Integer staffId) {
+        this.staffId = staffId;
+    }
+        
     @Override
     public String getCaption() {
         if (task != null){
@@ -69,6 +80,7 @@ public class TaskElem extends WFConnectedElem{
     }
     public void setTask(Task task) {
         this.task = task;
+        this.staffId = task.getOwner().getId();
     }
     
     @Override

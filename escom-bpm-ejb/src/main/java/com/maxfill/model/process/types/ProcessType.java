@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
 
+/**
+ * Сущность "Вид процесса"
+ */
 @Entity
 @Table(name = "processesTypes")
 @DiscriminatorColumn(name = "REF_TYPE")
@@ -36,7 +39,7 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
 
     @Column(name = "AvaibleResults")
     private String avaibleResultsJSON;
-
+    
     /* Список шаблонов */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<ProcTempl> templates = new ArrayList<>();
@@ -91,7 +94,7 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     public void setState(ProcessTypeStates state) {
         this.state = state;
     }
-
+    
     @Override
     public List <ProcessTypeLog> getItemLogs() {
         return itemLogs;

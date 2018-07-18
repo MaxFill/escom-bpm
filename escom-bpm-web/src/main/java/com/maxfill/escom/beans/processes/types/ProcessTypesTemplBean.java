@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.processes.types;
 
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.model.process.types.ProcessType;
 
@@ -14,22 +14,22 @@ import java.util.List;
 import org.primefaces.model.TreeNode;
 
 /**
- * Сервисный бин для работы с сущностью "Виды Процессов" 
+ * Сервисный бин для работы с сущностью "Виды Процессов" для использования в обозревателе шаблонов процессов
  * @author maksim
  */
 @Named
 @SessionScoped
-public class ProcessTypesBean extends BaseTreeBean<ProcessType,ProcessType> {
+public class ProcessTypesTemplBean extends BaseTreeBean<ProcessType,ProcessType> {
     private static final long serialVersionUID = -6084661748115239310L;
 
     @Inject
-    private ProcessBean processBean;
+    private ProcTemplBean procTemplBean;
     @EJB
     private ProcessTypesFacade processTypesFacade;
 
     @Override
     public BaseDetailsBean getDetailBean() {
-        return processBean;
+        return procTemplBean;
     }
 
     @Override

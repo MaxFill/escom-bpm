@@ -41,6 +41,12 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     @GeneratedValue(strategy = TABLE, generator = "procTemplatesIdGen")
     private Integer id;
     
+    @Column(name="IsDefault")
+    private Boolean isDefault = false;
+      
+    @Column(name = "TermHours")
+    private Integer termHours = 72;  //типовой срок согласования в часах
+        
     @Lob
     @Column(name = "Elements", length = 9024)
     private byte[] elements;            
@@ -54,6 +60,19 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcTemplLog> itemLogs = new ArrayList<>();
+
+    public ProcTempl() {
+    }
+
+    @Override
+    public String getIconName() {
+        if (isDefault){
+            return "doc_check20";
+        } else {
+            return "doc_draft20";
+        }
+    }
+    
     
     /* GETS & SETS */
     
@@ -66,6 +85,20 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
         this.id = id;
     }
 
+    public Integer getTermHours() {
+        return termHours;
+    }
+    public void setTermHours(Integer termHours) {
+        this.termHours = termHours;
+    }
+    
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+    
     public byte[] getElements() {
         return elements;
     }

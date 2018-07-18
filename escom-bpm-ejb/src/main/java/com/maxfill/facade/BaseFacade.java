@@ -1,10 +1,8 @@
 package com.maxfill.facade;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -15,7 +13,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import org.apache.commons.lang3.StringUtils;
 
 /* Абстрактный фасад  */
 public abstract class BaseFacade<T> {

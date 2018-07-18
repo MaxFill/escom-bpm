@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.lucene.util.CollectionUtil;
 
 /**
  * Сервис формирования системных уведомлений
@@ -73,8 +75,11 @@ public class NotificationServiceImp implements NotificationService{
     public void makeNotification(Task task, String msg){
         Doc doc = null;
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
-           doc = task.getScheme().getProcess().getDoc();
-        }                
+            List<Doc> docs = task.getScheme().getProcess().getDocs();
+            if (CollectionUtils.isNotEmpty(docs)){
+                doc = docs.get(0);
+            }
+        }
         messagesFacade.createSystemMessage(task.getOwner().getEmployee(), msg, "", new Tuple(doc, task));
     }    
     

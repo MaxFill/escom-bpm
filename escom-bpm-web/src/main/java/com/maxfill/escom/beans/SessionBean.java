@@ -22,12 +22,14 @@ import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.escom.beans.posts.PostBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
 import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
+import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.escom.beans.system.numPuttern.NumeratorPatternBean;
 import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
 import com.maxfill.escom.beans.users.UserBean;
@@ -39,7 +41,12 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.task.Task;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.folders.Folder;
+import com.maxfill.model.process.Process;
+import com.maxfill.model.process.ProcessFacade;
+import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
@@ -77,6 +84,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -97,7 +106,8 @@ public class SessionBean implements Serializable{
     private Locale locale;
     private UserSettings userSettings = new UserSettings();
     private final List<NotifMsg> notifMessages = new ArrayList <>();
-
+    private final List<Attaches> attaches = new ArrayList<>();
+ 
     @EJB
     protected Configuration configuration;    
     @EJB
@@ -114,7 +124,14 @@ public class SessionBean implements Serializable{
     private AuthLogFacade authLogFacade;
     @EJB
     protected FavoriteService favoriteService;
-
+    @EJB
+    protected DocFacade docFacade;
+    @EJB
+    protected ProcessFacade processFacade;
+        
+    @Inject
+    private AttacheBean attacheBean;
+    
     @Inject
     private ApplicationBean appBean;
     @Inject
@@ -151,6 +168,8 @@ public class SessionBean implements Serializable{
     private ProcessBean processBean;
     @Inject
     private ProcessTypesBean processTypeBean;
+    @Inject
+    private ProcTemplBean procTemplBean;
 
     @PostConstruct
     public void init() {                  
@@ -165,9 +184,9 @@ public class SessionBean implements Serializable{
         column4.addWidget("loggers");
         
         column3.addWidget("orgStructure");
-         
-        column2.addWidget("docsExplorer");
-        column2.addWidget("dictsExplorer");
+        column3.addWidget("dictsExplorer"); 
+        
+        column2.addWidget("docsExplorer");        
         column2.addWidget("processes");
          
         column1.addWidget("userParams");
@@ -205,6 +224,10 @@ public class SessionBean implements Serializable{
     
     public BaseDict prepEditItem(BaseDict item){
         BaseTableBean bean = getItemBean(item);
+        if (bean== null){
+            MsgUtils.errorMsg("Error");
+            return null;
+        }
         return bean.prepEditItem(item, bean.getParamsMap());
     }
     
@@ -271,7 +294,45 @@ public class SessionBean implements Serializable{
     }
     
     /* ПРОЧИЕ МЕТОДЫ */
-
+    
+    public void onUploadFile(FileUploadEvent event) throws IOException{       
+        attaches.clear();
+        UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event);        
+        attaches.add(attacheBean.uploadAtache(uploadFile));
+    } 
+     
+    /**
+     * Создание процесса из прикреплённого файла(ов)
+     */
+    public void onCreateProc(){        
+        ProcessType procType = processTypeBean.getFacade().find(ProcessTypesDict.CONCORDED_ID);
+        if (procType == null){
+            MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{ProcessType.class.getSimpleName(), ProcessTypesDict.CONCORDED_ID});
+            return;
+        }
+        Set<String> errors = new HashSet<>();
+        Process process = processFacade.createProcFromFile(procType, getCurrentUser(), attaches, errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        processBean.openItemCard(process, DictEditMode.INSERT_MODE, new HashMap<>(), errors);        
+    }
+    
+    /**
+     * Создание документа из прикреплённого файла
+     */
+    public void onCreateDoc(){
+        Set<String> errors = new HashSet<>();
+        User author = getCurrentUser();
+        Attaches attache = attaches.get(0);        
+        Doc doc = docFacade.createDocInUserFolder(attache.getName(), author, author.getInbox(), attache);
+        docBean.openItemCard(doc, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+        }
+    }
+    
     /* Добавление объекта в избранное  */
     public void addInFavorites(BaseDict item, Metadates metadates){
         Object[] params = new Object[]{item.getName()};
@@ -458,6 +519,18 @@ public class SessionBean implements Serializable{
         return url;
     }
 
+    /**
+     * Открытие обозревателя шаблонов процессов
+     * @return
+     */
+    public String openProcessTemplateExpl(){
+        String url = "";
+        if (appBean.getLicence().isCanUses(DictModules.MODULE_PROCESSES)){
+            url = "/view/processes/templ/" + DictDlgFrmName.FRM_PROCESS_TEMPL_EXPL + "?faces-redirect=true";
+        }
+        return url;
+    }
+    
     /**
      * Открытие формы монитора контроля процессов
      */
@@ -814,6 +887,10 @@ public class SessionBean implements Serializable{
             }
             case DictObjectName.PROCESS_TYPE:{
                 bean = processTypeBean;
+                break;
+            }
+            case DictObjectName.PROCESS_TEMPLATE:{
+                bean = procTemplBean;
                 break;
             }
         }

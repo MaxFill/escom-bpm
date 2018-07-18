@@ -4,11 +4,9 @@ import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.model.process.templates.ProcessTemplFacade;
-import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.process.templates.ProcTempl;
 import com.maxfill.model.process.types.ProcessType;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -48,7 +46,7 @@ public class ProcTemplBean extends BaseDetailsBean<ProcTempl, ProcessType>{
     }
 
     @Override
-    public BaseDictFacade getFacade() {
+    public ProcessTemplFacade getFacade() {
         return procTemplFacade;
     }    
 }

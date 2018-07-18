@@ -4,17 +4,22 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.process.ProcessLog;
-import com.maxfill.model.process.ProcessStates;
-import com.maxfill.model.process.Process;
+import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Фасад для сущности "Процессы"
@@ -24,7 +29,9 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
 
     @EJB
     private ProcessTypesFacade processTypesFacade;
-
+    @EJB
+    private DocFacade docFacade;
+        
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
     }
@@ -50,11 +57,34 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     }
 
     @Override
-    public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {
-        ProcessType processType = process.getOwner();
-        //process.setName(processType.getName());
+    public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {       
+        if (params.containsKey("documents")){
+            List<Doc> docs = (List<Doc>)params.get("document");
+            if (!docs.isEmpty()){
+                process.setDocs(docs);
+            }
+            makeProcName(process);            
+        }        
     }
 
+    /**
+     * Формирование дефолтного наименования для процесса
+     * @param process 
+     */
+    public void makeProcName(Process process){
+        StringBuilder sb = new StringBuilder();
+        if (process.getOwner() != null){
+            sb.append(process.getOwner().getName());
+        }
+        if (process.getDocs() != null && !process.getDocs().isEmpty()){
+            Doc doc = process.getDocs().get(0);            
+            if (doc != null){
+                sb.append(" <").append(doc.getFullName()).append(">");
+            }
+        }
+        process.setName(sb.toString());
+    }
+    
     /**
      * Получение прав доступа к процессу
      * @param item
@@ -78,7 +108,37 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     }
     
     @Override
-     public Tuple findDublicateExcludeItem(Process item){       
+    public Tuple findDublicateExcludeItem(Process item){       
         return new Tuple(false, null);        
+    }
+    
+    /**
+     * Создание процесса c созданием и прикреплением к нему документов созданных из файлов
+     * @param owner
+     * @param author
+     * @param attaches
+     * @param errors
+     * @return 
+     */
+    public Process createProcFromFile(ProcessType owner, User author, List<Attaches> attaches, Set<String> errors){
+        if (owner == null){
+            errors.add("DoNotSpecifyTypeProcess");
+            return null;
+        }
+        Folder folder = author.getInbox();
+        if (folder == null){
+            errors.add("NoDefaultUserFolderSpecified");
+            return null;
+        }
+        Map<String, Object> params = new HashMap<>();
+        List<Doc> docs = new ArrayList<>();
+        attaches.forEach(attach->{
+            Doc doc = docFacade.createDocInUserFolder(attach.getName(), author, folder, attach);
+            docs.add(doc);
+        });        
+        params.put("documents", docs);
+        Process process = createItem(author, owner, params);
+        makeRightItem(process, author);
+        return process;
     }
 }

@@ -23,11 +23,7 @@
                     </p:commandButton>
                 </h:panelGroup>
 
-                <h:panelGroup styleClass="pull-right" style="padding-top: 3px;">                    
-                    <p:outputLabel value="#{sessionBean.getCurrentUserPost().name}" />
-                    <p:outputLabel value="#{' '}" styleClass="without-spaces"/>
-                    <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
-                </h:panelGroup>
+                <p:outputLabel value="#{''.concat(sessionBean.getCurrentUserPost().name).concat(' ').concat(sessionBean.currentUser.shortFIO)}" />
                 
                 <h:panelGroup styleClass="pull-right" style="padding-top: 0px;">
                     <p:clock mode="server" id="serverTime" pattern="dd.MM.yy HH:mm:ss">

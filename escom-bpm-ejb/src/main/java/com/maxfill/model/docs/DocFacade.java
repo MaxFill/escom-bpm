@@ -294,12 +294,14 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     }
     
     /* Cоздание документа в папке пользователя из сервлета */
-    public void createDocInUserFolder(String name, User author, Folder userFolder, Attaches attache){
+    public Doc createDocInUserFolder(String name, User author, Folder userFolder, Attaches attache){
         Map<String, Object> params = new HashMap<>();
         params.put("attache", attache);
         params.put("name", name);
         Doc doc = createItem(author, userFolder, params);
         create(doc);
+        makeRightItem(doc, author);
+        return doc;
     }
     public Doc createDocInUserFolder(String name, User author, Folder userFolder){
         Map<String, Object> params = new HashMap<>();

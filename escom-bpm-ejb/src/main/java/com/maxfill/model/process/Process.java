@@ -46,10 +46,12 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @ManyToOne(optional = false)
     private ProcessType owner;
 
-    /* Ссылка на документ */
-    @JoinColumn(name = "Document", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Doc doc;
+    /* Список документов */
+    @JoinTable(name = "docsInProcesses", joinColumns = {
+        @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
+        @JoinColumn(name = "DocumentId", referencedColumnName = "Id")})
+    @ManyToMany
+    private List<Doc> docs;
 
     @JoinColumn(name = "Company", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -137,13 +139,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.state = state;
     }
 
-    public Doc getDoc() {
-        return doc;
-    }
-    public void setDoc(Doc doc) {
-        this.doc = doc;
-    }
-
     @Override
     public Date getBeginDate() {
         return beginDate;
@@ -191,7 +186,14 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public void setScheme(Scheme scheme) {
         this.scheme = scheme;
     }    
-    
+
+    public List<Doc> getDocs() {
+        return docs;
+    }
+    public void setDocs(List<Doc> docs) {
+        this.docs = docs;
+    }
+        
     @Override
     public List<Process> getDetailItems() {
         return null;

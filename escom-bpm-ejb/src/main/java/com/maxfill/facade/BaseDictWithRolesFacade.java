@@ -1,7 +1,6 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
-import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.states.BaseStateItem;

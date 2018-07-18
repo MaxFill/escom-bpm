@@ -49,18 +49,6 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Process}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                <p:outputLabel value="#{bundle.Doc}:" indicateRequired="true" />
-                <ui:include src="/view/common/item-select-btn.xhtml">
-                    <ui:param name="_itemValue" value="#{_bean.editedItem.doc}"/>
-                    <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                    <ui:param name="_itemPanel" value="mainDocPanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.Doc}"/>
-                    <ui:param name="_selectorBean" value="#{docsBean}"/>
-                    <ui:param name="_actionClear" value="setDoc"/>
-                    <ui:param name="_actionSelect" value="onDocSelected"/>
-                    <ui:param name="_update" value="#{_frm}:mainTabView:nameItem"/>
-                </ui:include>
                 
                 <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
@@ -72,22 +60,30 @@
                          requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                
                 
                 <p:outputLabel value="#{bundle.TermApproval}:" indicateRequired="true"/> 
-                <p:calendar value="#{processCardBean.editedItem.planExecDate}" disabledWeekends="true" 
+                <p:calendar id="dtPlanExecDate" value="#{processCardBean.editedItem.planExecDate}"  
                             styleClass="without-spaces" pages="2"
-                            timeZone="#{TimeZone.getDefault()}"
+                            timeZone="#{TimeZone.getDefault()}" disabledWeekends="true"
                             showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                             disabled="#{processCardBean.isReadOnly()}"
                             locale="#{sessionBean.locale}"
                             required="#{param['isRequired'] == 'true'}"
                             navigator="true" yearRange="c-10:c+20"
-                            requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">
-                    <f:validator validatorId="deadlineValidator" />
-                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                            requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">                    
+                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
                 </p:calendar>
                 
+                <p:outputLabel value="#{bundle.Documents}" />
+                 <ui:include src="/view/docs/doc-list.xhtml" >
+                     <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
+                </ui:include>
+                                
                 <p:outputLabel value="#{bundle.ApprovalSheet}" />                
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                              rowKey="#{task.tempId}" selectionMode="single" 
+                             paginator="true" paginatorPosition="bottom" 
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                             rowsPerPageTemplate="5, 10, 20, 35" 
+                             currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
                     
                     <p:column width="16" sortBy="#{task.state.currentState.name}">
@@ -111,7 +107,7 @@
                     </p:column>
                     
                     <p:column width="16" sortBy="#{task.iconName}" >
-                        <p:graphicImage value="/resources/icon/ico_#{task.iconName}.png" /> 
+                        <p:graphicImage value="/resources/icon/#{task.iconName}.png" /> 
                     </p:column>
                     
                     <p:column headerText="#{bundle.Result}" >
@@ -175,12 +171,12 @@
                         </span>
 
                         <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                                         disabled="#{processCardBean.isReadOnly()}"                                         
+                                         disabled="#{processCardBean.isReadOnly() or processCardBean.editedItem.owner == null}"                                         
                                          onclick="PF('LoadFromTemplDLG').show();"
                                          update="LoadFromTemplFRM">                           
                         </p:commandButton>
                         <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
-                                         disabled="#{processCardBean.isReadOnly()}"
+                                         disabled="#{processCardBean.isReadOnly() or processCardBean.editedItem.owner == null}"
                                          update="SaveAsTemplFRM"
                                          onclick="PF('SaveAsTemplDLG').show();">
                         </p:commandButton>
@@ -309,7 +305,7 @@
             }
             
             .ui-diagram-condition {
-                width:7em;
+                width:8em;
                 height:6em;
                 background-color: #c306ab;
             }

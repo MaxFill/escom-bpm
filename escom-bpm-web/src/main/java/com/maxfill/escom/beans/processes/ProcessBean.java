@@ -3,7 +3,6 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.model.process.ProcessFacade;
-import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.types.ProcessType;
@@ -15,6 +14,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
 
+/**
+ * Сервисный бин для работы с сущностью "Процессы"
+ * @author maksim
+ */
 @Named
 @SessionScoped
 public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
@@ -31,7 +34,7 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     }
 
     @Override
-    public BaseDictFacade getFacade() {
+    public ProcessFacade getFacade() {
         return processFacade;
     }
 

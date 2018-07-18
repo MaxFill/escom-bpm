@@ -47,7 +47,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @EJB
     protected Configuration conf;
     @EJB
-    private StaffFacade staffFacade;
+    protected StaffFacade staffFacade;
     
     private Integer centerHight = 0;
     private Integer northHight = 0;

@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * Сервис реализует методы управления бизнес-процессами
@@ -588,7 +589,7 @@ public class WorkflowImpl implements Workflow {
     }    
     
     /**
-     * Изменение состояния документа
+     * Изменение состояния документа(ов)
      * @param stateElem
      * @param scheme
      * @param errors 
@@ -599,16 +600,19 @@ public class WorkflowImpl implements Workflow {
             errors.add("StateProcessRouteNotFound");
             return;
         }
-        if (scheme.getProcess().getDoc() != null){
-            Doc doc = docFacade.find(scheme.getProcess().getDoc().getId());
-            if (doc != null){
-                DocStatuses docStatus = new DocStatuses(doc, status);
-                docStatus.setValue(Boolean.TRUE);
-                docStatus.setDateStatus(new Date());
-                //doc.getDocsStatusList().remove(docStatus);
-                doc.getDocsStatusList().add(docStatus);
-                docFacade.edit(doc);
-            }
+        List<Doc> docs = scheme.getProcess().getDocs();
+        if (CollectionUtils.isNotEmpty(docs)){
+            docs.forEach(d -> {
+                Doc doc = docFacade.find(d.getId());
+                if (doc != null){
+                    DocStatuses docStatus = new DocStatuses(doc, status);
+                    docStatus.setValue(Boolean.TRUE);
+                    docStatus.setDateStatus(new Date());
+                    //doc.getDocsStatusList().remove(docStatus); 
+                    doc.getDocsStatusList().add(docStatus);
+                    docFacade.edit(doc);
+                }
+            });
         }
     }            
     

@@ -39,7 +39,6 @@
         <f:event listener="#{sessionBean.showNotification()}" type="preRenderView" />
 
         <h:form id="mainFRM">
-            <ui:include src="/view/common/exeption-handler.xhtml"/>
             <style type="text/css">
                 .ui-dashboard-column {
                     width: 300px !important;
@@ -113,8 +112,8 @@
 
                     <p:panel id="admObjects" header="#{bundle.Administation}" 
                              rendered="#{sessionBean.userAdmin}"
-                             toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                             toggleable="true" styleClass="dash-panel without-spaces ">
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:commandLink value="#{bundle.Users}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -136,13 +135,17 @@
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="statusesdoc-explorer"/>
+                            <p:commandLink value="#{bundle.ProcessTemplates}"
+                                           onstart="return isClose = 1;"
+                                           ajax="false"
+                                           action="#{sessionBean.openProcessTemplateExpl()}"/>
                         </p:panelGrid>
                     </p:panel>
 
                     <p:panel id="loggers" header="#{bundle.Logging}"
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:commandLink value="#{bundle.Authentication}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -153,7 +156,7 @@
                     <p:panel id="services" header="#{bundle.Services}" 
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >                            
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                            
                             <p:commandLink value="#{bundle.MailService}"                                            
                                            actionListener="#{sessionBean.openMailSenderService()}"/>
                             <p:commandLink value="#{bundle.ServiceReaderEmail}"
@@ -168,7 +171,7 @@
                     <p:panel id="processes" header="#{bundle.Processes}"
                              rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}"
                              toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank " >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.Processes}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -177,11 +180,29 @@
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="#{sessionBean.openMonitor()}"/>
+                            <p:fileUpload id="file" style="font-size: small;"
+                                            styleClass="ui-grid-col-12"
+                                            allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                                            sizeLimit="#{docsBean.maxFileSize}"
+                                            invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                            invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                            fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                            process="@this"
+                                            mode="advanced" auto="true"
+                                            dragDropSupport="true"
+                                            label="#{bundle.SelectFileAndSendConcorder}" 
+                                            cancelLabel="#{bundle.Cancel}"
+                                            uploadLabel="#{bundle.SaveFiles}"
+                                            fileUploadListener="#{sessionBean.onUploadFile}"
+                                            onstart="PF('statusDialog').show();"
+                                            oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createProcBtn').click();">
+                            </p:fileUpload>
+                            <pe:tooltip for="file" value="#{bundle.DragDropFileForNewProcess}"/>
                         </p:panelGrid>
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                             
@@ -203,8 +224,8 @@
                     </p:panel>
 
                     <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-1" styleClass="ui-grid-col-12 ui-panelgrid-blank without-spaces" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces" >
                                 <p:commandLink value="#{bundle.CountNewMessages}"
                                                onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
                                 <p:commandLink value="#{sessionBean.getMessagesInfo()}" style="font-weight: bold;"
@@ -216,7 +237,7 @@
                     </p:panel>
 
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.DocsExplorer}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -225,15 +246,34 @@
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="doctype-explorer"/>
-                            <p:separator />
+
                             <p:commandLink value="#{bundle.Favorites}"
                                            ajax="false"
                                            action="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
+                            
+                            <p:fileUpload id="fileDoc" style="font-size: small;"                                       
+                                        styleClass="ui-grid-col-12"
+                                        allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                                        sizeLimit="#{docsBean.maxFileSize}"
+                                        invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                        invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                        fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                        process="@this"
+                                        mode="advanced" auto="true"
+                                        dragDropSupport="true"
+                                        label="#{bundle.SelectFileAndCreateDoc}" 
+                                        cancelLabel="#{bundle.Cancel}"
+                                        uploadLabel="#{bundle.SaveFiles}"
+                                        fileUploadListener="#{sessionBean.onUploadFile}" 
+                                        onstart="PF('statusDialog').show()"
+                                        oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
+                            </p:fileUpload>
+                            <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}"/>
                         </p:panelGrid>
                     </p:panel>
 
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >                        
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >                        
                             <p:commandLink value="#{bundle.Posts}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -246,7 +286,7 @@
                     </p:panel>
 
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank" >
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.Partners}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -263,6 +303,8 @@
                 
             </p:panelGrid>
             <p:remoteCommand name="onOpenForm" action="#{sessionBean.onAfterFormLoad()}"/>
+            <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
+            <p:commandButton style="display: none;" id="createDocBtn" actionListener="#{sessionBean.onCreateDoc()}"/>
         </h:form>
     </ui:define>
 

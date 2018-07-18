@@ -28,6 +28,7 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
@@ -55,6 +56,8 @@ import javax.inject.Named;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIInput;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
@@ -131,7 +134,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (getEditedItem().getScheme() == null){
             Scheme scheme = new Scheme(getEditedItem());
             getEditedItem().setScheme(scheme);
-            PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
+            if (getEditedItem().getOwner() != null){
+                PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
+            }
         }
         if (!isReadOnly()){
             addElementContextMenu();
@@ -158,13 +163,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     @Override
-    protected void checkItemBeforeSave(Process process, Set<String> errors){        
-        if (process.getPlanExecDate() == null ){
-                errors.add("DeadlineIncorrect");
-        } else 
-            if (process.getPlanExecDate().before(new Date())){
-                errors.add("DeadlineSpecifiedInPastTime");
-            }
+    protected void checkItemBeforeSave(Process process, Set<String> errors){                
         super.checkItemBeforeSave(process, errors);
     }    
     
@@ -191,9 +190,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обработка события запуска процесса на исполнение
      */
     public void onRun(){
+        Set<String> errors = new HashSet<>();
+        validatePlanDate(getEditedItem().getPlanExecDate(), errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
         onItemChange();
-        if (doSaveItem()){
-            Set<String> errors = new HashSet<>();
+        if (doSaveItem()){            
             workflow.start(getEditedItem(), getCurrentUser(), errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
@@ -229,13 +233,20 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     /**
      * Загрузка визуальной схемы процесса из шаблона
      */
-    public void onLoadModelFromTempl(){        
+    public void onLoadModelFromTempl(){
+        Integer termHours = selectedTempl.getTermHours();
+        if (termHours != null){
+            Date planExecDate = DateUtils.addHour(new Date(), termHours);
+            getEditedItem().setPlanExecDate(planExecDate);
+        }
+        
         Scheme scheme = new Scheme(getEditedItem());        
         scheme.setPackElements(selectedTempl.getElements());                 
-        workflow.unpackScheme(scheme);        
+        workflow.unpackScheme(scheme);       
+
         getEditedItem().setScheme(scheme);
         restoreModel();
-        onItemChange();        
+        onItemChange(); 
         modelRefresh();
     }
     
@@ -319,7 +330,11 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         Map<String, Element> elementMap = new HashMap <>();        
         getScheme().getElements().getTasks().forEach((k, taskEl)->{             
             if (taskEl.getTask() == null){
-                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), null, getCurrentUser(), getEditedItem().getPlanExecDate(), getScheme(), taskEl.getUid());
+                Staff staff = null;
+                if (taskEl.getStaffId() != null){
+                    staff = staffFacade.find(taskEl.getStaffId());
+                }
+                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), staff, getCurrentUser(), getEditedItem().getPlanExecDate(), getScheme(), taskEl.getUid());
                 taskEl.setTask(task);
                 getScheme().getTasks().add(task);
             }
@@ -627,7 +642,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     public void onAddStartElement(){       
         if (getScheme().getElements().getStartElem() == null){
-            baseElement = createStart(defX, defY, new HashSet<>());        
+            baseElement = createStart(3, 3, new HashSet<>());        
             finalAddElement();            
         } else {
             MsgUtils.errorMsg("SchemeCanBeOnlyOneStartElement");
@@ -1038,6 +1053,23 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     /* ПРОЧИЕ МЕТОДЫ */
     
     /**
+     * Проверка срока исполнения
+     * @param planDate 
+     * @param errors 
+     */
+    public void validatePlanDate(Date planDate, Set<String> errors){
+        Date today = new Date();
+        if (today.after(planDate)){
+            String errMsg = MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime");
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput input = (UIInput) context.getViewRoot().findComponent(getFormName()+":mainTabView:dtPlanExecDate");
+            input.setValid(false);
+            errors.add(errMsg);            
+            context.validationFailed();
+        }
+    }
+    
+    /**
      * Возвращает якорь компонента по ID якоря
      * @param element
      * @param endPointId
@@ -1100,19 +1132,16 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     /**
-     * Обработка события выбора документа из селектора
+     * Обработка события выбора документа(ов) из селектора
      * @param event
      */
-    public void onDocSelected(SelectEvent event){
-        List<Doc> items = (List<Doc>) event.getObject();
-        if (items.isEmpty()) return;
-        Doc doc = items.get(0);
+    public void onDocsSelected(SelectEvent event){
+        List<Doc> docs = (List<Doc>) event.getObject();
+        if (docs.isEmpty()) return;        
+        getEditedItem().getDocs().addAll(docs);
+        //processFacade.makeProcName(getEditedItem());
         onItemChange();
-        getEditedItem().setDoc(doc);
-        StringBuilder sb = new StringBuilder(getEditedItem().getOwner().getName());
-        sb.append(" документа <").append(doc.getFullName()).append(">");
-        getEditedItem().setName(sb.toString());
-    }    
+    }        
     
     public void onOpenExeReport(ProcReport report){
         currentReport = report;

@@ -39,11 +39,12 @@
                             disabled="#{processTypesCardBean.isReadOnly()}"
                             showCheckbox="true"
                             required="#{param['isRequired'] == 'true'}"
+                            onTransfer="itemChange = 1;"
                             requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"                                
                             itemLabel="#{resultBean.getLabelFromBundle(result.getName())}" itemValue="#{result}">
                     <f:facet name="sourceCaption">#{bundle.AvailableResults}</f:facet>
                     <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
-                </p:pickList>
+                </p:pickList>               
             </p:panelGrid>
         </p:tab>                
         

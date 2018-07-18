@@ -12,15 +12,4 @@
         </p:panelGrid>
     </p:dialog>
     
-    <p:dialog id="exceptionDialog" header="#{bundle.Error}" modal="true" closable="true" closeOnEscape="true" widgetVar="exceptionDialog" height="500px">
-        <p:panelGrid columns="1" styleClass="ui-grid-col-12">
-            <p:outputLabel value="#{bundle.Message}" />: Exception '#{pfExceptionHandler.type}' occurred! #{pfExceptionHandler.message}
-            <p:accordionPanel activeIndex="0">
-                <p:tab title="#{bundle.Detail}" >
-                    <h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false" />
-                </p:tab>
-            </p:accordionPanel>
-        </p:panelGrid>
-    </p:dialog>
-    
 </ui:composition>
