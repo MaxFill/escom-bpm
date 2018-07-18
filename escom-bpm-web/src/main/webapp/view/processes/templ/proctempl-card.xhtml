@@ -8,13 +8,12 @@
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.ProcessTemplate}">
             <p:panelGrid columns="1"  styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
-                <p:selectBooleanCheckbox value="#{procTemplCardBean.editedItem.isDefault}" 
-                                     disabled="#{_bean.isReadOnly()}"
-                                     valueChangeListener="#{_bean.onInheritsChildsRightChange}" > 
+                <p:selectBooleanCheckbox value="#{procTemplCardBean.editedItem.isDefault}" itemLabel="#{bundle.Main}"
+                                     disabled="#{_bean.isReadOnly()}"> 
                     <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
                 
-                <p:outputLabel value="#{bundle.Name}"/>
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
