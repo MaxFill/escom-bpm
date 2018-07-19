@@ -19,7 +19,7 @@ import org.primefaces.model.TreeNode;
  */
 @Named
 @SessionScoped
-public class ProcessTypesTemplBean extends BaseTreeBean<ProcessType,ProcessType> {
+public class ProcessTypesTemplBean extends BaseTreeBean<ProcessType, ProcessType> {
     private static final long serialVersionUID = -6084661748115239310L;
 
     @Inject

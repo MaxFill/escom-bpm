@@ -122,13 +122,15 @@
                             <p:autoUpdate />
                         </p:messages>
                         
-                        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding"  >
+                        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" 
+                                   activeIndex="#{_bean.tabActiveIndex}"  
+                                   onTabChange="#{_bean.tabChangeScript}">
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
                             <ui:insert name="childs_rights"/> 
                             <ui:include src="/view/common/dict-info.xhtml"/>
                             <ui:include src="/view/common/dict-log.xhtml"/> 
-                        </p:tabView>                         
+                        </p:tabView> 
                     </p:panelGrid>
 
                     <ui:include src="/view/common/confirm-dlg.xhtml" />

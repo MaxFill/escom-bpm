@@ -66,8 +66,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     protected User selUser;
     protected UserGroups selUsGroup;
     protected UserGroups selUserRole;
-    protected abstract BaseDictFacade getFacade();
-
+    protected abstract BaseDictFacade getFacade();    
+    
     /**
      * Общий метод для всех бинов карточек, вызываемый автоматически перед открытием карточки
      * @param params 
@@ -668,6 +668,9 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         this.itemCurrentState = itemCurrentState;
     }
 
+    public String getTabChangeScript(){
+        return "";
+    }
     
     /* Получение ссылки на объект метаданных  */
     public Metadates getMetadatesObj() {

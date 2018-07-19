@@ -57,6 +57,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     private Integer centerWidth = 0;
     private Integer eastWidth = 0;
     private BaseDict sourceItem;
+    private int tabActiveIndex = 0;
     
     protected Boolean openInDialog;
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
@@ -354,6 +355,13 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         this.sourceBean = sourceBean;
     }
 
+    public int getTabActiveIndex() {
+        return tabActiveIndex;
+    }
+    public void setTabActiveIndex(int tabActiveIndex) {
+        this.tabActiveIndex = tabActiveIndex;
+    }
+    
     @Override
     public BaseDict getSourceItem() {
         return sourceItem;

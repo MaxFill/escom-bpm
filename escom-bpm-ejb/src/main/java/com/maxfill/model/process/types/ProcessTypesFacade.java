@@ -47,6 +47,9 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
 
     /**
      * Формирование прав доступа объекта
+     * @param item
+     * @param user
+     * @return 
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {

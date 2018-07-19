@@ -24,7 +24,7 @@
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:commandButton id="openTreeCardBtn" actionListener="#{_explorerBean.onEditContentItem()}"
+    <p:commandButton id="openTreeCardBtn" actionListener="#{_explorerBean.onEditTreeItem()}"
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
@@ -32,7 +32,7 @@
                 listener="#{_explorerBean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:commandButton id="viewTreeCardBtn" actionListener="#{_explorerBean.onViewContentItem()}" 
+    <p:commandButton id="viewTreeCardBtn" actionListener="#{_explorerBean.onViewTreeItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 

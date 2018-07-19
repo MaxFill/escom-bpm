@@ -130,46 +130,15 @@ public class SessionBean implements Serializable{
     protected ProcessFacade processFacade;
         
     @Inject
-    private AttacheBean attacheBean;
-    
+    private AttacheBean attacheBean;   
     @Inject
     private ApplicationBean appBean;
     @Inject
-    private UserBean usersBean;
-    @Inject
-    private CompanyBean companyBean;
-    @Inject
-    private StaffBean staffBean;
-    @Inject
-    private DocTypeBean docTypeBean;
-    @Inject
-    private PartnersBean partnerBean;
-    @Inject
     private DocBean docBean;
-    @Inject
-    private StatusesDocBean statusesDocBean;
-    @Inject
-    private FoldersBean folderBean;
-    @Inject
-    private PostBean postBean;
-    @Inject
-    private DepartmentBean departmentBean;
-    @Inject
-    private UserGroupsBean userGroupBean;
-    @Inject
-    private PartnersGroupsBean partnerGroupBean;
-    @Inject
-    private PartnerTypesBean partnerTypeBean;
-    @Inject
-    private DocTypeGroupsBean docTypeGroupBean;
-    @Inject
-    private NumeratorPatternBean numeratorPatternBean;
     @Inject
     private ProcessBean processBean;
     @Inject
     private ProcessTypesBean processTypeBean;
-    @Inject
-    private ProcTemplBean procTemplBean;
 
     @PostConstruct
     public void init() {                  
@@ -215,60 +184,7 @@ public class SessionBean implements Serializable{
         sourceRightMap.remove(key);
     }
     
-    /* ITEM HELPER */    
-        
-    public BaseDict reloadItem(BaseDict item){
-        BaseTableBean bean = getItemBean(item);
-        return (BaseDict)bean.getFacade().find(item.getId());
-    }
-    
-    public BaseDict prepEditItem(BaseDict item){
-        BaseTableBean bean = getItemBean(item);
-        if (bean== null){
-            MsgUtils.errorMsg("Error");
-            return null;
-        }
-        return bean.prepEditItem(item, bean.getParamsMap());
-    }
-    
-    public BaseDict prepViewItem(BaseDict item){
-        BaseTableBean bean = getItemBean(item);
-        return bean.prepViewItem(item, bean.getParamsMap(), new HashSet<>());
-    }    
-    
-    public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
-        BaseTableBean bean = getItemBean(sourceItem);
-        BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
-
-        if (!errors.isEmpty()) return null;
-
-        if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
-            List<List<?>> dependency = bean.doGetDependency(sourceItem);
-            if (CollectionUtils.isNotEmpty(dependency)){
-                copyPasteDependency(dependency, pasteItem, errors);
-                pasteItem = bean.findItem(pasteItem.getId());
-            }
-            return pasteItem;
-        } else {
-            bean.preparePasteItem(pasteItem, sourceItem, recipient);
-            return sourceItem;
-        }
-    }
-    
-    public BaseDict prepCopyItem(BaseDict copyItem){
-        return getItemBean(copyItem).doCopy(copyItem);
-    }
-    
-    /* копирование дочерних и подчинённых объектов */
-    private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
-        for (List<?> depend : dependency){
-            depend.stream().forEach(detailItem -> prepPasteItem((BaseDict)detailItem, pasteItem, errors));
-        }        
-    }                       
-    
-    public boolean prepAddItemToGroup(BaseDict item, BaseDict targetGroup){ 
-        return ((BaseDetailsBean)getItemBean(item)).addItemToGroup(item, targetGroup);
-    }            
+    /* ITEM HELPER */           
     
     /**
      * Определяет, просрочен ли объект
@@ -813,89 +729,7 @@ public class SessionBean implements Serializable{
     public String getLicenseExpireAsString(){
         Date termLicense = appBean.getLicenseExpireDate();
         return DateUtils.dateToString(termLicense, DateFormat.SHORT, null, getLocale());
-    }
-
-    private BaseTableBean getItemBean(BaseDict item){
-        return getItemBeanByClassName(item.getClass().getSimpleName());
-    }   
-    public BaseTableBean getItemBeanByClassName(String className){
-        BaseTableBean bean = null;
-        switch(className){
-            case DictObjectName.STAFF:{
-                bean = staffBean;
-                break;
-            }
-            case DictObjectName.POST:{
-                bean = postBean;
-                break;
-            }
-            case DictObjectName.PARTNER_TYPES:{
-                bean = partnerTypeBean;
-                break;
-            }
-            case DictObjectName.PARTNER_GROUP:{
-                bean = partnerGroupBean;
-                break;
-            }
-            case DictObjectName.PARTNER:{
-                bean = partnerBean;
-                break;
-            }
-            case DictObjectName.FOLDER:{
-                bean = folderBean;
-                break;
-            }            
-            case DictObjectName.DOC_TYPE:{
-                bean = docTypeBean;
-                break;
-            }
-            case DictObjectName.DOC_TYPE_GROUPS:{
-                bean = docTypeGroupBean;
-                break;
-            }
-            case DictObjectName.DOC:{
-                bean = docBean;
-                break;
-            }
-            case DictObjectName.USER_GROUP:{
-                bean = userGroupBean;
-                break;
-            }
-            case DictObjectName.USER:{
-                bean = usersBean;
-                break;
-            }
-            case DictObjectName.STATUS_DOCS:{
-                bean = statusesDocBean;
-                break;
-            }
-            case DictObjectName.DEPARTAMENT:{
-                bean = departmentBean;
-                break;
-            }
-            case DictObjectName.COMPANY:{
-                bean = companyBean;
-                break;
-            }
-            case DictObjectName.NUMERATOR_PATTERN:{
-                bean = numeratorPatternBean;
-                break;
-            }
-            case DictObjectName.PROCESS:{
-                bean = processBean;
-                break;
-            }
-            case DictObjectName.PROCESS_TYPE:{
-                bean = processTypeBean;
-                break;
-            }
-            case DictObjectName.PROCESS_TEMPLATE:{
-                bean = procTemplBean;
-                break;
-            }
-        }
-        return bean;
-    }   
+    }     
     
     public Configuration getConfiguration(){        
         return configuration;

@@ -62,15 +62,15 @@ public class RightsBean implements Serializable{
         String accessorName = right.getName();
         switch (right.getObjType()){
             case (DictRights.TYPE_GROUP):{
-                right.setIcon("folder_open20");
+                right.setIcon("folder_open");
                 break;
             }
             case (DictRights.TYPE_ROLE):{
-                right.setIcon("roles20");
+                right.setIcon("role-16");
                 break;
             }
             case (DictRights.TYPE_USER):{
-                right.setIcon("user20");
+                right.setIcon("user");
                 break;
             }
         }

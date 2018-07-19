@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.explorer;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
@@ -253,13 +254,14 @@ public class ExplorerTreeBean extends ExplorerBean{
         }
         checkedItems.stream()
                 .filter(dragItem -> !isItemRootType(dragItem))
-                .forEach(dragItem -> {
-                    if (sessionBean.prepAddItemToGroup(dragItem, dropItem)){
+                .forEach(dragItem -> {                    
+                    if (((BaseTreeBean)getItemBean(dragItem)).addItemToGroup(dragItem, dropItem)){
                         MsgUtils.succesFormatMsg("AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });
     }
 
+    
     /* DRAG & DROP: отработка команды на перемещение в дереве */
     public void moveGroupToGroup() {
         checkedItems.stream().forEach(dragItem -> {

@@ -274,19 +274,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.orderBy(builder.asc(c.get("name")));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
-    }
-    
-    /* Возвращает число объектов у которых состояние равно указанному */
-    public Integer countItemsByState(State state){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery cq = builder.createQuery();
-        Root<T> root = cq.from(itemClass);        
-        Predicate crit1 = builder.equal(root.get("state").get("currentState"), state);
-        cq.select(builder.count(root));
-        cq.where(builder.and(crit1));        
-        Query query = getEntityManager().createQuery(cq);
-        return ((Long) query.getSingleResult()).intValue();
-    }
+    }    
     
     /* Отбор актуальных объектов по их владельцу  */
     public List<BaseDict> findItemByOwner(O owner){

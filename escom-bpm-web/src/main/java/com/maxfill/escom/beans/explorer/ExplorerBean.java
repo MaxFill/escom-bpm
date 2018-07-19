@@ -52,6 +52,7 @@ import java.text.Collator;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
@@ -161,19 +162,41 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
-    public void onViewContentItem(){
+    public void onViewDetailItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.VIEW_MODE);
-        editItem = sessionBean.prepViewItem(item);       
+        editItem = tableBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+    }
+
+    /* КАРТОЧКИ: открытие карточки объекта из дерева для просмотра */
+    public void onViewTreeItem(){
+        BaseDict item = getCurrentItem();
+        setTypeEdit(DictEditMode.VIEW_MODE);
+        if (isItemRootType(item)){
+            editItem = rootBean.prepViewItem(item, rootBean.getParamsMap(), new HashSet<>());
+        } else {
+            editItem = treeBean.prepViewItem(item, treeBean.getParamsMap(), new HashSet<>());
+        }      
     }
     
     /* КАРТОЧКИ: открытие карточки объекта для редактирование */
-    public void onEditContentItem(){
+    public void onEditDetailItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.EDIT_MODE);
-        editItem = sessionBean.prepEditItem(item);
+        editItem = tableBean.prepEditItem(item, tableBean.getParamsMap());        
     }
 
+    /* КАРТОЧКИ: открытие карточки объекта из дерева для редактирования */
+    public void onEditTreeItem(){
+        BaseDict item = getCurrentItem();
+        setTypeEdit(DictEditMode.EDIT_MODE);        
+        if (isItemRootType(item)){
+            editItem = rootBean.prepEditItem(item, rootBean.getParamsMap());
+        } else {
+            editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());        
+        }
+    }
+    
     /* КАРТОЧКИ: создание объекта в дереве с открытием карточки */
     public void onCreateTreeItem() {
         BaseDict selected = (BaseDict) treeSelectedNode.getData();
@@ -261,7 +284,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* TODO Нашёл что вызов данного метода есть в обозревателе документов (doc-explorer) Возможно что просто устаревший...*/
     public void onUpdateAfterChangeItem(SelectEvent event){
-        editItem = sessionBean.reloadItem(currentItem);
+        editItem = (BaseDict) getItemBean(currentItem).getFacade().find(currentItem.getId());
         try {                    
             BeanUtils.copyProperties(currentItem, editItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -278,6 +301,19 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public boolean isItemRootType(BaseDict item){
         return Objects.equals(typeRoot, item.getClass().getSimpleName());
     }    
+    
+    protected BaseTableBean getItemBean(BaseDict item){
+        if (isItemDetailType(item)){
+            return tableBean;
+        }
+        if (isItemTreeType(item)){
+            return treeBean;
+        }
+        if (isItemRootType(item)){
+            return rootBean;
+        }
+        throw new RuntimeException("ESCOM_ERROR: bean not found for item: [" + item.toString() + "]");
+    }
     
     /* ИЗБРАННОЕ */
     
@@ -822,7 +858,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }
         currentItem = (BaseDict) treeSelectedNode.getData();
         makeSelectedGroup(currentItem);        
-        onEditContentItem();        
+        onEditTreeItem();        
     }
     
     /* ДЕРЕВО: добавление нового объекта в дерево  */
@@ -988,7 +1024,9 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* КОПИРОВАНИЕ: копирование объектов в память  */
     public void doCopyItems(List<BaseDict> sourceItems) {
-        copiedItems = sourceItems.stream().map(copyItem -> sessionBean.prepCopyItem(copyItem)).collect(Collectors.toSet());         
+        copiedItems = sourceItems.stream()
+                .map(copyItem->getItemBean(copyItem).doCopy(copyItem))
+                .collect(Collectors.toSet());
         copiedItems.stream().forEach(item-> MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{item.getName()}));
     }
 
@@ -1057,13 +1095,40 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private List<BaseDict> pasteItem(BaseDict parent, Set<String> errors) {        
         List<BaseDict> rezults = new ArrayList<>();
         copiedItems.stream().forEach(item -> {
-            BaseDict pasteItem = sessionBean.prepPasteItem(item, parent, errors);
+            BaseDict pasteItem = prepPasteItem(item, parent, errors);
             if (pasteItem != null){
                 rezults.add(pasteItem);
             }
         });
         return rezults;
     }
+    
+    /* ВСТАВКА */
+    public BaseDict prepPasteItem(BaseDict sourceItem, BaseDict recipient, Set<String> errors){
+        BaseTableBean bean = getItemBean(sourceItem);
+        BaseDict pasteItem = bean.doPasteItem(sourceItem, recipient, errors);
+
+        if (!errors.isEmpty()) return null;
+
+        if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
+            List<List<?>> dependency = bean.doGetDependency(sourceItem);
+            if (CollectionUtils.isNotEmpty(dependency)){
+                copyPasteDependency(dependency, pasteItem, errors);
+                pasteItem = bean.findItem(pasteItem.getId());
+            }
+            return pasteItem;
+        } else {
+            bean.preparePasteItem(pasteItem, sourceItem, recipient);
+            return sourceItem;
+        }
+    }    
+    
+    /* ВСТАВКА копирование дочерних и подчинённых объектов */
+    private void copyPasteDependency(List<List<?>> dependency, BaseDict pasteItem, Set<String> errors){
+        for (List<?> depend : dependency){
+            depend.stream().forEach(detailItem -> prepPasteItem((BaseDict)detailItem, pasteItem, errors));
+        }        
+    } 
     
     /* ПОИСК */
 

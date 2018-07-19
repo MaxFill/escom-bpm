@@ -67,9 +67,9 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     @Override
     public String getIconName() {
         if (isDefault){
-            return "doc_check20";
+            return "done";
         } else {
-            return "doc_draft20";
+            return "blank-20";
         }
     }
     

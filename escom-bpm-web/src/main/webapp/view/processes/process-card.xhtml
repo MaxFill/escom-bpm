@@ -57,7 +57,7 @@
                          onchange="return itemChange = 1;"
                          disabled="#{processCardBean.isReadOnly()}"
                          required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                
+                         requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                
                 
                 <p:outputLabel value="#{bundle.TermApproval}:" indicateRequired="true"/> 
                 <p:calendar id="dtPlanExecDate" value="#{processCardBean.editedItem.planExecDate}"  
@@ -118,7 +118,7 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Scheme}" >            
+        <p:tab title="#{bundle.Scheme}" id="tbScheme" >            
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces" >
                 <p:toolbar styleClass="ui-grid-col-12" >
                     <f:facet name="left">
@@ -164,19 +164,25 @@
                                         actionListener="#{processCardBean.onAddExitElement()}" >
                                 <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
                         </p:commandButton>
-                        
-
+                         
+                        <span class="ui-separator">
+                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                        </span>
+                        <p:commandButton id="btnRefresh" title="#{bundle.Refresh}" icon="ui-icon-arrowrefresh-1-s"
+                                         disabled="#{processCardBean.isReadOnly()}"
+                                         actionListener="#{processCardBean.modelRefresh()}">
+                        </p:commandButton>
                         <span class="ui-separator">
                             <span class="ui-icon ui-icon-grip-dotted-vertical" />
                         </span>
 
                         <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                                         disabled="#{processCardBean.isReadOnly() or processCardBean.editedItem.owner == null}"                                         
+                                         disabled="#{processCardBean.isReadOnly()}"                                         
                                          onclick="PF('LoadFromTemplDLG').show();"
                                          update="LoadFromTemplFRM">                           
                         </p:commandButton>
                         <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
-                                         disabled="#{processCardBean.isReadOnly() or processCardBean.editedItem.owner == null}"
+                                         disabled="#{processCardBean.isReadOnly()}"
                                          update="SaveAsTemplFRM"
                                          onclick="PF('SaveAsTemplDLG').show();">
                         </p:commandButton>

@@ -75,7 +75,7 @@
 
                         <ui:insert name="btnDisplayNone" />
 
-                        <p:commandButton id="viewCardBtn" actionListener="#{_explorerBean.onEditContentItem()}" 
+                        <p:commandButton id="viewCardBtn" actionListener="#{_explorerBean.onEditDetailItem()}" 
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">
@@ -84,7 +84,7 @@
                                     oncomplete="initDND()"/>
                         </p:commandButton>
                         
-                        <p:commandButton id="editCardBtn" actionListener="#{_explorerBean.onViewContentItem()}"
+                        <p:commandButton id="editCardBtn" actionListener="#{_explorerBean.onViewDetailItem()}"
                                          onstart="PF('statusDialog').show()"
                                          oncomplete="PF('statusDialog').hide();"
                                          style="display: none;">

@@ -12,6 +12,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.system.rights.RightsBean;
+import com.maxfill.facade.CommonFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
@@ -27,6 +28,8 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.model.DualListModel;
@@ -54,9 +57,6 @@ public class MetadatesBean implements Serializable{
     private UserGroups selUserRole;
 
     private DualListModel<State> states;
-
-    @Inject
-    private SessionBean sessionBean;
     
     @Inject
     private RightsBean rightsBean;
@@ -69,7 +69,9 @@ public class MetadatesBean implements Serializable{
     private StateFacade stateFacade;
     @EJB
     private RightsDef rightsDef;
-
+    @EJB
+    private CommonFacade commonFacade;
+        
     @PostConstruct
     public void init() {
         initLayoutOptions();
@@ -136,13 +138,17 @@ public class MetadatesBean implements Serializable{
      * @param state
      */
     private void checkStateBeforeDelete(State state,  Set<String> errors){
-        if (Objects.equals(state, startState)){
-            errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
-        }
-        BaseTableBean bean = sessionBean.getItemBeanByClassName(selectedObject.getObjectName());
-        if (bean != null && bean.getFacade().countItemsByState(state) > 0){
-            String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
-            errors.add(message);
+        try {
+            if (Objects.equals(state, startState)){
+                errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
+            }
+            if (commonFacade.countItemsByState(Class.forName(selectedObject.getObjectName()), state) > 0){
+                String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
+                errors.add(message);
+            }
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MetadatesBean.class.getName()).log(Level.SEVERE, null, ex);
+            MsgUtils.errorMsg("Error");
         }
     }
 
@@ -157,6 +163,7 @@ public class MetadatesBean implements Serializable{
 
     /**
      * Обработка события изменения списка состояний объекта в pickList
+     * @param event
      */
     public void onTransfer(TransferEvent event){
         List<State> newStates = states.getTarget();

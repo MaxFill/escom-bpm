@@ -133,14 +133,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         super.onAfterFormLoad(beanId);
         if (getEditedItem().getScheme() == null){
             Scheme scheme = new Scheme(getEditedItem());
-            getEditedItem().setScheme(scheme);
+            getEditedItem().setScheme(scheme);            
             if (getEditedItem().getOwner() != null){
                 PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
+            }            
+        } else 
+            if (!isReadOnly()){
+                addElementContextMenu();
             }
-        }
-        if (!isReadOnly()){
-            addElementContextMenu();
-        }
     }
     
     /**
@@ -247,8 +247,15 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         getEditedItem().setScheme(scheme);
         restoreModel();
         onItemChange(); 
-        modelRefresh();
+        setTabActiveIndex(1);
+        PrimeFaces.current().ajax().update("process:mainTabView");
+        addElementContextMenu();
     }
+
+    @Override
+    public String getTabChangeScript() {
+        return "document.getElementById('process:mainTabView:btnRefresh').click();";
+    }    
     
     /**
      * Сохранение модели процесса в шаблон
@@ -277,7 +284,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             }
             processTemplFacade.addLogEvent(selectedTempl, "ObjectCreate", getCurrentUser());
             selectedTempl.setElements(scheme.getPackElements());            
-            
+            if (templs.isEmpty()){
+                selectedTempl.setIsDefault(Boolean.TRUE);
+            }
             templs.add(selectedTempl);
             processTypesFacade.edit(processType);
         } else {    //перезаписываем схему в существующий шаблон            
@@ -315,8 +324,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     /**
      * Перерисовка модели на странице формы
      */
-    private void modelRefresh(){
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");               
+    public void modelRefresh(){
+        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
         }

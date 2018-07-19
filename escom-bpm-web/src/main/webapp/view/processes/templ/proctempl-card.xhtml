@@ -8,8 +8,9 @@
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.ProcessTemplate}">
             <p:panelGrid columns="1"  styleClass="ui-panelgrid-blank ui-grid-col-12" columnClasses="ui-grid-col-12">
-                <p:selectBooleanCheckbox value="#{procTemplCardBean.editedItem.isDefault}" itemLabel="#{bundle.Main}"
-                                     disabled="#{_bean.isReadOnly()}"> 
+                <p:selectBooleanCheckbox value="#{procTemplCardBean.editedItem.isDefault}" itemLabel="#{bundle.MainTemplate}" 
+                                     disabled="#{_bean.isReadOnly()}"
+                                     valueChangeListener="#{procTemplCardBean.onDefaultChange}"> 
                     <p:ajax process="@this" oncomplete="return itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
                 
