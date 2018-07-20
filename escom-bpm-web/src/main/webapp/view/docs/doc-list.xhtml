@@ -49,17 +49,16 @@
                             actionListener="#{_bean.setSelectedDoc(doc)}"
                             oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();">
                 <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
-                            process="@this"
-                            disabled="#{doc.attache == null}"
+                            disabled="#{doc.mainAttache == null}"
                             actionListener="#{docsBean.onViewMainAttache(doc)}"/>
                 <p:separator />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
-                            process="@this"
                             actionListener="#{docsBean.addInFavorites(doc)}"/>
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                             update="tblDocs"
-                            disabled="#{!docsBean.isHaveRightDelete(doc)}"
-                            actionListener="#{docsBean.moveItemToTrash(doc)}"/>
+                            disabled="#{_bean.isReadOnly()}"
+                            rendered="#{_bean eq processCardBean}"
+                            actionListener="#{_bean.onDeleteDocFromChilds(doc)}"/>
             </p:splitButton>
 
         </p:column>

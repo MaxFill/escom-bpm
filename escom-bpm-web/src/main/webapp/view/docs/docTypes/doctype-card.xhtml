@@ -13,7 +13,7 @@
         <p:tab title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
 
-                <p:outputLabel value="#{bundle.Name}" />
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -22,7 +22,7 @@
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
 
-                <p:outputLabel value="#{bundle.Code}" />
+                <p:outputLabel value="#{bundle.Code}:" />
                 <p:inputText id="docTypeCode" value="#{_bean.editedItem.code}" 
                              title="#{bundle.StringArbitrary}"
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
@@ -32,7 +32,7 @@
                 </p:inputText>
                 <p:watermark for="docTypeCode" value="#{bundle.MaxLenght3}" />
 
-                <p:outputLabel value="#{bundle.Numerator}" />
+                <p:outputLabel value="#{bundle.Numerator}:" />
                 <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
                                  disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                                  onchange="return itemChange = 1;"
@@ -48,12 +48,12 @@
 
                 </p:selectOneMenu>
 
-                <p:outputLabel value="#{bundle.Statuses}" />
+                <p:outputLabel value="#{bundle.Statuses}:" />
                 <p:selectManyMenu id="statesMenu" value="#{_bean.editedItem.statusDocList}" converter="statusesDocConvertor"
                                   disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
                                   var="st" showCheckbox="true"
                                   onchange="return itemChange = 1;"
-                                  style="width: 100%;">
+                                  styleClass="ui-grid-col-12">
                     <f:selectItems value="#{statusesDocBean.findAll()}" var="status" itemLabel="#{status.name}" itemValue="#{status}" />
                     <p:column>
                         <h:outputText value="#{st.nameEndElipse}" />

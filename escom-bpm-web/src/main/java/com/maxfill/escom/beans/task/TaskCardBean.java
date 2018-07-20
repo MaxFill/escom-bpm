@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import org.primefaces.event.SelectEvent;
 
 import javax.faces.event.ValueChangeEvent;
@@ -226,7 +227,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
         }
-        Doc doc = docs.get(0);        
+        Doc doc = docs.stream().findFirst().orElse(null);       
         docBean.prepEditItem(doc, getParamsMap());                
     }
     
@@ -245,7 +246,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
         }
-        Doc doc = docs.get(0);
+        Doc doc = docs.stream().findFirst().orElse(null);
         docBean.onViewMainAttache(doc);
     }
     

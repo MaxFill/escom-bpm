@@ -1138,19 +1138,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             return taskElem.getCaption();
         }
         return getLabelFromBundle(bundleName);
-    }
-    
-    /**
-     * Обработка события выбора документа(ов) из селектора
-     * @param event
-     */
-    public void onDocsSelected(SelectEvent event){
-        List<Doc> docs = (List<Doc>) event.getObject();
-        if (docs.isEmpty()) return;        
-        getEditedItem().getDocs().addAll(docs);
-        //processFacade.makeProcName(getEditedItem());
-        onItemChange();
-    }        
+    }          
     
     public void onOpenExeReport(ProcReport report){
         currentReport = report;
@@ -1166,6 +1154,28 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             nameTemplate = selectedTempl.getName();
         } 
     }
+    
+    /* РАБОТА СО СПИСКОМ ДОКУМЕНТОВ */
+    
+    /**
+     * Обработка события удаления документа из списка документов процесса
+     * @param doc
+     */
+    public void onDeleteDocFromChilds(Doc doc){
+        getEditedItem().getDocs().remove(doc);
+        onItemChange();
+    }
+    
+    /**
+     * Обработка события выбора документа(ов) из селектора
+     * @param event
+     */
+    public void onDocsSelected(SelectEvent event){
+        List<Doc> docs = (List<Doc>) event.getObject();
+        if (docs.isEmpty()) return;        
+        getEditedItem().getDocs().addAll(docs);        
+        onItemChange();
+    } 
     
     /* GETS & SETS */
 

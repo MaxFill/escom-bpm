@@ -276,6 +276,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * Некоторые объекты при вставке не нужно копировать!
      * @param item
      * @param recipient
+     * @return 
      */
     public boolean isNeedCopyOnPaste(T item, BaseDict recipient){
         return true;

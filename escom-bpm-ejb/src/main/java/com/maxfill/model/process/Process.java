@@ -46,13 +46,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @ManyToOne(optional = false)
     private ProcessType owner;
 
-    /* Список документов */
-    @JoinTable(name = "docsInProcesses", joinColumns = {
-        @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
-        @JoinColumn(name = "DocumentId", referencedColumnName = "Id")})
-    @ManyToMany
-    private List<Doc> docs;
-
     @JoinColumn(name = "Company", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Company company;
@@ -81,6 +74,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     
     @Column(name="DeadLineType")
     private String deadLineType = "delta"; //вид установки срока исполнения
+    
+    /* Список документов */
+    @JoinTable(name = "docsInProcesses", joinColumns = {
+        @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
+        @JoinColumn(name = "DocumentId", referencedColumnName = "Id")})
+    @ManyToMany
+    private List<Doc> docs = new ArrayList<>();
     
     /* Состояние */
     @XmlTransient

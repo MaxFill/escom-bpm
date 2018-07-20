@@ -9,6 +9,7 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
+import java.text.MessageFormat;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
@@ -104,6 +105,12 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
      */
     @Override
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
+        super.checkAllowedDeleteItem(folder, errors);
+        if (!userFacade.findUsersByInbox(folder).isEmpty()){
+            Object[] messageParameters = new Object[]{folder.getName()};
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("FolderUsedInUsers"), messageParameters);
+            errors.add(error);
+        }
     }
 
     /**

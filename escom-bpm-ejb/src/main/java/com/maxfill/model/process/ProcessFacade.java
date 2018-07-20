@@ -14,6 +14,8 @@ import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -59,7 +61,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {       
         if (params.containsKey("documents")){
-            List<Doc> docs = (List<Doc>)params.get("document");
+            List<Doc> docs = (List<Doc>)params.get("documents");
             if (!docs.isEmpty()){
                 process.setDocs(docs);
             }
@@ -77,7 +79,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             sb.append(process.getOwner().getName());
         }
         if (process.getDocs() != null && !process.getDocs().isEmpty()){
-            Doc doc = process.getDocs().get(0);            
+            Iterator iterator = process.getDocs().iterator(); 
+            Doc doc = (Doc)iterator.next();            
             if (doc != null){
                 sb.append(" <").append(doc.getFullName()).append(">");
             }

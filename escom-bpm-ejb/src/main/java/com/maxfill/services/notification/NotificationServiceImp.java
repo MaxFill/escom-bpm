@@ -13,11 +13,12 @@ import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.lucene.util.CollectionUtil;
 
 /**
  * Сервис формирования системных уведомлений
@@ -76,8 +77,8 @@ public class NotificationServiceImp implements NotificationService{
         Doc doc = null;
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
             List<Doc> docs = task.getScheme().getProcess().getDocs();
-            if (CollectionUtils.isNotEmpty(docs)){
-                doc = docs.get(0);
+            if (CollectionUtils.isNotEmpty(docs)){                
+                doc = docs.stream().findFirst().orElse(null);
             }
         }
         messagesFacade.createSystemMessage(task.getOwner().getEmployee(), msg, "", new Tuple(doc, task));

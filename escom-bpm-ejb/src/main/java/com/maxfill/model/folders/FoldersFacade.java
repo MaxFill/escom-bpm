@@ -74,6 +74,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * Формирование прав доступа к папке
      * @param item
      * @param user
+     * @return 
      */
     @Override
     public Rights getRightItem(BaseDict item, User user) {

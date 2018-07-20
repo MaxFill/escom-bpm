@@ -17,6 +17,7 @@ import com.maxfill.model.posts.PostFacade;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.services.ldap.LdapUtils;
@@ -156,6 +157,23 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return q.getResultList();
     }
 
+    /**
+     * Ищет пользователей по дефолтной папке
+     * @param folder
+     * @return 
+     */
+    public List<User> findUsersByInbox(Folder folder){
+        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<User> cq = builder.createQuery(User.class);
+        Root<User> root = cq.from(User.class);        
+        Predicate crit1 = builder.equal(root.get(User_.inbox), folder);
+        Predicate crit2 = builder.equal(root.get("deleted"), false);
+        cq.select(root).where(builder.and(crit1, crit2));
+        Query q = getEntityManager().createQuery(cq);       
+        return q.getResultList();
+    }
+    
     /**
      * Проверка e-mail пользователя на дубликат
      * Возвращает TRUE если в базе уже есть пользователель с указанным e-mail

@@ -12,6 +12,7 @@ import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
+import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
@@ -21,6 +22,7 @@ import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
 import com.maxfill.services.mail.MailSettings;
+import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.searche.SearcheService;
 import org.apache.commons.lang3.StringUtils;
 
@@ -56,6 +58,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     private SearcheService searcheService;
     @EJB
     private FoldersFacade folderFacade;
+    @EJB
+    private DocNumeratorService docNumeratorService;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
@@ -243,8 +247,11 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         doSetDefaultDocType(doc, folder);
         doSetDefaultCompany(doc, folder);
         doSetDefaultPartner(doc, folder);           
-    
         doc.setDateDoc(new Date());
+        DocType docType = doc.getDocType();
+        if (docType != null && docType.getNumerator() != null && DictNumerator.TYPE_AUTO.equals(docType.getNumerator().getTypeCode())){ 
+            docNumeratorService.registratedDoc(doc, new HashSet<>());
+        }
         /*
         if (doc.getOwner().getId() == null) { 
             doc.setOwner(null);
@@ -293,7 +300,15 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         }
     }
     
-    /* Cоздание документа в папке пользователя из сервлета */
+    /**
+     * Cоздание документа в папке пользователя вызов из сервлета!
+     * Документ записывается в базу!
+     * @param name
+     * @param author
+     * @param userFolder
+     * @param attache
+     * @return 
+     */
     public Doc createDocInUserFolder(String name, User author, Folder userFolder, Attaches attache){
         Map<String, Object> params = new HashMap<>();
         params.put("attache", attache);
@@ -315,6 +330,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
      * Создание документа из e-mail сообщения
      * @param message
      * @param detailInfo
+     * @param settings
+     * @return 
      */
     public boolean createDocFromEmail(Message message, StringBuilder detailInfo, MailSettings settings) {
         try {

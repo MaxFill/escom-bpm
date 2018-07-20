@@ -2,8 +2,6 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.*;
-import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -17,23 +15,8 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.beans.users.settings.UserSettings;
-import com.maxfill.escom.beans.companies.CompanyBean;
-import com.maxfill.escom.beans.departaments.DepartmentBean;
-import com.maxfill.escom.beans.staffs.StaffBean;
-import com.maxfill.escom.beans.posts.PostBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
-import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
-import com.maxfill.escom.beans.docs.docsTypes.docTypeGroups.DocTypeGroupsBean;
-import com.maxfill.escom.beans.folders.FoldersBean;
-import com.maxfill.escom.beans.partners.PartnersBean;
-import com.maxfill.escom.beans.partners.groups.PartnersGroupsBean;
-import com.maxfill.escom.beans.partners.types.PartnerTypesBean;
-import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
-import com.maxfill.escom.beans.system.numPuttern.NumeratorPatternBean;
-import com.maxfill.escom.beans.system.statuses.StatusesDocBean;
-import com.maxfill.escom.beans.users.UserBean;
-import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.posts.Post;
@@ -46,14 +29,12 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.types.ProcessType;
-import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -239,10 +220,19 @@ public class SessionBean implements Serializable{
      * Создание документа из прикреплённого файла
      */
     public void onCreateDoc(){
-        Set<String> errors = new HashSet<>();
         User author = getCurrentUser();
-        Attaches attache = attaches.get(0);        
-        Doc doc = docFacade.createDocInUserFolder(attache.getName(), author, author.getInbox(), attache);
+        Folder folder = author.getInbox();
+        if (folder == null){
+            MsgUtils.errorMsg("NoDefaultUserFolderSpecified");
+            return;
+        }       
+        Attaches attache = attaches.get(0); 
+        Map<String, Object> params = new HashMap<>();
+        params.put("attache", attache);
+        params.put("name", attache.getName());
+        Doc doc = docFacade.createItem(author, folder, params);        
+        docFacade.makeRightItem(doc, author);        
+        Set<String> errors = new HashSet<>();
         docBean.openItemCard(doc, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
