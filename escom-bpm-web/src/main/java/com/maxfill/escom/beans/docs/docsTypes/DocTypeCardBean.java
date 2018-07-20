@@ -3,10 +3,8 @@ package com.maxfill.escom.beans.docs.docsTypes;
 import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.escom.beans.core.BaseCardBean;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsFacade;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
-
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -22,8 +20,6 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
             
     @EJB 
     private DocTypeFacade itemsFacade;       
-    @EJB
-    private DocTypeGroupsFacade docTypeGroupsFacade;
 
     @Override
     public DocTypeFacade getFacade() {
@@ -32,7 +28,7 @@ public class DocTypeCardBean extends BaseCardBean<DocType>{
 
     @Override
     protected void onBeforeSaveItem(DocType item){ 
-        if (StringUtils.isBlank(item.getGuide())){
+        if (StringUtils.isEmpty(item.getGuide())){
             String guid = EscomUtils.generateGUID();
             item.setGuide(guid);
         }

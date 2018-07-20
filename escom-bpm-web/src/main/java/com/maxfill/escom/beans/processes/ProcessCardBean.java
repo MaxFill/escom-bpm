@@ -56,7 +56,6 @@ import javax.inject.Named;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;

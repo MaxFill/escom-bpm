@@ -28,6 +28,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Date;
@@ -189,6 +190,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
         docURL = EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer");
     }   
             
+    /* РЕГИСТРАЦИЯ */
+    
     /* Сброс регистрационного номера */
     public void onClearRegNumber(){
         Doc doc = getEditedItem();
@@ -211,17 +214,28 @@ public class DocCardBean extends BaseCardBean<Doc>{
             onItemChange();
         } else {
             MsgUtils.showErrors(errors);
-        }    
-    }       
+        }
+    }
+    
+    /* Проверка регистрационного номера   */
+    public void checkRegNumber(Doc doc, Set<String> errors) {
+        String regNumber = doc.getRegNumber();
+        if (StringUtils.isNotBlank(regNumber)){
+            if (!getFacade().checkRegNumber(regNumber, doc)) {
+                String msg = MessageFormat.format(MsgUtils.getMessageLabel("REGNUMBER_IS_DUBLICATE"), new Object[]{doc.getOwner().getName(), regNumber});
+                errors.add(MsgUtils.getMessageLabel(msg));
+            }
+        }
+    }
+    
+    /* ВЛОЖЕНИЯ */
     
     /* Подготовка к отправке текущего документа на e-mail  */
     public void prepareSendMailDoc(String mode){
         List<BaseDict> docs = new ArrayList<>();
         docs.add(getEditedItem());
         sessionBean.openMailMsgForm(mode, docs);
-    }
-    
-    /* ВЛОЖЕНИЯ */
+    }    
     
     public void onSetSelectedAttache(Attaches attache){
        selectedAttache = attache;
@@ -418,17 +432,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             Object[] params = new Object[]{loadCounter};
             MsgUtils.succesFormatMsg("StatusesLoadComplete", params);
         }    
-    }
-    
-    /* Проверка регистрационного номера   */
-    public void checkRegNumber(Doc doc, Set<String> errors) {
-        String regNumber = doc.getRegNumber();
-        if (StringUtils.isNotBlank(regNumber)){
-            if (!getFacade().checkRegNumber(regNumber, doc)) {
-                errors.add("REGNUMBER_IS_DUBLICATE");              
-            }
-        }
-    }
+    }    
 
     /* Обновляет текущую запись в таблице версий на карточке документа */
     public void onUpdateSelectedAttache(){

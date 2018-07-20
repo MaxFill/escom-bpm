@@ -2,6 +2,8 @@ package com.maxfill.services.numerators.doc;
 
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.numPuttern.counter.Counter;
 import com.maxfill.services.numerators.NumeratorBase;
@@ -11,13 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.lang3.StringUtils;
 
 /* Нумератор для документов */
 @Stateless
 public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorService{    
-              
+    @EJB
+    private DocTypeFacade docTypeFacade;
+    
     @Override
     protected Counter doGetCounter(BaseDict item) {
         Doc doc = (Doc) item;
@@ -40,11 +45,23 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     @Override
     protected String doGetCounterName(BaseDict item) {
         Doc doc = (Doc) item;
-        String counterName = doc.getDocType().getGuide();       
-        if (doc.getDocType().getNumerator().getResetNewYear()){
-            counterName = counterName + "_" + doc.getCompany().getId() + "_" + EscomUtils.getYearYY(doc.getDateDoc());
+        DocType docType = doc.getDocType();
+        StringBuilder sb = new StringBuilder();
+        String counterName = docType.getGuide();
+        if (StringUtils.isEmpty(counterName)){
+            counterName = EscomUtils.generateGUID();
+            docType.setGuide(counterName);            
+            docTypeFacade.edit(docType);
         }
-        return counterName;
+        sb.append(counterName);
+        if (doc.getCompany() != null){
+            sb.append("_").append(doc.getCompany().getId());
+        }
+        if (doc.getDocType().getNumerator().getResetNewYear()){                
+            sb.append("_").append(EscomUtils.getYearYY(doc.getDateDoc()));
+        }
+        
+        return sb.toString();
     }
     
     /* Регистрация документа  */

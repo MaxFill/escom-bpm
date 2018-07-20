@@ -4,6 +4,7 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.utils.EscomUtils;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -78,6 +79,12 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @ManyToMany
     private List<StatusesDoc> statusDocList;
 
+    public DocType() {
+        this.guide = EscomUtils.generateGUID();
+    }
+    
+    /* GETS & SETS */
+    
     @Override
     public DocTypeStates getState() {
         return state;
@@ -157,6 +164,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
         return null;
     }
     
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

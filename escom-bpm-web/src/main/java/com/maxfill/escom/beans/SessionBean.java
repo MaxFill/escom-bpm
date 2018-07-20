@@ -29,6 +29,7 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
@@ -109,7 +110,9 @@ public class SessionBean implements Serializable{
     protected DocFacade docFacade;
     @EJB
     protected ProcessFacade processFacade;
-        
+    @EJB
+    protected AttacheService attacheService;
+            
     @Inject
     private AttacheBean attacheBean;   
     @Inject
@@ -210,7 +213,8 @@ public class SessionBean implements Serializable{
         Set<String> errors = new HashSet<>();
         Process process = processFacade.createProcFromFile(procType, getCurrentUser(), attaches, errors);
         if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
+            attacheService.deleteAttaches(attaches);
+            MsgUtils.showErrorsMsg(errors);            
             return;
         }
         processBean.openItemCard(process, DictEditMode.INSERT_MODE, new HashMap<>(), errors);        
@@ -235,6 +239,7 @@ public class SessionBean implements Serializable{
         Set<String> errors = new HashSet<>();
         docBean.openItemCard(doc, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
         if (!errors.isEmpty()){
+            attacheService.deleteAttaches(attaches);
             MsgUtils.showErrorsMsg(errors);
         }
     }
