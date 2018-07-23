@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <p:dataTable id="tblProcess" value="#{_processes}" var="proc"
+                 emptyMessage="#{bundle.EmptyTable}"
+                 paginator="true" paginatorPosition="bottom" 
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                 rowsPerPageTemplate="5, 10, 20, 35" 
+                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                 sortBy="#{proc.regNumber}" rowKey="#{proc.id}">
+
+        <p:column width="16" sortBy="#{proc.iconName}">
+            <p:graphicImage id="itemIcon" value="/resources/icon/#{proc.iconName}.png"/>  
+        </p:column>        
+        
+        <p:column headerText="#{bundle.Number}" sortBy="#{proc.number}" >
+            <h:outputText value="#{proc.regNumber}"/>
+        </p:column>
+        
+        <p:column headerText="#{bundle.ProcessType}" sortBy="#{proc.owner.name}">
+            <h:outputText value="#{proc.owner.name}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.Name}" sortBy="#{proc.name}">
+            <h:outputText value="#{proc.name}"/>
+        </p:column> 
+        
+        <p:column width="16" sortBy="#{proc.state.currentState.name}">
+            <h:graphicImage id="iconDone" value="#{proc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>             
+        </p:column>
+        
+        <p:column headerText="#{bundle.DateBegin}" sortBy="#{proc.beginDate}">
+            <h:outputText value="#{proc.beginDate}" >
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputText>
+        </p:column>                                      
+
+        <p:column headerText="#{bundle.Commands}" > 
+            <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
+                            actionListener="#{_bean.setSelectedProc(doc)}"
+                            oncomplete="document.getElementById('#{_frm}:mainTabView:openProcessBtn').click();">                              
+            </p:splitButton>
+        </p:column>
+    </p:dataTable>
+    
+    <p:commandButton id="openProcessBtn" actionListener="#{processBean.prepEditItem(_bean.selectedProcess)}" style="display: none;"> 
+        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseProcessForm}"/>
+    </p:commandButton>
+    
+</ui:composition>

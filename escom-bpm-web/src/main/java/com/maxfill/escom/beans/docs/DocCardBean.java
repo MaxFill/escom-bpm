@@ -15,10 +15,15 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictStates;
+import com.maxfill.dictionary.ProcessTypesDict;
+import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.docStatuses.DocStatusFacade;
 import com.maxfill.model.companies.Company;
+import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -32,6 +37,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +45,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import org.primefaces.PrimeFaces;
 
 /* Карточка документа */
 
@@ -53,10 +60,13 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private String docURL;  
     private Attaches selectedAttache;
     private Doc linkedDoc;
+    private Process selectedProcess;
     
     @Inject
     private DocBean docsBean;
-            
+    @Inject
+    private ProcessBean processBean;
+    
     @EJB
     private DocNumeratorService docNumeratorService;
     @EJB
@@ -65,7 +75,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private DocStatusFacade docStatusFacade;
     @EJB
     private AttacheFacade attacheFacade;
-
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
+ 
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -455,6 +467,41 @@ public class DocCardBean extends BaseCardBean<Doc>{
        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }
     
+    /* ПРОЦЕССЫ */        
+    
+    /**
+     * Создание и открытие процесса согласования и прикрепление к нему документа
+     */
+    public void onConcordedDoc(){
+        if (doSaveItem()){
+            ProcessType procType = processTypesFacade.find(ProcessTypesDict.CONCORDED_ID);
+            if (procType == null){
+                MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{ProcessType.class.getSimpleName(), ProcessTypesDict.CONCORDED_ID});
+                return;
+            }
+            List<Doc> docs = new ArrayList<>();
+            docs.add(getEditedItem());
+            Map<String, Object> params = new HashMap<>();
+            params.put("documents", docs);
+            processBean.createItemAndOpenCard(null, procType, params);
+        }
+    }
+    
+    /**
+     * Обработка события закрытия карточки процесса
+     * Закрываем документ, если процесс запустился
+     * @param event 
+     */
+    public void afterCloseProcess(SelectEvent event){
+        String exitResult = (String) event.getObject();
+        if (SysParams.EXIT_EXECUTE.equals(exitResult)) {
+            closeItemForm(SysParams.EXIT_NEED_UPDATE);
+        } else {
+            setTabActiveIndex(1);
+            PrimeFaces.current().ajax().update(getFormName()+":mainTabView");
+        }
+    }
+    
     /* GETS & SETS */
     
     public Doc getLinkedDoc() {
@@ -471,4 +518,11 @@ public class DocCardBean extends BaseCardBean<Doc>{
         this.docURL = docURL;
     }
 
+    public Process getSelectedProcess() {
+        return selectedProcess;
+    }
+    public void setSelectedProcess(Process selectedProcess) {
+        this.selectedProcess = selectedProcess;
+    }
+    
 }

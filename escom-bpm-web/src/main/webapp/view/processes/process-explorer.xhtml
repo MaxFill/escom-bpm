@@ -17,17 +17,30 @@
     
     <ui:param name="_showAuthor"     value="#{true}"/>
     <ui:param name="_showDateCreate" value="#{true}"/>
-    <ui:param name="_showDateChange" value="#{true}"/>
+    <ui:param name="_showDateChange" value="#{false}"/>
      
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />
     
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-         <p:column headerText="#{bundle.TermApproval}" width="90" priority="3" sortBy="#{item.planExecDate}">
+        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
+            <h:outputText value="#{item.regNumber}"/>
+        </p:column> 
+        <p:column headerText="#{bundle.TermApproval}" width="90" priority="3" sortBy="#{item.planExecDate}">
             <h:outputLabel value="#{item.planExecDate}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
+        </p:column>
+        <p:column headerText="#{bundle.DateBegin}" sortBy="#{item.beginDate}">
+            <h:outputText value="#{proc.beginDate}" >
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputText>
+        </p:column>
+        <p:column headerText="#{bundle.DateEnd}" sortBy="#{item.endDate}">
+            <h:outputText value="#{proc.endDate}" >
+                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+            </h:outputText>
         </p:column>
     </ui:define>
 

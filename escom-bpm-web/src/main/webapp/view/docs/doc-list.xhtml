@@ -54,7 +54,7 @@
                 <p:separator />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
                             actionListener="#{docsBean.addInFavorites(doc)}"/>
-                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                <p:menuitem icon="ui-icon-closethick" value="#{bundle.DeleteFromList}"
                             update="tblDocs"
                             disabled="#{_bean.isReadOnly()}"
                             rendered="#{_bean eq processCardBean}"

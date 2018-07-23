@@ -136,6 +136,14 @@
             </p:panelGrid>
         </p:tab> 
         
+        <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <ui:include src="/view/processes/process-list.xhtml"> 
+                    <ui:param name="_processes" value="#{docCardBean.editedItem.processList}"/>
+                </ui:include>
+            </p:panelGrid>
+        </p:tab>
+        
         <ui:include src="/view/docs/doc-links.xhtml"/>                
         <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>
@@ -181,6 +189,12 @@
                         rendered="#{_bean.editedItem.id != null}"
                         actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
         </p:submenu>
+        <p:submenu label="#{bundle.Processes}" icon="ui-icon-extlink" styleClass="submenu"
+                   rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+            <p:menuitem icon="ui-icon-extlink" value="#{bundle.ConcordedDoc}" 
+                        oncomplete="document.getElementById('#{_frm}:btnConcordedDoc').click();">                
+            </p:menuitem>
+        </p:submenu>
     </ui:define>
 
     <ui:define name="specMenuButtons">
@@ -199,6 +213,9 @@
     <ui:define name="card_scripts">
         <p:commandButton id="setLockBtn" actionListener="#{docCardBean.onLockSelectedAttache()}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docCardBean.onUpdateSelectedAttache()}" update="#{_frm}:mainTabView:versionsTBL"/>
+        </p:commandButton>
+         <p:commandButton id="btnConcordedDoc" actionListener="#{docCardBean.onConcordedDoc()}" style="display: none;">
+             <p:ajax event="dialogReturn" listener="#{docCardBean.afterCloseProcess}"/>
         </p:commandButton>
     </ui:define>
     

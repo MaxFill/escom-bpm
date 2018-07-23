@@ -68,7 +68,7 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (17, N'NumeratorPattern', N'NumeratorsPatterns', N'NumeratorsPatterns', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (18, N'PartnerTypes', N'PartnerTypes', N'PartnerTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (19, N'Filter', N'Filters', N'Filters', 0, N'ui-icon-search', NULL, 7);
-            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', NULL, 5);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (20, N'Process', N'Process', N'Processes', 0, N'ui-icon-circle-arrow-e', 0, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (21, N'ProcessType', N'ProcessType', N'ProcessesTypes', 0, N'ui-icon-note', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (22, N'Task', N'Task', N'Tasks', 0, N'ui-icon-contact', NULL, 5);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 7);

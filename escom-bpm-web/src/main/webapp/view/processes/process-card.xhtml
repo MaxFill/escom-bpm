@@ -48,8 +48,7 @@
     
     <ui:define name="page_body">
         <p:tab title="#{bundle.Process}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >                
                 <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                          styleClass="ui-grid-col-12" 
@@ -72,49 +71,40 @@
                     <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
                 </p:calendar>
                 
-                <p:outputLabel value="#{bundle.Documents}" />
-                 <ui:include src="/view/docs/doc-list.xhtml" >
+                <p:outputLabel value="#{bundle.Documents}:" />
+
+                <ui:include src="/view/docs/doc-list.xhtml" >
                      <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
                 </ui:include>
-                                
-                <p:outputLabel value="#{bundle.ApprovalSheet}" />                
-                <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
-                             rowKey="#{task.tempId}" selectionMode="single" 
-                             paginator="true" paginatorPosition="bottom" 
-                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                             rowsPerPageTemplate="5, 10, 20, 35" 
-                             currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
-                    
-                    <p:column width="16" sortBy="#{task.state.currentState.name}">
-                        <h:graphicImage id="iconDone" value="#{task.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
-                    </p:column>
-                    
-                    <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">                        
-                        <p:commandLink value="#{task.owner.nameEndElipse}" title="#{bundle.Open}"
-                                       actionListener="#{processCardBean.setCurrentTask(task)}"
-                                       oncomplete="document.getElementById('#{_frm}:btnOpenTask').click();"/>                        
-                    </p:column>
-                    
-                    <p:column headerText="#{bundle.Term}" width="90" sortBy="#{task.planExecDate}">
-                        <h:outputLabel value="#{task.planExecDate}">
-                            <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                        </h:outputLabel>
-                    </p:column>
-                    
-                    <p:column headerText="#{bundle.Status}" >
-                        <h:outputLabel value="#{sessionBean.getItemStatus(task)}"/>
-                    </p:column>
-                    
-                    <p:column width="16" sortBy="#{task.iconName}" >
-                        <p:graphicImage value="/resources/icon/#{task.iconName}.png" /> 
-                    </p:column>
-                    
-                    <p:column headerText="#{bundle.Result}" >
-                        <h:outputLabel value="#{processCardBean.getLabelFromBundle(task.result)}"/>
-                    </p:column>
-                    
-                </p:dataTable>
+                               
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <p:fileUpload value="#{fileUploadView.file}" auto="true" mode="advanced" styleClass="ui-grid-col-6"
+                                  rendered="#{!processCardBean.isReadOnly()}" style="float:right;"
+                                  allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                                  sizeLimit="#{docsBean.maxFileSize}"
+                                  invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                  invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                  fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                  process="@this" dragDropSupport="true"
+                                  label="#{bundle.SelectFileAndCreateDoc}" 
+                                  cancelLabel="#{bundle.Cancel}"
+                                  uploadLabel="#{bundle.SaveFiles}"
+                                  fileUploadListener="#{processCardBean.onUploadFile}"                           
+                                  onstart="PF('statusDialog').show()"
+                                  oncomplete="PF('statusDialog').hide(); document.getElementById('process:mainTabView:btnAddFile').click();">
+                    </p:fileUpload> 
+                    <p:commandButton id="btnAddFile" style="display: none;"  
+                                 actionListener="#{processCardBean.onAddFile()}"
+                                 update="process:mainTabView:tblDocs"> 
+                    </p:commandButton>
+                    <p:spacer width="10"/>
+                    <p:commandButton id="btnAddDoc" value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"
+                                     style="float:right;"
+                                     rendered="#{!processCardBean.isReadOnly()}"
+                                     actionListener="#{docsBean.onManySelectItem()}"> 
+                        <p:ajax event="dialogReturn" listener="#{processCardBean.onDocsSelected}" update="process:mainTabView:tblDocs"/>
+                    </p:commandButton>
+                </h:panelGroup>
             </p:panelGrid>
         </p:tab>
         
@@ -215,13 +205,55 @@
             </p:panelGrid>
         </p:tab>
         
+        <p:tab title="#{bundle.ApprovalSheet}">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" > 
+                <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
+                            rowKey="#{task.tempId}" selectionMode="single" 
+                            paginator="true" paginatorPosition="bottom" 
+                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                            rowsPerPageTemplate="5, 10, 20, 35" 
+                            currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                            tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
+
+                   <p:column width="16" sortBy="#{task.state.currentState.name}">
+                       <h:graphicImage id="iconDone" value="#{task.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
+                   </p:column>
+
+                   <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">                        
+                       <p:commandLink value="#{task.owner.nameEndElipse}" title="#{bundle.Open}"
+                                      actionListener="#{processCardBean.setCurrentTask(task)}"
+                                      oncomplete="document.getElementById('#{_frm}:btnOpenTask').click();"/>                        
+                   </p:column>
+
+                   <p:column headerText="#{bundle.Term}" width="90" sortBy="#{task.planExecDate}">
+                       <h:outputLabel value="#{task.planExecDate}">
+                           <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                       </h:outputLabel>
+                   </p:column>
+
+                   <p:column headerText="#{bundle.Status}" >
+                       <h:outputLabel value="#{sessionBean.getItemStatus(task)}"/>
+                   </p:column>
+
+                   <p:column width="16" sortBy="#{task.iconName}" >
+                       <p:graphicImage value="/resources/icon/#{task.iconName}.png" /> 
+                   </p:column>
+
+                   <p:column headerText="#{bundle.Result}" >
+                       <h:outputLabel value="#{processCardBean.getLabelFromBundle(task.result)}"/>
+                   </p:column>
+
+               </p:dataTable>
+            </p:panelGrid>
+        </p:tab>
+        
         <p:tab title="#{bundle.ReportsExe}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <ui:include src="/view/tasks/reports.xhtml"/>
             </p:panelGrid>
         </p:tab>
-    </ui:define>
-   
+    </ui:define>       
+    
     <ui:define name="customStyleCSS">
         <style type="text/css">
             .ui-diagram-task {

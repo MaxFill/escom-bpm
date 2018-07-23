@@ -59,6 +59,9 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcessTypeLog> itemLogs = new ArrayList<>();
 
+    public ProcessType() {
+    }
+    
     /* GETS & SETS */
 
     public List<ProcTempl> getTemplates() {

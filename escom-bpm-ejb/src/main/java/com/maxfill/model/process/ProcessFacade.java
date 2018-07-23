@@ -8,13 +8,14 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,7 +67,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 process.setDocs(docs);
             }
             makeProcName(process);            
-        }        
+        }
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(process, numeratorPattern, null, new Date());
+        process.setRegNumber(number);
     }
 
     /**

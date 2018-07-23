@@ -217,8 +217,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         options.put("minHeight", 300);
         options.put("width", size.a);
         options.put("height", size.b);
-        options.put("maximizable", true);
-        options.put("minimizable", true);
+        options.put("maximizable", false);
+        options.put("minimizable", false);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");

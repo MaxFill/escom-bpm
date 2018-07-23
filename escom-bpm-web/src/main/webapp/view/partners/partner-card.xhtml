@@ -11,7 +11,7 @@
         <p:tab title="#{bundle.Explorer}"> 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
 
-                <p:outputLabel value="#{bundle.Code}" />            
+                <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
                 <p:inputText value="#{_bean.editedItem.code}" id="code"
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}" 
@@ -20,7 +20,7 @@
                              onchange="return itemChange = 1;"/>
                 <p:message for="code" display="tooltip"/>
 
-                <p:outputLabel value="#{bundle.Type}" />
+                <p:outputLabel value="#{bundle.Type}:" />
                 <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
                                  disabled="#{_bean.isReadOnly()}"
                                  styleClass="ui-grid-col-12" 
@@ -32,18 +32,16 @@
                 </p:selectOneMenu>
                 <p:message for="type" display="tooltip"/>
 
-                <p:outputLabel value="#{bundle.Name}" />
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}" 
-                             maxlength="100"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
                              styleClass="ui-grid-col-12"
                              onchange="return itemChange = 1;">
-                    <f:validateLength minimum="1" maximum="50"/>
                 </p:inputText>
 
-                <p:outputLabel value="#{bundle.FullName}" />
+                <p:outputLabel value="#{bundle.FullName}:" />
                 <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"
                                  disabled="#{_bean.isReadOnly()}"
                                  rows="1" autoResize="true"
@@ -54,7 +52,7 @@
                                  update="fullName"
                                  actionListener="#{partnersCardBean.makeFullName()}"/>
 
-                <p:outputLabel value="#{bundle.EMail}" />
+                <p:outputLabel value="#{bundle.EMail}:" />
                 <p:inputText id="email" value="#{_bean.editedItem.email}" 
                              onkeypress="checkEsc(#{_bean.cancelBtnName});"
                              maxlength="256" 
@@ -68,6 +66,7 @@
 
             </p:panelGrid>
         </p:tab> 
+        
         <p:tab title="#{bundle.Documents}"> 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                 <ui:include src="/view/docs/doc-list.xhtml" >

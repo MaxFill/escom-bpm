@@ -19,9 +19,12 @@
     </ui:define>
 
     <ui:define name="body">       
+        
         <p:importConstants type="com.maxfill.dictionary.DictRights"   var="DictRights" />
         <p:importConstants type="com.maxfill.dictionary.DictStates"   var="DictStates" />
         <p:importConstants type="com.maxfill.dictionary.DictEditMode" var="DictEditMode" />
+        <p:importConstants type="com.maxfill.dictionary.DictModules"  var="DictModules" />
+         
         <script type="text/javascript" >
             var itemChange = 0;
 
@@ -68,7 +71,7 @@
                     
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                                                
 
-                        <p:menubar styleClass="without-spaces">
+                        <p:menubar styleClass="without-spaces" autoDisplay="false">
                             <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
                                 <ui:insert name="specActionMenu" />
                                 <p:separator />

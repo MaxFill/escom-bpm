@@ -136,6 +136,7 @@
                                            ajax="false"
                                            action="statusesdoc-explorer"/>
                             <p:commandLink value="#{bundle.ProcessTemplates}"
+                                           rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
                                            action="#{sessionBean.openProcessTemplateExpl()}"/>

@@ -5,8 +5,10 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.escom.beans.task.TaskBean;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.conditions.ConditionFacade;
 import com.maxfill.model.process.ProcessFacade;
@@ -16,7 +18,10 @@ import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.reports.ProcReport;
@@ -27,9 +32,11 @@ import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -60,6 +67,8 @@ import javax.faces.component.UIInput;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
 
@@ -75,7 +84,11 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private TaskBean taskBean;
     @Inject
     private ProcTemplBean procTemplBean;
+    @Inject
+    private AttacheBean attacheBean;
     
+    @EJB
+    private DocFacade docFacade;
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -110,6 +123,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private ProcTempl selectedTempl;
     private List<ProcTempl> templates;
     
+    private final List<Attaches> attaches = new ArrayList<>();
+    private Doc selectedDoc;
+    
     @Override
     protected BaseDictFacade getFacade() {
         return processFacade;
@@ -125,7 +141,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
         onReloadModel();
-    }    
+    }
 
     @Override
     public void onAfterFormLoad(String beanId) {
@@ -183,6 +199,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return closeItemForm(exitParam);  //закрыть форму объекта
     }
     
+    @Override
+    protected String makeHeader(StringBuilder sb){
+        if (StringUtils.isNotEmpty(getEditedItem().getRegNumber())){
+            sb.append(" ").append(MsgUtils.getBandleLabel("NumberShort")).append(getEditedItem().getRegNumber()).append(" ");
+        }
+        return super.makeHeader(sb);
+    }
+     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     
     /**
@@ -354,7 +378,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         getScheme().getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
         StartElem startElem = getScheme().getElements().getStartElem();
-        elementMap.put(startElem.getUid(), createElement(startElem));
+        if (startElem != null){
+            elementMap.put(startElem.getUid(), createElement(startElem));
+        }
         List<Connection> connections = new ArrayList <>();
         getScheme().getElements().getConnectors().stream().forEach(connectorElem->{
             AnchorElem anchorFrom = connectorElem.getFrom();            
@@ -1166,6 +1192,32 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     /**
+     * Обработка события добавления файла в процесс с созданием документа
+     */
+    public void onAddFile(){
+        User author = getCurrentUser();
+        Folder folder = author.getInbox();
+        if (folder == null){
+            MsgUtils.errorMsg("NoDefaultUserFolderSpecified");
+            return;
+        }
+        Attaches attache = attaches.get(0); 
+        Map<String, Object> params = new HashMap<>();
+        params.put("attache", attache);
+        params.put("name", attache.getName());
+        Doc doc = docFacade.createDocInUserFolder(attache.getName(), author, folder, attache);
+        getEditedItem().getDocs().add(doc);
+        onItemChange();
+    }
+    
+    /* Загрузка файла через контрол на форме карточки процеса */
+    public void onUploadFile(FileUploadEvent event) throws IOException{       
+        attaches.clear();
+        UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event);        
+        attaches.add(attacheBean.uploadAtache(uploadFile));
+    }  
+    
+    /**
      * Обработка события выбора документа(ов) из селектора
      * @param event
      */
@@ -1174,10 +1226,28 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (docs.isEmpty()) return;        
         getEditedItem().getDocs().addAll(docs);        
         onItemChange();
-    } 
+    }     
+    
+    /**
+     * Обработка события закрытия карточки документа
+     * @param event 
+     */
+    public void onUpdateAfterCloseDocForm(SelectEvent event){
+        String exitResult = (String) event.getObject();
+        if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
+           PrimeFaces.current().ajax().update(getFormName()+":mainTabView:tblDocs");
+        }
+    }
     
     /* GETS & SETS */
 
+    public Doc getSelectedDoc() {
+        return selectedDoc;
+    }
+    public void setSelectedDoc(Doc selectedDoc) {
+        this.selectedDoc = selectedDoc;
+    }
+    
     public List<ProcTempl> getTemplates() {
         if (templates == null){            
             templates = procTemplBean.findDetailItems(getEditedItem().getOwner());            

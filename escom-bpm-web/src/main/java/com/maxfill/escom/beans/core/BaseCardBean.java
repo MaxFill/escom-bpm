@@ -542,7 +542,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         String barcode = EscomUtils.getBarCode(editedItem, getMetadatesObj(), serverId); 
         return barcode;
     }
-
+    
     /* СЛУЖЕБНЫЕ МЕТОДЫ */
 
     /* Установка признака изменения объекта  */

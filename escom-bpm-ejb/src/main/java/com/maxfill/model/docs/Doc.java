@@ -9,6 +9,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
+import com.maxfill.model.process.Process;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,10 +26,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -106,6 +109,9 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     /* Список статусов документа  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
     private List<DocStatuses> docsStatusList = new ArrayList<>();
+    
+    @ManyToMany(mappedBy = "docs", fetch = FetchType.EAGER)
+    private List<Process> processList = new ArrayList<>();
     
     /* Версии файлов  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
@@ -312,7 +318,14 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     public void setDocsStatusList(List<DocStatuses> docsStatusList) {
         this.docsStatusList = docsStatusList;
     }
-        
+
+    public List<Process> getProcessList() {
+        return processList;
+    }
+    public void setProcessList(List<Process> processList) {
+        this.processList = processList;
+    }
+          
     @Override
     public Integer getId() {
         return id;
