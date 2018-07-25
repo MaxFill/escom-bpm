@@ -12,7 +12,7 @@
     </ui:define>
 
     <ui:param name="_explorerBean" value="#{folderExplBean}"/>
-    <ui:param name="_detailBean"   value="#{docsBean}" />
+    <ui:param name="_detailBean"   value="#{docBean}" />
     <ui:param name="_treeBean"     value="#{foldersBean}" /> 
     <ui:param name="_searcheBean"  value="#{_detailBean}"/>
 
@@ -108,12 +108,12 @@
 
     <ui:define name="btnDisplayNone" >
         <p:commandButton id="btnSendDocAttache" actionListener="#{_explorerBean.prepareSendMailDocs('asAttache')}" style="display: none;">
-            <p:ajax event="dialogReturn" listener="#{docsBean.onAfterSendDocToEmail}"
+            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
                     update="centerFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
         <p:commandButton id="btnSendDocLink" actionListener="#{_explorerBean.prepareSendMailDocs('asLink')}" style="display: none;">
-            <p:ajax event="dialogReturn" listener="#{docsBean.onAfterSendDocToEmail}"
+            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
                     update="centerFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
@@ -158,7 +158,7 @@
     </ui:define>    
     
     <ui:define name="addItemMenu">
-        <p:menuitem icon="ui-icon-pencil" value="#{docsBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
+        <p:menuitem icon="ui-icon-pencil" value="#{docBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
                     actionListener="#{_explorerBean.onSetCurrentItem(item)}"
                     disabled="#{item.mainAttache == null}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
@@ -166,7 +166,7 @@
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.mainAttache == null}"
-                    actionListener="#{docsBean.onViewAttache(item.getAttache())}"/>
+                    actionListener="#{docBean.onViewAttache(item.getAttache())}"/>
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"
                     onstart="return isClose = 1;"
@@ -175,7 +175,7 @@
         <p:separator />
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                    actionListener="#{docsBean.openAttacheAddForm(item)}"/>
+                    actionListener="#{docBean.openAttacheAddForm(item)}"/>
         <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     actionListener="#{_explorerBean.onSetCurrentItem(item)}"
@@ -219,7 +219,7 @@
                         icon="ui-icon-note"
                         onstart="PF('statusDialog').show()"
                         oncomplete="PF('statusDialog').hide();"
-                        actionListener="#{docsBean.openDocCountTypesReport()}"/>
+                        actionListener="#{docBean.openDocCountTypesReport()}"/>
             <p:menuitem value="#{bundle.DocJournal}" 
                         icon="ui-icon-note"
                         onstart="PF('statusDialog').show()"

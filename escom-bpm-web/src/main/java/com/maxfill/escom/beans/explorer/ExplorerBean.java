@@ -128,7 +128,6 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
-    private String tableToolTip = "";
     
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
@@ -186,7 +185,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public void onEditDetailItem(){
         BaseDict item = getCurrentItem();
         setTypeEdit(DictEditMode.EDIT_MODE);
-        editItem = tableBean.prepEditItem(item, tableBean.getParamsMap());        
+        if (isItemTreeType(item)){
+            editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());
+        } else 
+            if (isItemDetailType(item)) {
+                editItem = tableBean.prepEditItem(item, tableBean.getParamsMap());        
+            }
     }
 
     /* КАРТОЧКИ: открытие карточки объекта из дерева для редактирования */
@@ -196,7 +200,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (isItemRootType(item)){
             editItem = rootBean.prepEditItem(item, rootBean.getParamsMap());
         } else {
-            editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());        
+            editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());
         }
     }
     
@@ -305,6 +309,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         return Objects.equals(typeRoot, item.getClass().getSimpleName());
     }    
     
+    /**
+     * Возвращает бин объекта. Бин задаётся в форме обозревателя
+     * @param item
+     * @return 
+     */
     protected BaseTableBean getItemBean(BaseDict item){
         if (isItemDetailType(item)){
             return tableBean;
@@ -1523,11 +1532,17 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         onOpenAdmCardForm(currentItem);
     }    
     public void onOpenAdmCardForm(BaseDict item) {
-        if (item == null){
-            return;
-        }
+        if (item == null) return;        
         onSetCurrentItem(item);
-        sessionBean.openAdmCardForm(item);               
+        BaseTableBean bean = getItemBean(item);
+        bean.setSourceItem(item);
+        Map<String, List<String>> paramsMap = new HashMap<>();
+        List<String> itemIds = Collections.singletonList(bean.toString());
+        String beanName = bean.getClass().getSimpleName().substring(0, 1).toLowerCase() + bean.getClass().getSimpleName().substring(1);
+        List<String> beanNameList = Collections.singletonList(beanName);
+        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);         
+        sessionBean.openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramsMap);               
     }           
     
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
@@ -1557,14 +1572,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }    
     
     /* Формирование заголовка журнала обозревателя   */ 
-    public String makeJurnalHeader(String firstName, String secondName, String toolTipKey){              
+    public void makeJurnalHeader(String firstName, String secondName, String toolTipKey){              
         StringBuilder sb = new StringBuilder(firstName);
         sb.append(": ");
         sb.append(secondName); 
-        setJurnalHeader(sb.toString());
-        setCurrentPage(0);
-        setTableToolTip(MessageFormat.format(MsgUtils.getMessageLabel(toolTipKey), new Object[]{sb.toString()}));
-        return sb.toString();
+        setJurnalHeader(MessageFormat.format(MsgUtils.getMessageLabel(toolTipKey), new Object[]{sb.toString()}));
+        setCurrentPage(0);        
     }
     
     /* Отображает диалог перемещения объекта */
@@ -1627,14 +1640,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         currentType = typeMixed;
     }             
     
-    /* GETS & SETS */
-
-    public String getTableToolTip() {
-        return tableToolTip;
-    }
-    public void setTableToolTip(String tableToolTip) {
-        this.tableToolTip = tableToolTip;
-    }           
+    /* GETS & SETS */       
     
     public BaseDict getCurrentItem() {
         return currentItem;

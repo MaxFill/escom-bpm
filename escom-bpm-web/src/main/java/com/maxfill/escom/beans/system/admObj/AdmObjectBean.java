@@ -28,7 +28,9 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
 
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
-
+        if (sourceBean != null){
+            setSourceItem(sourceBean.getSourceItem());
+        }
     }
     
     /* Вычисление числа ссылок на объект в связанных объектах */
@@ -58,7 +60,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
         }
     }
 
-    /* gets & sets */
+    /* Gets & Sets */
 
     public BaseTableBean getItemBean() {        
         return (BaseTableBean)getSourceBean();

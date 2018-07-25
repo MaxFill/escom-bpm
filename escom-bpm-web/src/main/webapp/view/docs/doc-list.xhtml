@@ -50,10 +50,10 @@
                             oncomplete="document.getElementById('#{_frm}:mainTabView:openDocBtn').click();">
                 <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
                             disabled="#{doc.mainAttache == null}"
-                            actionListener="#{docsBean.onViewMainAttache(doc)}"/>
+                            actionListener="#{docBean.onViewMainAttache(doc)}"/>
                 <p:separator />
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
-                            actionListener="#{docsBean.addInFavorites(doc)}"/>
+                            actionListener="#{docBean.addInFavorites(doc)}"/>
                 <p:menuitem icon="ui-icon-closethick" value="#{bundle.DeleteFromList}"
                             update="tblDocs"
                             disabled="#{_bean.isReadOnly()}"
@@ -64,7 +64,7 @@
         </p:column>
     </p:dataTable>
     
-    <p:commandButton id="openDocBtn" actionListener="#{docsBean.prepEditItem(_bean.selectedDoc)}" style="display: none;"> 
+    <p:commandButton id="openDocBtn" actionListener="#{docBean.prepEditItem(_bean.selectedDoc)}" style="display: none;"> 
         <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseDocForm}"/>
     </p:commandButton>
     

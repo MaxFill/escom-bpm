@@ -81,7 +81,7 @@
                     <p:fileUpload value="#{fileUploadView.file}" auto="true" mode="advanced" styleClass="ui-grid-col-6"
                                   rendered="#{!processCardBean.isReadOnly()}" style="float:right;"
                                   allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                                  sizeLimit="#{docsBean.maxFileSize}"
+                                  sizeLimit="#{docBean.maxFileSize}"
                                   invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
                                   invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
                                   fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
@@ -101,7 +101,7 @@
                     <p:commandButton id="btnAddDoc" value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"
                                      style="float:right;"
                                      rendered="#{!processCardBean.isReadOnly()}"
-                                     actionListener="#{docsBean.onManySelectItem()}"> 
+                                     actionListener="#{docBean.onManySelectItem()}"> 
                         <p:ajax event="dialogReturn" listener="#{processCardBean.onDocsSelected}" update="process:mainTabView:tblDocs"/>
                     </p:commandButton>
                 </h:panelGroup>

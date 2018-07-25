@@ -40,7 +40,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.UploadedFile;
 
-@Named(value = "docsBean")
+@Named
 @SessionScoped
 public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 

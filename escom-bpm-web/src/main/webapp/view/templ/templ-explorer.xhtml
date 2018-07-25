@@ -64,8 +64,8 @@
             </pe:layoutPane>
 
             <pe:layoutPane id="center" position="center" resizable="true">
-                <pe:layoutPane position="center">
-                    <f:facet name="header">
+                <pe:layoutPane position="center" id="center1" >                    
+                    <f:facet name="header" id="centerHeader">
                         <p:outputLabel id="centerHeaderLabel" value="#{_explorerBean.jurnalHeader}" />
                     </f:facet>
 
@@ -108,12 +108,14 @@
                             <p:ajax event="dialogReturn" listener="#{_explorerBean.addAttacheFromScan}"/>
                         </p:commandButton>
                         
-                        <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                            <p:autoUpdate />
-                        </p:messages>
-                        <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
-                        <ui:include src="/view/templ/expl/expl-table.xhtml"/>
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                            <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/> 
+                            <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                                <p:autoUpdate />
+                            </p:messages>
+                            <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
+                            <ui:include src="/view/templ/expl/expl-table.xhtml"/>
+                        </p:panelGrid>
                         
                     </h:form>
                 </pe:layoutPane>

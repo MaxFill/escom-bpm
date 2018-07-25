@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.BaseDict;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +108,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
                 HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
                 Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
-                for (Object entry : map.values()) {
+                for (Object entry : map.values()) { //поиск view бина
                   if (entry instanceof Map) {
                     Map viewScopes = (Map) entry;
                     if (viewScopes.containsKey(beanName)) {
@@ -116,7 +118,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
                     }
                   }
                 }
+                if (sourceBean == null){ //поиск session бина
+                    BaseTableBean bean = EscomBeanUtils.findBean(beanName, facesContext);
+                    setSourceBean((T) bean);
+                }
             }
+            
             doBeforeOpenCard(params);
         }
     }
@@ -326,11 +333,9 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      */
     public Map<String, List<String>> getParamsMap(){
         Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> itemIds = new ArrayList<>();
-        itemIds.add(beanId);
+        List<String> itemIds = Collections.singletonList(beanId);        
+        List<String> beanNameList = Collections.singletonList(getBeanName());
         paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(getBeanName());
         paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         return paramsMap;
     }

@@ -63,7 +63,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private Process selectedProcess;
     
     @Inject
-    private DocBean docsBean;
+    private DocBean docBean;
     @Inject
     private ProcessBean processBean;
     
@@ -256,12 +256,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
     /* Добавление версии к документу   */
     public void addAttacheFromFile(FileUploadEvent event) throws IOException{
         onItemChange();        
-        docsBean.addAttacheFromFile(getEditedItem(), event);
+        docBean.addAttacheFromFile(getEditedItem(), event);
     }
     
     public void addAttacheFromScan(SelectEvent event){
         onItemChange();
-        docsBean.addAttacheFromScan(getEditedItem(), event);
+        docBean.addAttacheFromScan(getEditedItem(), event);
     }
     
     /* Удаление текущей версии документа  */
@@ -329,11 +329,11 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     public void onLockSelectedAttache(){
         if (selectedAttache == null) return;
-        docsBean.onOpenFormLockAttache(selectedAttache);
+        docBean.onOpenFormLockAttache(selectedAttache);
     }
     
     public void onOpenFormLockAttache(Attaches attache){
-        docsBean.onOpenFormLockAttache(attache);
+        docBean.onOpenFormLockAttache(attache);
     }
     
     /* Событие изменения контрагента на карточке */
@@ -356,12 +356,12 @@ public class DocCardBean extends BaseCardBean<Doc>{
         DocType item = items.get(0);
         getEditedItem().setDocType(item);
         onItemChange();
-        docsBean.addDocStatusFromDocType(getEditedItem(),item);
+        docBean.addDocStatusFromDocType(getEditedItem(),item);
     }
     public void onDocTypeSelected(ValueChangeEvent event){        
         DocType docType = (DocType) event.getNewValue();
         getEditedItem().setDocType(docType);
-        docsBean.addDocStatusFromDocType(getEditedItem(), docType);
+        docBean.addDocStatusFromDocType(getEditedItem(), docType);
     }      
   
     /* Событие обработки выбора главного документа на карточке */
@@ -375,7 +375,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Возвращает true если у документа есть заблокированные вложения */
     public boolean getDocIsLock(){
-        return docsBean.docIsLock(getEditedItem());
+        return docBean.docIsLock(getEditedItem());
     }
     
     @Override
@@ -426,7 +426,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Загрузка статусов в редактируемый документ из шаблона документа - вызов с формы  */
     public void onLoadDocStatusFromDocType(){
-        int loadCounter = docsBean.addDocStatusFromDocType(getEditedItem(), getEditedItem().getDocType());
+        int loadCounter = docBean.addDocStatusFromDocType(getEditedItem(), getEditedItem().getDocType());
         if (loadCounter > 0){
             onItemChange();
             Object[] params = new Object[]{loadCounter};
@@ -440,7 +440,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     public void onAddStatusesFromSelector(SelectEvent event){
         if (event.getObject() != null){
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
-            int loadCounter = docsBean.addStatusesInDoc(getEditedItem(), statuses);
+            int loadCounter = docBean.addStatusesInDoc(getEditedItem(), statuses);
             Object[] params = new Object[]{loadCounter};
             MsgUtils.succesFormatMsg("StatusesLoadComplete", params);
         }    

@@ -4,7 +4,7 @@
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:p="http://primefaces.org/ui">
-   
+       
     <p:dataTable id="tblDetail" value="#{_explorerBean.detailItems}" var="item" 
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{_explorerBean.currentPage}"
@@ -146,10 +146,7 @@
                 </p:menuitem>                
             </p:splitButton>
         </p:column>
-    </p:dataTable>        
-    <pe:tooltip for="tblDetail" value="#{_explorerBean.tableToolTip}" rendered="#{!empty(_explorerBean.tableToolTip)}"
-                mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10"                 
-                styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+    </p:dataTable>
     
     <ui:include src="/view/common/confirm-dlg.xhtml"/>
 </ui:composition>

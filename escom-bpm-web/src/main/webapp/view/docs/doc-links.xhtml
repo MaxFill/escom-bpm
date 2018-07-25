@@ -5,7 +5,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <p:tab title="#{bundle.Links}" >        
-        <p:commandButton id="openDocBtn" actionListener="#{docsBean.prepEditItem(_bean.linkedDoc)}"
+        <p:commandButton id="openDocBtn" actionListener="#{docBean.prepEditItem(_bean.linkedDoc)}"
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"
                          style="display: none;"> 
@@ -20,7 +20,7 @@
                 <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                 <ui:param name="_itemPanel" value="mainDocPanel"/>
                 <ui:param name="_titleItem" value="#{bundle.MainDoc}"/>
-                <ui:param name="_selectorBean" value="#{docsBean}"/>
+                <ui:param name="_selectorBean" value="#{docBean}"/>
                 <ui:param name="_actionClear" value="setMainDoc"/>
                 <ui:param name="_actionSelect" value="onMainDocSelected"/>
                 <ui:param name="_update" value=""/>
@@ -63,7 +63,7 @@
 
                 <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
                     <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
-                                   actionListener="#{docsBean.onViewMainAttache(doc)}"
+                                   actionListener="#{docBean.onViewMainAttache(doc)}"
                                    onstart="PF('statusDialog').show()"
                                    oncomplete="PF('statusDialog').hide();"/>
                 </p:column>                       
@@ -77,11 +77,11 @@
                                     onstart="PF('statusDialog').show()"
                                     oncomplete="PF('statusDialog').hide();"
                                     disabled="#{doc.attache == null}"
-                                    actionListener="#{docsBean.onViewMainAttache(doc)}"/>
+                                    actionListener="#{docBean.onViewMainAttache(doc)}"/>
                         <p:separator />
                         <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" title="#{bundle.AddToFavorites}"
                                     process="@this"
-                                    actionListener="#{docsBean.addInFavorites(doc)}"/>                        
+                                    actionListener="#{docBean.addInFavorites(doc)}"/>                        
                     </p:splitButton>
 
                 </p:column>

@@ -458,19 +458,6 @@ public class SessionBean implements Serializable{
     public String openDocExplorer(String filterId){
         return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true&filterId=" + filterId;
     }
-
-    /* Открытие карточки администрирования объекта */
-    public void openAdmCardForm(BaseDict item){
-        String beanName = item.getClass().getSimpleName();
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> beanNameList = new ArrayList<>();
-        List<String> itemIds = new ArrayList<>();
-        beanNameList.add(beanName);
-        itemIds.add(String.valueOf(item.getId()));
-        paramMap.put("beanName", beanNameList);
-        paramMap.put("itemId", itemIds);
-        openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramMap);
-    }
     
     /* Открытие окна сканирования */
     public void openScaningForm(){

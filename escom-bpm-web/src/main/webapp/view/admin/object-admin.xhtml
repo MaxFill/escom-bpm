@@ -16,10 +16,10 @@
     <ui:define name="toolbarComponents" >
     </ui:define>
 
-    <ui:define name="centerFormContent">
-        <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.itemBean != null}" >
+    <ui:define name="centerFormContent">        
+        <p:tabView orientation="left" id="mainTabView" rendered="#{admObjectBean.sourceItem != null}" >
             <p:tab title="#{bundle.Replace}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                     <h:panelGroup styleClass="ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Object}:" />
                         <p:spacer width="3"/>
