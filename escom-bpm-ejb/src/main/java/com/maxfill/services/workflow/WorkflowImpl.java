@@ -510,7 +510,7 @@ public class WorkflowImpl implements Workflow {
                         Set<StatusElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
                         targetStates.forEach(stateElem->{
                                     stateElem.setDone(true);
-                                    updateDocState(stateElem, scheme, errors);
+                                    changingDoc(stateElem, scheme, errors);
                                     doRun(stateElem.getAnchors(), process, exeTasks, errors);
                                 });
 
@@ -589,32 +589,57 @@ public class WorkflowImpl implements Workflow {
     }    
     
     /**
-     * Изменение состояния документа(ов)
+     * Выполнение изменений в документе
      * @param stateElem
      * @param scheme
      * @param errors 
      */
-    private void updateDocState(StatusElem stateElem, Scheme scheme, Set<String> errors){
-        StatusesDoc status = statusesFacade.find(stateElem.getDocStatusId());
-        if (status == null){
-            errors.add("StateProcessRouteNotFound");
-            return;
-        }
+    private void changingDoc(StatusElem stateElem, Scheme scheme, Set<String> errors){
+        final StatusesDoc status = getNewDocStatus(stateElem, errors);
+        final State state = getNewDocState(stateElem, errors);
+        if (!errors.isEmpty()) return;
         List<Doc> docs = scheme.getProcess().getDocs();
         if (CollectionUtils.isNotEmpty(docs)){
             docs.forEach(d -> {
                 Doc doc = docFacade.find(d.getId());
                 if (doc != null){
-                    DocStatuses docStatus = new DocStatuses(doc, status);
-                    docStatus.setValue(Boolean.TRUE);
-                    docStatus.setDateStatus(new Date());
-                    //doc.getDocsStatusList().remove(docStatus); 
-                    doc.getDocsStatusList().add(docStatus);
-                    docFacade.edit(doc);
+                    boolean docChanging = false;
+                    if (status != null){
+                        DocStatuses docStatus = new DocStatuses(doc, status);
+                        docStatus.setValue(Boolean.TRUE);
+                        docStatus.setDateStatus(new Date());                    
+                        doc.getDocsStatusList().add(docStatus); 
+                        docChanging = true;
+                    }
+                    if (state != null){
+                        doc.getState().setCurrentState(state);
+                        docChanging = true;
+                    }
+                    if (docChanging){
+                        docFacade.edit(doc);
+                    }
                 }
             });
         }
-    }            
+    }              
+    
+    private State getNewDocState(StatusElem stateElem, Set<String> errors){
+        if (stateElem.getDocStateId() == null) return null;
+        State state = stateFacade.find(stateElem.getDocStateId());
+        if (state == null){
+            errors.add("StateProcessRouteNotFound");
+        }
+        return state;
+    }
+    
+    private StatusesDoc getNewDocStatus(StatusElem stateElem, Set<String> errors ){        
+        if (stateElem.getDocStatusId() == null) return null;
+        StatusesDoc status = statusesFacade.find(stateElem.getDocStatusId());
+        if (status == null){
+            errors.add("StateProcessRouteNotFound");            
+        }
+        return status;
+    }
     
     /* *** ВЕТВЛЕНИЯ *** */
     

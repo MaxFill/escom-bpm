@@ -15,8 +15,8 @@
 
         #{_rootBean   != null ? _explorerBean.setRootBean(_rootBean) : ''}
         #{_detailBean != null ? _explorerBean.setTableBean(_detailBean)  : ''}
-        #{_treeBean   != null ? _explorerBean.setTreeBean(_treeBean) : ''}
-
+        #{_treeBean   != null ? _explorerBean.setTreeBean(_treeBean) : ''}        
+        <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
     </ui:define>
@@ -43,6 +43,7 @@
         </script>
 
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
+        <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />        
 
         <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{_explorerBean.handleResize}"/>                        

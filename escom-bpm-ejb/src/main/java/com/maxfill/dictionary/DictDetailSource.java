@@ -18,4 +18,5 @@ public final class DictDetailSource {
     public final static int TREE_SOURCE = 1;
     public final static int FILTER_SOURCE = 2;
     public final static int SEARCHE_SOURCE = 3;
+    public final static int PROCESS_SOURCE = 4;
 }

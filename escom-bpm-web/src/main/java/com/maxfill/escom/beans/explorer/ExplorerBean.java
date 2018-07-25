@@ -49,11 +49,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
 
@@ -64,7 +66,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 5230153127233924868L;   
 
     @Inject
-    private DocBean docBean;
+    protected DocBean docBean;
     @Inject
     private AttacheBean attacheBean; 
     
@@ -79,7 +81,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     protected BaseTableBean tableBean;
     protected BaseTableBean searcheBean;
     
-    private BaseDict currentItem;    
+    protected BaseDict currentItem;    
     private BaseDict editItem; 
     private Set<BaseDict> copiedItems;
 
@@ -102,7 +104,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private Integer typeEdit;                   //режим редактирования записи
     
     protected List<BaseDict> checkedItems = new ArrayList<>();  //список выбранных объектов на форме обозревателя/селектора
-    private List<BaseDict> detailItems = new ArrayList<>();   //список подчинённых объектов
+    protected List<BaseDict> detailItems = new ArrayList<>();   //список подчинённых объектов
     
     private final Map<String, Object> createParams = new HashMap<>();
     protected BaseDict dropItem;
@@ -122,11 +124,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
     private Integer source = DictDetailSource.TREE_SOURCE;
-    private Integer viewMode;           //режим отображения формы
+    protected Integer viewMode;           //режим отображения формы
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
-
+    private String tableToolTip = "";
+    
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -605,7 +608,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     
     /* ФИЛЬТР: обработка события выбора фильтра */
-    private void doFilterTreeNodeSelect(TreeNode node){
+    protected void doFilterTreeNodeSelect(TreeNode node){
         if (node == null) return;
 
         currentTab = DictExplForm.TAB_FILTER;
@@ -624,7 +627,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }
 
         doMakeFilterJurnalHeader(node, filter);
-
+        
         List<BaseDict> result = null;
         if (node.getType().equals(typeDetail)){
             result = tableBean.makeFilteredContent(filter);                    
@@ -652,7 +655,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                 firstName = parentFilter.getName();
             }
         }
-        makeJurnalHeader(firstName, filter.getName());
+        
+        makeJurnalHeader(firstName, filter.getName(), "DisplaysObjectsSelectedFilter");        
     }
     
     /* ФИЛЬТР: проверят, является ли фильтр "Корзина" текущим элементом в дереве */
@@ -697,6 +701,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             }
         }
     }
+    
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА */
     
@@ -813,7 +818,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         treeSelectedNode = node;
         currentTab = DictExplForm.TAB_TREE;
         treeSelectedNode.setSelected(true);
-        currentItem = (BaseDict) treeSelectedNode.getData();
+        currentItem = (BaseDict) treeSelectedNode.getData();        
         List<BaseDict> details = null; 
         if (isItemTreeType(currentItem)){
             details = treeBean.makeGroupContent(currentItem, viewMode);
@@ -830,8 +835,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         String journalName = "";
         if (!rootItem.equals(currentItem)){
             journalName = currentItem.getName();
-        }
-        makeJurnalHeader(rootItem.getName(), journalName);
+        }        
+        makeJurnalHeader(rootItem.getName(), journalName, "DisplaysObjectsRelatedTo");
     }
     
     /* ДЕРЕВО: установка текущего элемента в ДЕРЕВЕ по заданному объекту item */
@@ -1246,8 +1251,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }
         
         setDetails(result, DictDetailSource.SEARCHE_SOURCE);
-        setCurrentViewModeDetail();
-        makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"));
+        setCurrentViewModeDetail();        
+        makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"), "DisplaysObjectsSelectedSearche");
         navigator = null;
     }
 
@@ -1552,18 +1557,19 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }    
     
     /* Формирование заголовка журнала обозревателя   */ 
-    public String makeJurnalHeader(String firstName, String secondName){      
+    public String makeJurnalHeader(String firstName, String secondName, String toolTipKey){              
         StringBuilder sb = new StringBuilder(firstName);
         sb.append(": ");
         sb.append(secondName); 
         setJurnalHeader(sb.toString());
         setCurrentPage(0);
+        setTableToolTip(MessageFormat.format(MsgUtils.getMessageLabel(toolTipKey), new Object[]{sb.toString()}));
         return sb.toString();
     }
     
     /* Отображает диалог перемещения объекта */
     public void onShowMovedDlg(String dlgName) {
-        RequestContext.getCurrentInstance().execute("PF('" + dlgName + "').show();");
+        PrimeFaces.current().executeScript("PF('" + dlgName + "').show();");        
     }   
     
     /* Признак текущего режима отображения контента    */
@@ -1622,7 +1628,14 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }             
     
     /* GETS & SETS */
-   
+
+    public String getTableToolTip() {
+        return tableToolTip;
+    }
+    public void setTableToolTip(String tableToolTip) {
+        this.tableToolTip = tableToolTip;
+    }           
+    
     public BaseDict getCurrentItem() {
         return currentItem;
     }

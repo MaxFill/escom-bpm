@@ -21,6 +21,9 @@ public class StatusElem extends WFConnectedElem{
     @XmlElement(name = "status")
     private Integer docStatusId;
     
+    @XmlElement(name = "state")
+    private Integer docStateId;
+    
     public StatusElem() {
         this.uid = EscomUtils.generateGUID();
     }
@@ -41,7 +44,14 @@ public class StatusElem extends WFConnectedElem{
     public void setDocStatusId(Integer docStatusId) {
         this.docStatusId = docStatusId;
     }
-        
+
+    public Integer getDocStateId() {
+        return docStateId;
+    }
+    public void setDocStateId(Integer docStateId) {
+        this.docStateId = docStateId;
+    }
+       
     @Override
     public String getStyle() {
         StringBuilder sb = new StringBuilder("ui-diagram-" + styleType + "-state");

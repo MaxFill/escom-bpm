@@ -11,6 +11,7 @@ public final class DictExplForm {
     
     public static final String TAB_FILTER = "1";
     public static final String TAB_TREE = "0";
+    public static final String TAB_PROC = "2";
     
     public static final int ROW_IN_PAGE = 15;
     

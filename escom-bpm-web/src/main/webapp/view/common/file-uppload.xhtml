@@ -24,7 +24,8 @@
                       onstart="PF('statusDialog').show()"
                       oncomplete="PF('statusDialog').hide(); document.getElementById('centerFRM:createItemBtn').click();">
         </p:fileUpload>
-        <pe:tooltip for="file" value="#{bundle.DragAndDropFile}"/>
+        <pe:tooltip for="file" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
+                    styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
 
     </h:form>
     

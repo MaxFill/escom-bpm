@@ -20,6 +20,7 @@ import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.DocStates;
 import com.maxfill.model.docs.Doc_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
+import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.users.User;
 import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.numerators.doc.DocNumeratorService;

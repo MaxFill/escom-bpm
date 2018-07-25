@@ -33,6 +33,9 @@ body{
     font-size: 90% !important;
 }
 
+.qtip{
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+}
 .without-spaces {
     margin: 0 !important;
     padding: 0 !important;
@@ -88,6 +91,10 @@ body{
     vertical-align: central;
     font-weight: bold;
     width: 100%;
+}
+
+.ui-dialog-content > .ui-icon {
+    background-image: url('../resources/icon/importance-16.png') !important;
 }
 
 .bt_action{

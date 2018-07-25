@@ -198,7 +198,8 @@
                                             onstart="PF('statusDialog').show();"
                                             oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createProcBtn').click();">
                             </p:fileUpload>
-                            <pe:tooltip for="file" value="#{bundle.DragDropFileForNewProcess}"/>
+                            <pe:tooltip for="file" value="#{bundle.DragDropFileForNewProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
+                                styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
                     </p:panel>
 
@@ -269,7 +270,8 @@
                                         onstart="PF('statusDialog').show()"
                                         oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
                             </p:fileUpload>
-                            <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}"/>
+                            <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
+                                        styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
                     </p:panel>
 

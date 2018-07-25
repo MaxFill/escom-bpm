@@ -4,6 +4,7 @@
     xmlns:p="http://primefaces.org/ui"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:pe="http://primefaces.org/ui/extensions"
     template="/view/templ/templ-explorer.xhtml">  
 
     <ui:define name="title">
@@ -11,21 +12,21 @@
     </ui:define>
 
     <ui:param name="_explorerBean" value="#{folderExplBean}"/>
-    <ui:param name="_detailBean" value="#{docsBean}" />
-    <ui:param name="_treeBean" value="#{foldersBean}" /> 
-    <ui:param name="_searcheBean" value="#{_detailBean}"/>
+    <ui:param name="_detailBean"   value="#{docsBean}" />
+    <ui:param name="_treeBean"     value="#{foldersBean}" /> 
+    <ui:param name="_searcheBean"  value="#{_detailBean}"/>
 
     <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('DocSelector')}"/>
     <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('DocsExplorer')}"/>
 
-    <ui:param name="_showAuthor"      value="#{true}"/>
-    <ui:param name="_showDateCreate"  value="#{false}"/>
-    <ui:param name="_showDateChange"  value="#{true}"/>    
-    <ui:param name="_showUploadPanel" value="#{_explorerBean.selectorViewMode ? false : true}"/>
-    <ui:param name="_showCompany"     value="#{true}"/>
-
+    <ui:param name="_showAuthor"       value="#{true}"/>
+    <ui:param name="_showDateCreate"   value="#{false}"/>
+    <ui:param name="_showDateChange"   value="#{true}"/>    
+    <ui:param name="_showUploadPanel"  value="#{_explorerBean.selectorViewMode ? false : true}"/>
+    <ui:param name="_showCompany"      value="#{true}"/>
+    <ui:param name="_lbGroupName"      value="#{bundle.Folders}"/>  
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
-    <ui:param name="_CreateItemLabel" value="#{bundle.CreateDoc}" />
+    <ui:param name="_CreateItemLabel"  value="#{bundle.CreateDoc}" />
     <ui:param name="_updates" value="fileUploadFRM" />
     
     <!-- специфичные поля поиска -->
@@ -116,6 +117,20 @@
                     update="centerFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
+        <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="true" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
+            <p:commandButton value="#{bundle.CreateProcess}" process="@this"
+                             styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
+                             actionListener="#{_explorerBean.createProcess()}"
+                             update="centerFRM centerHeaderLabel #{_updates}"
+                             onclick="PF('CreateProcessDlg').hide();"
+                             oncomplete="initDND()">
+            </p:commandButton>
+            <p:commandButton value="#{bundle.Cancel}" process="@this" 
+                             styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                             update="centerFRM"
+                             onclick="PF('CreateProcessDlg').hide();"
+                             oncomplete="initDND()"/>
+        </p:confirmDialog>
     </ui:define>
 
     <!-- специфичные поля таблицы обозревателя -->
@@ -170,9 +185,28 @@
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}" 
                     update="westFRM centerFRM"
                     actionListener="#{_explorerBean.onShowDocInFolder(item)}"
-                    oncomplete="initDND()"/>
+                    oncomplete="initDND()"/>        
     </ui:define>
 
+    <ui:define name="treeTabs" >
+        <p:tab id="tabProc" title="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+            <p:tree id="procTree" value="#{_explorerBean.procTree}" var="treeItem"  
+                    selectionMode="single" animate="true" 
+                    selection="#{_explorerBean.procSelectedNode}" style="width: auto; overflow-y: auto;">
+
+                <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                    <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
+                </p:treeNode>
+
+                <p:ajax event="select" listener="#{_explorerBean.onProcNodeSelect}"
+                        update="centerHeaderLabel centerFRM #{_updates}"
+                        oncomplete="initDND()"/>
+            </p:tree>
+            <pe:tooltip for="procTree" value="#{msg.DragDropDocumentCreateProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
+                styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+        </p:tab>
+    </ui:define>
+    
     <ui:define name="addMenuCreates" >        
     </ui:define>
     

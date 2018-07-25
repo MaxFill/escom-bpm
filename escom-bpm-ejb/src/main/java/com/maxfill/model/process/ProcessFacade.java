@@ -118,7 +118,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     public Tuple findDublicateExcludeItem(Process item){       
         return new Tuple(false, null);        
     }
-    
+        
     /**
      * Создание процесса c созданием и прикреплением к нему документов созданных из файлов
      * @param owner

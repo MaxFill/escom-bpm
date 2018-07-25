@@ -1,5 +1,5 @@
 function initDND() {                        //строки дерева источник
-    $('.ui-treenode').draggable({
+    $('.ui-treenode .dragable').draggable({
         scope: 'test',
         zIndex: ++PrimeFaces.zindex,
         helper: 'clone'

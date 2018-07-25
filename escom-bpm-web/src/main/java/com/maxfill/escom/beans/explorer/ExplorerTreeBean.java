@@ -28,21 +28,21 @@ import java.util.stream.Collectors;
 public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
-    private static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
-    private static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
+    protected static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
+    protected static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
 
-    private static final String TABLE_NAME = "centerFRM:tblDetail:";
-    private static final String NAVIG_NAME = "centerFRM:navigator";
+    protected static final String TABLE_NAME = "centerFRM:tblDetail:";
+    protected static final String NAVIG_NAME = "centerFRM:navigator";
 
-    private static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
-    private static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
-    private static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
-    private static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
+    protected static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
+    protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
+    protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
+    protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
 
     protected BaseDetailsBean tableBean;
 
     /* Обработка drop помещения объекта в дерево */
-    private void doDropToTree(List<BaseDict> dragItems){
+    protected void doDropToTree(List<BaseDict> dragItems){
         Set<String> errors = new HashSet<>();
         switch (getSource()){
             case DictDetailSource.TREE_SOURCE:{    //если источник для detail дерево, то будем перемещать объект
@@ -152,7 +152,7 @@ public class ExplorerTreeBean extends ExplorerBean{
     }
 
     /*  Формирование списка объектов для перетаскивания.  В список включается перетаскиваемый объект и уже отмеченные объекты  */
-    private void makeCheckedItemList(BaseDict dragItem){
+    protected void makeCheckedItemList(BaseDict dragItem){
         if (dragItem == null){
             checkedItems.clear();
             return;
