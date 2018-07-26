@@ -34,6 +34,11 @@ public class TaskElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    @Override
+    public String getImage() {
+        return null;
+    }
+    
     /* GETS & SETS */
 
     public Integer getStaffId() {

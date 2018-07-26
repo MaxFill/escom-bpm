@@ -32,6 +32,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.event.TabChangeEvent;
 
 /**
  * Базовый бин для работы с единичными объектами
@@ -74,7 +75,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
-        if (getEditedItem() == null){
+        if (params.containsKey("itemId") && getEditedItem() == null){
             itemOpenKey = params.get("itemId");
             T item;
             if (params.containsKey("openMode")){ //only if enter from url
@@ -496,6 +497,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
 
     protected String makeHeader(StringBuilder sb){
+        if (getEditedItem() == null) return "";
         sb.append(": ");
         switch (getTypeEdit()){
             case DictEditMode.VIEW_MODE:{
@@ -519,6 +521,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
 
     /* Формирует текст сообщения о том, что редактируемый объект актуален или не актуален  */
     public String getActualInfo() {
+        if (getEditedItem() == null) return "";
         String msg;
         if (getEditedItem().isActual()) {
             msg = MsgUtils.getBandleLabel("ActualInfo");
@@ -668,8 +671,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         this.itemCurrentState = itemCurrentState;
     }
 
-    public String getTabChangeScript(){
-        return "";
+    public void onTabChange(TabChangeEvent event){
     }
     
     /* Получение ссылки на объект метаданных  */

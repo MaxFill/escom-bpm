@@ -41,6 +41,11 @@ public class EnterElem extends WFConnectedElem{
         return "Enter";
     }
     
+    @Override
+    public String getImage() {
+        return null;
+    }
+    
     /* *** *** */
     @Override
     public boolean equals(Object o) {

@@ -65,7 +65,12 @@ public class ConditionElem extends WFConnectedElem{
                 .filter(a->DictWorkflowElem.STYLE_NO.equals(a.getStyle()))
                 .collect(Collectors.toSet());
     }
-        
+     
+    @Override
+    public String getImage() {
+        return null;
+    }
+    
     /* *** *** */
 
     @Override

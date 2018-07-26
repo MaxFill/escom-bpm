@@ -26,6 +26,11 @@ public class StartElem extends WFConnectedElem{
     }
 
     @Override
+    public String getImage() {
+        return null;
+    }
+    
+    @Override
     public String getStyle() {
         StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_START);
         if (isDone()){

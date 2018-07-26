@@ -52,8 +52,10 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
     @Override
     public String onCloseCard(Object param){
         try {
-            editedItem.setConditonId(selected.getId());
-            editedItem.setCaption(selected.getName());
+            if (selected != null){
+                editedItem.setConditonId(selected.getId());
+                editedItem.setCaption(selected.getName());
+            }
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

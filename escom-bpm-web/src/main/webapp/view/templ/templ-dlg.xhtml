@@ -16,6 +16,7 @@
 
     <ui:define name="body">
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
+        
         <script type="text/javascript" >
             function init() {
                 onAfterFormLoad();
@@ -78,8 +79,8 @@
 
                             <f:facet name="right">
                                 <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                                 title="#{bundle.Close}" immediate="true" 
-                                                 disabled="#{_canNotClose}"                                             
+                                                 title="#{bundle.Close}" immediate="true"
+                                                 disabled="#{_canNotClose}"
                                                  actionListener="#{_bean.onCloseCard()}">
                                 </p:commandButton>
                             </f:facet>

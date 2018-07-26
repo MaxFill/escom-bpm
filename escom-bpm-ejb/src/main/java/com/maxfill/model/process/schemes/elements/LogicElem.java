@@ -20,6 +20,11 @@ public class LogicElem extends WFConnectedElem{
     }
 
     @Override
+    public String getImage() {
+        return null;
+    }
+    
+    @Override
     public String getStyle() {
         StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_LOGIC);
         if (isDone()){

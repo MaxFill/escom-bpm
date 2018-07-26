@@ -28,6 +28,8 @@ public abstract class WFConnectedElem extends WFElement{
     @Transient
     protected Set<AnchorElem> anchors = new HashSet<>();
 
+    public abstract String getImage();
+    
     public Set<AnchorElem> getAnchors() {
         return anchors;
     }

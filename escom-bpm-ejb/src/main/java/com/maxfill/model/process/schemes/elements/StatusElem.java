@@ -36,6 +36,11 @@ public class StatusElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    @Override
+    public String getImage() {
+        return null;
+    }
+    
     /* Gets & Sets */
 
     public Integer getDocStatusId() {
@@ -74,6 +79,7 @@ public class StatusElem extends WFConnectedElem{
     }
     
     /* *** *** */
+    
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;

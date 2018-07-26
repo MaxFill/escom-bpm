@@ -2,66 +2,67 @@ package com.maxfill.model.process.schemes.elements;
 
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Сущность "Элемент схемы процесса "Выход из процесса" - точка выхода
+ * Сущность элемент "Таймер" схемы процесса 
  */
-
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExitElem extends WFConnectedElem{
-    private static final long serialVersionUID = 8512962777531919513L;
-    
-    @XmlElement(name = "finalize")
-    private Boolean finalize = true;
-    
-    public ExitElem() {
-    }
+public class TimerElem extends WFConnectedElem {    
+    private static final long serialVersionUID = -1829446194973668643L;
 
-    public ExitElem(String caption, Boolean finalize, int x, int y) {
+    @XmlElement(name = "timerId")
+    private Integer timerId;
+    
+    public TimerElem() {
+        this.uid = EscomUtils.generateGUID();
+    }
+    
+    public TimerElem(String caption, int x, int y) {
         this.caption = caption;
-        this.finalize = finalize;
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
     }
 
-    public Boolean getFinalize() {
-        return finalize;
-    }
-    public void setFinalize(Boolean finalize) {
-        this.finalize = finalize;
-    }
+    /* GETS & SETS */
     
-    @Override
-    public String getImage() {
-        return null;
+    public Integer getTimerId() {
+        return timerId;
+    }       
+    public void setTimerId(Integer timerId) {
+        this.timerId = timerId;
     }
-    
+
     @Override
     public String getStyle() {
-        return finalize ? DictWorkflowElem.STYLE_FINISH : DictWorkflowElem.STYLE_EXIT;        
+        return DictWorkflowElem.STYLE_TIMER;
     }
 
     @Override
     public String getBundleKey() {
-        return "Exit";
+        return "timer";
+    }
+
+    @Override
+    public String getImage() {
+        return "timer-32";
     }
     
     /* *** *** */
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
 
-        ExitElem exitElem = (ExitElem) o;
+        TimerElem elem = (TimerElem) o;
 
-        return uid.equals(exitElem.uid);
+        return uid.equals(elem.uid);
     }
 
     @Override
@@ -71,8 +72,9 @@ public class ExitElem extends WFConnectedElem{
 
     @Override
     public String toString() {
-        return "ExitElem{" +
-                "caption='" + caption + '\'' +
+        return "TimerElem{" +                
+                " caption='" + caption + '\'' +
                 '}';
-    }
+    }    
+    
 }

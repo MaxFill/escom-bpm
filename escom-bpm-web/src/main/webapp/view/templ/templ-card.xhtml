@@ -10,7 +10,7 @@
  
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{_bean.onBeforeOpenCard()}"/>
+            <f:event type="preRenderView" listener="#{_bean.onBeforeOpenCard()}" />
         </f:metadata>
     </ui:define>
 
@@ -39,7 +39,9 @@
             }
             window.addEventListener("load", init, false);
         </script> 
-
+        
+        <ui:insert name="card_scripts"/>
+        
         <style>  
             .ui-tabs-left>.ui-tabs-nav{
                 width: 15%;
@@ -60,13 +62,12 @@
             }
         </style>
 
-        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" stateCookie="true">
+        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" rendered="#{_bean.editedItem != null}">
             <p:ajax event="resize" listener="#{_bean.handleResize}"/>            
             
             <pe:layoutPane id="center" position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;">                                        
-                    <ui:insert name="card_scripts"/>
-                    
+                <h:form id="#{_frm}" style="font-size: 90%; height: 100%;" >                    
+                    <ui:insert name="form_scripts"/> 
                     <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
                     
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                                                
@@ -114,8 +115,7 @@
                                 <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
                                                      actionListener="#{_bean.onCancelItemSave()}"
                                                      icon="ui-icon-circle-close"
-                                                     onclick="if (itemChange == 1)
-                                                                     onChangeItem();">
+                                                     onclick="if (itemChange == 1) onChangeItem();">
                                     <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
                                 </p:commandButton> 
                             </f:facet>
@@ -126,14 +126,14 @@
                         </p:messages>
                         
                         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" 
-                                   activeIndex="#{_bean.tabActiveIndex}"  
-                                   onTabChange="#{_bean.tabChangeScript}">
+                                   activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
+                            <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
                             <ui:insert name="page_body"/>
                             <ui:include src="/view/common/dict-rights.xhtml"/>
                             <ui:insert name="childs_rights"/> 
                             <ui:include src="/view/common/dict-info.xhtml"/>
                             <ui:include src="/view/common/dict-log.xhtml"/> 
-                        </p:tabView> 
+                        </p:tabView>                         
                     </p:panelGrid>
 
                     <ui:include src="/view/common/confirm-dlg.xhtml" />
@@ -142,7 +142,7 @@
                                      oncomplete="return itemChange = 0;"/>
                     <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/> 
                     
-                </h:form>    
+                </h:form> 
             </pe:layoutPane>
         </pe:layout>
         

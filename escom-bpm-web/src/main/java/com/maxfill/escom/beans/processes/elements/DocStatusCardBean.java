@@ -61,9 +61,13 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
     
     public String onSaveAndClose(Object param){
          try {
-            editedItem.setDocStatusId(selected.getId());
-            editedItem.setDocStateId(selectedState.getId());
-            editedItem.setCaption(selected.getBundleName());
+            if (selected != null){
+                editedItem.setDocStatusId(selected.getId());
+                editedItem.setCaption(selected.getBundleName());
+            }
+            if (selectedState != null){
+                editedItem.setDocStateId(selectedState.getId());
+            }
             editedItem.setStyleType(style);
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {

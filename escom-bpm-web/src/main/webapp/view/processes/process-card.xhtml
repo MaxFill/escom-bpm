@@ -108,101 +108,8 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Scheme}" id="tbScheme" >            
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces" >
-                <p:toolbar styleClass="ui-grid-col-12" >
-                    <f:facet name="left">
-                        <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
-                                        disabled="#{processCardBean.isReadOnly()}"
-                                        onstart="PF('statusDialog').show()"
-                                        oncomplete="PF('statusDialog').hide();"
-                                        actionListener="#{staffBean.onManySelectItem()}" >
-                           <p:ajax event="dialogReturn" listener="#{processCardBean.onStaffsSelected}" />
-                        </p:commandButton>
-                        <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddLogicElement('And')}" >
-                        </p:commandButton>
-                        <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddLogicElement('Or')}" >
-                        </p:commandButton>
-                        <p:commandButton  value="If" title="#{bundle.AddCondition}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddConditionElement()}" >
-                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
-                        </p:commandButton>
-                        
-                        <p:commandButton  value="State" title="#{bundle.AddState}"
-                                          disabled="#{processCardBean.isReadOnly()}"
-                                          actionListener="#{processCardBean.onAddStateElement('success')}" >
-                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
-                        </p:commandButton>
-                        
-                        <p:commandButton value="Start" title="#{bundle.AddStart}"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         actionListener="#{processCardBean.onAddStartElement()}" >
-                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
-                        </p:commandButton>
-                        <p:commandButton value="Enter" title="#{bundle.AddEnter}"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         actionListener="#{processCardBean.onAddEnterElement()}" >
-                            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
-                        </p:commandButton>
-                        <p:commandButton value="Exit" title="#{bundle.AddExit}"
-                                        disabled="#{processCardBean.isReadOnly()}"
-                                        actionListener="#{processCardBean.onAddExitElement()}" >
-                                <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
-                        </p:commandButton>
-                         
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-                        <p:commandButton id="btnRefresh" title="#{bundle.Refresh}" icon="ui-icon-arrowrefresh-1-s"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         actionListener="#{processCardBean.modelRefresh()}">
-                        </p:commandButton>
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>
-
-                        <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                                         disabled="#{processCardBean.isReadOnly()}"                                         
-                                         onclick="PF('LoadFromTemplDLG').show();"
-                                         update="LoadFromTemplFRM">                           
-                        </p:commandButton>
-                        <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         update="SaveAsTemplFRM"
-                                         onclick="PF('SaveAsTemplDLG').show();">
-                        </p:commandButton>
-                        
-                        <p:commandButton title="Clear" icon="ui-icon-closethick"
-                                         disabled="#{processCardBean.isReadOnly()}"
-                                         actionListener="#{processCardBean.onClearModel()}"
-                                         update="diagramm">
-                            <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
-                        </p:commandButton>
-                        <span class="ui-separator">
-                            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                        </span>                          
-                        <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
-                    </f:facet>
-
-                    <f:facet name="right">
-                        
-                    </f:facet>
-                </p:toolbar>  
-            
-                <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
-                    <f:facet name="element" >
-                        <h:outputLabel value="#{processCardBean.getElementCaption(el)}" style="display:block;margin:1em;word-wrap:break-word;"/>
-                    </f:facet>
-                    <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" />
-                    <p:ajax event="disconnect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onDisconnect}" />
-                    <p:ajax event="connectionChange" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnectionChange}" />
-                </p:diagram>
-            </p:panelGrid>
+        <p:tab title="#{bundle.Scheme}" id="tbScheme"  >  
+            <ui:include src="/view/processes/diagramm.xhtml"/>
         </p:tab>
         
         <p:tab title="#{bundle.ApprovalSheet}">
@@ -301,6 +208,12 @@
                 width:3em;
                 height:3em;
                 background-color: #edef04;
+            }
+            
+            .ui-diagram-timer {
+                width:5em;
+                height:5em;
+                background-color: skyblue;
             }
 
             .ui-diagram-enter {
@@ -464,7 +377,9 @@
                 component.contextMenu('update', menu, {});  
             }
         </script>
-        
+    </ui:define>
+    
+    <ui:define name="form_scripts">
         <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
         <p:remoteCommand name="elementCopy" actionListener="#{processCardBean.onElementCopy()}"/>

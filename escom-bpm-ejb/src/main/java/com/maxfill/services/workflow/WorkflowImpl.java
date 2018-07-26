@@ -140,6 +140,18 @@ public class WorkflowImpl implements Workflow {
     }
 
     @Override
+    public void addTimer(TimerElem timer, Scheme scheme, Set<String> errors) {
+        if (!errors.isEmpty()) return;
+        if (timer == null){
+            errors.add("WorkflowIncorrectData");
+        }
+        //ToDo проверки!
+        if (errors.isEmpty()) {
+            scheme.getElements().getTimers().put(timer.getUid(), timer);
+        }
+    }
+    
+    @Override
     public void addState(StatusElem state, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
         if (state == null){

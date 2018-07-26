@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.utils.EscomUtils;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
@@ -22,7 +23,7 @@ public abstract class WFElement implements Serializable{
 
     @XmlElement
     private boolean done;
-        
+
     public String getCaption() {
         return caption;
     }

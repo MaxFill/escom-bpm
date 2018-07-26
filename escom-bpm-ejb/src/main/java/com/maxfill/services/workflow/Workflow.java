@@ -15,6 +15,7 @@ public interface Workflow {
     void addTask(TaskElem task, Scheme scheme, Set<String> errors);
     ConnectorElem createConnector(AnchorElem from, AnchorElem to, Scheme scheme, String label, Set<String> errors);
     void addCondition(ConditionElem condition, Scheme scheme, Set<String> errors);
+    void addTimer(TimerElem timer, Scheme scheme, Set<String> errors);
     void addLogic(LogicElem logic, Scheme scheme, Set<String> errors);
     void addState(StatusElem state, Scheme scheme, Set<String> errors);
     void addStart(StartElem start, Scheme scheme, Set<String> errors);

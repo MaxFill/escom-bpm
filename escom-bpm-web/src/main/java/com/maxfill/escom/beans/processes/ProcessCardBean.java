@@ -55,7 +55,6 @@ import org.primefaces.model.diagram.endpoint.EndPointAnchor;
 import org.primefaces.model.diagram.endpoint.RectangleEndPoint;
 import org.primefaces.model.diagram.overlay.ArrowOverlay;
 import org.primefaces.model.diagram.overlay.LabelOverlay;
-
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -140,24 +139,22 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
-        onReloadModel();
+        loadModel(getScheme());
     }
 
     @Override
     public void onAfterFormLoad(String beanId) {
         super.onAfterFormLoad(beanId);
+        if (getEditedItem() == null) return;
         if (getEditedItem().getScheme() == null){
             Scheme scheme = new Scheme(getEditedItem());
             getEditedItem().setScheme(scheme);            
             if (getEditedItem().getOwner() != null){
                 PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
-            }            
-        } else 
-            if (!isReadOnly()){
-                addElementContextMenu();
             }
+        } 
     }
-    
+
     /**
      * Перед сохранением процесса
      * @param item
@@ -201,7 +198,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     
     @Override
     protected String makeHeader(StringBuilder sb){
-        if (StringUtils.isNotEmpty(getEditedItem().getRegNumber())){
+        if (getEditedItem() != null && StringUtils.isNotEmpty(getEditedItem().getRegNumber())){
             sb.append(" ").append(MsgUtils.getBandleLabel("NumberShort")).append(getEditedItem().getRegNumber()).append(" ");
         }
         return super.makeHeader(sb);
@@ -245,7 +242,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
         } else {
-            onReloadModel();
+            loadModel(getScheme());
+            modelRefresh();
             exitParam = SysParams.EXIT_EXECUTE;
             MsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
@@ -264,21 +262,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
         
         Scheme scheme = new Scheme(getEditedItem());        
-        scheme.setPackElements(selectedTempl.getElements());                 
-        workflow.unpackScheme(scheme);       
-
-        getEditedItem().setScheme(scheme);
-        restoreModel();
+        scheme.setPackElements(selectedTempl.getElements());               
+        getEditedItem().setScheme(scheme);        
+        loadModel(scheme);
         onItemChange(); 
         setTabActiveIndex(1);
         PrimeFaces.current().ajax().update("process:mainTabView");
         addElementContextMenu();
-    }
-
-    @Override
-    public String getTabChangeScript() {
-        return "document.getElementById('process:mainTabView:btnRefresh').click();";
-    }    
+    }      
     
     /**
      * Сохранение модели процесса в шаблон
@@ -324,30 +315,22 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
-
-    /**
-     * Обработка события перезагрузки визуальной схемы процесса
-     */
-    public void onReloadModel(){
-        if (getScheme() != null){
-            loadModel(getScheme());
-            modelRefresh();
-        }
-    }
     
     /**
      * Загрузка визуальной схемы процесса
      * @param scheme
      */
     public void loadModel(Scheme scheme){       
+        if (scheme == null) return;
         workflow.unpackScheme(scheme);
-        restoreModel();        
+        model.clear();
+        restoreModel();
     }
 
     /**
      * Перерисовка модели на странице формы
      */
-    public void modelRefresh(){
+    public void modelRefresh(){        
         PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
@@ -357,8 +340,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     /**
      * Формирует графическую схему из данных модели процесса
      */
-    private void restoreModel(){        
-        model.clear();
+    private void restoreModel(){                
         Map<String, Element> elementMap = new HashMap <>();        
         getScheme().getElements().getTasks().forEach((k, taskEl)->{             
             if (taskEl.getTask() == null){
@@ -373,6 +355,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             elementMap.put(k, createElement(taskEl));
         });
         getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
@@ -664,6 +647,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     /**
+     * Обработка события добавления в схему процесса визуального компонента "Таймер"
+     */
+    public void onAddTimerElement() {
+        baseElement = createTimer(null, defX, defY, new HashSet<>());
+        finalAddElement(); 
+    }
+    
+    /**
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
     public void onAddEnterElement(){       
@@ -732,6 +723,22 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return null;
     }
 
+    private TimerElem createTimer(String name, int x, int y, Set<String> errors){
+        TimerElem timer = new TimerElem(name, x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        timer.setAnchors(makeAnchorElems(timer, endPoints));
+        workflow.addTimer(timer, getScheme(), errors);
+        if (errors.isEmpty()) {
+            modelAddElement(timer);
+            return timer;
+        }
+        return null;
+    }
+            
     /**
      * Создание элемента "Логическое ветвление"
      * @param x
@@ -961,7 +968,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             connector.setCornerRadius(10); 
             conn.setConnector(connector);
         }
-        int h = conn.hashCode();
         return conn;
     }
 
@@ -1073,12 +1079,12 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-        PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
+        PrimeFaces.current().executeScript("addContextMenu('diagramFRM:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
-            sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
+            sb.append("'diagramFRM:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("])");      
         PrimeFaces.current().executeScript(sb.toString());       
@@ -1141,11 +1147,13 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     public boolean isDisableBtnStop(){
+        if (getEditedItem() == null) return false;
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || !getEditedItem().isRunning();
     }
     
     @Override
     public boolean isReadOnly(){
+        if (getEditedItem() == null) return false;
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning() || getEditedItem().isCompleted() ;
     }
     
@@ -1164,6 +1172,17 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
         return getLabelFromBundle(bundleName);
     }          
+    
+    /**
+     * Формирует ссылку на изображение для элемента модели
+     * @param wfElement
+     * @return 
+     */
+    public String getElementImage(WFConnectedElem wfElement){
+        String image = wfElement.getImage();
+        if (StringUtils.isEmpty(image)) return "";
+        return "/resources/icon/" + image + ".png";
+    }
     
     public void onOpenExeReport(ProcReport report){
         currentReport = report;
@@ -1249,7 +1268,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     public List<ProcTempl> getTemplates() {
-        if (templates == null){            
+        if (templates == null && getEditedItem() != null){            
             templates = procTemplBean.findDetailItems(getEditedItem().getOwner());            
         }
         return templates;
@@ -1330,6 +1349,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }        
     
     public Scheme getScheme(){
+        if (getEditedItem() == null) return null;
         return getEditedItem().getScheme();
     }
    

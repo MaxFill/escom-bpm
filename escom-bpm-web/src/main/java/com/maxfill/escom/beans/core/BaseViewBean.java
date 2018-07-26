@@ -96,9 +96,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     }
 
     /**
-     * Метод вызывается автоматически при открытии формы диалога
+     * Метод вызывается автоматически при открытии формы
      */
-    public void onBeforeOpenCard(){        
+    public void onBeforeOpenCard(){
+        this.beanId = this.toString();
         if (openInDialog == null){
             FacesContext facesContext = FacesContext.getCurrentInstance();
             Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();

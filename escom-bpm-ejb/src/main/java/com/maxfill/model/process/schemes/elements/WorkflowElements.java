@@ -42,6 +42,9 @@ public class WorkflowElements implements Serializable{
     @XmlElement(name = "states")
     private Map<String, StatusElem> states = new HashMap <>();
     
+    @XmlElement(name = "timers")
+    private Map<String, TimerElem> timers = new HashMap <>();
+    
     public WorkflowElements() {
     }
 
@@ -52,6 +55,13 @@ public class WorkflowElements implements Serializable{
         this.startElem = startElem;
     }
 
+    public Map<String, TimerElem> getTimers() {
+        return timers;
+    }
+    public void setTimers(Map<String, TimerElem> timers) {
+        this.timers = timers;
+    }
+    
     public Map<String, TaskElem> getTasks() {
         return tasks;
     }
