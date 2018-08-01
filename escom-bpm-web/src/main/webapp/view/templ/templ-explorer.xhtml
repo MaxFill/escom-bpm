@@ -25,22 +25,9 @@
         #{_explorerBean.jurnalHeader}
     </ui:define>
 
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{_explorerBean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
-
     <ui:define name="body">
         <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 
-        <h:outputScript library="js" name="drag-drop.js" />  
-        
-        <script type="text/javascript" >            
-            function init() {
-                onAfterFormLoad();
-            }
-            window.addEventListener("load", init, false);  
-        </script>
+        <h:outputScript library="js" name="drag-drop.js" />         
 
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
         <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />        
@@ -134,7 +121,7 @@
                     <ui:include src="/view/templ/templ-searche.xhtml">
                         <ui:param name="_tblUpdate" value="centerFRM westFRM centerHeaderLabel #{_updates}"/>
                     </ui:include>
-                    <p:remoteCommand name="onAfterFormLoad" action="#{_explorerBean.onAfterFormLoad(_explorerBean)}"/>
+
                 </h:form>
             </pe:layoutPane>
 

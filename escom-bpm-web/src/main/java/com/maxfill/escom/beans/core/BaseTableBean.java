@@ -201,11 +201,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         String itemOpenKey = appBean.addLockedItem(itemKey, editMode, item, getCurrentUser());
         List<String> itemKeyList = new ArrayList<>();
         itemKeyList.add(itemOpenKey);
-        paramsMap.put("itemId", itemKeyList);
-        
-        List<String> openInDialogList = new ArrayList<>();
-        openInDialogList.add("true");
-        paramsMap.put("openInDialog", openInDialogList);  
+        paramsMap.put("itemId", itemKeyList);          
         
         String formName = getFormName();
         Tuple<Integer, Integer> size = sessionBean.getFormSize(formName);
@@ -464,17 +460,17 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 /* *** CЕЛЕКТОР ОБЪЕКТОВ *** */
     
     /* CЕЛЕКТОР: Открытие формы селектора для выбора единичного объекта */
-    public void onOneSelectItem() {
-        openItemSelector(DictExplForm.SING_SELECT_MODE);
+    public void onOneSelectItem() {        
+        openItemSelector(DictExplForm.SING_SELECT_MODE, getParamsMap());
     }
 
     /* СЕЛЕКТОР: открытие формы для выбора нескольких объектов */
     public void onManySelectItem() {
-        openItemSelector(DictExplForm.MULTY_SELECT_MODE);
+        openItemSelector(DictExplForm.MULTY_SELECT_MODE, getParamsMap());
     }
 
     /* СЕЛЕКТОР: открытие формы выбора */
-    private void openItemSelector(Integer selectMode) {
+    private void openItemSelector(Integer selectMode, Map<String, List<String>> paramsMap) {
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
         options.put("modal", true);
@@ -485,13 +481,10 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> paramList = new ArrayList<>();
-        paramList.add(selectMode.toString());
-        paramsMap.put("selectMode", paramList);
-        List<String> openInDialogList = new ArrayList<>();
-        openInDialogList.add("true");
-        paramsMap.put("openInDialog", openInDialogList);
+        
+        List<String> paramList = Collections.singletonList(selectMode.toString());
+        paramsMap.put("selectMode", paramList);        
+
         String frmName = getFacade().getFRM_NAME() + "-explorer";
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);
     }        

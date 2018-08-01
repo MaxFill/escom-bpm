@@ -6,6 +6,13 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     template="/view/templ/templ-card.xhtml">    
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{docCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{docCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{docCardBean}"/>
     <ui:param name="_item" value="#{_bean.editedItem}"/>  
     

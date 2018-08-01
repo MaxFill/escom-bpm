@@ -1,11 +1,16 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-dlg.xhtml">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{usersSessionsBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{usersSessionsBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="title">
         #{bundle.ActiveUsers}
     </ui:define>

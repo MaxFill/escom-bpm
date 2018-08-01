@@ -4,7 +4,14 @@
                  template="/view/templ/templ-dlg.xhtml"
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-     <ui:param name="_bean" value="#{exitCardBean}"/>
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{exitCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{exitCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
+    <ui:param name="_bean" value="#{exitCardBean}"/>
 
     <ui:define name="title">
         #{bundle.ElementExit}

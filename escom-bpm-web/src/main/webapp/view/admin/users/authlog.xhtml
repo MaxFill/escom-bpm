@@ -10,6 +10,13 @@
         #{bundle.AuthenticationLog}
     </ui:define>
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{authLogBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{authLogBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{authLogBean}"/>
 
     <ui:define name="leftFormContent" >

@@ -5,6 +5,13 @@
                  template="/view/templ/templ-dlg.xhtml"
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{monitorBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{monitorBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="title">
         #{monitorBean.getLabelFromBundle("ProcessExecutionControl")}
     </ui:define>

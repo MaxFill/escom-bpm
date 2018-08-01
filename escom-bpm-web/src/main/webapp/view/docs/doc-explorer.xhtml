@@ -7,6 +7,13 @@
     xmlns:pe="http://primefaces.org/ui/extensions"
     template="/view/templ/templ-explorer.xhtml">  
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{folderExplBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{folderExplBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="title">
         <h:outputText value="#{bundle.FolderExplorer}"></h:outputText>
     </ui:define>

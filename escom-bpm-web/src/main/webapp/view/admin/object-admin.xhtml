@@ -2,8 +2,16 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 template="/view/templ/templ-dlg.xhtml">
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{admObjectBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{admObjectBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="title">
         #{bundle.Administation}
     </ui:define>

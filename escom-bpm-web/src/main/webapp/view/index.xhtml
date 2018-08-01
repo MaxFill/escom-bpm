@@ -10,43 +10,19 @@
         #{applicationBean.appName}
     </ui:define>
     
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{sessionBean.showNotification()}" />
+            <f:viewAction action="#{sessionBean.onAfterFormLoad()}" />
+        </f:metadata>     
+    </ui:define>
+    
     <ui:define name="body">
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
-        <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />
+        <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />      
 
-        <script type="text/javascript">
-            function init() {
-                onOpenForm();
-            }
-
-            window.addEventListener("load", init, false);
-
-            function OpenFolder(sFolderUrl) {
-                ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
-            }
-            
-            function ProtocolInstallCallback(message) {
-                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" + 
-                    ITHit.WebDAV.Client.DocManager.GetInstallFileName();
-
-                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")){
-                    window.open(installerFilePath);
-                }
-            }
-        </script>
-        
-        <f:event listener="#{sessionBean.showNotification()}" type="preRenderView" />
-
-        <h:form id="mainFRM">
-            <style type="text/css">
-                .ui-dashboard-column {
-                    width: 300px !important;
-                }
-                .dash-panel{
-                    margin: 5px !important;
-                }
-            </style>
+        <h:form id="mainFRM">            
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
                         
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
@@ -97,9 +73,8 @@
                     </span>
 
                     <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
-                                     onstart="return isClose = 1;"
-                                     ajax="false"
-                                     action="#{sessionBean.onSessionExit()}"/>
+                                     onstart="return isClose = 1;"                                     
+                                     actionListener="#{sessionBean.onSessionExit()}"/>
                 </f:facet>
             </p:toolbar>
 
@@ -149,7 +124,6 @@
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:commandLink value="#{bundle.Authentication}"
                                            onstart="return isClose = 1;"
-                                           ajax="false"
                                            actionListener="#{sessionBean.openAuthLog()}"/>
                         </p:panelGrid>
                     </p:panel>
@@ -176,7 +150,7 @@
                             <p:commandLink value="#{bundle.Processes}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
-                                           action="#{sessionBean.openProcessExpl()}"/>
+                                           action="process-explorer"/>
                             <p:commandLink value="#{bundle.ProcessExecutionControl}"
                                            onstart="return isClose = 1;"
                                            ajax="false"
@@ -305,12 +279,40 @@
                 </p:dashboard>                 
                 
             </p:panelGrid>
-            <p:remoteCommand name="onOpenForm" action="#{sessionBean.onAfterFormLoad()}"/>
+
             <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
             <p:commandButton style="display: none;" id="createDocBtn" actionListener="#{sessionBean.onCreateDoc()}"/>
         </h:form>
     </ui:define>
 
+    <ui:define name="customStyleCSS">
+        <style type="text/css">
+            .ui-dashboard-column {
+                width: 300px !important;
+            }
+            .dash-panel{
+                margin: 5px !important;
+            }
+        </style>
+    </ui:define>
+    
+    <ui:define name="customJavaScript">
+        <script type="text/javascript">
+            function OpenFolder(sFolderUrl) {
+                ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
+            }
+            
+            function ProtocolInstallCallback(message) {
+                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" + 
+                    ITHit.WebDAV.Client.DocManager.GetInstallFileName();
+
+                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")){
+                    window.open(installerFilePath);
+                }
+            }
+        </script> 
+    </ui:define>
+    
     <ui:define name="dialogs"> 
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgAbout">
             <h:form id="logFRM">                

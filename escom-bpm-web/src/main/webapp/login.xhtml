@@ -10,11 +10,16 @@
         #{bundle.ProgramName} #{bundle.EnterToProgram}
     </ui:define> 
 
-    <ui:define name="body">
-        <ui:include src="/view/common/error-dlg.xhtml"/>
+    <ui:define name="preRendered">
         <f:metadata>
             <f:viewParam name="from" value="#{loginBean.targetPage}" />
-        </f:metadata>
+            <f:viewAction action="#{loginBean.onBeforeOpen()}" />
+        </f:metadata>     
+    </ui:define>
+    
+    <ui:define name="body">
+        <ui:include src="/view/common/error-dlg.xhtml"/>
+
 
         <h:form id="loginFRM">
             <p:panel styleClass="panelLogin" >

@@ -9,6 +9,13 @@
         #{bundle.MessagesForSent}
     </ui:define>
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{mailBoxBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{mailBoxBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{mailBoxBean}"/>
 
     <ui:define name="menuActions" >

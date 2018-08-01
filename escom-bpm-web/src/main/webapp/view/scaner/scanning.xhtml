@@ -18,7 +18,7 @@
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{scanBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{scanBean.onBeforeOpenCard()}"/>
         </f:metadata>
     </ui:define>
 

@@ -1,12 +1,20 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-explorer.xhtml">
+                template="/view/templ/templ-explorer.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- стандартный обозреватель/селектор для Должностей -->
     
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{explorerBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{explorerBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
+    <ui:param name="_explorerBean" value="#{explorerBean}" />
     <ui:param name="_detailBean"  value="#{postBean}" />
     <ui:param name="_searcheBean" value="#{postBean}"/>
-    <ui:param name="_explorerBean" value="#{explorerBean}" />
     
     <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('PostSelector')}"/>
     <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Posts')}"/>   

@@ -6,6 +6,13 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-dlg.xhtml">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{userSettingsBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{userSettingsBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="title">
         #{bundle.PersonalSettings}
     </ui:define>

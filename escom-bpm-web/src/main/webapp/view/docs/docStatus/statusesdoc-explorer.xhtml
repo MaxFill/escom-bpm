@@ -1,9 +1,16 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-explorer.xhtml">
+                template="/view/templ/templ-explorer.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- стандартный обозреватель/селектор для Статусов документов -->
-
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{explorerBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{explorerBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_explorerBean" value="#{explorerBean}" />
     <ui:param name="_detailBean"  value="#{statusesDocBean}" />
     <ui:param name="_searcheBean" value="#{statusesDocBean}"/>

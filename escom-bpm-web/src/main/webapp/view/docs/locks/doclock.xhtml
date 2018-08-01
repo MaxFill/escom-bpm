@@ -8,7 +8,7 @@
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{docLockBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{docLockBean.onBeforeOpenCard()}"/>
         </f:metadata>
     </ui:define>
 

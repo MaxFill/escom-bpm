@@ -1,10 +1,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-explorer.xhtml"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- стандарный обозреватель/селектор -->
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{explorerBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{explorerBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_explorerBean" value="#{explorerBean}" />
     <ui:param name="_detailBean"  value="#{partnerTypesBean}"/>
     <ui:param name="_searcheBean" value="#{partnerTypesBean}"/>

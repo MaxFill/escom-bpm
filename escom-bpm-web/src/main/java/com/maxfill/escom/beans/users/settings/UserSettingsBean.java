@@ -32,8 +32,7 @@ public class UserSettingsBean extends BaseViewBean{
     private String repeatePassword;
 
     @Override
-    public void onAfterFormLoad(String beanId) {
-        super.onAfterFormLoad(beanId);
+    public void onAfterFormLoad() {
         User user = sessionBean.getCurrentUser();
         if (user.isNeedChangePwl()) {
             MsgUtils.errorMsg("YouNeedChangePassword");

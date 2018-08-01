@@ -143,8 +143,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     @Override
-    public void onAfterFormLoad(String beanId) {
-        super.onAfterFormLoad(beanId);
+    public void onAfterFormLoad() {
         if (getEditedItem() == null) return;
         if (getEditedItem().getScheme() == null){
             Scheme scheme = new Scheme(getEditedItem());

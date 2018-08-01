@@ -36,6 +36,7 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
+import com.sun.faces.application.view.ViewScopeManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -66,6 +67,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
@@ -308,7 +310,23 @@ public class SessionBean implements Serializable{
     }
 
     /* Переход на начальную страницу программы */
-    public String goToIndex(){
+    public String goToIndex(){                 
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
+        map.entrySet().removeIf(mapEntry->{
+            boolean flag = false;
+            if (mapEntry instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) mapEntry;
+                if (entry.getValue() instanceof Map) {
+                    Map viewScopes = (Map) entry.getValue();
+                    if (viewScopes.isEmpty()){
+                        flag = true;
+                    }
+                }
+            }
+            return flag;
+        });
         return "/view/index?faces-redirect=true";
     }
 
@@ -379,7 +397,7 @@ public class SessionBean implements Serializable{
     /* Просмотр вложения  */
     public void onViewAttache(Attaches attache) {
         String path = configuration.getUploadPath() + attache.getFullName();
-        Map<String, List<String>> paramMap = new HashMap<>();
+        Map<String, List<String>> paramMap = getParamsMap();
         List<String> pathList = new ArrayList<>();
         pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
         paramMap.put("path", pathList);
@@ -412,24 +430,9 @@ public class SessionBean implements Serializable{
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
-        List<String> openInDialogList = new ArrayList<>();
-        openInDialogList.add("true");
-        paramsMap.put("openInDialog", openInDialogList);
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
     }
-
-    /**
-     * Открытие обозревателя процессов
-     * @return
-     */
-    public String openProcessExpl(){
-        String url = "";
-        if (appBean.getLicence().isCanUses(DictModules.MODULE_PROCESSES)){
-            url = "/view/processes/" + DictDlgFrmName.FRM_PROCESS_EXPL + "?faces-redirect=true";
-        }
-        return url;
-    }
-
+    
     /**
      * Открытие обозревателя шаблонов процессов
      * @return
@@ -445,9 +448,8 @@ public class SessionBean implements Serializable{
     /**
      * Открытие формы монитора контроля процессов
      */
-    public void openMonitor(){
-        Map<String, List<String>> paramMap = new HashMap<>();
-        openDialogFrm(DictDlgFrmName.FRM_MONITOR, paramMap);
+    public void openMonitor(){        
+        openDialogFrm(DictDlgFrmName.FRM_MONITOR, getParamsMap());
     }
     
     /**
@@ -461,20 +463,17 @@ public class SessionBean implements Serializable{
     
     /* Открытие окна сканирования */
     public void openScaningForm(){
-        Map<String, List<String>> paramMap = new HashMap<>();
-        openDialogFrm(DictDlgFrmName.FRM_SCANING, paramMap);
+        openDialogFrm(DictDlgFrmName.FRM_SCANING, getParamsMap());
     }
 
     /* Открытие окна пользовательских сессий */
-    public void openSessionsForm(){
-        Map<String, List<String>> paramMap = new HashMap<>();
-        openDialogFrm(DictDlgFrmName.FRM_USER_SESSIONS, paramMap);
+    public void openSessionsForm(){        
+        openDialogFrm(DictDlgFrmName.FRM_USER_SESSIONS, getParamsMap());
     }
 
     /* Открытие окна просмотра лицензии */
-    public void openLicenseForm(){
-        Map<String, List<String>> paramMap = new HashMap<>();
-        openDialogFrm(DictDlgFrmName.FRM_AGREE_LICENSE, paramMap);
+    public void openLicenseForm(){        
+        openDialogFrm(DictDlgFrmName.FRM_AGREE_LICENSE, getParamsMap());
     }
     
     /* Открытие формы нового почтового сообщения  */
@@ -485,7 +484,7 @@ public class SessionBean implements Serializable{
         String docIds = org.apache.commons.lang3.StringUtils.join(idList, ",");
         List<String> docsList = new ArrayList<>();
         docsList.add(docIds); 
-        Map<String, List<String>> paramMap = new HashMap<>();
+        Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("modeSendAttache", openModeList);
         paramMap.put("docIds", docsList);
         openDialogFrm(DictDlgFrmName.FRM_MAIL_MESSAGE, paramMap);
@@ -495,21 +494,21 @@ public class SessionBean implements Serializable{
     public void openAttacheAddForm(Doc doc){        
         List<String> docsList = new ArrayList<>();
         docsList.add(doc.getId().toString()); 
-        Map<String, List<String>> paramMap = new HashMap<>();
+        Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("docId", docsList);
         openDialogFrm(DictDlgFrmName.FRM_ADD_ATTACHE, paramMap); 
     }
     
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
-        openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, getParamsMap());
     }
 
     /**
      * Открытие диалога журнала аутентификации
      */
     public void openAuthLog(){
-        openDialogFrm(DictDlgFrmName.FRM_AUTH_LOG, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_AUTH_LOG, getParamsMap());
     }
 
     /* Просмотр файла PDF в диалоговом окне */
@@ -520,7 +519,7 @@ public class SessionBean implements Serializable{
                 .append("_")
                 .append(getCurrentUser().getLogin())
                 .append(".pdf").toString();
-        Map<String, List<String>> paramMap = new HashMap<>();
+        Map<String, List<String>> paramMap = getParamsMap();
         List<String> pathList = new ArrayList<>();
         pathList.add(pdfFile);
         paramMap.put("path", pathList);
@@ -540,41 +539,54 @@ public class SessionBean implements Serializable{
 
     /* Открытие формы почтовой службы отправки e-mail сообщений */
     public void openMailSenderService(){
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, getParamsMap());
     }
 
     /* Открытие формы почтовой службы получения e-mail сообщений */    
     public void openMailReaderService(){        
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_READER_SERVICE, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_MAIL_READER_SERVICE, getParamsMap());
     }
 
     /* Открытие формы службы интеграции с LDAP */
     public void openLdapService(){
-        openDialogFrm(DictDlgFrmName.FRM_LDAP, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_LDAP, getParamsMap());
     }
 
     /* Открытие формы службы формирования системных уведомлений */
     public void openNotificationService(){
-        openDialogFrm(DictDlgFrmName.FRM_NOTIFICATION, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_NOTIFICATION, getParamsMap());
     }
     
     /* Открытие формы списка сообщений пользователя */
     public void openUserMessagesForm(String typeMsg){
         List<String> msgList = new ArrayList<>();
         msgList.add(typeMsg);
-        Map<String, List<String>> paramMap = new HashMap<>();
+        Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("typeMsg", msgList);
         openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, paramMap);
     }
     
     /* Открытие окна счётчиков нумераторов */
     public void openContersExpl(){        
-        openDialogFrm(DictDlgFrmName.FRM_COUNTERS, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_COUNTERS, getParamsMap());
     }
 
+    /**
+     * Формирует набор параметров для передачи его в открываемый бин
+     * @return 
+     */
+    public Map<String, List<String>> getParamsMap(){
+        Map<String, List<String>> paramsMap = new HashMap<>();
+        List<String> itemIds = Collections.singletonList(this.toString());
+        List<String> beanNameList = Collections.singletonList("sessionBean");
+        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        return paramsMap;
+    }
+    
     /* Открытие окна планировщика */
     public void openScheduler(){
-        openDialogFrm(DictDlgFrmName.FRM_SCHEDULER, new HashMap<>());
+        openDialogFrm(DictDlgFrmName.FRM_SCHEDULER, getParamsMap());
     }
     
     /* Инициализация спиcка тем */
@@ -686,12 +698,12 @@ public class SessionBean implements Serializable{
     
     /* Проверка наличия обновления программы */
     public void onCheckReleaseApp(){       
-        openDialogFrm(DictDlgFrmName.FRM_CHECK_RELEASE, null);
+        openDialogFrm(DictDlgFrmName.FRM_CHECK_RELEASE, getParamsMap());
     }
     
     /* Отображение справки */
     public void onViewHelp(){
-       openDialogFrm(DictDlgFrmName.FRM_HELP, null); 
+       openDialogFrm(DictDlgFrmName.FRM_HELP, getParamsMap()); 
     }
             
     /* GETS & SETS */

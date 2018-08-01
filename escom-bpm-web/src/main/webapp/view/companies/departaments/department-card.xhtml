@@ -5,6 +5,13 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-card.xhtml">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{departmentCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{departmentCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{departmentCardBean}"/>
 
     <ui:define name="extColumnsRights">

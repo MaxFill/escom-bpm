@@ -1,10 +1,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml">
+                template="/view/templ/templ-card.xhtml"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{partnersGroupsCardBean}"/>
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{partnersGroupsCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{partnersGroupsCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateSubGroup}">
             <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>

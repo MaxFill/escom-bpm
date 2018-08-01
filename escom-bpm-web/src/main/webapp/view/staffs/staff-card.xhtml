@@ -7,6 +7,13 @@
 
     <ui:param name="_bean" value="#{staffCardBean}"/>
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{staffCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{staffCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:define name="page_body">
 
         <p:tab title="#{bundle.Explorer}">     

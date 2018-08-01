@@ -5,6 +5,13 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/view/templ/templ-card.xhtml">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{processCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{processCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{processCardBean}"/>
 
     <ui:define name="customJavaScript">

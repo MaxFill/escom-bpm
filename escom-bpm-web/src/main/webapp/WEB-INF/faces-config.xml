@@ -46,6 +46,7 @@
         <navigation-case>
             <from-outcome>proctempl-explorer</from-outcome>
             <to-view-id>/view/processes/templ/proctempl-explorer.xhtml</to-view-id>
+            <redirect />
         </navigation-case>               
         
         <navigation-case>
@@ -156,6 +157,7 @@
             <to-view-id>/view/docs/docStatus/statusesdoc-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
+        
         <navigation-case>
             <from-outcome>statusesdoc-card</from-outcome>
             <to-view-id>/view/docs/docStatus/statusesdoc-card.xhtml</to-view-id>
@@ -176,7 +178,6 @@
         <navigation-case>
             <from-outcome>process-card</from-outcome>
             <to-view-id>/view/processes/process-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
 
         <navigation-case>
@@ -188,7 +189,6 @@
         <navigation-case>
             <from-outcome>processtype-card</from-outcome>
             <to-view-id>/view/processes/types/processtype-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
 
         <navigation-case>
@@ -374,7 +374,6 @@
         <navigation-case>
             <from-outcome>post-card</from-outcome>
             <to-view-id>/view/staffs/posts/post-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
                 
         <navigation-case>

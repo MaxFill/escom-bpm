@@ -7,27 +7,17 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:param name="_canNotClose" value="#{_canNotClose == null ? false : _canNotClose}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:event type="preRenderView" listener="#{_bean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
-
+    
     <ui:define name="body">
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
         
         <script type="text/javascript" >
-            function init() {
-                onAfterFormLoad();
-            }
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
                     document.getElementById(componentName).focus();
                     return;
                 }
             }
-            window.addEventListener("load", init, false);
 
             var itemChange = 0;
         </script>
@@ -91,7 +81,6 @@
                         </p:panelGrid>
                     </p:panelGrid>
 
-                    <p:remoteCommand name="onAfterFormLoad" action="#{_bean.onAfterFormLoad(_bean)}"/>
                     <ui:insert name="form_scripts"/>
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>

@@ -15,7 +15,7 @@
     <ui:define name="preRendered">
         <f:metadata>
             <f:viewParam name="itemId" value="#{docBean.documentId}" />
-            <f:event listener="#{docBean.onDownLoadAttachePDFByExtLink()}" type="preRenderView" />
+            <f:viewAction action="#{docBean.onDownLoadAttachePDFByExtLink()}"/>
         </f:metadata>  
     </ui:define>
     

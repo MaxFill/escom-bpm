@@ -16,7 +16,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +60,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     private BaseDict sourceItem;
     private int tabActiveIndex = 0;
     
-    protected Boolean openInDialog;
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
     
     protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).
@@ -99,11 +97,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * Метод вызывается автоматически при открытии формы
      */
     public void onBeforeOpenCard(){
-        this.beanId = this.toString();
-        if (openInDialog == null){
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
-            openInDialog = params.containsKey("openInDialog");
+        beanId = this.toString();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        if (params.size() <= 1){
+            killBean();
+        } else  {
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
                 String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
@@ -124,7 +123,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
                     setSourceBean((T) bean);
                 }
             }
-            
             doBeforeOpenCard(params);
         }
     }
@@ -136,8 +134,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * Метод вызывается автоматически после загрузки формы диалога
      * @param beanId
      */
-    public void onAfterFormLoad(String beanId){
-        this.beanId = beanId;
+    public void onAfterFormLoad(){        
     }
 
     /**
@@ -158,10 +155,30 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){    
+        killBean();
+        PrimeFaces.current().dialog().closeDynamic(exitParam);
+        return "";
+    }
+    
+    private void killBean(){
         String beanName = getBeanName();
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
+        map.entrySet().removeIf(mapEntry->{
+            boolean flag = false;
+            if (mapEntry instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) mapEntry;
+                if (entry.getValue() instanceof Map) {
+                    Map viewScopes = (Map) entry.getValue();
+                    if (viewScopes.isEmpty()){
+                        flag = true;
+                    }
+                }
+            }
+            return flag;
+        });
+        
         for (Object mapEntry : map.entrySet()){
             if (mapEntry instanceof Map.Entry) {
                 Map.Entry entry = (Map.Entry) mapEntry;
@@ -178,11 +195,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
                 }
             }
         }
-        if (openInDialog){            
-            PrimeFaces.current().dialog().closeDynamic(exitParam);
-            return "";
-        }
-        return "/view/index?faces-redirect=true";        
     }
     
     /* Обработка cобытия изменения размеров формы */

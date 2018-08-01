@@ -9,14 +9,11 @@ import com.maxfill.model.users.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.services.sms.SmsService;
-import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -33,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXB;
 import org.apache.commons.lang.StringUtils;
-import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 
 /* Контролер формы логина */
@@ -83,7 +79,7 @@ public class LoginBean implements Serializable{
         }
     }
     
-    public void login() throws NoSuchAlgorithmException{
+    public String login() throws NoSuchAlgorithmException{
         Set <FacesMessage> errors = new HashSet <>();
         RequestContext context = RequestContext.getCurrentInstance();
 
@@ -91,7 +87,7 @@ public class LoginBean implements Serializable{
             errors.add(MsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
             makeCountErrLogin(context, errors);
             MsgUtils.showFacesMessages(errors);
-            return;
+            return "";
         }
 
         //проверка на просроченность лицензии
@@ -115,7 +111,7 @@ public class LoginBean implements Serializable{
         if(!errors.isEmpty()) {
             makeCountErrLogin(context, errors);
             MsgUtils.showFacesMessages(errors);
-            return;
+            return "";
         }
 
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
@@ -126,7 +122,7 @@ public class LoginBean implements Serializable{
             if(StringUtils.isNotBlank(smsResult) && !smsResult.contains("error")) {
                 context.update("loginFRM");
                 MsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
-                return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
+                return ""; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
             } else {
                 System.out.println("ERROR_SMS: " + smsResult == null ? "no data." : smsResult);
             }
@@ -144,9 +140,13 @@ public class LoginBean implements Serializable{
             targetPage = SysParams.MAIN_PAGE;
         }
         generatePinCode = null;
-        sessionBean.redirectToPage(targetPage, Boolean.FALSE);
+        return targetPage + "?faces-redirect=true";
+        //sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }               
-        
+      
+    public void onBeforeOpen(){      
+    }
+    
     /* Инициализация текущего пользователя */
     private void initCurrentUser(User user){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();

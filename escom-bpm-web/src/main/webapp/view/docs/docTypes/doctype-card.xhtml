@@ -6,6 +6,13 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-card.xhtml">
 
+    <ui:define name="preRendered">
+        <f:metadata>
+            <f:viewAction action="#{docTypeCardBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{docTypeCardBean.onAfterFormLoad()}"/>
+        </f:metadata>
+    </ui:define>
+    
     <ui:param name="_bean" value="#{docTypeCardBean}"/>
 
     <ui:define name="page_body">

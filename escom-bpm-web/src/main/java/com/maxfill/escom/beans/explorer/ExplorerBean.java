@@ -129,6 +129,14 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
     
+    @Override
+    public void onBeforeOpenCard() {  
+        beanId = this.toString();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        doBeforeOpenCard(params);
+    }
+    
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){

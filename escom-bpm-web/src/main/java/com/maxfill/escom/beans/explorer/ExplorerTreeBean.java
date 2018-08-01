@@ -40,7 +40,7 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
 
     protected BaseDetailsBean tableBean;
-
+    
     /* Обработка drop помещения объекта в дерево */
     protected void doDropToTree(List<BaseDict> dragItems){
         Set<String> errors = new HashSet<>();

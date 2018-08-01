@@ -70,8 +70,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     }
 
     @Override
-    public void onAfterFormLoad(String beanId){
-        super.onAfterFormLoad(beanId);
+    public void onAfterFormLoad(){
         validateStaff(oldStaffvalue);
     }
     

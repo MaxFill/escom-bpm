@@ -8,7 +8,7 @@
 
     <ui:define name="preRendered">
         <f:metadata>
-            <f:event type="preRenderView" listener="#{countersExplBean.onBeforeOpenCard()}"/>
+            <f:viewAction action="#{countersExplBean.onBeforeOpenCard()}"/>
         </f:metadata>
     </ui:define>
 
