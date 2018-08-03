@@ -210,6 +210,8 @@ public class WorkflowImpl implements Workflow {
             scheme.getElements().getConditions().remove(element.getUid());
         } else if (element instanceof LogicElem){
             scheme.getElements().getLogics().remove(element.getUid());
+        } else if (element instanceof TimerElem){
+            scheme.getElements().getTimers().remove(element.getUid());
         }
         removeConnectors(element, scheme);        
     }
