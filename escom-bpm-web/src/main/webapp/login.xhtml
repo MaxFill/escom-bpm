@@ -13,7 +13,6 @@
     <ui:define name="preRendered">
         <f:metadata>
             <f:viewParam name="from" value="#{loginBean.targetPage}" />
-            <f:viewAction action="#{loginBean.onBeforeOpen()}" />
         </f:metadata>     
     </ui:define>
     
@@ -91,9 +90,9 @@
 
                             <p:commandButton id="btnLogin" value="#{bundle.enter}" title="#{bundle.EnterProgram}"
                                              icon="ui-icon-circle-triangle-e"
-                                             update="panelLogin" ajax="false"
+                                             update="panelLogin" 
                                              disabled="#{loginBean.isLoginLock()}"
-                                             action="#{loginBean.login()}"/>
+                                             actionListener="#{loginBean.login()}"/>
                         </p:panelGrid>
                         <p:outputLabel value="#{bundle.DeveloperInfo}" style="font-size: x-small;" /> 
                     </p:panelGrid>

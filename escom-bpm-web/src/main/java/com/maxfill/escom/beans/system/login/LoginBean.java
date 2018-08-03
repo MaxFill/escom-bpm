@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXB;
 import org.apache.commons.lang.StringUtils;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 /* Контролер формы логина */
 @Named
@@ -82,15 +82,14 @@ public class LoginBean implements Serializable{
         }
     }
     
-    public String login() throws NoSuchAlgorithmException{
+    public void login() throws NoSuchAlgorithmException{
         Set <FacesMessage> errors = new HashSet <>();
-        RequestContext context = RequestContext.getCurrentInstance();
-
+       
         if (!Objects.equals(pinCode, generatePinCode)){   //оба кода должны быть равны (null если не требуется ввод кода)
             errors.add(MsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
-            makeCountErrLogin(context, errors);
+            makeCountErrLogin(errors);
             MsgUtils.showFacesMessages(errors);
-            return "";
+            return;
         }
 
         //проверка на просроченность лицензии
@@ -112,9 +111,9 @@ public class LoginBean implements Serializable{
         }
 
         if(!errors.isEmpty()) {
-            makeCountErrLogin(context, errors);
+            makeCountErrLogin(errors);
             MsgUtils.showFacesMessages(errors);
-            return "";
+            return;
         }
 
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
@@ -123,9 +122,9 @@ public class LoginBean implements Serializable{
             String smsResult = smsService.sendAccessCode(user.getMobilePhone(), message);
 
             if(StringUtils.isNotBlank(smsResult) && !smsResult.contains("error")) {
-                context.update("loginFRM");
+                PrimeFaces.current().ajax().update("loginFRM");
                 MsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
-                return ""; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
+                return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
             } else {
                 System.out.println("ERROR_SMS: " + smsResult == null ? "no data." : smsResult);
             }
@@ -143,11 +142,9 @@ public class LoginBean implements Serializable{
             targetPage = SysParams.MAIN_PAGE;
         }
         generatePinCode = null;
-        return targetPage + "?faces-redirect=true";
-        //sessionBean.redirectToPage(targetPage, Boolean.FALSE);
-    }               
-      
-    public void onBeforeOpen(){      
+        //return targetPage + "?faces-redirect=true";
+        //Используется ajax и редирект/ Если не использовать ajax, то в Chrome почему то сбрасывает selectedLang и далее ошибка.
+        sessionBean.redirectToPage(targetPage, Boolean.FALSE);
     }
     
     /* Инициализация текущего пользователя */
@@ -176,10 +173,10 @@ public class LoginBean implements Serializable{
     }             
     
     /* Увеличивает счётчик ошибок входа и генерирует сообщение в случае превышения допустимого числа ошибок  */
-    private void makeCountErrLogin(RequestContext context, Set<FacesMessage> errors){
+    private void makeCountErrLogin(Set<FacesMessage> errors){
         countErrLogin++;
         if (isLoginLock()){
-            context.execute("PF('poll').start();");
+            PrimeFaces.current().executeScript("PF('poll').start();");
             errors.add(MsgUtils.prepFormatErrorMsg("ErrorCountLogin", new Object[]{}));
         } 
     }
