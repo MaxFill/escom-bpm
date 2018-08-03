@@ -77,6 +77,9 @@ public class LoginBean implements Serializable{
                 break;
             }
         }
+        if (selectedLang == null){
+            selectedLang = new CountryFlags(0, "en", "English");
+        }
     }
     
     public String login() throws NoSuchAlgorithmException{
