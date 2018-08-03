@@ -655,7 +655,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обработка события добавления в схему процесса визуального компонента "Таймер"
      */
     public void onAddTimerElement() {
-        baseElement = createTimer(MsgUtils.getBandleLabel("Timer"), defX, defY, new HashSet<>());
+        baseElement = createTimer(null, defX, defY, new HashSet<>());
         finalAddElement(); 
     }
     
@@ -729,8 +729,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
 
     private TimerElem createTimer(String name, int x, int y, Set<String> errors){        
-        TimerElem timer = new TimerElem(name, x, y);
-        ProcTimer procTimer = procTimerFacade.createTimer(getEditedItem(), name);
+        TimerElem timer = new TimerElem(null, x, y);
+        ProcTimer procTimer = procTimerFacade.createTimer(getEditedItem());
         timer.setProcTimer(procTimer);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);

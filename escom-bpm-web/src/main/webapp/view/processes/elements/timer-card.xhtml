@@ -96,16 +96,45 @@
                 </p:panelGrid>
                     
                     <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="centerFRM"
-                                     actionListener="#{timerCardBean.onCloseCard('save')}" style="float: right;">
-                        <f:param name="isRequired" value="true"/>
-                    </p:commandButton>
+                    
                 </p:panelGrid>
             </p:tab>
             
             <p:tab title="#{bundle.Settings}" >
-            
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces">
+                    <h:panelGrid columns="2" styleClass="without-spaces">
+                        <h:panelGroup>
+                            <p:outputLabel value="#{''.concat(bundle.Run).concat(' ').concat(bundle.in)}:"/>
+                            <p:selectOneRadio id="startType" value="#{timerCardBean.procTimer.startType}" layout="grid" columns="1"  >
+                                <f:selectItem itemLabel="#{bundle.OnInit}" itemValue="on_init" />
+                                <f:selectItem itemLabel="#{bundle.PlanEndDate}" itemValue="on_plan" />
+                                <f:selectItem itemLabel="#{bundle.Date}" itemValue="on_date" />  
+                                <p:ajax update="pnDateStart" event="valueChange" process="@this"/>
+                            </p:selectOneRadio>
+                        </h:panelGroup>
+                        <h:panelGroup>
+                            <h:panelGrid id="pnDateStart" columns="1" styleClass="without-spaces">
+                                <p:spacer/>
+                                <p:spacer/>
+                                <p:calendar value="#{timerCardBean.procTimer.startDate}"
+                                            rendered="#{timerCardBean.procTimer.startType eq 'on_date'}"
+                                            disabled="#{timerCardBean.procTimer.startType ne 'on_date'}"
+                                            showHour="true" showMinute="true"
+                                            locale="#{sessionBean.locale}"
+                                            navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
+                                            required="#{param['isRequired'] == 'true'}"
+                                            requiredMessage="#{bundle.Field} [#{bundle.StartInDate}] #{bundle.MustBeFilled}">                            
+                                </p:calendar>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </p:panelGrid>
             </p:tab>
         </p:tabView>
+        
+        <p:commandButton value="#{bundle.Save}" update="centerFRM"
+                    actionListener="#{timerCardBean.onCloseCard('save')}" style="float: right;">
+                <f:param name="isRequired" value="true"/>
+        </p:commandButton>
     </ui:define>
 </ui:composition>

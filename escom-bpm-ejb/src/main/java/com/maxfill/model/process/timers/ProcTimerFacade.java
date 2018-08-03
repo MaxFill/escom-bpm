@@ -15,11 +15,11 @@ public class ProcTimerFacade extends BaseFacade<ProcTimer>{
         super(ProcTimer.class);
     }
     
-    public ProcTimer createTimer(Process process, String name){
-        ProcTimer procTimer = new ProcTimer();
-        procTimer.setName(name);
+    public ProcTimer createTimer(Process process){
+        ProcTimer procTimer = new ProcTimer();        
         procTimer.setProcess(process);
         procTimer.setStartDate(process.getPlanExecDate());
+        procTimer.setStartType("on_init");
         return procTimer;
     }
 }

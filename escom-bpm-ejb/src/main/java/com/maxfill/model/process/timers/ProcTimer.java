@@ -17,7 +17,6 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Сущность для хранения настроек таймера
@@ -58,6 +57,15 @@ public class ProcTimer implements Serializable {
     @Column(name = "StartDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate = new Date();
+    
+    /**
+     * Тип запуска
+     * on_init - при инициализации
+     * on_plan - срок исполнения процесса
+     * on_date - дата указывается принудительно
+     */
+    @Column(name = "StartType")    
+    private String startType = "on_init";
     
     /**
      * Тип повтора:
@@ -101,6 +109,13 @@ public class ProcTimer implements Serializable {
         
     /* gets & sets */
 
+    public String getStartType() {
+        return startType;
+    }
+    public void setStartType(String startType) {
+        this.startType = startType;
+    }
+    
     public Process getProcess() {
         return process;
     }
