@@ -74,10 +74,10 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     private Date factExecDate;
     
     @Column(name="DeltaDeadLine")
-    private Integer deltaDeadLine = 0; //срок исполнения в секундах
+    private Integer deltaDeadLine = 0;      //срок исполнения в секундах
     
     @Column(name="DeadLineType")
-    private String deadLineType = "delta"; //вид установки срока исполнения
+    private String deadLineType = "delta";  //вид установки срока исполнения
     
     @Column(name="ReminderType")
     private String reminderType = "no";     //вид установки напоминания

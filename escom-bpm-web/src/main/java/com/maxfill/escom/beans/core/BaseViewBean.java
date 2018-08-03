@@ -106,19 +106,21 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
                 String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-                HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-                Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
-                for (Object entry : map.values()) { //поиск view бина
-                  if (entry instanceof Map) {
-                    Map viewScopes = (Map) entry;
-                    if (viewScopes.containsKey(beanName)) {
-                        setSourceBean((T) viewScopes.get(beanName));
-                        String id = sourceBean.toString();
-                        if (sourceBeanId.equals(id)) break;
+                if (StringUtils.isNotEmpty(sourceBeanId)){                 
+                    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+                    Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
+                    for (Object entry : map.values()) { //поиск view бина
+                      if (entry instanceof Map) {
+                        Map viewScopes = (Map) entry;
+                        if (viewScopes.containsKey(beanName)) {
+                            setSourceBean((T) viewScopes.get(beanName));
+                            String id = sourceBean.toString();
+                            if (sourceBeanId.equals(id)) break;
+                        }
+                      }
                     }
-                  }
                 }
-                if (sourceBean == null){ //поиск session бина
+                if (sourceBean == null && StringUtils.isNotEmpty(beanName)){ //поиск session бина
                     BaseTableBean bean = EscomBeanUtils.findBean(beanName, facesContext);
                     setSourceBean((T) bean);
                 }

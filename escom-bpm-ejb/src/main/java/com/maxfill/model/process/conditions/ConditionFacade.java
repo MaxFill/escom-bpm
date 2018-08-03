@@ -1,7 +1,6 @@
 package com.maxfill.model.process.conditions;
 
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.process.conditions.Condition;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;

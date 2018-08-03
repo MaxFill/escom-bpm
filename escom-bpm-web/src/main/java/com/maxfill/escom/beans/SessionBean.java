@@ -576,11 +576,9 @@ public class SessionBean implements Serializable{
      * @return 
      */
     public Map<String, List<String>> getParamsMap(){
-        Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> itemIds = Collections.singletonList(this.toString());
-        List<String> beanNameList = Collections.singletonList("sessionBean");
-        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        Map<String, List<String>> paramsMap = new HashMap<>();        
+        paramsMap.put(SysParams.PARAM_BEAN_ID, Collections.singletonList(""));
+        paramsMap.put(SysParams.PARAM_BEAN_NAME, Collections.singletonList(""));
         return paramsMap;
     }
     

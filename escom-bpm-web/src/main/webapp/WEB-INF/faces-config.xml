@@ -96,6 +96,10 @@
         </navigation-case>
         
         <navigation-case>
+            <from-outcome>timer-card</from-outcome>
+            <to-view-id>/view/processes/elements/timer-card.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>condition-card</from-outcome>
             <to-view-id>/view/processes/elements/condition-card.xhtml</to-view-id>
         </navigation-case>

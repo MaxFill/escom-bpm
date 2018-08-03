@@ -87,6 +87,7 @@
     <class>com.maxfill.model.users.assistants.Assistant</class>
     <class>com.maxfill.model.users.assistants.AssistantLog</class>
     <class>com.maxfill.model.users.assistants.AssistantStates</class>
+    <class>com.maxfill.model.process.timers.ProcTimer</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

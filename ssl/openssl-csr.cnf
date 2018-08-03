@@ -1,0 +1,36 @@
+###############################################
+# Remaining options below  should not be edited
+###############################################
+
+[ req ]
+default_bits = 4096
+distinguished_name  = req_distinguished_name
+req_extensions     = req_ext
+
+[ req_distinguished_name ]
+countryName                  = Country Name (2 letter code)
+countryName_default          = RU
+stateOrProvinceName          = State or Province Name (full name)
+stateOrProvinceName_default  = Russia
+localityName                 = Locality Name (eg, city)
+localityName_default         = Moscow
+organizationName             = Organization Name (eg, company)
+organizationName_default     = MaxFill, LLC.
+commonName                   = commonName
+commonName_default           = localhost
+commonName_max               = 64
+
+[ req_ext ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+
+###############################################
+# Edit this line to set subjectAltName contents
+###############################################
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+DNS.2 = maksim-PC
+IP.1 = 192.168.1.3
+IP.2 = 192.168.1.100

@@ -1,11 +1,13 @@
 package com.maxfill.model.process.schemes.elements;
 
 import com.maxfill.dictionary.DictWorkflowElem;
+import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.utils.EscomUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Сущность элемент "Таймер" схемы процесса 
@@ -15,6 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class TimerElem extends WFConnectedElem {    
     private static final long serialVersionUID = -1829446194973668643L;
 
+    @XmlTransient
+    private ProcTimer procTimer;
+     
     @XmlElement(name = "timerId")
     private Integer timerId;
     
@@ -30,7 +35,14 @@ public class TimerElem extends WFConnectedElem {
     }
 
     /* GETS & SETS */
-    
+
+    public ProcTimer getProcTimer() {
+        return procTimer;
+    }
+    public void setProcTimer(ProcTimer procTimer) {
+        this.procTimer = procTimer;
+    }
+        
     public Integer getTimerId() {
         return timerId;
     }       

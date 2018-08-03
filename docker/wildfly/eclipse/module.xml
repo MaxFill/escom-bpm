@@ -30,7 +30,7 @@
 
     <resources>
         <resource-root path="jipijapa-eclipselink-11.0.0.Final.jar"/>
-        <resource-root path="eclipselink-2.7.0.jar"><filter><exclude path="javax/**" /></filter></resource-root>
+        <resource-root path="eclipselink-2.7.2.jar"><filter><exclude path="javax/**" /></filter></resource-root>
     </resources>
 
     <dependencies>

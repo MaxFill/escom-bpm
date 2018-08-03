@@ -28,6 +28,8 @@ import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.templates.ProcTempl;
+import com.maxfill.model.process.timers.ProcTimer;
+import com.maxfill.model.process.timers.ProcTimerFacade;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
@@ -104,6 +106,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private StatusesDocFacade statusesDocFacade;
     @EJB
     private StateFacade stateFacade;
+    @EJB
+    private ProcTimerFacade procTimerFacade;
         
     private Element selectedElement = null;
 
@@ -148,7 +152,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (getEditedItem().getScheme() == null){
             Scheme scheme = new Scheme(getEditedItem());
             getEditedItem().setScheme(scheme);            
-            if (getEditedItem().getOwner() != null){
+            if (getEditedItem().getOwner() != null && !getTemplates().isEmpty()){
                 PrimeFaces.current().executeScript("PF('LoadFromTemplDLG').show();");
             }
         } 
@@ -437,23 +441,27 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обоработка события открытия карточки свойств визуального компонента 
      */
     public void onElementOpen(){
-       if (baseElement instanceof TaskElem){
-           TaskElem taskElem = (TaskElem) baseElement;           
-           currentTask = (Task) taskElem.getTask();           
-           onOpenTask();
-           return;
-       } 
-       if (baseElement instanceof ConditionElem){
-           openElementCard(DictDlgFrmName.FRM_CONDITION);
-           return;
-       } 
-       if (baseElement instanceof StatusElem){
-           openElementCard(DictDlgFrmName.FRM_DOC_STATUS);
-           return;
-       }
-       if (baseElement instanceof ExitElem){
-           openElementCard(DictDlgFrmName.FRM_EXIT);           
-       }
+        if (baseElement instanceof TaskElem){
+            TaskElem taskElem = (TaskElem) baseElement;           
+            currentTask = (Task) taskElem.getTask();           
+            onOpenTask();
+            return;
+        } 
+        if (baseElement instanceof ConditionElem){
+            openElementCard(DictDlgFrmName.FRM_CONDITION);
+            return;
+        } 
+        if (baseElement instanceof StatusElem){
+            openElementCard(DictDlgFrmName.FRM_DOC_STATUS);
+            return;
+        }
+        if (baseElement instanceof ExitElem){
+            openElementCard(DictDlgFrmName.FRM_EXIT);
+            return;
+        }
+        if (baseElement instanceof TimerElem){
+            openElementCard(DictDlgFrmName.FRM_TIMER);
+        }
     }
     
     /**
@@ -462,11 +470,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     private void openElementCard(String formName){
         Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemIds = new ArrayList<>();
-        itemIds.add(beanId);
+        List<String> itemIds = Collections.singletonList(beanId);
+        List<String> beanNameList = Collections.singletonList(getBeanName());
         paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        List<String> beanNameList = new ArrayList<>();
-        beanNameList.add(getBeanName());
         paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         sessionBean.openDialogFrm(formName, paramMap);
     }
@@ -649,7 +655,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Обработка события добавления в схему процесса визуального компонента "Таймер"
      */
     public void onAddTimerElement() {
-        baseElement = createTimer(null, defX, defY, new HashSet<>());
+        baseElement = createTimer(MsgUtils.getBandleLabel("Timer"), defX, defY, new HashSet<>());
         finalAddElement(); 
     }
     
@@ -722,8 +728,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return null;
     }
 
-    private TimerElem createTimer(String name, int x, int y, Set<String> errors){
+    private TimerElem createTimer(String name, int x, int y, Set<String> errors){        
         TimerElem timer = new TimerElem(name, x, y);
+        ProcTimer procTimer = procTimerFacade.createTimer(getEditedItem(), name);
+        timer.setProcTimer(procTimer);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
