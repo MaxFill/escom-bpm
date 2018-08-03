@@ -51,7 +51,7 @@
                             <h:panelGroup id="langPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
                                 <p:selectOneMenu var="lng" value="#{loginBean.selectedLang}" converter="langConverter" disabled="#{loginBean.isLoginLock()}">
                                     <f:selectItems value="#{loginBean.languages}" var="items" itemLabel="#{items.displayName}" itemValue="#{items}"/>
-                                    <p:ajax event="change" listener="#{loginBean.changeLocale()}" update="@form"/>
+                                    <p:ajax event="change" listener="#{loginBean.changeLocale()}" update="loginFRM"/>
                                     <p:column style="width:10%">
                                         <p:graphicImage value="/resources/images/#{lng.name}.png" /> 
                                     </p:column>

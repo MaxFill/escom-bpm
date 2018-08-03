@@ -69,6 +69,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.UploadedFile;
 import org.primefaces.model.diagram.endpoint.BlankEndPoint;
 import org.primefaces.model.diagram.overlay.Overlay;
@@ -270,7 +271,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         loadModel(scheme);
         onItemChange(); 
         setTabActiveIndex(1);
-        PrimeFaces.current().ajax().update("process:mainTabView");
+        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
         addElementContextMenu();
     }      
     
@@ -1086,15 +1087,22 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-        PrimeFaces.current().executeScript("addContextMenu('diagramFRM:diagramm')");
+        PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
-            sb.append("'diagramFRM:diagramm-").append(element.getId()).append("', "); 
+            sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("])");      
         PrimeFaces.current().executeScript(sb.toString());       
+    }
+    
+    @Override
+    public void onTabChange(TabChangeEvent event){
+        if (event.getTab().getId().equals("tbScheme")){
+            addElementContextMenu();
+        }
     }
     
     /* ПРОЧИЕ МЕТОДЫ */
