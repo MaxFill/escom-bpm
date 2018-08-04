@@ -50,13 +50,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @EJB
     protected StaffFacade staffFacade;
     
-    private Integer centerHight = 0;
-    private Integer northHight = 0;
-    private Integer southHight = 0;
-
-    private Integer westWidth = 0;
-    private Integer centerWidth = 0;
-    private Integer eastWidth = 0;
     private BaseDict sourceItem;
     private int tabActiveIndex = 0;
     
@@ -157,6 +150,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){    
+        PrimeFaces.current().executeScript("sendFormSize();");
         killBean();
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
@@ -197,46 +191,18 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
                 }
             }
         }
+    }    
+
+    public void onFormSize(){
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();        
+        if (params.containsKey("width") && params.containsKey("height")){
+            Integer width = Integer.valueOf(params.get("width"));
+            Integer height = Integer.valueOf(params.get("height"));
+            sessionBean.saveFormSize(getFormName(), width, height);
+        }        
     }
     
-    /* Обработка cобытия изменения размеров формы */
-    public void handleResize(org.primefaces.extensions.event.ResizeEvent event) { 
-        LayoutPane o = (LayoutPane)event.getSource();
-        Double width = event.getWidth();
-        Double height = event.getHeight();
-        switch(o.getId()){
-            case "center":{
-                centerHight = northHight + southHight + height.intValue();
-                centerWidth = westWidth + eastWidth + width.intValue();
-                westWidth = 0;
-                eastWidth = 0;
-                northHight = 0;
-                southHight = 0;
-                break;
-            }
-            case "north":{
-                northHight = height.intValue();
-                break;
-            }
-            case "south":{
-                southHight = height.intValue();
-                break;
-            }
-            case "west":{
-                westWidth = width.intValue();
-                break;
-            }
-            case "east":{
-                eastWidth = width.intValue();
-                break;
-            }
-        }
-        Integer heightSum = centerHight + southHight + northHight;
-        Integer widthSum = centerWidth + westWidth + eastWidth;
-        sessionBean.saveFormSize(getFormName(), widthSum + 25, heightSum + 25);
-    }
-
-/* *** НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ *** */
+    /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */
 
     public abstract String getFormName();
     

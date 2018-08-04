@@ -25,7 +25,7 @@ import java.util.Map;
 public class UserMsgBean extends LazyLoadBean {
     private static final long serialVersionUID = -7376087892834532742L;
 
-    private Boolean showOnlyUnread;
+    private boolean showOnlyUnread;
     private UserMessages selectedMessages;
 
     @Inject
@@ -49,9 +49,7 @@ public class UserMsgBean extends LazyLoadBean {
     
     @Override
     public void doBeforeOpenCard(Map params){
-        if (showOnlyUnread == null){
-            showOnlyUnread = params.get("typeMsg").equals("newMsg");
-        }
+        showOnlyUnread = params.get("typeMsg").equals("newMsg");
     }
 
     @Override

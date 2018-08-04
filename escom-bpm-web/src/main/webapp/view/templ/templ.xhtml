@@ -5,8 +5,6 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"                
         xmlns:p="http://primefaces.org/ui" 
         xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:insert name="preRendered"/>
         
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -29,37 +27,49 @@
         <h:outputStylesheet library="css" name="em_style1.css"/> 
         <link rel="shortcut icon" href="#{resource['icon/done.png']}" type="image/png"/>
     </h:head>
+
+    <ui:insert name="preRendered"/>
     
     <h:body>
         <f:view locale="#{sessionBean.locale}"></f:view>
-        <script type="text/javascript">           
-            PrimeFaces.locales ['ru'] = {
-                closeText: 'Закрыть',
-                prevText: 'Назад',
-                nextText: 'Вперёд',
-                currentText: 'Сегодня',
-                monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-                monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
-                dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
-                dayNamesShort: ['Вс.', 'Пн.', 'Вт.', 'Ср.', 'Чт.', 'Пт.', 'Сб.'],
-                dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-                weekHeader: 'Неделя',
-                firstDay: 1,
-                isRTL: false,
-                showMonthAfterYear: false,
-                yearSuffix: '',
-                timeOnlyTitle: 'Только время',
-                timeText: 'Время',
-                hourText: 'Час',
-                minuteText: 'Минута',
-                secondText: 'Секунда',
-                ampm: false,
-                month: 'Месяц',
-                week: 'неделя',
-                day: 'День',
-                allDayText: 'Весь день'
-            };
-        </script>       
+            <script type="text/javascript">  
+                function sendFormSize(){
+                    var width = window.innerWidth;
+                    var height = window.innerHeight;
+
+                    formSize([
+                        {name : 'width',  value : width},
+                        {name : 'height', value : height}
+                    ]);
+                }
+            
+                PrimeFaces.locales ['ru'] = {
+                    closeText: 'Закрыть',
+                    prevText: 'Назад',
+                    nextText: 'Вперёд',
+                    currentText: 'Сегодня',
+                    monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                    monthNamesShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+                    dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+                    dayNamesShort: ['Вс.', 'Пн.', 'Вт.', 'Ср.', 'Чт.', 'Пт.', 'Сб.'],
+                    dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                    weekHeader: 'Неделя',
+                    firstDay: 1,
+                    isRTL: false,
+                    showMonthAfterYear: false,
+                    yearSuffix: '',
+                    timeOnlyTitle: 'Только время',
+                    timeText: 'Время',
+                    hourText: 'Час',
+                    minuteText: 'Минута',
+                    secondText: 'Секунда',
+                    ampm: false,
+                    month: 'Месяц',
+                    week: 'неделя',
+                    day: 'День',
+                    allDayText: 'Весь день'
+                };
+            </script>       
                 
         <ui:insert name="customStyleCSS"/>
         <ui:insert name="customJavaScript"/>

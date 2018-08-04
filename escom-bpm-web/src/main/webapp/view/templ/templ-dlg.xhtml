@@ -36,8 +36,6 @@
         </style>
 
         <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;" stateCookie="true">
-            <p:ajax event="resize" listener="#{_bean.handleResize}"/>
-
             <pe:layoutPane id="center" position="center" resizable="true">
                 <ui:insert name="centerFacet"/>
                 <h:form id="centerFRM" style="font-size: 90%; height: 100%;">
@@ -83,6 +81,7 @@
 
                     <ui:insert name="form_scripts"/>
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
+                    <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}"/>
                 </h:form>
             </pe:layoutPane>
 

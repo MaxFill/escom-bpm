@@ -274,113 +274,113 @@
         <h:outputScript library="contextMenu" name="contextMenu.js" />
         <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
 
-    <script type="text/javascript">        
-        function addContextMenu(componentId){    
-            var menu = [{
-                    name: '#{bundle.Paste}',
-                    img: '/escom-bpm-web/resources/icon/paste.png',
-                    disable: true,
-                    fun: function () {
-                        elementPaste();
-                    }
-                },{
-                    name: '#{bundle.Close}',
-                    img: '/escom-bpm-web/resources/icon/cancel.png'                        
-                }];
-                
-            var component = $(document.getElementById(componentId)); 
-            component.contextMenu('menu', menu, {});                
-        }
-            
-        function addElementMenu(elementIds){    
-            var menu = [{
-                    name: '#{bundle.Properties}',
-                    img: '/escom-bpm-web/resources/images/settings.png',
-                    fun: function () {
-                        elementOpen();
-                    }
-                },{
-                    name: '#{bundle.Copy}',
-                    img: '/escom-bpm-web/resources/icon/copy.png',
-                    fun: function () {
-                        elementCopy();
-                    }
-                },{
-                    name: '#{bundle.Delete}',
-                    img: '/escom-bpm-web/resources/images/delete.png',
-                    fun: function () {
-                        elementDelete();
-                    }
-                }];
+        <script type="text/javascript">        
+            function addContextMenu(componentId){    
+                var menu = [{
+                        name: '#{bundle.Paste}',
+                        img: '/escom-bpm-web/resources/icon/paste.png',
+                        disable: true,
+                        fun: function () {
+                            elementPaste();
+                        }
+                    },{
+                        name: '#{bundle.Close}',
+                        img: '/escom-bpm-web/resources/icon/cancel.png'                        
+                    }];
 
-            elementIds.forEach(function(elementId){                  
-                var component = $(document.getElementById(elementId)); 
-                component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
-            });
-        }
+                var component = $(document.getElementById(componentId)); 
+                component.contextMenu('menu', menu, {});                
+            }
 
-        function sendElementClick(info){
-                console.log("elementId="+info.target.id);                    
-                var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                var elementId = info.target.id;
-                if (elementId == ""){
-                    var parentElement = info.target.parentElement;                              
-                    elementId = $(parentElement).attr('id');
-                    xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                    yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                }
-                elementClicked([
-                    {name : 'elementId',value : elementId},
-                    {name : 'posX',     value : xPos},
-                    {name : 'posY',     value : yPos}
-                ]);
-        }
-                                        
-        $(document).on('click', '.ui-diagram > .ui-diagram-element', 
-            function(info) {
-                sendElementClick(info);
-            });
-                                
-        $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
-            function(info) {
-                sendElementClick(info);                    
-        });
-        $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
-            function(info) {
-                var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                var elementId = info.target.id;
-                if (elementId == ""){
-                    var parentElement = info.target.parentElement;                              
-                    elementId = $(parentElement).attr('id');
-                    xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                    yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                }
-                elementOpen([
-                    {name : 'elementId',value : elementId},
-                    {name : 'posX',     value : xPos},
-                    {name : 'posY',     value : yPos}
-                ]);
-            });
- 
-         function refreshContextMenu(componentId){
-            console.log("refresh componentId="+componentId);
-             var menu = [{
-                    name: '#{bundle.Paste}',
-                    img: '/escom-bpm-web/resources/images/paste.png',
-                    disable: false,
-                    fun: function () {
-                        elementPaste();
+            function addElementMenu(elementIds){    
+                var menu = [{
+                        name: '#{bundle.Properties}',
+                        img: '/escom-bpm-web/resources/images/settings.png',
+                        fun: function () {
+                            elementOpen();
+                        }
+                    },{
+                        name: '#{bundle.Copy}',
+                        img: '/escom-bpm-web/resources/icon/copy.png',
+                        fun: function () {
+                            elementCopy();
+                        }
+                    },{
+                        name: '#{bundle.Delete}',
+                        img: '/escom-bpm-web/resources/images/delete.png',
+                        fun: function () {
+                            elementDelete();
+                        }
+                    }];
+
+                elementIds.forEach(function(elementId){                  
+                    var component = $(document.getElementById(elementId)); 
+                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
+                });
+            }
+
+            function sendElementClick(info){
+                    console.log("elementId="+info.target.id);                    
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
                     }
-                },{
-                    name: '#{bundle.Close}',
-                    img: '/escom-bpm-web/resources/icon/cancel.png',                        
-                }];
-                
-            var component = $(document.getElementById(componentId)); 
-            component.contextMenu('update', menu, {});  
-        }
+                    elementClicked([
+                        {name : 'elementId',value : elementId},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+            }                
+
+            $(document).on('click', '.ui-diagram > .ui-diagram-element', 
+                function(info) {
+                    sendElementClick(info);
+                });
+
+            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    sendElementClick(info);                    
+            });
+            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
+                function(info) {
+                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
+                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                    var elementId = info.target.id;
+                    if (elementId == ""){
+                        var parentElement = info.target.parentElement;                              
+                        elementId = $(parentElement).attr('id');
+                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
+                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    }
+                    elementOpen([
+                        {name : 'elementId',value : elementId},
+                        {name : 'posX',     value : xPos},
+                        {name : 'posY',     value : yPos}
+                    ]);
+                });
+
+             function refreshContextMenu(componentId){
+                console.log("refresh componentId="+componentId);
+                 var menu = [{
+                        name: '#{bundle.Paste}',
+                        img: '/escom-bpm-web/resources/images/paste.png',
+                        disable: false,
+                        fun: function () {
+                            elementPaste();
+                        }
+                    },{
+                        name: '#{bundle.Close}',
+                        img: '/escom-bpm-web/resources/icon/cancel.png',                        
+                    }];
+
+                var component = $(document.getElementById(componentId)); 
+                component.contextMenu('update', menu, {});  
+            }
         </script>
     </ui:define>
     

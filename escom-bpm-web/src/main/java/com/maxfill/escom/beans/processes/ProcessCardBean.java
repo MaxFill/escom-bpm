@@ -428,8 +428,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             baseElement.setPosX(Integer.valueOf(x));
             baseElement.setPosY(Integer.valueOf(y));            
         }
-    }
-   
+    }   
+    
     /**
      * Обоработка события контекстного меню для открытия карточки свойств визуального компонента 
      */

@@ -19,6 +19,7 @@
         <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
+        #{_explorerBean.onAfterFormLoad()}        
     </ui:define>
 
     <ui:define name="title">
