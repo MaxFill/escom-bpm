@@ -10,7 +10,7 @@ import com.maxfill.model.filters.FiltersFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.dictionary.DictDetailSource;
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
@@ -27,6 +27,7 @@ import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
+import com.sun.faces.application.view.ViewScopeManager;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.api.UIColumn;
@@ -53,6 +54,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -134,6 +136,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         beanId = this.toString();
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);   
         doBeforeOpenCard(params);
     }
     
@@ -153,22 +157,6 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }    
     }
 
-    @Override
-    protected void initLayoutOptions() {
-        super.initLayoutOptions();
-        
-        LayoutOptions center = layoutOptions.getCenterOptions();        
-        center.addOption("size", 950);
-
-        LayoutOptions childCenterOptions = new LayoutOptions();
-        center.setChildOptions(childCenterOptions);
-        
-        LayoutOptions centerSouth = new LayoutOptions();
-        centerSouth.addOption("size", "15%");
-        childCenterOptions = center.getChildOptions();
-        childCenterOptions.setSouthOptions(centerSouth);
-    }
-    
     /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
@@ -1525,7 +1513,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         };       
         
         List<Object> dataReport = docs.stream().sorted(comparator).collect(Collectors.toList());
-        sessionBean.preViewReport(dataReport, params, DictDlgFrmName.REP_DOC_JOURNAL);
+        sessionBean.preViewReport(dataReport, params, DictFrmName.REP_DOC_JOURNAL);
     }
     
     /* ПРОЧИЕ МЕТОДЫ */
@@ -1550,7 +1538,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         List<String> beanNameList = Collections.singletonList(beanName);
         paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
         paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);         
-        sessionBean.openDialogFrm(DictDlgFrmName.FRM_OBJECT_ADMIN, paramsMap);               
+        sessionBean.openDialogFrm(DictFrmName.FRM_OBJECT_ADMIN, paramsMap);               
     }           
     
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
@@ -1563,8 +1551,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (sortOrder == null){
             sortOrder = new ArrayList<>();
             UIViewRoot viewRoot =  FacesContext.getCurrentInstance().getViewRoot();
-            UIComponent columnIcon = viewRoot.findComponent("centerFRM:tblDetail:colIcon"); 
-            UIComponent columnName = viewRoot.findComponent("centerFRM:tblDetail:shortName"); 
+            UIComponent columnIcon = viewRoot.findComponent("mainFRM:tblDetail:colIcon"); 
+            UIComponent columnName = viewRoot.findComponent("mainFRM:tblDetail:shortName"); 
             SortMeta sm1 = new SortMeta();
             sm1.setSortBy((UIColumn)columnIcon);
             sm1.setSortField("iconName");
@@ -1606,7 +1594,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public boolean isNowShowMix(){
         return Objects.equals(currentType, typeMixed);
     }  
-        
+       
+    
     /* Определяет режим отображения: обозреватель или селектор */
     public boolean isSelectorViewMode(){
         return Objects.equals(viewMode, DictExplForm.SELECTOR_MODE);
@@ -1827,33 +1816,30 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     public void setSelectedDocId(Integer selectedDocId) {
         this.selectedDocId = selectedDocId;
-    }
-
-    @Override
-    protected boolean isWestInitClosed(){
-        return false;
-    }
+    }   
     
     @Override
     public Boolean isEastShow(){
         return true;
     }
-    
-    @Override
-    public Boolean isSouthShow(){
-        return true;
-    }
-    
     @Override
     public Boolean isWestShow(){
         return true;
+    }
+    @Override
+    public String getMainGridColumnStyleClass() {
+        return "ui-grid-col-3 col-padding, ui-grid-col-6 col-padding, ui-grid-col-3 col-padding";
+    }
+    @Override
+    public String getMainGridColumnCount() {
+        return "3";
     }
     
     @Override
     public String getFormName() {
         if (isSelectorViewMode()){
-            return typeDetail + "-selector";
+            return typeDetail.toLowerCase() + "-selector";
         }
-        return typeDetail + "-explorer";
+        return typeDetail.toLowerCase() + "-explorer";
     }
 }

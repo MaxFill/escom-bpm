@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.partners.groups;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.model.partners.groups.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;

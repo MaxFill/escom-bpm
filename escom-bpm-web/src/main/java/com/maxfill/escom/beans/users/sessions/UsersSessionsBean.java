@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.users.sessions;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.users.sessions.UsersSessions;
 
@@ -37,7 +37,7 @@ public class UsersSessionsBean extends BaseViewBean{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_USER_SESSIONS;
+        return DictFrmName.FRM_USER_SESSIONS;
     }
 
     /* gets & sets */

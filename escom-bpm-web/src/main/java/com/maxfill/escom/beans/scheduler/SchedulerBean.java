@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.scheduler;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.task.TaskFacade;
@@ -88,7 +88,7 @@ public class SchedulerBean extends BaseViewBean {
     
     public void onEventSelect(SelectEvent selectEvent) {
         schedulerTask = (SchedulerTask) selectEvent.getObject();
-        PrimeFaces.current().executeScript("document.getElementById('centerFRM:btnOpenTask').click();");
+        PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnOpenTask').click();");
     }
      
     public void onDateSelect(SelectEvent selectEvent) {
@@ -96,7 +96,7 @@ public class SchedulerBean extends BaseViewBean {
         Date startDateTime = DateUtils.addSeconds((Date) selectEvent.getObject(), offset);
         Date endDateTime = DateUtils.addHour(startDateTime, 1); //ToDO нужно вычислять с учётом рабочего времени!
         schedulerTask = new SchedulerTask("", startDateTime, endDateTime);        
-        PrimeFaces.current().executeScript("document.getElementById('centerFRM:btnCreateTask').click();");
+        PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnCreateTask').click();");
     }
      
     public void onEventMove(ScheduleEntryMoveEvent event) {        
@@ -122,12 +122,12 @@ public class SchedulerBean extends BaseViewBean {
     }
     
     public void modelRefresh(){
-        PrimeFaces.current().ajax().update("centerFRM");
+        PrimeFaces.current().ajax().update("mainFRM:centerFRM");
     }
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_SCHEDULER;
+        return DictFrmName.FRM_SCHEDULER;
     }
     
     /* GETS & SETS */

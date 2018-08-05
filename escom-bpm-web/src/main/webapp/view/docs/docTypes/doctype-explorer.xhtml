@@ -1,25 +1,19 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-explorer.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                template="/view/templ/templ-explorer.xhtml">
 
     <!-- стандартный обозреватель/селектор -->
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{explorerTreeBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{explorerTreeBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
-    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
+    <ui:param name="_bean" value="#{explorerTreeBean}" />
+    <ui:param name="_bean" value="#{explorerTreeBean}" />
     <ui:param name="_treeBean" value="#{docTypeGroupsBean}" />   
     <ui:param name="_detailBean" value="#{docTypeBean}" /> 
     <ui:param name="_searcheBean" value="#{docTypeBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('DocTypeSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('DocsTypes')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('DocTypeSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('DocsTypes')}"/>
     
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateChildGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDocType}" />
-
+    
 </ui:composition>

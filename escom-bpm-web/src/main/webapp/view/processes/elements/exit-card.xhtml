@@ -3,13 +3,6 @@
                  xmlns:p="http://primefaces.org/ui"
                  template="/view/templ/templ-dlg.xhtml"
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{exitCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{exitCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:param name="_bean" value="#{exitCardBean}"/>
 
@@ -32,7 +25,7 @@
                     </p:selectBooleanCheckbox>
                     
                     <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="centerFRM"
+                    <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
                                      action="#{exitCardBean.onCloseCard('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>

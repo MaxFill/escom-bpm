@@ -1,133 +1,238 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui"               
                 xmlns:pe="http://primefaces.org/ui/extensions"               
-                template="/view/templ/templ.xhtml">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="initBeans">
         <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
+                  
+        #{_bean.setSelectorHeader(_selectorHeader)}
+        #{_bean.setExplorerHeader(_explorerHeader)}
+        #{_bean.setSearcheBean(_searcheBean)}
 
-        #{_explorerBean.setSelectorHeader(_selectorHeader)}
-        #{_explorerBean.setExplorerHeader(_explorerHeader)}
-        #{_explorerBean.setSearcheBean(_searcheBean)}
-
-        #{_rootBean   != null ? _explorerBean.setRootBean(_rootBean) : ''}
-        #{_detailBean != null ? _explorerBean.setTableBean(_detailBean)  : ''}
-        #{_treeBean   != null ? _explorerBean.setTreeBean(_treeBean) : ''}        
+        #{_rootBean   != null ? _bean.setRootBean(_rootBean) : ''}
+        #{_detailBean != null ? _bean.setTableBean(_detailBean)  : ''}
+        #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}        
         <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
         <ui:param name="_frmExpl" value="explorer"/>
         <ui:param name="_frmTree" value="explorer_west"/>
-        #{_explorerBean.onAfterFormLoad()}        
+     
     </ui:define>
 
     <ui:define name="title">
-        #{_explorerBean.jurnalHeader}
+        #{_bean.jurnalHeader}
     </ui:define>
 
-    <ui:define name="body">
-        <h:outputScript library="js" name="confirm-close-window.js" rendered="#{!_explorerBean.selectorViewMode}" /> 
-        <h:outputScript library="js" name="drag-drop.js" />         
+    <ui:define name="leftFacet">
+        <p:outputLabel value="#{bundle.Sections}" />
+    </ui:define>
+    
+    <ui:define name="leftFormContent">
+        <p:focus context="mainFRM:westFRM" for="mainFRM:accord:nameSearche"/>
+        <ui:include src="/view/templ/tree/tree.xhtml" />   
+    </ui:define>
+           
+    <ui:define name="menuActions" rendered="#{!_bean.isTrashSelected()}">    
+        <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
+                    disabled="#{_bean.checkedItems.isEmpty()}"
+                    update="mainFRM:westFRM mainFRM:centerFRM"
+                    actionListener="#{_bean.onMoveCheckedContentToTrash()}"
+                    oncomplete="initDND()">
+            <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+        </p:menuitem>
+        <p:separator />
+        <ui:insert name="addMenuActions" />
+        <p:menuitem icon="ui-icon-star" value="#{bundle.AddCheckedToFavorites}" title="#{bundle.AddToFavorites}"
+                    disabled="#{_bean.checkedItems.isEmpty()}"
+                    rendered="#{!_bean.isFavoriteSelected()}"
+                    actionListener="#{_bean.onAddCheckedContentInFavorites()}"/>
+        <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteCheckedFromFavorites}" title="#{bundle.DeleteFromFavorites}"
+                    disabled="#{_bean.checkedItems.isEmpty()}"
+                    rendered="#{_bean.isFavoriteSelected()}"
+                    update="mainFRM:centerFRM"
+                    oncomplete="initDND()"
+                    actionListener="#{_bean.onDelCheckedFromFavorites()}"/>
+        <p:separator />
+        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
+                    actionListener="#{sessionBean.onViewHelp()}"/>
+    </ui:define>
+    
+    <ui:define name="toolbarComponents" >
+        <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
+                         title="#{bundle.Refresh}"                                  
+                         actionListener="#{_bean.reloadDetailsItems()}"
+                         update="mainFRM:centerFRM #{_updates}"
+                         oncomplete="initDND()"/> 
 
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+
+        <p:commandButton icon="ui-icon-arrowthick-1-n" title="#{bundle.Up}"
+                         actionListener="#{_bean.onGotoUpLevelContent()}"
+                         disabled="#{_bean.treeSelectedNode == null or _bean.isSelectRootItem()}"
+                         rendered="#{_treeBean != null}"
+                         update="mainFRM:centerFRM mainFRM:westFRM "
+                         oncomplete="initDND()"/>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+
+        <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
+                         disabled="#{_bean.checkedItems.isEmpty()}"
+                         update="mainFRM:explToolBar"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide(); initDND();"
+                         actionListener="#{_bean.onCopySelectedItem()}"/>
+        <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
+                         disabled="#{_bean.canPasteItem}"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         actionListener="#{_bean.onPasteItemToTable()}"
+                         update="mainFRM:centerFRM mainFRM:westFRM"/>
+
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+
+        <p:commandButton value="#{_CreateItemLabel}"
+                         title="#{_bean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
+                         icon="ui-icon-document" id="createItemBtn"
+                         disabled="#{_bean.canCreateItem}"
+                         rendered="#{_treeBean == null or _bean.isShowTree()}"
+                         style="#{_bean.selectorViewMode ? 'display: none;' : ''}"
+                         actionListener="#{_bean.onCreateDetailItem()}">
+            <p:ajax event="dialogReturn"
+                    update="mainFRM:centerFRM"
+                    listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        </p:commandButton>
+
+        <p:commandButton value="#{_CreateGroupLabel}" icon="ui-icon-folder-open"
+                         disabled="#{_treeBean != null and _bean.treeSelectedNode == null}"
+                         rendered="#{_treeBean != null and _bean.isShowTree()}"
+                         actionListener="#{_bean.onCreateTreeItem()}">
+            <p:ajax event="dialogReturn" 
+                    update="mainFRM:westFRM mainFRM:centerFRM" 
+                    listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        </p:commandButton>
+        <p:commandButton value="#{_CreateItemLabel}" icon="ui-icon-plus" 
+                         disabled="#{_treeBean != null and _bean.treeSelectedNode == null}"
+                         rendered="#{!_bean.isTrashSelected() and _bean.selectorViewMode}"
+                         actionListener="#{_bean.onCreateDetailItem()}">
+            <p:ajax event="dialogReturn"
+                    update="mainFRM:centerFRM"
+                    listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        </p:commandButton>
+        <ui:insert name="addMenuCreates" />
+        <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 
+                         title="#{bundle.SelectChecked}"
+                         disabled="#{_bean.checkedItems.isEmpty()}"
+                         rendered="#{_bean.multySelectMode}"
+                         action="#{_bean.onMultySelect()}"
+                         onclick="return isClose = 1;">
+        </p:commandButton>       
+
+        <!-- Кнопка для Корзины -->
+        <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
+                       rendered="#{sessionBean.userAdmin and _bean.isTrashSelected()}">
+            <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
+                        disabled="#{_bean.detailItems.isEmpty()}"
+                        update="mainFRM:centerFRM"
+                        actionListener="#{_bean.onClearTrash()}"
+                        oncomplete="initDND()">
+                <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+            </p:menuitem>
+            <p:menuitem value="#{bundle.ClearCheckedTrash}" icon="ui-icon-close"                                                 
+                        update="mainFRM:centerFRM"
+                        disabled="#{_bean.checkedItems.isEmpty()}"
+                        actionListener="#{_bean.onClearCheckedContentTrash()}"
+                        oncomplete="initDND()">
+                <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+            </p:menuitem> 
+            <p:separator/>
+            <p:menuitem value="#{bundle.RestoreChecked}" icon="ui-icon-arrowreturnthick-1-w"                                                 
+                        update="mainFRM:centerFRM"
+                        disabled="#{_bean.checkedItems.isEmpty()}"
+                        actionListener="#{_bean .onRestoreCheckedContentTrash()}"
+                        oncomplete="initDND()">
+            </p:menuitem>
+        </p:splitButton>            
+
+        <ui:insert name="addToolButtons" />
+    </ui:define>
+    
+    <ui:define name="centerFacet">
+        <p:outputLabel id="centerHeaderLabel" value="#{_bean.jurnalHeader}" />
+    </ui:define>
+    
+    <ui:define name="centerFormContent">        
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                           
+            <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
+            <ui:include src="/view/templ/expl/expl-table.xhtml"/>
+        </p:panelGrid>
+        
+        <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
+        <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
+        <p:remoteCommand name="dropToNavig" actionListener="#{_bean.dropToNavig}" update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>                           
+
+        <ui:insert name="btnDisplayNone" />
+
+        <p:commandButton id="viewCardBtn" actionListener="#{_bean.onEditDetailItem()}" 
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}"
+                    update="mainFRM:centerFRM mainFRM:westFRM"
+                    oncomplete="initDND()"/>
+        </p:commandButton>
+
+        <p:commandButton id="editCardBtn" actionListener="#{_bean.onViewDetailItem()}"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         style="display: none;">
+            <p:ajax event="dialogReturn" 
+                    update="mainFRM:centerFRM"
+                    oncomplete="initDND()"/>
+        </p:commandButton>
+
+        <p:commandButton id="editDocument" actionListener="#{_bean.onEditDocument()}"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         style="display: none;">
+            <p:ajax event="dialogReturn" 
+                    update="mainFRM:centerFRM" listener="#{_bean.onUpdateAfterChangeItem}"
+                    oncomplete="initDND()"/>
+        </p:commandButton>                                                 
+
+        <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"     
+                         actionListener="#{sessionBean.openScaningForm()}"> 
+            <p:ajax event="dialogReturn" listener="#{_bean.addAttacheFromScan}"/>
+        </p:commandButton>
+    </ui:define>
+        
+    <ui:define name="rightFacet">
+        <p:outputLabel value="#{bundle.Searche}" />
+    </ui:define>
+    
+    <ui:define name="rightFormContent">
+        <ui:include src="/view/templ/templ-searche.xhtml">
+            <ui:param name="_tblUpdate" value="mainFRM:centerFRM mainFRM:westFRM #{_updates}"/>
+        </ui:include>
+    </ui:define>   
+
+    <ui:define name="form_scripts">        
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
-        <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />        
-
-        <pe:layout fullPage="true" options="#{_explorerBean.layoutOptions}" stateCookie="true" widgetVar="fpLayoutWidget">
-            <p:ajax event="resize" listener="#{_explorerBean.handleResize}"/>                        
-            
-            <pe:layoutPane id="west" position="west" resizable="true">
-                <f:facet name="header">
-                    <p:outputLabel value="#{bundle.Sections}" />
-                </f:facet>
-                <h:form id="westFRM" style="font-size: 90%;"> 
-                    <style>
-                        .ui-accordion .ui-accordion-content {
-                            padding: 0px !important;
-                        }
-                    </style>
-                    <p:focus context="westFRM" for="westFRM:accord:nameSearche"/>
-                    <ui:include src="/view/templ/tree/tree.xhtml" />                    
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane id="center" position="center" resizable="true">
-                <pe:layoutPane position="center" id="center1" >                    
-                    <f:facet name="header" id="centerHeader">
-                        <p:outputLabel id="centerHeaderLabel" value="#{_explorerBean.jurnalHeader}" />
-                    </f:facet>
-
-                    <h:form id="centerFRM" style="font-size: 80%;">
-                        <p:remoteCommand name="dropToTree"  actionListener="#{_explorerBean.dropToTree}"  update="westFRM centerFRM" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToTable" actionListener="#{_explorerBean.dropToTable}" update="westFRM centerFRM" oncomplete="initDND()"/>
-                        <p:remoteCommand name="dropToNavig" actionListener="#{_explorerBean.dropToNavig}" update="westFRM centerFRM" oncomplete="initDND()"/>                           
-
-                        <ui:insert name="btnDisplayNone" />
-
-                        <p:commandButton id="viewCardBtn" actionListener="#{_explorerBean.onEditDetailItem()}" 
-                                         onstart="PF('statusDialog').show()"
-                                         oncomplete="PF('statusDialog').hide();"
-                                         style="display: none;">
-                            <p:ajax event="dialogReturn" listener="#{_explorerBean.onUpdateAfterCloseForm}"
-                                    update="centerFRM westFRM"
-                                    oncomplete="initDND()"/>
-                        </p:commandButton>
-                        
-                        <p:commandButton id="editCardBtn" actionListener="#{_explorerBean.onViewDetailItem()}"
-                                         onstart="PF('statusDialog').show()"
-                                         oncomplete="PF('statusDialog').hide();"
-                                         style="display: none;">
-                            <p:ajax event="dialogReturn" 
-                                    update="centerFRM"
-                                    oncomplete="initDND()"/>
-                        </p:commandButton>
-                        
-                        <p:commandButton id="editDocument" actionListener="#{_explorerBean.onEditDocument()}"
-                                         onstart="PF('statusDialog').show()"
-                                         oncomplete="PF('statusDialog').hide();"
-                                         style="display: none;">
-                            <p:ajax event="dialogReturn" 
-                                    update="centerFRM" listener="#{_explorerBean.onUpdateAfterChangeItem}"
-                                    oncomplete="initDND()"/>
-                        </p:commandButton>                                                 
-                        
-                        <p:commandButton id="btnScan" icon="ui-icon-clipboard" style="display: none;"     
-                                actionListener="#{sessionBean.openScaningForm()}"> 
-                            <p:ajax event="dialogReturn" listener="#{_explorerBean.addAttacheFromScan}"/>
-                        </p:commandButton>
-                        
-                        <p:messages id="messages" showDetail="true" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                            <p:autoUpdate />
-                        </p:messages>
-                        
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                            <ui:include src="/view/templ/expl/expl-toolbar.xhtml"/>                             
-                            <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
-                            <ui:include src="/view/templ/expl/expl-table.xhtml"/>
-                        </p:panelGrid>
-                        
-                    </h:form>
-                </pe:layoutPane>
-
-                <pe:layoutPane position ="south" rendered="#{_showUploadPanel == true}" >
-                    <ui:include src="/view/common/file-uppload.xhtml" />
-                </pe:layoutPane> 
-            </pe:layoutPane>
-
-            <pe:layoutPane id="east" position="east" resizable="true" >
-                <f:facet name="header">  
-                    <p:outputLabel value="#{bundle.Searche}" />
-                </f:facet> 
-                <h:form style="font-size: 80%;" id="eastFRM"> 
-                    <ui:include src="/view/templ/templ-searche.xhtml">
-                        <ui:param name="_tblUpdate" value="centerFRM westFRM centerHeaderLabel #{_updates}"/>
-                    </ui:include>
-
-                </h:form>
-            </pe:layoutPane>
-
-            <ui:include src="/view/templ/expl/expl-southpane.xhtml"/>
-        </pe:layout> 
-        <ui:include src="/view/common/error-dlg.xhtml"/>
+        <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" /> 
     </ui:define>
+    
+    <ui:define name="dialogs">
+    </ui:define>
+    
+    <ui:define name="customJavaScript">
+        <h:outputScript library="js" name="drag-drop.js" /> 
+    </ui:define>        
+
 </ui:composition>

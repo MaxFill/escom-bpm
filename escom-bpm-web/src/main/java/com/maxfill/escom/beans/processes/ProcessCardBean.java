@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
@@ -449,19 +449,19 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             return;
         } 
         if (baseElement instanceof ConditionElem){
-            openElementCard(DictDlgFrmName.FRM_CONDITION);
+            openElementCard(DictFrmName.FRM_CONDITION);
             return;
         } 
         if (baseElement instanceof StatusElem){
-            openElementCard(DictDlgFrmName.FRM_DOC_STATUS);
+            openElementCard(DictFrmName.FRM_DOC_STATUS);
             return;
         }
         if (baseElement instanceof ExitElem){
-            openElementCard(DictDlgFrmName.FRM_EXIT);
+            openElementCard(DictFrmName.FRM_EXIT);
             return;
         }
         if (baseElement instanceof TimerElem){
-            openElementCard(DictDlgFrmName.FRM_TIMER);
+            openElementCard(DictFrmName.FRM_TIMER);
         }
     }
     

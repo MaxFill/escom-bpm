@@ -6,12 +6,6 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
                  template="/view/templ/templ.xhtml">
 
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{docReportBean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
-
     <ui:define name="title">
         #{bundle.Report}
     </ui:define>

@@ -6,13 +6,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{taskCardBean}"/>
-   
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{taskCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{taskCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="specActionMenu" >
     </ui:define>

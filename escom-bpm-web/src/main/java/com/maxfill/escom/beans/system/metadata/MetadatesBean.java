@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.system.metadata;
 
 import com.maxfill.RightsDef;
-import com.maxfill.escom.beans.core.BaseTableBean;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.metadates.MetadatesFacade;
 import com.maxfill.model.BaseDict;
@@ -9,8 +9,8 @@ import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.RightFacade;
 import com.maxfill.model.states.State;
-import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.facade.CommonFacade;
 import com.maxfill.model.states.StateFacade;
@@ -19,13 +19,10 @@ import com.maxfill.model.users.groups.UserGroups;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
-import org.primefaces.extensions.model.layout.LayoutOptions;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -37,7 +34,7 @@ import org.primefaces.model.DualListModel;
 /* Контроллер формы обозревателя настройки объектов */
 @ViewScoped
 @Named
-public class MetadatesBean implements Serializable{
+public class MetadatesBean extends BaseViewBean{
     private static final long serialVersionUID = -3106225231045015183L;
     
     private Metadates selectedObject;
@@ -45,7 +42,6 @@ public class MetadatesBean implements Serializable{
 
     private List<Right> rights = null;
     private List<State> objectStates;
-    private LayoutOptions layoutOptions;
 
     private State stateAdd;
     private State startState;
@@ -70,12 +66,7 @@ public class MetadatesBean implements Serializable{
     @EJB
     private RightsDef rightsDef;
     @EJB
-    private CommonFacade commonFacade;
-        
-    @PostConstruct
-    public void init() {
-        initLayoutOptions();
-    }
+    private CommonFacade commonFacade;        
 
     /**
      * Обработка события изменения права
@@ -200,45 +191,7 @@ public class MetadatesBean implements Serializable{
     }
 
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
-    
-    /**
-     * Инициализация областей формы обозревателя объектов
-     */
-    private void initLayoutOptions() {
-        layoutOptions = new LayoutOptions();
-
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        layoutOptions.setPanesOptions(panes);
-
-        LayoutOptions south = new LayoutOptions();
-        south.addOption("resizable", false);
-        south.addOption("closable", false);
-        south.addOption("size", 38);
-        layoutOptions.setSouthOptions(south);
-
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 270);
-        west.addOption("minSize", 150);
-        west.addOption("maxSize", 450);
-        west.addOption("resizable", true);
-        layoutOptions.setWestOptions(west);
-
-        LayoutOptions east = new LayoutOptions();
-        east.addOption("size", 400);
-        east.addOption("minSize", 0);
-        east.addOption("maxSize", 300);
-        layoutOptions.setEastOptions(east);
-
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("minWidth", 200);
-        center.addOption("minHeight", 100);
-        layoutOptions.setCenterOptions(center);
         
-    }
-    
     /**
      * Событие выбора текущего объекта в дереве объектов
      * @param event 
@@ -257,6 +210,34 @@ public class MetadatesBean implements Serializable{
         return MsgUtils.getBandleLabel(metadate.getBundleName());
     }
 
+    @Override
+    public Boolean isWestShow() {
+        return true;
+    }
+
+    /**
+     * Определяет кол-во колонок в главном гриде 
+     * @return 
+     */
+    @Override
+    public String getMainGridColumnCount(){
+        return "2";
+    }
+    
+    /**
+     * Определяет стиль колонок в главном гриде
+     * @return 
+     */
+    @Override
+    public String getMainGridColumnStyleClass(){
+        return "ui-grid-col-4 col-padding, ui-grid-col-8 col-padding";
+    }
+    
+    @Override
+    public String getFormName() {
+        return DictFrmName.FRM_OBJECT_EXPL;
+    }
+    
     /* *** GETS & SETS *** */
 
     public List <State> getObjectStates() {
@@ -356,9 +337,5 @@ public class MetadatesBean implements Serializable{
     public MetadatesFacade getItemFacade(){
         return metadatesFacade;
     }   
-
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }
      
 }

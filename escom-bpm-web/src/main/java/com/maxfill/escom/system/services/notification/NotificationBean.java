@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.notification;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -47,7 +47,7 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_NOTIFICATION;
+        return DictFrmName.FRM_NOTIFICATION;
     }
     
     /**

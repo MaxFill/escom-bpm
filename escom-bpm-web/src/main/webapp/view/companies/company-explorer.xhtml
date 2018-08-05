@@ -1,30 +1,23 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="/view/templ/templ-explorer.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                template="/view/templ/templ-explorer.xhtml">
 
     <!-- Используется как селектор компаний ! -->
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{companyExplBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{companyExplBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
        
-    <ui:param name="_explorerBean" value="#{companyExplBean}"/>
+    <ui:param name="_bean" value="#{companyExplBean}"/>
     <ui:param name="_treeBean" value="#{companyBean}" />
     <ui:param name="_detailBean" value="#{departmentBean}" />
     <ui:param name="_searcheBean" value="#{companyBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('CompanySelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Companies')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('CompanySelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('Companies')}"/>
     
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />            
     
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_explorerBean.source != DictSource.FILTER_SOURCE}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.source != DictSource.FILTER_SOURCE}">
             #{item.code}
         </p:column>
     </ui:define>   

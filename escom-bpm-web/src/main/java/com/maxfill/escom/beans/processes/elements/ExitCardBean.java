@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes.elements;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
@@ -51,7 +51,7 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_EXIT;
+        return DictFrmName.FRM_EXIT;
     } 
 
     public ExitElem getEditedItem() {

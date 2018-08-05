@@ -3,15 +3,7 @@
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 template="/view/templ/templ-dlg.xhtml"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{licenseBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{licenseBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
+                 template="/view/templ/templ-dlg.xhtml">
     
     <ui:param name="_bean" value="#{licenseBean}"/>
     <ui:param name="_canNotClose" value="#{!sessionBean.userSettings.agreeLicense}"/>

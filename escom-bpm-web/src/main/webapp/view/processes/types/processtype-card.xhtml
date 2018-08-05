@@ -5,13 +5,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{processTypesCardBean}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{processTypesCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{processTypesCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateTypeProcesses}" styleClass="colRight">

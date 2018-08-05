@@ -1,10 +1,10 @@
 package com.maxfill.dictionary;
 
 /* Наименования форм диалогов */
-public final class DictDlgFrmName {
+public final class DictFrmName {
 
-    private DictDlgFrmName() {
-    }
+    private DictFrmName() {
+    }        
     
     public static final String FRM_DOC_VIEWER = "doc-viewer";
     public static final String FRM_DOC_LOCK = "doclock";
@@ -22,6 +22,7 @@ public final class DictDlgFrmName {
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 
     public static final String FRM_OBJECT_ADMIN = "object-admin";
+    public static final String FRM_OBJECT_EXPL = "objects-expl";
 
     public static final String FRM_MAIL_SENDER_SERVICE = "mail-sender-service";
     public static final String FRM_MAIL_READER_SERVICE = "mail-reader-service";

@@ -6,13 +6,6 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:param name="_bean" value="#{timerCardBean}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{timerCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{timerCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         #{bundle.Timer}
@@ -132,7 +125,7 @@
             </p:tab>
         </p:tabView>
         
-        <p:commandButton value="#{bundle.Save}" update="centerFRM"
+        <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
                     actionListener="#{timerCardBean.onCloseCard('save')}" style="float: right;">
                 <f:param name="isRequired" value="true"/>
         </p:commandButton>

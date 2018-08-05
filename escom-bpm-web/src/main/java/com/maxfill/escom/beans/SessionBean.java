@@ -66,6 +66,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import org.primefaces.event.FileUploadEvent;
@@ -92,6 +93,8 @@ public class SessionBean implements Serializable{
     private final List<NotifMsg> notifMessages = new ArrayList <>();
     private final List<Attaches> attaches = new ArrayList<>();
  
+    private String openFormName;
+    
     @EJB
     protected Configuration configuration;    
     @EJB
@@ -288,7 +291,7 @@ public class SessionBean implements Serializable{
     
     /* Обработка события выхода из программы, завершения сессии */
     public void onSessionExit() {
-        doSessionExit(SysParams.LOGOUT_PAGE);
+        doSessionExit("/faces/"+SysParams.LOGIN_PAGE);
     }
     
     /* Завершение сессии пользователя  */           
@@ -401,7 +404,7 @@ public class SessionBean implements Serializable{
         List<String> pathList = new ArrayList<>();
         pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
         paramMap.put("path", pathList);
-        openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+        openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
     }
 
     /* Скачивание вложения  */
@@ -410,12 +413,15 @@ public class SessionBean implements Serializable{
         String path = configuration.getUploadPath() + attache.getFullName();
         EscomFileUtils.attacheDownLoad(path, attache.getName());
     }
-
+    
     /**
      * Открытие формы диалога
-     * @param frmName
-     * @param paramsMap
      */
+    public void onOpenForm(){
+        if (StringUtils.isNotEmpty(openFormName)){
+            openDialogFrm(openFormName, getParamsMap());
+        }
+    }
     public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
         Map<String, Object> options = new HashMap<>();
@@ -423,8 +429,8 @@ public class SessionBean implements Serializable{
         options.put("modal", true);
         options.put("width", formSize.a);
         options.put("height", formSize.b);
-        options.put("minWidth", 600);
-        options.put("minHeight", 400);
+        options.put("minWidth", 800);
+        options.put("minHeight", 600);
         options.put("maximizable", true);
         options.put("closable", false);
         options.put("closeOnEscape", false);
@@ -432,48 +438,32 @@ public class SessionBean implements Serializable{
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
     }
-    
-    /**
-     * Открытие обозревателя шаблонов процессов
-     * @return
-     */
-    public String openProcessTemplateExpl(){
-        String url = "";
-        if (appBean.getLicence().isCanUses(DictModules.MODULE_PROCESSES)){
-            url = "/view/processes/templ/" + DictDlgFrmName.FRM_PROCESS_TEMPL_EXPL + "?faces-redirect=true";
-        }
-        return url;
-    }
-    
+        
     /**
      * Открытие формы монитора контроля процессов
      */
-    public void openMonitor(){        
-        openDialogFrm(DictDlgFrmName.FRM_MONITOR, getParamsMap());
+    public void openMonitorForm(){        
+        openDialogFrm(DictFrmName.FRM_MONITOR, getParamsMap());
     }
     
     /**
-     * Открытие обозревателя документов
-     * @param filterId
-     * @return 
+     * Открытие обозревателя документов c передачей параметра
+     * @param filterId 
      */
-    public String openDocExplorer(String filterId){
-        return "/view/docs/" + DictDlgFrmName.FRM_DOC_EXPLORER + "?faces-redirect=true&filterId=" + filterId;
+    public void openDocExplorer(String filterId){
+        Map<String, List<String>> params = getParamsMap();
+        params.put("filterId", Collections.singletonList(filterId));
+        openDialogFrm(DictFrmName.FRM_DOC_EXPLORER, params);        
     }
     
     /* Открытие окна сканирования */
     public void openScaningForm(){
-        openDialogFrm(DictDlgFrmName.FRM_SCANING, getParamsMap());
-    }
-
-    /* Открытие окна пользовательских сессий */
-    public void openSessionsForm(){        
-        openDialogFrm(DictDlgFrmName.FRM_USER_SESSIONS, getParamsMap());
+        openDialogFrm(DictFrmName.FRM_SCANING, getParamsMap());
     }
 
     /* Открытие окна просмотра лицензии */
     public void openLicenseForm(){        
-        openDialogFrm(DictDlgFrmName.FRM_AGREE_LICENSE, getParamsMap());
+        openDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
     }
     
     /* Открытие формы нового почтового сообщения  */
@@ -487,7 +477,7 @@ public class SessionBean implements Serializable{
         Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("modeSendAttache", openModeList);
         paramMap.put("docIds", docsList);
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_MESSAGE, paramMap);
+        openDialogFrm(DictFrmName.FRM_MAIL_MESSAGE, paramMap);
     }
     
     /* Открытие формы добавления версии */
@@ -496,19 +486,12 @@ public class SessionBean implements Serializable{
         docsList.add(doc.getId().toString()); 
         Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("docId", docsList);
-        openDialogFrm(DictDlgFrmName.FRM_ADD_ATTACHE, paramMap); 
+        openDialogFrm(DictFrmName.FRM_ADD_ATTACHE, paramMap); 
     }
     
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
-        openDialogFrm(DictDlgFrmName.FRM_USER_SETTINGS, getParamsMap());
-    }
-
-    /**
-     * Открытие диалога журнала аутентификации
-     */
-    public void openAuthLog(){
-        openDialogFrm(DictDlgFrmName.FRM_AUTH_LOG, getParamsMap());
+        openDialogFrm(DictFrmName.FRM_USER_SETTINGS, getParamsMap());
     }
 
     /* Просмотр файла PDF в диалоговом окне */
@@ -523,7 +506,7 @@ public class SessionBean implements Serializable{
         List<String> pathList = new ArrayList<>();
         pathList.add(pdfFile);
         paramMap.put("path", pathList);
-        openDialogFrm(DictDlgFrmName.FRM_DOC_VIEWER, paramMap);
+        openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
     }
 
     /**
@@ -537,39 +520,13 @@ public class SessionBean implements Serializable{
         onViewReport(reportName);
     }
 
-    /* Открытие формы почтовой службы отправки e-mail сообщений */
-    public void openMailSenderService(){
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_SENDER_SERVICE, getParamsMap());
-    }
-
-    /* Открытие формы почтовой службы получения e-mail сообщений */    
-    public void openMailReaderService(){        
-        openDialogFrm(DictDlgFrmName.FRM_MAIL_READER_SERVICE, getParamsMap());
-    }
-
-    /* Открытие формы службы интеграции с LDAP */
-    public void openLdapService(){
-        openDialogFrm(DictDlgFrmName.FRM_LDAP, getParamsMap());
-    }
-
-    /* Открытие формы службы формирования системных уведомлений */
-    public void openNotificationService(){
-        openDialogFrm(DictDlgFrmName.FRM_NOTIFICATION, getParamsMap());
-    }
     
     /* Открытие формы списка сообщений пользователя */
-    public void openUserMessagesForm(String typeMsg){
-        List<String> msgList = new ArrayList<>();
-        msgList.add(typeMsg);
+    public void openUserMessagesForm(String typeMsg){        
         Map<String, List<String>> paramMap = getParamsMap();
-        paramMap.put("typeMsg", msgList);
-        openDialogFrm(DictDlgFrmName.FRM_USER_MESSAGES, paramMap);
-    }
-    
-    /* Открытие окна счётчиков нумераторов */
-    public void openContersExpl(){        
-        openDialogFrm(DictDlgFrmName.FRM_COUNTERS, getParamsMap());
-    }
+        paramMap.put("typeMsg", Collections.singletonList(typeMsg));
+        openDialogFrm(DictFrmName.FRM_USER_MESSAGES, paramMap);
+    }    
 
     /**
      * Формирует набор параметров для передачи его в открываемый бин
@@ -581,12 +538,7 @@ public class SessionBean implements Serializable{
         paramsMap.put(SysParams.PARAM_BEAN_NAME, Collections.singletonList(""));
         return paramsMap;
     }
-    
-    /* Открытие окна планировщика */
-    public void openScheduler(){
-        openDialogFrm(DictDlgFrmName.FRM_SCHEDULER, getParamsMap());
-    }
-    
+        
     /* Инициализация спиcка тем */
     private void temeInit(){
         themes = new ArrayList<>();
@@ -638,7 +590,7 @@ public class SessionBean implements Serializable{
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
         } else {
-            rezult = new Tuple(800, 420);
+            rezult = new Tuple(1000, 620);
             formsSize.put(formName, rezult);
         }
         return rezult;
@@ -696,16 +648,20 @@ public class SessionBean implements Serializable{
     
     /* Проверка наличия обновления программы */
     public void onCheckReleaseApp(){       
-        openDialogFrm(DictDlgFrmName.FRM_CHECK_RELEASE, getParamsMap());
+        openDialogFrm(DictFrmName.FRM_CHECK_RELEASE, getParamsMap());
     }
     
     /* Отображение справки */
     public void onViewHelp(){
-       openDialogFrm(DictDlgFrmName.FRM_HELP, getParamsMap()); 
+       openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
     }
             
     /* GETS & SETS */
-            
+
+    public void setOpenFormName(String openFormName) {
+        this.openFormName = openFormName;
+    }
+                
     public String getLicenseLocalName(){
         return MsgUtils.getBandleLabel(appBean.getLicenseBundleName());
     }

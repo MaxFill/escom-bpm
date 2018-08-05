@@ -2,25 +2,17 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-explorer.xhtml"
                 xmlns:p="http://primefaces.org/ui"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <!-- стандарный обозреватель/селектор -->
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{explorerTreeBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{explorerTreeBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
-    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
+    <ui:param name="_bean" value="#{explorerTreeBean}" />
     <ui:param name="_treeBean" value="#{processTypesTemplBean}" />
     <ui:param name="_detailBean"  value="#{procTemplBean}"/>
     <ui:param name="_searcheBean" value="#{procTemplBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('ProcessTemplateSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('ProcessTemplates')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('ProcessTemplateSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('ProcessTemplates')}"/>
     
     <ui:param name="_showAuthor"     value="#{true}"/>
     <ui:param name="_showDateCreate" value="#{true}"/>

@@ -6,29 +6,23 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:pe="http://primefaces.org/ui/extensions"
     template="/view/templ/templ-explorer.xhtml">  
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{folderExplBean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         <h:outputText value="#{bundle.FolderExplorer}"></h:outputText>
     </ui:define>
 
-    <ui:param name="_explorerBean" value="#{folderExplBean}"/>
-    <ui:param name="_detailBean"   value="#{docBean}" />
-    <ui:param name="_treeBean"     value="#{foldersBean}" /> 
-    <ui:param name="_searcheBean"  value="#{_detailBean}"/>
+    <ui:param name="_bean"        value="#{folderExplBean}"/>
+    <ui:param name="_detailBean"  value="#{docBean}" />
+    <ui:param name="_treeBean"    value="#{foldersBean}" /> 
+    <ui:param name="_searcheBean" value="#{_detailBean}"/>
 
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('DocSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('DocsExplorer')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('DocSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('DocsExplorer')}"/>
 
     <ui:param name="_showAuthor"       value="#{true}"/>
     <ui:param name="_showDateCreate"   value="#{false}"/>
     <ui:param name="_showDateChange"   value="#{true}"/>    
-    <ui:param name="_showUploadPanel"  value="#{_explorerBean.selectorViewMode ? false : true}"/>
+    <ui:param name="_showUploadPanel"  value="#{_bean.selectorViewMode ? false : true}"/>
     <ui:param name="_showCompany"      value="#{true}"/>
     <ui:param name="_lbGroupName"      value="#{bundle.Folders}"/>  
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
@@ -39,10 +33,10 @@
     <ui:define name="searche">         
         <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche"
                                  title="#{bundle.FullTextSearcheMode}"
-                                 value="#{_explorerBean.model.fullTextSearche}">
+                                 value="#{_bean.model.fullTextSearche}">
         </p:selectBooleanCheckbox>
         
-        <p:selectCheckboxMenu value="#{_explorerBean.model.docTypes}" label="#{bundle.DocTypeSelector}"
+        <p:selectCheckboxMenu value="#{_bean.model.docTypes}" label="#{bundle.DocTypeSelector}"
                               widgetVar="cbmDocType"
                               converter="docsTypesConvertor"
                               filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
@@ -51,7 +45,7 @@
 
         <p:outputLabel value="#{bundle.Number}"/>
         <div class="ui-inputgroup">
-            <p:inputText title="#{bundle.HelpSearcheContext}" value="#{_explorerBean.model.numberSearche}"
+            <p:inputText title="#{bundle.HelpSearcheContext}" value="#{_bean.model.numberSearche}"
                      widgetVar="docNumberSearche"
                      styleClass="ui-grid-col-12"
                      onkeypress="keyPress();">
@@ -61,39 +55,39 @@
         
         <p:selectBooleanCheckbox itemLabel="#{bundle.DateDoc}" widgetVar="cbDateDoc"
                                  title="#{bundle.SearcheDateDoc}" 
-                                 value="#{_explorerBean.model.dateDocSearche}">
+                                 value="#{_bean.model.dateDocSearche}">
             <p:ajax event="change" update="pnDateDocSearche"/>
         </p:selectBooleanCheckbox>   
         
         <h:panelGroup id="pnDateDocSearche"> 
             <p:panelGrid columns="2" columnClasses="col10r ui-grid-col-1" 
-                         rendered="#{_explorerBean.model.dateDocSearche}">
+                         rendered="#{_bean.model.dateDocSearche}">
                 #{bundle.With}
-                <p:calendar value="#{_explorerBean.model.dateDocStart}" id="dateDocStart" 
+                <p:calendar value="#{_bean.model.dateDocStart}" id="dateDocStart" 
                             widgetVar="dateDocStartSearche"
                             navigator="true" yearRange="c-120:c+20"
                             locale="#{sessionBean.locale}"
-                            required="#{_explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
+                            required="#{_bean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.With}] #{bundle.MustBeFilled}"
-                            disabled="#{!_explorerBean.model.dateDocSearche}">
+                            disabled="#{!_bean.model.dateDocSearche}">
                 </p:calendar>
             </p:panelGrid>
             <p:panelGrid columns="2" columnClasses="col10r ui-grid-col-1" 
-                         rendered="#{_explorerBean.model.dateDocSearche}">
+                         rendered="#{_bean.model.dateDocSearche}">
                 #{bundle.At}
-                <p:calendar value="#{_explorerBean.model.dateDocEnd}" id="dateDocEnd"
+                <p:calendar value="#{_bean.model.dateDocEnd}" id="dateDocEnd"
                             widgetVar="dateDocEndSearche"
                             navigator="true" yearRange="c-120:c+20"
                             locale="#{sessionBean.locale}"
-                            required="#{_explorerBean.model.dateDocSearche and param['isRequired'] == 'true'}"
+                            required="#{_bean.model.dateDocSearche and param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.DateDoc}: #{bundle.At}] #{bundle.MustBeFilled}"
-                            disabled="#{!_explorerBean.model.dateDocSearche}">
+                            disabled="#{!_bean.model.dateDocSearche}">
                 </p:calendar>
             </p:panelGrid>
         </h:panelGroup>
         
         <p:outputLabel value="#{bundle.Partner}"/>
-        <p:selectOneMenu value="#{_explorerBean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
+        <p:selectOneMenu value="#{_bean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
                         widgetVar="partnerSearche"
                         styleClass="ui-grid-col-12">
                 <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
@@ -104,36 +98,36 @@
     <!-- специфичные пункты в меню тулбара обозревателя -->
     <ui:define name="addMenuActions">
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsAttache}" title="#{bundle.SendToEmailAsAttache}"
-                    disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                    onclick="document.getElementById('centerFRM:btnSendDocAttache').click();"/>
+                    disabled="#{_bean.checkedItems.isEmpty()}"
+                    onclick="document.getElementById('mainFRM:btnSendDocAttache').click();"/>
         <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.SendToEmailAsLink}" title="#{bundle.SendToEmailAsLink}"
-                    disabled="#{_explorerBean.checkedItems.isEmpty()}"
-                    onclick="document.getElementById('centerFRM:btnSendDocLink').click();"/>
+                    disabled="#{_bean.checkedItems.isEmpty()}"
+                    onclick="document.getElementById('mainFRM:btnSendDocLink').click();"/>
         <p:separator />
     </ui:define>   
 
     <ui:define name="btnDisplayNone" >
-        <p:commandButton id="btnSendDocAttache" actionListener="#{_explorerBean.prepareSendMailDocs('asAttache')}" style="display: none;">
+        <p:commandButton id="btnSendDocAttache" actionListener="#{_bean.prepareSendMailDocs('asAttache')}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
-                    update="centerFRM:messages"
+                    update="mainFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
-        <p:commandButton id="btnSendDocLink" actionListener="#{_explorerBean.prepareSendMailDocs('asLink')}" style="display: none;">
+        <p:commandButton id="btnSendDocLink" actionListener="#{_bean.prepareSendMailDocs('asLink')}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
-                    update="centerFRM:messages"
+                    update="mainFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
         <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="true" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
             <p:commandButton value="#{bundle.CreateProcess}" process="@this"
                              styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                             actionListener="#{_explorerBean.createProcess()}"
-                             update="centerFRM centerHeaderLabel #{_updates}"
+                             actionListener="#{_bean.createProcess()}"
+                             update="mainFRM:centerFRM #{_updates}"
                              onclick="PF('CreateProcessDlg').hide();"
                              oncomplete="initDND()">
             </p:commandButton>
             <p:commandButton value="#{bundle.Cancel}" process="@this" 
                              styleClass="ui-confirmdialog-no" icon="ui-icon-close"
-                             update="centerFRM"
+                             update="mainFRM:centerFRM"
                              onclick="PF('CreateProcessDlg').hide();"
                              oncomplete="initDND()"/>
         </p:confirmDialog>
@@ -148,7 +142,7 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2" rendered="#{_explorerBean.isNowShowDetail()}"
+        <p:column headerText="#{bundle.DateDoc}" width="90" priority="2" rendered="#{_bean.isNowShowDetail()}"
                   sortBy="#{item.dateDoc}">
             <h:outputLabel value="#{item.dateDoc}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
@@ -159,16 +153,16 @@
     <ui:define name="specCommandLinks">
         <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                        rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                       actionListener="#{_explorerBean.onViewDocument(item)}">
+                       actionListener="#{_bean.onViewDocument(item)}">
         </p:commandLink>
     </ui:define>    
     
     <ui:define name="addItemMenu">
         <p:menuitem icon="ui-icon-pencil" value="#{docBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
-                    actionListener="#{_explorerBean.onSetCurrentItem(item)}"
+                    actionListener="#{_bean.onSetCurrentItem(item)}"
                     disabled="#{item.mainAttache == null}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                    oncomplete="document.getElementById('centerFRM:editDocument').click();"/>
+                    oncomplete="document.getElementById('mainFRM:editDocument').click();"/>
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.mainAttache == null}"
@@ -176,7 +170,7 @@
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"
                     onstart="return isClose = 1;"
-                    rendered="#{_explorerBean.isItemHaveAttache(item)}"
+                    rendered="#{_bean.isItemHaveAttache(item)}"
                     action="#{sessionBean.attacheDownLoad(item.getAttache())}"/>
         <p:separator />
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
@@ -184,28 +178,28 @@
                     actionListener="#{docBean.openAttacheAddForm(item)}"/>
         <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
-                    actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                    oncomplete="document.getElementById('centerFRM:btnScan').click();"/> 
+                    actionListener="#{_bean.onSetCurrentItem(item)}"
+                    oncomplete="document.getElementById('mainFRM:btnScan').click();"/> 
         <p:separator />
         <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}" 
-                    update="westFRM centerFRM"
-                    actionListener="#{_explorerBean.onShowDocInFolder(item)}"
+                    update="mainFRM:westFRM mainFRM:centerFRM"
+                    actionListener="#{_bean.onShowDocInFolder(item)}"
                     oncomplete="initDND()"/>        
     </ui:define>
 
     <ui:define name="treeTabs" >
         <p:tab id="tabProc" title="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
-            <p:tree id="procTree" value="#{_explorerBean.procTree}" var="treeItem"  
+            <p:tree id="procTree" value="#{_bean.procTree}" var="treeItem"  
                     selectionMode="single" animate="true" 
-                    selection="#{_explorerBean.procSelectedNode}" style="width: auto; overflow-y: auto;">
+                    selection="#{_bean.procSelectedNode}" style="width: auto; overflow-y: auto;">
 
                 <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                     <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                 </p:treeNode>
 
-                <p:ajax event="select" listener="#{_explorerBean.onProcNodeSelect}"
-                        update="centerHeaderLabel centerFRM #{_updates}"
+                <p:ajax event="select" listener="#{_bean.onProcNodeSelect}"
+                        update="mainFRM:centerFRM #{_updates}"
                         oncomplete="initDND()"/>
             </p:tree>
             <pe:tooltip for="procTree" value="#{msg.DragDropDocumentCreateProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
@@ -230,7 +224,11 @@
                         icon="ui-icon-note"
                         onstart="PF('statusDialog').show()"
                         oncomplete="PF('statusDialog').hide();"
-                        actionListener="#{_explorerBean.openDocJournalReport()}"/>
+                        actionListener="#{_bean.openDocJournalReport()}"/>
         </p:menuButton>        
+    </ui:define>
+    
+    <ui:define name="extCenterPanel">
+        <ui:include src="/view/common/file-uppload.xhtml" />
     </ui:define>
 </ui:composition>

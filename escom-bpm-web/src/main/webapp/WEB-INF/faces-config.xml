@@ -48,12 +48,96 @@
             <to-view-id>/view/processes/templ/proctempl-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>               
+        <navigation-case>
+            <from-outcome>statusesdoc-explorer</from-outcome>
+            <to-view-id>/view/docs/docStatus/statusesdoc-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>doc-explorer</from-outcome>
+            <to-view-id>/view/docs/doc-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>process-explorer</from-outcome>
+            <to-view-id>/view/processes/process-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>processtype-explorer</from-outcome>
+            <to-view-id>/view/processes/types/process-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>num-pattern-explorer</from-outcome>
+            <to-view-id>/view/admin/numPattern/num-pattern-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>department-explorer</from-outcome>
+            <to-view-id>/view/companies/departaments/department-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>user-explorer</from-outcome>
+            <to-view-id>/view/users/user-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>usergroups-explorer</from-outcome>
+            <to-view-id>/view/users/groupsUsers/usergroup-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>                    
+        <navigation-case>
+            <from-outcome>state-explorer</from-outcome>
+            <to-view-id>/view/admin/states/state-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>       
+        <navigation-case>
+            <from-outcome>doctype-explorer</from-outcome>
+            <to-view-id>/view/docs/docTypes/doctype-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>partnertype-explorer</from-outcome>
+            <to-view-id>/view/partners/types/partnertype-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>partnergroups-explorer</from-outcome>
+            <to-view-id>/view/partners/groups/partnergroup-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+        <navigation-case>
+            <from-outcome>partner-explorer</from-outcome>
+            <to-view-id>/view/partners/partner-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>post-explorer</from-outcome>
+            <to-view-id>/view/staffs/posts/post-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>       
+        <navigation-case>
+            <from-outcome>staff-explorer</from-outcome>
+            <to-view-id>/view/staffs/staff-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case> 
+        <navigation-case>
+            <from-outcome>folder-explorer</from-outcome>
+            <to-view-id>/view/folders/folder-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>        
+        <navigation-case>
+            <from-outcome>company-explorer</from-outcome>
+            <to-view-id>/view/companies/company-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case> 
         
         <navigation-case>
             <from-outcome>proctempl-card</from-outcome>
             <to-view-id>/view/processes/templ/proctempl-card.xhtml</to-view-id>
-        </navigation-case>
-        
+        </navigation-case>        
         <navigation-case>
             <from-outcome>counters</from-outcome>
             <to-view-id>/view/admin/counters/counters.xhtml</to-view-id>
@@ -74,27 +158,22 @@
             <from-outcome>messages</from-outcome>
             <to-view-id>/view/messages/messages.xhtml</to-view-id>
         </navigation-case>
-
         <navigation-case>
             <from-outcome>authlog</from-outcome>
             <to-view-id>/view/admin/users/authlog.xhtml</to-view-id>
         </navigation-case>
-
         <navigation-case>
             <from-outcome>scheduler</from-outcome>
             <to-view-id>/view/tasks/scheduler.xhtml</to-view-id>
         </navigation-case>
-        
         <navigation-case>
             <from-outcome>monitor</from-outcome>
             <to-view-id>/view/processes/monitor.xhtml</to-view-id>
         </navigation-case>
-        
         <navigation-case>
             <from-outcome>notification</from-outcome>
             <to-view-id>/view/services/notification/notification.xhtml</to-view-id>
         </navigation-case>
-        
         <navigation-case>
             <from-outcome>timer-card</from-outcome>
             <to-view-id>/view/processes/elements/timer-card.xhtml</to-view-id>
@@ -127,12 +206,10 @@
             <from-outcome>task-card</from-outcome>
             <to-view-id>/view/tasks/task-card.xhtml</to-view-id>
         </navigation-case>
-        
         <navigation-case>
             <from-outcome>doclock</from-outcome>
             <to-view-id>/view/docs/locks/doclock.xhtml</to-view-id>
         </navigation-case>
-        
         <navigation-case>
             <from-outcome>doc-count-types</from-outcome>
             <to-view-id>/view/docs/reports/count-types.xhtml</to-view-id>            
@@ -154,40 +231,15 @@
             <from-outcome>document</from-outcome>
             <to-view-id>/view/docs/document.xhtml</to-view-id>
             <redirect />
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>statusesdoc-explorer</from-outcome>
-            <to-view-id>/view/docs/docStatus/statusesdoc-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-        
+        </navigation-case>                
         <navigation-case>
             <from-outcome>statusesdoc-card</from-outcome>
             <to-view-id>/view/docs/docStatus/statusesdoc-card.xhtml</to-view-id>
         </navigation-case>
             
         <navigation-case>
-            <from-outcome>doc-explorer</from-outcome>
-            <to-view-id>/view/docs/doc-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>process-explorer</from-outcome>
-            <to-view-id>/view/processes/process-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-
-        <navigation-case>
             <from-outcome>process-card</from-outcome>
             <to-view-id>/view/processes/process-card.xhtml</to-view-id>
-        </navigation-case>
-
-        <navigation-case>
-            <from-outcome>processtype-explorer</from-outcome>
-            <to-view-id>/view/processes/types/process-explorer.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
 
         <navigation-case>
@@ -240,13 +292,7 @@
             <from-outcome>sessions</from-outcome>
             <to-view-id>/view/admin/users/sessions.xhtml</to-view-id>
             <redirect />
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>numPatternsExpl</from-outcome>
-            <to-view-id>/view/admin/numPattern/num-pattern-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
+        </navigation-case>        
         
         <navigation-case>
             <from-outcome>numeratorpattern-card</from-outcome>
@@ -254,7 +300,7 @@
         </navigation-case>
          
         <navigation-case>
-            <from-outcome>objectsExpl</from-outcome>
+            <from-outcome>objects-expl</from-outcome>
             <to-view-id>/view/admin/objects-expl.xhtml</to-view-id>
             <redirect />
         </navigation-case>
@@ -268,24 +314,12 @@
         <navigation-case>
             <from-outcome>noSaveDlg</from-outcome>
             <to-view-id>/view/sys/noSaveDlg.xhtml</to-view-id>
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>department-explorer</from-outcome>
-            <to-view-id>/view/companies/departaments/department-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
+        </navigation-case>        
         
         <navigation-case>
             <from-outcome>department-card</from-outcome>
             <to-view-id>/view/companies/departaments/department-card.xhtml</to-view-id>
         </navigation-case>        
-
-        <navigation-case>
-            <from-outcome>user-explorer</from-outcome>
-            <to-view-id>/view/users/user-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
         
         <navigation-case>
             <from-outcome>user-card</from-outcome>
@@ -308,27 +342,9 @@
         </navigation-case>        
         
         <navigation-case>
-            <from-outcome>usergroups-explorer</from-outcome>
-            <to-view-id>/view/users/groupsUsers/usergroup-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>        
-        
-        <navigation-case>
             <from-outcome>state-card</from-outcome>
             <to-view-id>/view/admin/states/state-сard.xhtml</to-view-id>
-        </navigation-case>
-    
-        <navigation-case>
-            <from-outcome>state-explorer</from-outcome>
-            <to-view-id>/view/admin/states/state-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>doctype-explorer</from-outcome>
-            <to-view-id>/view/docs/docTypes/doctype-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
+        </navigation-case>        
         
         <navigation-case>
             <from-outcome>doctypegroups-card</from-outcome>
@@ -344,31 +360,13 @@
             <from-outcome>partnertypes-card</from-outcome>
             <to-view-id>/view/partners/types/partnertype-card.xhtml</to-view-id>
             <redirect />
-        </navigation-case>
-             
-        <navigation-case>
-            <from-outcome>partnertype-explorer</from-outcome>
-            <to-view-id>/view/partners/types/partnertype-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
+        </navigation-case>             
         
         <navigation-case>
             <from-outcome>partnergroups-card</from-outcome>
             <to-view-id>/view/partners/groups/partnergroup-card.xhtml</to-view-id>
             <redirect />
-        </navigation-case>
-    
-        <navigation-case>
-            <from-outcome>partnergroups-explorer</from-outcome>
-            <to-view-id>/view/partners/groups/partnergroup-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>partner-explorer</from-outcome>
-            <to-view-id>/view/partners/partner-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
+        </navigation-case>    
         
         <navigation-case>
             <from-outcome>partner-card</from-outcome>
@@ -378,19 +376,7 @@
         <navigation-case>
             <from-outcome>post-card</from-outcome>
             <to-view-id>/view/staffs/posts/post-card.xhtml</to-view-id>
-        </navigation-case>
-                
-        <navigation-case>
-            <from-outcome>post-explorer</from-outcome>
-            <to-view-id>/view/staffs/posts/post-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>
-       
-        <navigation-case>
-            <from-outcome>staff-explorer</from-outcome>
-            <to-view-id>/view/staffs/staff-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>              
+        </navigation-case>                             
         
         <navigation-case>
             <from-outcome>staff-card</from-outcome>
@@ -400,25 +386,13 @@
         <navigation-case>
             <from-outcome>folder-card</from-outcome>
             <to-view-id>/view/folders/folder-card.xhtml</to-view-id>
-        </navigation-case>
-    
-       <navigation-case>
-            <from-outcome>folder-explorer</from-outcome>
-            <to-view-id>/view/folders/folder-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>        
-        
+        </navigation-case>    
+                
         <navigation-case>
             <from-outcome>company-card</from-outcome>
             <to-view-id>/view/companies/company-card.xhtml</to-view-id>
             <redirect />
-        </navigation-case>
-        
-        <navigation-case>
-            <from-outcome>company-explorer</from-outcome>
-            <to-view-id>/view/companies/company-explorer.xhtml</to-view-id>
-            <redirect />
-        </navigation-case>        
+        </navigation-case>               
         
         <navigation-case>
             <from-outcome>object-admin</from-outcome>

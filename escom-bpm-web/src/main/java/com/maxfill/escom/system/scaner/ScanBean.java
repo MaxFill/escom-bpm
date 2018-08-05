@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.scaner;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.services.files.FileService;
@@ -46,6 +46,6 @@ public class ScanBean extends BaseViewBean{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_SCANING;
+        return DictFrmName.FRM_SCANING;
     }
 }

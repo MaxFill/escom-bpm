@@ -6,14 +6,14 @@
     <p:confirmDialog widgetVar="MoveItemToNotActual" severity="info" global="true" header="#{bundle.Move}" message="#{bundle.Confirm}" showEffect="fade" hideEffect="fade">
         <p:commandButton value="#{bundle.Move}" process="@this" 
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
-                         actionListener="#{_explorerBean.dropItemToNotActual()}" 
-                         update="westFRM centerFRM centerHeaderLabel #{_updates}"
+                         actionListener="#{_bean.dropItemToNotActual()}" 
+                         update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
                          onclick="PF('MoveItemToNotActual').hide();"
                          oncomplete="initDND()">
         </p:commandButton>
         <p:commandButton value="#{bundle.Cancel}" process="@this" 
                          styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
-                         update="centerFRM westFRM"
+                         update="mainFRM:centerFRM mainFRM:westFRM"
                          onclick="PF('MoveItemToNotActual').hide();"
                          oncomplete="initDND()"/>
     </p:confirmDialog>
@@ -21,14 +21,14 @@
     <p:confirmDialog widgetVar="MoveItemToTrashDlg" severity="info" global="true" header="#{bundle.Move}" message="#{bundle.ConfirmMoveToTrash}" showEffect="fade" hideEffect="fade">
         <p:commandButton value="#{bundle.Move}" process="@this" 
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
-                         actionListener="#{_explorerBean.dropItemToTrash()}" 
-                         update="westFRM centerFRM centerHeaderLabel #{_updates}"
+                         actionListener="#{_bean.dropItemToTrash()}" 
+                         update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
                          onclick="PF('MoveItemToTrashDlg').hide();"
                          oncomplete="initDND()">
         </p:commandButton>
         <p:commandButton value="#{bundle.Cancel}" process="@this" 
                          styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
-                         update="centerFRM westFRM"
+                         update="mainFRM:centerFRM mainFRM:westFRM"
                          onclick="PF('MoveItemToTrashDlg').hide();"
                          oncomplete="initDND()"/>
     </p:confirmDialog>
@@ -36,14 +36,14 @@
     <p:confirmDialog widgetVar="MoveTreeDlg"  severity="info" global="true" header="#{bundle.Move}" message="#{bundle.ConfirmMove}" showEffect="fade" hideEffect="fade">
         <p:commandButton value="#{bundle.Move}" process="@this" 
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
-                         actionListener="#{_explorerBean.moveGroupToGroup()}" 
-                         update="westFRM centerFRM centerHeaderLabel #{_updates}"
+                         actionListener="#{_bean.moveGroupToGroup()}" 
+                         update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
                          onclick="PF('MoveTreeDlg').hide();"
                          oncomplete="initDND()">
         </p:commandButton>
         <p:commandButton value="#{bundle.Cancel}" process="@this" 
                          styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
-                         update="centerFRM westFRM"
+                         update="mainFRM:centerFRM mainFRM:westFRM"
                          onclick="PF('MoveTreeDlg').hide();"
                          oncomplete="initDND()"/>
     </p:confirmDialog>
@@ -51,14 +51,14 @@
     <p:confirmDialog widgetVar="AddTblDlg" severity="info" global="true" header="#{bundle.Add}" message="#{bundle.ConfirmAddToGroup}" showEffect="fade" hideEffect="fade">
         <p:commandButton value="#{bundle.Add}" process="@this" 
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check" 
-                         actionListener="#{_explorerBean.addItemToGroup()}" 
-                         update="westFRM centerFRM centerHeaderLabel #{_updates}"
+                         actionListener="#{_bean.addItemToGroup()}" 
+                         update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
                          onclick="PF('AddTblDlg').hide();"
                          oncomplete="initDND()">
         </p:commandButton>
         <p:commandButton value="#{bundle.Cancel}" process="@this" 
                          styleClass="ui-confirmdialog-no"  icon="ui-icon-close" 
-                         update="centerFRM westFRM"
+                         update="mainFRM:centerFRM mainFRM:westFRM"
                          onclick="PF('AddTblDlg').hide();"
                          oncomplete="initDND()"/>
     </p:confirmDialog>
@@ -66,14 +66,14 @@
     <p:confirmDialog widgetVar="MoveTblDlg" global="true" severity="info" header="#{bundle.Move}" message="#{bundle.ConfirmMove}" showEffect="fade" hideEffect="fade">
         <p:commandButton value="#{bundle.Move}" process="@this"
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                         actionListener="#{_explorerBean.moveItemToGroup()}"
-                         update="centerFRM centerHeaderLabel #{_updates}"
+                         actionListener="#{_bean.moveItemToGroup()}"
+                         update="mainFRM:centerFRM #{_updates}"
                          onclick="PF('MoveTblDlg').hide();"
                          oncomplete="initDND()">
         </p:commandButton>
         <p:commandButton value="#{bundle.Cancel}" process="@this" 
                          styleClass="ui-confirmdialog-no" icon="ui-icon-close"
-                         update="centerFRM"
+                         update="mainFRM:centerFRM"
                          onclick="PF('MoveTblDlg').hide();"
                          oncomplete="initDND()"/>
     </p:confirmDialog>

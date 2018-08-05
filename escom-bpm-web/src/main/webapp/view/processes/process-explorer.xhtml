@@ -6,21 +6,14 @@
                 template="/view/templ/templ-explorer.xhtml">
 
     <!-- стандарный обозреватель/селектор -->
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{explorerTreeBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{explorerTreeBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
-    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
+    <ui:param name="_bean" value="#{explorerTreeBean}" />
     <ui:param name="_treeBean" value="#{processTypesBean}" />
     <ui:param name="_detailBean"  value="#{processBean}"/>
     <ui:param name="_searcheBean" value="#{processBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('ProcessSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Processes')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('ProcessSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('Processes')}"/>
     
     <ui:param name="_showAuthor"     value="#{true}"/>
     <ui:param name="_showDateCreate" value="#{true}"/>

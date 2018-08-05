@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.help;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
@@ -53,7 +53,7 @@ public class HelpBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName(){
-        return DictDlgFrmName.FRM_HELP;
+        return DictFrmName.FRM_HELP;
     }
       
 }

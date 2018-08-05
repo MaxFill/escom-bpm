@@ -6,21 +6,11 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/view/templ/templ.xhtml">
 
-    <ui:define name="initBeans">
-
-    </ui:define>
-
     <ui:define name="title">
         #{bundle.Scan}
     </ui:define>
 
     <ui:param name="_frm" value="scanform" />
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{scanBean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
 
     <ui:define name="body">
         <pe:layout fullPage="true" options="#{scanBean.layoutOptions}" widgetVar="fpLayoutWidget">

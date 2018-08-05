@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.docs;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.docs.DocFacade;
@@ -188,7 +188,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     
     /* ПЕЧАТЬ: Открытие формы предввода отчёта по видам документов */
     public void openDocCountTypesReport() {
-        sessionBean.openDialogFrm(DictDlgFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
+        sessionBean.openDialogFrm(DictFrmName.REP_DOC_COUNT_TYPES, new HashMap<>());
     }    
         
     public boolean docIsLock(Doc doc) {
@@ -260,7 +260,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         List<String> paramList = new ArrayList<>();
         paramList.add(attache.getId().toString());
         paramMap.put("attache", paramList);
-        sessionBean.openDialogFrm(DictDlgFrmName.FRM_DOC_LOCK, paramMap);
+        sessionBean.openDialogFrm(DictFrmName.FRM_DOC_LOCK, paramMap);
     }
 
     public void onDownLoadAttachePDFByExtLink() {

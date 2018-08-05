@@ -1,16 +1,7 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:pe="http://primefaces.org/ui/extensions"
                  template="/view/templ/templ-dlg.xhtml">
-
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{helpBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{helpBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         #{bundle.ManualBook}

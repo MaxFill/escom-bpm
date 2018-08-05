@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.mail;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.services.mail.MailBoxFacade;
 import com.maxfill.services.mail.Mailbox;
@@ -22,7 +22,7 @@ public class MailBoxBean extends BaseViewBean{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_MAIL_BOX;
+        return DictFrmName.FRM_MAIL_BOX;
     }
     
     public void refreshMessages(){

@@ -5,13 +5,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-dlg.xhtml">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{userSettingsBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{userSettingsBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         #{bundle.PersonalSettings}
@@ -21,13 +14,13 @@
 
     <ui:define name="menuActions" >
         <p:menuitem icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
-                    onclick="document.getElementById('centerFRM:btnMake').click();">
+                    onclick="document.getElementById('mainFRM:btnMake').click();">
         </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
-                         update="centerFRM"
+                         update="mainFRM:centerFRM"
                          actionListener="#{userSettingsBean.onChangePassword()}">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>

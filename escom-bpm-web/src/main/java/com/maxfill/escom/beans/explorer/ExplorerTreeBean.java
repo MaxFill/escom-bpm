@@ -28,11 +28,11 @@ import java.util.stream.Collectors;
 public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
-    protected static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
-    protected static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
+    protected static final String TREE_ITEMS_NAME  = "mainFRM:accord:tree:";
+    protected static final String TREE_FILTERS_NAME = "mainFRM:accord:filtersTree:";
 
-    protected static final String TABLE_NAME = "centerFRM:tblDetail:";
-    protected static final String NAVIG_NAME = "centerFRM:navigator";
+    protected static final String TABLE_NAME = "mainFRM:tblDetail:";
+    protected static final String NAVIG_NAME = "mainFRM:navigator";
 
     protected static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
@@ -260,7 +260,6 @@ public class ExplorerTreeBean extends ExplorerBean{
                     }
                 });
     }
-
     
     /* DRAG & DROP: отработка команды на перемещение в дереве */
     public void moveGroupToGroup() {

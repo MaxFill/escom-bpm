@@ -16,7 +16,7 @@
                         actionListener="#{notificationBean.onCheckServices()}"
                         onstart="PF('statusDialog').show()"
                         oncomplete="PF('statusDialog').hide();"
-                        update="centerFRM eastFRM">
+                        update="mainFRM:centerFRM mainFRM:eastFRM">
                 <f:param name="isRequired" value="true"/>
         </p:commandButton>
     </ui:define>

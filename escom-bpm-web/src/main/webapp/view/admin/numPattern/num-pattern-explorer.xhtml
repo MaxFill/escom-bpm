@@ -1,20 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"                
                 xmlns:p="http://primefaces.org/ui"
-                template="/view/templ/templ-explorer.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{explorerBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{explorerBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
+                template="/view/templ/templ-explorer.xhtml">
     
-    <ui:param name="_explorerBean" value="#{explorerBean}" />
+    <ui:param name="_bean" value="#{explorerBean}" />
     <ui:param name="_detailBean" value="#{numeratorPatternBean}" />  
 
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Numerators')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('Numerators')}"/>
             
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />

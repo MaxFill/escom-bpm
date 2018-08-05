@@ -10,13 +10,13 @@
 
     <ui:define name="toolbarComponents" >
         <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                         update="centerFRM:tblLog" 
+                         update="mainFRM:tblLog" 
                          actionListener="#{_bean.refreshLogEvents()}"/>
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
         <p:commandButton value="#{bundle.Clear}" icon="ui-icon-closethick"
-                         update="centerFRM:tblLog"
+                         update="mainFRM:tblLog"
                          actionListener="#{_bean.clearLogEvents()}">
             <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
         </p:commandButton>
@@ -40,7 +40,7 @@
     
     <ui:define name="leftFormContent">
         <ui:include src="/view/services/common/sheduler.xhtml"/>
-        <p:commandButton id="btnWestSaves" update="westFRM" style="display: none;"/> 
+        <p:commandButton id="btnWestSaves" update="mainFRM:westFRM" style="display: none;"/> 
     </ui:define>
 
     <ui:define name="rightFacet">
@@ -53,19 +53,16 @@
         <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
             <ui:insert name="serviceParams"/>
         </p:panelGrid>
-        <p:commandButton id="btnEastSave" update="eastFRM" style="display: none;" />
+        <p:commandButton id="btnEastSave" update="mainFRM:eastFRM" style="display: none;" />
     </ui:define>
     
     <ui:define name="southFormContent">
-        <p:commandButton id="btnClose" icon="ui-icon-arrowreturnthick-1-w" style="float: right;"
-                         value="#{bundle.Close}"
-                         actionListener="#{_bean.onCloseForm()}"/>
         <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
                          title="#{bundle.SaveServiceSettings}" style="float: right;"
-                         onclick="document.getElementById('westFRM:btnWestSaves').click();
-                                  document.getElementById('eastFRM:btnEastSave').click();"
+                         onclick="document.getElementById('mainFRM:btnWestSaves').click();
+                                  document.getElementById('mainFRM:btnEastSave').click();"
                          actionListener="#{_bean.onSaveSettings()}"/>
-    </ui:define> 
+    </ui:define>
 
     <ui:define name="dialogs">
         <p:dialog header="#{bundle.Detail}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgDetail">            

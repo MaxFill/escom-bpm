@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.users.settings;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.users.UserFacade;
@@ -123,7 +123,7 @@ public class UserSettingsBean extends BaseViewBean{
 
     @Override
     public String getFormName(){
-        return DictDlgFrmName.FRM_USER_SETTINGS;
+        return DictFrmName.FRM_USER_SETTINGS;
     }
     
     /* GETS & SETS */

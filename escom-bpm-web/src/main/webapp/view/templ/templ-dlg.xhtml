@@ -7,10 +7,49 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:param name="_canNotClose" value="#{_canNotClose == null ? false : _canNotClose}"/>
-    
+
     <ui:define name="body">
-        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />
-        
+        #{_bean.onBeforeOpenCard()}
+        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />               
+        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
+            <p:hotkey bind="esc" id="hotskey"
+                      immediate="true"
+                      onstart="document.getElementById('mainFRM:btnClose').click();">
+            </p:hotkey>
+
+            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                <p:autoUpdate />
+            </p:messages>
+
+            <p:panelGrid columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">                        
+
+                <h:panelGrid id="westFRM" columns="1" columnClasses="ui-grid-col-12" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces">
+                    <ui:insert name="leftFacet"/>
+                    <ui:insert name="leftFormContent"/>
+                </h:panelGrid>
+
+                <p:panelGrid id="centerFRM" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+                    <ui:include src="/view/templ/toolbar.xhtml" />
+                    <ui:insert name="centerFacet"/>
+                    <ui:insert name="centerFormContent"/>
+                </p:panelGrid>
+
+                <p:panelGrid id="eastFRM" columns="1" columnClasses="ui-grid-col-12" rendered="#{_bean.isEastShow()}" styleClass="ui-grid-col-12 without-spaces">
+                    <ui:insert name="rightFacet"/>
+                    <ui:insert name="rightFormContent"/>
+                </p:panelGrid>
+
+            </p:panelGrid>
+
+            <ui:insert name="extCenterPanel"/>                    
+            <ui:insert name="form_scripts"/>
+            <ui:include src="/view/common/confirm-dlg.xhtml"/>
+            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
+        </h:form>
+
+
+        #{_bean.onAfterFormLoad()}
+
         <script type="text/javascript" >
             function checkEsc(componentName) {
                 if (event.keyCode === 27) {
@@ -34,88 +73,6 @@
                 width: auto !important;
             }
         </style>
-
-        <pe:layout fullPage="true" options="#{_bean.layoutOptions}" style="font-size: 80%;" stateCookie="true">
-            <pe:layoutPane id="center" position="center" resizable="true">
-                <ui:insert name="centerFacet"/>
-                <h:form id="centerFRM" style="font-size: 90%; height: 100%;">
-                    <p:hotkey bind="esc" id="hotskey"
-                              immediate="true"
-                              onstart="document.getElementById('centerFRM:btnClose').click();">
-                    </p:hotkey>
-
-                    <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                        <p:autoUpdate />
-                    </p:messages>
-                    
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                        <p:toolbar>
-                            <f:facet name="left">
-                                <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
-                                    <ui:insert name="menuActions" />
-                                    <p:separator />
-                                    <p:menuitem icon="ico_close" value="#{bundle.Close}"
-                                                disabled="#{_canNotClose}" immediate="true" process="@this"
-                                                action="#{_bean.onCloseCard()}">
-                                    </p:menuitem>
-                                </p:menuButton>
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
-                                <ui:insert name="toolbarComponents"/>
-                            </f:facet>
-
-                            <f:facet name="right">
-                                <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                                 title="#{bundle.Close}" immediate="true"
-                                                 disabled="#{_canNotClose}"
-                                                 actionListener="#{_bean.onCloseCard()}">
-                                </p:commandButton>
-                            </f:facet>
-                        </p:toolbar>
-                    
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
-                            <ui:insert name="centerFormContent"/>
-                        </p:panelGrid>
-                    </p:panelGrid>
-
-                    <ui:insert name="form_scripts"/>
-                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
-                    <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}"/>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane id="north" position="north" rendered="#{_bean.isNorthShow()}">>
-                <h:form id="northFRM" style="font-size: 90%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <ui:insert name="northFormContent" />
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane id="south" position="south" rendered="#{_bean.isSouthShow()}">
-                <h:form id="southFRM" style="font-size: 90%;">
-                    <p:outputPanel styleClass="ui-grid-col-12 btn-group">
-                        <ui:insert name="southFormContent" />
-                    </p:outputPanel>
-                </h:form>
-            </pe:layoutPane>
-
-            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}">
-                <ui:insert name="leftFacet"/>
-                <h:form id="westFRM" style="font-size: 90%;">
-                    <ui:insert name="leftFormContent"/>
-                </h:form>
-            </pe:layoutPane>
-            
-            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}">
-                <ui:insert name="rightFacet"/>
-                <h:form id="eastFRM" style="font-size: 90%;">
-                    <ui:insert name="rightFormContent"/>
-                </h:form>
-            </pe:layoutPane>
-
-        </pe:layout>
     </ui:define>
 
 </ui:composition>

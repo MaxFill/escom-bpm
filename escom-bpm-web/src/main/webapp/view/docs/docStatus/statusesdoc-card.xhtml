@@ -2,17 +2,9 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                template="/view/templ/templ-card.xhtml">
 
     <ui:param name="_bean" value="#{statusesDocCardBean}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{statusesDocCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{statusesDocCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="page_body">
                 

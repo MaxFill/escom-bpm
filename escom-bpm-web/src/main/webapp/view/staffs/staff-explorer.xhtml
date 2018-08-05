@@ -6,23 +6,16 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <!-- стандарный обозреватель/селектор для Штатных единиц -->
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{companyExplBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{companyExplBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
-    <ui:param name="_explorerBean" value="#{companyExplBean}"/>
+    <ui:param name="_bean" value="#{companyExplBean}"/>
     <ui:param name="_rootBean"    value="#{companyBean}"/> 
     <ui:param name="_treeBean"    value="#{departmentBean}"/> 
     <ui:param name="_detailBean"  value="#{staffBean}"/>     
     <ui:param name="_filterBean"  value="#{filtersBean}"/>     
     <ui:param name="_searcheBean" value="#{_detailBean}"/>
     
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('StaffSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('OrgStructureExplorer')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('StaffSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('OrgStructureExplorer')}"/>
     
     <ui:param name="_showAuthor"     value="#{false}"/>
     <ui:param name="_showDateCreate" value="#{false}"/>
@@ -36,25 +29,25 @@
     <!-- специфичные колонки таблицы обозревателя для "Штатной единицы"-->
     <ui:define name="specDetailColumns">       
         <p:column headerText="#{bundle.Employee}" sortBy="#{item.employee.shortFIO}" 
-                  rendered="#{_explorerBean.isNowShowDetail()}">
+                  rendered="#{_bean.isNowShowDetail()}">
             <h:outputLabel value="#{item.employee.shortFIO}"/>
         </p:column>
         <p:column headerText="#{bundle.Post}" sortBy="#{item.post.name}" 
-                  rendered="#{_explorerBean.isNowShowDetail()}">
+                  rendered="#{_bean.isNowShowDetail()}">
             <h:outputLabel value="#{item.post.name}"/>
         </p:column>
     </ui:define> 
     
     <!-- специфичные колонки таблицы обозревателя для "Подразделения"-->
     <ui:define name="specTreeColumns"> 
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_explorerBean.isNowShowTree()}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.isNowShowTree()}">
             #{item.code}
         </p:column>
     </ui:define>
     
     <!-- специфичные колонки таблицы обозревателя для "Компания"-->
     <ui:define name="specRootColumns"> 
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_explorerBean.isNowShowRoot()}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.isNowShowRoot()}">
             #{item.code}
         </p:column>
     </ui:define>
@@ -67,7 +60,7 @@
                 <p:inputText title="#{bundle.HelpSearcheContext}" id="searchPost" widgetVar="searchPost"
                              styleClass="ui-grid-col-10"
                              placeholder="#{bundle.InputCreteriaForSearche}"
-                             value="#{_explorerBean.model.postSearche}"
+                             value="#{_bean.model.postSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchPost').jq.val('');"/>
@@ -80,7 +73,7 @@
                 <p:inputText title="#{bundle.HelpSearcheContext}" id="searchSecondName" widgetVar="searchSecondName"
                              styleClass="ui-grid-col-10"
                              placeholder="#{bundle.InputCreteriaForSearche}"
-                             value="#{_explorerBean.model.secondNameSearche}"
+                             value="#{_bean.model.secondNameSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>
                 <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchSecondName').jq.val('');"/>

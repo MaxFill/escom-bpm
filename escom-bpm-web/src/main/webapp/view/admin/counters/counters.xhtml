@@ -1,107 +1,64 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
-                 xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 template="/view/templ/templ.xhtml">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{countersExplBean.onBeforeOpenCard()}"/>
-        </f:metadata>
-    </ui:define>
+                 template="/view/templ/templ-dlg.xhtml">
 
     <ui:define name="title">
         #{bundle.CountersNumbers}
     </ui:define>
 
-    <ui:param name="_frm" value="CountersForm" />    
-        
-    <ui:define name="body">      
-        <pe:layout fullPage="true" options="#{countersExplBean.layoutOptions}" widgetVar="fpLayoutWidget">
-            <p:ajax event="resize" listener="#{countersExplBean.handleResize}"/> 
-            <pe:layoutPane position="center" resizable="true">
-                <h:form id="#{_frm}" style="font-size: 90%;">                     
-                    <p:hotkey bind="esc" id="hotskey"
-                              immediate="true"                             
-                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
-                    </p:hotkey>
-                    <p:menubar styleClass="without-spaces">
-                        <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                            <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                                        update="#{_frm}" actionListener="#{countersExplBean.refresh()}"> 
-                            </p:menuitem>
-                            <p:separator />
-                            <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
-                            </p:menuitem>
-                        </p:submenu>
-                        <f:facet name="options">                            
-                            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                                             title="#{bundle.Close}"
-                                             immediate="true" onclick="return isClose = 1;"
-                                             action="#{countersExplBean.onCloseCard()}"> 
-                            </p:commandButton> 
-                        </f:facet>
-                    </p:menubar>                                                            
-                    
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding">
-                        <p:messages id="messages" showDetail="true" closable="true" >
-                            <p:autoUpdate />
-                        </p:messages>
+    <ui:param name="_bean" value="#{countersExplBean}"/>
 
-                        <p:dataTable id="itemsTbl" value="#{countersExplBean.counters}" 
-                                     emptyMessage="#{bundle.EmptyTable}"
-                                     editable="true" editMode="cell"
-                                     paginator="true" paginatorPosition="bottom"                       
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rowsPerPageTemplate="10,25,50" rows="10"
-                                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
-                                     selection="#{countersExplBean.selected}" selectionMode="single"
-                                     var="item" rowKey="#{item.id}">
-                            
-                            <p:ajax event="cellEdit" listener="#{countersExplBean.onNumberEdit}" />
-                            
-                            <p:column width="16">
-                                <h:graphicImage value="/resources/icon/counter.png"/>   
-                            </p:column>
-                            
-                            <p:column headerText="#{bundle.TypeDoc}" sortBy="#{item.docType.name}">
-                                <h:outputLabel value="#{item.docType.name}"/>
-                            </p:column>
+    <ui:define name="centerFormContent">      
 
-                            <p:column headerText="#{bundle.Company}" sortBy="#{item.company.name}">
-                                <h:outputLabel value="#{item.company.name}"/>
-                            </p:column>   
+        <p:dataTable id="itemsTbl" value="#{countersExplBean.counters}" 
+                     emptyMessage="#{bundle.EmptyTable}"
+                     editable="true" editMode="cell"
+                     paginator="true" paginatorPosition="bottom"                       
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="10,25,50" rows="10"
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                     selection="#{countersExplBean.selected}" selectionMode="single"
+                     var="item" rowKey="#{item.id}">
 
-                            <p:column headerText="#{bundle.Year}" sortBy="#{item.year}">
-                                <h:outputLabel value="#{item.year}" />                                    
-                            </p:column> 
+            <p:ajax event="cellEdit" listener="#{countersExplBean.onNumberEdit}" />
 
-                            <p:column headerText="#{bundle.Number}">
-                                <p:cellEditor>
-                                    <f:facet name="output">
-                                        <h:outputLabel value="#{item.number}" />
-                                    </f:facet>
-                                    <f:facet name="input">
-                                        <p:inputNumber value="#{item.number}" decimalPlaces="0" />
-                                    </f:facet>
-                                </p:cellEditor>
-                            </p:column>
+            <p:column width="16">
+                <h:graphicImage value="/resources/icon/counter.png"/>   
+            </p:column>
 
-                            <p:column>
-                                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                                update="itemsTbl"
-                                                actionListener="#{countersExplBean.onDeleteItem(item)}">
-                                    <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                                </p:commandButton>
-                            </p:column>
-                        </p:dataTable>                         
-                    </p:panelGrid>
-                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
-                </h:form>
-            </pe:layoutPane>
-        </pe:layout>
+            <p:column headerText="#{bundle.TypeDoc}" sortBy="#{item.docType.name}">
+                <h:outputLabel value="#{item.docType.name}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.Company}" sortBy="#{item.company.name}">
+                <h:outputLabel value="#{item.company.name}"/>
+            </p:column>   
+
+            <p:column headerText="#{bundle.Year}" sortBy="#{item.year}">
+                <h:outputLabel value="#{item.year}" />                                    
+            </p:column> 
+
+            <p:column headerText="#{bundle.Number}">
+                <p:cellEditor>
+                    <f:facet name="output">
+                        <h:outputLabel value="#{item.number}" />
+                    </f:facet>
+                    <f:facet name="input">
+                        <p:inputNumber value="#{item.number}" decimalPlaces="0" />
+                    </f:facet>
+                </p:cellEditor>
+            </p:column>
+
+            <p:column>
+                <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                 update="itemsTbl"
+                                 actionListener="#{countersExplBean.onDeleteItem(item)}">
+                    <p:confirm header="#{bundle.Delete}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable> 
     </ui:define>
 </ui:composition>

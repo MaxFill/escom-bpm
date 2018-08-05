@@ -4,13 +4,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-card.xhtml">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{userCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{userCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:param name="_bean" value="#{userCardBean}"/>
 

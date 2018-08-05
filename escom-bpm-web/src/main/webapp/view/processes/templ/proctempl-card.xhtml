@@ -1,15 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{procTemplCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{procTemplCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
+                template="/view/templ/templ-card.xhtml">
     
     <ui:param name="_bean" value="#{procTemplCardBean}"/>
 

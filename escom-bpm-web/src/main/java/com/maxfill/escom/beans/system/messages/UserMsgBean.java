@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.messages;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.task.TaskBean;
@@ -54,7 +54,7 @@ public class UserMsgBean extends LazyLoadBean {
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_USER_MESSAGES;
+        return DictFrmName.FRM_USER_MESSAGES;
     }
     
     /* установка отметки о прочтении на выделенных сообщениях */

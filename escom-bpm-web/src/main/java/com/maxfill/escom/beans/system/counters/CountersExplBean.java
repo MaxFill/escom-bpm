@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.counters;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.numPuttern.counter.CounterFacade;
 import com.maxfill.model.numPuttern.counter.Counter;
@@ -24,7 +24,7 @@ public class CountersExplBean extends BaseViewBean{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_COUNTERS;
+        return DictFrmName.FRM_COUNTERS;
     }
     
     public void onDeleteItem(Counter item){

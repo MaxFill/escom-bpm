@@ -6,13 +6,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{foldersCardBean}"/>  
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{foldersCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{foldersCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateSubfolders}" styleClass="colRight">

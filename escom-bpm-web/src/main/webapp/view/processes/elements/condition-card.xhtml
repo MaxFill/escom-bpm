@@ -4,15 +4,7 @@
                  template="/view/templ/templ-dlg.xhtml"
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-
     <ui:param name="_bean" value="#{conditionCardBean}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{conditionCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{conditionCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         #{bundle.Condition}
@@ -37,7 +29,7 @@
                         <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                     </p:selectOneMenu>
                     <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="centerFRM"
+                    <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
                                      actionListener="#{conditionCardBean.onCloseCard('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>

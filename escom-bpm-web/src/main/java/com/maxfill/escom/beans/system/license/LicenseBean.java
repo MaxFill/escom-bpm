@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.license;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import javax.enterprise.context.SessionScoped;
@@ -52,7 +52,7 @@ public class LicenseBean extends BaseViewBean{
 
     @Override
     public String getFormName(){
-        return DictDlgFrmName.FRM_AGREE_LICENSE;
+        return DictFrmName.FRM_AGREE_LICENSE;
     }
       
 }

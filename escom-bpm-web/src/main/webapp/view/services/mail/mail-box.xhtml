@@ -8,25 +8,18 @@
     <ui:define name="title">
         #{bundle.MessagesForSent}
     </ui:define>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{mailBoxBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{mailBoxBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:param name="_bean" value="#{mailBoxBean}"/>
 
     <ui:define name="menuActions" >
         <p:menuitem value="#{bundle.Refresh}"
                     icon="ui-icon-refresh"
-                    onclick="document.getElementById('centerFRM:btnRefresh').click();"/>
+                    onclick="document.getElementById('mainFRM:btnRefresh').click();"/>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                         update="centerFRM:tblDetail"
+                         update="mainFRM:tblDetail"
                          actionListener="#{mailBoxBean.refreshMessages()}"/>
     </ui:define>
 

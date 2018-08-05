@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.mail;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -72,11 +72,11 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     }
     
     public void onOpenMailBox(){
-        sessionBean.openDialogFrm(DictDlgFrmName.FRM_MAIL_BOX, null);
+        sessionBean.openDialogFrm(DictFrmName.FRM_MAIL_BOX, null);
     }
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_MAIL_SENDER_SERVICE;
+        return DictFrmName.FRM_MAIL_SENDER_SERVICE;
     }
 }

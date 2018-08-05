@@ -155,14 +155,7 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
             LOG.log(Level.SEVERE, null, ex);
         }
         return false;
-    }
-            
-    /**
-     * Закрытие формы службы
-     */
-    public void onCloseForm() {
-        RequestContext.getCurrentInstance().closeDialog(null);
-    }
+    }            
     
     /**
      * Очистка журнала событий службы
@@ -197,10 +190,6 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
     }    
     
     @Override
-    public Boolean isSouthShow(){
-        return true;
-    }    
-    @Override
     public Boolean isWestShow(){
         return true;
     }
@@ -210,9 +199,15 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
     }
     
     @Override
-    protected boolean isWestInitClosed(){
-        return false;
+    public String getMainGridColumnStyleClass() {
+        return "3";
     }
+
+    @Override
+    public String getMainGridColumnCount() {
+        return "ui-grid-col-3 col-padding, ui-grid-col-6 col-padding, ui-grid-col-3 col-padding";
+    }
+    
     /**
      * Инициализация списковых значений для настройки расписания
      */

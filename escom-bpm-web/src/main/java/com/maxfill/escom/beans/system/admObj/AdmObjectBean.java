@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.system.admObj;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -54,7 +54,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
         if (replaceItem != null) {
             int count = getItemBean().replaceItem(getSourceItem(), replaceItem);
             MsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
-            PrimeFaces.current().ajax().update("centerFRM");
+            PrimeFaces.current().ajax().update("mainFRM:centerFRM");
         } else {
             MsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }
@@ -72,7 +72,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_OBJECT_ADMIN;
+        return DictFrmName.FRM_OBJECT_ADMIN;
     }
     
     public Map<String, Integer> getRezultUpdate() {

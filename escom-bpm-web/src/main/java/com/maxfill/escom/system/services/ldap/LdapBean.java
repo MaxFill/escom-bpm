@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.ldap;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.ldap.LdapSettings;
@@ -101,7 +101,7 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_LDAP;
+        return DictFrmName.FRM_LDAP;
     }
 
 }

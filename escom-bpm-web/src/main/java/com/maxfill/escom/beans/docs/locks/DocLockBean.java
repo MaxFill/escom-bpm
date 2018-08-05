@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.docs.locks;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -63,7 +63,7 @@ public class DocLockBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_DOC_LOCK;
+        return DictFrmName.FRM_DOC_LOCK;
     }
     
     public String makeLock(){

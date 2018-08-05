@@ -13,7 +13,8 @@
     </ui:define>
 
     <ui:define name="body">        
-
+        #{_bean.onBeforeOpenCard()}
+        
         <p:importConstants type="com.maxfill.dictionary.DictRights"   var="DictRights" />
         <p:importConstants type="com.maxfill.dictionary.DictStates"   var="DictStates" />
         <p:importConstants type="com.maxfill.dictionary.DictEditMode" var="DictEditMode" />
@@ -131,6 +132,8 @@
             <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}"/>
 
         </h:form> 
+        
+        #{_bean.onAfterFormLoad()}
         
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
         <ui:include src="/view/common/error-dlg.xhtml"/>

@@ -5,13 +5,6 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:param name="_bean" value="#{docStatusCardBean}"/>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{docStatusCardBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{docStatusCardBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:define name="title">
         #{bundle.SetDocStatus}
@@ -50,7 +43,7 @@
                         <f:selectItem itemValue="completed" itemLabel="#{bundle.Gray}"/>
                     </p:selectOneMenu>
                     <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="centerFRM"
+                    <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
                                      actionListener="#{_bean.onSaveAndClose('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>

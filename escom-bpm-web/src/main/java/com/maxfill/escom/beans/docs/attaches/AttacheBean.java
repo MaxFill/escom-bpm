@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.docs.attaches;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
@@ -107,7 +107,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName(){
-        return DictDlgFrmName.FRM_DOC_VIEWER;
+        return DictFrmName.FRM_DOC_VIEWER;
     }
 
 }

@@ -3,24 +3,24 @@
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
     
-    <p:tree id="filtersTree" value="#{_explorerBean.filterTree}" var="filterItem"  
+    <p:tree id="filtersTree" value="#{_bean.filterTree}" var="filterItem"  
             selectionMode="single" 
-            selection="#{_explorerBean.filterSelectedNode}" style="width: 100%; overflow-y: auto;">
+            selection="#{_bean.filterSelectedNode}" style="width: 100%; overflow-y: auto;">
 
-        <p:treeNode icon="#{filterItem.icon}" type="#{_explorerBean.typeDetail}">
+        <p:treeNode icon="#{filterItem.icon}" type="#{_bean.typeDetail}">
             <h:outputText value="#{filterItem.name}"/>
         </p:treeNode>
 
-        <p:treeNode icon="#{filterItem.icon}" type="#{_explorerBean.typeOwner}">
+        <p:treeNode icon="#{filterItem.icon}" type="#{_bean.typeOwner}">
             <h:outputText value="#{filterItem.name}"/>
         </p:treeNode>
         
-        <p:treeNode icon="#{filterItem.icon}" type="#{_explorerBean.typeRoot}">
+        <p:treeNode icon="#{filterItem.icon}" type="#{_bean.typeRoot}">
             <h:outputText value="#{filterItem.name}"/>
         </p:treeNode>
         
-        <p:ajax event="select" listener="#{_explorerBean.onFilterTreeNodeSelect}" 
-                update="centerFRM centerHeaderLabel #{_updates}"
+        <p:ajax event="select" listener="#{_bean.onFilterTreeNodeSelect}" 
+                update="mainFRM:centerFRM #{_updates}"
                 oncomplete="initDND()"/>
     </p:tree> 
    

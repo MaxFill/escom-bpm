@@ -1,7 +1,7 @@
 package com.maxfill.escom.system.services.mail;
 
 import com.google.gson.Gson;
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -238,7 +238,7 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_MAIL_MESSAGE;
+        return DictFrmName.FRM_MAIL_MESSAGE;
     }
     
 }

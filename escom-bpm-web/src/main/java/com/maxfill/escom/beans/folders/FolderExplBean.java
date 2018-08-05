@@ -37,6 +37,7 @@ import javax.inject.Named;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
 /* Расширение контролёра обозревателя архива */
@@ -44,7 +45,7 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class FolderExplBean extends ExplorerTreeBean{
     private static final long serialVersionUID = 1718197265045722509L;
-    private  static final String PROC_ITEMS_NAME  = "westFRM:accord:procTree:";
+    private  static final String PROC_ITEMS_NAME  = "mainFRM:accord:procTree:";
     private static final Integer LEH_TREE_PROCESS = PROC_ITEMS_NAME.length();
     
     @Inject
@@ -58,8 +59,8 @@ public class FolderExplBean extends ExplorerTreeBean{
     private ProcessFacade processFacade;
     
     private TreeNode procTree;
-    private TreeNode procSelectedNode;
-            
+    private TreeNode procSelectedNode;             
+    
     /* Расширение для поиска в дереве папок по индексу дела */
     @Override
     protected boolean extTreeSearche(String searche, BaseDict item){

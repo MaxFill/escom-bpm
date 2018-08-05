@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.system.logging;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.FontFactory;
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.authlog.AuthLogFacade;
@@ -73,7 +73,7 @@ public class AuthLogBean extends LazyLoadBean{
 
     @Override
     public String getFormName(){
-        return DictDlgFrmName.FRM_AUTH_LOG;
+        return DictFrmName.FRM_AUTH_LOG;
     }
 
 

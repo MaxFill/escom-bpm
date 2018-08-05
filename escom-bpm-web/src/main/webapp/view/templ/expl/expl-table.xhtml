@@ -1,28 +1,28 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:f="http://java.sun.com/jsf/core"    
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
        
-    <p:dataTable id="tblDetail" value="#{_explorerBean.detailItems}" var="item" 
+    <p:dataTable id="tblDetail" value="#{_bean.detailItems}" var="item" 
                  emptyMessage="#{bundle.EmptyTable}"
-                 paginator="true" paginatorPosition="bottom" first="#{_explorerBean.currentPage}"
+                 paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_explorerBean.rowsInPage}"
+                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_bean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
-                 sortMode="multiple" sortBy="#{_explorerBean.sortOrder}"
-                 selection="#{_explorerBean.checkedItems}"
+                 sortMode="multiple" sortBy="#{_bean.sortOrder}"
+                 selection="#{_bean.checkedItems}"
                  rowKey="#{item.itemKey}">
 
-        <p:ajax event="rowSelect" update="centerFRM:explToolBar" oncomplete="initDND();" />
+        <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" 
-                listener="#{_explorerBean.onRowDblClckOpen}"
-                oncomplete="document.getElementById('centerFRM:viewCardBtn').click();"/>
-        <p:ajax event="rowSelectCheckbox" update="centerFRM:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="rowUnselectCheckbox" update="centerFRM:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="toggleSelect" update="centerFRM:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="page" listener="#{_explorerBean.onPageChange}" oncomplete="initDND()"/>             
+                listener="#{_bean.onRowDblClckOpen}"
+                oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
+        <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="toggleSelect" update="mainFRM:explToolBar" oncomplete="initDND()"/>
+        <p:ajax event="page" listener="#{_bean.onPageChange}" oncomplete="initDND()"/>             
         
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
         
@@ -32,14 +32,14 @@
 
         <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
-                           rendered="#{_explorerBean.isItemTreeType(item)}"
-                           actionListener="#{_explorerBean.onLoadGroupContent(item)}"
-                           update="centerFRM westFRM centerHeaderLabel #{_updates}" 
+                           rendered="#{_bean.isItemTreeType(item)}"
+                           actionListener="#{_bean.onLoadGroupContent(item)}"
+                           update="mainFRM:centerFRM mainFRM:westFRM #{_updates}" 
                            oncomplete="initDND()"/>
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
-                           rendered="#{!_explorerBean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
-                           actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                           oncomplete="document.getElementById('centerFRM:editCardBtn').click();">
+                           rendered="#{!_bean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
+                           actionListener="#{_bean.onSetCurrentItem(item)}"
+                           oncomplete="document.getElementById('mainFRM:editCardBtn').click();">
             </p:commandLink>
             <ui:insert name="specCommandLinks"/>
         </p:column>
@@ -80,66 +80,66 @@
 
         <p:column style="text-align: center;" width="90" >
             <p:splitButton  value="#{bundle.Select}"
-                            rendered="#{!item.deleted and item.actual and _explorerBean.selectorViewMode}" 
-                            action="#{_explorerBean.onSelect(item)}">                
+                            rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" 
+                            action="#{_bean.onSelect(item)}">                
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('centerFRM:editCardBtn').click();"/>
+                            actionListener="#{_bean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('centerFRM:viewCardBtn').click();"/>
+                            actionListener="#{_bean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
             </p:splitButton>                      
                         
             <p:splitButton value="#{bundle.Edit}"
-                           actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                           rendered="#{!item.deleted and _explorerBean.explorerViewMode}"                           
-                           oncomplete="document.getElementById('centerFRM:viewCardBtn').click();">
+                           actionListener="#{_bean.onSetCurrentItem(item)}"
+                           rendered="#{!item.deleted and _bean.explorerViewMode}"                           
+                           oncomplete="document.getElementById('mainFRM:viewCardBtn').click();">
                 <ui:insert name="addItemMenu" />                 
                 <p:separator/>
                 <p:menuitem icon="ui-icon-search" value="#{bundle.ViewCard}" 
-                            actionListener="#{_explorerBean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('centerFRM:editCardBtn').click();"/>
+                            actionListener="#{_bean.onSetCurrentItem(item)}"
+                            oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
                 <p:separator/>
 
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
-                            update="centerFRM:explToolBar"
-                            actionListener="#{_explorerBean.onCopyItem(item)}"/>
+                            update="mainFRM:explToolBar"
+                            actionListener="#{_bean.onCopyItem(item)}"/>
 
                 <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
                             disabled="#{item.id == 0}"
-                            update="westFRM centerFRM"
-                            actionListener="#{_explorerBean.onMoveContentToTrash(item)}"
+                            update="mainFRM:westFRM mainFRM:centerFRM"
+                            actionListener="#{_bean.onMoveContentToTrash(item)}"
                             oncomplete="initDND()">
                     <p:confirm header="#{bundle.Move}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />
                 </p:menuitem>
 
                 <p:separator/>
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
-                            rendered="#{!_explorerBean.isFavoriteSelected()}"
-                            actionListener="#{_explorerBean.onAddContentInFavorites(item)}"/>
+                            rendered="#{!_bean.isFavoriteSelected()}"
+                            actionListener="#{_bean.onAddContentInFavorites(item)}"/>
                 <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" 
-                            rendered="#{_explorerBean.isFavoriteSelected()}"
-                            actionListener="#{_explorerBean.onDelContentFromFavorites(item)}"
-                            update="centerFRM"
+                            rendered="#{_bean.isFavoriteSelected()}"
+                            actionListener="#{_bean.onDelContentFromFavorites(item)}"
+                            update="mainFRM:centerFRM"
                             oncomplete="initDND()"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
                             rendered="#{sessionBean.userAdmin}"
-                            actionListener="#{_explorerBean.onOpenAdmCardForm(item)}"/>                
+                            actionListener="#{_bean.onOpenAdmCardForm(item)}"/>                
             </p:splitButton>                           
 
             <p:splitButton value="#{bundle.Delete}"  
                             rendered="#{item.deleted}"
                             disabled="#{!sessionBean.userAdmin}"
-                            update="centerFRM westFRM"
-                            actionListener="#{_explorerBean.onDeleteContentFromTrash(item)}"
+                            update="mainFRM:centerFRM mainFRM:westFRM"
+                            actionListener="#{_bean.onDeleteContentFromTrash(item)}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()">
                 <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
                 <p:menuitem value="#{bundle.Restore}"
                             icon="ui-icon-arrowreturnthick-1-w"
-                            update="centerFRM westFRM"
-                            actionListener="#{_explorerBean.onRestoreContentFromTrash(item)}"
+                            update="mainFRM:centerFRM mainFRM:westFRM"
+                            actionListener="#{_bean.onRestoreContentFromTrash(item)}"
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()">
                 </p:menuitem>                

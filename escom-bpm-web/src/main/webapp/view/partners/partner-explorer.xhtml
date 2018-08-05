@@ -3,16 +3,9 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 template="/view/templ/templ-explorer.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{explorerTreeBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{explorerTreeBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
+                xmlns:f="http://xmlns.jcp.org/jsf/core">    
     
-    <ui:param name="_explorerBean" value="#{explorerTreeBean}" />
+    <ui:param name="_bean" value="#{explorerTreeBean}" />
     <ui:param name="_detailBean" value="#{partnersBean}" />
     <ui:param name="_treeBean" value="#{partnersGroupsBean}" /> 
     
@@ -23,12 +16,12 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreatePartner}" />
         
-    <ui:param name="_selectorHeader" value="#{_explorerBean.getLabelFromBundle('PartnerSelector')}"/>
-    <ui:param name="_explorerHeader" value="#{_explorerBean.getLabelFromBundle('Partners')}"/>
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('PartnerSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('Partners')}"/>
     
     <!-- специфичные поля таблицы обозревателя Detail -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_explorerBean.isNowShowDetail()}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.isNowShowDetail()}">
             #{item.code}
         </p:column>
     </ui:define> 
@@ -44,7 +37,7 @@
             <div class="ui-inputgroup">
                 <p:inputText id="codeSearche" title="#{bundle.HelpSearcheContext}" widgetVar="searchCode"
                              styleClass="ui-grid-col-12"
-                             value="#{_explorerBean.model.codeSearche}"
+                             value="#{_bean.model.codeSearche}"
                              placeholder="#{bundle.InputCreteriaForSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>

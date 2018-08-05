@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes.elements;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
@@ -80,7 +80,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_TIMER;
+        return DictFrmName.FRM_TIMER;
     }     
 
     /**

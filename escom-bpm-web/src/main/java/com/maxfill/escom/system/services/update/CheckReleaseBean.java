@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.update;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.core.Release;
@@ -107,7 +107,7 @@ public class CheckReleaseBean extends BaseViewBean{
             MsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
-        PrimeFaces.current().ajax().update("centerFRM");
+        PrimeFaces.current().ajax().update("mainFRM:centerFRM");
     }
 
     public void onGotoSupportPage(){
@@ -130,7 +130,7 @@ public class CheckReleaseBean extends BaseViewBean{
     
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_CHECK_RELEASE;
+        return DictFrmName.FRM_CHECK_RELEASE;
     }
 
     public String getStrDateRelease() {

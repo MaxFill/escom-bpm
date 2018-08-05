@@ -20,7 +20,8 @@
     <ui:define name="body">
         <h:outputScript library="js" name="ITHitWebDAVClient.js" />
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
-        <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />      
+        <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />   
+        <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" /> 
 
         <h:form id="mainFRM">            
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
@@ -46,13 +47,16 @@
                 <p:ajax event="dialogReturn" update="mainFRM:messages"/>
             </p:commandButton>
             <p:commandButton id="btnLicense" style="display: none;" actionListener="#{sessionBean.openLicenseForm()}">
-                <p:ajax event="dialogReturn" listener="#{sessionBean.onAfterCloseLicenseDlg}" />
+                <p:ajax event="dialogReturn" update="mainFRM:messages" listener="#{sessionBean.onAfterCloseLicenseDlg}" />
+            </p:commandButton>
+            <p:commandButton id="btnOpenForm" style="display: none;" actionListener="#{sessionBean.onOpenForm()}">
+                <p:ajax event="dialogReturn" update="mainFRM:messages" />
             </p:commandButton>
             
-            <p:toolbar style="">
+            <p:toolbar >
                 <f:facet name="left">
                     <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
-                    <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
+                    <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />                     
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
@@ -90,31 +94,34 @@
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:commandLink value="#{bundle.Users}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="user-explorer"/>
+                                           actionListener="#{sessionBean.setOpenFormName('user-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.Sessions}"
-                                           actionListener="#{sessionBean.openSessionsForm()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_USER_SESSIONS)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             <p:separator/>
+                            
                             <p:commandLink value="#{bundle.SettigsObjects}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="objectsExpl"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_OBJECT_EXPL)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.Numerators}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="numPatternsExpl"/>
+                                           actionListener="#{sessionBean.setOpenFormName('num-pattern-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.CountersNumbers}"
-                                           actionListener="#{sessionBean.openContersExpl()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_COUNTERS)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.Statuses}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="statusesdoc-explorer"/>
+                                           actionListener="#{sessionBean.setOpenFormName('statusesdoc-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.ProcessTemplates}"
-                                           rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="#{sessionBean.openProcessTemplateExpl()}"/>
+                                           rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" 
+                                           actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                         </p:panelGrid>
                     </p:panel>
 
@@ -123,8 +130,8 @@
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:commandLink value="#{bundle.Authentication}"
-                                           onstart="return isClose = 1;"
-                                           actionListener="#{sessionBean.openAuthLog()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_AUTH_LOG)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                         </p:panelGrid>
                     </p:panel>
 
@@ -132,14 +139,21 @@
                              rendered="#{sessionBean.userAdmin}"
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                            
-                            <p:commandLink value="#{bundle.MailService}"                                            
-                                           actionListener="#{sessionBean.openMailSenderService()}"/>
+                            <p:commandLink value="#{bundle.MailService}"
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_SENDER_SERVICE)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.ServiceReaderEmail}"
-                                           actionListener="#{sessionBean.openMailReaderService()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_READER_SERVICE)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.LdapService}" 
-                                           actionListener="#{sessionBean.openLdapService()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_LDAP)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.ServiceNotification}" 
-                                           actionListener="#{sessionBean.openNotificationService()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_NOTIFICATION)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                         </p:panelGrid>
                     </p:panel>
 
@@ -148,13 +162,10 @@
                              toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.Processes}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="process-explorer"/>
-                            <p:commandLink value="#{bundle.ProcessExecutionControl}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="#{sessionBean.openMonitor()}"/>
+                                           actionListener="#{sessionBean.setOpenFormName('process-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            <p:commandLink value="#{bundle.ProcessExecutionControl}"                                           
+                                           actionListener="#{sessionBean.openMonitorForm()}"/>
                             <p:fileUpload id="file" style="font-size: small;"
                                             styleClass="ui-grid-col-12"
                                             allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
@@ -183,7 +194,9 @@
                             <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
                             
                             <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
-                                           actionListener="#{sessionBean.openScheduler()}"/>                            
+                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_SCHEDULER)}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                            
                             <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
                                            actionListener="#{sessionBean.openSettingsForm()}"/>
                             <p:separator />
@@ -215,18 +228,17 @@
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.DocsExplorer}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="doc-explorer"/>
-                            <p:commandLink value="#{bundle.DocsTypes}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="doctype-explorer"/>
-
-                            <p:commandLink value="#{bundle.Favorites}"
-                                           ajax="false"
-                                           action="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
+                                           actionListener="#{sessionBean.setOpenFormName('doc-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
+                            </p:commandLink>
                             
+                            <p:commandLink value="#{bundle.DocsTypes}"
+                                           actionListener="#{sessionBean.setOpenFormName('doctype-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
+                            </p:commandLink>                                             
+                            
+                            <p:commandLink value="#{bundle.Favorites}"
+                                           actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>    
                             <p:fileUpload id="fileDoc" style="font-size: small;"                                       
                                         styleClass="ui-grid-col-12"
                                         allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
@@ -252,32 +264,27 @@
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >                        
                             <p:commandLink value="#{bundle.Posts}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="post-explorer"/> 
+                                           actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/> 
                             <p:commandLink value="#{bundle.OrgStructureExplorer}" 
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="staff-explorer"/>
+                                           actionListener="#{sessionBean.setOpenFormName('staff-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                         </p:panelGrid>
                     </p:panel>
 
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:commandLink value="#{bundle.Partners}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="partner-explorer"/>
+                                           actionListener="#{sessionBean.setOpenFormName('partner-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             <p:commandLink value="#{bundle.PartnerTypes}"
                                            disabled="#{!sessionBean.userAdmin}"
-                                           onstart="return isClose = 1;"
-                                           ajax="false"
-                                           action="partnertype-explorer"/>
+                                           actionListener="#{sessionBean.setOpenFormName('partnertype-explorer')}"
+                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                         </p:panelGrid>
                     </p:panel>
 
-                </p:dashboard>                 
-                
+                </p:dashboard>                                 
             </p:panelGrid>
 
             <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
@@ -298,6 +305,7 @@
     
     <ui:define name="customJavaScript">
         <script type="text/javascript">
+            var isClose = 0;
             function OpenFolder(sFolderUrl) {
                 ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
             }

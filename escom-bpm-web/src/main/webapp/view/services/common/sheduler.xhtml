@@ -11,14 +11,14 @@
                 <p:commandButton title="#{bundle.RunOnSchedule}" icon="ui-icon-circle-triangle-e"
                              disabled="#{_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
                              actionListener="#{_bean.onStartService()}"
-                             update="westFRM"
-                             onclick="document.getElementById('eastFRM:btnEastSaves').click();">
+                             update="mainFRM:westFRM"
+                             onclick="document.getElementById('mainFRM:btnEastSaves').click();">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
                 <p:commandButton title="#{bundle.Stop}" icon="ui-icon-circle-close"
                              disabled="#{!_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
                              actionListener="#{_bean.onStopService()}"
-                             update="westFRM, centerFRM">
+                             update="mainFRM:westFRM, mainFRM:centerFRM">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
                 <span class="ui-separator">
@@ -26,10 +26,10 @@
                 </span>
                 <p:commandButton icon="ui-icon-play" title="#{bundle.StartImmediately}"
                              actionListener="#{_bean.doRunService()}"
-                             onclick="document.getElementById('eastFRM:btnEastSave').click();"
+                             onclick="document.getElementById('mainFRM:btnEastSave').click();"
                              onstart="PF('statusDialog').show()"
                              oncomplete="PF('statusDialog').hide();"
-                             update="centerFRM, logFRM:logDetailPanel">
+                             update="mainFRM:centerFRM, logFRM:logDetailPanel">
                 </p:commandButton>
             </f:facet>
          </p:toolbar>
@@ -37,7 +37,7 @@
         <p:selectBooleanCheckbox value="#{_bean.scheduler.autoStart}" 
                                  itemLabel="#{bundle.AutoStart}"
                                  disabled="#{_bean.service.started}">
-            <p:ajax update="westFRM"/> 
+            <p:ajax update="mainFRM:westFRM"/> 
         </p:selectBooleanCheckbox>
 
         <h:panelGrid columns="2" rendered="#{_bean.service.started}">
@@ -53,7 +53,7 @@
             <p:selectOneRadio value="#{_bean.scheduler.repeatType}" layout="grid" columns="1" 
                               disabled="#{_bean.service.started}">
                 <f:selectItems value="#{_bean.repeatTypes}" /> 
-                <p:ajax update="westFRM"/> 
+                <p:ajax update="mainFRM:westFRM"/> 
             </p:selectOneRadio>
             
             <p:outputLabel value="#{bundle.StartIn}:" rendered="#{_bean.scheduler.repeatType == 1}"/>

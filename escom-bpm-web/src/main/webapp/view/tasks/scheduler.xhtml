@@ -9,32 +9,11 @@
         #{bundle.Scheduler}
     </ui:define>
 
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{schedulerBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{schedulerBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
-    
     <ui:param name="_bean" value="#{schedulerBean}"/>
 
     <ui:define name="menuActions" >
     </ui:define>   
-    
-    <ui:define name="customStyleCSS">
-        <style>
-            .finished {
-                text-decoration: line-through !important; 
-            }
-            .running {
-                font-weight: bold !important;
-            }
-            .draft {
-                font-style: italic !important;
-            }
-        </style>
-    </ui:define>
-    
+        
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnCreateTask" style="display: none;" actionListener="#{schedulerBean.onCreateTask(_bean)}">
             <p:ajax event="dialogReturn" listener="#{schedulerBean.onTaskDlgClose}"/>
@@ -53,5 +32,19 @@
             <p:ajax event="eventMove" listener="#{schedulerBean.onEventMove}"  />
             <p:ajax event="eventResize" listener="#{schedulerBean.onEventResize}" />
         </p:schedule>  
+    </ui:define>
+    
+    <ui:define name="customStyleCSS">
+        <style>
+            .finished {
+                text-decoration: line-through !important; 
+            }
+            .running {
+                font-weight: bold !important;
+            }
+            .draft {
+                font-style: italic !important;
+            }
+        </style>
     </ui:define>
 </ui:composition>

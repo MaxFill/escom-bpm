@@ -1,17 +1,18 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"                
-        xmlns:p="http://primefaces.org/ui" 
-        xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"                
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
         
-    <h:head>
+    <h:head>       
+        
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="Content-Style-Type" content="text/css" />  
         <meta name="viewport" content="width=device-width" />   
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />                     
-                
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />            
+        
         <meta http-equiv="Cache-Control" content="no-store" />
         <meta http-equiv="Cache-Control" content="no-cache" />
         <meta http-equiv="Cache-Control" content="must-revalidate" />
@@ -23,16 +24,39 @@
         <title>
             <ui:insert name="title"/>
         </title> 
-        
-        <h:outputStylesheet library="css" name="em_style1.css"/> 
+                
         <link rel="shortcut icon" href="#{resource['icon/done.png']}" type="image/png"/>
+        <h:outputStylesheet library="css" name="em_style1.css"/>
+        <f:view locale="#{sessionBean.locale}"></f:view>
     </h:head>
-
+    
     <ui:insert name="preRendered"/>
     
-    <h:body>
-        <f:view locale="#{sessionBean.locale}"></f:view>
-            <script type="text/javascript">  
+    <h:body> 
+        <style>
+            .ui-accordion .ui-accordion-content {
+                padding: 0px !important
+            }
+            
+            .ui-tabs-left>.ui-tabs-panels{
+                float:left !important;
+            }
+            .ui-tabs .ui-tabs-panel{
+                padding: 0em 1.4em !important;
+            }
+            ul.ui-menu-child {
+                white-space: nowrap;
+                width: auto !important;
+            }
+        </style>
+        
+        <ui:insert name="customStyleCSS"/>
+        <ui:insert name="initBeans"/>
+        <ui:insert name="systems"/>
+        <ui:insert name="body" /> 
+        <ui:insert name="dialogs"/>
+                
+        <script type="text/javascript">  
                 function sendFormSize(){
                     var width = window.innerWidth;
                     var height = window.innerHeight;
@@ -69,14 +93,9 @@
                     day: 'День',
                     allDayText: 'Весь день'
                 };
-            </script>       
-                
-        <ui:insert name="customStyleCSS"/>
-        <ui:insert name="customJavaScript"/>
-        
-        <ui:insert name="dialogs"/>
-        <ui:insert name="systems"/>
-        <ui:insert name="body" />         
+            </script>
+               
+        <ui:insert name="customJavaScript"/>                
 
         <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false"
                   resizable="false" showHeader="false">

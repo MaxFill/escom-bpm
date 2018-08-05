@@ -4,68 +4,68 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
     
-    <p:defaultCommand target="westFRM:accord:btnTreeSearche" />
+    <p:defaultCommand target="mainFRM:accord:btnTreeSearche" />
     
     <p:toolbar id="toolbarTree" styleClass="ui-grid-col-12">
-        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{_explorerBean.tree != null}">
+        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{_bean.tree != null}">
             
                     <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
                                      style="font-size: 90%;"
-                                     actionListener="#{_explorerBean.onReloadTreeItems()}"
-                                     update="westFRM centerFRM"
+                                     actionListener="#{_bean.onReloadTreeItems()}"
+                                     update="mainFRM:westFRM mainFRM:centerFRM"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
                     <p:commandButton icon="ui-icon-folder-open" title="#{bundle.ExpandTree}"
-                                     update="westFRM" oncomplete="initDND()"
+                                     update="mainFRM:westFRM" oncomplete="initDND()"
                                      style="font-size: 90%;"
-                                     actionListener="#{_explorerBean.onExpandTree()}"/>
+                                     actionListener="#{_bean.onExpandTree()}"/>
                     <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.CollapseTree}"
-                                     update="westFRM" oncomplete="initDND()"
+                                     update="mainFRM:westFRM" oncomplete="initDND()"
                                      style="font-size: 90%;"
-                                     actionListener="#{_explorerBean.onCollapseTree()}"/>
+                                     actionListener="#{_bean.onCollapseTree()}"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
                     <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
                                      style="font-size: 90%;"
-                                     disabled="#{_explorerBean.isCanCopyTreeItem()}"
+                                     disabled="#{_bean.isCanCopyTreeItem()}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
-                                     update="westFRM:accord:toolbarTree"
-                                     actionListener="#{_explorerBean.onCopySelectedTreeItem()}"/>
+                                     update="mainFRM:accord:toolbarTree"
+                                     actionListener="#{_bean.onCopySelectedTreeItem()}"/>
 
                     <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}"
                                      style="font-size: 90%;"
-                                     disabled="#{_explorerBean.canPasteItem}"
+                                     disabled="#{_bean.canPasteItem}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND()"
-                                     actionListener="#{_explorerBean.onPasteItemToTree()}"
-                                     update="westFRM:accord:tree centerFRM"/>
+                                     actionListener="#{_bean.onPasteItemToTree()}"
+                                     update="mainFRM:accord:tree mainFRM:centerFRM"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>
 
                     <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
-                                     disabled="#{_explorerBean.isCanDeleteTreeItem()}"
+                                     disabled="#{_bean.isCanDeleteTreeItem()}"
                                      style="font-size: 90%;"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide(); initDND();"
-                                     update="westFRM:accord:tree westFRM:accord:toolbarTree centerFRM centerHeaderLabel #{_updates}"
-                                     actionListener="#{_explorerBean.onMoveTreeItemToTrash()}">
+                                     update="mainFRM:accord:tree mainFRM:accord:toolbarTree mainFRM:centerFRM #{_updates}"
+                                     actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                     </p:commandButton>
 
-                    <p:inputText value="#{_explorerBean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
-                                 disabled="#{!_explorerBean.isShowTree()}"
+                    <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
+                                 disabled="#{!_bean.isShowTree()}"
                                  style="font-size: 90%;">
                     </p:inputText>
                     <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
-                                     disabled="#{!_explorerBean.isShowTree()}"
-                                     update="westFRM centerHeaderLabel centerFRM #{_updates}"
-                                     actionListener="#{_explorerBean.onSearcheInTree()}" style="font-size: 90%;" 
+                                     disabled="#{!_bean.isShowTree()}"
+                                     update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
+                                     actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
                                      oncomplete="initDND()">
                     </p:commandButton>
 
@@ -76,9 +76,9 @@
     <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"
                     rendered="#{false}">
         <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateChildGroup}"                            
-                    oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>                
+                    oncomplete="document.getElementById('mainFRM:createTreeCardBtn').click();"/>                
         <p:menuitem icon="ui-icon-plus" value="#{bundle.CreateInNullLevel}"
-                    oncomplete="document.getElementById('westFRM:createRootTreeCardBtn').click();"/>
+                    oncomplete="document.getElementById('mainFRM:createRootTreeCardBtn').click();"/>
     </p:splitButton>    
 
 </ui:composition>

@@ -27,8 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.codehaus.plexus.util.StringUtils;
 import org.primefaces.PrimeFaces;
-
-import org.primefaces.extensions.component.layout.LayoutPane;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /**
@@ -70,7 +68,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     @PostConstruct
     protected void init(){
-        initLayoutOptions();
         initBean();
     }
 
@@ -149,8 +146,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @param exitParam
      * @return 
      */
-    protected String finalCloseDlg(Object exitParam){    
-        PrimeFaces.current().executeScript("sendFormSize();");
+    protected String finalCloseDlg(Object exitParam){
         killBean();
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
@@ -161,6 +157,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
+        /*
         map.entrySet().removeIf(mapEntry->{
             boolean flag = false;
             if (mapEntry instanceof Map.Entry) {
@@ -174,7 +171,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             }
             return flag;
         });
-        
+        */
         for (Object mapEntry : map.entrySet()){
             if (mapEntry instanceof Map.Entry) {
                 Map.Entry entry = (Map.Entry) mapEntry;
@@ -204,89 +201,32 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */
 
-    public abstract String getFormName();
+    public abstract String getFormName();       
     
-    protected void initLayoutOptions(){        
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        panes.addOption("resizable", true);
-        layoutOptions.setPanesOptions(panes);
-
-        if (isSouthShow()) {
-            LayoutOptions south = new LayoutOptions();
-            south.addOption("resizable", false);
-            south.addOption("closable", false);
-            south.addOption("size", 45);
-            south.addOption("initClosed", isSouthInitClosed());
-            layoutOptions.setSouthOptions(south);
-        }
-
-        if (isNorthShow()) {
-            LayoutOptions north = new LayoutOptions();
-            north.addOption("resizable", false);
-            north.addOption("closable", false);
-            north.addOption("size", 45);
-            north.addOption("initClosed", isNorthInitClosed());
-            layoutOptions.setNorthOptions(north);
-        }
-
-        initWestLayout(layoutOptions);                
-
-        if (isEastShow()) {
-            LayoutOptions east = new LayoutOptions();;
-            east.addOption("size", "20%");
-            east.addOption("minSize", 150);
-            east.addOption("maxSize", 450);
-            east.addOption("resizable", true);
-            east.addOption("initClosed", isEastInitClosed());
-            layoutOptions.setEastOptions(east);
-        }
-        
-        LayoutOptions center = new LayoutOptions();        
-        center.addOption("resizable", true);
-        center.addOption("closable", false);
-        center.addOption("minWidth", 200);
-        center.addOption("minHeight", 100);
-        layoutOptions.setCenterOptions(center);
-    }
-
-    protected void initWestLayout(LayoutOptions layoutOptions){
-        if (isWestShow()) {
-            LayoutOptions west = new LayoutOptions();
-            west.addOption("size", "20%");
-            west.addOption("resizable", true);            
-            west.addOption("initClosed", isWestInitClosed());
-            layoutOptions.setWestOptions(west);
-        }
-    }
-    
-    public Boolean isSouthShow(){
-        return false;
-    }
     public Boolean isWestShow(){
-        return false;
-    }
-    public Boolean isNorthShow(){
         return false;
     }
     public Boolean isEastShow(){
         return false;
+    }   
+    
+    /**
+     * Определяет кол-во колонок в главном гриде 
+     * @return 
+     */
+    public String getMainGridColumnCount(){
+        return "1";
     }
     
-    protected boolean isSouthInitClosed(){
-        return false;
-    }
-    protected boolean isEastInitClosed(){
-        return false;
-    }
-    protected boolean isWestInitClosed(){
-        return true;
-    }
-    protected boolean isNorthInitClosed(){
-        return false;
+    /**
+     * Определяет стиль колонок в главном гриде
+     * @return 
+     */
+    public String getMainGridColumnStyleClass(){
+        return "ui-grid-col-12 col-padding";        
     }
     
-/* *** ПРОЧИЕ *** */
+    /* ПРОЧИЕ */
     
     public User getCurrentUser(){
         return sessionBean.getCurrentUser();
@@ -355,5 +295,5 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public void setSourceItem(BaseDict sourceItem) {
         this.sourceItem = sourceItem;
     }
-        
+      
 }

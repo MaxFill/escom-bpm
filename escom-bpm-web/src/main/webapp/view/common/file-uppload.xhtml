@@ -6,8 +6,8 @@
 
     <h:form id="fileUploadFRM" style="font-size: 90%;">
         
-        <p:fileUpload id="file" disabled="#{_explorerBean.treeSelectedNode == null}"
-                      rendered="#{!_explorerBean.isTrashSelected()}"
+        <p:fileUpload id="file" disabled="#{_bean.treeSelectedNode == null}"
+                      rendered="#{!_bean.isTrashSelected()}"
                       styleClass="ui-grid-col-12"
                       allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
                       sizeLimit="#{docBean.maxFileSize}"
@@ -20,9 +20,9 @@
                       label="#{bundle.SelectFileAndCreateDoc}" 
                       cancelLabel="#{bundle.Cancel}"
                       uploadLabel="#{bundle.SaveFiles}"
-                      fileUploadListener="#{_explorerBean.onUploadFile}" 
+                      fileUploadListener="#{_bean.onUploadFile}" 
                       onstart="PF('statusDialog').show()"
-                      oncomplete="PF('statusDialog').hide(); document.getElementById('centerFRM:createItemBtn').click();">
+                      oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createItemBtn').click();">
         </p:fileUpload>
         <pe:tooltip for="file" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
                     styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>

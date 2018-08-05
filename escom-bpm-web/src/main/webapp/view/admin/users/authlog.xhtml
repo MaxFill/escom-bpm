@@ -9,13 +9,6 @@
     <ui:define name="title">
         #{bundle.AuthenticationLog}
     </ui:define>
-
-    <ui:define name="preRendered">
-        <f:metadata>
-            <f:viewAction action="#{authLogBean.onBeforeOpenCard()}"/>
-            <f:viewAction action="#{authLogBean.onAfterFormLoad()}"/>
-        </f:metadata>
-    </ui:define>
     
     <ui:param name="_bean" value="#{authLogBean}"/>
 
@@ -26,46 +19,46 @@
             <h:panelGroup>
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/excel-32.png" width="24" title="#{bundle.ExportToExcel}"/>
-                    <p:dataExporter type="xls" target="centerFRM:tblLog" fileName="#{_bean.formName}" encoding="utf-8"
+                    <p:dataExporter type="xls" target="mainFRM:tblLog" fileName="#{_bean.formName}" encoding="utf-8"
                                     pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/pdf-32.png" width="24" title="#{bundle.ExportToPDF}" />
-                    <pe:exporter type="pdf" target="centerFRM:tblLog" fileName="#{_bean.formName}"
+                    <pe:exporter type="pdf" target="mainFRM:tblLog" fileName="#{_bean.formName}"
                                  preProcessor="#{authLogBean.preProcessPDF}" fontName="Arial" encoding="CP1251"
                                  orientation="#{authLogBean.orientationName}" pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/csv-32.png" width="24" title="#{bundle.ExportToCSV}"/>
-                    <p:dataExporter type="csv" target="centerFRM:tblLog" fileName="#{_bean.formName}" 
+                    <p:dataExporter type="csv" target="mainFRM:tblLog" fileName="#{_bean.formName}" 
                                     pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
 
                 <h:commandLink>
                     <p:graphicImage value="/resources/icon/xml-32.png" width="24" title="#{bundle.ExportToXML}"/>
-                    <p:dataExporter type="xml" target="centerFRM:tblLog" fileName="#{_bean.formName}" 
+                    <p:dataExporter type="xml" target="mainFRM:tblLog" fileName="#{_bean.formName}" 
                                     pageOnly="#{authLogBean.onlyCurPageExp}"/>
                 </h:commandLink>
             </h:panelGroup>
 
             <p:selectBooleanCheckbox value="#{authLogBean.onlyCurPageExp}" itemLabel="#{bundle.OnlyCurrentPage}">
-                <p:ajax update="westFRM"/>
+                <p:ajax update="mainFRM:westFRM"/>
             </p:selectBooleanCheckbox>
 
             <p:selectBooleanButton value="#{authLogBean.orientation}" offLabel="#{bundle.Portret}" onLabel="#{bundle.Landscape}" style="width:70px;" >
-                <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="westFRM"/>
+                <p:ajax listener="#{authLogBean.onChangeOrientation()}" update="mainFRM:westFRM"/>
             </p:selectBooleanButton>
         </p:panelGrid>
     </ui:define>
 
     <ui:define name="menuActions" >
         <p:menuitem icon="ui-icon-search" value="#{bundle.Find}"
-                    onclick="document.getElementById('centerFRM:btnSearche').click();">
+                    onclick="document.getElementById('mainFRM:btnSearche').click();">
         </p:menuitem>
         <p:menuitem icon="ui-icon-trash" value="#{bundle.Clear}"
-                    onclick="document.getElementById('centerFRM:btnClear').click();">
+                    onclick="document.getElementById('mainFRM:btnClear').click();">
         </p:menuitem>
     </ui:define>
 
@@ -73,7 +66,7 @@
 
         <p:commandButton value="#{bundle.Clear}" id="btnClear"
                          actionListener="#{authLogBean.onClearData()}"
-                         update="centerFRM">
+                         update="mainFRM:centerFRM">
             <p:confirm header="#{bundle.ConfirmAction}" message="#{authLogBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
         </p:commandButton>
 
@@ -109,7 +102,7 @@
                                     requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
                         </p:calendar>
                     </p:panelGrid>
-                    <p:commandButton value="#{bundle.Find}" id="btnSearche" update="centerFRM" >
+                    <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM:centerFRM" >
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>

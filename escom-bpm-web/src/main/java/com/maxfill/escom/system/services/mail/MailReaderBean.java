@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.services.mail;
 
-import com.maxfill.dictionary.DictDlgFrmName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -83,7 +83,7 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
 
     @Override
     public String getFormName() {
-        return DictDlgFrmName.FRM_MAIL_READER_SERVICE;
+        return DictFrmName.FRM_MAIL_READER_SERVICE;
     }
 
 }
