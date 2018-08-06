@@ -1,0 +1,84 @@
+62.173.140.9
+fjuM610zVG1X
+ALL
+sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
+
+
+[skills_info posts_count="3" chart_width="363"  chart_height="363" excerpt_count="100"]
+
+Обновление EAR
+1. Заходим на стенд и удаляем файл /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear
+2. Копируем файл командой:
+sudo scp /opt/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
+/* sudo scp /home/maksim/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
+3. Проверяем, что файл скопировался
+4. Заходим на стенде в папку cd /home/compose/wildfly8443 
+ЕСЛИ МЕНЯЛАСЬ БАЗА БЕЗ ЛИКВИБАСЕ, то
+Подключаемся к контейнеру:
+docker exec -i -t wildfly8443 bash
+Подключаемся к mysql командой:
+mysql -uescom -p пароль qwerty
+удаляем схему командой:
+DROP DATABASE scomdb;
+создаём базу данных командой:
+CREATE DATABASE escomdb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+Отключаемся от mysql и от контейнера
+
+5. Останавливаем стенд командой:
+docker-compose stop
+6. На стенде, копируем файл в остановленный контейнер командой:
+docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear storage8443:/opt/wildfly/standalone/deployments/
+если нужно, то копируем и конфигурационные файлы:
+docker cp /home/docker/escom-bpm/datastore/configuration/escom.properties storage8443:/opt/wildfly/standalone/configuration/
+docker cp /home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml storage8443:/opt/wildfly/standalone/configuration
+
+
+7. Запускаем контейнер командой
+docker-compose start
+
+- для пересоздания контейнера выполнить команду:
+docker-compose build
+
+/* *** *** *** *** *** *** /
+escom.properties
+sudo scp /home/maksim/escom-bpm/docker/datastore/configuration/escom.properties root@62.173.140.9:/home/docker/datastore/configuration
+
+
+wildfly.jks
+sudo scp /home/maksim/escom-bpm/ssl/wildfly.jks root@62.173.140.9:/home/docker/datastore/configuration
+
+mysql
+sudo scp -r /home/maksim/escom-bpm/docker/datastore/mysql root@62.173.140.9:/home/docker/datastore/mysql
+
+wildfly
+sudo scp -r /home/maksim/escom-bpm/docker/wildfly root@62.173.140.9:/home/docker/wildfly
+
+datastore DOCKERFILE
+sudo scp -r /home/maksim/escom-bpm/docker/datastore/Dockerfile root@62.173.140.9:/home/docker/datastore
+
+SPHINX
+sudo scp -r /home/maksim/escom-bpm/docker/datastore/sphinx root@62.173.140.9:/home/docker/datastore/sphinx
+
+/* загрузки на сайт */
+sudo scp -r /home/maksim/Загрузки/22.01.2018.tar.gz root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/membership.zip root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/social-login-opencart-opencart-3.x.zip root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/ZENCHAT.zip root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/opencart-3.0.2.0-rs.zip root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/HelpDesk.zip root@62.173.140.9:/home/opencart
+sudo scp -r /home/maksim/Загрузки/advslider-v3-opencart-3x.zip root@62.173.140.9:/home/opencart
+
+/* скачать с сайта */
+sudo scp root@62.173.140.9:/home/opencart/fix_https.ocmod.xml /home/maksim/Загрузки/
+sudo scp root@62.173.140.9:/home/opencart/logo.png /home/maksim/Загрузки/
+sudo scp root@62.173.140.9:/home/opencart/opencart-htaccess.conf /home/maksim/Загрузки/
+sudo scp root@62.173.140.9:/home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml /home/maksim/Загрузки/
+sudo scp root@62.173.140.9:/home/docker/escom-bpm/datastore/escom-bpm* /home/maksim/Загрузки/
+
+Stop
+Linux: $ ./jboss-cli.sh --connect command=:shutdown
+Windows: > jboss-cli.bat --connect command=:shutdown
+
+Restart
+Linux: $ ./jboss-cli.sh --connect command=:reload
+Windows: > jboss-cli.bat --connect command=:reload

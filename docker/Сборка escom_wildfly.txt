@@ -21,7 +21,7 @@ docker exec -i -t wildfly8443 bash
 
 /* если контейнер НЕ работает, то подключаемся так: */
 docker run -it wildfly-img /bin/bash
-docker run -it datastorage-img /bin/bash
+docker run -it storage8443 /bin/bash
 docker run -it bitnami/opencart /bin/bash /bin/bash
 
 docker cp wildfly:/opt/wildfly/standalone/configuration/log* /home/escom/
