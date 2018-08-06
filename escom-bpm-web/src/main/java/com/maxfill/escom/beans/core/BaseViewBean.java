@@ -143,7 +143,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){
-        killBean();
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
     }
@@ -192,7 +191,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             Integer width = Integer.valueOf(params.get("width"));
             Integer height = Integer.valueOf(params.get("height"));
             sessionBean.saveFormSize(getFormName(), width, height);
-        }        
+        }
+        killBean();
     }
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */

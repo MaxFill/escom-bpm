@@ -10,10 +10,19 @@
     <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
     <ui:param name="_frmExpl" value="explorer"/>
     <ui:param name="_frmTree" value="explorer_west"/>
-    <ui:param name="_leftPanelHeader"   value="#{bundle.Sections}"/>
-    <ui:param name="_centerPanelHeader" value="#{_bean.jurnalHeader}"/>
-    <ui:param name="_rightPanelHeader"  value="#{bundle.Searche}"/>
 
+    <ui:define name="centerFormHeader">
+        <p:outputLabel value="#{_bean.jurnalHeader}" />
+    </ui:define>
+    
+    <ui:define name="leftFormHeader">
+        <p:outputLabel value="#{bundle.Sections}" />
+    </ui:define>
+    
+    <ui:define name="rightFormHeader">
+        <p:outputLabel value="#{bundle.Searche}" />
+    </ui:define>
+    
     <ui:define name="initBean">
         #{_bean.setSelectorHeader(_selectorHeader)}
         #{_bean.setExplorerHeader(_explorerHeader)}
@@ -48,10 +57,7 @@
                     rendered="#{_bean.isFavoriteSelected()}"
                     update="mainFRM:centerFRM"
                     oncomplete="initDND()"
-                    actionListener="#{_bean.onDelCheckedFromFavorites()}"/>
-        <p:separator />
-        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help"
-                    actionListener="#{sessionBean.onViewHelp()}"/>
+                    actionListener="#{_bean.onDelCheckedFromFavorites()}"/>        
     </ui:define>
     
     <ui:define name="toolbarComponents" >
@@ -159,8 +165,8 @@
     
     <ui:define name="centerFormContent">        
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                           
-            <ui:include src="/view/templ/tree/tree-navigator.xhtml"/>
-            <ui:include src="/view/templ/expl/expl-table.xhtml"/>
+            <ui:include src="/view/templ/navigator.xhtml"/>
+            <ui:include src="/view/templ/table.xhtml"/>
         </p:panelGrid>
         
         <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>

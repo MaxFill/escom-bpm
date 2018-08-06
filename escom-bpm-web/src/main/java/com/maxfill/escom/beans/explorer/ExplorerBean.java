@@ -1838,15 +1838,15 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     
     @Override
-    public String getFormName() {
+    public String getFormName() {        
         if (isSelectorViewMode()){
             return typeDetail.toLowerCase() + "-selector";
         }
-        return typeDetail.toLowerCase() + "-explorer";
+        return typeDetail.toLowerCase() + "-explorer";       
     }
     
     @Override
     public String getFormHeader() {
-        return getLabelFromBundle("Explorer") + ": " + tableBean.getFormHeader();
+        return explorerHeader;
     }
 }

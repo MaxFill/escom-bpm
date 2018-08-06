@@ -3,7 +3,7 @@
                 xmlns:p="http://primefaces.org/ui"                
                 template="/view/templ/templ-dlg.xhtml">
         
-    <ui:param name="_explorerHeader" value="#{bundle.Rights}"/>
+    <ui:param name="_explorerHeader" value="#{''.concat(bundle.Administation).concat(': ').concat(bundle.Objects)}"/>
     
     <ui:param name="_bean" value="#{metadatesBean}"/>
 
@@ -13,6 +13,14 @@
     <ui:define name="toolbarComponents" >
     </ui:define>
 
+    <ui:define name="centerFormHeader">
+        <p:outputLabel value="#{bundle.Settings}" />
+    </ui:define>
+    
+    <ui:define name="leftFormHeader">
+        <p:outputLabel value="#{bundle.Objects}" />
+    </ui:define>        
+    
     <ui:define name="leftFormContent">
         <p:dataTable value="#{metadatesBean.allItems}" rowKey="#{item.id}" selectionMode="single"
                      selection="#{metadatesBean.selectedObject}" var="item">
@@ -21,8 +29,8 @@
             <p:column headerText="ID" width="15">
                             #{item.id}
             </p:column>
-            <p:column headerText="#{bundle.Objects}">
-                            #{metadatesBean.getBundleName(item)}
+            <p:column headerText="#{bundle.Object}">
+                #{metadatesBean.getBundleName(item)}
             </p:column>
         </p:dataTable>
     </ui:define>

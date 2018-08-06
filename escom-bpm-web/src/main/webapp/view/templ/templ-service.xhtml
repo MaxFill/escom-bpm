@@ -24,11 +24,19 @@
     
     <ui:define name="centerFormContent">
         <ui:include src="/view/services/common/log-events.xhtml"/>
+    </ui:define>       
+    
+    <ui:define name="centerFormHeader">
+        <p:outputLabel value="#{bundle.LogEventHistory}" />
     </ui:define>
     
-    <ui:param name="leftPanelHeader" value="#{bundle.ServiceSchedule}"/>
-    <ui:param name="rightPanelHeader" value="#{bundle.ServiceParams}"/>
-    <ui:param name="centerPanelHeader" value="#{bundle.LogEventHistory}"/>        
+    <ui:define name="leftFormHeader">
+        <p:outputLabel value="#{bundle.ServiceSchedule}" />
+    </ui:define>
+    
+    <ui:define name="rightFormHeader">
+        <p:outputLabel value="#{bundle.ServiceParams}" />
+    </ui:define>
     
     <ui:define name="leftFormContent">
         <ui:include src="/view/services/common/sheduler.xhtml"/>

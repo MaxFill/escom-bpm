@@ -7,10 +7,10 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
-            
+
     <ui:define name="body">
         <ui:insert name="initBean"/>
-        
+
         #{_bean.onBeforeOpenCard()}
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />               
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
@@ -25,14 +25,30 @@
 
                 <p:panelGrid layout="grid" columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">
 
-                    <p:panel id="westFRM" header="#{_leftPanelHeader}" rendered="#{_bean.isWestShow()}" 
-                             styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                    <p:panel id="westFRM" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <ui:insert name="leftFormHeader"/>
+                        </f:facet>
                         <ui:insert name="leftFormContent"/>
                     </p:panel>
 
-                    <p:panel id="centerFRM" header="#{_centerPanelHeader}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                    <p:panel id="centerFRM" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <ui:insert name="centerFormHeader"/>
+                        </f:facet>
                         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                            
-                            <ui:include src="/view/templ/toolbar.xhtml" />
+                            <p:toolbar id="explToolBar">
+                                <f:facet name="left">
+                                    <ui:insert name="toolbarComponents"/>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                        <ui:insert name="menuActions" />  
+                                        <p:separator />
+                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" actionListener="#{sessionBean.onViewHelp()}"/>
+                                    </p:menuButton>
+                                </f:facet>
+                            </p:toolbar>  
                             <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
                                 <p:autoUpdate />
                             </p:messages>
@@ -44,14 +60,16 @@
                         </f:facet>
                     </p:panel>
 
-                    <p:panel id="eastFRM" header="#{_rightPanelHeader}" rendered="#{_bean.isEastShow()}" 
-                             styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                    <p:panel id="eastFRM" rendered="#{_bean.isEastShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <ui:insert name="rightFormHeader"/>
+                        </f:facet>
                         <ui:insert name="rightFormContent"/>
                     </p:panel>
 
                 </p:panelGrid>
             </p:panel>
-                               
+
             <ui:insert name="form_scripts"/>
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
             <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
