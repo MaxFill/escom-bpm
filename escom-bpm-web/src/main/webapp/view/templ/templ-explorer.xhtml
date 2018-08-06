@@ -163,11 +163,9 @@
         <ui:insert name="addToolButtons" />
     </ui:define>    
     
-    <ui:define name="centerFormContent">        
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                           
-            <ui:include src="/view/templ/navigator.xhtml"/>
-            <ui:include src="/view/templ/table.xhtml"/>
-        </p:panelGrid>
+    <ui:define name="centerFormContent">                
+        <ui:include src="/view/templ/navigator.xhtml"/>
+        <ui:include src="/view/templ/table.xhtml"/>        
         
         <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
         <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
