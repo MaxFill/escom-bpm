@@ -40,6 +40,11 @@ public class UsersSessionsBean extends BaseViewBean{
         return DictFrmName.FRM_USER_SESSIONS;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ActiveUsers");
+    }
+    
     /* gets & sets */
 
     public UsersSessions getSelectedSession() {
@@ -48,4 +53,5 @@ public class UsersSessionsBean extends BaseViewBean{
     public void setSelectedSession(UsersSessions selectedSession) {
         this.selectedSession = selectedSession;
     }
+    
 }

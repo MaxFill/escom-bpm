@@ -76,6 +76,10 @@ public class AuthLogBean extends LazyLoadBean{
         return DictFrmName.FRM_AUTH_LOG;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("AuthenticationLog");
+    }
 
     public String getBundleName(String keyBundle){
         if (keyBundle == null) return null;

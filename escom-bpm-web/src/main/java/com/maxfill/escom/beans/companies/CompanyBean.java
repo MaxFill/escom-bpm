@@ -11,7 +11,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentFacade;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.staffs.StaffFacade;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
@@ -37,9 +36,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @EJB
     private CompanyFacade itemsFacade;
     @EJB
-    private DepartmentFacade departmentFacade;
-    @EJB
-    private StaffFacade staffFacade;    
+    private DepartmentFacade departmentFacade;   
     
     @Override
     public CompanyFacade getFacade() {

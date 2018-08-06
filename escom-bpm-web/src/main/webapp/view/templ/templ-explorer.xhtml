@@ -5,29 +5,23 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"               
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/view/templ/templ-dlg.xhtml">
+              
+    <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
+    <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
+    <ui:param name="_frmExpl" value="explorer"/>
+    <ui:param name="_frmTree" value="explorer_west"/>
+    <ui:param name="_leftPanelHeader"   value="#{bundle.Sections}"/>
+    <ui:param name="_centerPanelHeader" value="#{_bean.jurnalHeader}"/>
+    <ui:param name="_rightPanelHeader"  value="#{bundle.Searche}"/>
 
-    <ui:define name="initBeans">
-        <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
-                  
+    <ui:define name="initBean">
         #{_bean.setSelectorHeader(_selectorHeader)}
         #{_bean.setExplorerHeader(_explorerHeader)}
-        #{_bean.setSearcheBean(_searcheBean)}
+        #{_bean.setSearcheBean(_searcheBean)}    
 
         #{_rootBean   != null ? _bean.setRootBean(_rootBean) : ''}
         #{_detailBean != null ? _bean.setTableBean(_detailBean)  : ''}
-        #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}        
-        <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
-        <ui:param name="_frmExpl" value="explorer"/>
-        <ui:param name="_frmTree" value="explorer_west"/>
-     
-    </ui:define>
-
-    <ui:define name="title">
-        #{_bean.jurnalHeader}
-    </ui:define>
-
-    <ui:define name="leftFacet">
-        <p:outputLabel value="#{bundle.Sections}" />
+        #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}
     </ui:define>
     
     <ui:define name="leftFormContent">
@@ -98,9 +92,8 @@
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
 
-        <p:commandButton value="#{_CreateItemLabel}"
+        <p:commandButton id="createItemBtn" value="#{_CreateItemLabel}"
                          title="#{_bean.canCreateItem ? bundle.ForCreateObjectNeedSelectGroup : _CreateItemLabel}" 
-                         icon="ui-icon-document" id="createItemBtn"
                          disabled="#{_bean.canCreateItem}"
                          rendered="#{_treeBean == null or _bean.isShowTree()}"
                          style="#{_bean.selectorViewMode ? 'display: none;' : ''}"
@@ -110,7 +103,7 @@
                     listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
         </p:commandButton>
 
-        <p:commandButton value="#{_CreateGroupLabel}" icon="ui-icon-folder-open"
+        <p:commandButton value="#{_CreateGroupLabel}" 
                          disabled="#{_treeBean != null and _bean.treeSelectedNode == null}"
                          rendered="#{_treeBean != null and _bean.isShowTree()}"
                          actionListener="#{_bean.onCreateTreeItem()}">
@@ -162,11 +155,7 @@
         </p:splitButton>            
 
         <ui:insert name="addToolButtons" />
-    </ui:define>
-    
-    <ui:define name="centerFacet">
-        <p:outputLabel id="centerHeaderLabel" value="#{_bean.jurnalHeader}" />
-    </ui:define>
+    </ui:define>    
     
     <ui:define name="centerFormContent">        
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                           
@@ -211,11 +200,7 @@
                          actionListener="#{sessionBean.openScaningForm()}"> 
             <p:ajax event="dialogReturn" listener="#{_bean.addAttacheFromScan}"/>
         </p:commandButton>
-    </ui:define>
-        
-    <ui:define name="rightFacet">
-        <p:outputLabel value="#{bundle.Searche}" />
-    </ui:define>
+    </ui:define>        
     
     <ui:define name="rightFormContent">
         <ui:include src="/view/templ/templ-searche.xhtml">

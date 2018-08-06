@@ -10,7 +10,7 @@
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_bean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"
+                 styleClass="ui-grid-col-12 without-spaces"
                  sortMode="multiple" sortBy="#{_bean.sortOrder}"
                  selection="#{_bean.checkedItems}"
                  rowKey="#{item.itemKey}">
@@ -74,11 +74,11 @@
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" sortBy="#{item.id}" priority="5">
+        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="5">
             <h:outputText value="#{item.id}"/>
         </p:column>
 
-        <p:column style="text-align: center;" width="90" >
+        <p:column style="text-align: center;" width="95" >
             <p:splitButton  value="#{bundle.Select}"
                             rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" 
                             action="#{_bean.onSelect(item)}">                

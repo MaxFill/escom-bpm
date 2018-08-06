@@ -591,14 +591,18 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         return getFacade().getFRM_NAME();
     }
 
+    @Override
+    public String getFormHeader() {
+        return getMetadatesObj().getBundleJurnalName();
+    }
+    
     /* Получение ссылки на объект метаданных  */
     public Metadates getMetadatesObj() {
         if (metadatesObj == null) {
             metadatesObj = getFacade().getMetadatesObj();
         }
         return metadatesObj;
-    }
-    
+    }    
     
     /**
      * Возвращает список состояний объекта

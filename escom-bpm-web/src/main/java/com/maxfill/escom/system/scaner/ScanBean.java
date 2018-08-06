@@ -48,4 +48,8 @@ public class ScanBean extends BaseViewBean{
     public String getFormName() {
         return DictFrmName.FRM_SCANING;
     }
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Scan");
+    }
 }

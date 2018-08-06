@@ -588,6 +588,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return getFacade().getFRM_NAME().toLowerCase();
     }
 
+    @Override
+    public String getFormHeader() {
+        return makeCardHeader();
+    }
+    
     /* Возвращает пользователя, владельца объекта */
     public User getOwner() { return owner; }
 

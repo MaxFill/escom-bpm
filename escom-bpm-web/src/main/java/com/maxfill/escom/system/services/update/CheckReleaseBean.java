@@ -133,6 +133,11 @@ public class CheckReleaseBean extends BaseViewBean{
         return DictFrmName.FRM_CHECK_RELEASE;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("CheckUpdates");
+    }
+    
     public String getStrDateRelease() {
         return strDateRelease;
     }

@@ -20,33 +20,19 @@
                          actionListener="#{_bean.clearLogEvents()}">
             <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
         </p:commandButton>
-    </ui:define>
-    
-    <ui:define name="centerFacet">
-        <f:facet name="header">  
-            <p:outputLabel value="#{bundle.LogEventHistory}"/>
-        </f:facet> 
-    </ui:define>
+    </ui:define>    
     
     <ui:define name="centerFormContent">
         <ui:include src="/view/services/common/log-events.xhtml"/>
     </ui:define>
     
-    <ui:define name="leftFacet">
-        <f:facet name="header">
-            <p:outputLabel value="#{bundle.ServiceSchedule}"/>
-        </f:facet> 
-    </ui:define>
+    <ui:param name="leftPanelHeader" value="#{bundle.ServiceSchedule}"/>
+    <ui:param name="rightPanelHeader" value="#{bundle.ServiceParams}"/>
+    <ui:param name="centerPanelHeader" value="#{bundle.LogEventHistory}"/>        
     
     <ui:define name="leftFormContent">
         <ui:include src="/view/services/common/sheduler.xhtml"/>
         <p:commandButton id="btnWestSaves" update="mainFRM:westFRM" style="display: none;"/> 
-    </ui:define>
-
-    <ui:define name="rightFacet">
-        <f:facet name="header">  
-            <p:outputLabel value="#{bundle.ServiceParams}"/>
-        </f:facet> 
     </ui:define>
     
     <ui:define name="rightFormContent">

@@ -11,7 +11,6 @@ import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.sheduler.Sheduler;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import javax.ejb.NoSuchObjectLocalException;
@@ -200,12 +199,12 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
     
     @Override
     public String getMainGridColumnStyleClass() {
-        return "3";
+        return "ui-grid-col-3 col-grid-expl, ui-grid-col-6 col-grid-expl, ui-grid-col-3 col-grid-expl";
     }
 
     @Override
     public String getMainGridColumnCount() {
-        return "ui-grid-col-3 col-padding, ui-grid-col-6 col-padding, ui-grid-col-3 col-padding";
+        return "3";
     }
     
     /**

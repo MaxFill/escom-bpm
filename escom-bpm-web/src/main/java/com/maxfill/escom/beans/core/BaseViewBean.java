@@ -27,7 +27,6 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.codehaus.plexus.util.StringUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 
 /**
  * Базовый бин для работы с формами и диалогами
@@ -53,9 +52,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
     
-    protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).
-    
-    protected final LayoutOptions layoutOptions = new LayoutOptions();
+    protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).    
 
     /**
      * Возвращает имя этого бина. (Использется для передачи имени бина в качестве параметра в дочерний бин)
@@ -124,7 +121,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     /**
      * Метод вызывается автоматически после загрузки формы диалога
-     * @param beanId
      */
     public void onAfterFormLoad(){        
     }
@@ -226,6 +222,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         return "ui-grid-col-12 col-padding";        
     }
     
+    public abstract String getFormHeader();
+    
     /* ПРОЧИЕ */
     
     public User getCurrentUser(){
@@ -262,10 +260,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     }
     
     /* GETS & SETS */
-
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }    
    
     public String getBeanId() {
         return beanId;

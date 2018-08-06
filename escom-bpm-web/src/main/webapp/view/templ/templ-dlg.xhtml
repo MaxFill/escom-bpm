@@ -6,9 +6,11 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ.xhtml">
 
-    <ui:param name="_canNotClose" value="#{_canNotClose == null ? false : _canNotClose}"/>
-
+    <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
+            
     <ui:define name="body">
+        <ui:insert name="initBean"/>
+        
         #{_bean.onBeforeOpenCard()}
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />               
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
@@ -17,31 +19,39 @@
                       onstart="document.getElementById('mainFRM:btnClose').click();">
             </p:hotkey>
 
-            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
-                <p:autoUpdate />
-            </p:messages>
+            <p:panel header="#{_bean.getFormHeader()}" closable="#{_canClose}" closeSpeed="0" rendered="#{_bean != null}"
+                     styleClass="ui-grid-col-12 ui-draggable without-spaces" style="height: 100%;" >
+                <p:ajax event="close" listener="#{_bean.onCloseCard()}" immediate="true" onstart="sendFormSize();"/>
 
-            <p:panelGrid columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">                        
+                <p:panelGrid layout="grid" columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">
 
-                <h:panelGrid id="westFRM" columns="1" columnClasses="ui-grid-col-12" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces">
-                    <ui:insert name="leftFacet"/>
-                    <ui:insert name="leftFormContent"/>
-                </h:panelGrid>
+                    <p:panel id="westFRM" header="#{_leftPanelHeader}" rendered="#{_bean.isWestShow()}" 
+                             styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <ui:insert name="leftFormContent"/>
+                    </p:panel>
 
-                <p:panelGrid id="centerFRM" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                    <ui:include src="/view/templ/toolbar.xhtml" />
-                    <ui:insert name="centerFacet"/>
-                    <ui:insert name="centerFormContent"/>
+                    <p:panel id="centerFRM" header="#{_centerPanelHeader}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                            
+                            <ui:include src="/view/templ/toolbar.xhtml" />
+                            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                                <p:autoUpdate />
+                            </p:messages>
+                            <ui:insert name="centerFormContent"/>
+                            <ui:insert name="extCenterPanel"/> 
+                        </p:panelGrid>
+                        <f:facet name="footer">
+                            <ui:insert name="centerFormFooter"/>
+                        </f:facet>
+                    </p:panel>
+
+                    <p:panel id="eastFRM" header="#{_rightPanelHeader}" rendered="#{_bean.isEastShow()}" 
+                             styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <ui:insert name="rightFormContent"/>
+                    </p:panel>
+
                 </p:panelGrid>
-
-                <p:panelGrid id="eastFRM" columns="1" columnClasses="ui-grid-col-12" rendered="#{_bean.isEastShow()}" styleClass="ui-grid-col-12 without-spaces">
-                    <ui:insert name="rightFacet"/>
-                    <ui:insert name="rightFormContent"/>
-                </p:panelGrid>
-
-            </p:panelGrid>
-
-            <ui:insert name="extCenterPanel"/>                    
+            </p:panel>
+                               
             <ui:insert name="form_scripts"/>
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
             <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
@@ -68,10 +78,19 @@
             .ui-tabs .ui-tabs-panel{
                 padding: 0em 1.4em !important;
             }
-            ul.ui-menu-child {
+            .ul.ui-menu-child {
                 white-space: nowrap;
                 width: auto !important;
             }
+            .ui-panel-content, .ui-widget-content{
+                padding-top: 0.1em !important;
+                padding-right: 0.1em !important;
+                padding-bottom: 0.1em !important;
+                padding-left: 0.1em !important; 
+            }            
+            .ui-dialog-titlebar > .ui-widget-header{
+                display: none !important;
+            }            
         </style>
     </ui:define>
 

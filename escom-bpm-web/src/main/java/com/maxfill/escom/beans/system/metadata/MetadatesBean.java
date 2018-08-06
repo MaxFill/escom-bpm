@@ -238,6 +238,11 @@ public class MetadatesBean extends BaseViewBean{
         return DictFrmName.FRM_OBJECT_EXPL;
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Objects");
+    }
+    
     /* *** GETS & SETS *** */
 
     public List <State> getObjectStates() {

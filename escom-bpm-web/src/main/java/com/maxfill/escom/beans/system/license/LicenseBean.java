@@ -54,5 +54,10 @@ public class LicenseBean extends BaseViewBean{
     public String getFormName(){
         return DictFrmName.FRM_AGREE_LICENSE;
     }
-      
+     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("LicenseAgreement");
+    }
+    
 }

@@ -58,5 +58,9 @@ public class AddAttacheBean extends BaseViewBean<BaseView>{
     public void setDoc(Doc doc) {
         this.doc = doc;
     }
-          
+      
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ADD_VERSION");
+    }    
 }

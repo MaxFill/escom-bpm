@@ -110,4 +110,8 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         return DictFrmName.FRM_DOC_VIEWER;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("View");
+    }
 }

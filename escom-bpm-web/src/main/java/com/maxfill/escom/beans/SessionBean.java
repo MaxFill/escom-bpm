@@ -429,16 +429,35 @@ public class SessionBean implements Serializable{
         options.put("modal", true);
         options.put("width", formSize.a);
         options.put("height", formSize.b);
-        options.put("minWidth", 800);
+        options.put("minWidth", 900);
         options.put("minHeight", 600);
-        options.put("maximizable", true);
+        options.put("maximizable", false);
+        options.put("minimizable", false);
         options.put("closable", false);
         options.put("closeOnEscape", false);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
     }
-        
+    
+    public void openModalDialogFrm(String frmName, Map<String, List<String>> paramsMap){
+        Tuple formSize = getFormSize(frmName);
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", formSize.a);
+        options.put("height", formSize.b);
+        options.put("minWidth", 900);
+        options.put("minHeight", 600);
+        options.put("maximizable", false);
+        options.put("minimizable", false);
+        options.put("closable", false);
+        options.put("closeOnEscape", false);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
+    }
+    
     /**
      * Открытие формы монитора контроля процессов
      */
@@ -463,7 +482,7 @@ public class SessionBean implements Serializable{
 
     /* Открытие окна просмотра лицензии */
     public void openLicenseForm(){        
-        openDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
+        openModalDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
     }
     
     /* Открытие формы нового почтового сообщения  */
@@ -519,7 +538,6 @@ public class SessionBean implements Serializable{
         printService.doPrint(dataReport, parameters, reportName);
         onViewReport(reportName);
     }
-
     
     /* Открытие формы списка сообщений пользователя */
     public void openUserMessagesForm(String typeMsg){        

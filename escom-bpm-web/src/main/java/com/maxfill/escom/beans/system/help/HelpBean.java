@@ -56,4 +56,8 @@ public class HelpBean extends BaseViewBean<BaseView>{
         return DictFrmName.FRM_HELP;
     }
       
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ManualBook");
+    }
 }

@@ -10,8 +10,8 @@
                 <ui:insert name="menuActions" />
                 <p:separator />
                 <p:menuitem icon="ico_close" value="#{bundle.Close}"
-                            disabled="#{_canNotClose}" immediate="true" process="@this"
-                            action="#{_bean.onCloseCard()}">
+                            disabled="#{!_canClose}" immediate="true" process="@this"
+                            actionListener="#{_bean.onCloseCard()}">
                 </p:menuitem>
             </p:menuButton>
             <span class="ui-separator">
@@ -21,12 +21,7 @@
         </f:facet>
 
         <f:facet name="right">
-            <p:commandButton id="btnClose" icon="ui-icon-circle-close" style="float:right;"
-                             title="#{bundle.Close}" immediate="true"
-                             disabled="#{_canNotClose}"
-                             actionListener="#{_bean.onCloseCard()}"
-                             onclick="sendFormSize();">
-            </p:commandButton>
+            <ui:insert name="RightToolbarElements"/>
         </f:facet>
     </p:toolbar>    
 

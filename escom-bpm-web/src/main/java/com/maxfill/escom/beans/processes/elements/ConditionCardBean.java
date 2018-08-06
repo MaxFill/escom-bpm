@@ -84,5 +84,8 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
         this.editedItem = editedItem;
     }
 
-    
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Condition");
+    }
 }

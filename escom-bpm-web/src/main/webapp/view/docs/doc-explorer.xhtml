@@ -5,11 +5,7 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:pe="http://primefaces.org/ui/extensions"
-    template="/view/templ/templ-explorer.xhtml">  
-    
-    <ui:define name="title">
-        <h:outputText value="#{bundle.FolderExplorer}"></h:outputText>
-    </ui:define>
+    template="/view/templ/templ-explorer.xhtml">           
 
     <ui:param name="_bean"        value="#{folderExplBean}"/>
     <ui:param name="_detailBean"  value="#{docBean}" />
@@ -27,7 +23,7 @@
     <ui:param name="_lbGroupName"      value="#{bundle.Folders}"/>  
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateFolder}" />
     <ui:param name="_CreateItemLabel"  value="#{bundle.CreateDoc}" />
-    <ui:param name="_updates" value="fileUploadFRM" />
+    <ui:param name="_updates"          value="mainFRM:fileUploadFRM" />
     
     <!-- специфичные поля поиска -->
     <ui:define name="searche">         
@@ -228,7 +224,7 @@
         </p:menuButton>        
     </ui:define>
     
-    <ui:define name="extCenterPanel">
+    <ui:define name="centerFormFooter">
         <ui:include src="/view/common/file-uppload.xhtml" />
     </ui:define>
 </ui:composition>

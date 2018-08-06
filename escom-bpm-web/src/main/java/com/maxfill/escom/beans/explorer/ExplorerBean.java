@@ -537,7 +537,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* ФИЛЬТР: Формирует дерево фильтров */
     public TreeNode getFilterTree() {
-        if (filterTree == null) {
+        if (filterTree == null && tableBean != null) {
             filterTree = new DefaultTreeNode("Root", null);
             filterTree.setExpanded(true);
             
@@ -800,9 +800,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (tree == null){
             if (rootBean != null){
                 tree = rootBean.makeTree();
-            } else {
-                tree = treeBean.makeTree();
-            }
+            } else 
+                if (treeBean != null){
+                    tree = treeBean.makeTree();
+                }            
         }
         return tree;
     }    
@@ -1520,6 +1521,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* Определяет доступность кнопки "Создать" на панели обозревателя */
     public boolean getCanCreateItem(){
+        if (tableBean == null) return false;
         return tableBean.canCreateItem(treeSelectedNode);                
     }
     
@@ -1828,7 +1830,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     @Override
     public String getMainGridColumnStyleClass() {
-        return "ui-grid-col-3 col-padding, ui-grid-col-6 col-padding, ui-grid-col-3 col-padding";
+        return "ui-grid-col-2 col-grid-expl, ui-grid-col-7 col-grid-expl, ui-grid-col-3 col-grid-expl";
     }
     @Override
     public String getMainGridColumnCount() {
@@ -1841,5 +1843,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             return typeDetail.toLowerCase() + "-selector";
         }
         return typeDetail.toLowerCase() + "-explorer";
+    }
+    
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Explorer") + ": " + tableBean.getFormHeader();
     }
 }

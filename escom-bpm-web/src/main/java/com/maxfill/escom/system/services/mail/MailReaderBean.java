@@ -86,4 +86,8 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
         return DictFrmName.FRM_MAIL_READER_SERVICE;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ServiceReaderEmail");
+    }
 }

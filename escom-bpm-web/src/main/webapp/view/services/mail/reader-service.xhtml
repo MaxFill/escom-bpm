@@ -5,11 +5,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 template="/view/templ/templ-service.xhtml">
 
-    <ui:param name="_bean" value="#{mailReaderBean}"/>
-    
-    <ui:define name="title">
-        #{bundle.ServiceReaderEmail}
-    </ui:define>
+    <ui:param name="_bean" value="#{mailReaderBean}"/>    
 
     <ui:define name="serviceParams">
         <p:outputLabel value="#{bundle.MailServer}"/>

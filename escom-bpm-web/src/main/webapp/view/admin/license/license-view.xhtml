@@ -5,12 +5,8 @@
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
                  template="/view/templ/templ-dlg.xhtml">
     
-    <ui:param name="_bean" value="#{licenseBean}"/>
-    <ui:param name="_canNotClose" value="#{!sessionBean.userSettings.agreeLicense}"/>
-
-    <ui:define name="title">
-        #{bundle.LicenseAgreement}
-    </ui:define>
+    <ui:param name="_bean"       value="#{licenseBean}"/>
+    <ui:param name="_canClose"   value="#{sessionBean.userSettings.agreeLicense}"/>   
 
     <ui:define name="menuActions" >
         <p:menuitem icon="ui-icon-circle-check"
@@ -29,7 +25,9 @@
 
     <ui:define name="centerFormContent">
         <pe:documentViewer value="#{licenseBean.content}" height="750" style="width: 100%;"/>
-
+    </ui:define>
+    
+    <ui:define name="centerFormFooter">
         <h:panelGroup id="groupConfirm">
             <p:selectBooleanCheckbox value="#{sessionBean.userSettings.agreeLicense}"
                                      disabled="#{sessionBean.userSettings.agreeLicense}"

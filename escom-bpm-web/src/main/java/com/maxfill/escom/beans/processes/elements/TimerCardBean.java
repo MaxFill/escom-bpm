@@ -83,6 +83,11 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
         return DictFrmName.FRM_TIMER;
     }     
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Timer");
+    }
+    
     /**
      * Формирует локализованное наименование дня недели по его значению
      * @param day

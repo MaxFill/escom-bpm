@@ -3,11 +3,7 @@
                 xmlns:p="http://primefaces.org/ui"                
                 template="/view/templ/templ-dlg.xhtml">
         
-    <ui:param name="_explorerHeader" value="#{bundle.Rights}"/>        
-
-    <ui:define name="title">
-        #{bundle.Scheduler}
-    </ui:define>
+    <ui:param name="_explorerHeader" value="#{bundle.Rights}"/>
     
     <ui:param name="_bean" value="#{metadatesBean}"/>
 
@@ -20,7 +16,7 @@
     <ui:define name="leftFormContent">
         <p:dataTable value="#{metadatesBean.allItems}" rowKey="#{item.id}" selectionMode="single"
                      selection="#{metadatesBean.selectedObject}" var="item">
-            <p:ajax event="rowSelect" update="frmFldDefRight:mainGrid" listener="#{metadatesBean.onSelectedItem}"  />                
+            <p:ajax event="rowSelect" update="mainFRM:mainGrid" listener="#{metadatesBean.onSelectedItem}"  />                
 
             <p:column headerText="ID" width="15">
                             #{item.id}

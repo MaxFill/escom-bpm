@@ -4,11 +4,10 @@
 
     <!-- стандартный обозреватель/селектор -->
     
-    <ui:param name="_bean" value="#{explorerTreeBean}" />
-    <ui:param name="_bean" value="#{explorerTreeBean}" />
-    <ui:param name="_treeBean" value="#{docTypeGroupsBean}" />   
+    <ui:param name="_bean"       value="#{explorerTreeBean}" />
+    <ui:param name="_treeBean"   value="#{docTypeGroupsBean}" />   
     <ui:param name="_detailBean" value="#{docTypeBean}" /> 
-    <ui:param name="_searcheBean" value="#{docTypeBean}"/>
+    <ui:param name="_searcheBean" value="#{_detailBean}"/>
     
     <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('DocTypeSelector')}"/>
     <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('DocsTypes')}"/>

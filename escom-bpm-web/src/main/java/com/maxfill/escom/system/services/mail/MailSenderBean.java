@@ -79,4 +79,9 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     public String getFormName() {
         return DictFrmName.FRM_MAIL_SENDER_SERVICE;
     }
+
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("MailService");
+    }
 }

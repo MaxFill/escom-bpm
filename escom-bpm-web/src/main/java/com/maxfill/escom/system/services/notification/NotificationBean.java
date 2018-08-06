@@ -50,6 +50,11 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
         return DictFrmName.FRM_NOTIFICATION;
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ServiceNotification");
+    }
+    
     /**
      * Проверка работы службы
      */

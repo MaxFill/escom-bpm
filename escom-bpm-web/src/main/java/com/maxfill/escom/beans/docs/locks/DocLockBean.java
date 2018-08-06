@@ -14,7 +14,6 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import java.text.DateFormat;
@@ -61,6 +60,11 @@ public class DocLockBean extends BaseViewBean<BaseView>{
         }
     }
 
+    @Override
+    public String getFormHeader() {
+        return isAttacheLock() ? getLabelFromBundle("UnLock") : getLabelFromBundle("SettingLock");
+    }
+    
     @Override
     public String getFormName() {
         return DictFrmName.FRM_DOC_LOCK;

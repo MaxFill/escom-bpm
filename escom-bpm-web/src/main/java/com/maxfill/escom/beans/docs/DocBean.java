@@ -314,4 +314,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         this.documentId = documentId;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Document");
+    }
 }

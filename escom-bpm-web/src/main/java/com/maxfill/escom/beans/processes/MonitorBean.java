@@ -58,6 +58,11 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     @Inject
     private TaskBean taskBean;
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ProcessExecutionControl");
+    }
+    
     /**
      * Обновление данных журнала процессов
      */

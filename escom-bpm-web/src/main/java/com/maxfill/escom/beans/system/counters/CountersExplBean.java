@@ -61,4 +61,8 @@ public class CountersExplBean extends BaseViewBean{
         this.selected = selected;
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("CountersNumbers");
+    }
 }

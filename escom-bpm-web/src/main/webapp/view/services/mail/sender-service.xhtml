@@ -6,11 +6,7 @@
                 template="/view/templ/templ-service.xhtml">
 
     <ui:param name="_bean" value="#{mailSenderBean}"/>
-    
-    <ui:define name="title">
-        #{bundle.MailService}
-    </ui:define>
-
+            
     <ui:define name="serviceParams">        
         <p:inputText id="server" style="width: 100%;"
                      title="#{bundle.MailServer}"

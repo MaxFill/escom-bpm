@@ -82,4 +82,8 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
         this.rezultUpdate = rezultUpdate;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Administation");
+    }
 }

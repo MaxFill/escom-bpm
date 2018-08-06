@@ -60,5 +60,9 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
     public void setEditedItem(ExitElem editedItem) {
         this.editedItem = editedItem;
     }
-        
+    
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("ElementExit");
+    }
 }

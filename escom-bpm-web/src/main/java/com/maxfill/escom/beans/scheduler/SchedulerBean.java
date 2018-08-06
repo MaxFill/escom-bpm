@@ -44,6 +44,11 @@ public class SchedulerBean extends BaseViewBean {
                 .forEach(task-> eventModel.addEvent(new SchedulerTask(task)));
     };    
   
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Scheduler");
+    }
+    
     /**
      * Обработка события создания нового поручения
      * @param beanId

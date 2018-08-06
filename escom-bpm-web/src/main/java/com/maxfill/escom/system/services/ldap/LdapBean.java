@@ -31,6 +31,11 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
     @EJB
     private LdapTimer ldapTimer;   
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("LoadLdapUsers");
+    }
+    
     /**
      * Тест получения пользователей из LDAP
      */

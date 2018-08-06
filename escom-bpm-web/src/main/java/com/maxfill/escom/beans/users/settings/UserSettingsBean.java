@@ -32,6 +32,11 @@ public class UserSettingsBean extends BaseViewBean{
     private String repeatePassword;
 
     @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("PersonalSettings");
+    }
+    
+    @Override
     public void onAfterFormLoad() {
         User user = sessionBean.getCurrentUser();
         if (user.isNeedChangePwl()) {

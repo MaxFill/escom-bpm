@@ -1,12 +1,9 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
-                 xmlns:pe="http://primefaces.org/ui/extensions"
-                 xmlns:h="http://xmlns.jcp.org/jsf/html">
-
-    <h:form id="fileUploadFRM" style="font-size: 90%;">
+                 xmlns:pe="http://primefaces.org/ui/extensions">
         
-        <p:fileUpload id="file" disabled="#{_bean.treeSelectedNode == null}"
+        <p:fileUpload id="fileUploadFRM" disabled="#{_bean.treeSelectedNode == null}"
                       rendered="#{!_bean.isTrashSelected()}"
                       styleClass="ui-grid-col-12"
                       allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
@@ -24,9 +21,7 @@
                       onstart="PF('statusDialog').show()"
                       oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createItemBtn').click();">
         </p:fileUpload>
-        <pe:tooltip for="file" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
+        <pe:tooltip for="fileUploadFRM" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
                     styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
-
-    </h:form>
     
 </ui:composition>

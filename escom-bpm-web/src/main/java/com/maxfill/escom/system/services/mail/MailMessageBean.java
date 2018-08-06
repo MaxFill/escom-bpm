@@ -241,4 +241,8 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
         return DictFrmName.FRM_MAIL_MESSAGE;
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("MailMessage");
+    }
 }

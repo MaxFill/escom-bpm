@@ -130,4 +130,9 @@ public class UserMsgBean extends LazyLoadBean {
         taskBean.prepEditItem(selectedMessages.getTask(), getParamsMap());
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Messages");
+    }
+    
 }

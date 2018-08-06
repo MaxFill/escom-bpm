@@ -25,6 +25,11 @@ public class MailBoxBean extends BaseViewBean{
         return DictFrmName.FRM_MAIL_BOX;
     }
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("MessagesForSent");
+    }
+    
     public void refreshMessages(){
         messages = null;
     }

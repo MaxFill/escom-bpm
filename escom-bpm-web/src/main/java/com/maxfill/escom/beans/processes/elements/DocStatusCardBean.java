@@ -104,5 +104,9 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         this.selectedState = selectedState;
     }
 
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("SetDocStatus");
+    }
       
 }

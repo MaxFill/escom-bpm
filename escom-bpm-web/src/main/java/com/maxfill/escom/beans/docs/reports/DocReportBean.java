@@ -12,44 +12,7 @@ import com.maxfill.utils.DateUtils;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;import java.util.Map;
-;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.Tuple;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.primefaces.model.TreeNode;
-import org.primefaces.model.chart.PieChartModel;import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.Tuple;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.primefaces.model.TreeNode;
-import org.primefaces.model.chart.PieChartModel;import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.Tuple;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.primefaces.model.TreeNode;
-import org.primefaces.model.chart.PieChartModel;import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -182,5 +145,8 @@ public class DocReportBean extends BaseReportBean{
         return reportData;
     }
     
-    
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Report");
+    }
 }

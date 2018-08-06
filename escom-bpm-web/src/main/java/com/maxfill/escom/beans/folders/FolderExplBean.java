@@ -37,7 +37,6 @@ import javax.inject.Named;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TabChangeEvent;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.TreeNode;
 
 /* Расширение контролёра обозревателя архива */
@@ -283,6 +282,11 @@ public class FolderExplBean extends ExplorerTreeBean{
     
     /* GETS & SETS */
     
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("DocsExplorer");
+    }
+    
     /* Формирование дерева процессов */
     public TreeNode getProcTree() {
         if (procTree == null){            
@@ -297,5 +301,5 @@ public class FolderExplBean extends ExplorerTreeBean{
     public void setProcSelectedNode(TreeNode procSelectedNode) {
         this.procSelectedNode = procSelectedNode;
     }
-    
+        
 }
