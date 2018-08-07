@@ -136,8 +136,13 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         beanId = this.toString();
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        if (params.containsKey(SysParams.PARAM_BEAN_ID)){
+           sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
+        }
+        // Это отладка. TO DO удалить позже..
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);   
+        // 
         doBeforeOpenCard(params);
     }
     

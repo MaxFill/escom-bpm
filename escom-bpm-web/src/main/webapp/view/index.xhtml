@@ -25,6 +25,8 @@
 
         <h:form id="mainFRM">            
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
+            <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
+            <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
                         
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
@@ -55,8 +57,7 @@
             
             <p:toolbar >
                 <f:facet name="left">
-                    <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
-                    <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />                     
+                    <p:outputLabel value="#{sessionBean.currentUser.fullName}"/>                     
                 </f:facet>
                 <f:facet name="right">
                     <p:menuButton value="#{bundle.Help}">
@@ -189,26 +190,29 @@
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:outputLabel value="#{sessionBean.getCurrentUserPost().nameEndElipse}"/>
-                            <p:outputLabel value="#{sessionBean.currentUser.shortFIO}"/> 
-                            
-                            <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
-                                           actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_SCHEDULER)}"
-                                           oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-                            
-                            <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
-                                           actionListener="#{sessionBean.openSettingsForm()}"/>
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage value="/resources/icon/timer-32.png"/>  
+                                <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
+                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_SCHEDULER)}"
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+
+                                <p:graphicImage value="/resources/icon/settings-32.png"/>  
+                                <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
+                                               actionListener="#{sessionBean.openSettingsForm()}"/>
+                            </p:panelGrid> 
                             <p:separator />
-                            <p:outputLabel value="#{bundle.ChooseTheme}"/>
-                            <p:themeSwitcher effect="fade" var="t">
-                                <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
-                                <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item}" itemValue="#{item}"/>
-                                <p:column>
-                                    <h:outputText value="#{t}"/>
-                                </p:column>
-                                <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
-                            </p:themeSwitcher>
+                            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                                <p:outputLabel value="#{bundle.ChooseTheme}"/>
+                                <p:themeSwitcher effect="fade" var="t">
+                                    <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
+                                    <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item}" itemValue="#{item}"/>
+                                    <p:column>
+                                        <h:outputText value="#{t}"/>
+                                    </p:column>
+                                    <p:ajax global="false" listener="#{sessionBean.saveTheme}"/>
+                                </p:themeSwitcher>
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>
 

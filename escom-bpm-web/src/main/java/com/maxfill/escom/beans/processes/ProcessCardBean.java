@@ -271,7 +271,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         loadModel(scheme);
         onItemChange(); 
         setTabActiveIndex(1);
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:diagramm");
         addElementContextMenu();
     }      
     
@@ -335,7 +335,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Перерисовка модели на странице формы
      */
     public void modelRefresh(){        
-        PrimeFaces.current().ajax().update("process:mainTabView:diagramm");
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
         }
@@ -435,7 +435,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     public void onElementOpenClick(){
         onElementClicked();        
-        PrimeFaces.current().executeScript("document.getElementById('process:btnOpenElement').click();");
+        PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnOpenElement').click();");
     }
 
     /**
@@ -499,7 +499,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         try { 
             copiedElement = elem;
             BeanUtils.copyProperties(copiedElement, baseElement);
-            PrimeFaces.current().executeScript("refreshContextMenu('process:mainTabView:diagramm');");
+            PrimeFaces.current().executeScript("refreshContextMenu('mainFRM:mainTabView:diagramm');");
             MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);        
@@ -587,7 +587,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
                 onItemChange();
                 Element task = model.findElement(baseElement.getUid());
                 task.setStyleClass(baseElement.getStyle());
-                PrimeFaces.current().ajax().update("process:mainTabView:concorderList");      
+                PrimeFaces.current().ajax().update("mainFRM:mainTabView:concorderList");      
                 modelRefresh();
                 break;
             }
@@ -1087,15 +1087,15 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-        PrimeFaces.current().executeScript("addContextMenu('process:mainTabView:diagramm')");
+        PrimeFaces.current().executeScript("addContextMenu('mainFRM:mainTabView:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
-            sb.append("'process:mainTabView:diagramm-").append(element.getId()).append("', "); 
+            sb.append("'mainFRM:mainTabView:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("])");      
-        PrimeFaces.current().executeScript(sb.toString());       
+        PrimeFaces.current().executeScript(sb.toString());
     }
     
     @Override

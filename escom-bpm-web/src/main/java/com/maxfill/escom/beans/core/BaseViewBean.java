@@ -51,10 +51,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     private int tabActiveIndex = 0;
     protected boolean isItemChange;               //признак изменения записи
         
-    protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
-    
+    protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки   
     protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).    
-
+    protected String sourceBeanId;
+    
     /**
      * Возвращает имя этого бина. (Использется для передачи имени бина в качестве параметра в дочерний бин)
      * @return - String имя бина
@@ -90,9 +90,9 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         if (params.size() <= 1){
             sessionBean.killBean(getBeanName(), beanId);
-        } else  {
+        } else  {            
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
-                String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
+                sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
                 if (StringUtils.isNotEmpty(sourceBeanId)){                 
                     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
@@ -268,5 +268,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public void setSourceItem(BaseDict sourceItem) {
         this.sourceItem = sourceItem;
     }
-      
+
+    public String getSourceBeanId() {
+        return sourceBeanId;
+    }      
 }

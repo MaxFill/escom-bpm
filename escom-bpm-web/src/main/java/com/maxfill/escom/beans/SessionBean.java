@@ -553,7 +553,7 @@ public class SessionBean implements Serializable{
      */
     public Map<String, List<String>> getParamsMap(){
         Map<String, List<String>> paramsMap = new HashMap<>();        
-        paramsMap.put(SysParams.PARAM_BEAN_ID, Collections.singletonList(""));
+        paramsMap.put(SysParams.PARAM_BEAN_ID, Collections.singletonList(this.toString()));
         paramsMap.put(SysParams.PARAM_BEAN_NAME, Collections.singletonList(""));
         return paramsMap;
     }

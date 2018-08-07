@@ -86,18 +86,18 @@
                                   uploadLabel="#{bundle.SaveFiles}"
                                   fileUploadListener="#{processCardBean.onUploadFile}"                           
                                   onstart="PF('statusDialog').show()"
-                                  oncomplete="PF('statusDialog').hide(); document.getElementById('process:mainTabView:btnAddFile').click();">
+                                  oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:mainTabView:btnAddFile').click();">
                     </p:fileUpload> 
                     <p:commandButton id="btnAddFile" style="display: none;"  
                                  actionListener="#{processCardBean.onAddFile()}"
-                                 update="process:mainTabView:tblDocs"> 
+                                 update="mainFRM:mainTabView:tblDocs"> 
                     </p:commandButton>
                     <p:spacer width="10"/>
                     <p:commandButton id="btnAddDoc" value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"
                                      style="float:right;"
                                      rendered="#{!processCardBean.isReadOnly()}"
                                      actionListener="#{docBean.onManySelectItem()}"> 
-                        <p:ajax event="dialogReturn" listener="#{processCardBean.onDocsSelected}" update="process:mainTabView:tblDocs"/>
+                        <p:ajax event="dialogReturn" listener="#{processCardBean.onDocsSelected}" update="mainFRM:mainTabView:tblDocs"/>
                     </p:commandButton>
                 </h:panelGroup>
             </p:panelGrid>
