@@ -39,9 +39,9 @@
                 </p:selectOneMenu>
 
                 <p:splitButton  icon="ui-icon-extlink" disabled="#{_disabled}" title="#{bundle.Select}"
-                                onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btn').click();">
+                                onclick="document.getElementById('mainFRM:mainTabView:#{_itemPanel}_btn').click();">
                     <p:menuitem icon="ui-icon-newwin" value="#{bundle.OpenCard}"
-                                onclick="document.getElementById('#{_frm}:mainTabView:#{_itemPanel}_btnOpenCard').click();"
+                                onclick="document.getElementById('mainFRM:mainTabView:#{_itemPanel}_btnOpenCard').click();"
                                 disabled="#{_disabled or _itemValue == null}"/>
                     <p:separator/>
                     <p:menuitem icon="ui-icon-close" value="#{bundle.ClearField}"

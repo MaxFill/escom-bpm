@@ -13,13 +13,10 @@
     <ui:define name="specActionMenu">
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
                     disabled="#{processCardBean.isReadOnly()}"
-                    onclick="document.getElementById('#{_frm}:btnRun').click();"/>
+                    onclick="document.getElementById('mainFRM:btnRun').click();"/>
         <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
                     disabled="#{processCardBean.isDisableBtnStop()}"
-                    onclick="document.getElementById('#{_frm}:btnStop').click();"/>
-    </ui:define>
-    
-    <ui:define name="specSubMenu" >
+                    onclick="document.getElementById('mainFRM:btnStop').click();"/>
     </ui:define>
     
     <ui:define name="specToolButtons">
@@ -28,7 +25,7 @@
         <p:spacer width="15"/>
         <p:commandButton id="btnRun" value="#{bundle.Run}" title="#{bundle.StartProcess}" icon="ui-icon-play"
                         disabled="#{processCardBean.isReadOnly()}"
-                        update="#{_frm}"
+                        update="mainFRM"
                         actionListener="#{processCardBean.onRun()}"
                         oncomplete="return itemChange = 0;">
             <f:param name="isRequired" value="true"/>
@@ -36,7 +33,7 @@
         <p:spacer width="2"/>
         <p:commandButton id="btnStop" value="#{bundle.Stop}" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
                         disabled="#{processCardBean.isDisableBtnStop()}"
-                        update="#{_frm}" 
+                        update="mainFRM" 
                         actionListener="#{processCardBean.onStop()}"
                         oncomplete="return itemChange = 0;">
             <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
@@ -127,7 +124,7 @@
                    <p:column headerText="#{bundle.Concorder}" sortBy="#{task.planExecDate}">                        
                        <p:commandLink value="#{task.owner.nameEndElipse}" title="#{bundle.Open}"
                                       actionListener="#{processCardBean.setCurrentTask(task)}"
-                                      oncomplete="document.getElementById('#{_frm}:btnOpenTask').click();"/>                        
+                                      oncomplete="document.getElementById('mainFRM:btnOpenTask').click();"/>                        
                    </p:column>
 
                    <p:column headerText="#{bundle.Term}" width="90" sortBy="#{task.planExecDate}">

@@ -15,7 +15,7 @@
             <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                              icon="#{'ico_'.concat(result.getIconName())}"
                              disabled="#{!taskCardBean.haveRightExec}"
-                             update="#{_frm}"
+                             update="mainFRM"
                              actionListener="#{taskCardBean.onExecute(result)}"
                              oncomplete="return itemChange = 0;">
                 <f:param name="isRequired" value="true"/>

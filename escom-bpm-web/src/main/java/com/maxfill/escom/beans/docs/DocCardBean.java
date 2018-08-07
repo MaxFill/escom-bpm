@@ -498,7 +498,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             closeItemForm(SysParams.EXIT_NEED_UPDATE);
         } else {
             setTabActiveIndex(1);
-            PrimeFaces.current().ajax().update(getFormName()+":mainTabView");
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView");
         }
     }
     

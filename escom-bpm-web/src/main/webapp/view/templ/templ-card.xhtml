@@ -1,141 +1,68 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                xmlns:pe="http://primefaces.org/ui/extensions"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-dlg.xhtml">
 
-    <ui:param name="_frm" value="#{_bean.getFormName()}"/>
-
-    <ui:define name="title">
-        #{_bean.makeCardHeader()}
+    <ui:define name="menuActions" >
+        <ui:insert name="specActionMenu" />
+        <p:separator />        
+        <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
+                    disabled="#{_bean.editedItem.id == null}"
+                    actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
+        <p:separator />
+        <p:menuitem value="#{bundle.SaveClose}"
+                    rendered="#{!_bean.isReadOnly()}"
+                    icon="ui-icon-circle-check"
+                    onclick="document.getElementById('mainFRM:btnSaveClose').click();">
+        </p:menuitem>
     </ui:define>
 
-    <ui:define name="body">        
-        #{_bean.onBeforeOpenCard()}
-        
-        <p:importConstants type="com.maxfill.dictionary.DictRights"   var="DictRights" />
-        <p:importConstants type="com.maxfill.dictionary.DictStates"   var="DictStates" />
-        <p:importConstants type="com.maxfill.dictionary.DictEditMode" var="DictEditMode" />
-        <p:importConstants type="com.maxfill.dictionary.DictModules"  var="DictModules" />
+    <ui:define name="specToolButtons">
+        <p:commandButton id="btnSaveClose" value="#{bundle.SaveClose}"
+                    rendered="#{!_bean.isReadOnly()}"
+                    icon="ui-icon-circle-check"
+                    update="mainFRM"
+                    actionListener="#{_bean.prepSaveItemAndClose()}"
+                    onclick="if (itemChange == 1) {onChangeItem()}; sendFormSize();">
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
+    </ui:define>
+    
+    <ui:define name="toolbarComponents" >
+        <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
+            <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
+                        disabled="#{_bean.editedItem.id == null}"
+                        actionListener="#{_bean.onPreViewItemCard()}"/>
+            <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
+                        disabled="#{_bean.editedItem.id == null}"
+                        actionListener="#{_bean.onPreViewBarcode()}"/>
+        </p:menuButton>
+        <ui:insert name="specSubMenu" />
+    </ui:define>
+            
+    <ui:define name="centerFormContent">        
+        <p:focus context="mainFRM:mainTabView" for="mainFRM:mainTabView:nameItem"/>
 
-        <script type="text/javascript" >
-            var itemChange = 0;
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
+            <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
+            <ui:insert name="page_body"/>
+            <ui:include src="/view/common/dict-rights.xhtml"/>
+            <ui:insert name="childs_rights"/> 
+            <ui:include src="/view/common/dict-info.xhtml"/>
+            <ui:include src="/view/common/dict-log.xhtml"/> 
+        </p:tabView>
 
-            function checkEsc(componentName) {
-                if (event.keyCode === 27) {
-                    document.getElementById(componentName).focus();
-                    return;
-                }
-            } 
-        </script> 
-
-        <ui:insert name="card_scripts"/>
-
-        <style>  
-            .ui-tabs-left>.ui-tabs-nav{
-                width: 15%;
-            }
-            .ui-tabs-left>.ui-tabs-panels{
-                float:left !important;
-                width: 85% !important;
-            }            
-            .ui-tabs .ui-tabs-panel{
-                padding: 0em !important;
-            }
-            .ui-menu-child {
-                white-space: nowrap;
-                width: auto !important;
-            }
-            .pe-layout-pane-content{
-                padding: 2px;
-            }
-        </style>
-
-        <h:form id="#{_frm}" style="font-size: 90%; height: 100%;" >                    
-            <ui:insert name="form_scripts"/> 
-            <p:focus context="#{_frm}:mainTabView" for="#{_frm}:mainTabView:nameItem"/>
-
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" rendered="#{_bean.editedItem != null}">
-
-                <p:menubar styleClass="without-spaces" autoDisplay="false">
-                    <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
-                        <ui:insert name="specActionMenu" />
-                        <p:separator />
-                        <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
-                                    disabled="#{_bean.editedItem.id == null}"
-                                    actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
-                        <p:separator />
-                        <p:menuitem value="#{bundle.SaveClose}"
-                                    rendered="#{!_bean.isReadOnly()}"
-                                    icon="ui-icon-circle-check"
-                                    onclick="document.getElementById('#{_frm}:btnSaveClose').click();">
-                        </p:menuitem>
-                        <p:separator />
-                        <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                    onclick="document.getElementById('#{_frm}:btnCancel').click();">
-                        </p:menuitem>
-                    </p:submenu>
-                    <p:submenu label="#{bundle.Print}" icon="ui-icon-print" styleClass="submenu">
-                        <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
-                                    disabled="#{_bean.editedItem.id == null}"
-                                    actionListener="#{_bean.onPreViewItemCard()}"/>
-                        <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
-                                    disabled="#{_bean.editedItem.id == null}"
-                                    actionListener="#{_bean.onPreViewBarcode()}"/>
-                    </p:submenu>
-                    <ui:insert name="specSubMenu" />
-                    <p:menuitem id="btnSaveClose" value="#{bundle.SaveClose}"
-                                rendered="#{!_bean.isReadOnly()}"
-                                icon="ui-icon-circle-check"
-                                update="#{_frm}"
-                                actionListener="#{_bean.prepSaveItemAndClose()}"
-                                onclick="if (itemChange == 1) {
-                                                    onChangeItem();
-                                        }">
-                        <f:param name="isRequired" value="true"/>
-                    </p:menuitem>
-                    <f:facet name="options">
-                        <ui:insert name="specToolButtons"/>
-                        <p:spacer width="10" />
-                        <p:commandButton id="btnCancel" title="#{bundle.CloseCard}"
-                                         actionListener="#{_bean.onCancelItemSave()}"
-                                         icon="ui-icon-circle-close"
-                                         onclick="if (itemChange == 1)
-                                                     onChangeItem();">
-                            <p:ajax event="dialogReturn" listener="#{_bean.onFinalCancelSave}"/>
-                        </p:commandButton> 
-                    </f:facet>
-                </p:menubar>
-
-                <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                    <p:autoUpdate />
-                </p:messages>
-
-                <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" 
-                           activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
-                    <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
-                    
-                    <ui:insert name="page_body"/>
-                    <ui:include src="/view/common/dict-rights.xhtml"/>
-                    <ui:insert name="childs_rights"/> 
-                    <ui:include src="/view/common/dict-info.xhtml"/>
-                    <ui:include src="/view/common/dict-log.xhtml"/> 
-                </p:tabView>                         
-            </p:panelGrid>
-
-            <ui:include src="/view/common/confirm-dlg.xhtml" />
-            <p:remoteCommand name="onChangeItem" immediate="true" 
-                             actionListener="#{_bean.onItemChange()}"
-                             oncomplete="return itemChange = 0;"/> 
-            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}"/>
-
-        </h:form> 
-        
-        #{_bean.onAfterFormLoad()}
-        
+        <p:importConstants type="com.maxfill.dictionary.DictRights"       var="DictRights" />
+        <p:importConstants type="com.maxfill.dictionary.DictEditMode"     var="DictEditMode" />
+        <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />
+        <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
+    
+    </ui:define>
+    
+    <ui:define name="dialogs">
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
         <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
+        
 </ui:composition>

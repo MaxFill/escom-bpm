@@ -233,7 +233,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             }
             loadModel(getScheme());
             exitParam = SysParams.EXIT_EXECUTE;
-            PrimeFaces.current().ajax().update(getFormName());
+            PrimeFaces.current().ajax().update("mainFRM");
         }
     }
     
@@ -1117,7 +1117,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (today.after(planDate)){
             String errMsg = MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime");
             FacesContext context = FacesContext.getCurrentInstance();
-            UIInput input = (UIInput) context.getViewRoot().findComponent(getFormName()+":mainTabView:dtPlanExecDate");
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:dtPlanExecDate");
             input.setValid(false);
             errors.add(errMsg);            
             context.validationFailed();
@@ -1269,7 +1269,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void onUpdateAfterCloseDocForm(SelectEvent event){
         String exitResult = (String) event.getObject();
         if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
-           PrimeFaces.current().ajax().update(getFormName()+":mainTabView:tblDocs");
+           PrimeFaces.current().ajax().update("mainFRM:mainTabView:tblDocs");
         }
     }
     

@@ -609,9 +609,9 @@ public class SessionBean implements Serializable{
             rezult = formsSize.get(formName);            
         } else 
             if (formName.contains("explorer")){
-                rezult = new Tuple(800, 600);                
+                rezult = new Tuple(1300, 800);                
             } else {
-                rezult = new Tuple(1200, 800);
+                rezult = new Tuple(800, 600);
             }
         formsSize.put(formName, rezult);
         return rezult;

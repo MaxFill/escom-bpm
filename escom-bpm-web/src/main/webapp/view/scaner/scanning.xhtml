@@ -12,7 +12,7 @@
         <pe:layout fullPage="true" options="#{scanBean.layoutOptions}" widgetVar="fpLayoutWidget">
             <p:ajax event="resize" listener="#{scanBean.handleResize}"/> 
             <pe:layoutPane position="center" resizable="true">
-                <h:form id="#{_frm}" styleClass="formLayoute">
+                <h:form id="mainFRM" styleClass="formLayoute">
 
                     <h:inputHidden id="maxFileSize" value="#{scanBean.scanHelper.maxFileSize}" />
                     <h:inputHidden id="productKey" value="#{scanBean.scanHelper.productKey}" />
@@ -20,17 +20,17 @@
 
                     <p:hotkey bind="esc" id="hotskey"
                               immediate="true"                             
-                              onstart="document.getElementById('#{_frm}:btnClose').click();"> 
+                              onstart="document.getElementById('mainFRM:btnClose').click();"> 
                     </p:hotkey>
 
                     <p:menubar styleClass="without-spaces">
                         <p:submenu label="#{bundle.Actions}" icon="ui-icon-gear" styleClass="submenu">
                             <p:menuitem icon="ui-icon-circle-arrow-e" value="#{bundle.Scaning}"
-                                        onclick="document.getElementById('#{_frm}:btnScan').click();"> 
+                                        onclick="document.getElementById('mainFRM:btnScan').click();"> 
                             </p:menuitem>
                             <p:separator />
                             <p:menuitem icon="ui-icon-circle-close" value="#{bundle.Close}"
-                                        onclick="document.getElementById('#{_frm}:btnClose').click();"> 
+                                        onclick="document.getElementById('mainFRM:btnClose').click();"> 
                             </p:menuitem>
                         </p:submenu>                
                         <f:facet name="options">

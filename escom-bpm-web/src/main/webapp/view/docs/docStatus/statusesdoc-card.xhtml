@@ -29,7 +29,7 @@
                 <h:panelGroup rendered="#{_bean.editedItem.id != null}">
                     <p:separator />
                     <p:commandButton value="#{bundle.AddStatusInTypeDocs}" 
-                                     update="#{_frm}"
+                                     update="mainFRM"
                                      actionListener="#{_bean.onAddStatusInTypeDocs()}">
                         <p:ajax event="dialogReturn" listener="#{_bean.doAddStatusInTypeDocs}"/>
                     </p:commandButton>

@@ -99,8 +99,8 @@
             <redirect />
         </navigation-case>
         <navigation-case>
-            <from-outcome>partnertype-explorer</from-outcome>
-            <to-view-id>/view/partners/types/partnertype-explorer.xhtml</to-view-id>
+            <from-outcome>partnertypes-explorer</from-outcome>
+            <to-view-id>/view/partners/types/partnertypes-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

@@ -44,10 +44,10 @@
                                  disabled="#{_bean.isReadOnly()}"
                                  actionListener="#{_bean.makeMainGroup(item)}"
                                  rendered="#{_showOwner}"
-                                 update="#{_frm}:mainTabView:panelGroups">
+                                 update="mainFRM:mainTabView:panelGroups">
                 </p:commandButton>
                 <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                 update="#{_frm}:mainTabView:panelGroups"
+                                 update="mainFRM:mainTabView:panelGroups"
                                  disabled="#{_bean.isReadOnly()}"
                                  actionListener="#{_bean.deleteFromGroup(item)}">              
                 </p:commandButton>
@@ -58,7 +58,7 @@
                                  icon="ui-icon-trash" title="#{bundle.Delete}"
                                  immediate="true"
                                  disabled="#{_bean.isReadOnly() or _bean.checkedGroups.isEmpty()}"
-                                 update="#{_frm}:mainTabView:panelGroups"
+                                 update="mainFRM:mainTabView:panelGroups"
                                  actionListener="#{_bean.deleteFromCheckedGroups()}"/>
                 <p:commandButton id="btnAddGroup" value="#{bundle.Add}" 
                                  icon="ui-icon-circle-plus"
@@ -66,7 +66,7 @@
                                  disabled="#{_bean.isReadOnly()}"
                                  actionListener="#{_selectorBean.onManySelectItem()}">
                     <p:ajax event="dialogReturn" listener="#{_bean.addGroupsFromSelector}" 
-                            update="#{_frm}:mainTabView:panelGroups"/>
+                            update="mainFRM:mainTabView:panelGroups"/>
                 </p:commandButton>
             </f:facet>
         </p:dataTable>

@@ -61,7 +61,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     private User owner;
     private State itemCurrentState;
     private List<Right> rights;
-    private boolean isItemChange;               //признак изменения записи
     protected Integer typeAddRight = DictRights.TYPE_GROUP;
     protected State selState;
     protected User selUser;
@@ -187,7 +186,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 }
             }
             onAfterSaveItem(item);
-            setIsItemChange(Boolean.FALSE);
+            isItemChange = false;
         }
         MsgUtils.succesMsg("ChangesSaved");
         return Boolean.TRUE;
@@ -227,6 +226,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
             
     /* Отмена изменений в объекте  */
+    @Override
     public String onCancelItemSave() {
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
             PrimeFaces.current().executeScript("PF('confirm').show();");
@@ -292,7 +292,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return !getCurrentUser().equals(owner);
     }
     
-/* *** ПЕЧАТЬ *** */
+    /* *** ПЕЧАТЬ *** */
     
     /* ПЕЧАТЬ: Подготовка бланка карточки объекта для печати */
     public void onPreViewItemCard() {
@@ -330,7 +330,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return parameters;
     }
 
-/* *** ПРАВА ДОСТУПА *** */    
+   /* *** ПРАВА ДОСТУПА *** */    
     
     /**
      * Обработка события добавления права в права объекта
@@ -461,7 +461,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return inheritsRightName;
     }
         
-/* *** ПРОЧИЕ МЕТОДЫ *** */
+    /* ПРОЧИЕ МЕТОДЫ */
 
     /* При изменении в карточке объекта опции "Наследование прав"  */
     public void onInheritsChange(ValueChangeEvent event) {
@@ -548,16 +548,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ */
 
-    /* Установка признака изменения объекта  */
-    public void onItemChange() {
-        isItemChange = true;
-    }
-
-    /* Признак изменения объекта  */
-    public boolean isItemChange() {
-        return isItemChange;
-    }
-
     /**
      * Возвращает число столбцов в групповой строке таблицы прав доступа
      * @return
@@ -595,13 +585,6 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     
     /* Возвращает пользователя, владельца объекта */
     public User getOwner() { return owner; }
-
-    public Boolean getIsItemChange() {
-        return isItemChange;
-    }
-    public void setIsItemChange(Boolean isItemChange) {
-        this.isItemChange = isItemChange;
-    }
 
     public State getSelState() {
         return selState;

@@ -15,16 +15,25 @@
         #{_bean.onBeforeOpenCard()}
         #{_bean.onAfterFormLoad()}
                 
-        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />               
+        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />  
+        
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
             <p:hotkey bind="esc" id="hotskey"
                       immediate="true"
                       onstart="document.getElementById('mainFRM:btnClose').click();">
             </p:hotkey>
 
-            <p:panel header="#{_bean.getFormHeader()}" closable="#{_canClose}" closeSpeed="0" rendered="#{_bean != null}"
-                     styleClass="ui-grid-col-12 ui-draggable without-spaces" style="height: 100%;" >
-                <p:ajax event="close" listener="#{_bean.onCloseCard()}" immediate="true" onstart="sendFormSize();"/>
+            <p:panel header="#{_bean.getFormHeader()}" rendered="#{_bean != null}" styleClass="ui-grid-col-12 ui-draggable without-spaces" style="height: 100%;" >
+                <f:facet name="actions">
+                    <p:commandLink type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                   onclick="if (itemChange == 1){
+                                        onChangeItem();
+                                    } 
+                                    sendFormSize(); 
+                                    document.getElementById('mainFRM:btnClose').click();">
+                        <h:outputText styleClass="ui-icon ui-icon-closethick" />
+                    </p:commandLink>
+                </f:facet>                                
 
                 <p:panelGrid layout="grid" columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">
 
@@ -40,11 +49,14 @@
                             <ui:insert name="centerFormHeader"/>
                         </f:facet>
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                            
+                            
                             <p:toolbar id="explToolBar">
                                 <f:facet name="left">
-                                    <ui:insert name="toolbarComponents"/>
+                                <ui:insert name="toolbarComponents"/>
                                 </f:facet>
                                 <f:facet name="right">
+                                    <ui:insert name="specToolButtons"/>
+                                    <p:spacer width="10"/>
                                     <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
                                         <ui:insert name="menuActions" />  
                                         <p:separator />
@@ -52,9 +64,11 @@
                                     </p:menuButton>
                                 </f:facet>
                             </p:toolbar>  
+                            
                             <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
                                 <p:autoUpdate />
                             </p:messages>
+                            
                             <ui:insert name="centerFormContent"/>
                             <ui:insert name="extCenterPanel"/> 
                         </p:panelGrid>
@@ -74,8 +88,11 @@
             </p:panel>
 
             <ui:insert name="form_scripts"/>
+            
+            <p:commandButton id="btnClose" actionListener="#{_bean.onCancelItemSave()}" style="display: none;"/>            
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
             <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
+            <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}" oncomplete="return itemChange = 0;"/> 
         </h:form>
 
         <script type="text/javascript" >
@@ -92,9 +109,7 @@
         <style>
             .ui-tabs-left>.ui-tabs-panels{
                 float:left !important;
-            }
-            .ui-tabs .ui-tabs-panel{
-                padding: 0em 1.4em !important;
+                width: 85% !important;
             }
             .ul.ui-menu-child {
                 white-space: nowrap;
@@ -108,7 +123,14 @@
             }            
             .ui-dialog-titlebar > .ui-widget-header{
                 display: none !important;
+            }                  
+            .ui-tabs-left>.ui-tabs-nav{
+                width: 15%;
             }            
+            .ui-tabs .ui-tabs-panel{
+                padding: 0em !important;
+            }
+      
         </style>
     </ui:define>
 

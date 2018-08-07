@@ -49,7 +49,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     private BaseDict sourceItem;
     private int tabActiveIndex = 0;
-    
+    protected boolean isItemChange;               //признак изменения записи
+        
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки
     
     protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).    
@@ -125,6 +126,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public void onAfterFormLoad(){        
     }
 
+    public String onCancelItemSave(){
+        return onCloseCard();
+    }
+    
     /**
      * Обработка события закрытия формы
      * @return
@@ -143,6 +148,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){
+        killBean();
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
     }
@@ -192,7 +198,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             Integer height = Integer.valueOf(params.get("height"));
             sessionBean.saveFormSize(getFormName(), width, height);
         }
-        killBean();
     }
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */
@@ -257,6 +262,18 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
         paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         return paramsMap;
+    }
+    
+    /* СЛУЖЕБНЫЕ МЕТОДЫ */
+
+    /* Установка признака изменения объекта  */
+    public void onItemChange() {
+        isItemChange = true;
+    }
+
+    /* Признак изменения объекта  */
+    public boolean isItemChange() {
+        return isItemChange;
     }
     
     /* GETS & SETS */

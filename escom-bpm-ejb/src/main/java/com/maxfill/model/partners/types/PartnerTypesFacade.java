@@ -4,10 +4,6 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.Partner_;
-import com.maxfill.model.partners.types.PartnerTypes;
-import com.maxfill.model.partners.types.PartnerTypesLog;
-import com.maxfill.model.partners.types.PartnerTypesStates;
-
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;

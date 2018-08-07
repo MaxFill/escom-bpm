@@ -93,7 +93,7 @@
                             <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditFile}"
                                         rendered="#{attache.id != null}"
                                         actionListener="#{_bean.onSetSelectedAttache(attache)}"
-                                        oncomplete="document.getElementById('#{_frm}:setLockBtn').click();"/>
+                                        oncomplete="document.getElementById('mainFRM:setLockBtn').click();"/>
                             <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
                                         ajax="false"
                                         disabled="#{_bean.isReadOnly() or _bean.docIsLock}"
