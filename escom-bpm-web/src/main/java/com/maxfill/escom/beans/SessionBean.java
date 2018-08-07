@@ -2,6 +2,7 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.*;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -611,7 +612,7 @@ public class SessionBean implements Serializable{
             if (formName.contains("explorer")){
                 rezult = new Tuple(1300, 800);                
             } else {
-                rezult = new Tuple(800, 600);
+                rezult = new Tuple(900, 600);
             }
         formsSize.put(formName, rezult);
         return rezult;
@@ -676,7 +677,44 @@ public class SessionBean implements Serializable{
     public void onViewHelp(){
        openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
     }
-            
+           
+    public void killBean(String beanName, String beanId){       
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
+        /*
+        map.entrySet().removeIf(mapEntry->{
+            boolean flag = false;
+            if (mapEntry instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) mapEntry;
+                if (entry.getValue() instanceof Map) {
+                    Map viewScopes = (Map) entry.getValue();
+                    if (viewScopes.isEmpty()){
+                        flag = true;
+                    }
+                }
+            }
+            return flag;
+        });
+        */
+        for (Object mapEntry : map.entrySet()){
+            if (mapEntry instanceof Map.Entry) {
+                Map.Entry entry = (Map.Entry) mapEntry;
+                if (entry.getValue() instanceof Map) {
+                    Map viewScopes = (Map) entry.getValue();
+                    if (viewScopes.containsKey(beanName)) {
+                        BaseView bean = ((BaseView) viewScopes.get(beanName));
+                        String id = bean.toString();
+                        if (beanId.equals(id)) {
+                            map.remove(entry.getKey());
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+       
     /* GETS & SETS */
 
     public void setOpenFormName(String openFormName) {

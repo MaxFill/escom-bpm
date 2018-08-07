@@ -229,7 +229,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     @Override
     public String onCancelItemSave() {
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange()) {
-            PrimeFaces.current().executeScript("PF('confirm').show();");
+            PrimeFaces.current().executeScript("PF('confirmDLG').show();");
         } else {
             return doFinalCancelSave();
         }

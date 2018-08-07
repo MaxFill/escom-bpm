@@ -95,43 +95,6 @@
             <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}" oncomplete="return itemChange = 0;"/> 
         </h:form>
 
-        <script type="text/javascript" >
-            function checkEsc(componentName) {
-                if (event.keyCode === 27) {
-                    document.getElementById(componentName).focus();
-                    return;
-                }
-            }
-
-            var itemChange = 0;
-        </script>
-
-        <style>
-            .ui-tabs-left>.ui-tabs-panels{
-                float:left !important;
-                width: 85% !important;
-            }
-            .ul.ui-menu-child {
-                white-space: nowrap;
-                width: auto !important;
-            }
-            .ui-panel-content, .ui-widget-content{
-                padding-top: 0.1em !important;
-                padding-right: 0.1em !important;
-                padding-bottom: 0.1em !important;
-                padding-left: 0.1em !important; 
-            }            
-            .ui-dialog-titlebar > .ui-widget-header{
-                display: none !important;
-            }                  
-            .ui-tabs-left>.ui-tabs-nav{
-                width: 15%;
-            }            
-            .ui-tabs .ui-tabs-panel{
-                padding: 0em !important;
-            }
-      
-        </style>
     </ui:define>
 
 </ui:composition>

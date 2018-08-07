@@ -18,9 +18,8 @@
     
     <ui:define name="body">
         <ui:include src="/view/common/error-dlg.xhtml"/>
-
-
-        <h:form id="loginFRM">
+        #{loginBean.onBeforeOpenCard()}
+        <h:form id="loginFRM">            
             <p:panel styleClass="panelLogin" >
                 <p:messages id="messages" showDetail="true" closable="true" >
                     <p:autoUpdate />

@@ -30,29 +30,53 @@
     <ui:insert name="preRendered"/>
     
     <h:body> 
-        <style>
-            .ui-accordion .ui-accordion-content {
-                padding: 0px !important
-            }
-            
-            .ui-tabs-left>.ui-tabs-panels{
-                float:left !important;
-            }
-            .ui-tabs .ui-tabs-panel{
-                padding: 0em 1.4em !important;
-            }
-            ul.ui-menu-child {
-                white-space: nowrap;
-                width: auto !important;
-            }
-        </style>
         
         <ui:insert name="customStyleCSS"/>
         <ui:insert name="systems"/>
         <ui:insert name="body" /> 
         <ui:insert name="dialogs"/>
-                
+            
+        <style>
+            .ui-tabs-left>.ui-tabs-panels{
+                float:left !important;
+                width: 85% !important;
+            }
+            .ul.ui-menu-child {
+                white-space: nowrap;
+                width: auto !important;
+            }
+            .ui-panel-content, .ui-widget-content{
+                padding-top: 0.1em !important;
+                padding-right: 0.2em !important;
+                padding-bottom: 0.1em !important;
+                padding-left: 0.2em !important; 
+            }            
+            .ui-dialog-titlebar > .ui-widget-header{
+                display: none !important;
+            }                  
+            .ui-tabs-left>.ui-tabs-nav{
+                width: 15%;
+            }            
+            .ui-tabs .ui-tabs-panel{
+                padding: 0em 1em !important;
+            }
+            .ui-accordion .ui-accordion-content {
+                padding: 0px !important
+            }
+          
+        </style>
+        
         <script type="text/javascript">  
+            
+                function checkEsc(componentName) {
+                    if (event.keyCode === 27) {
+                        document.getElementById(componentName).focus();
+                        return;
+                    }
+                }
+
+                var itemChange = 0;
+        
                 function sendFormSize(){
                     var width = window.innerWidth;
                     var height = window.innerHeight;

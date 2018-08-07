@@ -1,27 +1,35 @@
 <ui:composition  xmlns="http://www.w3.org/1999/xhtml"
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
-                 xmlns:pe="http://primefaces.org/ui/extensions">
-        
-        <p:fileUpload id="fileUploadFRM" disabled="#{_bean.treeSelectedNode == null}"
-                      rendered="#{!_bean.isTrashSelected()}"
-                      styleClass="ui-grid-col-12"
-                      allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                      sizeLimit="#{docBean.maxFileSize}"
-                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                      process="@this"
-                      mode="advanced" auto="true"
-                      dragDropSupport="true"
-                      label="#{bundle.SelectFileAndCreateDoc}" 
-                      cancelLabel="#{bundle.Cancel}"
-                      uploadLabel="#{bundle.SaveFiles}"
-                      fileUploadListener="#{_bean.onUploadFile}" 
-                      onstart="PF('statusDialog').show()"
-                      oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createItemBtn').click();">
-        </p:fileUpload>
-        <pe:tooltip for="fileUploadFRM" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
-                    styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
-    
+                 xmlns:pe="http://primefaces.org/ui/extensions"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:panelGrid id="fileUploadFRM" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+        <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
+            <p:panel header="" styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
+                <p:outputLabel value="#{bundle.FolderIsNotSelected}"/>
+            </p:panel>
+            <p:fileUpload id="file" disabled="#{_bean.treeSelectedNode == null}"
+                       rendered="#{_bean.treeSelectedNode != null}"
+                       styleClass="ui-grid-col-12"
+                       allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                       sizeLimit="#{docBean.maxFileSize}"
+                       invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                       invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                       fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                       process="@this"
+                       mode="advanced" auto="true"
+                       dragDropSupport="true"
+                       label="#{''.concat(bundle.SelectFileAndCreateDoc).concat(' ').concat(bundle.InFolder).concat(' =').concat(_bean.currentItem.name).concat('= ')}"
+                       cancelLabel="#{bundle.Cancel}"
+                       uploadLabel="#{bundle.SaveFiles}"
+                       fileUploadListener="#{_bean.onUploadFile}" 
+                       onstart="PF('statusDialog').show()"
+                       oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createItemBtn').click();">
+             </p:fileUpload>
+             <pe:tooltip for="file" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
+                         styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+         </h:panelGroup>
+    </p:panelGrid>
+
 </ui:composition>

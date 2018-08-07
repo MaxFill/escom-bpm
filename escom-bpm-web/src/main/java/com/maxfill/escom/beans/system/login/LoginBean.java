@@ -8,6 +8,7 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
 import com.maxfill.escom.beans.ApplicationBean;
+import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.services.sms.SmsService;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.primefaces.PrimeFaces;
 /* Контролер формы логина */
 @Named
 @ViewScoped
-public class LoginBean implements Serializable{    
+public class LoginBean extends BaseViewBean{    
     private static final long serialVersionUID = 4390983938416752289L;
     private static final Logger LOGGER = Logger.getLogger(LoginBean.class.getName());
 
@@ -49,20 +50,16 @@ public class LoginBean implements Serializable{
     private String generatePinCode;     //код, генерируемый сервисом и отправляемый на мобильник
     private User user;
 
-    @Inject
-    private ApplicationBean appBean;
-    @Inject
-    private SessionBean sessionBean;
     @EJB 
     private UserFacade userFacade;
     @EJB
     private SmsService smsService;
     @EJB
     private AuthLogFacade authLogFacade;
-
-    @PostConstruct
-    public void init(){
-        if (appBean.getLicence() == null) {
+    
+    @Override
+    public void initBean(){
+    if (appBean.getLicence() == null) {
             sessionBean.redirectToPage(SysParams.ACTIVATE_PAGE, Boolean.FALSE);
             return;
         }
@@ -80,6 +77,11 @@ public class LoginBean implements Serializable{
         if (selectedLang == null){
             selectedLang = new CountryFlags(0, "en", "English");
         }
+    };
+    
+    @Override
+    public void onBeforeOpenCard(){
+       beanId = this.toString();
     }
     
     public void login() throws NoSuchAlgorithmException{
@@ -145,6 +147,7 @@ public class LoginBean implements Serializable{
         //return targetPage + "?faces-redirect=true";
         //Используется ajax и редирект/ Если не использовать ajax, то в Chrome почему то сбрасывает selectedLang и далее ошибка.
         sessionBean.redirectToPage(targetPage, Boolean.FALSE);
+        sessionBean.killBean(getBeanName(), beanId);        
     }
     
     /* Инициализация текущего пользователя */
@@ -240,5 +243,15 @@ public class LoginBean implements Serializable{
     }
     public void setPinCode(String pinCode) {
         this.pinCode = pinCode;
+    }
+
+    @Override
+    public String getFormName() {
+        return "login";
+    }
+
+    @Override
+    public String getFormHeader() {
+        return getLabelFromBundle("Login");
     }
 }

@@ -10,12 +10,6 @@
         <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
                     disabled="#{_bean.editedItem.id == null}"
                     actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/>
-        <p:separator />
-        <p:menuitem value="#{bundle.SaveClose}"
-                    rendered="#{!_bean.isReadOnly()}"
-                    icon="ui-icon-circle-check"
-                    onclick="document.getElementById('mainFRM:btnSaveClose').click();">
-        </p:menuitem>
     </ui:define>
 
     <ui:define name="specToolButtons">

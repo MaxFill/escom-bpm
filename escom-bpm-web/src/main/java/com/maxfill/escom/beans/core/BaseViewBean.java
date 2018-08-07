@@ -89,7 +89,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         if (params.size() <= 1){
-            killBean();
+            sessionBean.killBean(getBeanName(), beanId);
         } else  {
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
                 String sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
@@ -148,48 +148,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){
-        killBean();
+        sessionBean.killBean(getBeanName(), beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
-    }
-    
-    private void killBean(){
-        String beanName = getBeanName();
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
-        /*
-        map.entrySet().removeIf(mapEntry->{
-            boolean flag = false;
-            if (mapEntry instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) mapEntry;
-                if (entry.getValue() instanceof Map) {
-                    Map viewScopes = (Map) entry.getValue();
-                    if (viewScopes.isEmpty()){
-                        flag = true;
-                    }
-                }
-            }
-            return flag;
-        });
-        */
-        for (Object mapEntry : map.entrySet()){
-            if (mapEntry instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) mapEntry;
-                if (entry.getValue() instanceof Map) {
-                    Map viewScopes = (Map) entry.getValue();
-                    if (viewScopes.containsKey(beanName)) {
-                        BaseView bean = ((BaseView) viewScopes.get(beanName));
-                        String id = bean.toString();
-                        if (beanId.equals(id)) {
-                            map.remove(entry.getKey());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }    
+    }        
 
     public void onFormSize(){
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();        
