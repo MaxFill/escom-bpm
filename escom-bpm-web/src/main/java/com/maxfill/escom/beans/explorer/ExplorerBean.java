@@ -103,7 +103,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     protected String typeTree;
     protected String typeRoot;
 
-    private Integer typeEdit;                   //режим редактирования записи
+    private Integer typeEdit; //режим редактирования записи
     
     protected List<BaseDict> checkedItems = new ArrayList<>();  //список выбранных объектов на форме обозревателя/селектора
     protected List<BaseDict> detailItems = new ArrayList<>();   //список подчинённых объектов

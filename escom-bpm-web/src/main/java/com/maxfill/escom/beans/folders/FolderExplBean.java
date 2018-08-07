@@ -16,7 +16,6 @@ import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.Process;
-import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -29,8 +28,6 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
-import org.primefaces.PrimeFaces;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,8 +51,6 @@ public class FolderExplBean extends ExplorerTreeBean{
     
     @EJB
     private DocFacade docFacade;
-    @EJB
-    private ProcessFacade processFacade;
     
     private TreeNode procTree;
     private TreeNode procSelectedNode;             
@@ -75,8 +70,6 @@ public class FolderExplBean extends ExplorerTreeBean{
             Filter filter = filtersFacade.find(getFilterId());
             if (filter != null) {
                 makeSelectedFilter(filter);
-                PrimeFaces.current().ajax().update("explorer_west");
-                PrimeFaces.current().ajax().update("explorer");
             }
         }
     }

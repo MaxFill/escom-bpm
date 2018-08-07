@@ -607,10 +607,13 @@ public class SessionBean implements Serializable{
         Tuple<Integer, Integer> rezult;
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
-        } else {
-            rezult = new Tuple(1000, 620);
-            formsSize.put(formName, rezult);
-        }
+        } else 
+            if (formName.contains("explorer")){
+                rezult = new Tuple(800, 600);                
+            } else {
+                rezult = new Tuple(1200, 800);
+            }
+        formsSize.put(formName, rezult);
         return rezult;
     }
 

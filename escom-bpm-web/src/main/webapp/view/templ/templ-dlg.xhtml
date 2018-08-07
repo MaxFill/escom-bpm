@@ -7,11 +7,14 @@
                 template="/view/templ/templ.xhtml">
 
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
-
+    <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
+    
     <ui:define name="body">
         <ui:insert name="initBean"/>
 
         #{_bean.onBeforeOpenCard()}
+        #{_bean.onAfterFormLoad()}
+                
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />               
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
             <p:hotkey bind="esc" id="hotskey"
@@ -45,7 +48,7 @@
                                     <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
                                         <ui:insert name="menuActions" />  
                                         <p:separator />
-                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" actionListener="#{sessionBean.onViewHelp()}"/>
+                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" actionListener="#{sessionBean.onViewHelp()}"/>
                                     </p:menuButton>
                                 </f:facet>
                             </p:toolbar>  
@@ -74,9 +77,6 @@
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
             <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
         </h:form>
-
-
-        #{_bean.onAfterFormLoad()}
 
         <script type="text/javascript" >
             function checkEsc(componentName) {
