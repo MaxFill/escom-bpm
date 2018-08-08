@@ -65,7 +65,6 @@
                                              required="true" requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
                                              styleClass="ui-grid-col-9"
                                              disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"/>
-                                <p:message for="j_username" styleClass="ui-grid-col-9"/>
                             </h:panelGroup>
 
                             <p:outputLabel value="#{bundle.password}:"/>
@@ -74,7 +73,6 @@
                                             required="true" requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                                             disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"
                                             styleClass="ui-grid-col-9"/>
-                                <p:message for="j_password" styleClass="ui-grid-col-9"/>
                             </h:panelGroup>
 
                             <p:outputLabel value="#{bundle.AccessCode}:" rendered="#{loginBean.isNeedPinCode()}" />
@@ -82,7 +80,6 @@
                                 <p:inputMask id="j_code" mask="99999" value="#{loginBean.pinCode}" rendered="#{loginBean.isNeedPinCode()}"
                                              disabled="#{loginBean.isLoginLock()}"
                                              required="true" requiredMessage="#{bundle.Field} [#{bundle.AccessCode}] #{bundle.MustBeFilled}"/>
-                                <p:message for="j_code" styleClass="ui-grid-col-9"/>
                             </h:panelGroup>
 
                             <p:spacer/><p:spacer/>

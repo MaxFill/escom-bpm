@@ -190,7 +190,8 @@
                         actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
         </p:menuButton>
         <p:menuButton value="#{bundle.Processes}" icon="ui-icon-extlink" styleClass="submenu"
-                   rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+                      disabled="#{_item.id == null}"
+                      rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
             <p:menuitem icon="ui-icon-extlink" value="#{bundle.ConcordedDoc}" 
                         oncomplete="document.getElementById('mainFRM:btnConcordedDoc').click();">                
             </p:menuitem>

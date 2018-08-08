@@ -89,7 +89,7 @@
 
                     <p:column width="45">                    
                         <p:splitButton  value="#{bundle.View}" title="#{bundle.Commands}" 
-                                        actionListener="#{_bean.onViewAttache(attache)}">
+                                        actionListener="#{docBean.onViewAttache(attache)}">
                             <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditFile}"
                                         rendered="#{attache.id != null}"
                                         actionListener="#{_bean.onSetSelectedAttache(attache)}"

@@ -113,7 +113,8 @@
                     update="mainFRM:messages"
                     oncomplete="initDND()"/>
         </p:commandButton>
-        <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="true" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
+        
+        <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="false" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
             <p:commandButton value="#{bundle.CreateProcess}" process="@this"
                              styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                              actionListener="#{_bean.createProcess()}"
