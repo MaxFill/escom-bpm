@@ -20,7 +20,7 @@
                 <p:outputLabel value="#{bundle.Name}:"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                             styleClass="ui-grid-col-12"
-                            onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                            onkeypress="checkEsc();"
                             onchange="return itemChange = 1;"
                             required="#{param['isRequired'] == 'true'}"
                             disabled="#{_bean.isReadOnly()}"

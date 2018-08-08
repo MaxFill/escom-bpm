@@ -148,7 +148,7 @@ public final class EscomBeanUtils {
         return sb.toString();        
     }
     
-    private static String makeServerURL(){
+    public static String makeServerURL(){
         ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
         HttpServletRequest request = (HttpServletRequest) ectx.getRequest();        
         try {

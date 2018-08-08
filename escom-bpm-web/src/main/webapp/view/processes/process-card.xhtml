@@ -46,7 +46,7 @@
                 <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                          styleClass="ui-grid-col-12" 
-                         onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                         onkeypress="checkEsc();"
                          onchange="return itemChange = 1;"
                          disabled="#{processCardBean.isReadOnly()}"
                          required="#{param['isRequired'] == 'true'}"

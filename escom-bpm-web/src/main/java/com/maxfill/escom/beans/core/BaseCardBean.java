@@ -484,11 +484,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             }
         }
         rights = null;
-    }
-    
-    public String getCancelBtnName() {
-        return "itemCard:btnCancel";
-    }
+    }    
 
     /* Формирует заголовок карточки объекта. Вызов с экранной формы  */
     public String makeCardHeader() {

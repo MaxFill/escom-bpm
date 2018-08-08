@@ -60,6 +60,7 @@
 
                     <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
                                  disabled="#{!_bean.isShowTree()}"
+                                 onkeypress="checkEsc();"
                                  style="font-size: 90%;">
                     </p:inputText>
                     <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"

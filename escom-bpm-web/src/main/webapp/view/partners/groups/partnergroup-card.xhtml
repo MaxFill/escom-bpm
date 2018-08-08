@@ -29,7 +29,7 @@
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
                              title="#{bundle.GroupName}"
                              disabled="#{_bean.isReadOnly()}"
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onkeypress="checkEsc();"
                              onchange="return itemChange = 1;"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">

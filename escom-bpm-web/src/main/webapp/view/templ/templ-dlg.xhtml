@@ -16,15 +16,13 @@
                 
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />  
         
-        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12">
-            <p:hotkey bind="esc" id="hotskey"
-                      immediate="true"
-                      onstart="document.getElementById('mainFRM:btnClose').click();">
+        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
+            <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();">
             </p:hotkey>
 
             <p:panel header="#{_bean.getFormHeader()}" rendered="#{_bean != null}" styleClass="ui-grid-col-12 ui-draggable without-spaces" style="height: 100%;" >
                 <f:facet name="actions">
-                    <p:commandLink type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                    <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                    rendered="#{_bean.getSourceBeanId() != null}"
                                    disabled="#{!_canClose}"
                                    actionListener="#{_bean.onCancelItemSave()}" 

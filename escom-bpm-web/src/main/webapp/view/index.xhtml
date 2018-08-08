@@ -57,7 +57,7 @@
             
             <p:toolbar >
                 <f:facet name="left">
-                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank without-spaces">
                         <p:outputLabel value="#{sessionBean.currentUser.fullName}"/>
                     </p:panelGrid>
                 </f:facet>
@@ -93,21 +93,21 @@
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
 
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage id="imgUsers" value="/resources/icon/users-32.png"/>
                                 <p:commandLink value="#{bundle.Users}"
                                                actionListener="#{sessionBean.setOpenFormName('user-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/table_active-32.png"/>
                                 <p:commandLink value="#{bundle.Sessions}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_USER_SESSIONS)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                             <p:separator/>
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage value="/resources/icon/settings-32.png"/>
                                 <p:commandLink value="#{bundle.SettigsObjects}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_OBJECT_EXPL)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
@@ -117,7 +117,7 @@
                                                actionListener="#{sessionBean.setOpenFormName('num-pattern-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/counter-32.png"/>
                                 <p:commandLink value="#{bundle.CountersNumbers}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_COUNTERS)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
@@ -127,45 +127,48 @@
                                                actionListener="#{sessionBean.setOpenFormName('statusesdoc-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/template-32.png"/>
                                 <p:commandLink value="#{bundle.ProcessTemplates}"
                                                rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" 
                                                actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                         </p:panelGrid>
+                        <p:contextMenu for="imgUsers">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" action="user-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
                     </p:panel>
 
                     <p:panel id="loggers" header="#{bundle.Logging}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage value="/resources/icon/log-32.png"/>
                                 <p:commandLink value="#{bundle.Authentication}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_AUTH_LOG)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
-                        </p:panelGrid>
+                        </p:panelGrid>                        
                     </p:panel>
 
                     <p:panel id="services" header="#{bundle.Services}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.MailService}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_SENDER_SERVICE)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.ServiceReaderEmail}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_READER_SERVICE)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.LdapService}" 
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_LDAP)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.ServiceNotification}" 
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_NOTIFICATION)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
@@ -174,8 +177,8 @@
                     </p:panel>
 
                     <p:panel id="processes" header="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
                                 <p:commandLink value="#{bundle.Processes}"
                                                actionListener="#{sessionBean.setOpenFormName('process-explorer')}"
@@ -206,13 +209,13 @@
                                 styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
                         <p:contextMenu for="imgProcesses">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="process-explorer" target="blank" icon="ui-icon-extlink" />                                                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" action="process-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
                         </p:contextMenu>
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/timer-32.png"/>  
                                 <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_SCHEDULER)}"
@@ -224,8 +227,13 @@
                             </p:panelGrid> 
                             
                             <p:separator />
-                            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage value="/resources/icon/theme_change-32.png"/>  
                                 <p:outputLabel value="#{bundle.ChooseTheme}"/>
+                            </p:panelGrid>
+                            
+                            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                                                                
                                 <p:themeSwitcher effect="fade" var="t">
                                     <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
                                     <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item}" itemValue="#{item}"/>
@@ -239,16 +247,11 @@
                     </p:panel>
 
                     <p:panel id="messages" header="#{bundle.Messages}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces">                            
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                
-                                <p:graphicImage value="/resources/icon/new_msg-32.png"/>
-                                <p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-1" styleClass="ui-grid-col-12 without-spaces" >
-                                    <p:commandLink value="#{bundle.CountNewMessages}"
-                                                   onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
-                                    <p:commandLink value="#{sessionBean.getMessagesInfo()}" style="font-weight: bold;"
-                                                   onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />
-                                </p:panelGrid>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces">                            
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
+                                <p:graphicImage value="/resources/icon/new_msg-32.png"/>                                
+                                <p:commandLink value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
+                                                   onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />                                
                                 
                                 <p:graphicImage value="/resources/icon/msg-32.png"/>
                                 <p:commandLink value="#{bundle.AllMessages}"
@@ -258,9 +261,9 @@
                     </p:panel>
 
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/folders-32.png"/> 
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage id="imgDocs" value="/resources/icon/folders-32.png"/> 
                                 <p:commandLink value="#{bundle.DocsExplorer}"
                                                actionListener="#{sessionBean.setOpenFormName('doc-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
@@ -296,28 +299,34 @@
                             <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
                                         styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
+                        <p:contextMenu for="imgDocs">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" action="doc-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>                        
                     </p:panel>
 
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/book-32.png"/> 
                                 <p:commandLink value="#{bundle.Posts}"
                                                actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/> 
                                 
-                                <p:graphicImage value="/resources/icon/structure-32.png"/> 
+                                <p:graphicImage id="imgStaffs" value="/resources/icon/structure-32.png"/> 
                                 <p:commandLink value="#{bundle.OrgStructureExplorer}" 
                                                actionListener="#{sessionBean.setOpenFormName('staff-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                         </p:panelGrid>
+                        <p:contextMenu for="imgStaffs">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" action="staff-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
                     </p:panel>
 
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
-                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage id="imgPartners" value="/resources/icon/book-32.png"/>
                                 <p:commandLink value="#{bundle.Partners}"
                                                actionListener="#{sessionBean.setOpenFormName('partner-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
@@ -329,6 +338,9 @@
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                         </p:panelGrid>
+                        <p:contextMenu for="imgPartners">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" action="partner-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
                     </p:panel>
 
                 </p:dashboard>                                 

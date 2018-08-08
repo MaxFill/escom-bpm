@@ -32,7 +32,6 @@
     </ui:define>
     
     <ui:define name="leftFormContent">
-        <p:focus context="mainFRM:westFRM" for="mainFRM:accord:nameSearche"/>
         <ui:include src="/view/templ/tree/tree.xhtml" />   
     </ui:define>
            
@@ -164,7 +163,8 @@
     <ui:define name="centerFormContent">                
         <ui:include src="/view/templ/navigator.xhtml"/>
         <ui:include src="/view/templ/table.xhtml"/>        
-        
+        <p:focus context="mainFRM:eastFRM" for="mainFRM:nameSearche"/>
+                
         <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
         <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>
         <p:remoteCommand name="dropToNavig" actionListener="#{_bean.dropToNavig}" update="mainFRM:westFRM mainFRM:centerFRM" oncomplete="initDND()"/>                           

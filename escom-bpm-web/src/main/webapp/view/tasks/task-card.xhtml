@@ -47,7 +47,8 @@
 
                 <p:outputLabel value="#{bundle.Task}" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{taskCardBean.editedItem.name}"
-                             styleClass="ui-grid-col-12"                                                          
+                             styleClass="ui-grid-col-12"
+                             onkeypress="checkEsc();"
                              required="#{param['isRequired'] == 'true'}"
                              disabled="#{taskCardBean.readOnly}"
                              onchange="return itemChange = 1;"

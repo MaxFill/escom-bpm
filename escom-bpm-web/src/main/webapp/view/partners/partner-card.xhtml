@@ -15,6 +15,7 @@
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}" 
                              maxlength="50"
+                             onkeypress="checkEsc();"
                              requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
                              onchange="return itemChange = 1;"/>
                 <p:message for="code" display="tooltip"/>
@@ -34,6 +35,7 @@
                 <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                              disabled="#{_bean.isReadOnly()}"
+                             onkeypress="checkEsc();"
                              required="#{param['isRequired'] == 'true'}" 
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
                              styleClass="ui-grid-col-12"
@@ -43,6 +45,7 @@
                 <p:outputLabel value="#{bundle.FullName}:" />
                 <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"
                                  disabled="#{_bean.isReadOnly()}"
+                                 onkeypress="checkEsc();"
                                  rows="1" autoResize="true"
                                  styleClass="ui-grid-col-12"                                      
                                  onchange="return itemChange = 1;">
@@ -53,7 +56,7 @@
 
                 <p:outputLabel value="#{bundle.EMail}:" />
                 <p:inputText id="email" value="#{_bean.editedItem.email}" 
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onkeypress="checkEsc();"
                              maxlength="256" 
                              styleClass="ui-grid-col-12" 
                              disabled="#{_bean.isReadOnly()}"

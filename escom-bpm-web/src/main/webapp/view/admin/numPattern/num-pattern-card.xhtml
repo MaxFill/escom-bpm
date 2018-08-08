@@ -11,7 +11,7 @@
 
                 <p:outputLabel value="#{bundle.NamePattern}" indicateRequired="true"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onkeypress="checkEsc();"
                              onchange="return itemChange = 1;"
                              disabled="#{!_bean.isHaveRightEdit()}"
                              styleClass="ui-grid-col-12"
@@ -22,7 +22,7 @@
                 <p:outputLabel value="#{bundle.PatternAutoGenerate}" indicateRequired="true"/>
                 <p:inputText id="patternAuto" value="#{_bean.editedItem.pattern}"
                              title="#{bundle.PatternAutoGenerate}"
-                             onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                             onkeypress="checkEsc();"
                              onchange="return itemChange = 1;"
                              disabled="#{!_bean.isHaveRightEdit()}"
                              styleClass="ui-grid-col-12"
@@ -33,7 +33,7 @@
                 <p:watermark for="patternAuto" value="#{bundle.InputPattern}"/> 
                 <p:outputLabel value="#{bundle.LeadingZeros}" indicateRequired="true"/>
                 <p:spinner id="leadingZeros" value="#{_bean.editedItem.leadingZeros}" 
-                           onkeypress="checkEsc(#{_bean.cancelBtnName});"
+                           onkeypress="checkEsc();"
                            onchange="return itemChange = 1;"
                            disabled="#{!_bean.isHaveRightEdit()}"
                            required="#{param['isRequired'] == 'true'}"
