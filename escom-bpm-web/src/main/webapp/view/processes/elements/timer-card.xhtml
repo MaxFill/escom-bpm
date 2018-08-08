@@ -16,13 +16,7 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{timerCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Timer}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Caption}:" indicateRequired="true"/>
-                    <p:inputText value="#{timerCardBean.editedItem.caption}" styleClass="ui-grid-col-12"
-                                 required="#{param['isRequired'] == 'true'}" 
-                                 requiredMessage="#{bundle.Field} [#{bundle.Caption}] #{bundle.MustBeFilled}">
-                    </p:inputText>
-                    
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >                   
                     <p:outputLabel value="#{bundle.DateNextStart}:"/>
                     <p:inputText value="#{timerCardBean.procTimer.startDate}" readonly="true">
                         <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>

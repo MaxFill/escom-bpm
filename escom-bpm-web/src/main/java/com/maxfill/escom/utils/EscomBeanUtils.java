@@ -127,21 +127,9 @@ public final class EscomBeanUtils {
     }       
     
     /* Формирует ссылку URL для объекта  */
-    public static String doGetItemURL(BaseDict item, String page){
-        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
-        
-        String serverURL = null;
-        String docURL = "";
-
-        try {
-            serverURL = new URL(request.getScheme(),
-                    request.getServerName(),
-                    request.getServerPort(),
-                    request.getContextPath()).toString();
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static String doGetItemURL(BaseDict item, String page){       
+        String serverURL = makeServerURL();
+        String docURL = "";        
 
         if (!org.apache.commons.lang3.StringUtils.isEmpty(serverURL)){
             StringBuilder builder = new StringBuilder();
@@ -152,6 +140,27 @@ public final class EscomBeanUtils {
             docURL = builder.toString();
         }
         return docURL;
+    }
+    
+    public static String makePageURL(String page){
+        StringBuilder sb = new StringBuilder(makeServerURL());
+        sb.append("/faces/view/").append(page).append(".xhtml");
+        return sb.toString();        
+    }
+    
+    private static String makeServerURL(){
+        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();        
+        try {
+            String serverURL = new URL(request.getScheme(),
+                    request.getServerName(),
+                    request.getServerPort(),
+                    request.getContextPath()).toString();
+            return serverURL;
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException();
+        }
     }
     
     /* Формирует ключ открываемого объекта */

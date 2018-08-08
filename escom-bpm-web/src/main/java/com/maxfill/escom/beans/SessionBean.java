@@ -67,7 +67,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import org.primefaces.event.FileUploadEvent;
@@ -416,6 +415,16 @@ public class SessionBean implements Serializable{
     }
     
     /**
+     * Формирование URL формы обозревателя 
+     * @param formName 
+     * @return  
+     */
+    public String onGetFormURL(String formName){
+        String url = EscomBeanUtils.makePageURL(formName);
+        return url;
+    }
+    
+    /**
      * Открытие формы диалога
      */
     public void onOpenForm(){
@@ -652,6 +661,7 @@ public class SessionBean implements Serializable{
         } 
     }
     
+    
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     
     public void changeLocale(String lang){
@@ -675,7 +685,7 @@ public class SessionBean implements Serializable{
     
     /* Отображение справки */
     public void onViewHelp(){
-       openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
+       openModalDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
     }
            
     public void killBean(String beanName, String beanId){       

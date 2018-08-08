@@ -19,11 +19,11 @@
                     onclick="document.getElementById('mainFRM:btnStop').click();"/>
     </ui:define>
     
-    <ui:define name="specToolButtons">
+    <ui:define name="CardToolButtons">
         <h:outputLabel value="#{bundle.State}: "/>
         <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
         <p:spacer width="15"/>
-        <p:commandButton id="btnRun" value="#{bundle.Run}" title="#{bundle.StartProcess}" icon="ui-icon-play"
+        <p:commandButton id="btnRun" title="#{bundle.StartProcess}" icon="ui-icon-play"
                         disabled="#{processCardBean.isReadOnly()}"
                         update="mainFRM"
                         actionListener="#{processCardBean.onRun()}"
@@ -31,14 +31,13 @@
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
         <p:spacer width="2"/>
-        <p:commandButton id="btnStop" value="#{bundle.Stop}" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
+        <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
                         disabled="#{processCardBean.isDisableBtnStop()}"
                         update="mainFRM" 
                         actionListener="#{processCardBean.onStop()}"
                         oncomplete="return itemChange = 0;">
             <p:confirm header="#{bundle.InterruptionProcess}" message="#{msg.ConfirmInterruptionProcess}" icon="ui-icon-alert" />
         </p:commandButton>
-        <p:spacer width="10"/>
     </ui:define>
     
     <ui:define name="page_body">                
@@ -313,23 +312,24 @@
             }
 
             function sendElementClick(info){
-                    console.log("elementId="+info.target.id);                    
+                    //console.log("elementId="+info.target.id);                    
                     var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
                     var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
                     var elementId = info.target.id;
-                    if (elementId == ""){
-                        var parentElement = info.target.parentElement;                              
+                    if (elementId.indexOf('diagramm') == -1){
+                        var parentElement = info.target.parentElement;                          
                         elementId = $(parentElement).attr('id');
+                        //console.log("parent elementId="+ elementId);
                         xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
                         yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                    }
+                    }                    
                     elementClicked([
                         {name : 'elementId',value : elementId},
                         {name : 'posX',     value : xPos},
                         {name : 'posY',     value : yPos}
                     ]);
-            }                
-
+            }            
+                
             $(document).on('click', '.ui-diagram > .ui-diagram-element', 
                 function(info) {
                     sendElementClick(info);
@@ -358,7 +358,7 @@
                 });
 
              function refreshContextMenu(componentId){
-                console.log("refresh componentId="+componentId);
+                 //console.log("refresh componentId="+componentId);
                  var menu = [{
                         name: '#{bundle.Paste}',
                         img: '/escom-bpm-web/resources/images/paste.png',

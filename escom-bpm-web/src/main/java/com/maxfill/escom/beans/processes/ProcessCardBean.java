@@ -420,13 +420,15 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             String y = params.get("posY");
             String id = paramId.substring(paramId.indexOf("-") + 1);
             selectedElement = model.findElement(id);
-            selectedElement.setX(x + "em");
-            selectedElement.setY(y + "em");
-            defX = Integer.valueOf(x) + 5;
-            defY = Integer.valueOf(y) + 5;
-            baseElement = (WFConnectedElem) selectedElement.getData();
-            baseElement.setPosX(Integer.valueOf(x));
-            baseElement.setPosY(Integer.valueOf(y));            
+            if (selectedElement != null){
+                selectedElement.setX(x + "em");
+                selectedElement.setY(y + "em");
+                defX = Integer.valueOf(x) + 5;
+                defY = Integer.valueOf(y) + 5;
+                baseElement = (WFConnectedElem) selectedElement.getData();
+                baseElement.setPosX(Integer.valueOf(x));
+                baseElement.setPosY(Integer.valueOf(y));
+            }
         }
     }   
     

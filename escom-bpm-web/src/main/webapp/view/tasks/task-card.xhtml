@@ -10,7 +10,7 @@
     <ui:define name="specActionMenu" >
     </ui:define>
 
-    <ui:define name="specToolButtons" >                    
+    <ui:define name="CardToolButtons" >                    
         <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
             <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                              icon="#{'ico_'.concat(result.getIconName())}"

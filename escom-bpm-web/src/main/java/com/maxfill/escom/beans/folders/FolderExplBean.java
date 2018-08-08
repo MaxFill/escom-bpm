@@ -270,7 +270,7 @@ public class FolderExplBean extends ExplorerTreeBean{
         });
         Map<String, Object> params = new HashMap<>();
         params.put("documents", docs);
-        processBean.createItemAndOpenCard(null, dropItem, params);
+        processBean.createItemAndOpenCard(null, dropItem, params, getParamsMap());
     }
     
     /* GETS & SETS */

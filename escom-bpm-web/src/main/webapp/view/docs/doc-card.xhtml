@@ -202,10 +202,11 @@
                     rendered="#{!_bean.isReadOnly() and _bean.editedItem.state.currentState.id == 5}"
                     icon="ui-icon-extlink"
                     update="mainFRM"
-                    action="#{_bean.prepSaveItemAndPublic()}"
+                    actionListener="#{_bean.prepSaveItemAndPublic()}"
                     onclick="if (itemChange == 1) {
                                 onChangeItem();
-                            }">
+                            }
+                            sendFormSize();">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
     </ui:define>

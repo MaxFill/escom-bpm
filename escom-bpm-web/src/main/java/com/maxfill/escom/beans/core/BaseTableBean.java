@@ -141,11 +141,18 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         }
     }
 
-    /* СОЗДАНИЕ: Создание объекта с открытием карточки */
-    public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> params){
+    /**
+     * СОЗДАНИЕ: Создание объекта с открытием карточки
+     * @param parent
+     * @param owner
+     * @param createParams - параеметры, используемые на стадии создания объекта 
+     * @param openParams - параметры, используемые при открытии карточки объекта, например, данные о бине из которого был вызов метода
+     * @return 
+     */
+    public T createItemAndOpenCard(BaseDict parent, BaseDict owner, Map<String, Object> createParams, Map<String, List<String>> openParams){
         Set<String> errors = new HashSet<>();
-        T newItem = checkCanCreateItem(parent, owner, errors, params);
-        openItemCard(newItem, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
+        T newItem = checkCanCreateItem(parent, owner, errors, createParams);
+        openItemCard(newItem, DictEditMode.INSERT_MODE, openParams, errors);
         return newItem;
     }
 

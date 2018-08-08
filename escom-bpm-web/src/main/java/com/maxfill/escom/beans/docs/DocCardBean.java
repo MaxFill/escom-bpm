@@ -483,7 +483,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
             docs.add(getEditedItem());
             Map<String, Object> params = new HashMap<>();
             params.put("documents", docs);
-            processBean.createItemAndOpenCard(null, procType, params);
+            processBean.createItemAndOpenCard(null, procType, params, getParamsMap());
         }
     }
     

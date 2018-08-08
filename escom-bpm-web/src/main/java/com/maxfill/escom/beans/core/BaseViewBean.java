@@ -147,7 +147,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @param exitParam
      * @return 
      */
-    protected String finalCloseDlg(Object exitParam){
+    protected String finalCloseDlg(Object exitParam){        
         sessionBean.killBean(getBeanName(), beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";

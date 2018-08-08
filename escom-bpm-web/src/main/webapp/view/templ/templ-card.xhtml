@@ -13,14 +13,24 @@
     </ui:define>
 
     <ui:define name="specToolButtons">
-        <p:commandButton id="btnSaveClose" value="#{bundle.SaveClose}"
-                    rendered="#{!_bean.isReadOnly()}"
-                    icon="ui-icon-circle-check"
+        <ui:insert name="CardToolButtons"/>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+        <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
+                    disabled="#{_bean.isReadOnly()}"
+                    icon="ui-icon-disk"
                     update="mainFRM"
                     actionListener="#{_bean.prepSaveItemAndClose()}"
-                    onclick="if (itemChange == 1) {onChangeItem()}; sendFormSize();">
+                    onclick="if (itemChange == 1) {
+                        onChangeItem();
+                    } 
+                    sendFormSize();">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
     </ui:define>
     
     <ui:define name="toolbarComponents" >
@@ -51,11 +61,11 @@
         <p:importConstants type="com.maxfill.dictionary.DictEditMode"     var="DictEditMode" />
         <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
-    
+        <ui:include src="/view/sys/noSaveDlg.xhtml" />
     </ui:define>
     
     <ui:define name="dialogs">
-        <ui:include src="/view/sys/noSaveDlg.xhtml" />
+        
         <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
         

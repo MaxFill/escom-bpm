@@ -220,7 +220,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                 owner = selected;
             }
         typeEdit = DictEditMode.INSERT_MODE;        
-        editItem = treeBean.createItemAndOpenCard(parent, owner, createParams);
+        editItem = treeBean.createItemAndOpenCard(parent, owner, createParams, treeBean.getParamsMap());
     }
     
     /* КАРТОЧКИ: создание объекта в дереве на нулевом уровне */
@@ -228,7 +228,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         BaseDict owner = null;
         BaseDict parent = null;
         typeEdit = DictEditMode.INSERT_MODE;
-        editItem = rootBean.createItemAndOpenCard(parent, owner, createParams);
+        editItem = rootBean.createItemAndOpenCard(parent, owner, createParams, rootBean.getParamsMap());
     }
     
     /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
@@ -239,7 +239,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (treeSelectedNode != null){
             owner = (BaseDict) treeSelectedNode.getData();
         }        
-        editItem = tableBean.createItemAndOpenCard(parent, owner, createParams);
+        editItem = tableBean.createItemAndOpenCard(parent, owner, createParams, tableBean.getParamsMap());
     }
     
     public Boolean checkCanCreateDetailItem(Set<String> errors){
