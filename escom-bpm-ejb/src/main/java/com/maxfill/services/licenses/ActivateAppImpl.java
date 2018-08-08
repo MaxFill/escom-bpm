@@ -64,7 +64,7 @@ public class ActivateAppImpl implements ActivateApp{
             byte[] bytes = Files.readAllBytes(licenseFile.toPath());
             String sourceStr = new String(bytes, "UTF-8");
             byte[] encrypted = cipher.doFinal(Base64.getDecoder().decode(sourceStr));
-            String resultXML = new String(encrypted);
+            String resultXML = new String(encrypted, "UTF-8");
             license = JAXB.unmarshal(new StringReader(resultXML), Licence.class);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
                 | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | IOException ex) {
@@ -115,7 +115,6 @@ public class ActivateAppImpl implements ActivateApp{
         String processorIdentifier = centralProcessor.getIdentifier();
         String bios = systemInfo.getHardware().getComputerSystem().getBaseboard().getSerialNumber();
         HWDiskStore[] hwDiskStHw = hardwareAbstractionLayer.getDiskStores();
-
 
         int processors = centralProcessor.getLogicalProcessorCount();
 

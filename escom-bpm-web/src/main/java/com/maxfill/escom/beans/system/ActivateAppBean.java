@@ -65,7 +65,7 @@ public class ActivateAppBean implements Serializable{
             MsgUtils.errorMessage(licenseData);
             return;
         }
-        if (activateApp.activate(licNumber,licenseData)){
+        if (activateApp.activate(licNumber, licenseData)){
             appBean.initLicense();
             MsgUtils.succesMsg("ApplicationIsActivate");
             PrimeFaces.current().ajax().update("activateFRM:mainPanel");

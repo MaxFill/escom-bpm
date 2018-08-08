@@ -9,7 +9,8 @@ sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
 Обновление EAR
 1. Заходим на стенд и удаляем файл /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear
 2. Копируем файл командой:
-sudo scp /opt/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
+sudo scp /home/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
+
 /* sudo scp /home/maksim/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
 3. Проверяем, что файл скопировался
 4. Заходим на стенде в папку cd /home/compose/wildfly8443 
@@ -19,17 +20,17 @@ docker exec -i -t wildfly8443 bash
 Подключаемся к mysql командой:
 mysql -uescom -p пароль qwerty
 удаляем схему командой:
-DROP DATABASE scomdb;
+DROP DATABASE escomdb;
 создаём базу данных командой:
 CREATE DATABASE escomdb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 Отключаемся от mysql и от контейнера
 
-5. Останавливаем стенд командой:
-docker-compose stop
-6. На стенде, копируем файл в остановленный контейнер командой:
-docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear storage8443:/opt/wildfly/standalone/deployments/
+ЕСЛИ mysql остановлен то его следует запустить командой /etc/init.d/mysql start
+
+5. На стенде, копируем файл в контейнер командой:
+docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear wildfly8443:/opt/wildfly/standalone/deployments/
 если нужно, то копируем и конфигурационные файлы:
-docker cp /home/docker/escom-bpm/datastore/configuration/escom.properties storage8443:/opt/wildfly/standalone/configuration/
+docker cp /home/docker/escom-bpm/datastore/configuration/escom.properties wildfly8443:/opt/wildfly/standalone/configuration/
 docker cp /home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml storage8443:/opt/wildfly/standalone/configuration
 
 

@@ -382,7 +382,8 @@
     
     <ui:define name="dialogs"> 
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" widgetVar="dlgAbout">
-            <h:form id="logFRM">                
+            <h:form id="logFRM">  
+                <p:defaultCommand target="logFRM:btnClose" />
                 <p:panelGrid id="aboutPanel" columns="2"  columnClasses="ui-grid-col-6 ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces" >
                     <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                         <p:outputLabel value="#{bundle.LicenceNumber}"/>
@@ -426,8 +427,10 @@
                         <p:separator />
                         <h:panelGrid columns="2" styleClass="ui-grid-col-12">
                             <p:commandButton value="#{bundle.LicenseAgreement}" style="float: left;"
-                                             actionListener="#{sessionBean.openLicenseForm()}"/>
-                            <p:commandButton value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
+                                             actionListener="#{sessionBean.openLicenseForm()}"
+                                             onstart="PF('statusDialog').show()"
+                                             oncomplete="PF('statusDialog').hide();"/>
+                            <p:commandButton id="btnClose" value="#{bundle.Close}" onclick="PF('dlgAbout').hide();" style="float: right;"/>
                         </h:panelGrid>
                     </p:panelGrid>
                 </p:panelGrid>

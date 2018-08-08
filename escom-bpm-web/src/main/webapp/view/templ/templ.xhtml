@@ -67,13 +67,6 @@
         </style>
 
         <script type="text/javascript">
-            $(function () {
-                $(':input').bind('keydown', 'esc', function () {
-                    checkEsc();
-                    return false;
-                });
-            });
-
             function checkEsc() {
                 if (event.keyCode === 27) {
                     document.getElementById('mainFRM:btnClose').click();
