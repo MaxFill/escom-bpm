@@ -142,4 +142,20 @@ public abstract class BaseFacade<T> {
         orderList.add(builder.asc(root.get("name")));
         return orderList;
     }
+    
+    /**
+     * Поиск объекта по его имени в поле name
+     * @param name
+     * @return 
+     */
+    public List<T> findByName(String name){
+        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(entityClass);
+        Root<T> root = cq.from(entityClass);
+        Predicate crit1 = builder.equal(root.get("name"), name);
+        cq.select(root).where(builder.and(crit1));        
+        Query q = getEntityManager().createQuery(cq);
+        return q.getResultList();
+    }
 }

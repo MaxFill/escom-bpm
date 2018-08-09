@@ -24,6 +24,8 @@ import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.WithDatesPlans;
+import com.maxfill.model.core.forms.FormsSettings;
+import com.maxfill.model.core.forms.FormsSettingsFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
@@ -117,6 +119,8 @@ public class SessionBean implements Serializable{
     protected ProcessFacade processFacade;
     @EJB
     protected AttacheService attacheService;
+    @EJB
+    private FormsSettingsFacade formsSettingsFacade;
             
     @Inject
     private AttacheBean attacheBean;   
@@ -401,10 +405,9 @@ public class SessionBean implements Serializable{
     public void onViewAttache(Attaches attache) {
         String path = configuration.getUploadPath() + attache.getFullName();
         Map<String, List<String>> paramMap = getParamsMap();
-        List<String> pathList = new ArrayList<>();
-        pathList.add(FilenameUtils.removeExtension(path) + ".pdf");
+        List<String> pathList = Collections.singletonList(FilenameUtils.removeExtension(path) + ".pdf");        
         paramMap.put("path", pathList);
-        openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
+        openModalDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
     }
 
     /* Скачивание вложения  */
@@ -617,12 +620,18 @@ public class SessionBean implements Serializable{
         Tuple<Integer, Integer> rezult;
         if (formsSize.containsKey(formName)){
             rezult = formsSize.get(formName);            
-        } else 
-            if (formName.contains("explorer")){
-                rezult = new Tuple(1300, 800);                
-            } else {
-                rezult = new Tuple(900, 600);
-            }
+        } else {
+            List<FormsSettings> fsList = formsSettingsFacade.findByName(formName);
+            if (!fsList.isEmpty()){
+                FormsSettings fs = fsList.get(0);
+                rezult = new Tuple(fs.getWidth(), fs.getHeight());
+            } else
+                if (formName.contains("explorer")){
+                    rezult = new Tuple(1300, 800);                
+                } else {
+                    rezult = new Tuple(900, 600);
+                }
+        }
         formsSize.put(formName, rezult);
         return rezult;
     }
@@ -636,6 +645,11 @@ public class SessionBean implements Serializable{
     public void saveFormSize(String formName, Integer width, Integer heaght){
         Tuple<Integer, Integer> size = new Tuple(width, heaght);
         userSettings.getFormsSize().put(formName, size);
+        List<FormsSettings> fsList = formsSettingsFacade.findByName(formName);
+        if (fsList.isEmpty()){
+            FormsSettings fs = new FormsSettings(formName, width, heaght);
+            formsSettingsFacade.create(fs);
+        }
     }       
     
     /* редирект на страницу */

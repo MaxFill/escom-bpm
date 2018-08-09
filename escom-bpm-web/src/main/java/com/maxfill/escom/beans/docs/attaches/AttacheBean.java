@@ -12,6 +12,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.files.FileService;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,9 +94,21 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         try {
             //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
             content = new DefaultStreamedContent(new FileInputStream(path), "application/pdf");                
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+    
+    @Override
+    public String onCloseCard(){
+        try {
+            if (content != null && content.getStream() != null){
+                content.getStream().close();
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return super.onCloseCard();
     }
     
     public StreamedContent getContent() {

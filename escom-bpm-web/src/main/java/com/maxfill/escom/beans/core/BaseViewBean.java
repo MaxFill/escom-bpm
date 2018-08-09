@@ -94,7 +94,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-                if (StringUtils.isNotEmpty(sourceBeanId)){                 
+                if (StringUtils.isNotEmpty(sourceBeanId) && StringUtils.isNotEmpty(beanName)){                 
                     HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
                     Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
                     for (Object entry : map.values()) { //поиск view бина

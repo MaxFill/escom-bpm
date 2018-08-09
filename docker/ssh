@@ -27,6 +27,8 @@ CREATE DATABASE escomdb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 ЕСЛИ mysql остановлен то его следует запустить командой /etc/init.d/mysql start
 
+Останавливаем сервер (Но можно копировать и в работающий сервер!) командой:
+docker-compose stop
 5. На стенде, копируем файл в контейнер командой:
 docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear wildfly8443:/opt/wildfly/standalone/deployments/
 если нужно, то копируем и конфигурационные файлы:

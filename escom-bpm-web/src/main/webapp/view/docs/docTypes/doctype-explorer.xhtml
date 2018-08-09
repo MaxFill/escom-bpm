@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-explorer.xhtml">
+                template="/view/templ/templ-explorer.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
 
     <!-- стандартный обозреватель/селектор -->
     
@@ -15,4 +17,11 @@
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateChildGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.CreateDocType}" />
     
+    <ui:define name="centerFormFooter">
+        <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
+            <p:panel header="" styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
+                <p:outputLabel value="#{''.concat(bundle.GroupIsNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>
+            </p:panel>
+        </h:panelGroup>        
+    </ui:define>
 </ui:composition>

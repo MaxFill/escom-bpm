@@ -7,7 +7,7 @@
     <p:panelGrid id="fileUploadFRM" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
         <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
             <p:panel header="" styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
-                <p:outputLabel value="#{bundle.FolderIsNotSelected}"/>
+                <p:outputLabel value="#{''.concat(bundle.FolderIsNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>
             </p:panel>
             <p:fileUpload id="file" disabled="#{_bean.treeSelectedNode == null}"
                        rendered="#{_bean.treeSelectedNode != null}"

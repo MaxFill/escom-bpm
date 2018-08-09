@@ -163,7 +163,7 @@
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.mainAttache == null}"
-                    actionListener="#{docBean.onViewAttache(item.getAttache())}"/>
+                    actionListener="#{docBean.onViewAttache(item.getMainAttache())}"/>
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"
                     onstart="return isClose = 1;"

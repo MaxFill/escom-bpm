@@ -2,11 +2,7 @@ package com.maxfill.model.authlog;
 
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.facade.BaseLazyLoadFacade;
-import com.maxfill.model.authlog.Authlog;
-import com.maxfill.model.authlog.Authlog_;
-
 import javax.ejb.Stateless;
-import javax.persistence.metamodel.SingularAttribute;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;

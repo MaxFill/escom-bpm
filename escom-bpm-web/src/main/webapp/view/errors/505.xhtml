@@ -4,7 +4,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui">
-    
+
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width" />     
@@ -18,19 +18,29 @@
         <h:outputStylesheet library="css" name="em_style1.css"/> 
         <title>#{msg.Error}</title>
     </h:head>
-    
+
     <h:body>
         <h:form>
             <p:panel styleClass="panelLogin">
-                <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
-                    <p:graphicImage name="/images/escom_logo.jpg"  />
-                    <h2>#{bundle.INTERNAL_ERROR}</h2>
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
+                    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
+                        <p:graphicImage name="/images/escom_logo.jpg"  />
+                        <h:panelGroup styleClass="ui-grid-col-12">
+                            <h2> #{bundle.OurApologies}</h2>
+                            <br/>
+                            <h3>#{bundle.INTERNAL_ERROR}</h3>                        
+                        </h:panelGroup>
+                    </p:panelGrid>
+                    <p:separator />
+                    <p:outputLabel value="#{msg.PossibleErroralreadyFixed}"/>
+                    <p:spacer />
+                    <p:commandButton value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+                                     onstart="return isClose = 1;"                                     
+                                     actionListener="#{sessionBean.onSessionExit()}"/>
+                    <p:panelGrid  columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">                    
+                        <h:outputText value="#{requestScope['javax.servlet.error.message']}" style="color: red;" />  
+                    </p:panelGrid>                    
                 </p:panelGrid>
-                <br/><br/>
-                <p:panelGrid  columns="1" columnClasses="ui-grid-col-12">                    
-                    <h:outputText value="#{requestScope['javax.servlet.error.message']}" style="color: red;" />  
-                </p:panelGrid>
-                <br/><br/>
             </p:panel>
         </h:form> 
     </h:body> 

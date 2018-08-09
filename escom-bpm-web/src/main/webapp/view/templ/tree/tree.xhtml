@@ -41,8 +41,7 @@
 
     <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
         <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}"
-                update="mainFRM:centerFRM #{_updates}"
-                oncomplete="initDND()"/>
+                update="mainFRM:centerFRM #{_updates}" oncomplete="initDND()"/>
 
         <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
             <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
