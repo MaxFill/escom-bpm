@@ -5,12 +5,12 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <p:dialog header="#{bundle.DataNoSave}" widgetVar="confirmDLG" width="470" height="195" modal="true" resizable="false">
-        <h:form style="font-size: 110%;">
+        <h:form style="font-size: 150%;">
             <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">                
-                <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">
                     <p:graphicImage id="itemIcon" value="/resources/images/info.jpg"/>
-                    <h:outputText value="#{bundle.PressSaveOrCancel}" />
-                </h:panelGrid>                
+                    <p:outputLabel value="#{bundle.PressSaveOrCancel}" />
+                </p:panelGrid>                
                 <p:spacer height="3"/>
                 
                 <h:panelGroup>

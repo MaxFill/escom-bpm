@@ -10,9 +10,8 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.users.User;
 import com.maxfill.services.webDav.WebDavRemainder;
 import com.maxfill.utils.DateUtils;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
-
+import org.primefaces.PrimeFaces;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
@@ -88,19 +87,17 @@ public class DocLockBean extends BaseViewBean<BaseView>{
     }
     
     public void onChangeDateLock(SelectEvent event){
-        Date newDate = (Date) event.getObject();
-        RequestContext requestContext = RequestContext.getCurrentInstance();
+        Date newDate = (Date) event.getObject();        
         if (isAttacheLock() && isUserIsEditor()){            
-            requestContext.update("lockForm");
+            PrimeFaces.current().ajax().update("lockForm");
         }
     }
     
     private void openFile(){        
         String folder = getFolderLink();                                    
         StringBuilder command = new StringBuilder("EditDoc('");
-        command.append(folder).append(attache.getName()).append("','").append(folder).append("');");
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.execute(command.toString());
+        command.append(folder).append(attache.getName()).append("','").append(folder).append("');");        
+        PrimeFaces.current().executeScript(command.toString());
         //"EditDoc('https://fil-pc:8443/modeshape-webdav/sample/default/newdoc.docx', 'https://localhost:8443/modeshape-webdav/sample/default/');"   
     }
     
@@ -111,9 +108,8 @@ public class DocLockBean extends BaseViewBean<BaseView>{
     
     public void showFileLink(){
         StringBuilder command = new StringBuilder("CopyToClipboard('");
-        command.append(getFileLink()).append("')");
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.execute(command.toString());
+        command.append(getFileLink()).append("')");        
+        PrimeFaces.current().executeScript(command.toString());
     }
     
     private String getFolderLink(){

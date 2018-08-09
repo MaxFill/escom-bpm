@@ -99,6 +99,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * @param event
      */
     public void onInboxSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<Folder> items = (List<Folder>) event.getObject();
         if (items.isEmpty()) return;
         Folder folder = items.get(0);
@@ -236,6 +237,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * @param event 
      */
     public void onChangeStaff(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<Staff> items = (List<Staff>)event.getObject();
         if (items.isEmpty()) return;
         Staff staff = items.get(0);        

@@ -197,7 +197,7 @@ public class MetadatesBean extends BaseViewBean{
      * @param event 
      */
     public void onSelectedItem(SelectEvent event){
-        if (event.getObject() == null) return;
+        if (event.getObject() == null) return;        
         selectedObject = ((Metadates) event.getObject());
         states = null;
         rights = null;

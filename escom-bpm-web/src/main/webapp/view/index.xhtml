@@ -25,9 +25,7 @@
 
         <h:form id="mainFRM">            
             <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
-            <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
-            <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
-                        
+            
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
                                  icon="ui-icon-circle-close"
@@ -42,6 +40,10 @@
                 </ui:repeat>
             </p:notificationBar>           
             
+            <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
+            <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
+            <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
+            <p:commandButton style="display: none;" id="createDocBtn"  actionListener="#{sessionBean.onCreateDoc()}"/>
             <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('newMsg')}">
                 <p:ajax event="dialogReturn" update="mainFRM:messages"/>
             </p:commandButton>
@@ -346,8 +348,6 @@
                 </p:dashboard>                                 
             </p:panelGrid>
 
-            <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
-            <p:commandButton style="display: none;" id="createDocBtn" actionListener="#{sessionBean.onCreateDoc()}"/>
         </h:form>
     </ui:define>
 

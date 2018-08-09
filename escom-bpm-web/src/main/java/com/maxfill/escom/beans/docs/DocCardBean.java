@@ -260,6 +260,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     public void addAttacheFromScan(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         onItemChange();
         docBean.addAttacheFromScan(getEditedItem(), event);
     }
@@ -338,6 +339,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Событие изменения контрагента на карточке */
     public void onPartnerSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<Partner> items = (List<Partner>) event.getObject();
         if (items.isEmpty()) return;
         Partner item = items.get(0);
@@ -351,6 +353,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Событие изменения типа документа на карточке  */
     public void onDocTypeSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<DocType> items = (List<DocType>) event.getObject();
         if (items.isEmpty()){return;}
         DocType item = items.get(0);
@@ -366,6 +369,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
   
     /* Событие обработки выбора главного документа на карточке */
     public void onMainDocSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<Doc> items = (List<Doc>) event.getObject();
         if (items.isEmpty()) return;
         Doc item = items.get(0);
@@ -438,6 +442,7 @@ public class DocCardBean extends BaseCardBean<Doc>{
     
     /* Добавление в документ статусов из селектора */
     public void onAddStatusesFromSelector(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         if (event.getObject() != null){
             List<StatusesDoc> statuses = (List<StatusesDoc>) event.getObject();
             int loadCounter = docBean.addStatusesInDoc(getEditedItem(), statuses);

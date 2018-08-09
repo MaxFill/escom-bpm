@@ -305,8 +305,8 @@ public class SessionBean implements Serializable{
         HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         authLogFacade.addAuthExit(currentUser.getLogin(), request);
         redirectToPage(page, Boolean.TRUE);
-    }
-
+    }  
+    
     /**
      * Обработка события закрытия диалога лицензионного соглашения
      * @param event

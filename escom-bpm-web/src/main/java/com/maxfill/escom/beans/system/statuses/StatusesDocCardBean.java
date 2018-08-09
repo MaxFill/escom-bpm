@@ -35,6 +35,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
     }
     
     public void doAddStatusInTypeDocs(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<DocType> docTypes = (List<DocType>) event.getObject();
         if (docTypes.isEmpty()) return;
         docTypes.stream().forEach(docType -> {

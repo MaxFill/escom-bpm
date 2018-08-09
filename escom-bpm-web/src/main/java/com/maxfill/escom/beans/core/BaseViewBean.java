@@ -164,7 +164,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */
 
-    public abstract String getFormName();       
+    public abstract String getFormName();
     
     public Boolean isWestShow(){
         return false;
@@ -219,7 +219,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      */
     public Map<String, List<String>> getParamsMap(){
         Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> itemIds = Collections.singletonList(beanId);        
+        List<String> itemIds = Collections.singletonList(beanId == null ? this.toString() : beanId);        
         List<String> beanNameList = Collections.singletonList(getBeanName());
         paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
         paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);

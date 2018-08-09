@@ -28,7 +28,7 @@
                 });
             </script>
             
-            <p:panel header="#{_bean.getFormHeader()}" rendered="#{_bean != null}" styleClass="ui-grid-col-12 ui-draggable without-spaces" style="height: 100%;" >
+            <p:panel header="#{_bean.getFormHeader()}" rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
                 <f:facet name="actions">
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                    rendered="#{_bean.getSourceBeanId() != null}"

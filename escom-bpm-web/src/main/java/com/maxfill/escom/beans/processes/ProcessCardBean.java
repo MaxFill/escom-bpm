@@ -564,6 +564,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (baseElement instanceof ExitElem){
             Element exit = model.findElement(baseElement.getUid());
             exit.setStyleClass(baseElement.getStyle());
+            return;
         }
         if (baseElement instanceof StatusElem){
             Element status = model.findElement(baseElement.getUid());

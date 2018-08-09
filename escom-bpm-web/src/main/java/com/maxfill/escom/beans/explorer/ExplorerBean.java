@@ -159,7 +159,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                     filterId = Integer.valueOf(params.get("filterId"));
                 }
             } 
-        }    
+        }        
     }
 
     /* КАРТОЧКИ ОБЪЕКТОВ */

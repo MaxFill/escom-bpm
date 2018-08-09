@@ -99,10 +99,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
      * @param event
      */
     public void onAfterSendDocToEmail(SelectEvent event){
-        if (event.getObject() != null) {                        
-            String message = (String) event.getObject();
-            MsgUtils.succesMessage(message);
-        }
+        if (event.getObject() == null) return;
+        String message = (String) event.getObject();
+        MsgUtils.succesMessage(message);
     }
 
     /* Возвращает полное регистрационное имя документа */

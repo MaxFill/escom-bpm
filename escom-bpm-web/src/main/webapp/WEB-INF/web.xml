@@ -78,7 +78,7 @@
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/faces/view/errors/505.xhtml</location>
+        <location>/faces/view/errors/505.xhtml?faces-redirect=true</location>
     </error-page>
     <security-role>
         <description/>

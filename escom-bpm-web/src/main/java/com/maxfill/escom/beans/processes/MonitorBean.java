@@ -159,6 +159,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * @param event 
      */
     public void onChangeInitiator(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<User> users = (List<User>) event.getObject();
         if (users.isEmpty()) return;
         initiator = users.get(0);

@@ -55,9 +55,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     
     /* Добавление групп в редактируемый объект из селектора с деревом  */
     public void addGroupsFromSelector(SelectEvent event){
-        if (event.getObject() == null){
-            throw new NullPointerException("EscomERR: Selected object in selector is null!");
-        }
+        if (event.getObject() instanceof String) return;
         List<O> items = (List<O>) event.getObject();
         if (items.isEmpty()) return;
         onItemChange();

@@ -127,7 +127,7 @@
                          title="#{bundle.SelectChecked}"
                          disabled="#{_bean.checkedItems.isEmpty()}"
                          rendered="#{_bean.multySelectMode}"
-                         action="#{_bean.onMultySelect()}"
+                         actionListener="#{_bean.onMultySelect()}"
                          onclick="return isClose = 1;">
         </p:commandButton>       
 
@@ -176,17 +176,14 @@
                          oncomplete="PF('statusDialog').hide();"
                          style="display: none;">
             <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}"
-                    update="mainFRM:centerFRM mainFRM:westFRM"
-                    oncomplete="initDND()"/>
+                    update="mainFRM:centerFRM mainFRM:westFRM" oncomplete="initDND()"/>
         </p:commandButton>
 
         <p:commandButton id="editCardBtn" actionListener="#{_bean.onViewDetailItem()}"
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"
                          style="display: none;">
-            <p:ajax event="dialogReturn" 
-                    update="mainFRM:centerFRM"
-                    oncomplete="initDND()"/>
+            <p:ajax event="dialogReturn" update="mainFRM:centerFRM" oncomplete="initDND()"/>
         </p:commandButton>
 
         <p:commandButton id="editDocument" actionListener="#{_bean.onEditDocument()}"

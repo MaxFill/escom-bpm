@@ -273,6 +273,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     
     /* Обработка события изменения Владельца на карточке объекта */
     public void onChangeOwner(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<User> users = (List<User>) event.getObject();
         if (users.isEmpty()) return;
         User user = users.get(0);

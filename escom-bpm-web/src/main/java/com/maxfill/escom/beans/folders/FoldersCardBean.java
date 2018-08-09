@@ -34,6 +34,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     
     /* Обработка события изменения поля "Вид документа для новых документов"  */
     public void onDocTypeDefaultSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<DocType> items = (List<DocType>) event.getObject();
         if (items.isEmpty()){return;}
         DocType item = items.get(0);
@@ -48,6 +49,7 @@ public class FoldersCardBean extends BaseCardTree<Folder> {
     
     /* Обработка события изменения поля "Контрагент для новых документов"   */
     public void onPartnerSelected(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<Partner> items = (List<Partner>) event.getObject();
         if (items.isEmpty()){return;}
         Partner item = items.get(0);

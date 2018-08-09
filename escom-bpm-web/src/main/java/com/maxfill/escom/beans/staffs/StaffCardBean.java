@@ -55,6 +55,7 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
 
     /* Обработка события на выбор сотрудника   */
     public void onEmployeeSelected(SelectEvent event) {
+        if (event.getObject() instanceof String) return;
         List <User> items = (List <User>) event.getObject();
         if(items.isEmpty()) return;
         User user = items.get(0);
@@ -77,6 +78,7 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     
     /* Событие изменение на форме поля выбора должности  */
     public void onPostSelected(SelectEvent event) {
+        if (event.getObject() instanceof String) return;
         List <Post> items = (List <Post>) event.getObject();
         if(items.isEmpty()) return;
         Post item = items.get(0);        

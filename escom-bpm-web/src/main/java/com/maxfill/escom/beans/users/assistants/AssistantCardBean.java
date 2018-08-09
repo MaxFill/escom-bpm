@@ -38,6 +38,7 @@ public class AssistantCardBean extends BaseCardBeanGroups<Assistant, User>{
      * @param event 
      */
     public void onChangeAssistant(SelectEvent event){
+        if (event.getObject() instanceof String) return;
         List<User> items = (List<User>)event.getObject();
         if (items.isEmpty()) return;
         User assist = items.get(0);

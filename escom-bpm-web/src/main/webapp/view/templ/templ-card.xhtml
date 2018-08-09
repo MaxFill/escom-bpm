@@ -47,7 +47,7 @@
             
     <ui:define name="centerFormContent">        
         <p:focus context="mainFRM:mainTabView" for="mainFRM:mainTabView:nameItem"/>
-
+               
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
             <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
             <ui:insert name="page_body"/>
@@ -62,11 +62,7 @@
         <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
-    </ui:define>
-    
-    <ui:define name="dialogs">
         
-        <ui:include src="/view/common/error-dlg.xhtml"/>
-    </ui:define>
+    </ui:define>    
         
 </ui:composition>
