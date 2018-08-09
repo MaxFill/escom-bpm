@@ -46,8 +46,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){                        
             if (sourceBean != null){
-                sourceItem = (TimerElem)((ProcessCardBean)sourceBean).getBaseElement();                 
-            
+                sourceItem = (TimerElem)((ProcessCardBean)sourceBean).getBaseElement();                             
                 if (sourceItem != null){
                     if (sourceItem.getTimerId() != null){
                         procTimer = procTimerFacade.find(sourceItem.getTimerId());
@@ -69,7 +68,6 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
         try {
             if (procTimer != null){
                 editedItem.setTimerId(procTimer.getId());
-                editedItem.setCaption(procTimer.getName());
             }
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {

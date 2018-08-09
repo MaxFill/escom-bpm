@@ -1,6 +1,7 @@
 package com.maxfill.model.process.timers;
 
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.schemes.Scheme;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @author maksim
  */
 @Entity
-@Table(name = "proc_timers")
+@Table(name = "processTimers")
 public class ProcTimer implements Serializable {
     private static final long serialVersionUID = -1228064449198654818L;
     
@@ -104,11 +105,29 @@ public class ProcTimer implements Serializable {
     @Column(name = "DaysOfWeek")
     private String daysOfWeek;    
 
+    /* Ссылка на визуальный элемент схемы процесса */
+    @Column(name = "TimerLinkUID")
+    private String timerLinkUID;
+    
+    /**
+     * Ссылка на схему процесса
+     */
+    @JoinColumn(name = "Scheme", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Scheme scheme;
+    
     public ProcTimer() {
     }
         
     /* gets & sets */
 
+    public Scheme getScheme() {
+        return scheme;
+    }
+    public void setScheme(Scheme scheme) {
+        this.scheme = scheme;
+    }
+    
     public String getStartType() {
         return startType;
     }
@@ -178,7 +197,14 @@ public class ProcTimer implements Serializable {
     public void setDaysOfWeek(String daysOfWeek) {
         this.daysOfWeek = daysOfWeek;
     }
-    
+
+    public String getTimerLinkUID() {
+        return timerLinkUID;
+    }
+    public void setTimerLinkUID(String timerLinkUID) {
+        this.timerLinkUID = timerLinkUID;
+    }
+        
     /* *** *** */
 
     @Override

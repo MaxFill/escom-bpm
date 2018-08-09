@@ -165,15 +165,21 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     @Override
     protected void onBeforeSaveItem(Process item){       
-        List<Task> liveTask = getTasksFromModel();        
-        List<Task> forRemove = new ArrayList<>();
-        List<Task> schemeTasks = getScheme().getTasks();
-        forRemove.addAll(schemeTasks);
-        forRemove.removeAll(liveTask); //в списке остались только те элементы, которые нужно удалить
-        if (!forRemove.isEmpty()){
-            getScheme().getTasks().removeAll(forRemove);
-            editedTasks.removeAll(forRemove);
-        }       
+        //сохраняем только оставшиеся на схеме задачи, а старые удаляем        
+        List<Task> liveTasks = getTasksFromModel();        
+        List<Task> forRemoveTasks = new ArrayList<>(getScheme().getTasks());        
+        forRemoveTasks.removeAll(liveTasks); //в списке остались только те элементы, которые нужно удалить
+        if (!forRemoveTasks.isEmpty()){
+            getScheme().getTasks().removeAll(forRemoveTasks);
+            editedTasks.removeAll(forRemoveTasks);
+        }
+        //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
+        List<ProcTimer> liveTimers = getProcTimersFromModel();
+        List<ProcTimer> forRemoveTimers = new ArrayList<>(getScheme().getTimers());
+        forRemoveTimers.removeAll(liveTimers);
+        if (!forRemoveTimers.isEmpty()){
+            getScheme().getTimers().removeAll(forRemoveTimers);
+        }
         workflow.packScheme(getScheme());
         super.onBeforeSaveItem(item);
     }
@@ -358,8 +364,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             }
             elementMap.put(k, createElement(taskEl));
         });
-        getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));
-        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));        
+        getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
         getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
@@ -734,7 +740,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
 
     private TimerElem createTimer(String name, int x, int y, Set<String> errors){        
         TimerElem timer = new TimerElem(null, x, y);
-        ProcTimer procTimer = procTimerFacade.createTimer(getEditedItem());
+        ProcTimer procTimer = procTimerFacade.createTimer(getEditedItem(), getScheme(), timer.getUid());
         timer.setProcTimer(procTimer);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -1317,7 +1323,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     /**
-     * Загрузка списка задач в лист согласования
+     * Получение из модели списка задач процесса
      * @return 
      */
     public List<Task> getTasksFromModel(){
@@ -1332,6 +1338,21 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return result;
     }
     
+    /**
+     * Получение из модели списка та
+     * @return 
+     */
+    public List<ProcTimer> getProcTimersFromModel(){
+        Scheme scheme = getScheme(); 
+        List<ProcTimer> result = new ArrayList<>();
+        if (scheme != null){
+            result = getScheme().getElements().getTimers().entrySet().stream()                
+                .map(tsk->tsk.getValue().getProcTimer())
+                .collect(Collectors.toList());
+        }
+        return result;
+    }
+        
     /**
      * Формирует имя элемента для вывода в заголовке формы
      * @return 

@@ -17,6 +17,7 @@ import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
+import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.states.State;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
@@ -141,14 +142,15 @@ public class WorkflowImpl implements Workflow {
 
     @Override
     public void addTimer(TimerElem timer, Scheme scheme, Set<String> errors) {
-        if (!errors.isEmpty()) return;
         if (timer == null){
             errors.add("WorkflowIncorrectData");
         }
-        //ToDo проверки!
-        if (errors.isEmpty()) {
-            scheme.getElements().getTimers().put(timer.getUid(), timer);
-        }
+        if (!errors.isEmpty()) return;        
+        //ToDo проверки!        
+        scheme.getElements().getTimers().put(timer.getUid(), timer);
+        if (timer.getProcTimer() != null){
+            scheme.getTimers().add(timer.getProcTimer());
+        }       
     }
     
     @Override
@@ -275,11 +277,20 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            //перелинковка элементов с объектами
+            //перелинковка задач с объектами
             elements.getTasks().forEach((key, taskEl)-> {
                 for(Task task : scheme.getTasks()){
                     if (task.getTaskLinkUID().equals(key)){
                         taskEl.setTask(task);
+                        break;
+                    }
+                }
+               });
+            //перелинковка timers с объектами
+            elements.getTimers().forEach((key, timerEl)-> {
+                for(ProcTimer procTimer : scheme.getTimers()){
+                    if (procTimer.getTimerLinkUID().equals(key)){
+                        timerEl.setProcTimer(procTimer);
                         break;
                     }
                 }

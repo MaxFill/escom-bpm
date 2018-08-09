@@ -3,6 +3,7 @@ package com.maxfill.model.process.schemes;
 import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.elements.*;
+import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.task.Task;
 
 import javax.persistence.*;
@@ -37,6 +38,10 @@ public class Scheme implements Serializable, Dict{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme", orphanRemoval=true)
     private final List<Task> tasks = new ArrayList<>();
 
+    /* Список таймеров */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "scheme", orphanRemoval=true)
+    private final List<ProcTimer> timers = new ArrayList<>();
+    
     @Transient
     private WorkflowElements elements = new WorkflowElements();
 
@@ -63,6 +68,10 @@ public class Scheme implements Serializable, Dict{
         this.packElements = packElements;
     }
 
+    public List<ProcTimer> getTimers() {
+        return timers;
+    }
+    
     public List<Task> getTasks() {
         return tasks;
     }

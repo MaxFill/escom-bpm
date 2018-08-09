@@ -14,14 +14,14 @@
     </ui:define>    
     
     <ui:define name="centerFormContent">       
-        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{timerCardBean.editedItem != null}" >
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" >
             <p:tab title="#{bundle.Timer}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >                   
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" rendered="#{timerCardBean.procTimer != null}"> 
                     <p:outputLabel value="#{bundle.DateNextStart}:"/>
                     <p:inputText value="#{timerCardBean.procTimer.startDate}" readonly="true">
                         <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                     </p:inputText>       
-            
+
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <h:panelGroup>
                             <p:outputLabel value="#{''.concat(bundle.Run).concat(' ').concat(bundle.in)}:"/>
