@@ -140,6 +140,8 @@ public class SessionBean implements Serializable{
         DashboardColumn column2 = new DefaultDashboardColumn();
         DashboardColumn column3 = new DefaultDashboardColumn();
         DashboardColumn column4 = new DefaultDashboardColumn();
+        DashboardColumn column5 = new DefaultDashboardColumn();
+        DashboardColumn column6 = new DefaultDashboardColumn();
          
         column4.addWidget("admObjects"); 
         column4.addWidget("services");
@@ -158,6 +160,8 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(column2);
         dashboardModel.addColumn(column3); 
         dashboardModel.addColumn(column4);
+        dashboardModel.addColumn(column5);
+        dashboardModel.addColumn(column6);
 
         temeInit();                
     }    

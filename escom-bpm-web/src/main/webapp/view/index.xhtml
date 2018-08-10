@@ -128,12 +128,7 @@
                                 <p:commandLink value="#{bundle.Statuses}"
                                                actionListener="#{sessionBean.setOpenFormName('statusesdoc-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-
-                                <p:graphicImage value="/resources/icon/template-32.png"/>
-                                <p:commandLink value="#{bundle.ProcessTemplates}"
-                                               rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" 
-                                               actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                
                             </p:panelGrid>
                         </p:panelGrid>
                         <p:contextMenu for="imgUsers">
@@ -182,13 +177,19 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
-                                <p:commandLink value="#{bundle.Processes}"
+                                <p:commandLink value="#{bundle.ProcessExplorer}"
                                                actionListener="#{sessionBean.setOpenFormName('process-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                                 
                                 <p:graphicImage value="/resources/icon/control-32.png"/>
                                 <p:commandLink value="#{bundle.ProcessExecutionControl}"                                           
                                                actionListener="#{sessionBean.openMonitorForm()}"/>
+                                
+                                <p:graphicImage value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
+                                <p:commandLink value="#{bundle.ProcessTemplates}"
+                                               rendered="#{sessionBean.userAdmin}" 
+                                               actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                             <p:fileUpload id="file" style="font-size: small;"
                                             styleClass="ui-grid-col-12"
@@ -232,11 +233,11 @@
                             
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/theme_change-32.png"/>  
-                                <p:outputLabel value="#{bundle.ChooseTheme}"/>
+                                <h:outputLabel value="#{bundle.ChooseTheme}"/>
                             </p:panelGrid>
                             
                             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                                                                
-                                <p:themeSwitcher effect="fade" var="t">
+                                <p:themeSwitcher effect="fade" var="t" styleClass="ui-grid-col-12">
                                     <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
                                     <f:selectItems var="item" value="#{sessionBean.themes}" itemLabel="#{item}" itemValue="#{item}"/>
                                     <p:column>
@@ -271,15 +272,16 @@
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
                                 </p:commandLink>
 
+                                <p:graphicImage value="/resources/icon/favourites-32.png"/>
+                                <p:commandLink value="#{bundle.Favorites}"
+                                               actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
+                                
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
                                 <p:commandLink value="#{bundle.DocsTypes}"
                                                actionListener="#{sessionBean.setOpenFormName('doctype-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
                                 </p:commandLink>                                             
 
-                                <p:graphicImage value="/resources/icon/favourites-32.png"/>
-                                <p:commandLink value="#{bundle.Favorites}"
-                                               actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
                             </p:panelGrid>
                             <p:fileUpload id="fileDoc" style="font-size: small;"                                       
                                         styleClass="ui-grid-col-12"
@@ -309,15 +311,15 @@
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/book-32.png"/> 
-                                <p:commandLink value="#{bundle.Posts}"
-                                               actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/> 
-                                
                                 <p:graphicImage id="imgStaffs" value="/resources/icon/structure-32.png"/> 
                                 <p:commandLink value="#{bundle.OrgStructureExplorer}" 
                                                actionListener="#{sessionBean.setOpenFormName('staff-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                
+                                <p:graphicImage value="/resources/icon/book-32.png"/> 
+                                <p:commandLink value="#{bundle.Posts}"
+                                               actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                                 
                             </p:panelGrid>
                         </p:panelGrid>
                         <p:contextMenu for="imgStaffs">

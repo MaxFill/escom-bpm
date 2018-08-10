@@ -10,6 +10,16 @@
         <p:tab title="#{bundle.Explorer}"> 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
 
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
+                <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
+                             disabled="#{_bean.isReadOnly()}"
+                             onkeypress="checkEsc();"
+                             required="#{param['isRequired'] == 'true'}" 
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
+                             styleClass="ui-grid-col-12"
+                             onchange="return itemChange = 1;">
+                </p:inputText>
+                                
                 <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
                 <p:inputText value="#{_bean.editedItem.code}" id="code"
                              disabled="#{_bean.isReadOnly()}"
@@ -31,16 +41,6 @@
                     <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
                 </p:selectOneMenu>
                 <p:message for="type" display="tooltip"/>
-
-                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
-                <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
-                             disabled="#{_bean.isReadOnly()}"
-                             onkeypress="checkEsc();"
-                             required="#{param['isRequired'] == 'true'}" 
-                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
-                             styleClass="ui-grid-col-12"
-                             onchange="return itemChange = 1;">
-                </p:inputText>
 
                 <p:outputLabel value="#{bundle.FullName}:" />
                 <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"

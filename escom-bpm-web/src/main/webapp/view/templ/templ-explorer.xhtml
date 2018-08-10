@@ -7,19 +7,7 @@
                 template="/view/templ/templ-dlg.xhtml">
               
     <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
-    <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
-    
-    <ui:define name="centerFormHeader">
-        <p:outputLabel value="#{_bean.jurnalHeader}" />
-    </ui:define>
-    
-    <ui:define name="leftFormHeader">
-        <p:outputLabel value="#{bundle.Sections}" />
-    </ui:define>
-    
-    <ui:define name="rightFormHeader">
-        <p:outputLabel value="#{bundle.Searche}" />
-    </ui:define>
+    <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />    
     
     <ui:define name="initBean">
         #{_bean.setSelectorHeader(_selectorHeader)}

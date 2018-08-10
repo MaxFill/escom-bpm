@@ -15,6 +15,10 @@
                  selection="#{_bean.checkedItems}"
                  rowKey="#{item.itemKey}">
 
+        <f:facet name="header">
+            #{_bean.jurnalHeader}
+        </f:facet>
+        
         <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
         <p:ajax event="rowDblselect" 
                 listener="#{_bean.onRowDblClckOpen}"

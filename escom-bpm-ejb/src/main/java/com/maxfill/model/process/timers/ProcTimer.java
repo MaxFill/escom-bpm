@@ -105,6 +105,9 @@ public class ProcTimer implements Serializable {
     @Column(name = "DaysOfWeek")
     private String daysOfWeek;    
 
+    @Column(name="RepeatDateTime")
+    private Date repeatTime;  //время повтора 
+    
     /* Ссылка на визуальный элемент схемы процесса */
     @Column(name = "TimerLinkUID")
     private String timerLinkUID;
@@ -121,6 +124,13 @@ public class ProcTimer implements Serializable {
         
     /* gets & sets */
 
+    public Date getRepeatTime() {
+        return repeatTime;
+    }
+    public void setRepeatTime(Date repeatTime) {
+        this.repeatTime = repeatTime;
+    }
+    
     public Scheme getScheme() {
         return scheme;
     }

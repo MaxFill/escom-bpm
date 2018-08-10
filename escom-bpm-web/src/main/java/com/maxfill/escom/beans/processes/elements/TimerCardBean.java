@@ -34,13 +34,14 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     private ProcTimer procTimer = null;
     private TimerElem sourceItem = null;
     private TimerElem editedItem = new TimerElem();    
+    private List<String> sourceDays;
+    
     private String[] daysOfWeek;
     private int reminderDeltaDay = 0;
     private int reminderDeltaHour = 0;
     private int reminderDeltaMinute = 0;
     private Date reminderTime;
-    private String[] reminderDays;
-    private List<String> sourceDays;
+    private String[] reminderDays;    
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params){

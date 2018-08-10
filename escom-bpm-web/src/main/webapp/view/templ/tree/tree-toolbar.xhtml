@@ -28,25 +28,7 @@
                                      actionListener="#{_bean.onCollapseTree()}"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-                    <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
-                                     style="font-size: 90%;"
-                                     disabled="#{_bean.isCanCopyTreeItem()}"
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide(); initDND()"
-                                     update="mainFRM:accord:toolbarTree"
-                                     actionListener="#{_bean.onCopySelectedTreeItem()}"/>
-
-                    <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}"
-                                     style="font-size: 90%;"
-                                     disabled="#{_bean.canPasteItem}"
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide(); initDND()"
-                                     actionListener="#{_bean.onPasteItemToTree()}"
-                                     update="mainFRM:accord:tree mainFRM:centerFRM"/>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
+                    </span>                    
 
                     <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
                                      disabled="#{_bean.isCanDeleteTreeItem()}"

@@ -2,7 +2,9 @@ package com.maxfill.escom.beans.explorer;
 
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
+import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
@@ -38,8 +40,6 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
-
-    protected BaseDetailsBean tableBean;
     
     /* Обработка drop помещения объекта в дерево */
     protected void doDropToTree(List<BaseDict> dragItems){
@@ -255,7 +255,7 @@ public class ExplorerTreeBean extends ExplorerBean{
         checkedItems.stream()
                 .filter(dragItem -> !isItemRootType(dragItem))
                 .forEach(dragItem -> {                    
-                    if (((BaseTreeBean)getItemBean(dragItem)).addItemToGroup(dragItem, dropItem)){
+                    if (((BaseExplBeanGroups)getItemBean(dragItem)).addItemToGroup(dragItem, dropItem)){
                         MsgUtils.succesFormatMsg("AddObjectToGroupComplete", new Object[]{dragItem.getName(), dropItem.getName()});
                     }
                 });

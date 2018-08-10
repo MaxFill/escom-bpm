@@ -48,6 +48,36 @@
                             </h:panelGrid>
                         </h:panelGroup>
                     </h:panelGrid>
+                    
+                    <p:outputLabel value="#{bundle.Repeat}:"/>
+                    <p:selectOneRadio id="ReminderType" value="#{timerCardBean.procTimer.repeatType}" layout="grid" columns="1" >
+                        <f:selectItem itemLabel="#{bundle.No}"               itemValue="no" />
+                        <f:selectItem itemLabel="#{bundle.RepeatEveryDay}"   itemValue="everyday" />
+                        <f:selectItem itemLabel="#{bundle.RepeatEveryWeek}"  itemValue="everyweek" /> 
+                        <f:selectItem itemLabel="#{bundle.RepeatEveryMonth}" itemValue="everymounth"/> 
+                        <p:ajax update="pnDaysRepeat" event="valueChange" onstart="itemChange = 1;"/>
+                    </p:selectOneRadio> 
+                    
+                    <p:panelGrid id="pnDaysRepeat" layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="without-spaces ui-grid-col-12">
+                        <h:panelGroup rendered="#{timerCardBean.procTimer.repeatType eq 'everyweek'}">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="without-spaces">
+                                <p:outputLabel value="#{bundle.Days}:"/>
+                                <p:selectManyCheckbox id="reminderWeekDays" value="#{timerCardBean.reminderDays}" layout="grid" columns="3"
+                                                      onchange="return itemChange = 1;"
+                                                      disabled="#{timerCardBean.procTimer.repeatType ne 'everyweek'}">
+                                    <f:selectItems value="#{timerCardBean.sourceDays}" var="day" itemLabel="#{timerCardBean.getDayWeekName(day)}" itemValue="#{day}" />
+                                </p:selectManyCheckbox>
+                            </p:panelGrid>
+                        </h:panelGroup>
+                        <p:panelGrid rendered="#{timerCardBean.procTimer.repeatType ne 'no'}" columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="without-spaces">
+                            <p:outputLabel value="#{bundle.in}:"/>
+                            <p:calendar value="#{timerCardBean.procTimer.repeatTime}" title="#{bundle.Time}"
+                                pattern="HH:mm" timeOnly="true" 
+                                disabled="#{timerCardBean.procTimer.repeatType ne ('everyweek' or 'everyday')}">
+                                <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                            </p:calendar>
+                        </p:panelGrid>
+                    </p:panelGrid>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

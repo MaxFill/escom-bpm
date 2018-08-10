@@ -80,7 +80,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
-    protected BaseTableBean tableBean;
+    protected BaseDetailsBean tableBean;
     protected BaseTableBean searcheBean;
     
     protected BaseDict currentItem;    
@@ -1014,7 +1014,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* КОПИРОВАНИЕ: вызов копирования отмеченных объектов в таблице */
     public void onCopySelectedItem() {
-        if (checkedItems.isEmpty()){
+        if (CollectionUtils.isEmpty(checkedItems)){
             MsgUtils.warnMsg("NoCheckedItems");
             return;
         }
@@ -1023,7 +1023,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* КОПИРОВАНИЕ: вызов копирования объекта из дерева */
     public void onCopySelectedTreeItem() {
-        onCopyItem(currentItem);
+        if (isCanCopyTreeItem()){
+            onCopyItem(currentItem);
+        } else {
+            MsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{currentItem.getName()});
+        }
     }
 
     /* КОПИРОВАНИЕ: вызов копирования объекта из таблицы обозревателя */
@@ -1047,11 +1051,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
 
     /**
-     * Определят доступность кнопки "Вставить" в дереве
+     * Определяет возможность Копировать в дереве
      * @return
      */
     public boolean isCanPasteItem(){
-        return copiedItems == null || copiedItems.isEmpty();
+        return CollectionUtils.isEmpty(copiedItems);
     }
 
     /**
@@ -1070,10 +1074,13 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         boolean flag = isSelectRootItem();
         return flag;
     }
-
+    
     /* ВСТАВКА: вставка объекта в дерево */
     public void onPasteItemToTree(){
-        if (copiedItems == null) return;
+        if (CollectionUtils.isEmpty(copiedItems)){
+            MsgUtils.errorMsg("NoHaveObjectsToInsert");
+            return;
+        }
         
         Set<String> errors = new HashSet<>();
         List<BaseDict> rezults = pasteItem(currentItem, errors);
@@ -1682,7 +1689,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         treeBean.setBeanId(treeBean.toString());
     }
     
-    public void setTableBean(BaseTableBean tableBean) {
+    public void setTableBean(BaseDetailsBean tableBean) {
         this.tableBean = tableBean; 
         this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
         tableBean.setBeanId(tableBean.toString());

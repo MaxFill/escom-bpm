@@ -90,7 +90,17 @@
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
                             oncomplete="document.getElementById('mainFRM:openTreeCardBtn').click();"/>
                 <p:separator />                
-
+                <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND()"
+                            update="mainFRM:accord:toolbarTree"
+                            actionListener="#{_bean.onCopySelectedTreeItem()}"/>
+                <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Paste}"                                                                          
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND()"
+                            actionListener="#{_bean.onPasteItemToTree()}"
+                            update="mainFRM:accord:tree mainFRM:centerFRM"/>
+                <p:separator/>
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                             actionListener="#{_bean.onAddContentInFavorites()}"/>
                 <p:separator/>

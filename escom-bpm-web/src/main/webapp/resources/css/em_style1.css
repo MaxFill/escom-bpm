@@ -1,3 +1,29 @@
+@media all and (max-height: 1200px){
+    .btnABC{
+        width: 34px;
+        height: 26px;
+        padding: 0 !important;
+    }
+}
+
+@media all and (max-height: 1024px){
+    .btnABC{
+        width: 30px;
+        height: 22px;
+        padding: 0 !important;
+        font-size: 90% !important;
+    }
+}
+
+@media all and (max-height: 768 px){
+    .btnABC{
+        width: 28px;
+        height: 20px;
+        padding: 0 !important;
+        font-size: 80% !important;
+    }
+}
+
 @media all and (max-width: 480px){
     .dialog{
         width: 320px;
@@ -102,13 +128,6 @@ body{
         width: 100% !important;
         max-width: 600px !important;
         min-width: 140px !important;
-}
-
-.btABC{
-    width: 32px;
-    height: 24px;
-    padding: 0 !important;
-    font-size: 90%;
 }
 
 .btnClear{

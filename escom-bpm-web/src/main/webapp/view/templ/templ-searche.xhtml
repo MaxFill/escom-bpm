@@ -20,7 +20,7 @@
         
     <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
         <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses=" col-padding,  col-padding">
-            <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btABC"
+            <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btnABC"
                              actionListener="#{_bean.onAbcSearche}"
                              update="#{_tblUpdate}"
                              onstart="PF('statusDialog').show()"
@@ -36,7 +36,7 @@
             </p:commandButton>
 
             <ui:repeat var="abcEngl" value="#{_bean.model.abcEnglSearche}">
-                <p:commandButton value="#{abcEngl}" styleClass="btABC"                       
+                <p:commandButton value="#{abcEngl}" styleClass="btnABC"                       
                                 actionListener="#{_bean.onAbcSearche}"
                                 update="#{_tblUpdate}"
                                 onstart="PF('statusDialog').show()"
@@ -46,7 +46,7 @@
             </ui:repeat>
 
             <ui:repeat var="abcLocal" value="#{_bean.model.abcLocalSearche}">
-                <p:commandButton value="#{abcLocal}" styleClass="btABC"
+                <p:commandButton value="#{abcLocal}" styleClass="btnABC"
                                  actionListener="#{_bean.onAbcSearche}"
                                  update="#{_tblUpdate}"
                                  onstart="PF('statusDialog').show()"
@@ -72,7 +72,7 @@
                 <div class="ui-inputgroup">
                 <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
                              value="#{_bean.model.nameSearche}"
-                             styleClass="ui-grid-col-10"
+                             styleClass="ui-grid-col-12"
                              placeholder="#{bundle.InputCreteriaForSearche}"
                              onkeypress="keyPress();">
                 </p:inputText>
@@ -87,7 +87,7 @@
                 <div class="ui-inputgroup">
                     <p:selectOneMenu value="#{_bean.model.authorSearche}" filter="true" converter="usersConvertor"
                                      widgetVar="authorSearche"
-                                     styleClass="ui-grid-col-10">
+                                     styleClass="ui-grid-col-12">
                         <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
                     </p:selectOneMenu>

@@ -4,6 +4,10 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-dlg.xhtml">
 
+    <ui:define name="formHeader">
+        #{_bean.getFormHeader()}
+    </ui:define>
+    
     <ui:define name="menuActions" >
         <ui:insert name="specActionMenu" />
         <p:separator />        
