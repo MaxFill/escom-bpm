@@ -153,119 +153,13 @@
                 <ui:include src="/view/tasks/reports.xhtml"/>
             </p:panelGrid>
         </p:tab>
-    </ui:define>       
-    
-    <ui:define name="customStyleCSS">
-        <style type="text/css">
-            .ui-diagram-task {
-                background-color: #9ed4ef;
-                width: 14em;
-                min-height: 4em;                
-            }
-            
-            .noExecutor {
-                border: 0.1em solid #C33730 !important;              
-            }
-            .draft {
-            }
-            .running {
-                border:0.1em solid #020202 !important;
-            }            
-            .finished {
-                border:0.1em solid #020202 !important;                
-            }
-            .cancelled{
-                border:0.1em dotted #020202 !important;                
-            }
-            
-            .ui-diagram-element:hover {
-                background-color: #C7C6C4;
-            }
-
-            .ui-diagram-element {                 
-                text-align: center;
-                color: #ffffff;
-                border-radius: 4px;
-                border:0.1em dotted #E5E4E2;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
-            }
-
-            .ui-diagram-logic {
-                width:4em;
-                height:4em;
-                border-radius: 4em;
-                background-color: #099b05;
-                word-wrap: normal !important;
-            }
-
-            .ui-diagram-start {
-                width:3em;
-                height:3em;
-                background-color: #edef04;
-            }
-            
-            .ui-diagram-timer {
-                width:5em;
-                height:5em;
-                background-color: skyblue;
-            }
-
-            .ui-diagram-enter {
-                width:3em;
-                height:3em;
-                border-radius: 3em;
-                background-color: blue;
-            }
-            
-            .ui-diagram-exit {
-                width:3em;
-                height:3em;
-                border-radius: 3em;
-                background-color: #000000;
-            }
-
-            .ui-diagram-finish {
-                width:3em;
-                height:3em;
-                border-radius: 0em;
-                background-color: #000000;
-            }
-            
-            .ui-diagram-success-state {
-                width:10em;
-                height:5em;
-                background-color: #02b044;
-            }
-
-            .ui-diagram-fail-state {
-                width:10em;
-                height:5em;
-                background-color: #C33730;
-            }
-
-            .ui-diagram-completed-state {
-                width:10em;
-                height:5em;
-                background-color: darkgray;
-            }
-            
-            .ui-diagram-condition {
-                width:8em;
-                height:6em;
-                background-color: #c306ab;
-            }
-
-            .iw-contextMenu {
-                font-family: Verdana, Helvetica, Arial, sans-serif;
-            }
-            
-        </style>
-    </ui:define>
+    </ui:define>    
     
     <ui:define name="customJavaScript">
         <h:outputScript library="contextMenu" name="contextMenu.js" />
         <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
-
+        <h:outputStylesheet library="css" name="processes.css"/> 
+        
         <script type="text/javascript">        
             function addContextMenu(componentId){    
                 var menu = [{

@@ -20,4 +20,6 @@ public final class DictWorkflowElem {
     public static final String STYLE_NO = "{fillStyle:'#C33730'}";
     public static final String STYLE_MAIN = "{fillStyle:'#98AFC7'}";
     public static final String STYLE_TIMER = "ui-diagram-timer";
+    public static final String STYLE_PROCEDURE = "ui-diagram-procedure";
+    public static final String STYLE_MESSAGE = "ui-diagram-message";
 }

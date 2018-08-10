@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.schemes.elements.TimerElem;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.process.timers.ProcTimerFacade;
@@ -11,14 +12,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Контролер формы "Свойства условия процесса"
@@ -37,11 +40,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     private List<String> sourceDays;
     
     private String[] daysOfWeek;
-    private int reminderDeltaDay = 0;
-    private int reminderDeltaHour = 0;
-    private int reminderDeltaMinute = 0;
-    private Date reminderTime;
-    private String[] reminderDays;    
+    private String[] reminderDays;
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -56,6 +55,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
                     }
                     try {
                         BeanUtils.copyProperties(editedItem, sourceItem);
+                        restoreFields(procTimer);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
                     }
@@ -63,18 +63,41 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
             }
         }
     }
-    
+        
+    private void checkTimer(Set<String> errors){
+        if ("on_date".equals(procTimer.getStartType()) && procTimer.getStartDate() == null){
+            errors.add("DateStartNoSet");
+        }
+    }
+        
     @Override
     public String onCloseCard(Object param){
+        Set<String> errors = new HashSet<>();
+        checkTimer(errors);
+        if (errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return null;
+        }
+        saveFields(procTimer);
         try {
-            if (procTimer != null){
-                editedItem.setTimerId(procTimer.getId());
-            }
+            editedItem.setTimerId(procTimer.getId());            
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return super.onCloseCard(param);
+    }
+    
+    private void restoreFields(ProcTimer timer){
+        if (StringUtils.isNotEmpty(timer.getDaysWeekRepeat())){
+            reminderDays = timer.getDaysWeekRepeat().split(",");
+        }
+    }
+    
+    private void saveFields(ProcTimer timer){
+         if (reminderDays != null){
+            timer.setDaysWeekRepeat(String.join(",", reminderDays));
+        }
     }
     
     @Override
@@ -98,13 +121,6 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     }
     
     /* GETS & SETS */
-
-    public Date getReminderTime() {
-        return reminderTime;
-    }
-    public void setReminderTime(Date reminderTime) {
-        this.reminderTime = reminderTime;
-    }
     
     public String[] getDaysOfWeek() {
         return daysOfWeek;
@@ -126,28 +142,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     public void setEditedItem(TimerElem editedItem) {
         this.editedItem = editedItem;
     }
-
-    public int getReminderDeltaDay() {
-        return reminderDeltaDay;
-    }
-    public void setReminderDeltaDay(int reminderDeltaDay) {
-        this.reminderDeltaDay = reminderDeltaDay;
-    }
-
-    public int getReminderDeltaHour() {
-        return reminderDeltaHour;
-    }
-    public void setReminderDeltaHour(int reminderDeltaHour) {
-        this.reminderDeltaHour = reminderDeltaHour;
-    }
-
-    public int getReminderDeltaMinute() {
-        return reminderDeltaMinute;
-    }
-    public void setReminderDeltaMinute(int reminderDeltaMinute) {
-        this.reminderDeltaMinute = reminderDeltaMinute;
-    }
-
+    
     public String[] getReminderDays() {
         return reminderDays;
     }

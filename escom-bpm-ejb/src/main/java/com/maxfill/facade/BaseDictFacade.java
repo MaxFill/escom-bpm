@@ -26,6 +26,7 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -457,7 +458,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return results;
     }    
 
-    public List<T> findByIds(List<Integer> ids){
+    /**
+     * Поиск объектов по их идентификаторам
+     * @param ids
+     * @return 
+     */
+    public List<T> findByIds(Collection<Integer> ids){
         if (!ids.isEmpty()){
             getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
             CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

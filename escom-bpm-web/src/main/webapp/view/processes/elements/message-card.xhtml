@@ -1,0 +1,37 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"                 
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 template="/view/templ/templ-dlg.xhtml">
+
+    <ui:param name="_bean" value="#{messageCardBean}"/>
+    
+    <ui:define name="menuActions" >
+    </ui:define>
+
+    <ui:define name="toolbarComponents" >
+    </ui:define>    
+    
+    <ui:define name="centerFormContent">       
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" >
+            <p:tab title="#{bundle.Message}"  >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:outputLabel value="#{bundle.Message}:" indicateRequired="true"/>
+                    <p:inputTextarea value="#{messageCardBean.editedItem.content}" styleClass="ui-grid-col-12"
+                                     rows="1" autoResize="true"
+                                     required="#{param['isRequired'] == 'true'}" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
+                    </p:inputTextarea>
+                    
+                    
+                    <p:separator/>
+                    <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
+                                     actionListener="#{messageCardBean.onCloseCard('save')}" style="float: right;">
+                        <f:param name="isRequired" value="true"/>
+                    </p:commandButton>
+                </p:panelGrid>
+            </p:tab>
+                        
+        </p:tabView>
+    </ui:define>
+</ui:composition>

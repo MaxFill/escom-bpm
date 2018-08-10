@@ -76,34 +76,36 @@ public class ProcTimer implements Serializable {
      * everymounth - ежемесячно
      */
     @Column(name = "RepeatType")    
-    private String repeatType = "no";
+    private String repeatType = "no";    
     
     /**
-     * Значение интервала для типа повтора в секундах
+     * Вариант повтора:
+     * intime - в заданное время (repeatTime)
+     * each   - каждую(ый) час, минуту, день (repeatEachType)
      */
-    @Column(name = "RepeatTypeInterval")
-    private Integer repeatTypeInterval = 1;
+    @Column(name = "RepeatVariantType")
+    private String repeatVariantType = "intime";
     
     /**
      * Тип интервала повтора:
-     * 0 - каждую минуту
-     * 1 - каждый час
-     * 2 - каждый день
+     * minute - минута
+     * hour - час
+     * day - день
      */
     @Column(name = "RepeatEachType")
-    private Integer repeatEachType = 2;
+    private String repeatEachType = "day";
     
     /**
      * Значение интервала повтора в секундах
      */
     @Column(name = "RepeatEachInterval")
-    private Integer repeatEachInterval = 1;
+    private Integer repeatEachInterval = 1;    
     
     /**
      * Список дней в которые будет запуск в формате Json
      */
     @Column(name = "DaysOfWeek")
-    private String daysOfWeek;    
+    private String daysWeekRepeat;    
 
     @Column(name="RepeatDateTime")
     private Date repeatTime;  //время повтора 
@@ -180,17 +182,17 @@ public class ProcTimer implements Serializable {
         this.repeatType = repeatType;
     }
 
-    public Integer getRepeatTypeInterval() {
-        return repeatTypeInterval;
+    public String getRepeatVariantType() {
+        return repeatVariantType;
     }
-    public void setRepeatTypeInterval(Integer repeatTypeInterval) {
-        this.repeatTypeInterval = repeatTypeInterval;
+    public void setRepeatVariantType(String repeatVariantType) {
+        this.repeatVariantType = repeatVariantType;
     }
 
-    public Integer getRepeatEachType() {
+    public String getRepeatEachType() {
         return repeatEachType;
     }
-    public void setRepeatEachType(Integer repeatEachType) {
+    public void setRepeatEachType(String repeatEachType) {
         this.repeatEachType = repeatEachType;
     }
 
@@ -201,11 +203,11 @@ public class ProcTimer implements Serializable {
         this.repeatEachInterval = repeatEachInterval;
     }
 
-    public String getDaysOfWeek() {
-        return daysOfWeek;
+    public String getDaysWeekRepeat() {
+        return daysWeekRepeat;
     }
-    public void setDaysOfWeek(String daysOfWeek) {
-        this.daysOfWeek = daysOfWeek;
+    public void setDaysWeekRepeat(String daysWeekRepeat) {
+        this.daysWeekRepeat = daysWeekRepeat;
     }
 
     public String getTimerLinkUID() {

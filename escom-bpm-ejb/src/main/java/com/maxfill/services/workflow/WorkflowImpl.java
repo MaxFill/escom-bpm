@@ -12,12 +12,14 @@ import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
+import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.timers.ProcTimer;
+import com.maxfill.model.process.timers.ProcTimerFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
@@ -35,7 +37,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +71,8 @@ public class WorkflowImpl implements Workflow {
     private NotificationService notificationService;
     @EJB
     private Configuration config;
+    @EJB
+    private ProcTimerFacade procTimerFacade;
     
     /**
      * Добавление поручения в схему процесса
@@ -154,6 +157,26 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
+    public void addMessage(MessageElem elem, Scheme scheme, Set<String> errors) {
+        if (elem == null){
+            errors.add("WorkflowIncorrectData");
+        }
+        if (!errors.isEmpty()) return;        
+        //ToDo проверки!        
+        scheme.getElements().getMessages().put(elem.getUid(), elem);      
+    }
+    
+    @Override
+    public void addProcedure(ProcedureElem elem, Scheme scheme, Set<String> errors) {
+        if (elem == null){
+            errors.add("WorkflowIncorrectData");
+        }
+        if (!errors.isEmpty()) return;        
+        //ToDo проверки!        
+        scheme.getElements().getProcedures().put(elem.getUid(), elem);      
+    }
+    
+    @Override
     public void addState(StatusElem state, Scheme scheme, Set<String> errors) {
         if (!errors.isEmpty()) return;
         if (state == null){
@@ -214,6 +237,10 @@ public class WorkflowImpl implements Workflow {
             scheme.getElements().getLogics().remove(element.getUid());
         } else if (element instanceof TimerElem){
             scheme.getElements().getTimers().remove(element.getUid());
+        } else if (element instanceof ProcedureElem){
+            scheme.getElements().getProcedures().remove(element.getUid());
+        } else if (element instanceof MessageElem){
+            scheme.getElements().getMessages().remove(element.getUid());
         }
         removeConnectors(element, scheme);        
     }
@@ -548,6 +575,40 @@ public class WorkflowImpl implements Workflow {
                                     doRun(logic.getAnchors(), process, exeTasks, errors);
                                 });
 
+                        //обрабатываем таймеры
+                        Set<TimerElem> timers = findTimers(connectors, scheme.getElements().getTimers());
+                        timers.stream()
+                                .forEach(timerEl-> {
+                                    ProcTimer procTimer = timerEl.getProcTimer();
+                                    switch (procTimer.getStartType()){
+                                        case "on_init":{                                    
+                                            procTimer.setStartDate(DateUtils.addMinute(new Date(), -1));
+                                            break;
+                                        }
+                                        case "on_plan":{
+                                            procTimer.setStartDate(process.getPlanExecDate());
+                                            break;
+                                        }
+                                        case "on_date":{
+                                            if (procTimer.getStartDate()== null){
+                                                procTimer.setStartDate(DateUtils.addMinute(new Date(), -1));
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    if (procTimer.getStartDate().before(new Date())){
+                                        procTimerFacade.updateNextStart(procTimer);
+                                        doRun(timerEl.getAnchors(), process, exeTasks, errors);
+                                    }
+                                });
+                        
+                        //обрабатываем сообщения
+                        Set<MessageElem> messages = findMessages(connectors, scheme.getElements().getMessages());
+                        messages.stream().forEach(msgEl->{
+                            processFacade.sendRoleMessage(process, msgEl.getRecipientsJSON(), msgEl.getContent(), "");
+                            doRun(msgEl.getAnchors(), process, exeTasks, errors);
+                        });
+                                
                         //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
                         Set<ExitElem> targetExits = findTargetExits(connectors, scheme.getElements().getExits());
                         targetExits.forEach(exitElem->{
@@ -563,6 +624,28 @@ public class WorkflowImpl implements Workflow {
      * @return 
      */    
     private Set<LogicElem> findTargetLogics(List<ConnectorElem> connectors, Map<String, LogicElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит таймеры в модели процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<TimerElem> findTimers(List<ConnectorElem> connectors, Map<String, TimerElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+    
+    /**
+     * Находит элементы 'Сообщение' в модели процесса к которым идут коннекторы
+     * @return 
+     */    
+    private Set<MessageElem> findMessages(List<ConnectorElem> connectors, Map<String, MessageElem> elements){
         return connectors.stream()
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .filter(element->Objects.nonNull(element))

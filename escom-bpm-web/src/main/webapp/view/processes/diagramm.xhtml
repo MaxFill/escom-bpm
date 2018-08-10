@@ -38,6 +38,12 @@
                               actionListener="#{processCardBean.onAddTimerElement()}" >
                 <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
             </p:commandButton>
+            
+             <p:commandButton value="Message" title="#{bundle.AddMessageElement}"
+                              disabled="#{processCardBean.isReadOnly()}"
+                              actionListener="#{processCardBean.onAddMessageElement()}" >
+                <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}" />
+            </p:commandButton>
 
             <p:commandButton value="Start" title="#{bundle.AddStart}"
                              disabled="#{processCardBean.isReadOnly()}"

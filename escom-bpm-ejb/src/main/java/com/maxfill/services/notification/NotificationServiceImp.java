@@ -75,7 +75,7 @@ public class NotificationServiceImp implements NotificationService{
         Doc doc = null;
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
             List<Doc> docs = task.getScheme().getProcess().getDocs();
-            if (CollectionUtils.isNotEmpty(docs)){                
+            if (CollectionUtils.isNotEmpty(docs)){
                 doc = docs.stream().findFirst().orElse(null);
             }
         }

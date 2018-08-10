@@ -77,7 +77,16 @@
                                 <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                             </p:calendar>
                         </p:panelGrid>
+                        <p:panelGrid rendered="#{timerCardBean.procTimer.repeatType ne 'no'}" columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="without-spaces">
+                            <p:spinner id="basic" value="#{timerCardBean.procTimer.repeatEachInterval}" max="9999" size="4"/>
+                            <p:selectOneMenu value="#{timerCardBean.procTimer.repeatEachType}" >
+                                <f:selectItem itemLabel="#{bundle.Minute}" itemValue="minute" />
+                                <f:selectItem itemLabel="#{bundle.Hour}"   itemValue="hour" />
+                                <f:selectItem itemLabel="#{bundle.Day}"    itemValue="day" />                        
+                            </p:selectOneMenu>
+                        </p:panelGrid>
                     </p:panelGrid>
+                                        
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

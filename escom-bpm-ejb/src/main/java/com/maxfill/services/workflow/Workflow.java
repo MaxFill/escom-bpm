@@ -14,6 +14,7 @@ import java.util.Set;
 public interface Workflow {
     void addTask(TaskElem task, Scheme scheme, Set<String> errors);
     ConnectorElem createConnector(AnchorElem from, AnchorElem to, Scheme scheme, String label, Set<String> errors);
+    
     void addCondition(ConditionElem condition, Scheme scheme, Set<String> errors);
     void addTimer(TimerElem timer, Scheme scheme, Set<String> errors);
     void addLogic(LogicElem logic, Scheme scheme, Set<String> errors);
@@ -21,6 +22,9 @@ public interface Workflow {
     void addStart(StartElem start, Scheme scheme, Set<String> errors);
     void addEnter(EnterElem start, Scheme scheme, Set<String> errors);
     void addExit(ExitElem exit, Scheme scheme, Set<String> errors);
+    void addMessage(MessageElem exit, Scheme scheme, Set<String> errors);
+    void addProcedure(ProcedureElem exit, Scheme scheme, Set<String> errors);
+    
     void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors);
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);
     void packScheme(Scheme scheme);

@@ -45,8 +45,30 @@ public class WorkflowElements implements Serializable{
     @XmlElement(name = "timers")
     private Map<String, TimerElem> timers = new HashMap <>();
     
+    @XmlElement(name = "messages")
+    private Map<String, MessageElem> messages = new HashMap <>();
+     
+    @XmlElement(name = "procedures")
+    private Map<String, ProcedureElem> procedures = new HashMap <>();
+    
     public WorkflowElements() {
     }
+    
+    /* GETS & SETS */
+
+    public Map<String, MessageElem> getMessages() {
+        return messages;
+    }
+    public void setMessages(Map<String, MessageElem> messages) {
+        this.messages = messages;
+    }
+
+    public Map<String, ProcedureElem> getProcedures() {
+        return procedures;
+    }
+    public void setProcedures(Map<String, ProcedureElem> procedures) {
+        this.procedures = procedures;
+    }    
 
     public StartElem getStartElem() {
         return startElem;

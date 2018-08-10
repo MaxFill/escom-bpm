@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.primefaces.event.SelectEvent;
 
 import javax.faces.event.ValueChangeEvent;

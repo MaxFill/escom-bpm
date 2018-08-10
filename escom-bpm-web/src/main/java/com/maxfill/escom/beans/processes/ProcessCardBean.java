@@ -670,6 +670,22 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     }
     
     /**
+     * Обработка события добавления в схему процесса визуального компонента "Процедура"
+     */
+    public void onAddProcElement() {
+        baseElement = createProcedure(null, defX, defY, new HashSet<>());
+        finalAddElement(); 
+    }
+    
+    /**
+     * Обработка события добавления в схему процесса визуального компонента "Сообщение"
+     */
+    public void onAddMessageElement() {
+        baseElement = createMessage(null, defX, defY, new HashSet<>());
+        finalAddElement(); 
+    }
+    
+    /**
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
     public void onAddEnterElement(){       
@@ -755,7 +771,39 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
         return null;
     }
-            
+    
+    private MessageElem createMessage(String name, int x, int y, Set<String> errors){        
+        MessageElem element = new MessageElem(null, x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        element.setAnchors(makeAnchorElems(element, endPoints));
+        workflow.addMessage(element, getScheme(), errors);
+        if (errors.isEmpty()) {
+            modelAddElement(element);
+            return element;
+        }
+        return null;
+    }
+     
+    private ProcedureElem createProcedure(String name, int x, int y, Set<String> errors){        
+        ProcedureElem element = new ProcedureElem(null, x, y);
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        element.setAnchors(makeAnchorElems(element, endPoints));
+        workflow.addProcedure(element, getScheme(), errors);
+        if (errors.isEmpty()) {
+            modelAddElement(element);
+            return element;
+        }
+        return null;
+    }        
+    
     /**
      * Создание элемента "Логическое ветвление"
      * @param x

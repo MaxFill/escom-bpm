@@ -39,6 +39,7 @@ public class LogicElem extends WFConnectedElem{
     }
     
     /* *** *** */
+    
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;

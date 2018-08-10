@@ -16,6 +16,8 @@ public final class DictFrmName {
     public static final String FRM_TASK = "task";
     public static final String FRM_CONDITION = "condition-card";
     public static final String FRM_TIMER = "timer-card";
+    public static final String FRM_MESSAGE = "message-card";
+    public static final String FRM_PROCEDURE = "procedure-card";
     public static final String FRM_STATE = "state-card";
     public static final String FRM_DOC_STATUS = "doc-status-card";
     public static final String FRM_EXIT = "exit-card";
