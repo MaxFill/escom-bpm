@@ -12,7 +12,7 @@
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="mainFRM:westFRM mainFRM:centerFRM"
+                update="westFRM mainFRM"
                 listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
     <p:commandButton id="createRootCardBtn" action="#{_bean.onCreateRootItem()}" 
@@ -20,7 +20,7 @@
                      oncomplete="PF('statusDialog').hide();"
                      style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="mainFRM:westFRM mainFRM:centerFRM"
+                update="westFRM mainFRM"
                 listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
@@ -28,7 +28,7 @@
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" style="display: none;"> 
         <p:ajax event="dialogReturn" 
-                update="mainFRM:westFRM mainFRM:centerFRM"
+                update="westFRM mainFRM"
                 listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
@@ -41,7 +41,7 @@
 
     <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
         <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}"
-                update="mainFRM:centerFRM #{_updates}" oncomplete="initDND()"/>
+                update="mainFRM #{_updates}" oncomplete="initDND()"/>
 
         <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
             <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
@@ -59,10 +59,10 @@
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
-                        update="mainFRM:accord:toolbarTree mainFRM:accord:menuTree mainFRM:centerFRM #{_updates}"
+                        update="westFRM:accord:toolbarTree westFRM:accord:menuTree mainFRM #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
-                        update="mainFRM:accord:toolbarTree mainFRM:centerFRM #{_updates}"
+                        update="westFRM:accord:toolbarTree mainFRM #{_updates}"
                         oncomplete="initDND()"/>
                 <p:ajax event="expand"  listener="#{_bean.onNodeExpand}" />
                 <p:ajax event="collapse" listener="#{_bean.onNodeCollapse}" />
@@ -79,10 +79,10 @@
                             oncomplete="document.getElementById('mainFRM:createTreeCardBtn').click();"/>
                 <p:separator />
                 <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
-                            update="mainFRM:westFRM" oncomplete="initDND()"
+                            update="westFRM" oncomplete="initDND()"
                             actionListener="#{_bean.onExpandNode()}"/>
                 <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
-                            update="mainFRM:westFRM" oncomplete="initDND()"
+                            update="westFRM" oncomplete="initDND()"
                             actionListener="#{_bean.onCollapseNode()}"/>                
                 <p:separator />
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
@@ -93,13 +93,13 @@
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()"
-                            update="mainFRM:accord:toolbarTree"
+                            update="westFRM:accord:toolbarTree"
                             actionListener="#{_bean.onCopySelectedTreeItem()}"/>
                 <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Paste}"                                                                          
                             onstart="PF('statusDialog').show()"
                             oncomplete="PF('statusDialog').hide(); initDND()"
                             actionListener="#{_bean.onPasteItemToTree()}"
-                            update="mainFRM:accord:tree mainFRM:centerFRM"/>
+                            update="westFRM:accord:tree mainFRM"/>
                 <p:separator/>
                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                             actionListener="#{_bean.onAddContentInFavorites()}"/>

@@ -16,10 +16,10 @@
         }
     </script> 
 
-    <p:defaultCommand target="mainFRM:searcheBtn" />
+    <p:defaultCommand target="eastFRM:searcheBtn" />
         
-    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-        <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses=" col-padding,  col-padding">
+    <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3 col-padding, ui-grid-col-9 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+        <p:panelGrid columns="2" id="abcGrid" layout="grid" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12 without-spaces">
             <p:commandButton value="*" title="#{bundle.StartAnyChars}" styleClass="btnABC"
                              actionListener="#{_bean.onAbcSearche}"
                              update="#{_tblUpdate}"
@@ -56,8 +56,8 @@
             </ui:repeat>
         </p:panelGrid>
 
-        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" style="padding: 0px;">        
-            <p:selectOneRadio value="#{_bean.model.searcheInGroups}" layout="pageDirection" rendered="#{_bean.treeBean != null}">
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">        
+            <p:selectOneRadio value="#{_bean.model.searcheInGroups}" layout="pageDirection" rendered="#{_bean.treeBean != null}" styleClass="ui-grid-col-12">
                 <f:selectItem itemLabel="#{bundle.SearcheWitchOutGroup}" itemValue="#{false}" />
                 <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{true}" />
             </p:selectOneRadio>
@@ -67,22 +67,22 @@
                                      value="#{_bean.model.onlyActualItem}">
             </p:selectBooleanCheckbox> 
             
-            <p:outputLabel value="#{bundle.KeyWord}"/>
+            <p:outputLabel value="#{bundle.KeyWord}:"/>
             <h:panelGroup styleClass="ui-grid-col-12">
                 <div class="ui-inputgroup">
-                <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
-                             value="#{_bean.model.nameSearche}"
-                             styleClass="ui-grid-col-12"
-                             placeholder="#{bundle.InputCreteriaForSearche}"
-                             onkeypress="keyPress();">
-                </p:inputText>
-                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchName').jq.val('');"/>
+                    <p:inputText id="nameSearche" widgetVar="searchName" title="#{bundle.KeyWordSearche}"
+                                 value="#{_bean.model.nameSearche}"
+                                 styleClass="ui-grid-col-12"
+                                 placeholder="#{bundle.InputCreteriaForSearche}"
+                                 onkeypress="keyPress();">
+                    </p:inputText>
+                    <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchName').jq.val('');"/>
                 </div>
             </h:panelGroup>
 
             <ui:insert name="searche"/>
 
-            <p:outputLabel value="#{bundle.Owner}"/>
+            <p:outputLabel value="#{bundle.Owner}:"/>
             <h:panelGroup styleClass="ui-grid-col-12">
                 <div class="ui-inputgroup">
                     <p:selectOneMenu value="#{_bean.model.authorSearche}" filter="true" converter="usersConvertor"
@@ -95,7 +95,7 @@
                 </div>
             </h:panelGroup>
 
-            <p:outputLabel value="#{bundle.States}"/>
+            <p:outputLabel value="#{bundle.States}:"/>
             <p:selectManyMenu id="stateChecks" value="#{_bean.model.stateSearche}" showCheckbox="true"
                               widgetVar="stateSearche" var="s"
                               label="#{bundle.Select}" converter="stateConvertor"
@@ -113,10 +113,9 @@
                 <p:ajax event="change" update="pnDateCreateSearche"/>
             </p:selectBooleanCheckbox>   
 
-            <h:panelGroup id="pnDateCreateSearche"> 
-                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" 
-                             rendered="#{_bean.model.dateCreateSearche}">
-                    #{bundle.With}
+            <h:panelGroup id="pnDateCreateSearche" styleClass="ui-grid-col-12"> 
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateCreateSearche}" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
                     <p:calendar value="#{_bean.model.dateCreateStart}" id="dateCreateStart" 
                                 widgetVar="dateCreateStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
@@ -126,9 +125,8 @@
                                 disabled="#{!_bean.model.dateCreateSearche}">
                     </p:calendar>
                 </p:panelGrid>
-                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" 
-                             rendered="#{_bean.model.dateCreateSearche}">
-                    #{bundle.At}
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateCreateSearche}" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.At}:" style="float: right;" />
                     <p:calendar value="#{_bean.model.dateCreateEnd}" id="dateCreateEnd" 
                                 widgetVar="dateCreateEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
@@ -147,9 +145,9 @@
                 <p:ajax event="change" update="pnDateChangeSearche"/>
             </p:selectBooleanCheckbox> 
 
-            <h:panelGroup id="pnDateChangeSearche">          
-                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" rendered="#{_bean.model.dateChangeSearche}">
-                    #{bundle.With}
+            <h:panelGroup id="pnDateChangeSearche" styleClass="ui-grid-col-12">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateChangeSearche}" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.With}:" style="float: right;"/>
                     <p:calendar value="#{_bean.model.dateChangeStart}" id="dateChangeStart"
                                 widgetVar="dateChangeStartSearche"
                                 navigator="true" yearRange="c-120:c+20"
@@ -159,8 +157,8 @@
                                 disabled="#{!_bean.model.dateChangeSearche}">
                     </p:calendar>
                 </p:panelGrid>
-                <p:panelGrid columns="2"  columnClasses="col10r ui-grid-col-1" rendered="#{_bean.model.dateChangeSearche}">
-                    #{bundle.At}
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateChangeSearche}" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.At}:" style="float: right;"/>
                     <p:calendar value="#{_bean.model.dateChangeEnd}" id="dateChangeEnd"
                                 widgetVar="dateChangeEndSearche"
                                 navigator="true" yearRange="c-120:c+20"
@@ -174,18 +172,20 @@
 
             <p:separator />
 
-            <h:panelGroup styleClass="ui-grid-col-12">
-                <p:commandButton id="searcheBtn" title="#{bundle.MakeSearche}"
-                                 icon="ui-icon-search" value="#{bundle.Find}"
+            <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
+                <p:commandButton id="searcheBtn" value="#{bundle.Find}" title="#{bundle.MakeSearche}"
+                                 icon="ui-icon-search" 
+                                 styleClass="ui-grid-col-12"
                                  action="#{_bean.onSearcheItem}"
                                  update="#{_tblUpdate}"
                                  onstart="PF('statusDialog').show()"
                                  oncomplete="PF('statusDialog').hide(); initDND();">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
-                <p:commandButton value="#{bundle.Reset}" icon="ui-icon-closethick" style="float: right;"
-                                 title="#{bundle.ResetSearcheCriteria}">
-                    <p:ajax update="mainFRM:eastFRM" oncomplete="clearSearche();"/>
+                <p:commandButton value="#{bundle.Reset}" title="#{bundle.ResetSearcheCriteria}"
+                                 icon="ui-icon-closethick"
+                                 styleClass="ui-grid-col-12">
+                    <p:ajax update="eastFRM" oncomplete="clearSearche(); initDND();"/>
                 </p:commandButton>
             </h:panelGroup>
 

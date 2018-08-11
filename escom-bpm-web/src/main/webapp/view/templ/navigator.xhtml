@@ -5,10 +5,10 @@
 
     <p:panel id="NavigatorBar" rendered="#{_treeBean != null and _bean.isShowTree()}" styleClass="without-spaces">
         <ui:repeat id="navigator" var="navigator" value="#{_bean.navigator}">
-            <p:commandButton icon="ui-icon-folder-open" value="#{navigator.name}" title="#{navigator.label}"
+            <p:commandButton value="#{navigator.name}" title="#{navigator.label}"
                              process="@this" styleClass="btnNavigator"
                              actionListener="#{_bean.navigationSetSelected(navigator)}"
-                             update="mainFRM:westFRM mainFRM:centerFRM #{_updates}"
+                             update="westFRM mainFRM #{_updates}"
                              oncomplete="initDND()" 
                              style="font-size: 90%;">                  
             </p:commandButton>

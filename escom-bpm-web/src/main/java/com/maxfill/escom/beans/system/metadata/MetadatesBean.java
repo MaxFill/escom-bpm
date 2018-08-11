@@ -214,24 +214,6 @@ public class MetadatesBean extends BaseViewBean{
     public Boolean isWestShow() {
         return true;
     }
-
-    /**
-     * Определяет кол-во колонок в главном гриде 
-     * @return 
-     */
-    @Override
-    public String getMainGridColumnCount(){
-        return "2";
-    }
-    
-    /**
-     * Определяет стиль колонок в главном гриде
-     * @return 
-     */
-    @Override
-    public String getMainGridColumnStyleClass(){
-        return "ui-grid-col-4 col-padding, ui-grid-col-8 col-padding";
-    }
     
     @Override
     public String getFormName() {

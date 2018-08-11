@@ -50,5 +50,9 @@ public class PartnerTypesBean extends BaseTableBean<PartnerTypes>{
         }        
     }
 
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
+    }
 
 }

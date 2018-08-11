@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.task;
 
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
@@ -31,4 +32,8 @@ public class TaskBean extends BaseTableBean<Task>{
         return taskFacade;
     }
     
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
+    }
 }

@@ -80,7 +80,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
-    protected BaseDetailsBean tableBean;
+    protected BaseTableBean tableBean;
     protected BaseTableBean searcheBean;
     
     protected BaseDict currentItem;    
@@ -123,6 +123,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private List<SortMeta> sortOrder;
     private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
     private Integer currentPage = 0;
+    protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
     private Integer source = DictDetailSource.TREE_SOURCE;
@@ -1651,8 +1652,39 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         currentType = typeMixed;
     }             
     
+    protected void initLayoutOptions() {
+        LayoutOptions panes = new LayoutOptions();
+        panes.addOption("slidable", false);
+        panes.addOption("resizable", true);
+        layoutOptions.setPanesOptions(panes);
+
+        LayoutOptions west = new LayoutOptions();
+        west.addOption("size", 300);
+        west.addOption("minSize", 300);
+        west.addOption("resizable", true);
+        west.addOption("initClosed", false);
+        layoutOptions.setWestOptions(west);
+
+        LayoutOptions east = new LayoutOptions();;
+        east.addOption("size", 300);  
+        east.addOption("minSize", 300);
+        east.addOption("resizable", true);
+        east.addOption("initClosed", false);
+        layoutOptions.setEastOptions(east);
+
+        LayoutOptions center = new LayoutOptions();
+        center.addOption("size", "40%");
+        center.addOption("resizable", true);
+        center.addOption("closable", false);        
+        layoutOptions.setCenterOptions(center);
+    }
+    
     /* GETS & SETS */       
     
+    public LayoutOptions getLayoutOptions() {
+        return layoutOptions;
+    }
+
     public BaseDict getCurrentItem() {
         return currentItem;
     }
@@ -1689,7 +1721,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         treeBean.setBeanId(treeBean.toString());
     }
     
-    public void setTableBean(BaseDetailsBean tableBean) {
+    public void setTableBean(BaseTableBean tableBean) {
         this.tableBean = tableBean; 
         this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
         tableBean.setBeanId(tableBean.toString());
@@ -1839,14 +1871,6 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     @Override
     public Boolean isWestShow(){
         return true;
-    }
-    @Override
-    public String getMainGridColumnStyleClass() {
-        return "ui-grid-col-2 col-grid-expl, ui-grid-col-7 col-grid-expl, ui-grid-col-3 col-grid-expl";
-    }
-    @Override
-    public String getMainGridColumnCount() {
-        return "3";
     }
     
     @Override

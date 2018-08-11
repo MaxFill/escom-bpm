@@ -28,4 +28,8 @@ public class StatusesDocBean extends BaseTableBean<StatusesDoc>{
          return null;
     }
 
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
+    }
 }

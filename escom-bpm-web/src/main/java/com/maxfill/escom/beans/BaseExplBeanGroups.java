@@ -14,7 +14,7 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
     
     /* Обработка перед добавлением объекта в группу  */
     @Override
-    public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
+    public boolean checkRightBeforeAddItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {        
         getGroupBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
         if (!getFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});

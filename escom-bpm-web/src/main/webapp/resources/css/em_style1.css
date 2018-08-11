@@ -3,7 +3,17 @@
         width: 34px;
         height: 26px;
         padding: 0 !important;
+    }    
+}
+
+@media all and (max-height: 1080px){
+    .btnABC{
+        width: 32px;
+        height: 24px;
+        padding: 0 !important;
+        font-size: 90% !important;
     }
+    .columnExt3{display: none;}
 }
 
 @media all and (max-height: 1024px){
@@ -13,6 +23,8 @@
         padding: 0 !important;
         font-size: 90% !important;
     }
+    .columnExt3{display: none;}
+    .columnExt2{display: none;} 
 }
 
 @media all and (max-height: 768 px){
@@ -22,6 +34,9 @@
         padding: 0 !important;
         font-size: 80% !important;
     }
+    .columnExt3{display: none;}
+    .columnExt2{display: none;}
+    .columnExt1{display: none;}
 }
 
 @media all and (max-width: 480px){

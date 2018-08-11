@@ -1,7 +1,6 @@
 
 package com.maxfill.escom.beans.system.numPuttern;
 
-import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -53,4 +52,9 @@ public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern>{
          return null;
     }
 
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
+    }
+    
 }

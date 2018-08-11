@@ -41,7 +41,7 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class FolderExplBean extends ExplorerTreeBean{
     private static final long serialVersionUID = 1718197265045722509L;
-    private  static final String PROC_ITEMS_NAME  = "mainFRM:accord:procTree:";
+    private  static final String PROC_ITEMS_NAME  = "westFRM:accord:procTree:";
     private static final Integer LEH_TREE_PROCESS = PROC_ITEMS_NAME.length();
     
     @Inject

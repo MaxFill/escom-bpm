@@ -59,7 +59,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     @Override
     public abstract BaseDictFacade getFacade();
-    
+    public abstract BaseDetailsBean getOwnerBean();     //возвращает бин владельца объекта
+        
     /* Формирование списка детальных данных в таблице обозревателя  */
     public List<T> prepareSetDetails(List<T> sourceItems) {
         return sourceItems.stream()
@@ -85,8 +86,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         }
         openItemCard(editItem, DictEditMode.VIEW_MODE, paramsMap, errors);
         return editItem;
-    }
-    
+    }    
     
     /* Подготовка к редактированию объекта на карточке  */      
     public T prepEditItem(T item){
@@ -347,7 +347,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     protected void actualizeRightForDropItem(BaseDict dropItem){
         getFacade().actualizeRightItem(dropItem, getCurrentUser());
     }
-            
+
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {
         getFacade().actualizeRightItem(dragItem, getCurrentUser());
@@ -375,6 +375,51 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         item.setActual(false);
         getFacade().edit(item);
     }            
+    
+    /* Перед перемещением объекта в группу  */
+    public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
+        getFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getFacade().isHaveRightEdit(dragItem)){
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
+            errors.add(error);
+            return false;
+        }
+        
+        actualizeRightForDropItem(dropItem);
+
+        if (!getFacade().isHaveRightAddChild(dropItem)){
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
+            errors.add(error);
+            return false;
+        }
+        return true;
+    }
+    
+    /* Проверка прав перед добавлением объекта в группу  */
+    public boolean checkRightBeforeAddItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {        
+        getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
+        if (!getFacade().isHaveRightAddChild(dropItem)) {
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
+            errors.add(error);
+            return false;
+        }
+        getFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getFacade().isHaveRightEdit(dragItem)) {
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
+            errors.add(error);
+            return false;
+        }
+        return true;
+    }
+    
+    /* Обработка перемещения объекта в группу при drag & drop*/
+    public void moveItemToGroup(BaseDict dropItem, T dragItem, TreeNode sourceNode) {
+        BaseDict ownerDragItem = dragItem.getOwner();    
+        if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
+            dragItem.setOwner(dropItem);
+            getFacade().edit(dragItem);
+        }
+    }
     
     /* УДАЛЕНИЕ  */
     

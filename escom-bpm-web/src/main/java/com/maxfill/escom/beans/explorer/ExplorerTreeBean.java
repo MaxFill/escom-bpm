@@ -5,7 +5,6 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
@@ -30,8 +29,8 @@ import java.util.stream.Collectors;
 public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
-    protected static final String TREE_ITEMS_NAME  = "mainFRM:accord:tree:";
-    protected static final String TREE_FILTERS_NAME = "mainFRM:accord:filtersTree:";
+    protected static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
+    protected static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
 
     protected static final String TABLE_NAME = "mainFRM:tblDetail:";
     protected static final String NAVIG_NAME = "mainFRM:navigator";
@@ -284,9 +283,6 @@ public class ExplorerTreeBean extends ExplorerBean{
         });
         getDetailItems().removeAll(checkedItems);
     }
+    
 
-    @Override
-    public BaseDetailsBean getTableBean() {
-        return tableBean;
-    }
 }

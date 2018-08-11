@@ -197,16 +197,6 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
         return true;
     }
     
-    @Override
-    public String getMainGridColumnStyleClass() {
-        return "ui-grid-col-3 col-grid-expl, ui-grid-col-6 col-grid-expl, ui-grid-col-3 col-grid-expl";
-    }
-
-    @Override
-    public String getMainGridColumnCount() {
-        return "3";
-    }
-    
     /**
      * Инициализация списковых значений для настройки расписания
      */

@@ -20,7 +20,7 @@
         </p:treeNode>
         
         <p:ajax event="select" listener="#{_bean.onFilterTreeNodeSelect}" 
-                update="mainFRM:centerFRM #{_updates}"
+                update="mainFRM #{_updates}"
                 oncomplete="initDND()"/>
     </p:tree> 
    

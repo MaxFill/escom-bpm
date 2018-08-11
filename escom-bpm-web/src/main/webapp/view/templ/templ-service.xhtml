@@ -3,59 +3,114 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-dlg.xhtml">
+                template="/view/templ/templ-frm.xhtml"> 
 
-    <ui:define name="menuActions" >
-    </ui:define>
+    <ui:define name="centerContent">
+        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
+            <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
 
-    <ui:define name="toolbarComponents" >
-        <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                         update="mainFRM:tblLog" 
-                         actionListener="#{_bean.refreshLogEvents()}"/>
-        <span class="ui-separator">
-            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-        </span>
-        <p:commandButton value="#{bundle.Clear}" icon="ui-icon-closethick"
-                         update="mainFRM:tblLog"
-                         actionListener="#{_bean.clearLogEvents()}">
-            <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-        </p:commandButton>
-    </ui:define>    
-    
-    <ui:define name="centerFormContent">
-        <ui:include src="/view/services/common/log-events.xhtml"/>
-    </ui:define>       
-    
-    <ui:define name="centerFormHeader">
-        <p:outputLabel value="#{bundle.LogEventHistory}" />
-    </ui:define>
-    
-    <ui:define name="leftFormHeader">
-        <p:outputLabel value="#{bundle.ServiceSchedule}" />
-    </ui:define>
-    
-    <ui:define name="rightFormHeader">
-        <p:outputLabel value="#{bundle.ServiceParams}" />
-    </ui:define>
-    
-    <ui:define name="leftFormContent">
-        <ui:include src="/view/services/common/sheduler.xhtml"/>
-        <p:commandButton id="btnWestSaves" update="mainFRM:westFRM" style="display: none;"/> 
-    </ui:define>
-    
-    <ui:define name="rightFormContent">
-        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
-            <ui:insert name="serviceParams"/>
-        </p:panelGrid>
-        <p:commandButton id="btnEastSave" update="mainFRM:eastFRM" style="display: none;" />
-    </ui:define>
-    
-    <ui:define name="southFormContent">
-        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
-                         title="#{bundle.SaveServiceSettings}" style="float: right;"
-                         onclick="document.getElementById('mainFRM:btnWestSaves').click();
-                                  document.getElementById('mainFRM:btnEastSave').click();"
-                         actionListener="#{_bean.onSaveSettings()}"/>
+            <script type="text/javascript">
+                $(function () {
+                    $(':input').bind('keydown', 'esc', function () {
+                        checkEsc();
+                        return false;
+                    });
+                });
+            </script>
+            <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
+                <f:facet name="header">
+                    #{_bean.getFormHeader()}
+                </f:facet>
+                <f:facet name="actions">
+                    <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                   rendered="#{_bean.getSourceBeanId() != null}"
+                                   disabled="#{!_canClose}"
+                                   actionListener="#{_bean.onCancelItemSave()}" 
+                                   onclick="if (itemChange == 1) {
+                                               onChangeItem();
+                                           }
+                                           sendFormSize();">
+                        <h:outputText styleClass="ui-icon ui-icon-closethick" />
+                    </p:commandLink>
+                </f:facet>  
+                <p:panelGrid layout="grid" columns="3" columnClasses="ui-grid-col-3 col-grid-expl, ui-grid-col-6 col-grid-expl, ui-grid-col-3 col-grid-expl" 
+                             styleClass="ui-grid-col-12 without-spaces">
+
+                    <p:panel id="westFRM" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{bundle.ServiceSchedule}" />
+                        </f:facet>
+                        <ui:include src="/view/services/common/sheduler.xhtml"/>
+                    </p:panel>
+
+                    <p:panel id="centerFRM" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{bundle.LogEventHistory}" />
+                        </f:facet>
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                            
+
+                            <p:toolbar id="explToolBar">
+                                <f:facet name="left">
+                                    <p:commandButton value="#{bundle.Refresh}" icon="ui-icon-refresh"
+                                                     update="mainFRM:tblLog" 
+                                                     actionListener="#{_bean.refreshLogEvents()}"/>
+                                    <span class="ui-separator">
+                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                    </span>
+                                    <p:commandButton value="#{bundle.Clear}" icon="ui-icon-closethick"
+                                                     update="mainFRM:tblLog"
+                                                     actionListener="#{_bean.clearLogEvents()}">
+                                        <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <ui:insert name="specToolButtons"/>
+                                    <p:spacer width="10"/>
+                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                        <ui:insert name="menuActions" />  
+                                        <p:separator />
+                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
+                                                    onstart="PF('statusDialog').show()"
+                                                    oncomplete="PF('statusDialog').hide();"
+                                                    actionListener="#{sessionBean.onViewHelp()}"/>
+                                    </p:menuButton>
+                                </f:facet>
+                            </p:toolbar>  
+
+                            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                                <p:autoUpdate />
+                            </p:messages>
+
+                            <ui:include src="/view/services/common/log-events.xhtml"/>
+
+                        </p:panelGrid>
+                        <f:facet name="footer">
+                            <ui:insert name="centerFormFooter"/>
+                        </f:facet>
+                    </p:panel>
+
+                    <p:panel id="eastFRM" rendered="#{_bean.isEastShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
+                        <f:facet name="header">
+                            <p:outputLabel value="#{bundle.ServiceParams}" />
+                        </f:facet>
+                        <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
+                            <ui:insert name="serviceParams"/>
+                        </p:panelGrid>
+        
+                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
+                            title="#{bundle.SaveServiceSettings}" style="float: right;"                           
+                            actionListener="#{_bean.onSaveSettings()}">
+                        </p:commandButton>
+                    </p:panel>
+                </p:panelGrid>  
+            </p:panel>
+
+            <ui:insert name="form_scripts"/>
+
+            <ui:include src="/view/common/confirm-dlg.xhtml"/>
+            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
+            <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}" oncomplete="return itemChange = 0;"/> 
+        </h:form>
     </ui:define>
 
     <ui:define name="dialogs">
@@ -70,4 +125,3 @@
     </ui:define>
 
 </ui:composition>
-

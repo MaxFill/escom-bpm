@@ -24,8 +24,6 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     protected AttacheService attacheService;
 
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта
-    public abstract BaseDetailsBean getOwnerBean();     //возвращает бин владельца объекта
-
     
     /* Действия перед созданием объекта */
     @Override
@@ -91,45 +89,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     /* Добавление объекта в группу. Вызов из drag & drop */
     public boolean addItemToGroup(T item, BaseDict targetGroup){ 
         return false;
-    }
-    
-    /* Проверка прав перед добавлением объекта в группу  */
-    public boolean checkRightBeforeAddItemToGroup(O dropItem, T dragItem, Set<String> errors) {        
-        getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        if (!getFacade().isHaveRightAddChild(dropItem)) {
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)) {
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        return true;
-    }
-
-
-    /* Перед перемещением объекта в группу  */
-    public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)){
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
-            errors.add(error);
-            return false;
-        }
-        
-        actualizeRightForDropItem(dropItem);
-
-        if (!getFacade().isHaveRightAddChild(dropItem)){
-            String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
-            errors.add(error);
-            return false;
-        }
-
-        return true;
-    }
+    }    
 
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
@@ -139,21 +99,11 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
             getFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
-
     
     /* Обработка события перемещения в дереве группы в группу  */
     public void moveGroupToGroup(BaseDict dropItem, T dragItem) {
         dragItem.setParent(dropItem);
         getFacade().edit(dragItem);
-    }
-
-    /* Обработка перемещения объекта в группу при drag & drop*/
-    public void moveItemToGroup(BaseDict dropItem, T dragItem, TreeNode sourceNode) {
-        O ownerDragItem = (O) dragItem.getOwner();    
-        if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
-            dragItem.setOwner(dropItem);
-            getFacade().edit(dragItem);
-        }
     }
 
 

@@ -105,6 +105,11 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }           
     
     @Override
+    protected void actualizeRightForDropItem(BaseDict dropItem){
+        groupsBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
+    }
+    
+    @Override
     public void moveItemToGroup(BaseDict targetGroup, Partner partner, TreeNode sourceNode) {        
         if (sourceNode != null){
             PartnerGroups sourceGroup = (PartnerGroups)sourceNode.getData();

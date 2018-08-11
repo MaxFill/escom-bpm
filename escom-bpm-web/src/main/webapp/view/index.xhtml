@@ -132,7 +132,7 @@
                             </p:panelGrid>
                         </p:panelGrid>
                         <p:contextMenu for="imgUsers">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" action="user-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/users/user-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
                         </p:contextMenu>
                     </p:panel>
 
@@ -176,8 +176,8 @@
                     <p:panel id="processes" header="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
-                                <p:commandLink value="#{bundle.ProcessExplorer}"
+                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>                                
+                                <p:commandLink value="#{bundle.ProcessExplorer}"                     
                                                actionListener="#{sessionBean.setOpenFormName('process-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                                 
@@ -185,7 +185,7 @@
                                 <p:commandLink value="#{bundle.ProcessExecutionControl}"                                           
                                                actionListener="#{sessionBean.openMonitorForm()}"/>
                                 
-                                <p:graphicImage value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
+                                <p:graphicImage id="imgProcessTemplates" value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
                                 <p:commandLink value="#{bundle.ProcessTemplates}"
                                                rendered="#{sessionBean.userAdmin}" 
                                                actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
@@ -212,8 +212,11 @@
                                 styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
                         <p:contextMenu for="imgProcesses">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" action="process-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" target="blank" icon="ui-icon-extlink" />
                         </p:contextMenu>
+                        <p:contextMenu for="imgProcessTemplates">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" target="blank" icon="ui-icon-extlink" />
+                        </p:contextMenu>                        
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
@@ -276,7 +279,7 @@
                                 <p:commandLink value="#{bundle.Favorites}"
                                                actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
                                 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
                                 <p:commandLink value="#{bundle.DocsTypes}"
                                                actionListener="#{sessionBean.setOpenFormName('doctype-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
@@ -304,8 +307,11 @@
                                         styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
                         <p:contextMenu for="imgDocs">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" action="doc-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>  
+                        <p:contextMenu for="imgDocTypes">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
                     </p:panel>
 
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
@@ -316,14 +322,17 @@
                                                actionListener="#{sessionBean.setOpenFormName('staff-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                                 
-                                <p:graphicImage value="/resources/icon/book-32.png"/> 
+                                <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png"/> 
                                 <p:commandLink value="#{bundle.Posts}"
                                                actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                                 
                             </p:panelGrid>
                         </p:panelGrid>
                         <p:contextMenu for="imgStaffs">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" action="staff-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/staffs/staff-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
+                        <p:contextMenu for="imgPosts">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/staffs/posts/post-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
                         </p:contextMenu>
                     </p:panel>
 
@@ -335,7 +344,7 @@
                                                actionListener="#{sessionBean.setOpenFormName('partner-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                                 
-                                <p:graphicImage value="/resources/icon/book-32.png"/>
+                                <p:graphicImage id="imgPartnerTypes" value="/resources/icon/book-32.png"/>
                                 <p:commandLink value="#{bundle.PartnerTypes}"
                                                disabled="#{!sessionBean.userAdmin}"
                                                actionListener="#{sessionBean.setOpenFormName('partnertypes-explorer')}"
@@ -343,7 +352,10 @@
                             </p:panelGrid>
                         </p:panelGrid>
                         <p:contextMenu for="imgPartners">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" action="partner-explorer" target="newPopup" icon="ui-icon-extlink" ajax="false"/>                                                        
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/partners/partner-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
+                        </p:contextMenu>
+                        <p:contextMenu for="imgPartnerTypes">
+                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/partners/types/partnertypes-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
                         </p:contextMenu>
                     </p:panel>
 

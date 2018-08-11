@@ -9,7 +9,7 @@
 
         <p:tab id="cardTab" title="#{bundle.Explorer}">     
             <p:panelGrid columns="1" styleClass="ui-grid-col-12 ui-panelgrid-blank" columnClasses="ui-grid-col-12" >
-                <p:outputLabel value="#{bundle.ShortName}" />
+                <p:outputLabel value="#{bundle.ShortName}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
                                  onkeypress="checkEsc();"
                                  onchange="return itemChange = 1;"
@@ -18,7 +18,7 @@
                                  required="#{param['isRequired'] == 'true'}" 
                                  requiredMessage="#{bundle.Field} [#{bundle.ShortName}] #{bundle.MustBeFilled}"/>
                 
-                <p:outputLabel value="#{bundle.FullName}" />
+                <p:outputLabel value="#{bundle.FullName}:" />
                 <p:inputTextarea id="fullName" value="#{_bean.editedItem.fullName}" 
                                  onkeypress="checkEsc();"
                                  rows="1" autoResize="true"

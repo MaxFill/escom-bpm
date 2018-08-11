@@ -171,23 +171,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     }
     public Boolean isEastShow(){
         return false;
-    }   
-    
-    /**
-     * Определяет кол-во колонок в главном гриде 
-     * @return 
-     */
-    public String getMainGridColumnCount(){
-        return "1";
-    }
-    
-    /**
-     * Определяет стиль колонок в главном гриде
-     * @return 
-     */
-    public String getMainGridColumnStyleClass(){
-        return "ui-grid-col-12 col-padding";        
-    }
+    }    
     
     public abstract String getFormHeader();
     

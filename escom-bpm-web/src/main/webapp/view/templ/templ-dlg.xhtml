@@ -3,19 +3,12 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
-                template="/view/templ/templ.xhtml">
+                template="/view/templ/templ-frm.xhtml">
 
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
     <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
     
-    <ui:define name="body">
-        <ui:insert name="initBean"/>
-
-        #{_bean.onBeforeOpenCard()}
-        #{_bean.onAfterFormLoad()}
-                
-        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />  
-        
+    <ui:define name="centerContent">                
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
             <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
 
@@ -43,9 +36,9 @@
                                     sendFormSize();">
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
-                </f:facet>                                
-
-                <p:panelGrid layout="grid" columns="#{_bean.mainGridColumnCount}" columnClasses="#{_bean.mainGridColumnStyleClass}" styleClass="ui-grid-col-12 without-spaces">
+                </f:facet>               
+                
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
 
                     <p:panel id="westFRM" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
                         <f:facet name="header">

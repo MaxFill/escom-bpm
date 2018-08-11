@@ -144,7 +144,7 @@ public final class EscomBeanUtils {
     
     public static String makePageURL(String page){
         StringBuilder sb = new StringBuilder(makeServerURL());
-        sb.append("/faces/view/").append(page).append(".xhtml");
+        sb.append("/faces/view").append(page).append(".xhtml");
         return sb.toString();        
     }
     

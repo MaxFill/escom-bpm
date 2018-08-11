@@ -50,4 +50,8 @@ public class PostBean extends BaseTableBean<Post>{
         return null;
     }
 
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
+    }
 }

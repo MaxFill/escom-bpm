@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.task.result;
 
+import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.task.result.ResultFacade;
 import com.maxfill.facade.BaseDictFacade;
@@ -28,6 +29,11 @@ public class ResultBean extends BaseTableBean<Result> {
     @Override
     public BaseDictFacade getFacade() {
         return resultFacade;
+    }
+
+    @Override
+    public BaseDetailsBean getOwnerBean() {
+        return null;
     }
     
 }

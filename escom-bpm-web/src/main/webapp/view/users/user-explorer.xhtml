@@ -33,13 +33,13 @@
         <p:commandButton value="#{bundle.ActiveUsers}" 
                          icon="ui-icon-extlink"                         
                          actionListener="#{userBean.onActiveUsersFormShow()}">
-            <p:ajax event="dialogReturn" update="mainFRM:centerFRM"/>
+            <p:ajax event="dialogReturn" update="mainFRM"/>
         </p:commandButton> 
     </ui:define>
 
     <!-- специфичные поля поиска -->
     <ui:define name="searche">
-        <p:outputLabel value="#{bundle.Login}"/>
+        <p:outputLabel value="#{bundle.Login}:"/>
         <h:panelGroup styleClass="ui-grid-col-12">
         <div class="ui-inputgroup">
             <p:inputText title="#{bundle.HelpSearcheContext}" id="searchLogin" widgetVar="searchLogin"
