@@ -18,9 +18,9 @@
 
     <ui:define name="page_body">
         <p:tab title="#{_bean.editedItem.case ? bundle.Case : bundle.Folder}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
 
-                <p:outputLabel value="#{bundle.Header}"/>
+                <p:outputLabel value="#{bundle.Header}:" indicateRequired="true"/>
                 <p:inputText value="#{_bean.editedItem.name}" id="nameItem" styleClass="ui-grid-col-12"
                              onkeypress="checkEsc();"
                              readonly="#{!_bean.isHaveRightEdit()}"
@@ -30,14 +30,14 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
 
-                <p:outputLabel value="#{bundle.IndexCase}" />
+                <p:outputLabel value="#{bundle.IndexCase}:" />
                 <h:panelGroup styleClass="ui-grid-col-12">
                     <p:inputText value="#{_bean.editedItem.getParentNumber()}" rendered="#{not empty _bean.editedItem.parent}"
                                  styleClass="ui-grid-col-2"
                                  onkeypress="checkEsc();"
                                  readonly="true" disabled="true">
                     </p:inputText>
-                    <p:inputText value="#{_bean.editedItem.folderNumber}"
+                    <p:inputText value="#{_bean.editedItem.folderNumber}" title="#{bundle.InputNumberFolder}"
                                  styleClass="ui-grid-col-1"
                                  onkeypress="checkEsc();"
                                  readonly="#{!_bean.isHaveRightEdit()}"
@@ -50,12 +50,13 @@
         </p:tab>
 
         <p:tab title="#{bundle.AutoFillDocuments}">
-            <p:panelGrid id="gridAutoFill" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">
+            <p:panelGrid id="gridAutoFill" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
 
                 <p:outputLabel value="#{bundle.Company}:"/>
                 <p:inputSwitch value="#{_bean.editedItem.inheritCompany}" showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="сompanyPanel"/>
                 </p:inputSwitch>
+                
                 <h:panelGroup id="сompanyPanel" styleClass="ui-grid-col-12">
                     <p:selectOneMenu value="#{_bean.editedItem.companyDefault}" id="company" converter="companyConvertor"
                                      rendered="#{!_bean.editedItem.inheritCompany}"
@@ -73,6 +74,7 @@
                 <p:inputSwitch value="#{_bean.editedItem.inheritDocType}" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="typeDocPanel"/>
                 </p:inputSwitch>
+                
                 <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.docTypeDefault}"/>
@@ -95,6 +97,7 @@
                 <p:inputSwitch value="#{_bean.editedItem.inheritPartner}" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
                     <p:ajax oncomplete="itemChange = 1;" update="panelPartner"/>
                 </p:inputSwitch>
+                
                 <h:panelGroup id="panelPartner" styleClass="ui-grid-col-12" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.partnerDefault}"/>

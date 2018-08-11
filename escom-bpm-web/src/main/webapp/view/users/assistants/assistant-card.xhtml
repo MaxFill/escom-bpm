@@ -9,7 +9,7 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Assistant}">  
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                 
                 <p:outputLabel value="#{bundle.Chief}:"/>
                 <p:inputText id="nameItem" value="#{assistantCardBean.editedItem.owner.fullName}"

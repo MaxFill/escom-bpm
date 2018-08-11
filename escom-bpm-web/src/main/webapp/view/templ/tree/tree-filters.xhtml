@@ -19,9 +19,7 @@
             <h:outputText value="#{filterItem.name}"/>
         </p:treeNode>
         
-        <p:ajax event="select" listener="#{_bean.onFilterTreeNodeSelect}" 
-                update="mainFRM #{_updates}"
-                oncomplete="initDND()"/>
+        <p:ajax event="select" listener="#{_bean.onFilterTreeNodeSelect}" update="mainFRM #{_updates}" oncomplete="initDND()"/>
     </p:tree> 
    
 </ui:composition>

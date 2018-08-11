@@ -4,7 +4,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"      >
      
     <p:tab title="#{bundle.Info}">
-    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >        
+    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >        
         <p:outputLabel value="#{bundle.State}:"/>
         <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
                        disabled="#{_bean.isReadOnly()}"

@@ -172,7 +172,7 @@
 
             <p:separator />
 
-            <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
+            <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-6 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 without-spaces">
                 <p:commandButton id="searcheBtn" value="#{bundle.Find}" title="#{bundle.MakeSearche}"
                                  icon="ui-icon-search" 
                                  styleClass="ui-grid-col-12"
@@ -187,7 +187,7 @@
                                  styleClass="ui-grid-col-12">
                     <p:ajax update="eastFRM" oncomplete="clearSearche(); initDND();"/>
                 </p:commandButton>
-            </h:panelGroup>
+            </p:panelGrid>
 
         </p:panelGrid>
     </p:panelGrid>

@@ -9,10 +9,10 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.User}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 without-space" styleClass="ui-grid-col-12 without-spaces" >
-                <p:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces" >
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                        <p:outputLabel value="#{bundle.SecondName}" indicateRequired="true"/>
+                        <p:outputLabel value="#{bundle.SecondName}:" indicateRequired="true"/>
                         <p:inputText id="nameItem" value="#{_bean.editedItem.secondName}" 
                                      styleClass="ui-grid-col-12"
                                      disabled="#{_bean.isReadOnly()}"
@@ -23,7 +23,7 @@
                             <p:ajax event="change" listener="#{_bean.makeName()}" update="visbleName" />
                         </p:inputText>
 
-                        <p:outputLabel value="#{bundle.FirstName}" indicateRequired="true"/>
+                        <p:outputLabel value="#{bundle.FirstName}:" indicateRequired="true"/>
                         <p:inputText id="firstName" value="#{_bean.editedItem.firstName}"
                                      styleClass="ui-grid-col-12"
                                      onkeypress="checkEsc();"
@@ -34,7 +34,7 @@
                             <p:ajax event="change" listener="#{_bean.makeName()}" update="visbleName" />
                         </p:inputText>
 
-                        <p:outputLabel value="#{bundle.LastName}" />
+                        <p:outputLabel value="#{bundle.LastName}:" />
                         <p:inputText id="lastName" value="#{_bean.editedItem.lastName}"
                                      disabled="#{_bean.isReadOnly()}"
                                      styleClass="ui-grid-col-12"
@@ -45,7 +45,7 @@
                     </p:panelGrid>
 
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                        <p:outputLabel value="#{bundle.VisibleName}" indicateRequired="true"/>                        
+                        <p:outputLabel value="#{bundle.VisibleName}:" indicateRequired="true"/>                        
                         <p:inputText id="visbleName" value="#{_bean.editedItem.name}"
                                      disabled="#{_bean.isReadOnly()}"
                                      styleClass="ui-grid-col-12"
@@ -63,7 +63,7 @@
                     </p:panelGrid>
                     
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                        <p:outputLabel value="#{bundle.EMail}" />
+                        <p:outputLabel value="#{bundle.EMail}:" />
                         <h:panelGroup id="emailGroup">
                             <p:inputText id="email" value="#{_bean.editedItem.email}"
                                          styleClass="ui-grid-col-12"
@@ -81,7 +81,7 @@
                     </p:panelGrid>
 
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                        <p:outputLabel value="#{bundle.Phone}" />
+                        <p:outputLabel value="#{bundle.Phone}:" />
                         <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
                                      disabled="#{_bean.isReadOnly()}"
                                      mask="+9 (999) 999-9999" styleClass="ui-grid-col-12"
@@ -91,8 +91,8 @@
                     </p:panelGrid>
                 </p:panelGrid>
                 
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.MainStaff}:" />
                     <ui:include src="/view/common/item-select-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{userCardBean.editedItem.staff}"/>
@@ -114,8 +114,8 @@
         </p:tab>
 
         <p:tab id="accountTab" title="#{bundle.UserAccount}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12" >
-                <p:outputLabel value="#{bundle.Login}" indicateRequired="true"/>
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                <p:outputLabel value="#{bundle.Login}:" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText id="login" value="#{_bean.editedItem.login}"
                                  disabled="#{_bean.isReadOnly()}"
@@ -132,7 +132,7 @@
                     </p:commandButton>
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.password}" indicateRequired="true"/>
+                <p:outputLabel value="#{bundle.password}:" indicateRequired="true"/>
                 <p:inputText id="pwl" value="#{_bean.password}"
                              disabled="#{_bean.isReadOnly()}"
                              onchange="return itemChange = 1;"
@@ -170,8 +170,8 @@
         </p:tab>
 
         <p:tab title="#{bundle.Other}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-                <p:outputLabel value="#{bundle.Folder}" />
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{bundle.Folder}:" />
                 <ui:include src="/view/common/item-select-btn.xhtml" >
                     <ui:param name="_itemValue" value="#{_bean.editedItem.inbox}"/>
                     <ui:param name="_itemLabel" value="fullName"/>
@@ -187,7 +187,7 @@
                     <ui:param name="_update" value=""/>
                 </ui:include>
 
-                <p:outputLabel value="#{bundle.EmailSign}" />
+                <p:outputLabel value="#{bundle.EmailSign}:" />
                 <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
                               height="200" readonly="#{_bean.isReadOnly()}">
                     <f:facet name="toolbar">

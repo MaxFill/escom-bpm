@@ -84,7 +84,7 @@
         <p:column style="text-align: center;" width="75" >
             <p:splitButton  value="#{bundle.Select}"
                             rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" 
-                            action="#{_bean.onSelect(item)}">                
+                            actionListener="#{_bean.onSelect(item)}">                
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
                             actionListener="#{_bean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
@@ -148,7 +148,5 @@
                 </p:menuitem>                
             </p:splitButton>
         </p:column>
-    </p:dataTable>
-    
-    <ui:include src="/view/common/confirm-dlg.xhtml"/>
+    </p:dataTable>    
 </ui:composition>

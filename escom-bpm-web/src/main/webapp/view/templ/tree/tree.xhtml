@@ -7,41 +7,35 @@
 
     <ui:param name="_CreateGroupLabel" value="#{_CreateGroupLabel == null ? bundle.CreateGroup : _CreateGroupLabel}" />
 
-    <p:commandButton id="createTreeCardBtn" action="#{_bean.onCreateTreeItem()}" 
+    <p:commandButton id="createTreeCardBtn" style="display: none;"
+                     actionListener="#{_bean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
-                     oncomplete="PF('statusDialog').hide();"
-                     style="display: none;"> 
-        <p:ajax event="dialogReturn" 
-                update="westFRM mainFRM"
-                listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                     oncomplete="PF('statusDialog').hide();"> 
+        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
-    <p:commandButton id="createRootCardBtn" action="#{_bean.onCreateRootItem()}" 
+    <p:commandButton id="createRootCardBtn" style="display: none;"
+                     actionListener="#{_bean.onCreateRootItem()}" 
                      onstart="PF('statusDialog').show()"
-                     oncomplete="PF('statusDialog').hide();"
-                     style="display: none;"> 
-        <p:ajax event="dialogReturn" 
-                update="westFRM mainFRM"
-                listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                     oncomplete="PF('statusDialog').hide();"> 
+        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:commandButton id="openTreeCardBtn" actionListener="#{_bean.onEditTreeItem()}"
+    <p:commandButton id="openTreeCardBtn" style="display: none;"
+                     actionListener="#{_bean.onEditTreeItem()}"
                      onstart="PF('statusDialog').show()"
-                     oncomplete="PF('statusDialog').hide();" style="display: none;"> 
-        <p:ajax event="dialogReturn" 
-                update="westFRM mainFRM"
-                listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+                     oncomplete="PF('statusDialog').hide();" > 
+        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:commandButton id="viewTreeCardBtn" actionListener="#{_bean.onViewTreeItem()}" 
+    <p:commandButton id="viewTreeCardBtn" style="display: none;"
+                     actionListener="#{_bean.onViewTreeItem()}" 
                      onstart="PF('statusDialog').show()"
-                     oncomplete="PF('statusDialog').hide();"
-                     style="display: none;"> 
+                     oncomplete="PF('statusDialog').hide();">
         <p:ajax event="dialogReturn" oncomplete="initDND()"/>
     </p:commandButton>
 
     <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
-        <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}"
-                update="mainFRM #{_updates}" oncomplete="initDND()"/>
+        <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="mainFRM #{_updates}" oncomplete="initDND();"/>
 
         <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
             <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
@@ -71,12 +65,13 @@
             <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
                 <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
                             rendered="#{_bean.selectorViewMode}"
-                            action="#{_bean.onSelectTreeItem()}"/>
+                            actionListener="#{_bean.onSelectTreeItem()}"/>
                 <p:separator rendered="#{_bean.selectorViewMode}"/>
-                <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" rendered="#{_CreateRootLabel != null}"
-                            oncomplete="document.getElementById('mainFRM:createRootCardBtn').click();"/>
+                <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" 
+                            rendered="#{_CreateRootLabel != null}"
+                            oncomplete="document.getElementById('westFRM:createRootCardBtn').click();"/>
                 <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
-                            oncomplete="document.getElementById('mainFRM:createTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>
                 <p:separator />
                 <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
                             update="westFRM" oncomplete="initDND()"
@@ -86,9 +81,9 @@
                             actionListener="#{_bean.onCollapseNode()}"/>                
                 <p:separator />
                 <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            oncomplete="document.getElementById('mainFRM:viewTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:viewTreeCardBtn').click();"/>
                 <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            oncomplete="document.getElementById('mainFRM:openTreeCardBtn').click();"/>
+                            oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
                 <p:separator />                
                 <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
                             onstart="PF('statusDialog').show()"

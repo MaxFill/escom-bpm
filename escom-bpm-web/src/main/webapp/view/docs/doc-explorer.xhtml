@@ -104,14 +104,10 @@
 
     <ui:define name="btnDisplayNone" >
         <p:commandButton id="btnSendDocAttache" actionListener="#{_bean.prepareSendMailDocs('asAttache')}" style="display: none;">
-            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
-                    update="mainFRM:messages"
-                    oncomplete="initDND()"/>
+            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}" update="mainFRM:messages" oncomplete="initDND()"/>
         </p:commandButton>
         <p:commandButton id="btnSendDocLink" actionListener="#{_bean.prepareSendMailDocs('asLink')}" style="display: none;">
-            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}"
-                    update="mainFRM:messages"
-                    oncomplete="initDND()"/>
+            <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}" update="mainFRM:messages" oncomplete="initDND()"/>
         </p:commandButton>
         
         <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="false" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
