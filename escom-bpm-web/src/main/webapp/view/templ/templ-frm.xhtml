@@ -9,12 +9,11 @@
     <ui:define name="body">
 
         #{_bean.onBeforeOpenCard()}
-        #{_bean.onAfterFormLoad()}
                 
         <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />  
         
         <ui:insert name="centerContent"/>        
-
+        
     </ui:define>
 
 </ui:composition>

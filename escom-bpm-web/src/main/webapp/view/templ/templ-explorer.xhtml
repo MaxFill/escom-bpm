@@ -18,6 +18,8 @@
         #{_detailBean != null ? _bean.setTableBean(_detailBean)  : ''}
         #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}
 
+        #{_bean.onAfterFormLoad()}
+        
         <pe:layout fullPage="true"  style="font-size: 80%;" stateCookie="true">
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" size="25%" >                  
                 <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">

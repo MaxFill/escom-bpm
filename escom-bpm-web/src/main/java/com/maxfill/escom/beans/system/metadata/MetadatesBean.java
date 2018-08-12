@@ -157,8 +157,7 @@ public class MetadatesBean extends BaseViewBean{
      * @param event
      */
     public void onTransfer(TransferEvent event){
-        List<State> newStates = states.getTarget();
-        objectStates = newStates;
+        objectStates = states.getTarget();        
     }
 
     /**

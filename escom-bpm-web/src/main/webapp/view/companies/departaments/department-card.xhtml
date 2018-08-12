@@ -18,12 +18,12 @@
 
     <ui:define name="page_body">
       <p:tab title="#{bundle.Explorer}">
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
 
-            <p:outputLabel value="#{bundle.Company}"/>
+            <p:outputLabel value="#{bundle.Company}:"/>
             <p:inputText value="#{departmentCardBean.getCompanyName()}" disabled="true" styleClass="ui-grid-col-12" />
 
-            <p:outputLabel value="#{bundle.Departament}" />
+            <p:outputLabel value="#{bundle.Departament}:" indicateRequired="true" />
             <p:inputText id="nameItem" value="#{departmentCardBean.editedItem.name}" title="#{bundle.Name}"
                         styleClass="ui-grid-col-12"
                         onkeypress="checkEsc();"
@@ -33,7 +33,7 @@
                         requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
             <p:message for="nameItem" display="icon"/>
 
-            <p:outputLabel value="#{bundle.Code}" />
+            <p:outputLabel value="#{bundle.Code}:" />
             <h:panelGroup styleClass="ui-grid-col-12" id="codeGroup">
                 <p:inputText id="companyCode" value="#{departmentCardBean.editedItem.code}"
                              onkeypress="checkEsc();"

@@ -17,8 +17,8 @@
 
     <ui:define name="page_body">
         <p:tab id="cardTab" title="#{bundle.Explorer}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding">       
-                <p:outputLabel value="#{bundle.Name}" />
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">       
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc();"
@@ -28,7 +28,7 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
                 <p:message for="nameItem"/>
 
-                <p:outputLabel value="#{bundle.Code}" />
+                <p:outputLabel value="#{bundle.Code}:" />
                 <p:inputText id="companyCode" value="#{_bean.editedItem.code}" 
                              onkeypress="checkEsc();"
                              disabled="#{_bean.isReadOnly()}"

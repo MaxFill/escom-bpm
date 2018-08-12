@@ -27,7 +27,7 @@
     .columnExt2{display: none;} 
 }
 
-@media all and (max-height: 768 px){
+@media all and (max-height: 768px){
     .btnABC{
         width: 28px;
         height: 20px;

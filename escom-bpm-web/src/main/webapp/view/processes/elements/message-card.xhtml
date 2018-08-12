@@ -23,6 +23,13 @@
                                      requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>
                     
+                    <p:pickList id="pickList" value="#{messageCardBean.roles}" var="role" 
+                                showCheckbox="true"
+                                itemLabel="#{messageCardBean.getLabelFromBundle(role)}" itemValue="#{role}">
+                        <f:facet name="sourceCaption">#{bundle.AvailableRoles}</f:facet>
+                        <f:facet name="targetCaption">#{bundle.Recipients}</f:facet>
+                        <p:ajax event="transfer" listener="#{messageCardBean.onTransfer}"  />
+                    </p:pickList>
                     
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="mainFRM"

@@ -608,7 +608,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* ФИЛЬТР: установка текущего элемента в ФИЛЬТРАХ по заданному объекту filter */
     public void makeSelectedFilter(BaseDict filter){
-        TreeNode node = EscomBeanUtils.findTreeNode(getFilterTree(), filter);
+        TreeNode rootNode = getFilterTree();
+        TreeNode node = EscomBeanUtils.findTreeNode(rootNode, filter);
         doFilterTreeNodeSelect(node);
     }
 

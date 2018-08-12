@@ -6,6 +6,7 @@
                 template="/view/templ/templ-frm.xhtml">
 
     <ui:define name="centerContent"> 
+        #{_bean.onAfterFormLoad()}
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
             <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
             <p:focus context="mainFRM:mainTabView" for="mainFRM:mainTabView:nameItem"/>

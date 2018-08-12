@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
+import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -74,6 +75,10 @@ public class MessageCardBean extends BaseViewBean<BaseView>{
         liveRoles = gson.fromJson(sourceItem.getRecipientsJSON(), List.class);        
     }
     
+    public void onTransfer(TransferEvent event){
+        
+    }
+    
     /* GETS & SETS */
     
     @Override
@@ -92,5 +97,10 @@ public class MessageCardBean extends BaseViewBean<BaseView>{
     public void setEditedItem(MessageElem editedItem) {
         this.editedItem = editedItem;
     }    
+
+    public DualListModel<String> getRoles() {
+        return roles;
+    }
+    
     
 }

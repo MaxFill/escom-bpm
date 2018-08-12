@@ -8,7 +8,8 @@
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
     <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
 
-    <ui:define name="centerContent">                
+    <ui:define name="centerContent"> 
+        #{_bean.onAfterFormLoad()}
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
             <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
 

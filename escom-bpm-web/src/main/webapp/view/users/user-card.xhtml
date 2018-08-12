@@ -182,15 +182,8 @@
                     <ui:param name="_actionClear" value="setInbox"/>
                     <ui:param name="_actionSelect" value="onInboxSelected"/>
                     <ui:param name="_validateAction" value="checkFolder"/>
-                    <ui:param name="_update" value="pnOther"/>
-                </ui:include>
-
-                <p:commandButton value="#{bundle.AddRight}" style="float: right;"
-                                 actionListener="#{userCardBean.addRightChangeFolder()}"
-                                 rendered="#{sessionBean.userAdmin}"
-                                 disabled="#{_bean.isReadOnly() or userCardBean.editedItem.inbox == null}">
-                    <p:confirm header="#{bundle.Confirm}" message="#{msg.UserWillBAccessChangeFolder}" icon="ui-icon-alert" />
-                </p:commandButton>                
+                    <ui:param name="_update" value=""/>
+                </ui:include>             
 
                 <p:outputLabel value="#{bundle.EmailSign}:" />
                 <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
