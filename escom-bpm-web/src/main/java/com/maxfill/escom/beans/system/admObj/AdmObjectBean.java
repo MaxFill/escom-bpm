@@ -55,7 +55,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
         if (replaceItem != null) {
             int count = getItemBean().replaceItem(getSourceItem(), replaceItem);
             MsgUtils.succesFormatMsg("ReplaceCompleted", new Object[]{count});
-            PrimeFaces.current().ajax().update("mainFRM:centerFRM");
+            PrimeFaces.current().ajax().update("mainFRM");
         } else {
             MsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }

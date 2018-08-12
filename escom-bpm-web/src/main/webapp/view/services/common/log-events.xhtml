@@ -24,18 +24,18 @@
                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
-        <p:column headerText="#{bundle.DateFinish}" sortBy="#{item.dateFinish}">
+        <p:column headerText="#{bundle.DateFinish}" sortBy="#{item.dateFinish}" priority="3">
             <h:outputLabel value="#{item.dateFinish}">
                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
-        <p:column headerText="#{bundle.Duration}" >
+        <p:column headerText="#{bundle.Duration}" priority="4">
             #{item.duration}
         </p:column>
-        <p:column headerText="#{bundle.Result}" sortBy="#{item.result}">
+        <p:column headerText="#{bundle.Result}" sortBy="#{item.result}" priority="2">
             #{item.result}
         </p:column>
-        <p:column headerText="">
+        <p:column headerText="" >
             <p:commandButton icon="ui-icon-zoomin" title="#{bundle.View}"
                              update="logFRM:logDetailPanel"
                              actionListener="#{_bean.setSelectedEvent(item)}"

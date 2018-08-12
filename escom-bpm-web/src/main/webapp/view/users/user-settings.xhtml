@@ -16,7 +16,7 @@
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
-                         update="mainFRM:centerFRM"
+                         update="mainFRM"
                          actionListener="#{userSettingsBean.onChangePassword()}">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>

@@ -62,7 +62,7 @@
 
         <p:commandButton value="#{bundle.Clear}" id="btnClear"
                          actionListener="#{authLogBean.onClearData()}"
-                         update="mainFRM:centerFRM">
+                         update="mainFRM">
             <p:confirm header="#{bundle.ConfirmAction}" message="#{authLogBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
         </p:commandButton>
 
@@ -98,7 +98,7 @@
                                     requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
                         </p:calendar>
                     </p:panelGrid>
-                    <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM:centerFRM" >
+                    <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM" >
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>

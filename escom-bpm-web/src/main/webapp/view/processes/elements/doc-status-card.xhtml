@@ -39,7 +39,7 @@
                         <f:selectItem itemValue="completed" itemLabel="#{bundle.Gray}"/>
                     </p:selectOneMenu>
                     <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="mainFRM:centerFRM"
+                    <p:commandButton value="#{bundle.Save}" update="mainFRM"
                                      actionListener="#{_bean.onSaveAndClose('save')}" style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>

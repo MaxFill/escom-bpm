@@ -700,6 +700,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return rightsDef.getDefaultRights(getItemClass().getSimpleName());
     }
 
+    public void saveRights(T item, Rights rights){
+        saveAccess(item, rights.toString());
+    }
+    
     public void saveAccess(T item, String xml){
         try {
             byte[] compressXML = EscomUtils.compress(xml);
@@ -716,6 +720,24 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         } catch (IOException ex) {
             Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    /**
+     * Добавление к объекту прав на изменение для указанного пользователя
+     * @param item
+     * @param user
+     * @param state - состояние, для которого создаётся право
+     */
+    public void addItemRightForUser(T item, User user, State state){
+        Rights rights = getActualRightItem(item, user);
+        Right right = new Right(DictRights.TYPE_USER, user.getId(), "", state, getMetadatesObj());
+        right.setAddDetail(true);
+        right.setAddChild(true);
+        right.setUpdate(true);
+        right.setRead(true);        
+        rights.getRights().add(right);
+        saveRights(item, rights);
+        edit(item);
     }
     
     /* ПРАВА ДЛЯ ДОЧЕРНИХ ОБЪЕКТОВ */

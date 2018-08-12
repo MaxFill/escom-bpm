@@ -107,7 +107,7 @@ public class CheckReleaseBean extends BaseViewBean{
             MsgUtils.succesMsg("UsedActualVersion");
         }
         appBean.updateActualReleaseData(versionRelease, releaseNumber, pageRelease, dateRelease);
-        PrimeFaces.current().ajax().update("mainFRM:centerFRM");
+        PrimeFaces.current().ajax().update("mainFRM");
     }
 
     public void onGotoSupportPage(){

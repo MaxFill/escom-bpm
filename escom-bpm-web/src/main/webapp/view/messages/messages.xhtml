@@ -15,13 +15,13 @@
                     onclick="document.getElementById('mainFRM:btnMarkAllAsRead').click();">
         </p:menuitem>
         <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="mainFRM:centerFRM" actionListener="#{userMsgBean.refreshData()}">
+                    update="mainFRM" actionListener="#{userMsgBean.refreshData()}">
         </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                         
-                         update="mainFRM:centerFRM"
+                         update="mainFRM"
                          actionListener="#{userMsgBean.markAsRead()}">
         </p:commandButton>
     </ui:define>
@@ -30,7 +30,7 @@
         <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{userMsgBean.showOnlyUnread}" toggleSpeed="500" widgetVar="panel">
             <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
                                     itemLabel="#{bundle.ShowOnlyUnReadMessage}">
-                    <p:ajax update="mainFRM:centerFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
+                    <p:ajax update="mainFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
             </p:selectBooleanCheckbox>
             <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
                 <p:panelGrid columns="2" styleClass="without-spaces">
@@ -58,7 +58,7 @@
                     </p:calendar>
                 </p:panelGrid>
 
-                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM:centerFRM">
+                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
             </p:panelGrid>
@@ -79,27 +79,27 @@
                 <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
             </p:column>
             
-            <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}">
+            <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}" priority="2">
                 <h:outputLabel value="#{item.dateSent}">
                     <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
                 </h:outputLabel>
             </p:column>
 
-            <p:column headerText="#{bundle.Name}" sortBy="#{item.name}">
+            <p:column headerText="#{bundle.Name}" sortBy="#{item.name}" priority="1">
                 <h:outputLabel value="#{item.name}"/>
             </p:column>
 
-            <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
+            <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}" priority="3">
                 <h:outputLabel value="#{item.sender}"/>
             </p:column>
 
-            <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}">
+            <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}" priority="4">
                 <h:outputLabel value="#{item.dateReading}" >
                     <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
                 </h:outputLabel>
             </p:column>
 
-            <p:column>
+            <p:column priority="1">
                 <p:commandLink  value="#{bundle.GoToTask}"
                                 rendered="#{item.task != null}"
                                 actionListener="#{userMsgBean.onSetSelectedMessage(item)}"

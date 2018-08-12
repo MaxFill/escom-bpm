@@ -129,10 +129,10 @@ public class Right implements Serializable{
 
     public Right(Integer type, Integer objId, String name, State state, Metadates metadateObj) {
         this.objType = type; //0 - группа, 1 - пользователь
-        this.objId = objId;
+        this.objId = objId;  //id объекта, которому предоставляется право
         this.name = name;
-        this.state = state;
-        this.objLink = metadateObj;
+        this.state = state;  //состояние, для которого создается право
+        this.objLink = metadateObj; //объект метаданных, для которого создаётся право
     }
 
     public String getIcon() {

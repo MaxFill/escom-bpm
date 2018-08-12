@@ -94,7 +94,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     public void onUpdateAfterCloseDocForm(SelectEvent event){        
         Tuple<String, String> tuple = (Tuple) event.getObject();
         if (SysParams.EXIT_NEED_UPDATE.equals(tuple.a)){
-            PrimeFaces.current().ajax().update("itemCard:mainTabView:tblDocs");            
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:tblDocs");            
         }
     }
 

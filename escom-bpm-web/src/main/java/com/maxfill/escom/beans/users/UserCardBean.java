@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.folders.FoldersFacade;
@@ -14,8 +15,11 @@ import com.maxfill.escom.beans.users.assistants.AssistantBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.rights.RightFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.StaffFacade;
+import com.maxfill.model.states.State;
+import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.utils.EscomUtils;
@@ -51,7 +55,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     @EJB
     private AssistantFacade assistantFacade;
     @EJB
-    private StaffFacade staffFacade;
+    private StateFacade stateFacade;
+    
     @Inject
     private AssistantBean assistantBean;
     @Inject
@@ -113,17 +118,31 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * @param folder
      */
     public void checkFolder(Folder folder){
-        if(!folderFacade.checkRightAddDetail(folder, getCurrentUser())) {
+        if(!folderFacade.checkRightAddDetail(folder, getEditedItem())) {
             String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
-            UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:folderPanel_item");
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:folderPanel_item");
             input.setValid(false);
             context.addMessage(input.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_ERROR, errMsg, checkError));
             context.validationFailed();
         }
     }
 
+    /**
+     * Добавление пользователю прав на изменение папки
+     */
+    public void addRightChangeFolder(){
+        Folder folder = folderFacade.find(getEditedItem().getInbox().getId());
+        if (folder.isInherits()){
+            MsgUtils.errorFormatMsg("CannotAddRightBecauseInheritsRights", new Object[]{folder.getNameEndElipse()});
+            return;
+        }
+        State state = stateFacade.getValidState();
+        folderFacade.addItemRightForUser(folder, getEditedItem(), state);
+        MsgUtils.succesMsg("AccessRightsChanged");
+    }
+    
     /* Формирование отображаемого имени пользователя */    
     public void makeName(){
         getEditedItem().setName(getEditedItem().getShortFIO());
@@ -252,7 +271,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         if (staff.getEmployee() != null){
             if (!Objects.equals(staff.getEmployee(), getEditedItem())){
                 FacesContext context = FacesContext.getCurrentInstance();
-                UIInput input = (UIInput) context.getViewRoot().findComponent("user:mainTabView:staffPanel_item");            
+                UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:staffPanel_item");            
                 input.setValid(false);
                 String errMsg = MsgUtils.getMessageLabel("StaffAlreadyAssociated");
                 String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");

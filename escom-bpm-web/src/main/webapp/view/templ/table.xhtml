@@ -29,11 +29,11 @@
         
         <p:column width="16" selectionMode="multiple" style="text-align:center"/>
         
-        <p:column width="16" sortBy="#{item.iconName}" id="colIcon">
+        <p:column width="16" sortBy="#{item.iconName}" id="colIcon" priority="3">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName">
+        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" id="shortName" priority="3">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
@@ -51,11 +51,11 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column width="16" sortBy="#{item.state.currentState.name}">
+        <p:column width="16" sortBy="#{item.state.currentState.name}" priority="4">
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
         
-        <p:column headerText="#{bundle.DateChange}" width="90" styleClass="columnExt1"
+        <p:column headerText="#{bundle.DateChange}" width="85" priority="3" styleClass="columnExt1"
                   rendered="#{_showDateChange != false}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
@@ -63,7 +63,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.DateCreate}" width="90" styleClass="columnExt2"
+        <p:column headerText="#{bundle.DateCreate}" width="85" priority="4" styleClass="columnExt2"
                   rendered="#{_showDateCreate != false}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
@@ -71,17 +71,17 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.Owner}" styleClass="columnExt3"
+        <p:column headerText="#{bundle.Owner}" priority="5" styleClass="columnExt2"
                   rendered="#{_showAuthor == true}"
                   sortBy="#{item.author.shortFIO}">
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" sortBy="#{item.id}" width="25" styleClass="columnExt3" >
+        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="6" styleClass="columnExt3" >
             <h:outputText value="#{item.id}"/>
         </p:column>
 
-        <p:column style="text-align: center;" width="75" >
+        <p:column style="text-align: center;" width="70" >
             <p:splitButton  value="#{bundle.Select}"
                             rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" 
                             actionListener="#{_bean.onSelect(item)}">                

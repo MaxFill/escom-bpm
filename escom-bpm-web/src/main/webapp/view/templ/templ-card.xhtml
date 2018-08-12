@@ -36,80 +36,72 @@
                 </f:facet>
                 <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
 
-                    <p:panel id="centerFRM" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
-                        <f:facet name="header">
-                            <ui:insert name="centerFormHeader"/>
+                    <p:toolbar id="explToolBar">
+                        <f:facet name="left">
+                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
+                                <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
+                                            disabled="#{_bean.editedItem.id == null}"
+                                            actionListener="#{_bean.onPreViewItemCard()}"/>
+                                <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
+                                            disabled="#{_bean.editedItem.id == null}"
+                                            actionListener="#{_bean.onPreViewBarcode()}"/>
+                            </p:menuButton>
+                            <ui:insert name="specSubMenu" />
                         </f:facet>
+                        <f:facet name="right">
+                            <ui:insert name="CardToolButtons"/>
+                            <span class="ui-separator">
+                                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                            </span>
+                            <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
+                                             disabled="#{_bean.isReadOnly()}"
+                                             icon="ui-icon-disk"
+                                             update="mainFRM"
+                                             actionListener="#{_bean.prepSaveItemAndClose()}"
+                                             onclick="if (itemChange == 1) {
+                                                         onChangeItem();
+                                                     }
+                                                     sendFormSize();">
+                                <f:param name="isRequired" value="true"/>
+                            </p:commandButton>
+                            <span class="ui-separator">
+                                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                            </span>
+                            <p:spacer width="10"/>
+                            <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                <ui:insert name="specActionMenu" />
+                                <p:separator />        
+                                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
+                                            disabled="#{_bean.editedItem.id == null}"
+                                            actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
+                                <p:separator />
+                                <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
+                                            onstart="PF('statusDialog').show()"
+                                            oncomplete="PF('statusDialog').hide();"
+                                            actionListener="#{sessionBean.onViewHelp()}"/>
+                            </p:menuButton>
+                        </f:facet>
+                    </p:toolbar>  
 
-                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                            <p:toolbar id="explToolBar">
-                                <f:facet name="left">
-                                    <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
-                                        <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
-                                                    disabled="#{_bean.editedItem.id == null}"
-                                                    actionListener="#{_bean.onPreViewItemCard()}"/>
-                                        <p:menuitem icon="ui-icon-print" value="#{bundle.PrintBarCode}"
-                                                    disabled="#{_bean.editedItem.id == null}"
-                                                    actionListener="#{_bean.onPreViewBarcode()}"/>
-                                    </p:menuButton>
-                                    <ui:insert name="specSubMenu" />
-                                </f:facet>
-                                <f:facet name="right">
-                                    <ui:insert name="CardToolButtons"/>
-                                    <span class="ui-separator">
-                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                    </span>
-                                    <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
-                                                     disabled="#{_bean.isReadOnly()}"
-                                                     icon="ui-icon-disk"
-                                                     update="mainFRM"
-                                                     actionListener="#{_bean.prepSaveItemAndClose()}"
-                                                     onclick="if (itemChange == 1) {
-                                                                 onChangeItem();
-                                                             }
-                                                             sendFormSize();">
-                                        <f:param name="isRequired" value="true"/>
-                                    </p:commandButton>
-                                    <span class="ui-separator">
-                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                    </span>
-                                    <p:spacer width="10"/>
-                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
-                                        <ui:insert name="specActionMenu" />
-                                        <p:separator />        
-                                        <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
-                                                    disabled="#{_bean.editedItem.id == null}"
-                                                    actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
-                                        <p:separator />
-                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
-                                                    onstart="PF('statusDialog').show()"
-                                                    oncomplete="PF('statusDialog').hide();"
-                                                    actionListener="#{sessionBean.onViewHelp()}"/>
-                                    </p:menuButton>
-                                </f:facet>
-                            </p:toolbar>  
+                    <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                        <p:autoUpdate />
+                    </p:messages>
 
-                            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
-                                <p:autoUpdate />
-                            </p:messages>
+                    <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
+                        <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
+                        <ui:insert name="page_body"/>
+                        <ui:include src="/view/common/dict-rights.xhtml"/>
+                        <ui:insert name="childs_rights"/> 
+                        <ui:include src="/view/common/dict-info.xhtml"/>
+                        <ui:include src="/view/common/dict-log.xhtml"/> 
+                    </p:tabView>
 
-                            <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
-                                <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
-                                <ui:insert name="page_body"/>
-                                <ui:include src="/view/common/dict-rights.xhtml"/>
-                                <ui:insert name="childs_rights"/> 
-                                <ui:include src="/view/common/dict-info.xhtml"/>
-                                <ui:include src="/view/common/dict-log.xhtml"/> 
-                            </p:tabView>
-
-                            <p:importConstants type="com.maxfill.dictionary.DictRights"       var="DictRights" />
-                            <p:importConstants type="com.maxfill.dictionary.DictEditMode"     var="DictEditMode" />
-                            <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />
-                            <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
-                            <ui:include src="/view/sys/noSaveDlg.xhtml" />
-                        </p:panelGrid>
-                    </p:panel>
-                </p:panelGrid>        
+                    <p:importConstants type="com.maxfill.dictionary.DictRights"       var="DictRights" />
+                    <p:importConstants type="com.maxfill.dictionary.DictEditMode"     var="DictEditMode" />
+                    <p:importConstants type="com.maxfill.dictionary.DictModules"      var="DictModules" />
+                    <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
+                    <ui:include src="/view/sys/noSaveDlg.xhtml" />
+                </p:panelGrid>   
             </p:panel>
 
             <ui:insert name="form_scripts"/>

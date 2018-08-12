@@ -127,7 +127,7 @@ public class SchedulerBean extends BaseViewBean {
     }
     
     public void modelRefresh(){
-        PrimeFaces.current().ajax().update("mainFRM:centerFRM");
+        PrimeFaces.current().ajax().update("mainFRM");
     }
     
     @Override
