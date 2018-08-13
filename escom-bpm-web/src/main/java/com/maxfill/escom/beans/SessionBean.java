@@ -439,11 +439,6 @@ public class SessionBean implements Serializable{
             openDialogFrm(openFormName, getParamsMap());
         }
     }
-    public void onOpenExplorer(){
-        if (StringUtils.isNotEmpty(openFormName)){
-            openExplorerFrm(openFormName, getParamsMap());
-        }
-    }
     
     public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
@@ -461,25 +456,7 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
-    }
-    
-    public void openExplorerFrm(String frmName, Map<String, List<String>> paramsMap){
-        Tuple formSize = getFormSize(frmName);
-        Map<String, Object> options = new HashMap<>();
-        options.put("resizable", true);
-        options.put("modal", true);
-        options.put("width", formSize.a);
-        options.put("height", formSize.b);
-        options.put("minWidth", 900);
-        options.put("minHeight", 600);
-        options.put("maximizable", false);
-        options.put("minimizable", false);
-        options.put("closable", true);
-        options.put("closeOnEscape", false);
-        options.put("contentWidth", "100%");
-        options.put("contentHeight", "100%");
-        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
-    }
+    }    
         
     public void openModalDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
@@ -504,17 +481,7 @@ public class SessionBean implements Serializable{
      */
     public void openMonitorForm(){        
         openDialogFrm(DictFrmName.FRM_MONITOR, getParamsMap());
-    }
-    
-    /**
-     * Открытие обозревателя документов c передачей параметра
-     * @param filterId 
-     */
-    public void openDocExplorer(String filterId){
-        Map<String, List<String>> params = getParamsMap();
-        params.put("filterId", Collections.singletonList(filterId));
-        openExplorerFrm(DictFrmName.FRM_DOC_EXPLORER, params);        
-    }
+    }    
     
     /* Открытие окна сканирования */
     public void openScaningForm(){

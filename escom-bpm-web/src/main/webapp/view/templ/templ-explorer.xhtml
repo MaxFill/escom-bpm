@@ -14,7 +14,7 @@
     <ui:param name="_showID"         value="#{false}"/>    
     
     <ui:define name="title">
-        <p:outputLabel value="#{_bean.getFormHeader()}" rendered="#{_bean.getSourceBeanId() == null}" />
+        #{_bean.getSourceBeanId() == null ? _explorerHeader : ''}
     </ui:define>
     
     <ui:define name="centerContent">

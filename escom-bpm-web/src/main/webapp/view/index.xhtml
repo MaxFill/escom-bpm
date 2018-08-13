@@ -113,9 +113,7 @@
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
-                                <p:commandLink value="#{bundle.Numerators}"
-                                               actionListener="#{sessionBean.setOpenFormName('num-pattern-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/admin/numPattern/num-pattern-explorer')}" value="#{bundle.Numerators}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/counter-32.png"/>
                                 <p:commandLink value="#{bundle.CountersNumbers}"
@@ -123,9 +121,7 @@
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
-                                <p:commandLink value="#{bundle.Statuses}"
-                                               actionListener="#{sessionBean.setOpenFormName('statusesdoc-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docStatus/statusesdoc-explorer')}" value="#{bundle.Statuses}" target="_blank" />                                
 
                             </p:panelGrid>
                         </p:panelGrid>                        
@@ -257,11 +253,12 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" value="#{bundle.DocsExplorer}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/favourites-32.png"/>
-                                <p:commandLink value="#{bundle.Favorites}"
-                                               actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" includeViewParams="true" value="#{bundle.Favorites}" target="_blank" >
+                                    <f:param name="filterId" value="DictFilters.FAVORITE_ID" />
+                                </p:link>
 
                                 <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />                                
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />
                             </p:panelGrid>
                             <p:fileUpload id="fileDoc" style="font-size: small;"                                       
                                           styleClass="ui-grid-col-12"
