@@ -3,8 +3,6 @@
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <ui:include src="/view/common/drag-drop-dlg.xhtml"/>
-
     <ui:param name="_CreateGroupLabel" value="#{_CreateGroupLabel == null ? bundle.CreateGroup : _CreateGroupLabel}" />
 
     <p:commandButton id="createTreeCardBtn" style="display: none;"
@@ -34,86 +32,88 @@
         <p:ajax event="dialogReturn" oncomplete="initDND()"/>
     </p:commandButton>
 
-    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
-        <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="mainFRM #{_updates}" oncomplete="initDND();"/>
+    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+        <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
+            <p:ajax event="tabChange" listener="#{_bean.onTreeTabChange}" update="mainFRM #{_updates}" oncomplete="initDND();"/>
 
-        <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
-            <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
+            <p:tab id="tabTree" title="#{_lbGroupName}" rendered="#{_treeBean != null and _bean != null}">
+                <ui:include src="/view/templ/tree/tree-toolbar.xhtml"/>
 
-            <p:tree id="tree" value="#{_bean.tree}" var="treeItem"  
-                    selectionMode="single" animate="true" 
-                    selection="#{_bean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
+                <p:tree id="tree" value="#{_bean.tree}" var="treeItem"  
+                        selectionMode="single" animate="true" 
+                        selection="#{_bean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
 
-                <p:treeNode type="#{_bean.typeRoot}" icon="#{treeItem.iconTree}" >
-                    <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
-                </p:treeNode>
-                
-                <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed" styleClass="dragable">
-                    <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
-                </p:treeNode>
+                    <p:treeNode type="#{_bean.typeRoot}" icon="#{treeItem.iconTree}" >
+                        <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
+                    </p:treeNode>
 
-                <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
-                        update="westFRM:accord:toolbarTree westFRM:accord:menuTree mainFRM #{_updates}"
-                        oncomplete="initDND()"/>
-                <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
-                        update="westFRM:accord:toolbarTree mainFRM #{_updates}"
-                        oncomplete="initDND()"/>
-                <p:ajax event="expand"  listener="#{_bean.onNodeExpand}" />
-                <p:ajax event="collapse" listener="#{_bean.onNodeCollapse}" />
-            </p:tree>
-            
-            <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
-                <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
-                            rendered="#{_bean.selectorViewMode}"
-                            actionListener="#{_bean.onSelectTreeItem()}"/>
-                <p:separator rendered="#{_bean.selectorViewMode}"/>
-                <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" 
-                            rendered="#{_CreateRootLabel != null}"
-                            oncomplete="document.getElementById('westFRM:createRootCardBtn').click();"/>
-                <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
-                            oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>
-                <p:separator />
-                <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
-                            update="westFRM" oncomplete="initDND()"
-                            actionListener="#{_bean.onExpandNode()}"/>
-                <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
-                            update="westFRM" oncomplete="initDND()"
-                            actionListener="#{_bean.onCollapseNode()}"/>                
-                <p:separator />
-                <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            oncomplete="document.getElementById('westFRM:viewTreeCardBtn').click();"/>
-                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
-                <p:separator />                
-                <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); initDND()"
-                            update="westFRM:accord:toolbarTree"
-                            actionListener="#{_bean.onCopySelectedTreeItem()}"/>
-                <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Paste}"                                                                          
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); initDND()"
-                            actionListener="#{_bean.onPasteItemToTree()}"
-                            update="westFRM:accord:tree mainFRM"/>
-                <p:separator/>
-                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
-                            actionListener="#{_bean.onAddContentInFavorites()}"/>
-                <p:separator/>
+                    <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed" styleClass="dragable">
+                        <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
+                    </p:treeNode>
 
-                <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide();"
-                            rendered="#{sessionBean.userAdmin}"
-                            actionListener="#{_bean.onOpenAdmCardForm()}"/>
-            </p:contextMenu>
-        </p:tab>
+                    <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
+                            update="westFRM:accord:toolbarTree westFRM:accord:menuTree mainFRM #{_updates}"
+                            oncomplete="initDND()"/>
+                    <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
+                            update="westFRM:accord:toolbarTree mainFRM #{_updates}"
+                            oncomplete="initDND()"/>
+                    <p:ajax event="expand"  listener="#{_bean.onNodeExpand}" />
+                    <p:ajax event="collapse" listener="#{_bean.onNodeCollapse}" />
+                </p:tree>
 
-        <p:tab id="tabFilter" title="#{bundle.Filters}">
-            <ui:include src="/view/templ/tree/tree-filters.xhtml" />
-        </p:tab>
+                <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
+                    <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
+                                rendered="#{_bean.selectorViewMode}"
+                                actionListener="#{_bean.onSelectTreeItem()}"/>
+                    <p:separator rendered="#{_bean.selectorViewMode}"/>
+                    <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" 
+                                rendered="#{_CreateRootLabel != null}"
+                                oncomplete="document.getElementById('westFRM:createRootCardBtn').click();"/>
+                    <p:menuitem icon="ui-icon-plus" value="#{_CreateGroupLabel}"
+                                oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>
+                    <p:separator />
+                    <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
+                                update="westFRM" oncomplete="initDND()"
+                                actionListener="#{_bean.onExpandNode()}"/>
+                    <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
+                                update="westFRM" oncomplete="initDND()"
+                                actionListener="#{_bean.onCollapseNode()}"/>                
+                    <p:separator />
+                    <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
+                                oncomplete="document.getElementById('westFRM:viewTreeCardBtn').click();"/>
+                    <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
+                                oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
+                    <p:separator />                
+                    <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND()"
+                                update="westFRM:accord:toolbarTree"
+                                actionListener="#{_bean.onCopySelectedTreeItem()}"/>
+                    <p:menuitem icon="ui-icon-clipboard" value="#{bundle.Paste}"                                                                          
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND()"
+                                actionListener="#{_bean.onPasteItemToTree()}"
+                                update="westFRM:accord:tree mainFRM"/>
+                    <p:separator/>
+                    <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
+                                actionListener="#{_bean.onAddContentInFavorites()}"/>
+                    <p:separator/>
 
-        <ui:insert name="treeTabs" />
-        
-    </p:accordionPanel>
+                    <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide();"
+                                rendered="#{sessionBean.userAdmin}"
+                                actionListener="#{_bean.onOpenAdmCardForm()}"/>
+                </p:contextMenu>
+            </p:tab>
 
+            <p:tab id="tabFilter" title="#{bundle.Filters}">
+                <ui:include src="/view/templ/tree/tree-filters.xhtml" />
+            </p:tab>
+
+            <ui:insert name="treeTabs" />
+
+        </p:accordionPanel>
+    </p:panelGrid>
+    <ui:include src="/view/common/drag-drop-dlg.xhtml"/>
 </ui:composition>

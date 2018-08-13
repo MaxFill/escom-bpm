@@ -22,14 +22,14 @@
                     
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                                     action="#{exitCardBean.onCloseCard('save')}" style="float: right;">
+                                     actionListener="#{exitCardBean.onCloseCard('save')}" 
+                                     onclick="sendFormSize();"
+                                     style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>
             </p:tab>
             
-            <p:tab title="#{bundle.Settings}" >            
-            </p:tab>
         </p:tabView>
     </ui:define>
 

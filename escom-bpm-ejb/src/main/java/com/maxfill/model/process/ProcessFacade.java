@@ -1,6 +1,7 @@
 package com.maxfill.model.process;
 
 import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.BaseDict;
@@ -71,6 +72,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
         String number = numeratorService.doRegistrNumber(process, numeratorPattern, null, new Date());
         process.setRegNumber(number);
+        
+        addRole(process, DictRoles.ROLE_CONCORDER);
     }
 
     /**

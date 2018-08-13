@@ -9,10 +9,13 @@
     <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
     <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
     
-    <ui:param name="_showDateChange" value="#{false}"/>
     <ui:param name="_showDateCreate" value="#{false}"/>
     <ui:param name="_showAuthor"     value="#{false}"/>
     <ui:param name="_showID"         value="#{false}"/>    
+    
+    <ui:define name="title">
+        <p:outputLabel value="#{_bean.getFormHeader()}" rendered="#{_bean.getSourceBeanId() == null}" />
+    </ui:define>
     
     <ui:define name="centerContent">
         #{_bean.setSelectorHeader(_selectorHeader)}
@@ -25,17 +28,17 @@
 
         #{_bean.onAfterFormLoad()}
 
-        <pe:layout fullPage="true"  style="font-size: 80%;" stateCookie="true">            
+        <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="#{_bean.getSourceBeanId() != null}">            
             
-            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" size="25%" >                  
+            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" resizable="true" size="25%" >
                 <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
-                    <ui:include src="/view/templ/tree/tree.xhtml" />                
+                    <ui:include src="/view/templ/tree/tree.xhtml" />
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}" size="25%">                
+            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}" resizable="true" size="25%">
                 <h:form id="eastFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
-                    <p:focus context="eastFRM" for="eastFRM:nameSearche"/>                                        
+                    <p:focus context="eastFRM" for="eastFRM:nameSearche"/>           
                     <ui:include src="/view/templ/templ-searche.xhtml">
                         <ui:param name="_tblUpdate" value="mainFRM westFRM #{_updates}"/>
                     </ui:include>
@@ -55,7 +58,7 @@
                     </script>
 
                     <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: auto;" >
-                        <f:facet name="header">
+                        <f:facet name="header" rendered="#{_bean.getSourceBeanId() != null}" >
                             #{_bean.getFormHeader()}
                         </f:facet>
                         <f:facet name="actions">
@@ -198,7 +201,8 @@
                             <ui:include src="/view/templ/navigator.xhtml"/>
                             <ui:include src="/view/templ/table.xhtml"/>       
 
-                        </p:panelGrid>                        
+                        </p:panelGrid>    
+                        
                         <f:facet name="footer">
                             <ui:insert name="centerFormFooter"/>
                         </f:facet>

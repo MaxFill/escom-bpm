@@ -39,19 +39,23 @@
                                      actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                     </p:commandButton>
-
-                    <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
-                                 disabled="#{!_bean.isShowTree()}"
-                                 onkeypress="checkEsc();"
-                                 style="font-size: 90%;">
-                    </p:inputText>
-                    <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span> 
+                        
+                    <div class="ui-inputgroup">
+                        <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
                                      disabled="#{!_bean.isShowTree()}"
-                                     update="westFRM mainFRM #{_updates}"
-                                     actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
-                                     oncomplete="initDND()">
-                    </p:commandButton>
-
+                                     onkeypress="checkEsc();"
+                                     style="font-size: 90%;">
+                        </p:inputText>
+                        <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
+                                         disabled="#{!_bean.isShowTree()}"
+                                         update="westFRM mainFRM #{_updates}"
+                                         actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
+                                         oncomplete="initDND()">
+                        </p:commandButton>
+                    </div>
             
         </p:toolbarGroup>
     </p:toolbar>

@@ -9,7 +9,15 @@
     <ui:define name="menuActions" >
     </ui:define>
 
-    <ui:define name="toolbarComponents" >
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="mainFRM"
+                         actionListener="#{messageCardBean.onCloseCard('save')}"
+                         onclick="sendFormSize();">
+           <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
     </ui:define>    
     
     <ui:define name="centerFormContent">       
@@ -20,22 +28,19 @@
                     <p:inputTextarea value="#{messageCardBean.editedItem.content}" styleClass="ui-grid-col-12"
                                      rows="1" autoResize="true"
                                      required="#{param['isRequired'] == 'true'}" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
+                                     requiredMessage="#{bundle.Field} [#{bundle.Message}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>
                     
+                    <p:outputLabel value="#{bundle.Recipients}:" indicateRequired="true"/>
                     <p:pickList id="pickList" value="#{messageCardBean.roles}" var="role" 
                                 showCheckbox="true"
+                                required="#{param['isRequired'] == 'true'}" 
+                                requiredMessage="#{bundle.Field} [#{bundle.SelectedRoles}] #{bundle.MustBeFilled}"
                                 itemLabel="#{messageCardBean.getLabelFromBundle(role)}" itemValue="#{role}">
                         <f:facet name="sourceCaption">#{bundle.AvailableRoles}</f:facet>
-                        <f:facet name="targetCaption">#{bundle.Recipients}</f:facet>
-                        <p:ajax event="transfer" listener="#{messageCardBean.onTransfer}"  />
+                        <f:facet name="targetCaption">#{bundle.SelectedRoles}</f:facet>
                     </p:pickList>
-                    
-                    <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                                     actionListener="#{messageCardBean.onCloseCard('save')}" style="float: right;">
-                        <f:param name="isRequired" value="true"/>
-                    </p:commandButton>
+                                                            
                 </p:panelGrid>
             </p:tab>
                         

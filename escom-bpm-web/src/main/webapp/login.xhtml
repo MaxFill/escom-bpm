@@ -88,7 +88,8 @@
                                              icon="ui-icon-circle-triangle-e"
                                              update="panelLogin" 
                                              disabled="#{loginBean.isLoginLock()}"
-                                             actionListener="#{loginBean.login()}"/>
+                                             actionListener="#{loginBean.login()}"
+                                             onstart="return isClose = 1;"/>
                         </p:panelGrid>
                         <p:outputLabel value="#{bundle.DeveloperInfo}" style="font-size: x-small;" /> 
                     </p:panelGrid>

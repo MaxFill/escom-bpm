@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import org.springframework.util.CollectionUtils;
 
@@ -26,8 +27,12 @@ import org.springframework.util.CollectionUtils;
 public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseDictFacade<T, O, L, S>{
 
     @EJB
-    private UserMessagesFacade messagesFacade;
-    
+    private UserMessagesFacade messagesFacade;    
+
+    public BaseDictWithRolesFacade(Class <T> itemClass, Class <L> logClass, Class <S> stateClass) {
+        super(itemClass, logClass, stateClass);
+    }
+
     @Override
     public void edit(T item) {
         doSaveRoleToJson(item);
@@ -39,11 +44,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         doSaveRoleToJson(item);
         super.create(item);
     }
-
-    public BaseDictWithRolesFacade(Class <T> itemClass, Class <L> logClass, Class <S> stateClass) {
-        super(itemClass, logClass, stateClass);
-    }
-
+    
     /**
      * Сохранение ролей в строку для записи в базу
      * @param item 
@@ -117,4 +118,27 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
             messagesFacade.createSystemMessage(user, subject, content, new Tuple(item, null))
         );
     }
+    
+    /**
+     * Возвращает список ролей объекта
+     * @param item
+     * @return 
+     */
+    public List<String> getRoles(T item){
+         Map<String, Set<Integer>> roles = item.getRoles();
+         return roles.entrySet().stream().map(rec -> rec.getKey()).collect(Collectors.toList());         
+    }
+    
+    /**
+     * Добавление роли в объект
+     * @param roleName
+     * @param item 
+     */
+    public void addRole(T item, String roleName){        
+        Map<String, Set<Integer>> roles = item.getRoles();
+        if (!roles.containsKey(roleName)){
+            roles.put(roleName, new HashSet<>());
+        }
+    }
+    
 }

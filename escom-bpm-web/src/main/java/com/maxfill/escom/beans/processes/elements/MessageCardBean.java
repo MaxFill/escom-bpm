@@ -2,20 +2,21 @@ package com.maxfill.escom.beans.processes.elements;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
-import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.model.process.schemes.elements.MessageElem;
-import com.maxfill.model.states.State;
 import java.lang.reflect.InvocationTargetException;
+import com.maxfill.model.process.Process;
+import com.maxfill.model.process.ProcessFacade;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import javax.ejb.EJB;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
-import org.primefaces.event.TransferEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -23,21 +24,23 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-public class MessageCardBean extends BaseViewBean<BaseView>{    
+public class MessageCardBean extends BaseViewBean<ProcessCardBean>{    
     private static final long serialVersionUID = -1566412000716670159L;
 
+    @EJB
+    private ProcessFacade processFacade;
+        
     private MessageElem editedItem = new MessageElem();
     private MessageElem sourceItem;
-    
-    private DualListModel<String> roles;
-     
+
+    private DualListModel<String> roles;     
     private List<String> liveRoles = new ArrayList<>();
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
-        if (sourceItem == null){            
+        if (sourceItem == null){
             if (sourceBean != null){
-                sourceItem = (MessageElem)((ProcessCardBean)sourceBean).getBaseElement();                 
+                sourceItem = (MessageElem)((ProcessCardBean)sourceBean).getBaseElement();
             }
             if (sourceItem != null){
                 try {
@@ -48,11 +51,12 @@ public class MessageCardBean extends BaseViewBean<BaseView>{
                 }
             }
         }
-    }    
+    }
     
     @Override
     public String onCloseCard(Object param){
         try {
+            liveRoles = roles.getTarget();
             saveRoleToJson();            
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -71,19 +75,17 @@ public class MessageCardBean extends BaseViewBean<BaseView>{
     }
     
     private void restoreFields(){
-        Gson gson = new Gson();
-        liveRoles = gson.fromJson(sourceItem.getRecipientsJSON(), List.class);        
-    }
-    
-    public void onTransfer(TransferEvent event){
-        
+        if (StringUtils.isNoneEmpty(sourceItem.getRecipientsJSON())){
+            Gson gson = new Gson();
+            liveRoles = gson.fromJson(sourceItem.getRecipientsJSON(), List.class);        
+        }
     }
     
     /* GETS & SETS */
     
     @Override
     public String getFormName() {
-        return DictFrmName.FRM_PROCEDURE;
+        return DictFrmName.FRM_MESSAGE;
     }
 
     @Override
@@ -98,9 +100,20 @@ public class MessageCardBean extends BaseViewBean<BaseView>{
         this.editedItem = editedItem;
     }    
 
-    public DualListModel<String> getRoles() {
+    public DualListModel<String> getRoles() {        
+        if (roles == null){            
+            Process process = sourceBean.getEditedItem();
+            List<String> source = processFacade.getRoles(process);
+            if (liveRoles == null){
+                liveRoles = new ArrayList<>();
+            }
+            source.removeAll(liveRoles);
+            roles = new DualListModel<>(source, liveRoles);
+        }
         return roles;
     }
-    
+    public void setRoles(DualListModel<String> roles) {
+        this.roles = roles;
+    }        
     
 }

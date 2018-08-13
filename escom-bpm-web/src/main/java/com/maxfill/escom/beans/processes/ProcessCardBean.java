@@ -364,7 +364,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             }
             elementMap.put(k, createElement(taskEl));
         });
-        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));        
+        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
+        getScheme().getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v))); 
+        getScheme().getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
         getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
         getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
         getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
@@ -470,6 +472,14 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
         if (baseElement instanceof TimerElem){
             openElementCard(DictFrmName.FRM_TIMER);
+            return;
+        }
+        if (baseElement instanceof MessageElem){
+            openElementCard(DictFrmName.FRM_MESSAGE);
+            return;
+        }
+        if (baseElement instanceof ProcedureElem){
+            openElementCard(DictFrmName.FRM_PROCEDURE);            
         }
     }
     

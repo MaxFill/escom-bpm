@@ -144,6 +144,11 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public String getTypeName(Folder folder){
         return MsgUtils.getBandleLabel("FolderType");
     }        
+            
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
+    }
     
     /* GETS & SETS */
 

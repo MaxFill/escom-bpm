@@ -40,7 +40,9 @@
                     </p:selectOneMenu>
                     <p:separator/>
                     <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                                     actionListener="#{_bean.onSaveAndClose('save')}" style="float: right;">
+                                     actionListener="#{_bean.onSaveAndClose('save')}" 
+                                     onclick="sendFormSize();"
+                                     style="float: right;">
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </p:panelGrid>

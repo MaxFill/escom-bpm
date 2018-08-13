@@ -5,25 +5,27 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ.xhtml">
-    
+
     <ui:define name="title">
         #{applicationBean.appName}
     </ui:define>
-    
+
     <ui:define name="preRendered">
         <f:metadata>
             <f:viewAction action="#{sessionBean.showNotification()}" />
             <f:viewAction action="#{sessionBean.onAfterFormLoad()}" />
         </f:metadata>     
     </ui:define>
-    
+
     <ui:define name="body">
         <!--h:outputScript library="js" name="ITHitWebDAVClient.js" /-->
-        <h:outputScript library="js" name="confirm-close-window.js"/> 
+        <script>
+            var isClose = 0;
+        </script>
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />   
         <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" />        
-                        
+
         <h:form id="mainFRM">            
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
@@ -38,7 +40,7 @@
                     </h:panelGrid>
                 </ui:repeat>
             </p:notificationBar>           
-            
+
             <p:commandButton style="display: none;" value="testSample" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/sample/default/');" />
             <p:commandButton style="display: none;" value="testArtifacts" onclick="OpenFolder('https://192.168.0.10:8443/modeshape-webdav/artifacts/other/');" />
             <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
@@ -55,7 +57,7 @@
             <p:commandButton id="btnOpenForm" style="display: none;" actionListener="#{sessionBean.onOpenForm()}">
                 <p:ajax event="dialogReturn" update="mainFRM:messages"/>
             </p:commandButton>
-            
+
             <p:toolbar >
                 <f:facet name="left">
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank without-spaces">
@@ -89,18 +91,16 @@
             <p:growl id="growl" showDetail="true" >
                 <p:autoUpdate />
             </p:growl>
-                            
+
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12"> 
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
 
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                
+
                                 <p:graphicImage id="imgUsers" value="/resources/icon/users-32.png"/>
-                                <p:commandLink id="linkUsers" value="#{bundle.Users}"
-                                               actionListener="#{sessionBean.setOpenFormName('user-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/users/user-explorer')}" value="#{bundle.Users}" target="_blank" />                                
 
                                 <p:graphicImage value="/resources/icon/table_active-32.png"/>
                                 <p:commandLink value="#{bundle.Sessions}"
@@ -128,12 +128,9 @@
                                 <p:commandLink value="#{bundle.Statuses}"
                                                actionListener="#{sessionBean.setOpenFormName('statusesdoc-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-                                
+
                             </p:panelGrid>
-                        </p:panelGrid>
-                        <p:contextMenu for="imgUsers">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/users/user-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
+                        </p:panelGrid>                        
                     </p:panel>
 
                     <p:panel id="loggers" header="#{bundle.Logging}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
@@ -176,47 +173,36 @@
                     <p:panel id="processes" header="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>                                
-                                <p:commandLink value="#{bundle.ProcessExplorer}"                     
-                                               actionListener="#{sessionBean.setOpenFormName('process-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-                                
+                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" value="#{bundle.ProcessExplorer}" target="_blank" />
+
                                 <p:graphicImage value="/resources/icon/control-32.png"/>
                                 <p:commandLink value="#{bundle.ProcessExecutionControl}"                                           
                                                actionListener="#{sessionBean.openMonitorForm()}"/>
-                                
+
                                 <p:graphicImage id="imgProcessTemplates" value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
-                                <p:commandLink value="#{bundle.ProcessTemplates}"
-                                               rendered="#{sessionBean.userAdmin}" 
-                                               actionListener="#{sessionBean.setOpenFormName('proctempl-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" value="#{bundle.ProcessTemplates}" target="_blank" />                                
                             </p:panelGrid>
                             <p:fileUpload id="file" style="font-size: small;"
-                                            styleClass="ui-grid-col-12"
-                                            allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                                            sizeLimit="#{docBean.maxFileSize}"
-                                            invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                                            invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                                            fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                                            process="@this"
-                                            mode="advanced" auto="true"
-                                            dragDropSupport="true"
-                                            label="#{bundle.SelectFileAndSendConcorder}" 
-                                            cancelLabel="#{bundle.Cancel}"
-                                            uploadLabel="#{bundle.SaveFiles}"
-                                            fileUploadListener="#{sessionBean.onUploadFile}"
-                                            onstart="PF('statusDialog').show();"
-                                            oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createProcBtn').click();">
+                                          styleClass="ui-grid-col-12"
+                                          allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                                          sizeLimit="#{docBean.maxFileSize}"
+                                          invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                          invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                          fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                          process="@this"
+                                          mode="advanced" auto="true"
+                                          dragDropSupport="true"
+                                          label="#{bundle.SelectFileAndSendConcorder}" 
+                                          cancelLabel="#{bundle.Cancel}"
+                                          uploadLabel="#{bundle.SaveFiles}"
+                                          fileUploadListener="#{sessionBean.onUploadFile}"
+                                          onstart="PF('statusDialog').show();"
+                                          oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createProcBtn').click();">
                             </p:fileUpload>
                             <pe:tooltip for="file" value="#{bundle.DragDropFileForNewProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
-                                styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+                                        styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
-                        <p:contextMenu for="imgProcesses">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" target="blank" icon="ui-icon-extlink" />
-                        </p:contextMenu>
-                        <p:contextMenu for="imgProcessTemplates">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" target="blank" icon="ui-icon-extlink" />
-                        </p:contextMenu>                        
                     </p:panel>
 
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
@@ -231,14 +217,14 @@
                                 <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
                                                actionListener="#{sessionBean.openSettingsForm()}"/>
                             </p:panelGrid> 
-                            
+
                             <p:separator />
-                            
+
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/theme_change-32.png"/>  
                                 <h:outputLabel value="#{bundle.ChooseTheme}"/>
                             </p:panelGrid>
-                            
+
                             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >                                                                
                                 <p:themeSwitcher effect="fade" var="t" styleClass="ui-grid-col-12">
                                     <f:selectItem itemLabel="#{sessionBean.primefacesTheme}"/>
@@ -257,8 +243,8 @@
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
                                 <p:graphicImage value="/resources/icon/new_msg-32.png"/>                                
                                 <p:commandLink value="#{''.concat(bundle.CountNewMessages).concat(': ').concat(sessionBean.getMessagesInfo())}"
-                                                   onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />                                
-                                
+                                               onclick="document.getElementById('mainFRM:btnMsgInfo').click();" />                                
+
                                 <p:graphicImage value="/resources/icon/msg-32.png"/>
                                 <p:commandLink value="#{bundle.AllMessages}"
                                                onclick="document.getElementById('mainFRM:btnMessages').click();" />
@@ -269,99 +255,64 @@
                     <p:panel id="docsExplorer" header="#{bundle.Documents}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage id="imgDocs" value="/resources/icon/folders-32.png"/> 
-                                <p:commandLink value="#{bundle.DocsExplorer}"
-                                               actionListener="#{sessionBean.setOpenFormName('doc-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
-                                </p:commandLink>
+                                <p:graphicImage id="imgDocs" value="/resources/icon/folders-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" value="#{bundle.DocsExplorer}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/favourites-32.png"/>
                                 <p:commandLink value="#{bundle.Favorites}"
                                                actionListener="#{sessionBean.openDocExplorer(DictFilters.FAVORITE_ID)}"/>
-                                
-                                <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
-                                <p:commandLink value="#{bundle.DocsTypes}"
-                                               actionListener="#{sessionBean.setOpenFormName('doctype-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();" >                                
-                                </p:commandLink>                                             
 
+                                <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />                                
                             </p:panelGrid>
                             <p:fileUpload id="fileDoc" style="font-size: small;"                                       
-                                        styleClass="ui-grid-col-12"
-                                        allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                                        sizeLimit="#{docBean.maxFileSize}"
-                                        invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                                        invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                                        fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                                        process="@this"
-                                        mode="advanced" auto="true"
-                                        dragDropSupport="true"
-                                        label="#{bundle.SelectFileAndCreateDoc}" 
-                                        cancelLabel="#{bundle.Cancel}"
-                                        uploadLabel="#{bundle.SaveFiles}"
-                                        fileUploadListener="#{sessionBean.onUploadFile}" 
-                                        onstart="PF('statusDialog').show()"
-                                        oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
+                                          styleClass="ui-grid-col-12"
+                                          allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
+                                          sizeLimit="#{docBean.maxFileSize}"
+                                          invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
+                                          invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
+                                          fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
+                                          process="@this"
+                                          mode="advanced" auto="true"
+                                          dragDropSupport="true"
+                                          label="#{bundle.SelectFileAndCreateDoc}" 
+                                          cancelLabel="#{bundle.Cancel}"
+                                          uploadLabel="#{bundle.SaveFiles}"
+                                          fileUploadListener="#{sessionBean.onUploadFile}" 
+                                          onstart="PF('statusDialog').show()"
+                                          oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createDocBtn').click();">
                             </p:fileUpload>
                             <pe:tooltip for="fileDoc" value="#{bundle.DragAndDropFile}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" 
                                         styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
                         </p:panelGrid>
-                        <p:contextMenu for="imgDocs">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>  
-                        <p:contextMenu for="imgDocTypes">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
                     </p:panel>
 
                     <p:panel id="orgStructure" header="#{bundle.OrgStructure}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgStaffs" value="/resources/icon/structure-32.png"/> 
-                                <p:commandLink value="#{bundle.OrgStructureExplorer}" 
-                                               actionListener="#{sessionBean.setOpenFormName('staff-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-                                
-                                <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png"/> 
-                                <p:commandLink value="#{bundle.Posts}"
-                                               actionListener="#{sessionBean.setOpenFormName('post-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                                 
+                                <p:link href="#{sessionBean.onGetExplorerURL('/staffs/staff-explorer')}" value="#{bundle.OrgStructureExplorer}" target="_blank" />
+
+                                <p:graphicImage id="imgPosts" value="/resources/icon/book-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/staffs/posts/post-explorer')}" value="#{bundle.Posts}" target="_blank" />                                
                             </p:panelGrid>
-                        </p:panelGrid>
-                        <p:contextMenu for="imgStaffs">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/staffs/staff-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
-                        <p:contextMenu for="imgPosts">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/staffs/posts/post-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
+                        </p:panelGrid>                        
                     </p:panel>
 
                     <p:panel id="dictsExplorer" header="#{bundle.Partners}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgPartners" value="/resources/icon/book-32.png"/>
-                                <p:commandLink value="#{bundle.Partners}"
-                                               actionListener="#{sessionBean.setOpenFormName('partner-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-                                
+                                <p:link href="#{sessionBean.onGetExplorerURL('/partners/partner-explorer')}" value="#{bundle.Partners}" target="_blank" />
+
                                 <p:graphicImage id="imgPartnerTypes" value="/resources/icon/book-32.png"/>
-                                <p:commandLink value="#{bundle.PartnerTypes}"
-                                               disabled="#{!sessionBean.userAdmin}"
-                                               actionListener="#{sessionBean.setOpenFormName('partnertypes-explorer')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/partners/types/partnertypes-explorer')}" value="#{bundle.PartnerTypes}" target="_blank" />                                
                             </p:panelGrid>
-                        </p:panelGrid>
-                        <p:contextMenu for="imgPartners">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/partners/partner-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
-                        <p:contextMenu for="imgPartnerTypes">
-                            <p:menuitem value="#{bundle.OpenInNewPage}" url="#{sessionBean.onGetExplorerURL('/partners/types/partnertypes-explorer')}" target="blank" icon="ui-icon-extlink" ajax="false"/>                                                        
-                        </p:contextMenu>
+                        </p:panelGrid>                                                
                     </p:panel>
 
                 </p:dashboard>                                 
             </p:panelGrid>
-
         </h:form>
     </ui:define>
 
@@ -375,25 +326,25 @@
             }
         </style>
     </ui:define>
-    
+
     <ui:define name="customJavaScript">
         <script type="text/javascript">
             var isClose = 0;
             function OpenFolder(sFolderUrl) {
                 ITHit.WebDAV.Client.DocManager.OpenFolderInOsFileManager(sFolderUrl, sFolderUrl, ProtocolInstallCallback);
             }
-            
-            function ProtocolInstallCallback(message) {
-                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" + 
-                    ITHit.WebDAV.Client.DocManager.GetInstallFileName();
 
-                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")){
+            function ProtocolInstallCallback(message) {
+                var installerFilePath = "http://www.ajaxbrowser.com/ITHitService/WebDAVAJAXLibrary/Plugins/" +
+                        ITHit.WebDAV.Client.DocManager.GetInstallFileName();
+
+                if (confirm("This action requires a protocol installation. Select OK to download the protocol installer.")) {
                     window.open(installerFilePath);
                 }
             }
         </script> 
     </ui:define>
-    
+
     <ui:define name="dialogs"> 
         <p:dialog header="#{bundle.About}" modal="true" closeOnEscape="true" resizable="true" widgetVar="dlgAbout">
             <h:form id="logFRM">  

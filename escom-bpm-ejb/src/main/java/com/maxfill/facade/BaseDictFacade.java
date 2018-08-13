@@ -148,7 +148,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             throw new RuntimeException(ex);
         }
     }
-
+        
     @Override
     public void remove(T entity){
         entity = getEntityManager().getReference(itemClass, entity.getId());

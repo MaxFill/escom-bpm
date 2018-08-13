@@ -1,5 +1,6 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -53,12 +54,12 @@ public class MessageElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return DictWorkflowElem.STYLE_MESSAGE;
     }
 
     @Override
     public String getBundleKey() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "Message";
     }
 
     public String getRecipientsJSON() {

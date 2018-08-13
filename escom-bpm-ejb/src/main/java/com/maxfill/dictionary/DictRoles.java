@@ -5,7 +5,9 @@ public final class DictRoles {
     private DictRoles() {
     }
     
-    public static final String ROLE_OWNER = "owner";
-    public static final String ROLE_EDITOR = "editor";
-    public static final String ROLE_EXECUTOR = "executor";
+    public static final String ROLE_OWNER = "Owner";
+    public static final String ROLE_EDITOR = "Editor";
+    public static final String ROLE_EXECUTOR = "Executor";
+    public static final String ROLE_CONCORDER = "Concorder";
+    public static final String ROLE_CONTROLLER = "Controller";
 }

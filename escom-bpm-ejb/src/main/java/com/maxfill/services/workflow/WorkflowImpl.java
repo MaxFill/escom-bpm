@@ -12,7 +12,6 @@ import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
-import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.reports.ProcReport;
