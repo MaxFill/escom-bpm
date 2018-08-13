@@ -8,7 +8,12 @@
 
     <ui:param name="_searcheBean" value="#{_searcheBean == null ? _detailBean : _searcheBean}" />
     <ui:param name="_lbGroupName" value="#{_lbGroupName != null ? _lbGroupName : bundle.Sections}" />
-
+    
+    <ui:param name="_showDateChange" value="#{false}"/>
+    <ui:param name="_showDateCreate" value="#{false}"/>
+    <ui:param name="_showAuthor"     value="#{false}"/>
+    <ui:param name="_showID"         value="#{false}"/>    
+    
     <ui:define name="centerContent">
         #{_bean.setSelectorHeader(_selectorHeader)}
         #{_bean.setExplorerHeader(_explorerHeader)}
@@ -19,8 +24,9 @@
         #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}
 
         #{_bean.onAfterFormLoad()}
-        
-        <pe:layout fullPage="true"  style="font-size: 80%;" stateCookie="true">
+
+        <pe:layout fullPage="true"  style="font-size: 80%;" stateCookie="true">            
+            
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" size="25%" >                  
                 <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
                     <ui:include src="/view/templ/tree/tree.xhtml" />                
@@ -39,14 +45,13 @@
             <pe:layoutPane id="center" position="center" resizable="true" size="50%">
                 <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
                     <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
-
                     <script type="text/javascript">
                         $(function () {
                             $(':input').bind('keydown', 'esc', function () {
                                 checkEsc();
                                 return false;
                             });
-                        });
+                        });                                              
                     </script>
 
                     <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: auto;" >

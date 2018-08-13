@@ -314,7 +314,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         Map<String, Object> params = new HashMap<>();
         params.put("attache", attache);
         params.put("name", name);
-        Doc doc = createItem(author, userFolder, params);
+        Doc doc = createItem(author, null, userFolder, params);
         create(doc);
         makeRightItem(doc, author);
         return doc;
@@ -322,7 +322,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     public Doc createDocInUserFolder(String name, User author, Folder userFolder){
         Map<String, Object> params = new HashMap<>();
         params.put("name", name);
-        Doc doc = createItem(author, userFolder, params);
+        Doc doc = createItem(author, null, userFolder, params);
         create(doc);
         return doc;
     }

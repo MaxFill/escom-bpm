@@ -122,7 +122,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         Set<String> errors = new HashSet<>();
         BaseDictFacade facade = getFacade();
         try {            
-            T editItem =  createItem(item.getOwner(), getCurrentUser(), new HashMap<>()); //создаём копию объекта
+            T editItem =  createItem(item.getParent(), item.getOwner(), getCurrentUser(), new HashMap<>()); //создаём копию объекта
             BeanUtils.copyProperties(editItem, item);
             if (editItem.getRightItem() == null){
                 facade.makeRightItem(editItem, getCurrentUser());
@@ -158,12 +158,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     /* СОЗДАНИЕ: Cоздание нового объекта   */
     public T createItem(BaseDict owner) {
-        return createItem(owner, getCurrentUser(), new HashMap<>());
+        return createItem(null, owner, getCurrentUser(), new HashMap<>());
     }
 
     /* СОЗДАНИЕ: Cоздание объекта */
-    public T createItem(BaseDict owner, User author, Map<String, Object> params) {
-        return (T) getFacade().createItem(author, owner, params);
+    public T createItem(BaseDict parent, BaseDict owner, User author, Map<String, Object> params) {
+        return (T) getFacade().createItem(author, parent, owner, params);
     }
 
     /**
@@ -176,7 +176,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @return
      */
     public T checkCanCreateItem(BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
-        T newItem = createItem(owner, getCurrentUser(), params);
+        T newItem = createItem(parent, owner, getCurrentUser(), params);
         prepCreate(newItem, parent, errors);
         return newItem;
     }

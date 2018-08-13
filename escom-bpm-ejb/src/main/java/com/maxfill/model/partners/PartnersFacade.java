@@ -82,7 +82,7 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     }
     
     @Override
-    protected void detectParentOwner(Partner partner, BaseDict owner){
+    protected void detectParentOwner(Partner partner, BaseDict parent, BaseDict owner){
         partner.setOwner(null);
         partner.setParent(null);
         if (owner == null) return;

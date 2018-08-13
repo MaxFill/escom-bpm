@@ -38,6 +38,10 @@ public class CompanyExplBean extends ExplorerTreeBean{
 
     @Override
     public TreeNode addNewItemInTree(BaseDict item, TreeNode parentNode){
-        return super.addNewItemInTree(item, null);
+        if (isItemRootType(item)){
+            return super.addNewItemInTree(item, tree);
+        } else {
+            return super.addNewItemInTree(item, parentNode);
+        }
     }
 }

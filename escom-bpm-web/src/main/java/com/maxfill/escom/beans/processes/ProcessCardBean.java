@@ -300,7 +300,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (selectedTempl == null) {        //то создаём новый шаблон       
             Map<String, Object> params = new HashMap<>();
             params.put("name", nameTemplate);        
-            selectedTempl = processTemplFacade.createItem(getCurrentUser(), processType, params);                        
+            selectedTempl = processTemplFacade.createItem(getCurrentUser(), null, processType, params);                        
             Tuple result = processTemplFacade.findDublicateExcludeItem(selectedTempl);
             if ((Boolean)result.a){
                 MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});

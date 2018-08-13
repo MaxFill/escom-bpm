@@ -143,8 +143,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     
     public String getTypeName(Folder folder){
         return MsgUtils.getBandleLabel("FolderType");
-    }
-        
+    }        
+    
     /* GETS & SETS */
 
     @Override

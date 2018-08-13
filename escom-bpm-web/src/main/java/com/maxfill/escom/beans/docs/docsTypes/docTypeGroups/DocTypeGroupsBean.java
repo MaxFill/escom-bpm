@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.primefaces.model.TreeNode;
 
 /* Бин для сущности "Группы видов документов" */
 @Named
@@ -65,4 +66,8 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
         return docTypeBean;
     }
 
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
+    }
 }

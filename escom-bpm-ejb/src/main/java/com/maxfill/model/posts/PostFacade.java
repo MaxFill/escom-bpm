@@ -1,12 +1,9 @@
 package com.maxfill.model.posts;
 
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.posts.Post;
-import com.maxfill.model.posts.PostLog;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
-import com.maxfill.model.posts.PostStates;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,7 +58,7 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
         }
         Map<String, Object> params = new HashMap<>();
         params.put("name", postName);
-        Post post = createItem(userFacade.getAdmin(), null, params);
+        Post post = createItem(userFacade.getAdmin(), null, null, params);
         create(post);
         return post;
     }

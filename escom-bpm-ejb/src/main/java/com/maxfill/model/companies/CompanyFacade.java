@@ -3,11 +3,7 @@ package com.maxfill.model.companies;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.departments.DepartmentFacade;
-import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.companies.CompanyLog;
-import com.maxfill.model.companies.CompanyStates;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.Department_;
 import com.maxfill.model.folders.Folder;
@@ -80,7 +76,7 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
         }
         Map<String, Object> params = new HashMap<>();
         params.put("name", companyName);
-        Company company = createItem(userFacade.getAdmin(), null, params);
+        Company company = createItem(userFacade.getAdmin(), null, null, params);
         create(company);
         return company;
     }

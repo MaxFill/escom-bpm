@@ -1,7 +1,6 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.dictionary.DictEditMode;
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.folders.FoldersFacade;
@@ -15,9 +14,7 @@ import com.maxfill.escom.beans.users.assistants.AssistantBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.RightFacade;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.users.assistants.Assistant;
@@ -312,7 +309,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     
     @Override
     public void onCreateDetail(){
-        selectedDetail = assistantFacade.createItem(getCurrentUser(), getEditedItem(), new HashMap<>());        
+        selectedDetail = assistantFacade.createItem(getCurrentUser(), null, getEditedItem(), new HashMap<>());        
         onOpenDetail(selectedDetail);
     }
     

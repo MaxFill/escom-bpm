@@ -167,9 +167,17 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
     public void onViewDetailItem(){
-        BaseDict item = getCurrentItem();
+        BaseDict item = getCurrentItem();        
         setTypeEdit(DictEditMode.VIEW_MODE);
-        editItem = tableBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+        if (isItemDetailType(item)){
+            editItem = tableBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+        } else
+            if (isItemTreeType(item)){
+                editItem = treeBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+            } else
+                if (isItemRootType(item)){
+                    editItem = rootBean.prepViewItem(item, tableBean.getParamsMap(), new HashSet<>());       
+                }
     }
 
     /* КАРТОЧКИ: открытие карточки объекта из дерева для просмотра */

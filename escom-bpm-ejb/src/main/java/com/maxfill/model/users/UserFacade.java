@@ -90,7 +90,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
     
     @Override
-    protected void detectParentOwner(User user, BaseDict owner){
+    protected void detectParentOwner(User user, BaseDict parent, BaseDict owner){
         user.setOwner(null);
         user.setParent(null);
         if (owner == null) return;
@@ -270,7 +270,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     
     /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
-        User user = createItem(getAdmin(), null, null);
+        User user = createItem(getAdmin(), null, null, null);
         onUpdateUserFIO(user, name);
         user.setLogin(login);
         user.setPhone(phone);

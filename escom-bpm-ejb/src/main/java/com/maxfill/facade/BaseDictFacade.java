@@ -126,11 +126,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /**
      * Создание нового объекта в памяти
      * @param author
+     * @param parent
      * @param owner
      * @param params
      * @return
      */
-    public T createItem(User author, O owner, Map<String, Object> params) {
+    public T createItem(User author, T parent, O owner, Map<String, Object> params) {
         try {
             T item = itemClass.newInstance();
             item.setAuthor(author);
@@ -139,7 +140,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setInherits(true);
             item.doSetSingleRole(DictRoles.ROLE_OWNER, author);
             doSetState(item, getMetadatesObj().getStateForNewObj());
-            detectParentOwner(item, owner);
+            detectParentOwner(item, parent, owner);
             setSpecAtrForNewItem(item, params);
             return item;
         } catch (IllegalAccessException | InstantiationException ex) {
@@ -154,8 +155,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         getEntityManager().remove(entity);
     }
 
-    protected void detectParentOwner(T item, BaseDict owner){
+    protected void detectParentOwner(T item, BaseDict parent, BaseDict owner){
         item.setOwner(owner);
+        item.setParent(parent);
     } 
     
     protected void setSpecAtrForNewItem(T item, Map<String, Object> params) {

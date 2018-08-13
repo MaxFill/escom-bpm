@@ -68,6 +68,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
                 }
             }
             TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
+            doExpandTreeNode(newNode);
             String finalTypeNode = typeNode;
             childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild, finalTypeNode));
             rezNode = newNode;
@@ -193,4 +194,8 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         return departmentBean;
     }
 
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
+    }
 }

@@ -165,7 +165,7 @@ public class SessionBean implements Serializable{
 
         temeInit();                
     }    
-
+    
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
         sourceRightMap.put(key, right);
@@ -247,7 +247,7 @@ public class SessionBean implements Serializable{
         Map<String, Object> params = new HashMap<>();
         params.put("attache", attache);
         params.put("name", attache.getName());
-        Doc doc = docFacade.createItem(author, folder, params);        
+        Doc doc = docFacade.createItem(author, null, folder, params);        
         docFacade.makeRightItem(doc, author);        
         Set<String> errors = new HashSet<>();
         docBean.openItemCard(doc, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
@@ -439,6 +439,12 @@ public class SessionBean implements Serializable{
             openDialogFrm(openFormName, getParamsMap());
         }
     }
+    public void onOpenExplorer(){
+        if (StringUtils.isNotEmpty(openFormName)){
+            openExplorerFrm(openFormName, getParamsMap());
+        }
+    }
+    
     public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
         Map<String, Object> options = new HashMap<>();
@@ -457,6 +463,24 @@ public class SessionBean implements Serializable{
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
     }
     
+    public void openExplorerFrm(String frmName, Map<String, List<String>> paramsMap){
+        Tuple formSize = getFormSize(frmName);
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", formSize.a);
+        options.put("height", formSize.b);
+        options.put("minWidth", 900);
+        options.put("minHeight", 600);
+        options.put("maximizable", false);
+        options.put("minimizable", false);
+        options.put("closable", true);
+        options.put("closeOnEscape", false);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
+    }
+        
     public void openModalDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
         Map<String, Object> options = new HashMap<>();
@@ -489,7 +513,7 @@ public class SessionBean implements Serializable{
     public void openDocExplorer(String filterId){
         Map<String, List<String>> params = getParamsMap();
         params.put("filterId", Collections.singletonList(filterId));
-        openDialogFrm(DictFrmName.FRM_DOC_EXPLORER, params);        
+        openExplorerFrm(DictFrmName.FRM_DOC_EXPLORER, params);        
     }
     
     /* Открытие окна сканирования */

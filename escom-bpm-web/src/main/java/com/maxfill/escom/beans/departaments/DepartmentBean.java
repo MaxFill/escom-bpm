@@ -8,10 +8,7 @@ import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
-
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
-import com.maxfill.model.staffs.StaffFacade;
-
 import java.text.MessageFormat;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -21,9 +18,9 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-
 import com.maxfill.model.staffs.Staff;
 import org.apache.commons.collections.CollectionUtils;
+import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Подразделения" */
 @Named
@@ -38,8 +35,6 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     
     @EJB
     private DepartmentFacade itemFacade;
-    @EJB
-    private StaffFacade staffFacade;
     
     @Override
     public DepartmentFacade getFacade() {
@@ -48,7 +43,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     
     @Override
     public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
-        itemFacade.detectParentOwner(dragItem, dropItem);
+        itemFacade.detectParentOwner(dragItem, dropItem, dropItem);
         getFacade().edit(dragItem);
     }
     
@@ -74,7 +69,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
             dependency.add(departments);
         }
         return dependency;
-    } 
+    }
     
     /* Вставка скопированного объекта */
     @Override
@@ -87,13 +82,13 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
                 target = sourceItem.getParent();
             }
         }
-        itemFacade.detectParentOwner(pasteItem, target);    
-    }       
-    
+        itemFacade.detectParentOwner(pasteItem, target, target);
+    }
+
     /* Формирование кода подразделения  */
     public void makeCode(Department department){  
-        itemFacade.makeCode(department);        
-    } 
+        itemFacade.makeCode(department);
+    }
         
     /* Формирование контента подразделения  */     
     @Override
@@ -101,7 +96,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
         List<Department> departments = itemFacade.findActualChilds((Department)department);
-        departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));        
+        departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));
         //загружаем в контент штатные единицы
         List<BaseDict> staffs = staffFacade.findItemByOwner((Department)department);
         staffs.stream().forEach(staff -> addDetailItemInContent(staff, cnt));
@@ -159,4 +154,8 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         return staffBean;
     }
 
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
+    }
 }

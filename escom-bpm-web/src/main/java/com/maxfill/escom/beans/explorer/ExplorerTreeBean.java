@@ -3,8 +3,6 @@ package com.maxfill.escom.beans.explorer;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
-import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;

@@ -3,15 +3,10 @@ package com.maxfill.model.departments;
 import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.staffs.StaffFacade;
-import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.companies.Company;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.departments.DepartamentLog;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.DepartmentStates;
-import com.maxfill.model.departments.Department_;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
@@ -35,8 +30,6 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 public class DepartmentFacade extends BaseDictFacade<Department, Company, DepartamentLog, DepartmentStates>{
 
-    @EJB
-    private UserFacade userFacade;
     @EJB
     private DepartmentNumeratorService departmentNumeratorService;
     @EJB
@@ -129,7 +122,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
             }
             Map<String, Object> params = new HashMap<>();
             params.put("name", departName);
-            Department department = createItem(userFacade.getAdmin(), company, params);            
+            Department department = createItem(userFacade.getAdmin(), null, company, params);            
             create(department);
             company.getDetailItems().add(department);
             return department;
@@ -138,7 +131,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
     /* Определяет owner и parent для объекта  */
     @Override
-    public void detectParentOwner(Department item, BaseDict target){
+    public void detectParentOwner(Department item, BaseDict parent, BaseDict target){
         if (target instanceof Company){
             item.setOwner((Company)target);
             item.setParent(null);
@@ -146,6 +139,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         if (target instanceof Department){
             item.setOwner(null);
             item.setParent((Department)target);
+        } else {
+            super.detectParentOwner(item, parent, target);
         }
     }
 

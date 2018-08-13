@@ -15,6 +15,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Группы контрагентов" */
 @Named
@@ -116,4 +117,8 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
         return partnerBean;
     }
 
+    @Override
+    protected void doExpandTreeNode(TreeNode node){
+        node.setExpanded(true);
+    }
 }

@@ -144,7 +144,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             docs.add(doc);
         });        
         params.put("documents", docs);
-        Process process = createItem(author, owner, params);
+        Process process = createItem(author, null, owner, params);
         makeRightItem(process, author);
         return process;
     }

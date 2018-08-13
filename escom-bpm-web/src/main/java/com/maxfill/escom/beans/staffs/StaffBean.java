@@ -86,7 +86,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
                 target = sourceItem.getOwner();
             }
         }
-        itemsFacade.detectParentOwner(pasteItem, target);
+        itemsFacade.detectParentOwner(pasteItem, target, target);
     }
     
     @Override
@@ -97,7 +97,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     public void moveItemToGroup(BaseDict group, Staff staff){
-        itemsFacade.detectParentOwner(staff, group);
+        itemsFacade.detectParentOwner(staff,group, group);
         getFacade().edit(staff);
     }
       
@@ -180,5 +180,5 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
         } 
         staff.setName(staffName.toString());
     }
-            
+
 }

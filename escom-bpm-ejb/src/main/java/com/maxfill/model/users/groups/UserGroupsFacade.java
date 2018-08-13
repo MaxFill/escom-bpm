@@ -1,7 +1,6 @@
 package com.maxfill.model.users.groups;
 
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Right_;
@@ -10,27 +9,18 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRights;
-import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.model.users.groups.UserGroupsLog;
-import com.maxfill.model.users.groups.UserGroupsStates;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-
-import com.maxfill.model.users.groups.UserGroups_;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
-public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, UserGroupsLog, UserGroupsStates>{
-    
-    @EJB
-    private UserFacade userFacade;
+public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, UserGroupsLog, UserGroupsStates>{    
 
     public UserGroupsFacade() {
         super(UserGroups.class, UserGroupsLog.class, UserGroupsStates.class);
@@ -189,7 +179,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         }
         Map<String, Object> params = new HashMap<>();
         params.put("name", groupName);
-        UserGroups group = createItem(userFacade.getAdmin(), null, params);               
+        UserGroups group = createItem(userFacade.getAdmin(), null, null, params);               
         create(group);
         return group;
     }

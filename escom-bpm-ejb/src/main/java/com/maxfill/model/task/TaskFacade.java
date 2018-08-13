@@ -5,12 +5,8 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.task.Task;
-import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
-import com.maxfill.model.task.TaskLog;
-import com.maxfill.model.task.Task_;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -41,7 +37,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return createTask(taskName, owner, author, planDate, null, null);
     }   
     public Task createTask(String taskName, Staff owner, User author, Date planDate, Scheme scheme, String taskLinkUID){
-        Task task = createItem(author, owner, new HashMap<>());        
+        Task task = createItem(author, null, owner, new HashMap<>());        
         task.setName(taskName);
         task.setDeadLineType("data");
         task.setTaskLinkUID(taskLinkUID);

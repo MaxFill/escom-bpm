@@ -51,6 +51,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Формирование дерева */
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
+        tree.setExpanded(true);
         List<T> rootItem = getFacade().findRootItems();
         List<BaseDict> sourceTreeItems = rootItem.stream()
                 .filter(item -> getFacade().preloadCheckRightView(item, getCurrentUser()))

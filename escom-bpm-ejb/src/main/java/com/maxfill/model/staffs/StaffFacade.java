@@ -101,7 +101,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         String name = post.getName() + " " + user.getName();
         Map<String, Object> params = new HashMap<>();
         params.put("name", name);
-        Staff staff = createItem(userFacade.getAdmin(), department, params);
+        Staff staff = createItem(userFacade.getAdmin(), null, department, params);
         staff.setPost(post);
         staff.setEmployee(user);        
         create(staff);
@@ -109,7 +109,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
     
     @Override
-    public void detectParentOwner(Staff staff, BaseDict target){
+    public void detectParentOwner(Staff staff, BaseDict parent, BaseDict target){
         if (target instanceof Company){
             staff.setCompany((Company)target);
             staff.setOwner(null); //теперь нет связи с подразделением

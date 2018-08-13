@@ -18,14 +18,13 @@
     </ui:define>
     
     <ui:define name="body">
-        <h:outputScript library="js" name="ITHitWebDAVClient.js" />
+        <!--h:outputScript library="js" name="ITHitWebDAVClient.js" /-->
+        <h:outputScript library="js" name="confirm-close-window.js"/> 
         <p:importConstants type="com.maxfill.dictionary.DictFilters" var="DictFilters" />
         <p:importConstants type="com.maxfill.dictionary.DictModules" var="DictModules" />   
-        <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" /> 
-
+        <p:importConstants type="com.maxfill.dictionary.DictFrmName" var="DictFrmName" />        
+                        
         <h:form id="mainFRM">            
-            <!--h:outputScript library="js" name="confirm-close-window.js" /--> 
-            
             <p:notificationBar id="notifBar" position="top" effect="slide" styleClass="notifBar" widgetVar="notifBar" >
                 <p:commandButton title="#{bundle.Close}" style="position: absolute; right: 30px; top: 5px; border: 0px; width: 30px;"
                                  icon="ui-icon-circle-close"
@@ -97,8 +96,9 @@
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                
                                 <p:graphicImage id="imgUsers" value="/resources/icon/users-32.png"/>
-                                <p:commandLink value="#{bundle.Users}"
+                                <p:commandLink id="linkUsers" value="#{bundle.Users}"
                                                actionListener="#{sessionBean.setOpenFormName('user-explorer')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 

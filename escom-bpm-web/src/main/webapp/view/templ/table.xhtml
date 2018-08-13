@@ -39,11 +39,9 @@
                            actionListener="#{_bean.onLoadGroupContent(item)}"
                            update="mainFRM westFRM #{_updates}" 
                            oncomplete="initDND()"/>
-            <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}"
-                           rendered="#{!_bean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}"
-                           actionListener="#{_bean.onSetCurrentItem(item)}"
-                           oncomplete="document.getElementById('mainFRM:editCardBtn').click();">
-            </p:commandLink>
+            <h:outputLabel value="#{item.nameEndElipse}" title="#{item.name}"
+                           rendered="#{!_bean.isItemTreeType(item) and item.getClass().getSimpleName() != 'Doc'}">
+            </h:outputLabel>
             <ui:insert name="specCommandLinks"/>
         </p:column>
 
@@ -56,7 +54,7 @@
         </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="90" priority="3" styleClass="columnExt1"
-                  rendered="#{_showDateChange != false}"
+                  rendered="#{_showDateChange}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
@@ -64,7 +62,7 @@
         </p:column>
 
         <p:column headerText="#{bundle.DateCreate}" width="90" priority="4" styleClass="columnExt2"
-                  rendered="#{_showDateCreate != false}"
+                  rendered="#{_showDateCreate}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
@@ -72,12 +70,12 @@
         </p:column>
 
         <p:column headerText="#{bundle.Owner}" priority="5" styleClass="columnExt2"
-                  rendered="#{_showAuthor == true}"
+                  rendered="#{_showAuthor}"
                   sortBy="#{item.author.shortFIO}">
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="6" styleClass="columnExt3" >
+        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="6" styleClass="columnExt3" rendered="#{_showId}">           
             <h:outputText value="#{item.id}"/>
         </p:column>
 
@@ -98,7 +96,6 @@
                            rendered="#{!item.deleted and _bean.explorerViewMode}"                           
                            oncomplete="document.getElementById('mainFRM:viewCardBtn').click();">
                 <ui:insert name="addItemMenu" />                 
-                <p:separator/>
                 <p:menuitem icon="ui-icon-search" value="#{bundle.ViewCard}" 
                             actionListener="#{_bean.onSetCurrentItem(item)}"
                             oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
