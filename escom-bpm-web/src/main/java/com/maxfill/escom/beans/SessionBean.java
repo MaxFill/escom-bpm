@@ -426,9 +426,20 @@ public class SessionBean implements Serializable{
      * @param formName 
      * @return  
      */
-    public String onGetExplorerURL(String formName){
-        String url = EscomBeanUtils.makePageURL(formName);
-        return url;
+    public String onGetExplorerURL(String formName){        
+        StringBuilder sb = EscomBeanUtils.makePageURL(formName);
+        return sb.toString();
+    }
+    
+    /** 
+     * Формирование URL диалоговой формы
+     * @param formName
+     * @return 
+     */
+    public String onGetFormURL(String formName){
+        StringBuilder sb = EscomBeanUtils.makePageURL(formName);
+        sb.append("?beanId=").append("&beanName=");        
+        return sb.toString();
     }
     
     /**

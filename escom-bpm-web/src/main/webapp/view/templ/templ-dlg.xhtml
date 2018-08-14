@@ -8,10 +8,14 @@
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
     <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
 
+    <ui:define name="title">
+        #{empty(facesContext.externalContext.requestParameterMap.get('beanId')) ? _bean.getFormHeader() : ''}        
+    </ui:define>
+
     <ui:define name="centerContent"> 
         #{_bean.onAfterFormLoad()}
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
-            <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
+            <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>
 
             <script type="text/javascript">
                 $(function () {
@@ -23,9 +27,7 @@
             </script>
 
             <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
-                <f:facet name="header">
-                    #{_bean.getFormHeader()}
-                </f:facet>
+                <f:attribute name="header" value="#{_bean.getSourceBeanId() != null ? _bean.getFormHeader() : null}"/>
                 <f:facet name="actions">
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                    rendered="#{_bean.getSourceBeanId() != null}"

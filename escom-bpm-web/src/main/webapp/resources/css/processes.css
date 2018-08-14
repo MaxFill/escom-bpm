@@ -2,7 +2,7 @@
 .ui-diagram-task {
     background-color: #9ed4ef;
     width: 14em;
-    min-height: 4em;                
+    height: 5em;    
 }
 
 .noExecutor {
@@ -33,8 +33,8 @@
 }
 
 .ui-diagram-logic {
-    width:4em;
-    height:4em;
+    width:3em;
+    height:3em;
     border-radius: 4em;
     background-color: #099b05;
     word-wrap: normal !important;
@@ -47,20 +47,20 @@
 }
 
 .ui-diagram-timer {
-    width:5em;
-    height:5em;
+    width:4em;
+    height:4em;
     background-color: skyblue;
 }
 
 .ui-diagram-message {
-    width:5em;
-    height:5em;
+    width:4em;
+    height:4em;
     background-color: mediumaquamarine;
 }
 
 .ui-diagram-procedure {
-    width:8em;
-    height:5em;
+    width:7em;
+    height:4em;
     background-color: #ffffff;
 }
 
@@ -86,19 +86,19 @@
 }
 
 .ui-diagram-success-state {
-    width:10em;
+    width:9em;
     height:5em;
     background-color: #02b044;
 }
 
 .ui-diagram-fail-state {
-    width:10em;
+    width:9em;
     height:5em;
     background-color: #C33730;
 }
 
 .ui-diagram-completed-state {
-    width:10em;
+    width:9sem;
     height:5em;
     background-color: darkgray;
 }

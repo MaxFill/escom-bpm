@@ -59,8 +59,8 @@ import org.primefaces.model.diagram.overlay.ArrowOverlay;
 import org.primefaces.model.diagram.overlay.LabelOverlay;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.faces.view.ViewScoped;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -341,6 +341,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Перерисовка модели на странице формы
      */
     public void modelRefresh(){        
+        model.clear();
+        restoreModel();
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
@@ -431,8 +433,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             if (selectedElement != null){
                 selectedElement.setX(x + "em");
                 selectedElement.setY(y + "em");
-                defX = Integer.valueOf(x) + 5;
-                defY = Integer.valueOf(y) + 5;
+                defX = Integer.valueOf(x);
+                defY = Integer.valueOf(y);
                 baseElement = (WFConnectedElem) selectedElement.getData();
                 baseElement.setPosX(Integer.valueOf(x));
                 baseElement.setPosY(Integer.valueOf(y));
@@ -479,8 +481,10 @@ public class ProcessCardBean extends BaseCardBean<Process> {
             return;
         }
         if (baseElement instanceof ProcedureElem){
-            openElementCard(DictFrmName.FRM_PROCEDURE);            
+            openElementCard(DictFrmName.FRM_PROCEDURE); 
+            return;
         }
+        modelRefresh();
     }
     
     /**
@@ -493,7 +497,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         List<String> beanNameList = Collections.singletonList(getBeanName());
         paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
         paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
-        sessionBean.openDialogFrm(formName, paramMap);
+        sessionBean.openDialogFrm(formName, getParamsMap());
     }
     
     /**
@@ -641,7 +645,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
         } else { 
-            finalAddElement();
+            onItemChange();
+            modelRefresh();
+            //finalAddElement();
         }
     }   
     
@@ -728,10 +734,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param elementId 
      */
     private void finalAddElement(){
-        defX = defX + 3;
-        defY = defY + 3;
-        onItemChange();        
-        modelRefresh();
+        defX = defX + 5;
+        defY = defY + 5;
+        onItemChange();
         onElementOpen();
     }
     

@@ -7,8 +7,8 @@
     <application>
         <action-listener>org.primefaces.application.DialogActionListener</action-listener>
         <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
-        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
-
+        <view-handler>org.primefaces.application.DialogViewHandler</view-handler>              
+        
         <el-resolver>
             org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
         </el-resolver>                
@@ -33,7 +33,7 @@
             <supported-locale>en</supported-locale>
         </locale-config>
     </application>
-    
+
     <factory>
         <exception-handler-factory>
            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory
@@ -178,52 +178,42 @@
         <navigation-case>
             <from-outcome>timer-card</from-outcome>
             <to-view-id>/view/processes/elements/timer-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>procedure-card</from-outcome>
             <to-view-id>/view/processes/elements/procedure-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>message-card</from-outcome>
             <to-view-id>/view/processes/elements/message-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>condition-card</from-outcome>
             <to-view-id>/view/processes/elements/condition-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>enter-card</from-outcome>
             <to-view-id>/view/processes/elements/enter-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>exit-card</from-outcome>
             <to-view-id>/view/processes/elements/exit-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>logic-card</from-outcome>
             <to-view-id>/view/processes/elements/logic-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>doc-status-card</from-outcome>
             <to-view-id>/view/processes/elements/doc-status-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>state-card</from-outcome>
             <to-view-id>/view/processes/elements/state-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         <navigation-case>
             <from-outcome>task-card</from-outcome>
             <to-view-id>/view/tasks/task-card.xhtml</to-view-id>
-            <redirect />
         </navigation-case>
         
         <navigation-case>

@@ -9,7 +9,15 @@
     <ui:define name="menuActions" >
     </ui:define>
 
-    <ui:define name="toolbarComponents" >
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
+                         actionListener="#{_bean.onCloseCard('save')}"
+                         onclick="sendFormSize();">
+           <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
     </ui:define>    
     
     <ui:define name="centerFormContent">       
@@ -18,15 +26,7 @@
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.CompletePprocess}" />
                     <p:selectBooleanCheckbox value="#{_bean.editedItem.finalize}" title="#{bundle.CompletePprocess}">                
-                    </p:selectBooleanCheckbox>
-                    
-                    <p:separator/>
-                    <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                                     actionListener="#{exitCardBean.onCloseCard('save')}" 
-                                     onclick="sendFormSize();"
-                                     style="float: right;">
-                        <f:param name="isRequired" value="true"/>
-                    </p:commandButton>
+                    </p:selectBooleanCheckbox>                    
                 </p:panelGrid>
             </p:tab>
             

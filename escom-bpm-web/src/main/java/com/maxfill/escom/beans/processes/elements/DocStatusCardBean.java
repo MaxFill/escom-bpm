@@ -57,10 +57,11 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
             } 
             style = sourceItem.getStyleType();
         }
-    }
-    
-    public String onSaveAndClose(Object param){
-         try {
+    }     
+
+    @Override
+    public String onCloseCard(Object param){
+        try {
             if (selected != null){
                 editedItem.setDocStatusId(selected.getId());
                 editedItem.setCaption(selected.getBundleName());
@@ -73,14 +74,14 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return onCloseCard(param);
-    }    
-
+        return super.onCloseCard(param);
+    }
+    
     /* GETS & SETS */
     
     @Override
     public String getFormName() {
-        return DictFrmName.FRM_STATE;
+        return DictFrmName.FRM_DOC_STATUS;
     }
 
     public StatusesDoc getSelected() {

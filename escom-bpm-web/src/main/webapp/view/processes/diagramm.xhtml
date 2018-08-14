@@ -64,13 +64,6 @@
             <span class="ui-separator">
                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
             </span>
-            <p:commandButton id="btnRefresh" title="#{bundle.Refresh}" icon="ui-icon-arrowrefresh-1-s"
-                             disabled="#{processCardBean.isReadOnly()}"
-                             actionListener="#{processCardBean.modelRefresh()}">
-            </p:commandButton>
-            <span class="ui-separator">
-                <span class="ui-icon ui-icon-grip-dotted-vertical" />
-            </span>
 
             <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
                              disabled="#{processCardBean.isReadOnly()}"                                         
@@ -101,7 +94,7 @@
 
     <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
         <f:facet name="element" >
-            <h:outputLabel value="#{processCardBean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:1em;word-wrap:break-word;"/>
+            <h:outputLabel value="#{processCardBean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
             <p:graphicImage value="#{processCardBean.getElementImage(el)}" styleClass="diagramm-image"/>
         </f:facet>
         <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" />

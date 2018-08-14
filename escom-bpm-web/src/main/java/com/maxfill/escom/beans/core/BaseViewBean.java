@@ -71,7 +71,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
 
     @PreDestroy
     protected void destroy(){
-        //System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
+        System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
     }
 
     protected void initBean(){};
@@ -91,7 +91,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         if (params.size() <= 1){
             sessionBean.killBean(getBeanName(), beanId);
         } else  {            
-            if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID)){ 
+            if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
                 if (StringUtils.isNotEmpty(sourceBeanId) && StringUtils.isNotEmpty(beanName)){                 

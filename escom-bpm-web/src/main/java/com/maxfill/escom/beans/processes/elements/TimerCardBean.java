@@ -74,9 +74,9 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     public String onCloseCard(Object param){
         Set<String> errors = new HashSet<>();
         checkTimer(errors);
-        if (errors.isEmpty()){
+        if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
-            return null;
+            return "";
         }
         saveFields(procTimer);
         try {

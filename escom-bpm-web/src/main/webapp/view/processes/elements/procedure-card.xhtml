@@ -9,8 +9,15 @@
     <ui:define name="menuActions" >
     </ui:define>
 
-    <ui:define name="toolbarComponents" >
-    </ui:define>    
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="mainFRM"
+                         actionListener="#{_bean.onCloseCard('save')}"
+                         onclick="sendFormSize();">
+           <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
     
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{procedureCardBean.editedItem != null}" >

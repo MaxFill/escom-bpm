@@ -96,22 +96,19 @@
                     <p:panel id="admObjects" header="#{bundle.Administation}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-
                                 <p:graphicImage id="imgUsers" value="/resources/icon/users-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/users/user-explorer')}" value="#{bundle.Users}" target="_blank" />                                
 
                                 <p:graphicImage value="/resources/icon/table_active-32.png"/>
-                                <p:commandLink value="#{bundle.Sessions}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_USER_SESSIONS)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/users/'.concat(DictFrmName.FRM_USER_SESSIONS))}" value="#{bundle.Sessions}" target="_blank" />                                
                             </p:panelGrid>
+                            
                             <p:separator/>
+                            
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>
-                                <p:commandLink value="#{bundle.SettigsObjects}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_OBJECT_EXPL)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/'.concat(DictFrmName.FRM_OBJECT_EXPL))}" value="#{bundle.SettigsObjects}" target="_blank" />
+                                
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/admin/numPattern/num-pattern-explorer')}" value="#{bundle.Numerators}" target="_blank" />
 
@@ -121,7 +118,7 @@
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/book-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docStatus/statusesdoc-explorer')}" value="#{bundle.Statuses}" target="_blank" />                                
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/docStatus/statusesdoc-explorer')}" value="#{bundle.Statuses}" target="_blank" />
 
                             </p:panelGrid>
                         </p:panelGrid>                        
@@ -131,9 +128,7 @@
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces " >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/log-32.png"/>
-                                <p:commandLink value="#{bundle.Authentication}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_AUTH_LOG)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/users/'.concat(DictFrmName.FRM_AUTH_LOG))}" value="#{bundle.Authentication}" target="_blank" />
                             </p:panelGrid>
                         </p:panelGrid>                        
                     </p:panel>
@@ -202,10 +197,8 @@
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/timer-32.png"/>  
-                                <p:commandLink value="#{bundle.Scheduler}" title="#{bundle.Scheduler}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_SCHEDULER)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:graphicImage value="/resources/icon/timer-32.png"/>                                 
+                                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" value="#{bundle.Scheduler}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>  
                                 <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
@@ -253,9 +246,7 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" value="#{bundle.DocsExplorer}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/favourites-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" includeViewParams="true" value="#{bundle.Favorites}" target="_blank" >
-                                    <f:param name="filterId" value="DictFilters.FAVORITE_ID" />
-                                </p:link>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer').concat('?filterId=').concat(DictFilters.FAVORITE_ID)}" value="#{bundle.Favorites}" target="_blank" />                                    
 
                                 <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />

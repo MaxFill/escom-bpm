@@ -1,31 +1,25 @@
 package com.maxfill.escom.beans.system.login;
 
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.SessionBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.authlog.AuthLogFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.escom.beans.users.settings.UserSettings;
-import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.services.sms.SmsService;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.StringReader;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -38,7 +32,6 @@ import org.primefaces.PrimeFaces;
 @ViewScoped
 public class LoginBean extends BaseViewBean{    
     private static final long serialVersionUID = 4390983938416752289L;
-    private static final Logger LOGGER = Logger.getLogger(LoginBean.class.getName());
 
     private String userName;
     private String password;

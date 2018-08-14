@@ -10,8 +10,16 @@
     <ui:define name="menuActions" >
     </ui:define>
 
-    <ui:define name="toolbarComponents" >
-    </ui:define>    
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
+                         actionListener="#{timerCardBean.onCloseCard('save')}"
+                         onclick="sendFormSize();">
+           <f:param name="isRequired" value="true"/>
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define>   
     
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" >
@@ -89,11 +97,6 @@
                                         
                 </p:panelGrid>
             </p:tab>
-        </p:tabView>
-        
-        <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                    actionListener="#{timerCardBean.onCloseCard('save')}" style="float: right;">
-                <f:param name="isRequired" value="true"/>
-        </p:commandButton>
+        </p:tabView>        
     </ui:define>
 </ui:composition>

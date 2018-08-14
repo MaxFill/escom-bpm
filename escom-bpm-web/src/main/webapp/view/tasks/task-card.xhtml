@@ -149,15 +149,14 @@
                 <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
 
                 <p:commandLink  value="#{bundle.GoToProcess}"
-                                rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'processCardBean'}"
+                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'processCardBean'}"
                                 actionListener="#{taskCardBean.onOpenProcess()}"/>
                 <p:commandLink  value="#{bundle.GoToDocument}"
-                                rendered="#{taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'docCardBean'}"
+                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'docCardBean'}"
                                 actionListener="#{taskCardBean.onOpenDocument()}"/>
                 <p:commandLink  value="#{bundle.ViewDoc}"
-                                rendered="#{taskCardBean.editedItem.scheme != null}"
+                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}"
                                 actionListener="#{taskCardBean.onViewDocument()}"/>
-
 
                 <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                 <p:commandButton value="#{bundle.Delete}" 

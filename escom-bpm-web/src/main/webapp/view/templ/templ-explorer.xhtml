@@ -58,9 +58,7 @@
                     </script>
 
                     <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: auto;" >
-                        <f:facet name="header" rendered="#{_bean.getSourceBeanId() != null}" >
-                            #{_bean.getFormHeader()}
-                        </f:facet>
+                        <f:attribute name="header" value="#{_bean.getSourceBeanId() != null ? _bean.getFormHeader() : null}"/>
                         <f:facet name="actions">
                             <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                            rendered="#{_bean.getSourceBeanId() != null}"
@@ -128,9 +126,11 @@
                                                      rendered="#{_bean.multySelectMode}"
                                                      actionListener="#{_bean.onMultySelect()}"
                                                      onclick="return isClose = 1;">
-                                    </p:commandButton>       
-
-                                    <!-- Кнопка для Корзины -->
+                                    </p:commandButton>
+                                    <ui:insert name="addToolButtons" />
+                                </f:facet>
+                                
+                                <f:facet name="right">
                                     <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
                                                    rendered="#{sessionBean.userAdmin and _bean.isTrashSelected()}">
                                         <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
@@ -154,12 +154,8 @@
                                                     actionListener="#{_bean .onRestoreCheckedContentTrash()}"
                                                     oncomplete="initDND()">
                                         </p:menuitem>
-                                    </p:splitButton>            
-
-                                    <ui:insert name="addToolButtons" />
-                                </f:facet>
-                                <f:facet name="right">
-                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                    </p:splitButton>
+                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear" rendered="#{!_bean.isTrashSelected()}">
                                         <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateItemLabel}"                                                     
                                                     disabled="#{_bean.canCreateItem}"
                                                     rendered="#{_treeBean == null or _bean.isShowTree()}"
