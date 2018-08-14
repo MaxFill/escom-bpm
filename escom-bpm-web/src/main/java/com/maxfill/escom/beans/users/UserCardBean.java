@@ -38,6 +38,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.lang.WordUtils;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
 
 /* Контроллер формы "Карточка пользователя */
 @Named
@@ -73,7 +74,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
 
     @Override
     public void onAfterFormLoad(){
-        validateStaff(oldStaffvalue);
+        validateStaff(oldStaffvalue);        
     }
     
     /**
@@ -107,15 +108,24 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         Folder folder = items.get(0);
         onItemChange();
         getEditedItem().setInbox(folder);
-        checkFolder(folder);
+        if (!folderFacade.checkRightAddDetail(folder, getEditedItem())){
+            addRightForChangeFolder(folder);
+        }    
     }
 
+    @Override
+    public void onTabChange(TabChangeEvent event) {
+        if (event.getTab().getId().equals("tabOther")){
+            checkFolder(getEditedItem().getInbox());
+        }
+    }
+    
     /**
      * Проверка выбранной папки
      * @param folder
      */
     public void checkFolder(Folder folder){
-        if(!folderFacade.checkRightAddDetail(folder, getEditedItem())) {
+        if(folder != null && !folderFacade.checkRightAddDetail(folder, getEditedItem())) {
             String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
@@ -128,11 +138,13 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
 
     /**
      * Добавление пользователю прав на изменение папки
+     * @param folder
      */
-    public void addRightChangeFolder(){
-        Folder folder = folderFacade.find(getEditedItem().getInbox().getId());
+    public void addRightForChangeFolder(Folder folder){
+        //folder = folderFacade.find(getEditedItem().getInbox().getId());
         if (folder.isInherits()){
             MsgUtils.errorFormatMsg("CannotAddRightBecauseInheritsRights", new Object[]{folder.getNameEndElipse()});
+            checkFolder(folder);
             return;
         }
         State state = stateFacade.getValidState();

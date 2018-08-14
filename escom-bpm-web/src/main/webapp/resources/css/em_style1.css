@@ -75,6 +75,13 @@ body{
     font-size: 90% !important;
 }
 
+.warning-msg{
+    float: right !important;
+    text-align: right !important;
+    background: yellow !important;
+    padding: 5px !important;
+}
+
 .qtip{
     font-family: Verdana, Helvetica, Arial, sans-serif;
 }

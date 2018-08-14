@@ -2,7 +2,6 @@ package com.maxfill.escom.system;
 
 import com.maxfill.escom.beans.ApplicationBean;
 import com.sun.faces.application.view.ViewScopeManager;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;

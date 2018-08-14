@@ -736,7 +736,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         right.setAddDetail(true);
         right.setAddChild(true);
         right.setUpdate(true);
-        right.setRead(true);        
+        right.setRead(true);
+        right.setChangeRight(false);
+        right.setDelete(false);
         rights.getRights().add(right);
         saveRights(item, rights);
         edit(item);

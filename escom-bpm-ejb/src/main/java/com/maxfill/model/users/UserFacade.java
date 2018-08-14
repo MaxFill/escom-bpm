@@ -460,6 +460,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return assistant != null;
     }
     
+    @Override
+    public void remove(User user){
+        messagesFacade.removeMessageByUser(user);
+        super.remove(user);
+    }
     /* *** *** */
     
     @Override

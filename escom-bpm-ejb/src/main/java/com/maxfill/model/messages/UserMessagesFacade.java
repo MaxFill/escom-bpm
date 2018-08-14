@@ -16,6 +16,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -113,4 +114,13 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         return ((Long) query.getSingleResult()).intValue();
     }
 
+    public int removeMessageByUser(User user){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
+        Root root = cd.from(UserMessages.class);
+        Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), user);
+        cd.where(crit1);
+        Query query = getEntityManager().createQuery(cd);
+        return query.executeUpdate();
+    }
 }

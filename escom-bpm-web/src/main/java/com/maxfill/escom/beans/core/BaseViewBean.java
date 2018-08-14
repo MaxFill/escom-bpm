@@ -89,7 +89,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         if (params.size() <= 1){
-            sessionBean.killBean(getBeanName(), beanId);
+            sessionBean.killBean(getBeanName(), beanId);            
         } else  {            
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
