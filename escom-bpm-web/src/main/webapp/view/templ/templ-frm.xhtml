@@ -6,7 +6,27 @@
     <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
     <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
     
-    <ui:define name="body">       
+    <ui:define name="body">  
+        
+        <script type="text/javascript">
+            var itemChange = 0;
+            var formWidth = 0;
+            var formHeight = 0;
+            
+            window.onresize = function(){
+                formWidth  = window.innerWidth;
+                formHeight = window.innerHeight;
+                return null;
+            };                   
+            
+            function sendFormSize(formName) {
+                formSize([
+                    {name: 'form',   value: formName},
+                    {name: 'width',  value: formWidth},                    
+                    {name: 'height', value: formHeight}
+                ]);
+            }
+        </script>
         
         #{_bean.onBeforeOpenCard()}
                 

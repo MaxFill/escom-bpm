@@ -8,7 +8,7 @@ import com.maxfill.services.licenses.ActivateApp;
 import org.primefaces.PrimeFaces;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;

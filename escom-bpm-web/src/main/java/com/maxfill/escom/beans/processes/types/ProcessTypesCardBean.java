@@ -10,7 +10,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.task.result.Result;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;

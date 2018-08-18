@@ -460,10 +460,10 @@ public class SessionBean implements Serializable{
         options.put("height", formSize.b);
         options.put("minWidth", 900);
         options.put("minHeight", 600);
-        options.put("maximizable", false);
+        options.put("maximizable", true);
         options.put("minimizable", false);
-        options.put("closable", false);
-        options.put("closeOnEscape", false);
+        options.put("closable", true);
+        options.put("closeOnEscape", true);
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
@@ -615,7 +615,17 @@ public class SessionBean implements Serializable{
         themes.add("ui-lightness");
         themes.add("vader");
     }
-
+    
+    public void onFormSize(){
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();        
+        if (params.containsKey("width") && params.containsKey("height")){
+            Integer width = Integer.valueOf(params.get("width"));
+            Integer height = Integer.valueOf(params.get("height"));
+            String formName = params.get("form");
+            saveFormSize(formName, width, height);
+        }
+    }
+    
     /**
      * Возврашает размеры формы диалога, сохранённые в настройках пользователя
      * @param formName

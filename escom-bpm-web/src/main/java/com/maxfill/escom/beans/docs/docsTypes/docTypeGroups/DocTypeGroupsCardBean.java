@@ -8,7 +8,7 @@ import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.model.states.State;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 

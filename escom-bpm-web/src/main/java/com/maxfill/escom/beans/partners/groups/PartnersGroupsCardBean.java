@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.partners.Partner;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /* Бин карточки "Группы контрагентов" */

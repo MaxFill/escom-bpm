@@ -9,7 +9,7 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.SelectEvent;

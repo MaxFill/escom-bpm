@@ -2,24 +2,23 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-card.xhtml">
-    
+
     <ui:param name="_bean" value="#{postCardBean}"/>
 
     <ui:define name="page_body">
-                
-          <p:tab id="cardTab" title="#{bundle.Explorer}">     
-            <p:panelGrid columns="1"  styleClass="ui-panelgrid-blank ui-grid-col-12"
-                         columnClasses="ui-grid-col-12">
+
+        <p:tab id="cardTab" title="#{bundle.Explorer}">     
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.Name}" indicateRequired="true" />
-                    <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
-                                 styleClass="ui-grid-col-12"
-                                 onkeypress="checkEsc();"
-                                 onchange="return itemChange = 1;"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 required="#{param['isRequired'] == 'true'}"
-                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}" 
+                             styleClass="ui-grid-col-12"
+                             onkeypress="checkEsc();"
+                             onchange="return itemChange = 1;"
+                             disabled="#{_bean.isReadOnly()}"
+                             required="#{param['isRequired'] == 'true'}"
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
             </p:panelGrid>
-          </p:tab>                
+        </p:tab>                
 
     </ui:define>
 </ui:composition>

@@ -167,43 +167,7 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.Other}" id="tabOther">
-            <p:panelGrid id="pnOther" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.Folder}:" />
-                <ui:include src="/view/common/item-select-btn.xhtml" >
-                    <ui:param name="_itemValue" value="#{_bean.editedItem.inbox}"/>
-                    <ui:param name="_itemLabel" value="fullName"/>
-                    <ui:param name="_required" value="#{false}" />
-                    <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.id == null}"/>
-                    <ui:param name="_itemPanel" value="folderPanel"/>
-                    <ui:param name="_titleItem" value="#{bundle.DefaultFolder}"/>
-                    <ui:param name="_selectorBean" value="#{foldersBean}"/>
-                    <ui:param name="_items" value="#{foldersBean.findAll()}"/>
-                    <ui:param name="_actionClear" value="setInbox"/>
-                    <ui:param name="_actionSelect" value="onInboxSelected"/>
-                    <ui:param name="_validateAction" value="checkFolder"/>                    
-                    <ui:param name="_update" value=""/>
-                </ui:include>         
-                <h:outputLabel value="#{msg.SaveUserBeforeMakeInbox}" rendered="#{_bean.editedItem.id == null}" styleClass="warning-msg"/>
-                
-                <p:outputLabel value="#{bundle.EmailSign}:" />
-                <p:textEditor value="#{_bean.editedItem.emailSign}" valueChangeListener="#{_bean.onEmailSignChange}" styleClass="ui-grid-col-12"
-                              height="200" readonly="#{_bean.isReadOnly()}">
-                    <f:facet name="toolbar">
-                        <span class="ql-formats">
-                            <button class="ql-bold"></button>
-                            <button class="ql-italic"></button>
-                            <button class="ql-underline"></button>
-                            <button class="ql-strike"></button>
-                        </span>
-                        <span class="ql-formats">
-                            <select class="ql-font"></select>
-                            <select class="ql-size"></select>
-                        </span>
-                    </f:facet>
-                </p:textEditor>
-            </p:panelGrid>
-        </p:tab>
+        <ui:include src="/view/users/tabs/tab-over.xhtml" />
 
         <p:tab title="#{bundle.Assistants}" >
             <ui:include src="/view/common/dict-details.xhtml"/>

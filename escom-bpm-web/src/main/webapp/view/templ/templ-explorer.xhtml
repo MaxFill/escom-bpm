@@ -14,7 +14,7 @@
     <ui:param name="_showID"         value="#{false}"/>    
     
     <ui:define name="title">
-        #{_bean.getSourceBeanId() == null ? _explorerHeader : ''}
+         #{_explorerHeader}
     </ui:define>
     
     <ui:define name="centerContent">
@@ -27,16 +27,27 @@
         #{_treeBean   != null ? _bean.setTreeBean(_treeBean) : ''}
 
         #{_bean.onAfterFormLoad()}
-
+        
+        <script>
+            var isFullPage = #{_bean.isFullPageMode()};
+            var formName = '#{_bean.getFormName()}';
+            window.onbeforeunload = function() {                            
+                if (!isFullPage){
+                    sendFormSize(formName);
+                }
+                return null;
+            }; 
+        </script> 
+        
         <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="#{_bean.getSourceBeanId() != null}">            
             
-            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" resizable="true" size="25%" >
+            <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" resizable="true" size="22%" >
                 <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
                     <ui:include src="/view/templ/tree/tree.xhtml" />
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}" resizable="true" size="25%">
+            <pe:layoutPane id="east" position="east" rendered="#{_bean.isEastShow()}" resizable="true" size="22%">
                 <h:form id="eastFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
                     <p:focus context="eastFRM" for="eastFRM:nameSearche"/>           
                     <ui:include src="/view/templ/templ-searche.xhtml">
@@ -45,33 +56,8 @@
                 </h:form>
             </pe:layoutPane>
 
-            <pe:layoutPane id="center" position="center" resizable="true" size="50%">
-                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
-                    <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
-                    <script type="text/javascript">
-                        $(function () {
-                            $(':input').bind('keydown', 'esc', function () {
-                                checkEsc();
-                                return false;
-                            });
-                        });                                              
-                    </script>
-
-                    <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: auto;" >
-                        <f:attribute name="header" value="#{_bean.getSourceBeanId() != null ? _bean.getFormHeader() : null}"/>
-                        <f:facet name="actions">
-                            <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                           rendered="#{_bean.getSourceBeanId() != null}"
-                                           disabled="#{!_canClose}"
-                                           actionListener="#{_bean.onCancelItemSave()}" 
-                                           onclick="if (itemChange == 1) {
-                                                       onChangeItem();
-                                                   }
-                                                   sendFormSize();">
-                                <h:outputText styleClass="ui-icon ui-icon-closethick" />
-                            </p:commandLink>
-                        </f:facet>               
-
+            <pe:layoutPane id="center" position="center" resizable="true" size="56%">
+                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
                         <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                             <p:toolbar id="explToolBar">
                                 <f:facet name="left">
@@ -115,7 +101,8 @@
                                     <p:commandButton id="createItemBtn" icon="ui-icon-circle-plus" 
                                                      title="#{_CreateItemLabel}" 
                                                      disabled="#{_bean.canCreateItem}"
-                                                     rendered="#{_treeBean == null or _bean.isShowTree()}"                                                     
+                                                     rendered="#{_treeBean == null or _bean.isShowTree()}" 
+                                                     process="@this"
                                                      actionListener="#{_bean.onCreateDetailItem()}">
                                         <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
                                     </p:commandButton>                                    
@@ -197,37 +184,35 @@
                             <ui:include src="/view/templ/navigator.xhtml"/>
                             <ui:include src="/view/templ/table.xhtml"/>       
 
-                        </p:panelGrid>    
-                        
-                        <f:facet name="footer">
-                            <ui:insert name="centerFormFooter"/>
-                        </f:facet>
-                    </p:panel>
+                            <f:facet name="footer">
+                                <ui:insert name="centerFormFooter"/>
+                            </f:facet>
+                        </p:panelGrid>                                                    
 
                     <ui:insert name="form_scripts"/>
 
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
                     
-                    <p:remoteCommand name="formSize"     actionListener="#{_bean.onFormSize()}" />
-                    <p:remoteCommand name="onChangeItem" actionListener="#{_bean.onItemChange()}" immediate="true" oncomplete="return itemChange = 0;"/>                                     
+                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />
+                                    
                     <p:remoteCommand name="dropToTree"   actionListener="#{_bean.dropToTree}"  update="westFRM mainFRM" oncomplete="initDND()"/>
                     <p:remoteCommand name="dropToTable"  actionListener="#{_bean.dropToTable}" update="westFRM mainFRM" oncomplete="initDND()"/>
                     <p:remoteCommand name="dropToNavig"  actionListener="#{_bean.dropToNavig}" update="westFRM mainFRM" oncomplete="initDND()"/>                           
 
                     <ui:insert name="btnDisplayNone" />
 
-                    <p:commandButton id="viewCardBtn" style="display: none;"
+                   <p:commandButton id="editCardBtn" style="display: none;"
                                      actionListener="#{_bean.onEditDetailItem()}" 
                                      onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide();">
+                                     oncomplete="PF('statusDialog').hide();">                        
                         <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
                     </p:commandButton>
 
-                    <p:commandButton id="editCardBtn" style="display: none;"
+                    <p:commandButton id="viewCardBtn" style="display: none;"
                                      actionListener="#{_bean.onViewDetailItem()}"
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" update="mainFRM" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" update="mainFRM" oncomplete="initDND();"/>
                     </p:commandButton>
 
                     <p:commandButton id="editDocument" style="display: none;"

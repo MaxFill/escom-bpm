@@ -9,7 +9,7 @@ import com.maxfill.model.docs.Doc;
 import java.io.IOException;
 import java.util.Map;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;

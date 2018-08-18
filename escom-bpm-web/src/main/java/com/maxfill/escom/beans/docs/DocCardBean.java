@@ -30,7 +30,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
 import java.text.MessageFormat;

@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.folders;
 
-import com.google.common.base.Objects;
 import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictStates;
@@ -23,12 +22,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import org.apache.commons.lang3.StringUtils;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.component.tabview.Tab;
@@ -116,7 +116,7 @@ public class FolderExplBean extends ExplorerTreeBean{
         currentItem = (ProcessType) procSelectedNode.getData();
                 
         List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
-                     .filter(p-> Objects.equal(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
+                     .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
                      .collect(Collectors.toList()); 
 
         Set<Doc> docsSet = new HashSet<>();

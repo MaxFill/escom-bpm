@@ -12,7 +12,7 @@ import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Date;

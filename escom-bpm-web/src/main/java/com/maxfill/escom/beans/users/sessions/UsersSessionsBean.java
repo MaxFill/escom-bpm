@@ -6,7 +6,7 @@ import com.maxfill.model.users.sessions.UsersSessions;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /**

@@ -45,7 +45,9 @@ docker-compose build
 /* *** *** *** *** *** *** /
 escom.properties
 sudo scp /home/maksim/escom-bpm/docker/datastore/configuration/escom.properties root@62.173.140.9:/home/docker/datastore/configuration
+sudo scp /home/maksim/escom-bpm/ssl/wildfly.jks root@62.173.140.9:/home/docker/datastore/configuration
 
+sudo scp /opt/wildfly/standalone/configuration/standalone-ee8.xml root@62.173.140.9:/home/docker/escom-bpm/datastore/configuration
 
 wildfly.jks
 sudo scp /home/maksim/escom-bpm/ssl/wildfly.jks root@62.173.140.9:/home/docker/datastore/configuration
@@ -55,6 +57,7 @@ sudo scp -r /home/maksim/escom-bpm/docker/datastore/mysql root@62.173.140.9:/hom
 
 wildfly
 sudo scp -r /home/maksim/escom-bpm/docker/wildfly root@62.173.140.9:/home/docker/wildfly
+sudo scp -r /home/maksim/docker/wildfly/modules/mysql root@62.173.140.9:/home/docker/escom-bpm/wildfly/mysql
 
 datastore DOCKERFILE
 sudo scp -r /home/maksim/escom-bpm/docker/datastore/Dockerfile root@62.173.140.9:/home/docker/datastore

@@ -9,7 +9,7 @@ import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import javax.mail.Folder;
 import javax.mail.MessagingException;

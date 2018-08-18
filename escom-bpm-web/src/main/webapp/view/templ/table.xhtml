@@ -80,70 +80,91 @@
         </p:column>
 
         <p:column style="text-align: center;" width="70" >
-            <p:splitButton  value="#{bundle.Select}"
-                            rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" 
-                            actionListener="#{_bean.onSelect(item)}">                
-                <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
-                            actionListener="#{_bean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
-                <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
-                            actionListener="#{_bean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
-            </p:splitButton>                      
+            <h:panelGroup rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" >
+                <div class="ui-inputgroup">
+                    <p:commandButton title="#{bundle.Select}" icon="ui-icon-check"                                
+                                     action="#{_bean.onSelect(item)}"
+                                     onclick="isClose = 1;">
+                    </p:commandButton>  
+                    <p:commandButton title="#{bundle.Edit}" icon="ui-icon-pencil"
+                                     actionListener="#{_bean.onEditDetailItem(item)}" 
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide();">
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
+                    </p:commandButton>
+                    <p:commandButton title="#{bundle.View}" icon="ui-icon-search"
+                                     actionListener="#{_bean.onViewDetailItem(item)}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide();">
+                        <p:ajax event="dialogReturn" update="mainFRM" oncomplete="initDND();"/>
+                    </p:commandButton>
+                </div>
+            </h:panelGroup>
                         
-            <p:splitButton value="#{bundle.Edit}"
-                           actionListener="#{_bean.onSetCurrentItem(item)}"
-                           rendered="#{!item.deleted and _bean.explorerViewMode}"                           
-                           oncomplete="document.getElementById('mainFRM:viewCardBtn').click();">
-                <ui:insert name="addItemMenu" />                 
-                <p:menuitem icon="ui-icon-search" value="#{bundle.ViewCard}" 
-                            actionListener="#{_bean.onSetCurrentItem(item)}"
-                            oncomplete="document.getElementById('mainFRM:editCardBtn').click();"/>
-                <p:separator/>
+            <h:panelGroup rendered="#{!item.deleted and _bean.explorerViewMode}">
+                <div class="ui-inputgroup">
+                    <p:commandButton title="#{bundle.Edit}" icon="ui-icon-pencil"
+                                     actionListener="#{_bean.onEditDetailItem(item)}" 
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide();">
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
+                    </p:commandButton>
 
-                <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
-                            update="mainFRM:explToolBar"
-                            actionListener="#{_bean.onCopyItem(item)}"/>
+                    <p:menuButton >
+                        <ui:insert name="addItemMenu" />                 
 
-                <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
-                            disabled="#{item.id == 0}"
-                            update="westFRM mainFRM"
-                            actionListener="#{_bean.onMoveContentToTrash(item)}"
-                            oncomplete="initDND()">
-                    <p:confirm header="#{bundle.MoveToTrash}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />
-                </p:menuitem>
+                        <p:menuitem icon="ui-icon-search" value="#{bundle.ViewCard}" 
+                                    actionListener="#{_bean.onSetCurrentItem(item)}"
+                                    oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
+                        <p:separator/>
 
-                <p:separator/>
-                <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
-                            rendered="#{!_bean.isFavoriteSelected()}"
-                            actionListener="#{_bean.onAddContentInFavorites(item)}"/>
-                <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" 
-                            rendered="#{_bean.isFavoriteSelected()}"
-                            actionListener="#{_bean.onDelContentFromFavorites(item)}"
-                            update="mainFRM"
-                            oncomplete="initDND()"/>
-                <p:separator/>
-                <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
-                            rendered="#{sessionBean.userAdmin}"
-                            actionListener="#{_bean.onOpenAdmCardForm(item)}"/>                
-            </p:splitButton>                           
+                        <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"
+                                    update="mainFRM:explToolBar"
+                                    actionListener="#{_bean.onCopyItem(item)}"/>
 
-            <p:splitButton value="#{bundle.Delete}"  
-                            rendered="#{item.deleted}"
-                            disabled="#{!sessionBean.userAdmin}"
-                            update="mainFRM westFRM"
-                            actionListener="#{_bean.onDeleteContentFromTrash(item)}"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); initDND()">
-                <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
-                <p:menuitem value="#{bundle.Restore}"
-                            icon="ui-icon-arrowreturnthick-1-w"
-                            update="mainFRM westFRM"
-                            actionListener="#{_bean.onRestoreContentFromTrash(item)}"
-                            onstart="PF('statusDialog').show()"
-                            oncomplete="PF('statusDialog').hide(); initDND()">
-                </p:menuitem>                
-            </p:splitButton>
+                        <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
+                                    disabled="#{item.id == 0}"
+                                    update="westFRM mainFRM"
+                                    actionListener="#{_bean.onMoveContentToTrash(item)}"
+                                    oncomplete="initDND()">
+                            <p:confirm header="#{bundle.MoveToTrash}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />
+                        </p:menuitem>
+
+                        <p:separator/>
+                        <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
+                                    rendered="#{!_bean.isFavoriteSelected()}"
+                                    actionListener="#{_bean.onAddContentInFavorites(item)}"/>
+                        <p:menuitem icon="ui-icon-scissors" value="#{bundle.DeleteFromFavorites}" 
+                                    rendered="#{_bean.isFavoriteSelected()}"
+                                    actionListener="#{_bean.onDelContentFromFavorites(item)}"
+                                    update="mainFRM"
+                                    oncomplete="initDND()"/>
+                        <p:separator/>
+                        <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"
+                                    rendered="#{sessionBean.userAdmin}"
+                                    actionListener="#{_bean.onOpenAdmCardForm(item)}"/>                
+                    </p:menuButton>                           
+                </div>
+            </h:panelGroup>                          
+
+            <h:panelGroup rendered="#{item.deleted}">
+                <div class="ui-inputgroup">
+                    <p:commandButton title="#{bundle.Delete}" icon="ui-icon-closethick"
+                                     disabled="#{!sessionBean.userAdmin}"
+                                     update="mainFRM westFRM"
+                                     actionListener="#{_bean.onDeleteContentFromTrash(item)}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND()">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.OperationIsNotReversible}" icon="ui-icon-alert" />
+                    </p:commandButton>
+                    <p:commandButton title="#{bundle.Restore}" icon="ui-icon-arrowreturnthick-1-w"                            
+                                     update="mainFRM westFRM"
+                                     actionListener="#{_bean.onRestoreContentFromTrash(item)}"
+                                     onstart="PF('statusDialog').show()"
+                                     oncomplete="PF('statusDialog').hide(); initDND()">
+                    </p:commandButton>            
+                </div>
+            </h:panelGroup> 
         </p:column>
     </p:dataTable>    
 </ui:composition>

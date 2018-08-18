@@ -8,7 +8,7 @@ import com.maxfill.model.users.assistants.AssistantFacade;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import org.primefaces.event.SelectEvent;
 

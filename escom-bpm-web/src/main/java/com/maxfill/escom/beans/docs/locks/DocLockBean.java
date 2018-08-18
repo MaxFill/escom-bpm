@@ -13,7 +13,7 @@ import com.maxfill.utils.DateUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.PrimeFaces;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.text.DateFormat;
 import java.util.Date;

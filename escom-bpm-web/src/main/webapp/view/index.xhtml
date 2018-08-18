@@ -170,7 +170,9 @@
                                                actionListener="#{sessionBean.openMonitorForm()}"/>
 
                                 <p:graphicImage id="imgProcessTemplates" value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" value="#{bundle.ProcessTemplates}" target="_blank" />                                
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" 
+                                        rendered="#{sessionBean.userAdmin}"
+                                        value="#{bundle.ProcessTemplates}" target="_blank" />                                
                             </p:panelGrid>
                             <p:fileUpload id="file" style="font-size: small;"
                                           styleClass="ui-grid-col-12"
@@ -201,7 +203,7 @@
                                 <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" value="#{bundle.Scheduler}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>  
-                                <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}"
+                                <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}" ignoreAutoUpdate="true" immediate="true" partialSubmit="true"
                                                actionListener="#{sessionBean.openSettingsForm()}"/>
                             </p:panelGrid> 
 

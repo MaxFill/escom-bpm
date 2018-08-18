@@ -2,18 +2,16 @@ package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,9 +93,10 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     }
 
     /* Формирование наименования шт. единицы */
-    private void makeName() {        
+    public void makeName() {        
         staffBean.makeName(getEditedItem());        
-        onItemChange();         
+        onItemChange(); 
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:visibleName");
     }
 
     @Override
@@ -110,4 +109,10 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         return groups;
     }
 
+    @Override
+    public Staff getEditedItem() {
+        return super.getEditedItem(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 }

@@ -12,7 +12,7 @@ import com.maxfill.utils.ItemUtils;
 import org.primefaces.model.TreeNode;
 
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.HashSet;

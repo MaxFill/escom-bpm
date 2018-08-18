@@ -4,7 +4,7 @@ import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
 import com.maxfill.model.BaseDict;
 import org.primefaces.model.TreeNode;
 
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /* Расширение контролёра обозревателя оргструктуры */

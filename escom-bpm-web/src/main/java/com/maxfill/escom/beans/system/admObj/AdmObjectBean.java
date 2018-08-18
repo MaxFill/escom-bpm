@@ -9,7 +9,7 @@ import com.maxfill.model.BaseDict;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.List;

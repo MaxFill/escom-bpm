@@ -7,7 +7,7 @@ import com.maxfill.services.mail.Mailbox;
 
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 @Named

@@ -8,7 +8,7 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.states.State;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import javax.inject.Inject;

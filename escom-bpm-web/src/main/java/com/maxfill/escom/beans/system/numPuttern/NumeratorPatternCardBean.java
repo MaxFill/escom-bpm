@@ -8,7 +8,7 @@ import com.maxfill.dictionary.DictNumerator;
 
 import javax.ejb.EJB;
 import javax.faces.model.SelectItem;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;

@@ -9,7 +9,7 @@ import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.notification.NotificationSettings;
 import com.maxfill.services.notification.NotificationTimer;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /**

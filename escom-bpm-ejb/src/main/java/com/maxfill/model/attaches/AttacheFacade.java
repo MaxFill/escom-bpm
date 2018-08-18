@@ -1,4 +1,3 @@
-
 package com.maxfill.model.attaches;
 
 import com.maxfill.facade.BaseFacade;

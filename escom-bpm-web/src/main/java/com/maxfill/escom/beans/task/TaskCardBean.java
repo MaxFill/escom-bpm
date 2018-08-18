@@ -30,13 +30,13 @@ import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
 
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
 import org.springframework.util.CollectionUtils;
 

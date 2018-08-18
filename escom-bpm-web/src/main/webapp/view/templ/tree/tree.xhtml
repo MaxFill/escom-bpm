@@ -64,7 +64,7 @@
                 <p:contextMenu id="menuTree" for="tree" widgetVar="menuTree">
                     <p:menuitem value="#{bundle.Select}" icon="ui-icon-check"
                                 rendered="#{_bean.selectorViewMode}"
-                                actionListener="#{_bean.onSelectTreeItem()}"/>
+                                action="#{_bean.onSelectTreeItem()}"/>
                     <p:separator rendered="#{_bean.selectorViewMode}"/>
                     <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateRootLabel}" 
                                 rendered="#{_CreateRootLabel != null}"

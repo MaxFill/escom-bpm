@@ -1,17 +1,18 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-                template="/view/templ/templ-card.xhtml">
+                template="/view/templ/templ-card.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:param name="_bean" value="#{staffCardBean}"/>
-    
+
     <ui:define name="page_body">
 
         <p:tab title="#{bundle.Explorer}">     
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 ui-panelgrid-blank col-padding" >       
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >       
 
                 <p:outputLabel value="#{bundle.OrgUnit}"/>                
-                <p:inputText value="#{staffCardBean.editedItem.orgUnit}" disabled="true" styleClass="ui-grid-col-12" />                
+                <p:inputText value="#{staffCardBean.editedItem.orgUnit}" disabled="true" styleClass="ui-grid-col-12" />
 
                 <p:outputLabel value="#{bundle.Post}:" indicateRequired="true"/>
                 <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -45,9 +46,24 @@
                     <ui:param name="_update" value=""/>
                 </ui:include>                
 
+                <p:outputLabel value="#{bundle.VisibleName}:" indicateRequired="true"/>
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <div class="ui-inputgroup">
+                        <p:inputText id="visibleName" value="#{staffCardBean.editedItem.name}" 
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="#{param['isRequired'] == 'true'}"                                         
+                                     requiredMessage="#{bundle.Field} [#{bundle.VisibleName}] #{bundle.MustBeFilled}"
+                                     style="width: 100%;"
+                                     onkeypress="checkEsc();"
+                                     onchange="return itemChange = 1;"/>
+                        <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}" 
+                                         disabled="#{_bean.isReadOnly()}"
+                                         actionListener="#{staffCardBean.makeName()}"/>
+                    </div>
+                </h:panelGroup>
             </p:panelGrid>
         </p:tab>
 
     </ui:define>
-    
+
 </ui:composition>

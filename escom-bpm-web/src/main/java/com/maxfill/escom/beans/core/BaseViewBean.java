@@ -25,7 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -67,6 +67,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @PostConstruct
     protected void init(){
         initBean();
+        System.out.println("CreateBean [" + this.getClass().getSimpleName() + "]!");
     }
 
     @PreDestroy
@@ -88,15 +89,15 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         beanId = this.toString();
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
         if (params.size() <= 1){
             sessionBean.killBean(getBeanName(), beanId);            
         } else  {            
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-                if (StringUtils.isNotEmpty(sourceBeanId) && StringUtils.isNotEmpty(beanName)){                 
-                    HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-                    Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);          
+                if (StringUtils.isNotEmpty(sourceBeanId) && StringUtils.isNotEmpty(beanName)){                                    
                     for (Object entry : map.values()) { //поиск view бина
                       if (entry instanceof Map) {
                         Map viewScopes = (Map) entry;
@@ -148,18 +149,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){        
-        sessionBean.killBean(getBeanName(), beanId);
+        //sessionBean.killBean(getBeanName(), beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
-    }        
-
-    public void onFormSize(){
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();        
-        if (params.containsKey("width") && params.containsKey("height")){
-            Integer width = Integer.valueOf(params.get("width"));
-            Integer height = Integer.valueOf(params.get("height"));
-            sessionBean.saveFormSize(getFormName(), width, height);
-        }
+        //return "/view/index?faces-redirect=true";
     }
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */
@@ -256,4 +249,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public String getSourceBeanId() {
         return sourceBeanId;
     }      
+    
+    public boolean isFullPageMode(){
+        return sourceBeanId == null;
+    }
 }

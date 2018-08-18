@@ -5,7 +5,7 @@ import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.escom.beans.core.BaseCardBean;
 
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /**

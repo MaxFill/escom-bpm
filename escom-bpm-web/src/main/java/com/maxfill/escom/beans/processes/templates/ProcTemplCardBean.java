@@ -7,7 +7,7 @@ import com.maxfill.model.process.templates.ProcessTemplFacade;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /**

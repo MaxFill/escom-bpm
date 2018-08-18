@@ -16,7 +16,7 @@
                 <h:panelGroup>
                     <p:commandButton value="#{bundle.ExitNoSave}" style="float:right; "
                                      title="#{bundle.ExitWithoutSaving}"
-                                     actionListener="#{_bean.onFinalCancelSave()}"
+                                     action="#{_bean.onFinalCancelSave()}" ajax="false"
                                      onclick="PF('confirmDLG').hide();">
                     </p:commandButton>
                     <p:spacer width="5" />

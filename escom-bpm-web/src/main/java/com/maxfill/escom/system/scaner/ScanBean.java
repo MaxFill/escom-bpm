@@ -6,7 +6,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.services.files.FileService;
 import java.util.Date;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 @Named

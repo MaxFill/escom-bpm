@@ -3,9 +3,16 @@
          xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
     <context-param>
-        <param-name>sessionExpiredRedirect</param-name>
-        <param-value>true</param-value>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <!--param-value>Production</param-value-->
+        <param-value>Development</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+	<param-value>65535</param-value> <!-- 64KB. -->
     </context-param>
 
     <context-param>
@@ -14,26 +21,43 @@
     </context-param>
     
     <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <!--param-value>Production</param-value-->
-        <param-value>Development</param-value>
-    </context-param>    
+    	<param-name>javax.faces.SERIALIZE_SERVER_STATE</param-name>
+    	<param-value>true</param-value> <!-- Mojarra defaults to false and MyFaces to true. Let's align out.  -->
+    </context-param>
+    
+    <context-param>
+	<param-name>com.sun.faces.defaultResourceMaxAge</param-name>
+	<param-value>3628800000</param-value> <!-- 6 weeks. -->
+    </context-param>
+    
     <context-param>
         <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
         <param-value>true</param-value>
     </context-param>
+    
+    <context-param> 
+        <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name> 
+        <param-value>false</param-value> 
+    </context-param>
+
+    <context-param> 
+        <param-name>PARAM_NAME_MAX_ACTIVE_VIEW_SCOPES</param-name>
+        <param-value>50</param-value>
+    </context-param>
+
     <context-param>
         <param-name>VersionNumber</param-name>
-        <param-value>1.02</param-value>
-    </context-param>
+        <param-value>1.03</param-value>
+    </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>007</param-value>
-    </context-param>
+        <param-value>008</param-value>
+    </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-08-14</param-value>
-    </context-param>
+        <param-value>2018-08-16</param-value>
+    </context-param>  
+              
     <filter>
         <filter-name>RedirectFilter</filter-name>
         <filter-class>com.maxfill.escom.system.RedirectFilter</filter-class>
@@ -41,7 +65,7 @@
     <filter-mapping>
         <filter-name>RedirectFilter</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
-    </filter-mapping>
+    </filter-mapping>           
     <listener>
         <listener-class>com.maxfill.escom.system.SessionListener</listener-class>
     </listener>
@@ -76,32 +100,13 @@
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/faces/view/errors/expire.xhtml</location>
-    </error-page>
-    
+    </error-page>    
     <error-page>
         <error-code>404</error-code>
         <location>/faces/view/errors/404.xhtml</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/faces/view/errors/505.xhtml?faces-redirect=true</location>
+        <location>/faces/view/errors/505.xhtml</location>
     </error-page>
-    <security-role>
-        <description/>
-        <role-name>users</role-name>
-    </security-role>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>AllPages</web-resource-name>
-            <description/>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-    <security-role>
-        <description/>
-        <role-name>admin</role-name>
-    </security-role>
 </web-app>

@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.model.users.User;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 
 /* Контроллер формы "Группа пользователей" */

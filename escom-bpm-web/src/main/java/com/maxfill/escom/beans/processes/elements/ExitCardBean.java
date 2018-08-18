@@ -8,7 +8,7 @@ import com.maxfill.model.process.schemes.elements.ExitElem;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 

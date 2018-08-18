@@ -60,7 +60,7 @@ import org.primefaces.model.diagram.overlay.LabelOverlay;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;

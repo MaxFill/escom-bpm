@@ -14,6 +14,7 @@ import com.maxfill.escom.beans.users.assistants.AssistantBean;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.departments.Department;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.states.StateFacade;
@@ -21,12 +22,11 @@ import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
+import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -37,6 +37,7 @@ import java.util.Set;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.lang.WordUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
@@ -115,6 +116,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
 
     @Override
     public void onTabChange(TabChangeEvent event) {
+        if (event == null) return;
         if (event.getTab().getId().equals("tabOther")){
             checkFolder(getEditedItem().getInbox());
         }
@@ -124,8 +126,13 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * Проверка выбранной папки
      * @param folder
      */
+    public void checkFolder(){
+        checkFolder(getEditedItem().getInbox());
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:pnOther");
+    }
+        
     public void checkFolder(Folder folder){
-        if(folder != null && !folderFacade.checkRightAddDetail(folder, getEditedItem())) {
+        if(folder != null && !canUserEditFolder(folder)) {
             String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");
             FacesContext context = FacesContext.getCurrentInstance();
@@ -136,12 +143,20 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         }
     }
 
+    public boolean canUserEditFolder(Folder folder){
+        return folderFacade.checkRightAddDetail(folder, getEditedItem());
+    }
+    
     /**
      * Добавление пользователю прав на изменение папки
      * @param folder
      */
+    public void addRightForChangeFolder(){
+        addRightForChangeFolder(getEditedItem().getInbox());
+    }
+    
     public void addRightForChangeFolder(Folder folder){
-        //folder = folderFacade.find(getEditedItem().getInbox().getId());
+        folder = folderFacade.find(getEditedItem().getInbox().getId());
         if (folder.isInherits()){
             MsgUtils.errorFormatMsg("CannotAddRightBecauseInheritsRights", new Object[]{folder.getNameEndElipse()});
             checkFolder(folder);
@@ -266,14 +281,23 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      */
     public void onChangeStaff(SelectEvent event){
         if (event.getObject() instanceof String) return;
-        List<Staff> items = (List<Staff>)event.getObject();
-        if (items.isEmpty()) return;
-        Staff staff = items.get(0);        
+        List<Object> objs = (List)event.getObject();
+        if (objs.isEmpty()) return;
+        Object obj = objs.get(0);
+        if (obj instanceof Department){
+            MsgUtils.warnMsg("StaffIsNotSelected");
+            MsgUtils.errorMsg("DepartamentSelected");
+            return;
+        }                
+        Staff staff = (Staff) obj;        
         validateStaff(staff);
         onItemChange();
         getEditedItem().setStaff(staff);
     }    
     
+    public void validateStaff(){
+        validateStaff(getEditedItem().getStaff());
+    }
     public void validateStaff(Staff staff){
         if (staff == null) return;
         
