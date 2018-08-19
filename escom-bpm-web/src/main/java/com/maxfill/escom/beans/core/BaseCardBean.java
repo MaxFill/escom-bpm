@@ -188,7 +188,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             onAfterSaveItem(item);
             isItemChange = false;
         }
-        MsgUtils.succesMsg("ChangesSaved");
+        //MsgUtils.succesMsg("ChangesSaved");
         return Boolean.TRUE;
     }
     

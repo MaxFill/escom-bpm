@@ -8,36 +8,12 @@
     <ui:param name="_explorerHeader" value="#{''.concat(bundle.Administation).concat(': ').concat(bundle.Objects)}"/>
     <ui:param name="_bean" value="#{metadatesBean}"/>      
 
+    <ui:define name="title">
+        #{_explorerHeader}
+    </ui:define>
+    
     <ui:define name="centerContent">
-        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" onkeypress="checkEsc();">
-            <p:hotkey bind="esc" id="hotskey" immediate="true" onstart="checkEsc();"/>            
-
-            <script type="text/javascript">
-                $(function () {
-                    $(':input').bind('keydown', 'esc', function () {
-                        checkEsc();
-                        return false;
-                    });
-                });
-            </script>
-
-            <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
-                <f:facet name="header">
-                    #{_bean.getFormHeader()}
-                </f:facet>
-                <f:facet name="actions">
-                    <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                   rendered="#{_bean.getSourceBeanId() != null}"
-                                   disabled="#{!_canClose}"
-                                   actionListener="#{_bean.onCancelItemSave()}" 
-                                   onclick="if (itemChange == 1) {
-                                               onChangeItem();
-                                           }
-                                           sendFormSize();">
-                        <h:outputText styleClass="ui-icon ui-icon-closethick" />
-                    </p:commandLink>
-                </f:facet>               
-
+        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" >            
                 <p:panelGrid layout="grid" columns="2" columnClasses="ui-grid-col-4 col-padding, ui-grid-col-8 col-padding" 
                              styleClass="ui-grid-col-12 without-spaces">
 
@@ -92,13 +68,11 @@
                         </p:panelGrid>
                     </p:panel>
                 </p:panelGrid>
-            </p:panel>
 
             <ui:insert name="form_scripts"/>
 
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
-            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" />
-            <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}" oncomplete="return itemChange = 0;"/> 
+            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" immediate="true" />            
         </h:form>
 
     </ui:define>

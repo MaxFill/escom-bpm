@@ -45,11 +45,7 @@
     </ui:define>
         
     <ui:define name="centerFormFooter">
-        <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
-            <p:panel styleClass="ui-grid-col-12" rendered="#{_bean.treeSelectedNode == null}">
-                <p:outputLabel value="#{''.concat(bundle.ProcessTypeNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>
-            </p:panel>
-        </h:panelGroup>        
+        <p:outputLabel value="#{''.concat(bundle.ProcessTypeNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>    
     </ui:define>
     
 </ui:composition>

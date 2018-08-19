@@ -92,14 +92,14 @@
         </f:facet>
     </p:toolbar>  
 
-    <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" >
+    <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" widgetVar="DiagrammWG" >
         <f:facet name="element" >
             <h:outputLabel value="#{processCardBean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
             <p:graphicImage value="#{processCardBean.getElementImage(el)}" styleClass="diagramm-image"/>
         </f:facet>
-        <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" />
-        <p:ajax event="disconnect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onDisconnect}" />
-        <p:ajax event="connectionChange" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnectionChange}" />
+        <p:ajax event="connect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnect}" ignoreAutoUpdate="true"/>
+        <p:ajax event="disconnect" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onDisconnect}" ignoreAutoUpdate="true"/>
+        <p:ajax event="connectionChange" disabled="#{processCardBean.isReadOnly()}" listener="#{processCardBean.onConnectionChange}" ignoreAutoUpdate="true"/>
     </p:diagram>
 
 </ui:composition>

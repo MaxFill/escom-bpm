@@ -272,7 +272,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     
     public Boolean isShowExtTaskAtr(){
         boolean flag = false;
-        if (getEditedItem().getScheme() == null){
+        if (getEditedItem() != null && getEditedItem().getScheme() == null){
             flag = true;
         }
         return flag;

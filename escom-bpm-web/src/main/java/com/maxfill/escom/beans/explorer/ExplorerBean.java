@@ -27,7 +27,6 @@ import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
-import com.sun.faces.application.view.ViewScopeManager;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.api.UIColumn;
@@ -140,10 +139,6 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         if (params.containsKey(SysParams.PARAM_BEAN_ID)){
            sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
         }
-        // Это отладка. TO DO удалить позже..
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);   
-        // 
         doBeforeOpenCard(params);
     }
     

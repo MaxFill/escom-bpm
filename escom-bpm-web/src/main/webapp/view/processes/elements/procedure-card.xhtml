@@ -11,8 +11,8 @@
 
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="mainFRM"
-                         actionListener="#{_bean.onCloseCard('save')}"
-                         onclick="sendFormSize();">
+                         action="#{_bean.onCloseCard('save')}"
+                         onclick="sendFormSize('#{_bean.getFormName()}');">
            <f:param name="isRequired" value="true"/>
        </p:commandButton>
         <span class="ui-separator">
@@ -23,13 +23,7 @@
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{procedureCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Procedure}"  >
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                    
-                    <p:commandButton value="#{bundle.Save}" update="mainFRM"
-                                     actionListener="#{procedureCardBean.onCloseCard('save')}" 
-                                     onclick="sendFormSize();"
-                                     style="float: right;">
-                        <f:param name="isRequired" value="true"/>
-                    </p:commandButton>
+                                        
                 </p:panelGrid>
             </p:tab>            
 

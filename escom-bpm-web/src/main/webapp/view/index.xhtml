@@ -138,22 +138,22 @@
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.MailService}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_SENDER_SERVICE)}"
+                                               actionListener="#{sessionBean.setOpenFormName('mail-sender-service')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.ServiceReaderEmail}"
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MAIL_READER_SERVICE)}"
+                                               actionListener="#{sessionBean.setOpenFormName('mail-reader-service')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.LdapService}" 
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_LDAP)}"
+                                               actionListener="#{sessionBean.setOpenFormName('ldap')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
 
                                 <p:graphicImage value="/resources/icon/service-32.png"/>
                                 <p:commandLink value="#{bundle.ServiceNotification}" 
-                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_NOTIFICATION)}"
+                                               actionListener="#{sessionBean.setOpenFormName('notification')}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
                             </p:panelGrid>
                         </p:panelGrid>

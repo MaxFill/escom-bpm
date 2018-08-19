@@ -27,7 +27,7 @@
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                    rendered="#{_bean.getSourceBeanId() != null}"
                                    disabled="#{!_canClose}"
-                                   action="#{_bean.onCancelItemSave()}" ajax="false"
+                                   actionListener="#{_bean.onCancelItemSave()}" ajax="false" 
                                    onclick="if (itemChange == 1) {onChangeItem();} sendFormSize('#{_bean.getFormName()}');">
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
@@ -54,9 +54,8 @@
                             <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
                                              disabled="#{_bean.isReadOnly()}"
                                              icon="ui-icon-disk"
-                                             update="mainFRM"
-                                             action="#{_bean.prepSaveItemAndClose()}" ajax="false"
-                                             onclick="sendFormSize('user'); if (itemChange == 1) {onChangeItem();}">
+                                             actionListener="#{_bean.prepSaveItemAndClose()}" ajax="false"
+                                             onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {onChangeItem();}">
                                 <f:param name="isRequired" value="true"/>
                             </p:commandButton>
                             <span class="ui-separator">

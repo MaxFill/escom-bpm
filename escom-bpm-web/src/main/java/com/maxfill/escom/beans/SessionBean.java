@@ -720,44 +720,7 @@ public class SessionBean implements Serializable{
     /* Отображение справки */
     public void onViewHelp(){
        openModalDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
-    }
-           
-    public void killBean(String beanName, String beanId){       
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
-        /*
-        map.entrySet().removeIf(mapEntry->{
-            boolean flag = false;
-            if (mapEntry instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) mapEntry;
-                if (entry.getValue() instanceof Map) {
-                    Map viewScopes = (Map) entry.getValue();
-                    if (viewScopes.isEmpty()){
-                        flag = true;
-                    }
-                }
-            }
-            return flag;
-        });
-        */
-        for (Object mapEntry : map.entrySet()){
-            if (mapEntry instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) mapEntry;
-                if (entry.getValue() instanceof Map) {
-                    Map viewScopes = (Map) entry.getValue();
-                    if (viewScopes.containsKey(beanName)) {
-                        BaseView bean = ((BaseView) viewScopes.get(beanName));
-                        String id = bean.toString();
-                        if (beanId.equals(id)) {
-                            map.remove(entry.getKey());
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+    }           
        
     /* GETS & SETS */
 

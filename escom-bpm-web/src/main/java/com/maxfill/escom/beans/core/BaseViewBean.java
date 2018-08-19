@@ -10,7 +10,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
 import com.sun.faces.application.view.ViewScopeManager;
-
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -25,6 +24,7 @@ import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.omnifaces.util.Beans;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -57,12 +57,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @PostConstruct
     protected void init(){
         initBean();
-        System.out.println("CreateBean [" + this.getClass().getSimpleName() + "]!");
+        System.out.println("Create  " + this.getClass().getSimpleName());
     }
 
     @PreDestroy
     protected void destroy(){
-        System.out.println("Bean [" + this.getClass().getSimpleName() + "] destroy!");
+        System.out.println("Destroy " + this.getClass().getSimpleName());
     }
 
     protected void initBean(){};
@@ -76,14 +76,14 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * Метод вызывается автоматически при открытии формы
      */
     public void onBeforeOpenCard(){
-        beanId = this.toString();
+        beanId = this.toString();                
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
-        if (params.size() < 1){
-            //sessionBean.killBean(getBeanName(), beanId);            
-        } else  {            
+        if (beanId.contains("ProcessCardBean") && params.size() <= 1){
+            //Beans.destroy(this);
+        } else {
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
                 sourceBean = (T)sessionBean.getOpenedBeans().get(sourceBeanId);
@@ -123,7 +123,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      * @return 
      */
     protected String finalCloseDlg(Object exitParam){        
-        //sessionBean.killBean(getBeanName(), beanId);
         sessionBean.getOpenedBeans().remove(beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
