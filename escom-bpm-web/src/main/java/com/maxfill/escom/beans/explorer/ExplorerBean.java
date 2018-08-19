@@ -182,7 +182,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* КАРТОЧКИ: открытие карточки объекта из дерева для просмотра */
     public void onViewTreeItem(){
-        BaseDict item = getCurrentItem();
+        onViewTreeItem(getCurrentItem());
+    }
+    public void onViewTreeItem(BaseDict item){
+        currentItem = item;
         setTypeEdit(DictEditMode.VIEW_MODE);
         if (isItemRootType(item)){
             editItem = rootBean.prepViewItem(item, rootBean.getParamsMap(), new HashSet<>());
@@ -193,7 +196,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     
     /* КАРТОЧКИ: открытие карточки объекта для редактирование */
     public void onEditDetailItem(){
-        BaseDict item = getCurrentItem();
+        onEditDetailItem(getCurrentItem());
+    }
+    public void onEditDetailItem(BaseDict item){
+        currentItem = item;
         setTypeEdit(DictEditMode.EDIT_MODE);
         if (isItemTreeType(item)){
             editItem = treeBean.prepEditItem(item, treeBean.getParamsMap());

@@ -63,13 +63,15 @@
                             <f:selectItems value="#{_bean.metadatesObj.statesList}" var="s" itemLabel="#{stateBean.getBundleName(s)}" itemValue="#{s}" />
                         </p:selectOneMenu>
                         <p:spacer/>
+                        
                         <p:selectOneMenu value="#{_bean.typeAddRight}" title="#{bundle.ForSomeone}">
-                            <f:selectItem itemLabel="#{bundle.ForUser}" itemValue="#{DictRights.TYPE_USER}" />
-                            <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="#{DictRights.TYPE_GROUP}" />
-                            <f:selectItem itemLabel="#{bundle.ForRole}" itemValue="#{DictRights.TYPE_ROLE}" />
+                            <f:selectItem itemLabel="#{bundle.ForUser}" itemValue="1" />
+                            <f:selectItem itemLabel="#{bundle.ForGroup}" itemValue="0" />
+                            <f:selectItem itemLabel="#{bundle.ForRole}" itemValue="2" />
                             <p:ajax event="change" update="pnForObject"/>
                         </p:selectOneMenu>
                         <p:spacer/>
+                        
                         <h:panelGroup id="pnForObject">
                             <p:selectOneMenu value="#{_bean.selUser}" filter="true" filterMatchMode="startsWith" title="#{bundle.Users}"
                                              converter="usersConvertor" placeholder="#{bundle.Select}"

@@ -77,14 +77,14 @@ public class LoginBean extends BaseViewBean{
        beanId = this.toString();
     }
     
-    public void login() throws NoSuchAlgorithmException{
+    public String login() throws NoSuchAlgorithmException{
         Set <FacesMessage> errors = new HashSet <>();
        
         if (!Objects.equals(pinCode, generatePinCode)){   //оба кода должны быть равны (null если не требуется ввод кода)
             errors.add(MsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
             makeCountErrLogin(errors);
             MsgUtils.showFacesMessages(errors);
-            return;
+            return "";
         }
 
         //проверка на просроченность лицензии
@@ -108,7 +108,7 @@ public class LoginBean extends BaseViewBean{
         if(!errors.isEmpty()) {
             makeCountErrLogin(errors);
             MsgUtils.showFacesMessages(errors);
-            return;
+            return "";
         }
 
         if(smsService.isActive() && StringUtils.isBlank(generatePinCode) && user.isDoubleFactorAuth() && StringUtils.isNotBlank(user.getMobilePhone())) {
@@ -119,7 +119,7 @@ public class LoginBean extends BaseViewBean{
             if(StringUtils.isNotBlank(smsResult) && !smsResult.contains("error")) {
                 PrimeFaces.current().ajax().update("loginFRM");
                 MsgUtils.succesFormatMsg("SendCheckCodePhone", new Object[]{EscomUtils.makeSecureFormatPhone(user.getMobilePhone())});
-                return; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
+                return ""; //код доступа отправлен, нужен ввод полученного кода, поэтому выходим
             } else {
                 System.out.println("ERROR_SMS: " + smsResult == null ? "no data." : smsResult);
             }
@@ -137,10 +137,7 @@ public class LoginBean extends BaseViewBean{
             targetPage = SysParams.MAIN_PAGE;
         }
         generatePinCode = null;
-        //return targetPage + "?faces-redirect=true";
-        //Используется ajax и редирект/ Если не использовать ajax, то в Chrome почему то сбрасывает selectedLang и далее ошибка.
-        sessionBean.redirectToPage(targetPage, Boolean.FALSE);
-        sessionBean.killBean(getBeanName(), beanId);        
+        return targetPage + "?faces-redirect=true";        
     }
     
     /* Инициализация текущего пользователя */

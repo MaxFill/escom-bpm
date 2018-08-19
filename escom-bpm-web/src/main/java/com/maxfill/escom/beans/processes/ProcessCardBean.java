@@ -492,11 +492,6 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * @param formName 
      */
     private void openElementCard(String formName){
-        Map<String, List<String>> paramMap = new HashMap<>();
-        List<String> itemIds = Collections.singletonList(beanId);
-        List<String> beanNameList = Collections.singletonList(getBeanName());
-        paramMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        paramMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
         sessionBean.openDialogFrm(formName, getParamsMap());
     }
     

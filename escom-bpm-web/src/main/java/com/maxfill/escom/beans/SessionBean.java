@@ -66,6 +66,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -94,7 +95,10 @@ public class SessionBean implements Serializable{
     private UserSettings userSettings = new UserSettings();
     private final List<NotifMsg> notifMessages = new ArrayList <>();
     private final List<Attaches> attaches = new ArrayList<>();
- 
+    
+    //буфер бинов 
+    private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
+    
     private String openFormName;
     
     @EJB
@@ -856,6 +860,11 @@ public class SessionBean implements Serializable{
         this.userSettings = userSettings;
     }
 
+    public ConcurrentHashMap<String, BaseView> getOpenedBeans() {
+        return openedBeans;
+    }
+
+    
     public class NotifMsg{
         private final String message;
         private final String url;

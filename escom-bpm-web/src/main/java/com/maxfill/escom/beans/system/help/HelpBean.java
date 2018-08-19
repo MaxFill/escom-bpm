@@ -5,6 +5,7 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.enterprise.context.SessionScoped;
@@ -47,7 +48,13 @@ public class HelpBean extends BaseViewBean<BaseView>{
     
     @Override
     public String onCloseCard() {
-        content = null;
+         try {
+            if (content != null && content.getStream() != null){
+                content.getStream().close();
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
         return super.onCloseCard();
     }
 

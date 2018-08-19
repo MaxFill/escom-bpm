@@ -4,7 +4,6 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.ApplicationBean;
 import com.maxfill.escom.beans.SessionBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.BaseDict;
@@ -54,16 +53,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     protected String beanId; //Faces id этого бина (актуально для ViewScopeBean) автоматически записывается в это поле из формы карточки   
     protected T sourceBean;  //Ссылка на бин источник, из которого был открыт этот бин (актуально для ViewScopeBean).    
     protected String sourceBeanId;
-    
-    /**
-     * Возвращает имя этого бина. (Использется для передачи имени бина в качестве параметра в дочерний бин)
-     * @return - String имя бина
-     */
-    @Override
-    public String getBeanName(){
-        return this.getClass().getSimpleName().substring(0, 1).toLowerCase() + this.getClass().getSimpleName().substring(1);        
-    }
-    
+        
     @PostConstruct
     protected void init(){
         initBean();
@@ -91,28 +81,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
-        if (params.size() <= 1){
-            sessionBean.killBean(getBeanName(), beanId);            
+        if (params.size() < 1){
+            //sessionBean.killBean(getBeanName(), beanId);            
         } else  {            
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
-                String beanName = params.get(SysParams.PARAM_BEAN_NAME);
-                if (StringUtils.isNotEmpty(sourceBeanId) && StringUtils.isNotEmpty(beanName)){                                    
-                    for (Object entry : map.values()) { //поиск view бина
-                      if (entry instanceof Map) {
-                        Map viewScopes = (Map) entry;
-                        if (viewScopes.containsKey(beanName)) {
-                            setSourceBean((T) viewScopes.get(beanName));
-                            String id = sourceBean.toString();
-                            if (sourceBeanId.equals(id)) break;
-                        }
-                      }
-                    }
-                }
-                if (sourceBean == null && StringUtils.isNotEmpty(beanName)){ //поиск session бина
-                    BaseTableBean bean = EscomBeanUtils.findBean(beanName, facesContext);
-                    setSourceBean((T) bean);
-                }
+                sourceBean = (T)sessionBean.getOpenedBeans().get(sourceBeanId);
             }
             doBeforeOpenCard(params);
         }
@@ -150,6 +124,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      */
     protected String finalCloseDlg(Object exitParam){        
         //sessionBean.killBean(getBeanName(), beanId);
+        sessionBean.getOpenedBeans().remove(beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
         //return "/view/index?faces-redirect=true";
@@ -196,10 +171,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
      */
     public Map<String, List<String>> getParamsMap(){
         Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> itemIds = Collections.singletonList(beanId == null ? this.toString() : beanId);        
-        List<String> beanNameList = Collections.singletonList(getBeanName());
+        if (beanId == null){
+            beanId = this.toString();
+        }
+        List<String> itemIds = Collections.singletonList(beanId);
         paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);
+        sessionBean.getOpenedBeans().put(beanId, this);
         return paramsMap;
     }
     

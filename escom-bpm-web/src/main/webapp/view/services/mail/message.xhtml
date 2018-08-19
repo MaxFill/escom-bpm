@@ -16,7 +16,7 @@
     <ui:define name="toolbarComponents" >
         <p:commandButton value="#{bundle.Send}" id="btnSend"
                          icon="ui-icon-mail-closed"
-                         actionListener="#{mailMessageBean.sendMail()}"
+                         action="#{mailMessageBean.sendMail()}"
                          update="mainFRM">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>

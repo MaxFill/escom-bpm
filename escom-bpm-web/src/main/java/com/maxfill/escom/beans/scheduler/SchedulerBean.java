@@ -56,6 +56,7 @@ public class SchedulerBean extends BaseViewBean {
     public void onCreateTask(String beanId){
         Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser(), schedulerTask.getEndDate());
         task.setBeginDate(new Date());
+        task.setPlanExecDate(DateUtils.addDays(new Date(), 1));
         schedulerTask.setTask(task);
         onOpenTask(beanId);
     }

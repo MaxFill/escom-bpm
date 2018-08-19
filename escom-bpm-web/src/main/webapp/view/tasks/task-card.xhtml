@@ -26,8 +26,8 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" />
-                <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" >
+                <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
+                <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{taskCardBean.editedItem.owner}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
@@ -162,7 +162,7 @@
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
                                  disabled="#{taskCardBean.readOnly}"
-                                 actionListener="#{taskCardBean.onCloseCard('delete')}">                    
+                                 action="#{taskCardBean.onCloseCard('delete')}">                    
                 </p:commandButton>
 
             </p:panelGrid>

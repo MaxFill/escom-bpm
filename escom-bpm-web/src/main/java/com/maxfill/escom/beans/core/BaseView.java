@@ -9,7 +9,6 @@ import java.util.Map;
  */
 public interface BaseView {
     SessionBean getSessionBean();
-    String getBeanName();
     void doBeforeOpenCard(Map<String, String> params);
     BaseDict getSourceItem();
 }
