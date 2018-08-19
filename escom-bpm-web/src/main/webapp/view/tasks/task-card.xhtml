@@ -10,22 +10,36 @@
     <ui:define name="specActionMenu" >
     </ui:define>
 
-    <ui:define name="CardToolButtons" >                    
-        <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
-            <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
-                             icon="#{'ico_'.concat(result.getIconName())}"
-                             disabled="#{!taskCardBean.haveRightExec}"
-                             update="mainFRM"
-                             actionListener="#{taskCardBean.onExecute(result)}"
-                             oncomplete="return itemChange = 0;">
-                <f:param name="isRequired" value="true"/>
-            </p:commandButton>
-        </ui:repeat>
+    <ui:define name="form_scripts"> 
+        <script>
+            function sendResult(result) {
+                saveResult([                  
+                    {name: 'result', value: result}
+                ]);                
+                return;
+            }
+        </script>
+        <p:remoteCommand name="saveResult" immediate="true" actionListener="#{taskCardBean.onExecute()}"  />
+    </ui:define>
+    
+    <ui:define name="CardToolButtons" > 
+        <p:commandButton id="btnRun" style="display: none;"
+                         action="#{taskCardBean.onExecute()}" ajax="false">
+               <f:param name="isRequired" value="true"/>
+        </p:commandButton>
     </ui:define>
     
     <ui:define name="page_body">
-        <p:tab title="#{bundle.Task}"  >
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
+        <p:tab title="#{bundle.Task}"  >            
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">            
+                <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
+                    <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" type="button"                            
+                                     icon="#{'ico_'.concat(result.getIconName())}"
+                                     disabled="#{!taskCardBean.haveRightExec}"                           
+                                     onclick="sendResult('#{result.getName()}');">                         
+                    </p:commandButton>
+                </ui:repeat>
+                
                 <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
                 <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -162,7 +176,7 @@
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
                                  disabled="#{taskCardBean.readOnly}"
-                                 action="#{taskCardBean.onCloseCard('delete')}">                    
+                                 action="#{taskCardBean.onCloseCard('delete')}" ajax="false">                    
                 </p:commandButton>
 
             </p:panelGrid>

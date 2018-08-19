@@ -1,5 +1,6 @@
 package com.maxfill.model.task;
 
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRoles;
@@ -7,6 +8,7 @@ import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
+import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -163,7 +165,21 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         task.doSetSingleRole(DictRoles.ROLE_EXECUTOR, user);
         doSaveRoleToJson(task);
     }
-            
+     
+    /**
+     * Установка признаков что задача выполнена
+     * @param task
+     * @param result 
+     * @param user 
+     */
+    public void taskDone(Task task, Result result, User user){
+        task.setResult(result.getName());
+        task.setIconName(result.getIconName());
+        task.setFactExecDate(new Date());        
+        task.getState().setCurrentState(stateFacade.getCompletedState());
+        addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
+    }
+    
     /* *** ПРОЧЕЕ *** */
     
     @Override

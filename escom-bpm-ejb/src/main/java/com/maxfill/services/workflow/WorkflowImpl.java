@@ -392,13 +392,9 @@ public class WorkflowImpl implements Workflow {
         if (errors.isEmpty()){
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
-            task.setResult(result.getName());
-            task.setIconName(result.getIconName());
-            task.setFactExecDate(new Date());
-            task.getState().setCurrentState(stateFacade.getCompletedState());
+            taskFacade.taskDone(task, result, user);            
             scheme.getTasks().remove(task);
-            scheme.getTasks().add(task);
-            taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
+            scheme.getTasks().add(task); //TODO это лишнее ?  
             ProcReport report = new ProcReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
             process.getReports().add(report);
             task.getReports().add(report);

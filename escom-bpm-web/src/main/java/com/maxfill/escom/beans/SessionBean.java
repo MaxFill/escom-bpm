@@ -415,7 +415,7 @@ public class SessionBean implements Serializable{
         Map<String, List<String>> paramMap = getParamsMap();
         List<String> pathList = Collections.singletonList(FilenameUtils.removeExtension(path) + ".pdf");        
         paramMap.put("path", pathList);
-        openModalDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
+        openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
     }
 
     /* Скачивание вложения  */
@@ -505,7 +505,11 @@ public class SessionBean implements Serializable{
 
     /* Открытие окна просмотра лицензии */
     public void openLicenseForm(){        
-        openModalDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
+        if (userSettings.isAgreeLicense()){
+            openDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
+        } else {
+            openModalDialogFrm(DictFrmName.FRM_AGREE_LICENSE, getParamsMap());
+        }
     }
     
     /* Открытие формы нового почтового сообщения  */
@@ -719,7 +723,7 @@ public class SessionBean implements Serializable{
     
     /* Отображение справки */
     public void onViewHelp(){
-       openModalDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
+       openDialogFrm(DictFrmName.FRM_HELP, getParamsMap()); 
     }           
        
     /* GETS & SETS */

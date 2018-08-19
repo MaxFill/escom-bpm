@@ -33,8 +33,11 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
@@ -55,8 +58,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @EJB
     private ResultFacade resultFacade;
     @EJB
-    private ProcessFacade processFacade;
-    
+    private ProcessFacade processFacade;    
     @Inject
     private ProcessBean processBean;
     @Inject
@@ -66,6 +68,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
 
     private List<Result> taskResults;
     private DualListModel<Result> results;
+    private String currentResult;
+    
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;
     private int reminderDeltaDay = 0;
@@ -175,8 +179,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param result
      * @return 
      */
-    public String onExecute(Result result){        
+    public String onExecute(){ 
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();  
+        currentResult = params.get("result");
+        if (StringUtils.isEmpty(currentResult)) return "";
+        
+        List<Result> rs = resultFacade.findByName(currentResult);
+        Result result = rs.get(0);
         Set<String> errors = new HashSet<>();
+        
         checkItemBeforeSave(getEditedItem(), errors); 
         checkTaskBeforeExecute(getEditedItem(), result, errors);
         if (!errors.isEmpty()){
@@ -185,17 +196,22 @@ public class TaskCardBean extends BaseCardBean<Task>{
         } 
         
         Task task = getEditedItem();
-        Process process;
-        if (sourceBean instanceof ProcessCardBean){
-            process = ((ProcessCardBean)sourceBean).getEditedItem();
+        if (task.getScheme() != null){
+            Process process;
+            if (sourceBean instanceof ProcessCardBean){
+                process = ((ProcessCardBean)sourceBean).getEditedItem();
+            } else {
+                process = processFacade.find(task.getScheme().getProcess().getId());
+            }
+
+            workflow.executeTask(process, task, result, getCurrentUser(), errors);
+            if (!errors.isEmpty()){
+                MsgUtils.showErrorsMsg(errors);
+                return "";
+            }
         } else {
-            process = processFacade.find(task.getScheme().getProcess().getId());
-        }
-                
-        workflow.executeTask(process, task, result, getCurrentUser(), errors);
-        if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
-            return "";
+            taskFacade.taskDone(task, result, getCurrentUser());
+            taskFacade.edit(task);
         }
         return closeItemForm(SysParams.EXIT_EXECUTE);
     }
@@ -342,7 +358,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     /* GETS & SETS */
-
+    
     @Override
     public Integer getRightColSpan(){
         return 7;
