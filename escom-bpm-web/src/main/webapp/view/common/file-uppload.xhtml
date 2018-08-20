@@ -13,7 +13,7 @@
                        rendered="#{_bean.treeSelectedNode != null}"
                        styleClass="ui-grid-col-12"
                        allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                       sizeLimit="#{docBean.maxFileSize}"
+                       sizeLimit="#{sessionBean.maxFileSize}"
                        invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
                        invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
                        fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"

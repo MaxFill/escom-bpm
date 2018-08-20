@@ -65,6 +65,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.component.UIInput;
+import javax.faces.context.ExternalContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import org.apache.commons.beanutils.BeanUtils;
@@ -145,6 +146,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
         loadModel(getScheme());
+        sessionBean.getDiagrams().put(beanId, model);
     }
 
     @Override
@@ -203,6 +205,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      */
     @Override
     public String doFinalCancelSave() {  
+        sessionBean.getDiagrams().remove(beanId);
         return closeItemForm(exitParam);  //закрыть форму объекта
     }
     
@@ -343,6 +346,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void modelRefresh(){        
         model.clear();
         restoreModel();
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
+        ec.getFlash().put("beanId", beanId);
+        
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
@@ -578,9 +584,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         }
         if (baseElement instanceof ExitElem){
             Element exit = model.findElement(baseElement.getUid());
-            exit.setStyleClass(baseElement.getStyle());         
-            return;
-        }
+            exit.setStyleClass(baseElement.getStyle());                     
+        } else 
             if (baseElement instanceof StatusElem){
                 Element status = model.findElement(baseElement.getUid());
                 status.setStyleClass(baseElement.getStyle());
@@ -1168,6 +1173,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     @Override
     public void onTabChange(TabChangeEvent event){
         if (event.getTab().getId().equals("tbScheme")){
+            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+            ec.getFlash().put("beanId", beanId);            
             addElementContextMenu();
         }
     }
@@ -1419,11 +1426,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         if (getBaseElement() == null) return "";
         String key = baseElement.getBundleKey();
         return getLabelFromBundle(key);
-    }
-    
-    public DiagramModel getModel() {
-        return model;
-    }
+    }    
 
     public WFConnectedElem getBaseElement() {
         return baseElement;

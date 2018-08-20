@@ -16,6 +16,7 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.omnifaces.util.Beans;
 import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
@@ -268,7 +270,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
         
     /* КАРТОЧКИ: обработка после закрытия карточки объекта  */
-    public void onUpdateAfterCloseForm(SelectEvent event){        
+    public void onUpdateAfterCloseForm(SelectEvent event){ 
         String exitResult = (String) event.getObject();
         if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
             switch (typeEdit){

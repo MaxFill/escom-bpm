@@ -21,11 +21,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.enterprise.inject.spi.Bean;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.omnifaces.util.Beans;
 import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 
 /**
  * Базовый бин для работы с формами и диалогами
@@ -82,7 +84,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
         if (beanId.contains("ProcessCardBean") && params.size() <= 1){
-            //Beans.destroy(this);
+            //
         } else {
             if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
                 sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
@@ -116,7 +118,7 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public String onCloseCard(Object result){        
         return finalCloseDlg(result);
     }
-
+    
     /**
      * Завершающая стадия закрытия диалога с удалением view bean из viewMap 
      * @param exitParam

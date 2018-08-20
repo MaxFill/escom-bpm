@@ -74,6 +74,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.model.diagram.DefaultDiagramModel;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -98,6 +99,8 @@ public class SessionBean implements Serializable{
     
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
+    //буфер диаграмм
+    private ConcurrentHashMap<String, DefaultDiagramModel> diagrams = new ConcurrentHashMap<>();
     
     private String openFormName;
     
@@ -168,7 +171,7 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(column6);
 
         temeInit();                
-    }    
+    }          
     
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
@@ -831,6 +834,14 @@ public class SessionBean implements Serializable{
         return openedBeans;
     }
 
+    public ConcurrentHashMap<String, DefaultDiagramModel> getDiagrams() {
+        return diagrams;
+    }    
+    
+    /* Возвращает максимальный размер загружаемого файла */    
+    public Integer getMaxFileSize(){
+        return configuration.getMaxFileSize();
+    }
     
     public class NotifMsg{
         private final String message;

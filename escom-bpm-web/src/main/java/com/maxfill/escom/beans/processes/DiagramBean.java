@@ -1,27 +1,41 @@
 package com.maxfill.escom.beans.processes;
 
-import com.maxfill.model.process.schemes.Scheme;
+import com.maxfill.escom.beans.SessionBean;
 import java.io.Serializable;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.enterprise.context.SessionScoped;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.diagram.DefaultDiagramModel;
+import org.primefaces.model.diagram.DiagramModel;
 
 /**
  *
  * @author maksim
  */
 @Named
-@SessionScoped
+@RequestScoped
 public class DiagramBean implements Serializable{    
     private static final long serialVersionUID = -4403976059082444626L;
     
-    private ConcurrentHashMap<String, DiagramData> diagrams = new ConcurrentHashMap<>();
+    private DefaultDiagramModel model;
     
-    public class DiagramData {
-        private Scheme scheme;
-        private final DefaultDiagramModel model = new DefaultDiagramModel(); 
-        
+    @Inject
+    private SessionBean sessionBean;    
+    
+    @PostConstruct
+    private void init(){
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
+        String beanId = (String) ec.getFlash().get("beanId");
+        if (StringUtils.isNotEmpty(beanId)){
+            model = sessionBean.getDiagrams().get(beanId);
+        }
     }
     
+    public DiagramModel getModel() {
+        return model;
+    }
 }

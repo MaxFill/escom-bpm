@@ -194,12 +194,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         return DictStates.STATE_EDITED == doc.getState().getCurrentState().getId();
     }      
              
-    /* ВЛОЖЕНИЯ */
-    
-    /* Возвращает максимальный размер загружаемого файла */    
-    public Integer getMaxFileSize(){
-        return conf.getMaxFileSize();
-    }
+    /* ВЛОЖЕНИЯ */    
     
     public Attaches addAttacheFromScan(Doc doc, SelectEvent event){
         if (event.getObject() == null) return null;

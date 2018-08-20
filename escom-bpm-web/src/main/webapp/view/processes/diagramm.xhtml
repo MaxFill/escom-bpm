@@ -92,7 +92,7 @@
         </f:facet>
     </p:toolbar>  
 
-    <p:diagram id="diagramm" value="#{processCardBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" widgetVar="DiagrammWG" >
+    <p:diagram id="diagramm" value="#{diagramBean.model}" style="height:1600px" styleClass="ui-widget-content ui-grid-col-12" var="el" widgetVar="DiagrammWG" >
         <f:facet name="element" >
             <h:outputLabel value="#{processCardBean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
             <p:graphicImage value="#{processCardBean.getElementImage(el)}" styleClass="diagramm-image"/>
