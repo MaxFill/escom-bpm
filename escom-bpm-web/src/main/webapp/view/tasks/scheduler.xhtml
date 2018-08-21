@@ -20,7 +20,7 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" ignoreTimezone="false"
+        <p:schedule id="schedule" value="#{schedulerBean.eventModel}" widgetVar="schedule" clientTimeZone="#{schedulerBean.getClientTimeZone()}"
                     timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  scrollTime="09:00:00"                         
                     locale="#{sessionBean.locale}" >
             <p:ajax event="dateSelect" listener="#{schedulerBean.onDateSelect}"  />

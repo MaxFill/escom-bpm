@@ -19,7 +19,7 @@
                 return;
             }
         </script>
-        <p:remoteCommand name="saveResult" immediate="true" actionListener="#{taskCardBean.onExecute()}"  />
+        <p:remoteCommand name="saveResult" actionListener="#{taskCardBean.onExecute()}"  />
     </ui:define>
     
     <ui:define name="CardToolButtons" > 
@@ -152,12 +152,12 @@
 
                         <p:outputLabel value="#{bundle.State}" indicateRequired="true"/>
                         <p:selectOneMenu value="#{taskCardBean.editedItem.state.currentState}" converter="stateConvertor"                           
-                                       disabled="#{taskCardBean.editedItem.scheme != null}"
+                                       disabled="#{taskCardBean.editedItem.scheme != null}" 
                                        styleClass="ui-grid-col-12"
-                                       required="#{param['isRequired'] == 'true'}" 
+                                       required="#{param['isRequired'] == 'true'}"                                          
                                        requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
-                            <p:ajax event="change" update="mainFRM" oncomplete="return itemChange = 1;"/>
+                            <p:ajax event="change" update="mainFRM:explToolBar" oncomplete="return itemChange = 1;"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </p:panelGrid>

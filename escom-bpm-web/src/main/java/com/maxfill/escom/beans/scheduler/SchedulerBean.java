@@ -10,6 +10,7 @@ import com.maxfill.utils.DateUtils;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
@@ -36,9 +37,11 @@ public class SchedulerBean extends BaseViewBean {
             
     private final ScheduleModel eventModel = new DefaultScheduleModel();
     private SchedulerTask schedulerTask = new SchedulerTask();
+    private final TimeZone utc=TimeZone.getTimeZone("UTC");
+    private final String tzname = utc.getID();
     
     @Override
-    protected void initBean(){    
+    protected void initBean(){        
         List<Task> tasks = taskFacade.findTaskByStaff(getCurrentStaff());
         tasks.stream()
                 .filter(task-> task.getBeginDate() != null && task.getPlanExecDate() != null)
@@ -58,7 +61,7 @@ public class SchedulerBean extends BaseViewBean {
         Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser(), schedulerTask.getEndDate());
         Date startDate = schedulerTask.getStartDate();
         task.setBeginDate(startDate);
-        task.setPlanExecDate(DateUtils.addDays(startDate, 1));
+        task.setPlanExecDate(DateUtils.addDays(new Date(), 1));
         schedulerTask.setTask(task);
         onOpenTask(beanId);
     }
@@ -86,7 +89,12 @@ public class SchedulerBean extends BaseViewBean {
             }
             case SysParams.EXIT_EXECUTE:{
                 schedulerTask.setStyleClass(task.getStyle());
-                taskFacade.edit(task);
+                if (task.getId() == null){  
+                    taskFacade.create(task);
+                    eventModel.addEvent(schedulerTask);
+                } else {                
+                    taskFacade.edit(task);
+                }
                 modelRefresh();
                 break;
             }
@@ -155,6 +163,10 @@ public class SchedulerBean extends BaseViewBean {
     
     /* GETS & SETS */
 
+    public String getClientTimeZone(){
+        return tzname;
+    }
+    
     public ScheduleModel getEventModel() {
         return eventModel;
     }
