@@ -34,28 +34,13 @@ public class LicenseBean extends BaseViewBean{
     }
 
     public StreamedContent getContent() {
-        if (content == null){
-            content = new DefaultStreamedContent(
-                    FacesContext.getCurrentInstance().getExternalContext()
-                            .getResourceAsStream("/resources/License_ru.pdf"));
-        }
+        content = new DefaultStreamedContent(FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/License_ru.pdf"));
         return content;
     }
     public void setContent(StreamedContent content) {
         this.content = content;
     }
     
-    @Override
-    public String onCloseCard(Object result) {
-         try {
-            if (content != null && content.getStream() != null){
-                content.getStream().close();
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        return super.onCloseCard(result);
-    }
 
     @Override
     public String getFormName(){

@@ -2,11 +2,11 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/view/templ/templ.xhtml">
-
-    <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
+    
     <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
     
     <ui:define name="body">  
+        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" /> 
         
         <script type="text/javascript">
             var itemChange = 0;
@@ -28,9 +28,7 @@
             }
         </script>
         
-        #{_bean.onBeforeOpenCard()}
-                
-        <p:importConstants type="com.maxfill.dictionary.DictStates" var="DictStates" />  
+        #{_bean.onBeforeOpenCard()}                 
         
         <ui:insert name="centerContent"/>        
         

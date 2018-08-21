@@ -10,6 +10,16 @@
     </ui:define>
 
     <ui:define name="centerContent">
+        <script>
+            var isFullPage = #{_bean.isFullPageMode()};
+            var formName = '#{_bean.getFormName()}';
+            window.onbeforeunload = function () {
+                if (!isFullPage) {
+                    sendFormSize(formName);
+                }
+                return null;
+            };
+        </script> 
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" >                
             <p:panelGrid layout="grid" columns="3" columnClasses="ui-grid-col-3 col-grid-expl, ui-grid-col-6 col-grid-expl, ui-grid-col-3 col-grid-expl" styleClass="ui-grid-col-12 without-spaces">
 
@@ -71,20 +81,20 @@
                         <p:outputLabel value="#{bundle.ServiceParams}" />
                     </f:facet>
                     <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
-                        <ui:insert name="serviceParams"/>
+                        <ui:insert name="serviceParams"/>                    
+                        <p:separator/>
+                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
+                                         title="#{bundle.SaveServiceSettings}" style="float: right;"                           
+                                         actionListener="#{_bean.onSaveSettings()}">
+                        </p:commandButton>
                     </p:panelGrid>
-
-                    <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
-                                     title="#{bundle.SaveServiceSettings}" style="float: right;"                           
-                                     actionListener="#{_bean.onSaveSettings()}">
-                    </p:commandButton>
                 </p:panel>
             </p:panelGrid>  
 
             <ui:insert name="form_scripts"/>
 
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
-            <p:remoteCommand name="formSize" actionListener="#{_bean.onFormSize()}" immediate="true"/>
+            <p:remoteCommand name="formSize" actionListener="#{sessionBean.onFormSize()}" immediate="true"/>
 
         </h:form>
     </ui:define>

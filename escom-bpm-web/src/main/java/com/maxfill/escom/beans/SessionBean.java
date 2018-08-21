@@ -633,7 +633,9 @@ public class SessionBean implements Serializable{
             Integer width = Integer.valueOf(params.get("width"));
             Integer height = Integer.valueOf(params.get("height"));
             String formName = params.get("form");
-            saveFormSize(formName, width, height);
+            if (width != 0 && height != 0 ){
+                saveFormSize(formName, width, height);
+            }
         }
     }
     

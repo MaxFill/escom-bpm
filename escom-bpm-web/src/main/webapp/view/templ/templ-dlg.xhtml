@@ -5,9 +5,6 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/view/templ/templ-frm.xhtml">
 
-    <ui:param name="_canClose" value="#{_canClose == null ? true : _canClose}"/> 
-    <ui:param name="_isShowHelp" value="#{_isShowHelp == null ? true : _isShowHelp}" />
-
     <ui:define name="title">
         #{_bean.getFormHeader()}
     </ui:define>

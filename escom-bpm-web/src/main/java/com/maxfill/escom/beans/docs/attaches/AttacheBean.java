@@ -104,6 +104,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         try {
             if (content != null && content.getStream() != null){
                 content.getStream().close();
+                content = null;
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

@@ -16,7 +16,6 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
@@ -54,10 +53,8 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.omnifaces.util.Beans;
 import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
@@ -132,18 +129,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
-    
-    @Override
-    public void onBeforeOpenCard() {  
-        beanId = this.toString();
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
-        if (params.containsKey(SysParams.PARAM_BEAN_ID)){
-           sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
-        }
-        doBeforeOpenCard(params);
-    }
-    
+        
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -279,7 +265,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                         BeanUtils.copyProperties(currentItem, editItem);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
-                    }                    
+                    }
+                    if (isItemRootType(editItem) || isItemTreeType(editItem)){
+                        onSelectInTree(treeSelectedNode);
+                    }
                     break;
                 }
                 case DictEditMode.INSERT_MODE:{
@@ -293,11 +282,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
                     } else {                        
                         newNode = addNewItemInTree(editItem, treeSelectedNode);
                     }
-                    onSelectInTree(newNode);                    
+                    onSelectInTree(newNode);
                     break;
                 }
-            }            
+            }             
         }
+        
         createParams.clear();
         onSetCurrentItem(editItem);
     }

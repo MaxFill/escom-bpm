@@ -45,20 +45,24 @@
 
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.VisibleName}:" indicateRequired="true"/>                        
-                    <p:inputText id="visbleName" value="#{_bean.editedItem.name}"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 styleClass="ui-grid-col-12"
-                                 required="#{param['isRequired'] == 'true'}"                                         
-                                 requiredMessage="#{bundle.Field} [#{bundle.VisibleName}] #{bundle.MustBeFilled}"
-                                 onkeypress="checkEsc();"
-                                 onchange="return itemChange = 1;">
-                    </p:inputText>
-                    <p:commandButton value="#{bundle.Generate}" title="#{bundle.MakeName}"
-                                     actionListener="#{userCardBean.makeName()}"
-                                     update="visbleName" style="float: right;"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     onclick="return itemChange = 1;">                            
-                    </p:commandButton>                        
+                    <h:panelGroup styleClass="ui-grid-col-12">
+                        <div class="ui-inputgroup">
+                            <p:inputText id="visbleName" value="#{_bean.editedItem.name}"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         styleClass="ui-grid-col-12"
+                                         required="#{param['isRequired'] == 'true'}"                                         
+                                         requiredMessage="#{bundle.Field} [#{bundle.VisibleName}] #{bundle.MustBeFilled}"
+                                         onkeypress="checkEsc();"
+                                         onchange="return itemChange = 1;">
+                            </p:inputText>
+                            <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}"
+                                             actionListener="#{userCardBean.makeName()}"
+                                             update="visbleName" style="float: right;"
+                                             disabled="#{_bean.isReadOnly()}"
+                                             onclick="return itemChange = 1;">                            
+                            </p:commandButton>
+                        </div>
+                    </h:panelGroup>
                 </p:panelGrid>
 
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
@@ -113,21 +117,22 @@
 
         <p:tab id="accountTab" title="#{bundle.UserAccount}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                <p:outputLabel value="#{bundle.Login}:" indicateRequired="true"/>
-                <h:panelGroup>
-                    <p:inputText id="login" value="#{_bean.editedItem.login}"
-                                 disabled="#{_bean.isReadOnly()}"
-                                 required="#{param['isRequired'] == 'true'}"
-                                 onkeypress="checkEsc();"
-                                 onchange="return itemChange = 1;">
-                    </p:inputText>
-                    <p:spacer />
-                    <p:commandButton value="#{bundle.Generate}" title="#{bundle.MakeName}"
-                                     actionListener="#{userCardBean.makeLogin()}"
-                                     update="login"
+                <p:outputLabel value="#{bundle.Login}:" indicateRequired="true"/>                
+                <h:panelGroup styleClass="ui-grid-col-12">
+                    <div class="ui-inputgroup">
+                        <p:inputText id="login" value="#{_bean.editedItem.login}"
                                      disabled="#{_bean.isReadOnly()}"
-                                     onclick="return itemChange = 1;">
-                    </p:commandButton>
+                                     required="#{param['isRequired'] == 'true'}"
+                                     onkeypress="checkEsc();"
+                                     onchange="return itemChange = 1;">
+                        </p:inputText>                    
+                        <p:commandButton icon="ui-icon-script" title="#{bundle.Generate}"
+                                         actionListener="#{userCardBean.makeLogin()}"
+                                         update="login"
+                                         disabled="#{_bean.isReadOnly()}"
+                                         onclick="return itemChange = 1;">
+                        </p:commandButton>
+                    </div>
                 </h:panelGroup>
 
                 <p:outputLabel value="#{bundle.password}:" indicateRequired="true"/>

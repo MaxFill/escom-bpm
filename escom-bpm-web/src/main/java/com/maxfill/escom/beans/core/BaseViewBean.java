@@ -21,13 +21,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.inject.spi.Bean;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
-import org.omnifaces.util.Beans;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 
 /**
  * Базовый бин для работы с формами и диалогами
@@ -82,16 +79,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
-        if (beanId.contains("ProcessCardBean") && params.size() <= 1){
-            //
-        } else {
-            if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
-                sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
-                sourceBean = (T)sessionBean.getOpenedBeans().get(sourceBeanId);
-            }
-            doBeforeOpenCard(params);
-        }
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);                  
+        if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
+            sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
+            sourceBean = (T)sessionBean.getOpenedBeans().get(sourceBeanId);
+        }            
+        doBeforeOpenCard(params);
     }
 
     @Override
@@ -128,7 +121,6 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         sessionBean.getOpenedBeans().remove(beanId);
         PrimeFaces.current().dialog().closeDynamic(exitParam);
         return "";
-        //return "/view/index?faces-redirect=true";
     }
     
     /* НАСТРОЙКИ ОТРИСОВКИ ФОРМЫ */

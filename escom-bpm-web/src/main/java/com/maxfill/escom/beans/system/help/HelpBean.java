@@ -5,6 +5,7 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -34,7 +35,7 @@ public class HelpBean extends BaseViewBean<BaseView>{
         try {
             //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
             content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");
-        } catch (Exception ex) {
+        } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -48,13 +49,7 @@ public class HelpBean extends BaseViewBean<BaseView>{
     
     @Override
     public String onCloseCard() {
-         try {
-            if (content != null && content.getStream() != null){
-                content.getStream().close();
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
+        content = null;
         return super.onCloseCard();
     }
 

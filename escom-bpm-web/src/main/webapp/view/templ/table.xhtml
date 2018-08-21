@@ -54,7 +54,6 @@
         </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="90" priority="3" styleClass="columnExt1"
-                  rendered="#{_showDateChange}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
@@ -75,7 +74,7 @@
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="6" styleClass="columnExt3" rendered="#{_showId}">           
+        <p:column headerText="Id" sortBy="#{item.id}" width="25" priority="6" styleClass="columnExt3">           
             <h:outputText value="#{item.id}"/>
         </p:column>
 
