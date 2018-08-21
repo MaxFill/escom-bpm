@@ -92,24 +92,10 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         }
         
         try {
-            //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
             content = new DefaultStreamedContent(new FileInputStream(path), "application/pdf");                
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-    }
-    
-    @Override
-    public String onCloseCard(){
-        try {
-            if (content != null && content.getStream() != null){
-                content.getStream().close();
-                content = null;
-            }
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        return super.onCloseCard();
     }
     
     public StreamedContent getContent() {

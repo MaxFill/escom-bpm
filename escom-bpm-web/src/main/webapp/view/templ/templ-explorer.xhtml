@@ -97,11 +97,9 @@
                                     <span class="ui-icon ui-icon-grip-dotted-vertical" />
                                 </span>
 
-                                <p:commandButton id="createItemBtn" icon="ui-icon-circle-plus" 
-                                                 title="#{_CreateItemLabel}" 
+                                <p:commandButton icon="ui-icon-circle-plus" title="#{_CreateItemLabel}" 
                                                  disabled="#{_bean.canCreateItem}"
                                                  rendered="#{_treeBean == null or _bean.isShowTree()}" 
-                                                 process="@this"
                                                  actionListener="#{_bean.onCreateDetailItem()}">
                                     <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
                                 </p:commandButton>                                    
@@ -142,13 +140,6 @@
                                     </p:menuitem>
                                 </p:splitButton>
                                 <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear" rendered="#{!_bean.isTrashSelected()}">
-                                    <p:menuitem icon="ui-icon-circle-plus" value="#{_CreateItemLabel}"                                                     
-                                                disabled="#{_bean.canCreateItem}"
-                                                rendered="#{_treeBean == null or _bean.isShowTree()}"
-                                                style="#{_bean.selectorViewMode ? 'display: none;' : ''}"
-                                                onclick="document.getElementById('mainFRM:createItemBtn').click();">                                            
-                                    </p:menuitem>
-                                    <p:separator />
                                     <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
                                                 disabled="#{_bean.checkedItems.isEmpty()}"
                                                 update="westFRM mainFRM"

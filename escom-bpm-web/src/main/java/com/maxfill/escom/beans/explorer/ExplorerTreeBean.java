@@ -125,7 +125,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                 return;
             }
 
-            //определям источник : объект тянется из таблицы обозревателя
+            //определям источник : объект тянется из таблицы 
             if (dragId.substring(0, LEH_TABLE_NAME).equals(TABLE_NAME)) {
                 String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
@@ -277,9 +277,14 @@ public class ExplorerTreeBean extends ExplorerBean{
     /* DRAG & DROP: отработка команды на перемещение из таблицы в дерево  */
     public void moveItemToGroup(){
         checkedItems.stream().forEach(dragItem -> {
-            tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
-        });
-        getDetailItems().removeAll(checkedItems);
+            if (isItemTreeType(dragItem)){
+                treeBean.moveGroupToGroup(dropItem, dragItem);
+                onReloadTreeItems();
+            } else {
+                tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
+                getDetailItems().removeAll(checkedItems);
+            }
+        });        
     }
     
 

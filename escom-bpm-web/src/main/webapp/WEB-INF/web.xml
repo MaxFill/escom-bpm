@@ -31,8 +31,8 @@
     </context-param>
 
     <context-param> 
-        <param-name>PARAM_NAME_MAX_ACTIVE_VIEW_SCOPES</param-name>
-        <param-value>5</param-value>
+        <param-name>org.omnifaces.VIEW_SCOPE_MANAGER_MAX_ACTIVE_VIEW_SCOPES</param-name>
+        <param-value>50</param-value>
     </context-param>
 
     <context-param>
@@ -45,7 +45,7 @@
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-08-16</param-value>
+        <param-value>2018-08-21</param-value>
     </context-param>  
               
     <filter>

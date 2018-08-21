@@ -189,7 +189,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         } else 
             if (isItemDetailType(item)) {
                 editItem = tableBean.prepEditItem(item, tableBean.getParamsMap());        
-            }
+            } else 
+                if (isItemRootType(item)) {
+                    editItem = rootBean.prepEditItem(item, tableBean.getParamsMap());        
+                }
     }
 
     /* КАРТОЧКИ: открытие карточки объекта из дерева для редактирования */

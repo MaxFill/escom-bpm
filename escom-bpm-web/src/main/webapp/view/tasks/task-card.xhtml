@@ -27,19 +27,20 @@
                          action="#{taskCardBean.onExecute()}" ajax="false">
                <f:param name="isRequired" value="true"/>
         </p:commandButton>
+        
+        <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
+            <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" type="button" 
+                             update="mainFRM"
+                             icon="#{'ico_'.concat(result.getIconName())}"
+                             disabled="#{!taskCardBean.haveRightExec}"                           
+                             onclick="sendResult('#{result.getName()}');">                         
+            </p:commandButton>
+        </ui:repeat>
     </ui:define>
     
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >            
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">            
-                <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
-                    <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" type="button"                            
-                                     icon="#{'ico_'.concat(result.getIconName())}"
-                                     disabled="#{!taskCardBean.haveRightExec}"                           
-                                     onclick="sendResult('#{result.getName()}');">                         
-                    </p:commandButton>
-                </ui:repeat>
-                
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
                 <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -156,7 +157,7 @@
                                        required="#{param['isRequired'] == 'true'}" 
                                        requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{taskCardBean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
-                            <p:ajax event="change" oncomplete="return itemChange = 1;"/>
+                            <p:ajax event="change" update="mainFRM" oncomplete="return itemChange = 1;"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                 </p:panelGrid>
@@ -176,7 +177,7 @@
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
                                  disabled="#{taskCardBean.readOnly}"
-                                 action="#{taskCardBean.onCloseCard('delete')}" ajax="false">                    
+                                 actionListener="#{taskCardBean.onCloseCard('delete')}">                    
                 </p:commandButton>
 
             </p:panelGrid>

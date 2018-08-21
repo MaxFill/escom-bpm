@@ -333,7 +333,12 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
 
     @Override
     public void onDeleteDetail(BaseDict item) {
-        getDetails().remove((Assistant)item);
+        Assistant assistant = (Assistant)item;
+        getDetails().remove(assistant);
+        
+        if (assistant.getId() != null){
+            assistantFacade.remove(assistant);
+        }
         onItemChange();
     }    
     

@@ -32,8 +32,7 @@
                 </f:facet>
                 <f:facet name="actions">
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                   rendered="#{_bean.getSourceBeanId() != null}"
-                                   action="#{_bean.onCancelItemSave()}" ajax="false" 
+                                   action="#{_bean.onCancelItemSave()}"  
                                    onclick="if (itemChange == 1) {onChangeItem();}">
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
@@ -60,7 +59,7 @@
                             <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
                                              disabled="#{_bean.isReadOnly()}"
                                              icon="ui-icon-disk"
-                                             actionListener="#{_bean.prepSaveItemAndClose()}" ajax="false"
+                                             actionListener="#{_bean.prepSaveItemAndClose()}" 
                                              onclick="if (itemChange == 1) {onChangeItem();}">
                                 <f:param name="isRequired" value="true"/>
                             </p:commandButton>

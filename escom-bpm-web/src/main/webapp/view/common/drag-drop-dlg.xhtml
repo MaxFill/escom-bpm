@@ -67,7 +67,7 @@
         <p:commandButton value="#{bundle.Move}" process="@this"
                          styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
                          actionListener="#{_bean.moveItemToGroup()}"
-                         update="mainFRM #{_updates}"
+                         update="mainFRM westFRM #{_updates}"
                          onclick="PF('MoveTblDlg').hide();"
                          oncomplete="initDND()">
         </p:commandButton>

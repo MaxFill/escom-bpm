@@ -136,11 +136,11 @@ public class SearcheServiceImpl implements SearcheService {
     public Connection getFullTextSearcheConnection() throws SQLException {
         if (StringUtils.isBlank(conf.getFullSearcheConnect())) return null;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             return DriverManager.getConnection(conf.getFullSearcheConnect(), "", "");
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ex) {
             System.out.println("JDBC Driver not found!");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, null, ex);
             return null;
         }
     }

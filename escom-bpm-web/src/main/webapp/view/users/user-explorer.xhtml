@@ -21,10 +21,10 @@
     <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('Users')}"/>
         
     <ui:define name="specDetailColumns" >
-        <p:column headerText="#{bundle.Login}" sortBy="#{item.login}" rendered="#{_bean.source != DictSource.FILTER_SOURCE}">
+        <p:column headerText="#{bundle.Login}" sortBy="#{item.login}" rendered="#{_bean.source != 2}">
             #{item.login}
         </p:column>
-        <p:column headerText="#{bundle.EMail}" sortBy="#{item.email}" rendered="#{_bean.source != DictSource.FILTER_SOURCE}">
+        <p:column headerText="#{bundle.EMail}" sortBy="#{item.email}" rendered="#{_bean.source != 2}">
             #{item.email}
         </p:column> 
     </ui:define>

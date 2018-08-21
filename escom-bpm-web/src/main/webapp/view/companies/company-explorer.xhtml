@@ -16,7 +16,7 @@
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />            
     
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.source != DictSource.FILTER_SOURCE}">
+        <p:column headerText="#{bundle.Code}" sortBy="#{item.code}" rendered="#{_bean.source != 2}">
             #{item.code}
         </p:column>
     </ui:define>   

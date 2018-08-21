@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.scheduler;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.task.TaskFacade;
@@ -74,21 +75,36 @@ public class SchedulerBean extends BaseViewBean {
         if (event.getObject() == null) return;        
         String action = (String) event.getObject();
         Task task = getTask();
-        if ("delete".equals(action)){
-            if (task.getId() != null){
-                taskFacade.remove(task);
-                eventModel.deleteEvent(schedulerTask);
+        switch (action){
+            case "delete":{
+                if (task.getId() != null){
+                    taskFacade.remove(task);
+                    eventModel.deleteEvent(schedulerTask);
+                }
+                modelRefresh();
+                break;
             }
-        } else {
-            schedulerTask.setStyleClass(task.getStyle());
-            if (task.getId() == null){                
-                taskFacade.create(getTask());
-                eventModel.addEvent(schedulerTask);
-            } else {
-                taskFacade.edit(getTask());
+            case SysParams.EXIT_EXECUTE:{
+                schedulerTask.setStyleClass(task.getStyle());
+                taskFacade.edit(task);
+                modelRefresh();
+                break;
             }
-        }
-        modelRefresh();
+            case SysParams.EXIT_NEED_UPDATE:{
+                schedulerTask.setStyleClass(task.getStyle());
+                if (task.getId() == null){                
+                    taskFacade.create(task);
+                    eventModel.addEvent(schedulerTask);
+                } else {
+                    taskFacade.edit(task);
+                }
+                modelRefresh();
+                break;
+            }
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+        }        
     }
     
     /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */

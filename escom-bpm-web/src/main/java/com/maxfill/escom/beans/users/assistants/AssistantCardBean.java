@@ -55,5 +55,17 @@ public class AssistantCardBean extends BaseCardBeanGroups<Assistant, User>{
         return super.getEditedItem(); 
     }
     
+    /**
+     * Действия перед сохранением пользователя
+     * @param assistant
+     * @param user
+     */
+    @Override
+    protected void onBeforeSaveItem(Assistant assistant){
+        StringBuilder sb = new StringBuilder();
+        sb.append(assistant.getOwner().getName()).append(" ").append(assistant.getUser().getName());
+        assistant.setName(sb.toString());
+        super.onBeforeSaveItem(assistant);
+    }
     
 }

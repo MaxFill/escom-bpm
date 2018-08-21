@@ -21,10 +21,8 @@ public class HelpBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -740004080013527296L; 
     private static final String HELP_FILE = "UserManual_Storage.pdf";        
     private StreamedContent content;
-    
-    @Override
-    public void doBeforeOpenCard(Map<String, String> params){
-        if (content != null) return;
+        
+    public StreamedContent getContent() {
         String separator = File.separator;
         StringBuilder sb = new StringBuilder(conf.getServerPath());
         sb.append("standalone")
@@ -33,24 +31,11 @@ public class HelpBean extends BaseViewBean<BaseView>{
                 .append(separator)
                 .append(HELP_FILE);
         try {
-            //!!! InputStream stream = FacesContext.getCurrentInstance().getExternalContext().getResourceAsStream("/resources/demo/images/optimus.jpg");
             content = new DefaultStreamedContent(new FileInputStream(sb.toString()), "application/pdf");
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-    }
-
-    public StreamedContent getContent() {
         return content;
-    }
-    public void setContent(StreamedContent content) {
-        this.content = content;
-    }
-    
-    @Override
-    public String onCloseCard() {
-        content = null;
-        return super.onCloseCard();
     }
 
     @Override

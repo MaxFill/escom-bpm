@@ -155,13 +155,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     public boolean doSaveItem(){
         if (!getTypeEdit().equals(DictEditMode.VIEW_MODE)) {
             T item = getEditedItem();
+            onBeforeSaveItem(item);
             Set<String> errors = new LinkedHashSet<>();
             checkItemBeforeSave(item, errors);
             if (!errors.isEmpty()) {
                 MsgUtils.showErrors(errors);
                 return Boolean.FALSE; 
             }
-            onBeforeSaveItem(item);
+            
             owner = item.getAuthor();
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {                    

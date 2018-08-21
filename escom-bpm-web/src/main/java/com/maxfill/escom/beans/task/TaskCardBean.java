@@ -12,6 +12,7 @@ import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.task.result.ResultFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
@@ -21,6 +22,7 @@ import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
+import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -115,10 +117,13 @@ public class TaskCardBean extends BaseCardBean<Task>{
             case "data":{
                 if (task.getPlanExecDate() == null ){
                     errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
-                } else 
+                } 
+                /*
+                else 
                     if (task.getPlanExecDate().before(new Date())){
                         errors.add(MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime"));
                     }
+                */
             }
         }
         //проверка для напоминания
@@ -174,6 +179,12 @@ public class TaskCardBean extends BaseCardBean<Task>{
         }
     }
     
+    @Override
+    protected void onBeforeSaveItem(Task task){
+        saveDateFields(task);
+        super.onBeforeSaveItem(task);
+    }
+    
     /**
      * Обработка события выполнения задачи
      * @param result
@@ -188,14 +199,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
         Result result = rs.get(0);
         Set<String> errors = new HashSet<>();
         
-        checkItemBeforeSave(getEditedItem(), errors); 
-        checkTaskBeforeExecute(getEditedItem(), result, errors);
+        Task task = getEditedItem();                 
+        checkTaskBeforeExecute(task, result, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return "";
         } 
         
-        Task task = getEditedItem();
+        doSaveItem();        
+        task = (Task) sourceBean.getSourceItem(); 
         if (task.getScheme() != null){
             Process process;
             if (sourceBean instanceof ProcessCardBean){
@@ -211,7 +223,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
             }
         } else {
             taskFacade.taskDone(task, result, getCurrentUser());
-            taskFacade.edit(task);
         }
         return closeItemForm(SysParams.EXIT_EXECUTE);
     }

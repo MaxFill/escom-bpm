@@ -4,7 +4,11 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.users.User;
+import java.util.List;
 import javax.ejb.Stateless;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * Фасад для сущности "Заместитель"
@@ -35,5 +39,11 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
     public String getFRM_NAME() {
         return DictObjectName.ASSISTANT.toLowerCase();
     }
-    
+ 
+    @Override
+    protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Assistant> root, List<Predicate> criteries, Assistant item){
+       criteries.add(builder.equal(root.get("user"), item.getUser()));
+       criteries.add(builder.equal(root.get("owner"), item.getOwner()));
+    }
+
 }

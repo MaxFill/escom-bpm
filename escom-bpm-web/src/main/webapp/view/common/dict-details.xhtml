@@ -46,7 +46,9 @@
                                  immediate="true"
                                  disabled="#{_bean.isReadOnly() or _bean.checkedGroups.isEmpty()}"
                                  update="mainFRM:mainTabView:panelDetail"
-                                 actionListener="#{_bean.onDeleteCheckedDetails()}"/>
+                                 actionListener="#{_bean.onDeleteCheckedDetails()}">
+                    <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                </p:commandButton>
                 <p:commandButton id="btnCretate" value="#{bundle.Add}" 
                                  icon="ui-icon-circle-plus"
                                  immediate="true"
@@ -58,5 +60,4 @@
             </f:facet>
         </p:dataTable>
     </p:panelGrid>
-
 </ui:composition>
