@@ -1,6 +1,7 @@
 62.173.140.9
 fjuM610zVG1X
 ALL
+
 sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
 
 
@@ -34,6 +35,8 @@ docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear wildfl
 если нужно, то копируем и конфигурационные файлы:
 docker cp /home/docker/escom-bpm/datastore/configuration/escom.properties wildfly8443:/opt/wildfly/standalone/configuration/
 docker cp /home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml storage8443:/opt/wildfly/standalone/configuration
+
+docker cp /home/docker/escom-bpm/wildfly/bin/standalone.conf storage8443:/opt/wildfly/standalone/configuration
 
 
 7. Запускаем контейнер командой
