@@ -60,26 +60,27 @@
                     </ui:include>
                 </h:panelGroup>
 
-                <p:outputLabel value="#{bundle.Task}" indicateRequired="true" />
+                <p:outputLabel value="#{bundle.Task}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{taskCardBean.editedItem.name}"
                              styleClass="ui-grid-col-12"
-                             onkeypress="checkEsc();"
-                             required="#{param['isRequired'] == 'true'}"
+                             onkeypress="checkEsc();"                             
+                             placeholder="#{bundle.InputTaskContent}"
                              disabled="#{taskCardBean.readOnly}"
                              onchange="return itemChange = 1;"
+                             required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Task}] #{bundle.MustBeFilled}"/>
 
                 <p:panelGrid columns="2" columnClasses="ui-grid-col-6 without-spaces, ui-grid-col-6 without-spaces" styleClass="ui-grid-col-12 without-spaces">
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                         <p:outputLabel value="#{bundle.DateBegin}:" indicateRequired="true" rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                         <p:calendar value="#{taskCardBean.editedItem.beginDate}" disabledWeekends="true" 
-                                    styleClass="without-spaces" rendered="#{taskCardBean.isShowExtTaskAtr()}"
-                                    required="#{param['isRequired'] == 'true'}" 
+                                    styleClass="without-spaces" rendered="#{taskCardBean.isShowExtTaskAtr()}"                                     
                                     disabled="#{taskCardBean.readOnly}"
                                     locale="#{sessionBean.locale}" 
                                     timeZone="#{TimeZone.getDefault()}" 
                                     showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                    navigator="true" yearRange="c-1:c+20"                     
+                                    navigator="true" yearRange="c-1:c+20"
+                                    required="#{param['isRequired'] == 'true'}"
                                     requiredMessage="#{bundle.Field} [#{bundle.DateBegin}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>
@@ -101,21 +102,28 @@
                             <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" disabled="#{taskCardBean.readOnly}" layout="grid" columns="1" >
                                 <f:selectItem itemLabel="" itemValue="delta"/>
                                 <f:selectItem itemLabel="" itemValue="data" />
-                                <p:ajax update="planEndDate deltaDay deltaHour" event="valueChange" onstart="itemChange = 1;"/>
+                                <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
                             </p:selectOneRadio>
                            
                             <h:panelGrid columns="1" cellpadding="3" styleClass="ui-grid-col-12">
                                 <h:panelGroup>
+                                    <div class="ui-inputgroup">
                                     <p:spinner id="deltaDay" value="#{taskCardBean.deadLineDeltaDay}" min="0" max="999" 
-                                               suffix="#{bundle.DayShort}" size="3" 
-                                               onchange="return itemChange = 1;"
-                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
+                                               suffix="#{bundle.DayShort}" size="3"                                                
+                                               onchange="return itemChange = 1;"                                               
+                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">                                        
                                     </p:spinner>
+                                    <p:spacer width="1"/>
                                     <p:spinner id="deltaHour" value="#{taskCardBean.deadLineDeltaHour}" min="0" max="99" 
                                                suffix="#{bundle.HourShort}" size="2"
                                                onchange="return itemChange = 1;"
                                                disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
-                                    </p:spinner>
+                                    </p:spinner>                                    
+                                    <p:commandButton id="btnCalcPlan" icon="ui-icon-calculator" title="#{bundle.CalculateDeadline}" 
+                                         disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
+                                         update="planEndDate"
+                                         actionListener="#{taskCardBean.calculateDeadline()}"/>
+                                    </div>
                                 </h:panelGroup>
 
                                 <p:calendar id="planEndDate" value="#{taskCardBean.editedItem.planExecDate}" disabledWeekends="true" 
@@ -125,8 +133,9 @@
                                             disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'delta'}"
                                             locale="#{sessionBean.locale}"
                                             navigator="true" yearRange="c-1:c+20" timeInput="true" 
+                                            valueChangeListener="#{taskCardBean.onPlanExecDateChange}"
                                             requiredMessage="#{bundle.Field} [#{bundle.PlanEndDate}] #{bundle.MustBeFilled}">
-                                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                                    <p:ajax event="dateSelect" onstart="itemChange = 1;"/>
                                 </p:calendar>
                             </h:panelGrid>
                         </h:panelGrid>

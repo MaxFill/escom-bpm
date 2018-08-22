@@ -89,6 +89,8 @@
     <class>com.maxfill.model.users.assistants.AssistantStates</class>
     <class>com.maxfill.model.process.timers.ProcTimer</class>
     <class>com.maxfill.model.core.forms.FormsSettings</class>
+    <class>com.maxfill.model.process.procedures.Procedure</class>
+    <class>com.maxfill.services.worktime.WorkTimeCalendar</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

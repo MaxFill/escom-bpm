@@ -10,12 +10,14 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
+import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -30,6 +32,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Stateless
 public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, TaskStates>{
+    
+    @EJB
+    private WorkTimeService workTimeService;
     
     public TaskFacade() {
         super(Task.class, TaskLog.class, TaskStates.class);
@@ -80,6 +85,17 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return results;
     }        
     
+    /**
+     * Формирование даты планового срока исполнения. Учитывается рабочее время
+     * @param task 
+     */
+    public void makeDatePlan(Task task){
+        Integer deltasec = task.getDeltaDeadLine();
+        Date startDate = task.getBeginDate();
+        Date planExecDate = workTimeService.calcWorkDay(startDate, deltasec, task.getOwner());
+        task.setPlanExecDate(planExecDate);
+    }
+            
     /**
      * Формирование даты следующего напоминания для задачи 
      * @param task 

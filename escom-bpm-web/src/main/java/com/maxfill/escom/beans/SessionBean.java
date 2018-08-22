@@ -306,7 +306,7 @@ public class SessionBean implements Serializable{
     
     /* Обработка события выхода из программы, завершения сессии */
     public void onSessionExit() {
-        doSessionExit("/faces/"+SysParams.LOGIN_PAGE);
+        doSessionExit("/faces/" + SysParams.LOGOUT_PAGE);
     }
     
     /* Завершение сессии пользователя  */           

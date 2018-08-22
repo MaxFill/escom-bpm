@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "formsSettings",
-        indexes = {@Index(name="FormsDefSettings_INDEX", columnList = "FormName", unique = true)})
+        indexes = {@Index(name="FormsDefSettings_INDEX", columnList = "Name", unique = true)})
 public class FormsSettings implements Serializable{    
     private static final long serialVersionUID = -3746491857350793872L;
     

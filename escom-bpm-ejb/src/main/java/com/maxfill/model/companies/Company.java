@@ -17,7 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -57,11 +56,35 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     
     @OneToMany
     @JoinColumn(name = "owner")
-    private List<Department> detailItems = new ArrayList<>();
+    private List<Department> detailItems = new ArrayList<>();        
+
+    @Basic(optional = false)    
+    @Column(name = "WorkTime")
+    private Integer workTime = 8; //кол-во рабочих часов в дне
+    
+    @Basic(optional = false)    
+    @Column(name = "BeginTime")
+    private Integer beginTime = 28800; //начало рабочего дня в секундах
     
     public Company() {
     }
 
+    /* GETS & SETS */
+    
+    public Integer getWorkTime() {
+        return workTime;
+    }
+    public void setWorkTime(Integer workTime) {
+        this.workTime = workTime;
+    }
+
+    public Integer getBeginTime() {
+        return beginTime;
+    }
+    public void setBeginTime(Integer beginTime) {
+        this.beginTime = beginTime;
+    }
+    
     @Override
     public CompanyStates getState() {
         return state;

@@ -1,6 +1,5 @@
 package com.maxfill.utils;
 
-import com.google.common.base.Preconditions;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,7 +55,6 @@ public final class DateUtils {
     
     /* Обнуление времени в дате */
     public static Date clearDate(Date date) {
-        Preconditions.checkNotNull(date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -87,12 +85,10 @@ public final class DateUtils {
     
     /* Преобразование даты в локальную дату */
     public static LocalDate toLocalDate(Date date) {
-        Preconditions.checkNotNull(date);
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
     
     public static LocalDateTime toLocalDateTime(Date date){  
-        Preconditions.checkNotNull(date);
         LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
         return ldt;
         //Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());         
@@ -129,7 +125,7 @@ public final class DateUtils {
      */
     public static Date today() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 0, 0, 0);        
         return calendar.getTime();
     }         
     

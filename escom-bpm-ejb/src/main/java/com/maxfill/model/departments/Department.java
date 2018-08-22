@@ -74,6 +74,19 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     public Department() {
     }
 
+    public Company getCompany(){
+        return getCompany(this);
+    }
+    
+    public Company getCompany(Department department){
+        if (department.getOwner() != null){
+            return department.getOwner();
+        }
+        return getCompany(department.getParent());        
+    }
+    
+    /* GETS & SETS */
+    
     @Override
     public DepartmentStates getState() {
         return state;

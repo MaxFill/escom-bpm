@@ -67,7 +67,18 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     private List<StaffLog> itemLogs = new ArrayList<>();    
 
     @Basic(optional = false)
-    @NotNull
+    @Column(name = "InheritsWorkTime")
+    private boolean inheritsWorkTime = true;    //рабочий график наследуется от компании
+    
+    @Basic(optional = false)    
+    @Column(name = "WorkTime")
+    private Integer workTime = 8; //кол-во рабочих часов в дне
+    
+    @Basic(optional = false)    
+    @Column(name = "BeginTime")
+    private Integer beginTime = 28800; //начало рабочего дня
+    
+    @Basic(optional = false)
     @Column(name = "IsFired")
     private boolean isFired;
 
@@ -222,6 +233,27 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         this.itemLogs = itemLogs;
     }
 
+    public boolean isInheritsWorkTime() {
+        return inheritsWorkTime;
+    }
+    public void setInheritsWorkTime(boolean inheritsWorkTime) {
+        this.inheritsWorkTime = inheritsWorkTime;
+    }
+
+    public Integer getWorkTime() {
+        return workTime;
+    }
+    public void setWorkTime(Integer workTime) {
+        this.workTime = workTime;
+    }
+
+    public Integer getBeginTime() {
+        return beginTime;
+    }
+    public void setBeginTime(Integer beginTime) {
+        this.beginTime = beginTime;
+    }
+    
     /* *** *** */
 
     @Override

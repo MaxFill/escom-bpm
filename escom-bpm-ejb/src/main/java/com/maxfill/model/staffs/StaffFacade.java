@@ -231,6 +231,21 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         return q.getResultList();
     }
 
+    /**
+     * Возвращает компанию, в которой числится staff
+     * @param staff
+     * @return 
+     */
+    public Company findCompanyForStaff(Staff staff){
+        if (staff.getCompany() != null && staff.getOwner() == null){
+            return staff.getCompany();
+        }
+        if (staff.getOwner() != null){
+            return staff.getOwner().getCompany();
+        }
+        return null;
+    }
+    
     /* ***  ПРОЧЕЕ * *** */
     
     /**

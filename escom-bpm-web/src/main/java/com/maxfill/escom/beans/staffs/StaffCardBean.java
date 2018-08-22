@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
@@ -14,6 +15,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
@@ -29,6 +31,27 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     private StaffFacade itemFacade;
     @Inject
     private StaffBean staffBean;
+    
+    private Date beginTime;
+    
+    @Override
+    public void doPrepareOpen(Staff staff){
+        if (staff.isInheritsWorkTime()){
+            Company company = staffFacade.findCompanyForStaff(staff);
+            beginTime = new Date (company.getBeginTime());
+        } else {
+            beginTime = new Date(staff.getBeginTime());
+        }
+    }
+    
+    @Override
+    protected void onBeforeSaveItem(Staff staff){
+        if (!staff.isInheritsWorkTime()){
+            Long time = beginTime.getTime();
+            staff.setBeginTime(time.intValue());
+        }
+        super.onBeforeSaveItem(staff);
+    }
     
     @Override
     public StaffFacade getFacade() {
@@ -114,5 +137,12 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         return super.getEditedItem(); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public Date getBeginTime() {
+        return beginTime;
+    }
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+    
     
 }

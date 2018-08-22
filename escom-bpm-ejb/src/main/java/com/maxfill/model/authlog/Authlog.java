@@ -50,7 +50,7 @@ public class Authlog implements Serializable, Dict{
 
     public Authlog() {}
 
-    /* gets & sets */
+    /* GETS & SETS */
 
     @Override
     public Integer getId() {

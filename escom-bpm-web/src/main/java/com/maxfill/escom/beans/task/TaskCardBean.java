@@ -24,6 +24,9 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.services.worktime.WorkTimeService;
+import com.maxfill.utils.DateUtils;
+import java.text.DateFormat;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +38,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -61,6 +65,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ResultFacade resultFacade;
     @EJB
     private ProcessFacade processFacade;    
+    @EJB
+    private WorkTimeService workTimeService;
+    
     @Inject
     private ProcessBean processBean;
     @Inject
@@ -105,13 +112,19 @@ public class TaskCardBean extends BaseCardBean<Task>{
         ///проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
+        }        
+        if (task.getOwner() == null){
+            errors.add(MsgUtils.getMessageLabel("ExecutorNotSet"));
         }
         //проверка для срока исполнения
         switch (task.getDeadLineType()){
             case "delta":{
                 if (task.getDeltaDeadLine() == 0){
                    errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
-                }       
+                }
+                if (task.getBeginDate() == null){
+                    errors.add(MsgUtils.getMessageLabel("DateBeginNoSet"));
+                }
                 break;
             }
             case "data":{
@@ -355,6 +368,33 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     /**
+     * Вычисление планового срока исполнения
+     */
+    public void calculateDeadline(){
+        Task task = getEditedItem();
+        Set<String> errors = new HashSet<>();
+        if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
+            errors.add("DeadlineIncorrect");            
+        }
+        if (task.getBeginDate() == null){
+            errors.add("DateBeginNoSet");            
+        }
+        if (task.getOwner() == null){
+            errors.add("ExecutorNotSet");
+        }
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        int seconds = deadLineDeltaDay * 86400;
+        seconds = seconds + deadLineDeltaHour * 3600;
+        task.setDeltaDeadLine(seconds);
+        taskFacade.makeDatePlan(task);
+        String strDate = DateUtils.dateToString(task.getPlanExecDate(),  DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale());
+        MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
+    }
+    
+    /**
      * Формирует локализованное наименование дня недели по его значению
      * @param day
      * @return 
@@ -366,6 +406,18 @@ public class TaskCardBean extends BaseCardBean<Task>{
     
     public void onOpenExeReport(ProcReport report){
         currentReport = report;
+    }
+    
+    /**
+     * Проверка даты при изменении срока исполнения
+     * @param event 
+     */
+    public void onPlanExecDateChange(ValueChangeEvent event){
+        Date newValue = (Date) event.getNewValue();
+        Staff staff = getEditedItem().getOwner();
+        if (staff != null && workTimeService.isHolliday(newValue, staff)){
+            MsgUtils.warnMsg("SelectedDateIsWeekend");
+        }
     }
     
     /* GETS & SETS */
