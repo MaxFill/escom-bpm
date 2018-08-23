@@ -100,7 +100,10 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/users/user-explorer')}" value="#{bundle.Users}" target="_blank" />                                
 
                                 <p:graphicImage value="/resources/icon/table_active-32.png"/>
-                                <p:link href="#{sessionBean.onGetFormURL('/admin/users/'.concat(DictFrmName.FRM_USER_SESSIONS))}" value="#{bundle.Sessions}" target="_blank" />                                
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/users/'.concat(DictFrmName.FRM_USER_SESSIONS))}" value="#{bundle.Sessions}" target="_blank" />
+                                
+                                <p:graphicImage value="/resources/icon/timer-32.png"/>                                 
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/worktime/'.concat(DictFrmName.FRM_CALENDAR))}" value="#{bundle.WorkTime}" target="_blank" />
                             </p:panelGrid>
                             
                             <p:separator/>

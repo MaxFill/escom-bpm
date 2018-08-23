@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Сущность для хранения дат - исключений: как не рабочих, так и рабочих (если перенос), а так же сокращённых дней
@@ -47,12 +48,12 @@ public class WorkTimeCalendar implements Serializable, Dict{
 
     @Basic(optional = false)
     @Column(name = "BeginTime")
-    private Integer beginTime;  //начало рабочего дня
+    private Integer beginTime;  //начало рабочего дня в секундах    
     
     @NotNull
     @Basic(optional = false)
     @Column(name = "DayType")
-    private Boolean dayType;    //true - holliday, false - workday
+    private String dayType;
     
     @JoinColumn(name = "Staff", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -61,23 +62,43 @@ public class WorkTimeCalendar implements Serializable, Dict{
     public WorkTimeCalendar() {
     }
 
-    public WorkTimeCalendar(Date date, Integer workTime, Boolean dayType) {
+    public WorkTimeCalendar(Date date, Integer workTime, String dayType) {
         this.date = date;
         this.workTime = workTime;
         this.dayType = dayType;
     }     
     
+    public WorkTimeCalendar(Date date, Integer beginTime, Integer workTime, String dayType) {
+        this.date = date;
+        this.workTime = workTime;
+        this.dayType = dayType;
+        this.beginTime = beginTime;
+    }     
+     
     public boolean isWorkDay(){
-        return !dayType;
+        return "workday".equals(dayType);
     }    
     public boolean isHolliDay(){
-        return dayType;
+        return "hollyday".equals(dayType);
     }
     public void setHolliDay(){
-        dayType = true;
+        dayType = "hollyday";
     }
     public void setWorkDay(){
-        dayType = false;
+        dayType = "workday";
+    }
+    
+    public String getStyle(){
+        return dayType;
+    }
+    
+    public Date getStart(){        
+        return DateUtils.addSeconds(date, beginTime);
+    }
+    
+    public Date getEnd(){
+        Integer endTime = beginTime + workTime * 3600;
+        return DateUtils.addSeconds(date, endTime);
     }
     
     /* GETS & SETS */
@@ -105,20 +126,6 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.workTime = workTime;
     }
 
-    public boolean isDayType() {
-        return dayType;
-    }
-    public void setDayType(boolean dayType) {
-        this.dayType = dayType;
-    }   
-
-    public Boolean getDayType() {
-        return dayType;
-    }
-    public void setDayType(Boolean dayType) {
-        this.dayType = dayType;
-    }
-
     public Staff getStaff() {
         return staff;
     }
@@ -131,8 +138,8 @@ public class WorkTimeCalendar implements Serializable, Dict{
     }
     public void setBeginTime(Integer beginTime) {
         this.beginTime = beginTime;
-    }        
-    
+    }
+        
     /* *** *** */
 
     @Override

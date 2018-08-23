@@ -34,6 +34,8 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     private StaffBean staffBean;
     
     private Date beginTime;
+    private Date endTime;
+    private Integer workTime;
     
     @Override
     public void doPrepareOpen(Staff staff){
@@ -43,15 +45,17 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
             Integer time = company.getBeginTime();
             if (time != null){
                 beginTime = new Date(time);
-                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);
+                workTime = company.getWorkTime();
+                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);    
             }
         } else {
             Integer time = staff.getBeginTime();
             if (time != null){
                 beginTime = new Date(time);
-                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);
+                workTime = staff.getWorkTime();
+                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);                
             }    
-        }
+        }        
     }
     
     @Override
@@ -154,6 +158,13 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     public void setBeginTime(Date beginTime) {
         this.beginTime = beginTime;
     }
-    
+
+    public Date getEndTime() {        
+        endTime = DateUtils.addHour(beginTime, workTime);
+        return endTime;
+    }
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
     
 }

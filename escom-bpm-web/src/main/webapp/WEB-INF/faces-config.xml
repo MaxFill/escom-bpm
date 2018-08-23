@@ -138,6 +138,14 @@
         <navigation-case>
             <from-outcome>counters</from-outcome>
             <to-view-id>/view/admin/counters/counters.xhtml</to-view-id>
+        </navigation-case>        
+        <navigation-case>
+            <from-outcome>work-time</from-outcome>
+            <to-view-id>/view/admin/worktime/work-time.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>calendar</from-outcome>
+            <to-view-id>/view/admin/worktime/calendar.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>help-view</from-outcome>

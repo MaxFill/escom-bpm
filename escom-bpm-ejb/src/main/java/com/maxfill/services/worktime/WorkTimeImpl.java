@@ -6,7 +6,6 @@ import com.maxfill.model.staffs.StaffFacade;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.lang3.time.DateUtils;

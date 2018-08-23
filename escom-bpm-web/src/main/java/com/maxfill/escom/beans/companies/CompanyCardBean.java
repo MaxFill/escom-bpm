@@ -29,13 +29,14 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     private CompanyFacade itemsFacade;
 
     private Date beginTime;
+    private Date endTime;
     
     @Override
     public void doPrepareOpen(Company company){
         Integer time = company.getBeginTime();
         if (time != null){
-            beginTime = new Date(time);
-            beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);
+            beginTime = new Date(time);            
+            beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);            
         }
     }       
  
@@ -68,4 +69,13 @@ public class CompanyCardBean extends BaseCardTree<Company> {
     public void setBeginTime(Date beginTime) {
         this.beginTime = beginTime;
     }
+
+    public Date getEndTime() {
+        endTime = DateUtils.addHour(beginTime, getEditedItem().getWorkTime());
+        return endTime;
+    }
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+        
 }

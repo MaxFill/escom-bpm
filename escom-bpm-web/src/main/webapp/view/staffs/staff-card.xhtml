@@ -65,33 +65,17 @@
         </p:tab>
 
         <p:tab title="#{bundle.WorkTime}">     
-            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >  
+            <p:panelGrid id="gridWorkTime" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >  
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsWorkTime}"
                                          itemLabel="#{bundle.StandardWorkingTime}"
                                          disabled="#{_bean.isReadOnly()}">
-                    <p:ajax update="pnWorkTime" process="@this" oncomplete="itemChange = 1;"/>
+                    <p:ajax update="gridWorkTime" process="@this" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
                 
-                <p:panelGrid id="pnWorkTime" columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.DurationWorkingDay}:" indicateRequired="true"/>
-                    <p:spinner value="#{_bean.editedItem.workTime}" min="1" max="24" 
-                               suffix="#{bundle.HourShort}" size="2"
-                               onchange="return itemChange = 1;"
-                               disabled="#{_bean.readOnly or _bean.editedItem.inheritsWorkTime}"
-                               required="#{param['isRequired'] == 'true' and !_bean.editedItem.inheritsWorkTime}"
-                               requiredMessage="#{bundle.Field} [#{bundle.DurationWorkingDay}] #{bundle.MustBeFilled}">
-                    </p:spinner>
-
-                    <p:outputLabel value="#{bundle.BeginWorkingDay}:" indicateRequired="true"/>                
-                    <p:calendar value="#{_bean.beginTime}" pattern="HH:mm" timeOnly="true" 
-                                locale="#{sessionBean.locale}" timeZone="#{TimeZone.getTimeZone('UTC')}" 
-                                disabled="#{_bean.readOnly or _bean.editedItem.inheritsWorkTime}"
-                                showHour="true" showMinute="true" 
-                                required="#{param['isRequired'] == 'true' and !_bean.editedItem.inheritsWorkTime}"
-                                requiredMessage="#{bundle.Field} [#{bundle.BeginWorkingDay}] #{bundle.MustBeFilled}">
-                        <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                    </p:calendar>  
-                </p:panelGrid>
+                <ui:include src="/view/common/work-time.xhtml">
+                    <ui:param name="_readOnly" value="#{_bean.editedItem.inheritsWorkTime}"/>
+                </ui:include>
+                
             </p:panelGrid>
         </p:tab>
         

@@ -42,26 +42,7 @@
         </p:tab>
         
         <p:tab title="#{bundle.WorkTime}">             
-            <p:panelGrid id="pnWorkTime" columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces" >
-                <p:outputLabel value="#{bundle.DurationWorkingDay}:" indicateRequired="true"/>
-                <p:spinner value="#{_bean.editedItem.workTime}" min="1" max="24" 
-                           suffix="#{bundle.HourShort}" size="2"
-                           onchange="return itemChange = 1;"
-                           disabled="#{_bean.readOnly}"
-                           required="#{param['isRequired'] == 'true'}"
-                           requiredMessage="#{bundle.Field} [#{bundle.DurationWorkingDay}] #{bundle.MustBeFilled}">
-                </p:spinner>
-                
-                <p:outputLabel value="#{bundle.BeginWorkingDay}:" indicateRequired="true"/>                
-                <p:calendar value="#{_bean.beginTime}" pattern="HH:mm" timeOnly="true" 
-                            locale="#{sessionBean.locale}" timeZone="#{TimeZone.getTimeZone('UTC')}"
-                            disabled="#{_bean.readOnly}"
-                            showHour="true" showMinute="true" 
-                            required="#{param['isRequired'] == 'true'}"
-                            requiredMessage="#{bundle.Field} [#{bundle.BeginWorkingDay}] #{bundle.MustBeFilled}">
-                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                </p:calendar>  
-            </p:panelGrid>
+            <ui:include src="/view/common/work-time.xhtml"/>
         </p:tab>
     </ui:define>
     

@@ -1,0 +1,29 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core">          
+    
+    <ui:param name="_bean" value="#{workTimeCardBean}"/>
+
+    <ui:define name="centerFormContent">        
+        <p:panelGrid id="gridWorkTime" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                <p:selectBooleanCheckbox value="#{_bean.inheritsWorkTime}"
+                                         itemLabel="#{bundle.StandardWorkingTime}"
+                                         disabled="#{_bean.readOnly}">
+                    <p:ajax update="pnWorkTime" process="@this" oncomplete="itemChange = 1;"/>
+                </p:selectBooleanCheckbox>
+                
+                <p:outputLabel value="#{bundle.Type}:" indicateRequired="true"/>
+                <p:selectOneRadio id="typeDay" value="#{_bean.editedItem.dayType}" disabled="#{workTimeCardBean.readOnly}" layout="grid" columns="1" >
+                            <f:selectItem itemLabel="hollyday" itemValue="hollyday"/>
+                            <f:selectItem itemLabel="workday"  itemValue="workday" />
+                            <p:ajax update="gridWorkTime" event="valueChange" onstart="itemChange = 1;"/>
+                </p:selectOneRadio>
+                    
+                <ui:include src="/view/common/work-time.xhtml">
+                    <ui:param name="_readOnly" value="#{_bean.editedItem.dayType ne 'workday'}"/>
+                </ui:include>
+            </p:panelGrid>
+    </ui:define>
+</ui:composition>
