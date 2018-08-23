@@ -164,7 +164,7 @@
                     ajax="false"
                     onstart="return isClose = 1;"
                     rendered="#{_bean.isItemHaveAttache(item)}"
-                    action="#{sessionBean.attacheDownLoad(item.getAttache())}"/>
+                    action="#{sessionBean.attacheDownLoad(item.getMainAttache())}"/>
         <p:separator />
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"

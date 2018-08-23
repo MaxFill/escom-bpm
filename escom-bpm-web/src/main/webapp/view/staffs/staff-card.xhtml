@@ -69,7 +69,7 @@
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsWorkTime}"
                                          itemLabel="#{bundle.StandardWorkingTime}"
                                          disabled="#{_bean.isReadOnly()}">
-                    <p:ajax update="gridWorkTime" process="@this" oncomplete="itemChange = 1;"/>
+                    <p:ajax update="gridWorkTime" process="@this" listener="#{staffCardBean.onInheritsWTchange()}" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
                 
                 <ui:include src="/view/common/work-time.xhtml">

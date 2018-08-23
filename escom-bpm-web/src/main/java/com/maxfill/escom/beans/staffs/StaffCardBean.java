@@ -35,24 +35,22 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
     
     private Date beginTime;
     private Date endTime;
-    private Integer workTime;
+    private Company company;
     
     @Override
     public void doPrepareOpen(Staff staff){
         if (staff.isInheritsWorkTime()){
-            Company company = staffFacade.findCompanyForStaff(staff);
+            company = staffFacade.findCompanyForStaff(staff);
             beginTime = new Date (company.getBeginTime());
             Integer time = company.getBeginTime();
             if (time != null){
                 beginTime = new Date(time);
-                workTime = company.getWorkTime();
                 beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);    
             }
         } else {
             Integer time = staff.getBeginTime();
             if (time != null){
                 beginTime = new Date(time);
-                workTime = staff.getWorkTime();
                 beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);                
             }    
         }        
@@ -137,6 +135,14 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:visibleName");
     }
 
+    public void onInheritsWTchange(){
+        Staff staff = getEditedItem();
+        if (!staff.isInheritsWorkTime()){            
+            staff.setWorkTime(company.getWorkTime());
+            staff.setBeginTime(company.getBeginTime());
+        } 
+    }    
+    
     @Override
     public List <Department> getGroups(Staff item) {
         List <Department> groups = new ArrayList <>();
@@ -159,8 +165,14 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         this.beginTime = beginTime;
     }
 
-    public Date getEndTime() {        
-        endTime = DateUtils.addHour(beginTime, workTime);
+    public Date getEndTime() {   
+        Staff staff = getEditedItem();
+        if (staff.isInheritsWorkTime()){
+            endTime = DateUtils.addHour(beginTime, company.getWorkTime());            
+        } else {            
+            Integer worktime = staff.getWorkTime();
+            endTime = DateUtils.addHour(beginTime, worktime);            
+        }         
         return endTime;
     }
     public void setEndTime(Date endTime) {
