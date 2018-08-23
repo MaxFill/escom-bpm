@@ -465,8 +465,8 @@ public class SessionBean implements Serializable{
         options.put("modal", true);
         options.put("width", formSize.a);
         options.put("height", formSize.b);
-        options.put("minWidth", 900);
-        options.put("minHeight", 600);
+        options.put("minWidth", 600);
+        options.put("minHeight", 400);
         options.put("maximizable", true);
         options.put("minimizable", false);
         options.put("closable", true);
@@ -656,9 +656,9 @@ public class SessionBean implements Serializable{
                 rezult = new Tuple(fs.getWidth(), fs.getHeight());
             } else
                 if (formName.contains("explorer")){
-                    rezult = new Tuple(1200, 750);                
+                    rezult = new Tuple(1150, 700);                
                 } else {
-                    rezult = new Tuple(850, 600);
+                    rezult = new Tuple(800, 500);
                 }
         }
         formsSize.put(formName, rezult);

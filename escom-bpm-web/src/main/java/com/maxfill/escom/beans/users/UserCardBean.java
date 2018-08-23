@@ -202,7 +202,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     
     @Override
     protected void addItemInGroup(User item, UserGroups group) {
-        if (group == null || group.getId() == 0) return;
+        if (group == null) return;
         super.addItemInGroup(item, group);
     }
     

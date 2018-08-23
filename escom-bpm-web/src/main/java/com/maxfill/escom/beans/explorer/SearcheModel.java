@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /* Базовая модель данных для поиска объектов */
 public class SearcheModel implements Serializable {
@@ -151,7 +150,6 @@ public class SearcheModel implements Serializable {
     public Date getDateCreateStart() {
         return dateCreateStart;
     }
-
     public void setDateCreateStart(Date dateCreateStart) {
         this.dateCreateStart = dateCreateStart;
     }
@@ -159,7 +157,6 @@ public class SearcheModel implements Serializable {
     public Date getDateCreateEnd() {
         return dateCreateEnd;
     }
-
     public void setDateCreateEnd(Date dateCreateEnd) {
         this.dateCreateEnd = dateCreateEnd;
     }
@@ -167,7 +164,6 @@ public class SearcheModel implements Serializable {
     public Date getDateChangeStart() {
         return dateChangeStart;
     }
-
     public void setDateChangeStart(Date dateChangeStart) {
         this.dateChangeStart = dateChangeStart;
     }

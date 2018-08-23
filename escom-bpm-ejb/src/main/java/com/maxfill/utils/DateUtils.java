@@ -237,5 +237,45 @@ public final class DateUtils {
         }
         ld = ld.with(TemporalAdjusters.next(nextDay));
         return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }        
+    }  
+    
+    public static Date convertHourToUTCTimeZone(Date inputDate)  {        
+        Date result = null;
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(inputDate);
+            int hours = calendar.get(Calendar.HOUR_OF_DAY);
+            int minutes = calendar.get(Calendar.MINUTE);
+            String dateString = ""+((hours>9)?""+hours:"0"+hours)+":"+((hours>9)?""+minutes:"0"+minutes)+"";
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));        
+            result = sdf.parse(dateString);
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    /**
+      * convert a date with hour format (HH:mm) from UTC time zone to local time zone
+      * @param inputDate
+      * @return 
+      * @throws java.text.ParseException
+      */
+    public static Date convertHourFromUTCToLocalTimeZone(Date inputDate) {
+        Date result = null;
+        try {
+            Date localFromGmt = new Date(inputDate.getTime() - TimeZone.getDefault().getOffset(inputDate.getTime()));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(localFromGmt);
+            int hours = calendar.get(Calendar.HOUR_OF_DAY);
+            int minutes = calendar.get(Calendar.MINUTE);
+            String dateString = ""+((hours>9)?""+hours:"0"+hours)+":"+((hours>9)?""+minutes:"0"+minutes)+"";
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            result = sdf.parse(dateString);
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return result;
+     }
 }

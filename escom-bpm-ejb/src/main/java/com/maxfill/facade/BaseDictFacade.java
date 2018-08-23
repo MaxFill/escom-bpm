@@ -415,7 +415,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return criteriaQuery.select(root).where(builder.and(predicates));        
     }
     
-    protected void addLikePredicates(Root root, List<Predicate> predicates,  CriteriaBuilder builder, Map<String, Object> paramLIKE){
+    protected void addLikePredicates(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> paramLIKE){
         for (Map.Entry<String, Object> parameter : paramLIKE.entrySet()) {
             predicates.add(builder.like(root.<String>get(parameter.getKey()), (String) parameter.getValue()));
         }

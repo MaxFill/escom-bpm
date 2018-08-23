@@ -104,7 +104,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         String login = user.getLogin();
         String pwl = user.getPwl();
         if (StringUtils.isNotBlank(login) && StringUtils.isNotBlank(pwl)){
-            usersService.addUserInRealm(login, pwl);
+            //usersService.addUserInRealm(login, pwl);
         }
     }
 
@@ -425,10 +425,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
 
     /* Дополнения при выполнении поиска через форму поиска */
     @Override
-    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams){
+    protected void addJoinPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder cb, Map<String, Object> addParams){
         String loginName = (String) addParams.get("login");
         if (StringUtils.isNotBlank(loginName)){
-            predicates.add(builder.like(root.<String>get("login"), loginName));
+            predicates.add(cb.like(root.<String>get("login"), loginName));
         }
     }
 

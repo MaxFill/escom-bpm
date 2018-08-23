@@ -8,6 +8,7 @@ import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
+import com.maxfill.utils.DateUtils;
 import org.primefaces.event.SelectEvent;
 
 import javax.ejb.EJB;
@@ -39,14 +40,24 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
         if (staff.isInheritsWorkTime()){
             Company company = staffFacade.findCompanyForStaff(staff);
             beginTime = new Date (company.getBeginTime());
+            Integer time = company.getBeginTime();
+            if (time != null){
+                beginTime = new Date(time);
+                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);
+            }
         } else {
-            beginTime = new Date(staff.getBeginTime());
+            Integer time = staff.getBeginTime();
+            if (time != null){
+                beginTime = new Date(time);
+                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);
+            }    
         }
     }
     
     @Override
     protected void onBeforeSaveItem(Staff staff){
         if (!staff.isInheritsWorkTime()){
+            beginTime = DateUtils.convertHourToUTCTimeZone(beginTime);
             Long time = beginTime.getTime();
             staff.setBeginTime(time.intValue());
         }

@@ -1,6 +1,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"               
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/view/templ/templ-explorer.xhtml">
         
     <ui:param name="_bean"        value="#{explorerTreeBean}" />
@@ -36,8 +38,19 @@
     </ui:define>
 
     <!-- специфичные поля поиска -->
-    <ui:define name="searche">        
-        <!--ui:include src="/view/users/user-searche.xhtml" /-->
+    <ui:define name="searche">
+        <p:outputLabel value="#{bundle.Login}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+        <div class="ui-inputgroup">
+            <p:inputText title="#{bundle.HelpSearcheContext}" id="searchLogin" widgetVar="searchLogin"
+                         styleClass="ui-grid-col-10"
+                         value="#{_bean.model.searcheLogin}"
+                         placeholder="#{bundle.InputCreteriaForSearche}"
+                         onkeypress="keyPress();">
+            </p:inputText>
+            <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('searchLogin').jq.val('');"/>
+        </div>
+        </h:panelGroup>
     </ui:define>
     
 </ui:composition>
