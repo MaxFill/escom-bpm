@@ -21,7 +21,7 @@ import org.omnifaces.cdi.ViewScoped;
 public class WorkTimeCardBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 3482773173068260166L;
 
-    private WorkTimeCalendar editedItem = new WorkTimeCalendar();
+    private WorkTimeCalendar editedItem;
     private WorkTimeCalendar sourceItem;
     private boolean inheritsWorkTime = true;
     
@@ -30,7 +30,7 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
     
     @Override 
     public void doBeforeOpenCard(Map<String, String> params){
-        if (editedItem == null){                        
+        if (editedItem == null){                 
             if (sourceBean != null){                
                 sourceItem = ((CalendarBean)sourceBean).getSelected();
                 Integer time = sourceItem.getBeginTime(); //время в секундах
@@ -39,6 +39,7 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
             }
             if (sourceItem != null){
                 try {
+                    editedItem = new WorkTimeCalendar();
                     BeanUtils.copyProperties(editedItem, sourceItem);
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);

@@ -31,8 +31,9 @@ public class WorkTimeImpl implements WorkTimeService{
      */
     @Override
     public Date calcWorkDay(Date date, Integer deltasec, Staff staff){        
+        Company company = staffFacade.findCompanyForStaff(staff);
         while(deltasec >= 0){
-            WorkTimeCalendar wtc = getWorkTimeDate(date, staff);
+            WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
             if (wtc.isWorkDay()){
                 Integer duration = wtc.getWorkTime() * 3600;
                 if (deltasec <= duration){
@@ -53,14 +54,16 @@ public class WorkTimeImpl implements WorkTimeService{
     }
     
     @Override
-    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff){
+    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company){
         //сначала ищем исключения для конкретной штед
-        List<WorkTimeCalendar> dates = workTimeFacade.findDateByStaff(date, staff);
-        if (!dates.isEmpty()){
-            return dates.get(0);
+        if (staff != null){
+            List<WorkTimeCalendar> dates = workTimeFacade.findDateByStaff(date, staff);
+            if (!dates.isEmpty()){
+                return dates.get(0);
+            }
         }
         //раз нет, то ищем вообще исключение
-        dates = workTimeFacade.findDate(date);
+        List<WorkTimeCalendar> dates = workTimeFacade.findDate(date);
         if (!dates.isEmpty()){
             return dates.get(0);
         }
@@ -75,11 +78,13 @@ public class WorkTimeImpl implements WorkTimeService{
         calendar.set(Calendar.MILLISECOND, 0);
         wtc.setDate(calendar.getTime());
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
-            wtc.setHolliDay();
+            wtc.setWeekEnd();
+            wtc.setWorkTime(0);
+            wtc.setBeginTime(0);
         } else {
             wtc.setWorkDay();
-            makeDefaultWorkTime(wtc, staff);
-        }        
+            makeDefaultWorkTime(wtc, staff, company);
+        }
         return wtc;
     }
     
@@ -88,14 +93,13 @@ public class WorkTimeImpl implements WorkTimeService{
      * @param staff
      * @return 
      */
-    private void makeDefaultWorkTime(WorkTimeCalendar wtc, Staff staff){
-        Integer workTime = 8;
-        Integer beginTime = 9 * 60 * 60;
-        if (!staff.isInheritsWorkTime()){
+    private void makeDefaultWorkTime(WorkTimeCalendar wtc, Staff staff, Company company){
+        Integer workTime = 0;
+        Integer beginTime = 0;
+        if (staff != null && !staff.isInheritsWorkTime()){
             workTime = staff.getWorkTime();
             beginTime = staff.getBeginTime();
         } else {
-            Company company = staffFacade.findCompanyForStaff(staff);
             if (company != null){
                 workTime = company.getWorkTime();
                 beginTime = company.getBeginTime();
@@ -127,14 +131,14 @@ public class WorkTimeImpl implements WorkTimeService{
     }
     
     @Override
-    public boolean isHolliday(Date date, Staff staff){
-        WorkTimeCalendar wtc = getWorkTimeDate(date, staff);
+    public boolean isHolliday(Date date, Staff staff, Company company){
+        WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
         return wtc.isHolliDay();
     }
     
     @Override
-    public boolean isWorkday(Date date, Staff staff){
-        WorkTimeCalendar wtc = getWorkTimeDate(date, staff);
+    public boolean isWorkday(Date date, Staff staff, Company company){
+        WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
         return wtc.isWorkDay();
     }
 }

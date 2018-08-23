@@ -12,7 +12,7 @@ import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.task.result.ResultFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
@@ -22,7 +22,6 @@ import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
-import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
@@ -38,11 +37,9 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
@@ -415,7 +412,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     public void onPlanExecDateChange(ValueChangeEvent event){
         Date newValue = (Date) event.getNewValue();
         Staff staff = getEditedItem().getOwner();
-        if (staff != null && workTimeService.isHolliday(newValue, staff)){
+        Company company = staffFacade.findCompanyForStaff(staff);
+        if (staff != null && workTimeService.isHolliday(newValue, staff, company)){
             MsgUtils.warnMsg("SelectedDateIsWeekend");
         }
     }

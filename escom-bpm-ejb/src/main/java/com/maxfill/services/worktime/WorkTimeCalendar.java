@@ -48,9 +48,8 @@ public class WorkTimeCalendar implements Serializable, Dict{
 
     @Basic(optional = false)
     @Column(name = "BeginTime")
-    private Integer beginTime;  //начало рабочего дня в секундах    
+    private Integer beginTime;  //начало рабочего дня в милисекундах    
     
-    @NotNull
     @Basic(optional = false)
     @Column(name = "DayType")
     private String dayType;
@@ -81,8 +80,15 @@ public class WorkTimeCalendar implements Serializable, Dict{
     public boolean isHolliDay(){
         return "hollyday".equals(dayType);
     }
+    public boolean isWeekEnd(){
+        return "weekend".equals(dayType);
+    }
+    
     public void setHolliDay(){
         dayType = "hollyday";
+    }
+    public void setWeekEnd(){
+        dayType = "weekend";
     }
     public void setWorkDay(){
         dayType = "workday";
@@ -92,13 +98,13 @@ public class WorkTimeCalendar implements Serializable, Dict{
         return dayType;
     }
     
-    public Date getStart(){        
-        return DateUtils.addSeconds(date, beginTime);
+    public Date getStart(){
+        return DateUtils.addMilliseconds(date, beginTime);
     }
     
     public Date getEnd(){
-        Integer endTime = beginTime + workTime * 3600;
-        return DateUtils.addSeconds(date, endTime);
+        Integer endTime = beginTime + workTime * 3600 * 1000;
+        return DateUtils.addMilliseconds(date, endTime);
     }
     
     /* GETS & SETS */
@@ -139,7 +145,14 @@ public class WorkTimeCalendar implements Serializable, Dict{
     public void setBeginTime(Integer beginTime) {
         this.beginTime = beginTime;
     }
-        
+
+    public String getDayType() {
+        return dayType;
+    }
+    public void setDayType(String dayType) {
+        this.dayType = dayType;
+    }
+          
     /* *** *** */
 
     @Override

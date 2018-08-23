@@ -6,7 +6,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core">    
 
     <ui:param name="_bean" value="#{calendarBean}"/>
-       
+
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnCreate" style="display: none;" actionListener="#{calendarBean.onCreateDay()}">
             <p:ajax event="dialogReturn" listener="#{calendarBean.onDlgClose}"/>
@@ -17,16 +17,39 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:schedule id="schedule" value="#{calendarBean.eventModel}" widgetVar="schedule" clientTimeZone="#{calendarBean.getClientTimeZone()}"
-                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  scrollTime="09:00:00"  rightHeaderTemplate="month" 
-                    draggable="false" displayEventEnd="true" firstHour="8"
+        <p:panelGrid columns="2" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12 without-spaces">
+            <h:panelGrid columns="2" styleClass="without-spaces">
+                <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
+                <p:selectOneMenu value="#{_bean.company}" id="company" converter="companyConvertor">
+                    <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />            
+                    <p:ajax event="change" update="calendar" listener="#{calendarBean.onRefresh()}" oncomplete="return itemChange = 1;"/>
+                </p:selectOneMenu>
+            </h:panelGrid>
+            <h:panelGrid columns="4" styleClass="without-spaces">
+                <p:outputLabel id="monthName" value="#{calendarBean.getMounthName()}"/>
+                <p:spacer/>
+                <p:commandButton value="#{bundle.Previous}" 
+                                 icon="ico_arrow_back"
+                                 update="calendar monthName" 
+                                 actionListener="#{calendarBean.onChangeMonth('previous')}"/>
+                <p:commandButton value="#{bundle.Next}" 
+                                 icon="ico_arrow_next"
+                                 update="calendar monthName" 
+                                 actionListener="#{calendarBean.onChangeMonth('next')}"/>
+            </h:panelGrid>
+        </p:panelGrid>
+
+        <p:schedule id="calendar" value="#{calendarBean.eventModel}" ignoreTimezone="true"
+                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  aspectRatio="2.2"
+                    rightHeaderTemplate="" leftHeaderTemplate="" centerHeaderTemplate=""
+                    draggable="false" displayEventEnd="true" 
                     locale="#{sessionBean.locale}" >
             <p:ajax event="dateSelect" listener="#{calendarBean.onDateSelect}"  />
             <p:ajax event="eventSelect" listener="#{calendarBean.onEventSelect}"  />
-
         </p:schedule>  
+
     </ui:define>
-    
+
     <ui:define name="customStyleCSS">
         <style>
             .holliday {
@@ -34,12 +57,27 @@
                 color: #000000 !important;                
             }
             .weekend {
-                background-color: red !important; 
+                background-color: skyblue !important; 
                 font-weight: bold !important;
             }
             .hospital {
                 background-color: magenta !important; 
                 font-style: italic !important;
+            }
+            .fc-toolbar {
+                display: none !important;
+            }
+            .fc-row table {
+                height: 100% !important;
+            }
+            .fc-row .fc-content-skeleton{
+                height: 100% !important;
+            }
+            .fc-event-container{
+                height: 100% !important;
+            }
+            .fc-event{
+                height: 100% !important; 
             }
         </style>
     </ui:define>
