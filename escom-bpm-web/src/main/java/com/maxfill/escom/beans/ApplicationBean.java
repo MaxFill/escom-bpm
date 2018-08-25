@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictModules;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
@@ -231,6 +232,22 @@ public class ApplicationBean implements Serializable{
         return appName;
     }
 
+    public boolean isCanUsesPartners(){
+        return licence.isCanUses(DictModules.MODULE_PARTNERS);
+    }
+    public boolean isCanUsesStaffs(){
+        return licence.isCanUses(DictModules.MODULE_STAFFS);
+    }
+    public boolean isCanUsesProcess(){
+        return licence.isCanUses(DictModules.MODULE_PROCESSES);
+    }
+    public boolean isCanUsesContracts(){
+        return licence.isCanUses(DictModules.MODULE_CONTRACTS);
+    }
+    public boolean isCanUsesDelo(){
+        return licence.isCanUses(DictModules.MODULE_DELO);
+    }
+    
     /* GETS & SETS */
     
     public boolean getNeedUpadateSystem() {

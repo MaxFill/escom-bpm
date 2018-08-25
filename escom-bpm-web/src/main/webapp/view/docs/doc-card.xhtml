@@ -29,7 +29,7 @@
                         </p:inputTextarea>
                     </h:panelGrid>
                     
-                    <h:panelGrid columns="1" id="сompanyPanel" styleClass="ui-grid-col-12 without-spaces">
+                    <h:panelGrid columns="1" id="сompanyPanel" rendered="#{applicationBean.isCanUsesStaffs()}" styleClass="ui-grid-col-12 without-spaces">
                         <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
                         <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                          title="#{bundle.CompanyDocRegistred}"
@@ -113,7 +113,7 @@
                     </h:panelGrid>                    
                 </p:panelGrid>    
 
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="1" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Partner}:" />
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -136,7 +136,7 @@
             </p:panelGrid>
         </p:tab> 
         
-        <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+        <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 <ui:include src="/view/processes/process-list.xhtml"> 
                     <ui:param name="_processes" value="#{docCardBean.editedItem.processList}"/>
@@ -191,7 +191,7 @@
         </p:menuButton>
         <p:menuButton value="#{bundle.Processes}" icon="ui-icon-extlink" styleClass="submenu"
                       disabled="#{_item.id == null}"
-                      rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+                      rendered="#{applicationBean.isCanUsesProcess()}">
             <p:menuitem icon="ui-icon-extlink" value="#{bundle.ConcordedDoc}" 
                         oncomplete="document.getElementById('mainFRM:btnConcordedDoc').click();">                
             </p:menuitem>

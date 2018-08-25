@@ -94,7 +94,7 @@
                 </p:panelGrid>
             </p:panelGrid>
 
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" rendered="#{applicationBean.isCanUsesStaffs()}">
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.MainStaff}:" />
                     <ui:include src="/view/common/item-select-btn.xhtml" >

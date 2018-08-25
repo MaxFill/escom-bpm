@@ -182,7 +182,7 @@
     </ui:define>
 
     <ui:define name="treeTabs" >
-        <p:tab id="tabProc" title="#{bundle.Processes}" rendered="#{applicationBean.licence.isCanUses(DictModules.MODULE_PROCESSES)}">
+        <p:tab id="tabProc" title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
             <p:tree id="procTree" value="#{_bean.procTree}" var="treeItem"  
                     selectionMode="single" animate="true" 
                     selection="#{_bean.procSelectedNode}" style="width: auto; overflow-y: auto;">
