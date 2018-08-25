@@ -45,7 +45,9 @@ public class StaffCardBean extends BaseCardBeanGroups <Staff, Department>{
             Integer time = company.getBeginTime();
             if (time != null){
                 beginTime = new Date(time);
-                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);    
+                beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime); 
+                staff.setWorkTime(company.getWorkTime());
+                staff.setBeginTime(time);
             }
         } else {
             Integer time = staff.getBeginTime();

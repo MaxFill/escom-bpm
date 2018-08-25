@@ -29,7 +29,9 @@ RUN add-apt-repository -y ppa:libreoffice/ppa && \
 
 RUN add-apt-repository -y ppa:builds/sphinxsearch-rel22 && \
     apt-get -y update && \
-    apt-get -y install sphinxsearch
+    apt-get -y install sphinxsearch && \
+    chown -R sphinxsearch /opt/sphinx && \
+    chown -R sphinxsearch /var/run/sphinxsearch
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-oracle"
 ENV WILDFLY="/opt/wildfly/bin"   

@@ -23,7 +23,6 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
 
     private WorkTimeCalendar editedItem;
     private WorkTimeCalendar sourceItem;
-    private boolean inheritsWorkTime = true;
     
     private Date beginTime;
     private Date endTime;
@@ -82,13 +81,6 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
     }
     public void setEditedItem(WorkTimeCalendar editedItem) {
         this.editedItem = editedItem;
-    }
-
-    public boolean isInheritsWorkTime() {
-        return inheritsWorkTime;
-    }
-    public void setInheritsWorkTime(boolean inheritsWorkTime) {
-        this.inheritsWorkTime = inheritsWorkTime;
     }
 
     public Date getBeginTime() {

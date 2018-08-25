@@ -1,16 +1,15 @@
 package com.maxfill.model.licence;
 
-import com.maxfill.dictionary.DictModules;
 import com.maxfill.utils.DateUtils;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -32,13 +31,14 @@ public final class Licence implements Serializable{
     @XmlElement(name = "DateTerm")
     private Date dateTerm;
     
+    @XmlElement(name = "Modules")
+    private String modulesJSON;
+    
     //EscomUtils.getBandleLabel("Indefinitely") TODO нужно выводить для бессрочных лицензий!
 
-    private final Set<String> modules = new HashSet<>();
+    private List<String> modules;
 
     public Licence() {
-        modules.add(DictModules.MODULE_CONCORD);
-        modules.add(DictModules.MODULE_PROCESSES);
     }
 
     /**
@@ -57,11 +57,11 @@ public final class Licence implements Serializable{
      * @return
      */
     public Boolean isCanUses(String moduleName){
-        return modules.contains(moduleName);
+        return getModules().contains(moduleName);
     }
 
     /* gets & sets */
-
+    
     public Integer getTotal() {
         return total;
     }
@@ -81,4 +81,19 @@ public final class Licence implements Serializable{
     public String getLicensor() {
         return licensor;
     }
+
+    public String getModulesJSON() {
+        return modulesJSON;
+    }
+    public void setModulesJSON(String modulesJSON) {
+        this.modulesJSON = modulesJSON;
+    }  
+
+    public List<String> getModules() {
+        if (modules == null && modulesJSON != null ){             
+            modules = Arrays.asList(modulesJSON.split(","));
+        }
+        return modules;
+    }
+       
 }

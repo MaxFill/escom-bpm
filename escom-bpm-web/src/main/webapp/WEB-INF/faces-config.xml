@@ -37,6 +37,10 @@
 		
     </application>
 
+    <factory>
+        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+    </factory>
+    
     <navigation-rule>
         <from-view-id>*</from-view-id>         
                                 

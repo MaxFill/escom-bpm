@@ -14,4 +14,5 @@ public interface WorkTimeService {
     WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company);
     boolean isHolliday(Date date, Staff staff, Company company);
     boolean isWorkday(Date date, Staff staff, Company company);
+    void update(WorkTimeCalendar wtc);
 }

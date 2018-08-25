@@ -104,11 +104,7 @@ public class CalendarBean extends BaseViewBean {
                 break;
             }
         }
-        onRefresh();
-    }
-
-    public void onRefresh(){
-        eventModel.clear();
+        modelRefresh();
     }
     
     public String getMounthName(){        
@@ -123,14 +119,7 @@ public class CalendarBean extends BaseViewBean {
     public String getFormHeader() {
         return getLabelFromBundle("CalendarWorkTime");
     }
-    
-    /**
-     * Обработка события создания нового дня
-     */
-    public void onCreateDay(){
-        onOpenDay();
-    }
-    
+      
     public void onOpenDay(){        
         sessionBean.openDialogFrm(DictFrmName.FRM_WORKTIME, getParamsMap());
     }
@@ -145,7 +134,7 @@ public class CalendarBean extends BaseViewBean {
 
         switch (action){
             case SysParams.EXIT_NEED_UPDATE:{
-                
+                workTimeService.update(selected);
                 modelRefresh();
                 break;
             }
@@ -153,25 +142,17 @@ public class CalendarBean extends BaseViewBean {
                 break;
             }
         }
-    }
-    
-    /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */
+    }    
     
     public void onEventSelect(SelectEvent selectEvent) {
         calendarDay = (CalendarDay) selectEvent.getObject();
         selected = calendarDay.getWtc();
         PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnOpen').click();");
-    }
-     
-    public void onDateSelect(SelectEvent selectEvent) {       
-        Date date = (Date) selectEvent.getObject();
-        selected = new WorkTimeCalendar(date, 8 * 3600, 8, "holliday");
-        calendarDay = new CalendarDay(selected);        
-        PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnCreate').click();");
-    }
+    }     
     
     public void modelRefresh(){
-        PrimeFaces.current().ajax().update("mainFRM");
+        eventModel.clear();
+        //PrimeFaces.current().ajax().update("mainFRM");
     }
     
     @Override

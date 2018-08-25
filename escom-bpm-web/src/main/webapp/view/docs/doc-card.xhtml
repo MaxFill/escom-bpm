@@ -85,7 +85,7 @@
                                              value="#{_item.regNumber}"/>
 
                                 <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                                 disabled="#{_bean.isReadOnly() or !_bean.canRegistred}"
+                                                 disabled="#{_bean.isReadOnly() or !docCardBean.canRegistred}"
                                                  actionListener="#{_bean.onGenerateRegNumber(_item)}"
                                                  update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
                                 <p:commandButton id="clearNumberBtn"

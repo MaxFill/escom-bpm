@@ -8,11 +8,8 @@
     <ui:param name="_bean" value="#{calendarBean}"/>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnCreate" style="display: none;" actionListener="#{calendarBean.onCreateDay()}">
-            <p:ajax event="dialogReturn" listener="#{calendarBean.onDlgClose}"/>
-        </p:commandButton>
         <p:commandButton id="btnOpen" style="display: none;" actionListener="#{calendarBean.onOpenDay()}">
-            <p:ajax event="dialogReturn" listener="#{calendarBean.onDlgClose}"/>
+            <p:ajax event="dialogReturn" listener="#{calendarBean.onDlgClose}" update="calendar"/>
         </p:commandButton>
     </ui:define>
 
@@ -39,12 +36,11 @@
             </h:panelGrid>
         </p:panelGrid>
 
-        <p:schedule id="calendar" value="#{calendarBean.eventModel}" ignoreTimezone="true"
-                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  aspectRatio="2.2"
+        <p:schedule id="calendar" value="#{calendarBean.eventModel}" clientTimeZone="#{calendarBean.getClientTimeZone()}"
+                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  aspectRatio="2.2" 
                     rightHeaderTemplate="" leftHeaderTemplate="" centerHeaderTemplate=""
                     draggable="false" displayEventEnd="true" 
                     locale="#{sessionBean.locale}" >
-            <p:ajax event="dateSelect" listener="#{calendarBean.onDateSelect}"  />
             <p:ajax event="eventSelect" listener="#{calendarBean.onEventSelect}"  />
         </p:schedule>  
 
@@ -56,8 +52,12 @@
                 background-color: yellow !important;
                 color: #000000 !important;                
             }
+            .workday {
+                background-color: wheat !important; 
+                font-weight: bold !important;
+            }
             .weekend {
-                background-color: skyblue !important; 
+                background-color: yellowgreen !important; 
                 font-weight: bold !important;
             }
             .hospital {

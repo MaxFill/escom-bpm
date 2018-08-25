@@ -44,6 +44,7 @@ public class Configuration {
     private String tempFolder;
     private String jasperReports;
     private String convertorPDF;
+    private String convertorTXT;
     private String pdfEncoding;
     private String pdfFont;
     private String fullSearcheConnect;
@@ -85,7 +86,8 @@ public class Configuration {
             serverId = Integer.valueOf((String) properties.get("SERVER_ID"));
             tempFolder = (String) properties.get("TEMP_FOLDER");
             jasperReports = (String) properties.get("JASPER_REPORTS");
-            convertorPDF = (String) properties.get("CONVERTOR_PDF");
+            convertorPDF = (String) properties.get("CONVERTOR_TO_PDF");
+            convertorTXT = (String) properties.get("CONVERTOR_TO_TXT");
             pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
             pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
             maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
@@ -106,6 +108,9 @@ public class Configuration {
         }
     }
 
+    public String getConvertorTXT() {
+        return convertorTXT;
+    }   
     public Integer getMaxFileSize() {
         return maxFileSize;
     }    

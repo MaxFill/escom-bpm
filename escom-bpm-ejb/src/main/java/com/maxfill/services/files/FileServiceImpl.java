@@ -59,7 +59,7 @@ public class FileServiceImpl implements FileService{
         try {
             String uploadPath = conf.getUploadPath();
             StringBuilder sb = new StringBuilder();
-            String fileName = attache.getName();
+            //String fileName = attache.getName();
             String fileExt = attache.getExtension();
             String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
             Path path = Paths.get(basePath);
@@ -169,7 +169,7 @@ public class FileServiceImpl implements FileService{
             commandLine.addArgument("-f");
             commandLine.addArgument("pdf");
             commandLine.addArgument(file);
-            //System.out.println("Command line = " + commandLine.toString());
+            System.out.println("PDFConvertor command line = " + commandLine.toString());
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
             executor.execute(commandLine);

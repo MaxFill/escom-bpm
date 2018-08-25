@@ -90,12 +90,12 @@ public class SearcheServiceImpl implements SearcheService {
 
     /* Изменение потнотекстового индекса */
     private void executeChangeIndex(Doc doc, String sql){
-        try (Connection connection = getFullTextSearcheConnection()) {
+        try (Connection connection = getFullTextSearcheConnection()) {            
             if(connection != null) {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
                     preparedStatement.setInt(1, doc.getId());
                     preparedStatement.setString(2, doc.getName());
-                    preparedStatement.setString(3, loadContentFromPDF(doc.getMainAttache()));
+                    preparedStatement.setString(3, loadContent(doc.getMainAttache()));
                     preparedStatement.setInt(4, doc.getId());
                     preparedStatement.execute();
                 }
@@ -105,27 +105,52 @@ public class SearcheServiceImpl implements SearcheService {
         }
     }
 
-    /* Получение текстового контента из файла pdf */
-    private String loadContentFromPDF(Attaches attache){
+    private String loadContent(Attaches attache){
         if (attache == null) return "";
-        String content = "";
+        
         StringBuilder sb = new StringBuilder();
-        String basePath = sb.append(conf.getUploadPath()).append(attache.getGuid()).toString();
-        String pdfFileName = basePath + ".pdf";
-        try {            
-            CommandLine commandLine = CommandLine.parse("pdftotxt.cmd");            
+        sb.append(conf.getUploadPath()).append(attache.getGuid()).append(".");
+        if ("txt".equals(attache.getExtension().toLowerCase())){
+            sb.append(attache.getExtension());            
+            return loadContentFromTXT(new File(sb.toString()));
+        } else {            
+            return loadContentFromPDF(sb.toString());
+        }
+    }
+    
+    private String loadContentFromTXT(File txtFile){
+        String content = "";
+        if (txtFile.exists()){
+            try {
+                    String path = txtFile.getPath();
+                    byte[] encoded = Files.readAllBytes(Paths.get(path));
+                    Charset encoding = StandardCharsets.UTF_8;
+                    content = new String(encoded, encoding);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        return content;
+    }
+    
+    /* Получение текстового контента из файла pdf */
+    private String loadContentFromPDF(String basePath){
+        String convertTXT = conf.getConvertorTXT();
+        if (StringUtils.isEmpty(convertTXT)) return "";
+        
+        String content = "";        
+        String pdfFileName = basePath + "pdf";
+        String txtFileName = basePath + "txt";
+        
+        try {
+            CommandLine commandLine = CommandLine.parse(convertTXT);
             commandLine.addArgument(pdfFileName);
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
-            executor.execute(commandLine);    
-            String txtFileName = basePath + ".txt";
-            File txtFile = new File(txtFileName);
-            if (txtFile.exists()){
-                byte[] encoded = Files.readAllBytes(Paths.get(txtFileName));
-                Charset encoding = StandardCharsets.UTF_8;
-                content = new String(encoded, encoding);
-                txtFile.delete();                
-            }            
+            executor.execute(commandLine);          //создан временный файл txt    
+            File txtFile = new File(txtFileName);   
+            content = loadContentFromTXT(txtFile);
+            txtFile.delete();                       //удалён временный файл
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -136,7 +161,7 @@ public class SearcheServiceImpl implements SearcheService {
     public Connection getFullTextSearcheConnection() throws SQLException {
         if (StringUtils.isBlank(conf.getFullSearcheConnect())) return null;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             return DriverManager.getConnection(conf.getFullSearcheConnect(), "", "");
         } catch (ClassNotFoundException ex) {
             System.out.println("JDBC Driver not found!");

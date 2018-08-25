@@ -469,6 +469,8 @@ public class DocCardBean extends BaseCardBean<Doc>{
     /* Определяет доступность кнопки регистрации документа */
     public boolean isCanRegistred(){
        Doc doc = getEditedItem();
+       if (doc == null) return false;
+       
        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
     }
     
@@ -508,6 +510,11 @@ public class DocCardBean extends BaseCardBean<Doc>{
     }
     
     /* GETS & SETS */
+
+    @Override
+    public Doc getEditedItem() {
+        return super.getEditedItem(); 
+    }    
     
     public Doc getLinkedDoc() {
         return linkedDoc;

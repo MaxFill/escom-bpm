@@ -2,6 +2,7 @@ package com.maxfill.services.worktime;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
@@ -17,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -58,13 +60,20 @@ public class WorkTimeCalendar implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Staff staff;        //штатная единица, для которой задано исключение
         
+    @Transient    
+    private Boolean standart = false;
+    @Transient
+    protected String uid;
+    
     public WorkTimeCalendar() {
+        this.uid = EscomUtils.generateGUID();
     }
 
     public WorkTimeCalendar(Date date, Integer workTime, String dayType) {
         this.date = date;
         this.workTime = workTime;
         this.dayType = dayType;
+        this.uid = EscomUtils.generateGUID();
     }     
     
     public WorkTimeCalendar(Date date, Integer beginTime, Integer workTime, String dayType) {
@@ -72,6 +81,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.workTime = workTime;
         this.dayType = dayType;
         this.beginTime = beginTime;
+        this.uid = EscomUtils.generateGUID();
     }     
      
     public boolean isWorkDay(){
@@ -109,6 +119,13 @@ public class WorkTimeCalendar implements Serializable, Dict{
     
     /* GETS & SETS */
 
+    public Boolean getStandart() {
+        return standart;
+    }
+    public void setStandart(Boolean standart) {
+        this.standart = standart;
+    }
+    
     @Override
     public Integer getId() {
         return id;
@@ -157,8 +174,9 @@ public class WorkTimeCalendar implements Serializable, Dict{
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.id);
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.id);
+        hash = 89 * hash + Objects.hashCode(this.uid);
         return hash;
     }
 
@@ -174,6 +192,9 @@ public class WorkTimeCalendar implements Serializable, Dict{
             return false;
         }
         final WorkTimeCalendar other = (WorkTimeCalendar) obj;
+        if (!Objects.equals(this.uid, other.uid)) {
+            return false;
+        }
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }

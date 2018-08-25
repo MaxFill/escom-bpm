@@ -59,17 +59,22 @@ public class WorkTimeImpl implements WorkTimeService{
         if (staff != null){
             List<WorkTimeCalendar> dates = workTimeFacade.findDateByStaff(date, staff);
             if (!dates.isEmpty()){
-                return dates.get(0);
+                WorkTimeCalendar wtc = dates.get(0);
+                wtc.setStandart(Boolean.FALSE);
+                return wtc;
             }
         }
         //раз нет, то ищем вообще исключение
         List<WorkTimeCalendar> dates = workTimeFacade.findDate(date);
         if (!dates.isEmpty()){
-            return dates.get(0);
+            WorkTimeCalendar wtc = dates.get(0);
+            wtc.setStandart(Boolean.FALSE);
+            return wtc;
         }
         //раз нет исключений, то формируем дату по дефолту
         WorkTimeCalendar wtc = new WorkTimeCalendar();        
         wtc.setStaff(staff);
+        wtc.setStandart(Boolean.TRUE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -79,8 +84,7 @@ public class WorkTimeImpl implements WorkTimeService{
         wtc.setDate(calendar.getTime());
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
             wtc.setWeekEnd();
-            wtc.setWorkTime(0);
-            wtc.setBeginTime(0);
+            makeDefaultWorkTime(wtc, staff, company);
         } else {
             wtc.setWorkDay();
             makeDefaultWorkTime(wtc, staff, company);
@@ -140,5 +144,26 @@ public class WorkTimeImpl implements WorkTimeService{
     public boolean isWorkday(Date date, Staff staff, Company company){
         WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
         return wtc.isWorkDay();
+    }
+
+    /**
+     * Обновление информации о событии в календаре рабочего времени
+     * @param wtc 
+     */
+    @Override
+    public void update(WorkTimeCalendar wtc) {
+        if (wtc.getStandart() && wtc.getId() == null) return;
+        
+        if (!wtc.getStandart()){ //если день не стандартный
+            if (wtc.getId() == null){ //если записи нет в базе, то создаём запись
+                workTimeFacade.create(wtc);                
+            } else {    
+                workTimeFacade.edit(wtc);                
+            }
+        } else { //если день стандартный
+            if (wtc.getId() != null){
+                workTimeFacade.remove(wtc); //то удаляем запись из базы
+            }
+        }
     }
 }

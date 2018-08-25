@@ -97,9 +97,10 @@
                         <p:outputLabel value="#{bundle.Attention}" />
                         <h:outputLabel value="#{msg.ComputerMastConnectToInternet}" />
                         <p:spacer/>
-                        <p:commandButton id="btnLogin" value="#{bundle.Activate}" title="#{bundle.ActivateLicense}"
+                        <p:commandButton id="btnLogin" value="#{bundle.Activate}" title="#{bundle.ActivateLicense}" widgetVar="wvBtnLogin"
                                          actionListener="#{activateAppBean.onActivate()}"
                                          update="activateFRM"
+                                         onclick="PF('wvBtnLogin').disable();"
                                          onstart="PF('statusDialog').show();"
                                          oncomplete="PF('statusDialog').hide();"/>
                     </p:panelGrid>

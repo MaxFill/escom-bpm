@@ -12,7 +12,9 @@ sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
 2. Копируем файл командой:
 sudo scp /home/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
 
-/* sudo scp /home/maksim/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
+/* sudo scp /opt/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
+/* docker cp /home/docker/escom-info/datastore/EscomServices-1.0.war escom-info-wildfly:/opt/wildfly/standalone/deployments/
+
 3. Проверяем, что файл скопировался
 4. Заходим на стенде в папку cd /home/compose/wildfly8443 
 ЕСЛИ МЕНЯЛАСЬ БАЗА БЕЗ ЛИКВИБАСЕ, то

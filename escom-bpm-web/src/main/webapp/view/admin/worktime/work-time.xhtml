@@ -16,12 +16,12 @@
         </span>
     </ui:define> 
     
-    <ui:define name="centerFormContent">        
+    <ui:define name="centerFormContent">
         <p:panelGrid id="gridWorkTime" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-            <p:selectBooleanCheckbox value="#{_bean.inheritsWorkTime}"
+            <p:selectBooleanCheckbox value="#{workTimeCardBean.editedItem.standart}"
                                      itemLabel="#{bundle.StandardWorkingTime}"
                                      disabled="#{_bean.readOnly}">
-                <p:ajax update="pnWorkTime" process="@this" oncomplete="itemChange = 1;"/>
+                <p:ajax update="gridWorkTime" process="@this" oncomplete="itemChange = 1;"/>
             </p:selectBooleanCheckbox>
 
             <p:outputLabel value="#{bundle.Type}:" indicateRequired="true"/>
@@ -33,7 +33,7 @@
             </p:selectOneRadio>
 
             <ui:include src="/view/common/work-time.xhtml">
-                <ui:param name="_readOnly" value="#{_bean.readOnly or _bean.inheritsWorkTime or _bean.editedItem.dayType ne 'workday' }"/>
+                <ui:param name="_readOnly" value="#{_bean.readOnly or _bean.editedItem.standart or _bean.editedItem.dayType ne 'workday' }"/>
             </ui:include>
         </p:panelGrid>
     </ui:define>
