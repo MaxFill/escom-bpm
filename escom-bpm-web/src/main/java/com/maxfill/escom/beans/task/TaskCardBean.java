@@ -386,7 +386,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         task.setDeltaDeadLine(seconds);
-        taskFacade.makeDatePlan(task);
+        taskFacade.makeDatePlan(task, sessionBean.getLocale());
         String strDate = DateUtils.dateToString(task.getPlanExecDate(),  DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale());
         MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
     }
@@ -413,9 +413,12 @@ public class TaskCardBean extends BaseCardBean<Task>{
         Date newValue = (Date) event.getNewValue();
         Staff staff = getEditedItem().getOwner();
         Company company = staffFacade.findCompanyForStaff(staff);
+        //TODO нужно починить
+        /*
         if (staff != null && workTimeService.isHolliday(newValue, staff, company)){
             MsgUtils.warnMsg("SelectedDateIsWeekend");
         }
+        */
     }
     
     /* GETS & SETS */

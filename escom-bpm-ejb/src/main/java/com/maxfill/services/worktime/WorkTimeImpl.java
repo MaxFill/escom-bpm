@@ -3,12 +3,15 @@ package com.maxfill.services.worktime;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.StaffFacade;
+import com.maxfill.utils.DateUtils;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Обеспечивает вычисление дат с учётом рабочего времени и производственного календаря
@@ -27,13 +30,14 @@ public class WorkTimeImpl implements WorkTimeService{
      * @param date
      * @param deltasec
      * @param staff
+     * @param locale
      * @return 
      */
     @Override
-    public Date calcWorkDay(Date date, Integer deltasec, Staff staff){        
+    public Date calcWorkDay(Date date, Integer deltasec, Staff staff, Locale locale){        
         Company company = staffFacade.findCompanyForStaff(staff);
         while(deltasec >= 0){
-            WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
+            WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company, locale);
             if (wtc.isWorkDay()){
                 Integer duration = wtc.getWorkTime() * 3600;
                 if (deltasec <= duration){
@@ -54,22 +58,20 @@ public class WorkTimeImpl implements WorkTimeService{
     }
     
     @Override
-    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company){
+    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company, Locale locale){
+        DateFormat df = new SimpleDateFormat("MM/dd/yy");
+        String dts = df.format(date);
         //сначала ищем исключения для конкретной штед
-        if (staff != null){
-            List<WorkTimeCalendar> dates = workTimeFacade.findDateByStaff(date, staff);
-            if (!dates.isEmpty()){
-                WorkTimeCalendar wtc = dates.get(0);
-                wtc.setStandart(Boolean.FALSE);
-                return wtc;
+        if (staff != null){                         
+            List<WorkTimeCalendar> dates = workTimeFacade.findDateByStaff(dts, staff);
+            if (!dates.isEmpty()){               
+                return prepareWtc(dates);
             }
         }
-        //раз нет, то ищем вообще исключение
-        List<WorkTimeCalendar> dates = workTimeFacade.findDate(date);
-        if (!dates.isEmpty()){
-            WorkTimeCalendar wtc = dates.get(0);
-            wtc.setStandart(Boolean.FALSE);
-            return wtc;
+        //раз нет, то ищем вообще исключение        
+        List<WorkTimeCalendar> dates = workTimeFacade.findDate(dts);        
+        if (!dates.isEmpty()){            
+            return prepareWtc(dates);
         }
         //раз нет исключений, то формируем дату по дефолту
         WorkTimeCalendar wtc = new WorkTimeCalendar();        
@@ -81,14 +83,22 @@ public class WorkTimeImpl implements WorkTimeService{
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        wtc.setDate(calendar.getTime());
+        Date clear = calendar.getTime();
+        wtc.setDate(clear);
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
             wtc.setWeekEnd();
-            makeDefaultWorkTime(wtc, staff, company);
+            wtc.setWorkTime(10);
+            wtc.setBeginTime(0);
         } else {
             wtc.setWorkDay();
             makeDefaultWorkTime(wtc, staff, company);
         }
+        return wtc;
+    }
+    
+    private WorkTimeCalendar prepareWtc(List<WorkTimeCalendar> wtcs){
+        WorkTimeCalendar wtc = wtcs.get(0);
+        wtc.setStandart(Boolean.FALSE);
         return wtc;
     }
     
@@ -132,19 +142,7 @@ public class WorkTimeImpl implements WorkTimeService{
     @Override
     public Date getFinishDate(Date dateBegin, int minute) {
         return dateBegin;
-    }
-    
-    @Override
-    public boolean isHolliday(Date date, Staff staff, Company company){
-        WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
-        return wtc.isHolliDay();
-    }
-    
-    @Override
-    public boolean isWorkday(Date date, Staff staff, Company company){
-        WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
-        return wtc.isWorkDay();
-    }
+    }        
 
     /**
      * Обновление информации о событии в календаре рабочего времени

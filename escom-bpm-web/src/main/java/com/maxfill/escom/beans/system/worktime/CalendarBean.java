@@ -8,10 +8,12 @@ import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.services.worktime.WorkTimeCalendar;
 import com.maxfill.services.worktime.WorkTimeFacade;
 import com.maxfill.services.worktime.WorkTimeService;
+import com.maxfill.utils.DateUtils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
@@ -44,53 +46,35 @@ public class CalendarBean extends BaseViewBean {
     private final Calendar current = Calendar.getInstance();
     
     private Date dtStart;
-    private Date dtEnd;
     
-    private final LazyScheduleModel eventModel = new LazyScheduleModel() {
-        private static final long serialVersionUID = 1297279688835547588L;
-            @Override
-            public void loadEvents(Date start, Date end) {
-                makeStartEndDates();
-                Calendar calStart = new GregorianCalendar();
-                calStart.setTime(dtStart);
-                System.out.println(" Start Date: " + calStart.get(Calendar.YEAR) + "-" +
-                                   calStart.get(Calendar.MONTH) + "-" +
-                                   calStart.get(Calendar.DAY_OF_MONTH));
-                Calendar calEnd = new GregorianCalendar();
-                calEnd.setTime(dtEnd);
-                System.out.println(" End Date: " + calEnd.get(Calendar.YEAR) + "-" +
-                                   calEnd.get(Calendar.MONTH) + "-" +
-                                   calEnd.get(Calendar.DAY_OF_MONTH));
-                prepareEvents();
-	    }
-    };
+    private LazyScheduleModel eventModel;
     
-    private final TimeZone utc=TimeZone.getTimeZone("UTC");
-    private final String tzname = utc.getID();
+    private final TimeZone timeZone = TimeZone.getDefault();
+    private final String tzname = timeZone.getID();
     
     @Override
     protected void initBean(){        
-        company = companyFacade.findAll().get(0);                
+        company = companyFacade.findAll().get(0);  
+        makeStartEndDates();
     }
   
     private void prepareEvents(){
         int days = current.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = (Calendar)current.clone();
+        Locale locale = sessionBean.getLocale();
         while(days > 0){            
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), days, 0, 0, 0);
             Date date = calendar.getTime();
-            selected = workTimeService.getWorkTimeDate(date, null, company);            
-            eventModel.addEvent(new CalendarDay(selected));
+            selected = workTimeService.getWorkTimeDate(date, null, company, locale);            
+            eventModel.addEvent(new CalendarDay(selected, timeZone.toZoneId(), locale));
             days--;
         }
     }
     
-    private void makeStartEndDates(){
+    private void makeStartEndDates(){        
         Calendar calendar = (Calendar)current.clone();        
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
         dtStart = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        dtEnd = calendar.getTime();
     }
     
     public void onChangeMonth(String type) {
@@ -133,7 +117,7 @@ public class CalendarBean extends BaseViewBean {
         String action = (String) event.getObject();
 
         switch (action){
-            case SysParams.EXIT_NEED_UPDATE:{
+            case SysParams.EXIT_NEED_UPDATE:{                
                 workTimeService.update(selected);
                 modelRefresh();
                 break;
@@ -151,8 +135,8 @@ public class CalendarBean extends BaseViewBean {
     }     
     
     public void modelRefresh(){
-        eventModel.clear();
-        //PrimeFaces.current().ajax().update("mainFRM");
+        eventModel = null;
+        makeStartEndDates();
     }
     
     @Override
@@ -174,9 +158,22 @@ public class CalendarBean extends BaseViewBean {
     }
     
     public ScheduleModel getEventModel() {
+        if (eventModel== null){
+            eventModel = new LazyScheduleModel() {
+                private static final long serialVersionUID = 1297279688835547588L;
+                @Override
+                public void loadEvents(Date start, Date end) {
+                    prepareEvents();
+                }
+            };
+        }
         return eventModel;
     }
 
+    public Date getDtStart() {
+        return dtStart;
+    }
+    
     public WorkTimeCalendar getSelected() {
         return selected;
     }

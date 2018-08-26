@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.system.worktime;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.services.worktime.WorkTimeCalendar;
@@ -33,7 +34,7 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
             if (sourceBean != null){                
                 sourceItem = ((CalendarBean)sourceBean).getSelected();
                 Integer time = sourceItem.getBeginTime(); //время в секундах
-                beginTime = new Date(time * 1000);                
+                beginTime = new Date(time);
                 beginTime = DateUtils.convertHourFromUTCToLocalTimeZone(beginTime);                 
             }
             if (sourceItem != null){
@@ -57,7 +58,7 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return super.onCloseCard(SysParams.EXIT_NEED_UPDATE);
     }
     
     /* GETS & SETS */    
@@ -96,7 +97,6 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
     }
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
-    }
-       
+    }       
     
 }

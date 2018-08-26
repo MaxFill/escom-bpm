@@ -36,8 +36,8 @@
             </h:panelGrid>
         </p:panelGrid>
 
-        <p:schedule id="calendar" value="#{calendarBean.eventModel}" clientTimeZone="#{calendarBean.getClientTimeZone()}"
-                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  aspectRatio="2.2" 
+        <p:schedule id="calendar" value="#{calendarBean.eventModel}" initialDate="#{calendarBean.dtStart}"
+                    timeFormat="HH:mm" axisFormat="HH" tooltip="true" resizable="true"  aspectRatio="2.0" 
                     rightHeaderTemplate="" leftHeaderTemplate="" centerHeaderTemplate=""
                     draggable="false" displayEventEnd="true" 
                     locale="#{sessionBean.locale}" >
@@ -48,21 +48,21 @@
 
     <ui:define name="customStyleCSS">
         <style>
-            .holliday {
+            .Hollyday {
                 background-color: yellow !important;
-                color: #000000 !important;                
+                color: red !important;                
             }
-            .workday {
-                background-color: wheat !important; 
-                font-weight: bold !important;
+            .Workday {
+                background-color: white !important; 
+                color: #000000 !important;
             }
-            .weekend {
-                background-color: yellowgreen !important; 
-                font-weight: bold !important;
+            .Weekend {
+                background-color: lightgray !important; 
+                color: red !important;
             }
-            .hospital {
-                background-color: magenta !important; 
-                font-style: italic !important;
+            .Hospital {
+                background-color: beige !important; 
+                color: red !important;
             }
             .fc-toolbar {
                 display: none !important;

@@ -2,9 +2,13 @@ package com.maxfill.services.worktime;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,11 +20,7 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import org.apache.commons.lang3.time.DateUtils;
 
 /**
  * Сущность для хранения дат - исключений: как не рабочих, так и рабочих (если перенос), а так же сокращённых дней
@@ -40,9 +40,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
     
     @Basic(optional = false)
     @Column(name = "DateCalendar")
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotNull
-    private Date date;
+    private String dateCalendar;
     
     @Basic(optional = false)
     @Column(name = "WorkTime")
@@ -63,21 +61,21 @@ public class WorkTimeCalendar implements Serializable, Dict{
     @Transient    
     private Boolean standart = false;
     @Transient
-    protected String uid;
+    private final String uid;
     
     public WorkTimeCalendar() {
         this.uid = EscomUtils.generateGUID();
     }
 
-    public WorkTimeCalendar(Date date, Integer workTime, String dayType) {
-        this.date = date;
+    public WorkTimeCalendar(String date, Integer workTime, String dayType) {
+        this.dateCalendar = date;
         this.workTime = workTime;
         this.dayType = dayType;
         this.uid = EscomUtils.generateGUID();
     }     
     
-    public WorkTimeCalendar(Date date, Integer beginTime, Integer workTime, String dayType) {
-        this.date = date;
+    public WorkTimeCalendar(String date, Integer beginTime, Integer workTime, String dayType) {
+        this.dateCalendar = date;
         this.workTime = workTime;
         this.dayType = dayType;
         this.beginTime = beginTime;
@@ -85,36 +83,49 @@ public class WorkTimeCalendar implements Serializable, Dict{
     }     
      
     public boolean isWorkDay(){
-        return "workday".equals(dayType);
+        return "Workday".equals(dayType);
     }    
     public boolean isHolliDay(){
-        return "hollyday".equals(dayType);
+        return "Hollyday".equals(dayType);
     }
     public boolean isWeekEnd(){
-        return "weekend".equals(dayType);
+        return "Weekend".equals(dayType);
     }
     
     public void setHolliDay(){
-        dayType = "hollyday";
+        dayType = "Hollyday";
     }
     public void setWeekEnd(){
-        dayType = "weekend";
+        dayType = "Weekend";
     }
     public void setWorkDay(){
-        dayType = "workday";
+        dayType = "Workday";
     }
     
     public String getStyle(){
         return dayType;
-    }
-    
+    }    
+     
+    @Transient
     public Date getStart(){
-        return DateUtils.addMilliseconds(date, beginTime);
+        Date dt = getDate();
+        return DateUtils.addMilliseconds(dt, beginTime);
+    }
+    @Transient
+    public Date getEnd(){
+        Date dt = getDate();
+        Integer endTime = beginTime + workTime * 3600 * 1000;
+        return DateUtils.addMilliseconds(dt, endTime);
     }
     
-    public Date getEnd(){
-        Integer endTime = beginTime + workTime * 3600 * 1000;
-        return DateUtils.addMilliseconds(date, endTime);
+    @Transient
+    public Date getDate(){        
+        return DateUtils.convertStrToDate(dateCalendar, "MM/dd/yy");
+    }
+    @Transient
+    public void setDate(Date date){
+        DateFormat df = new SimpleDateFormat("MM/dd/yy");
+        this.dateCalendar = df.format(date);        
     }
     
     /* GETS & SETS */
@@ -135,11 +146,11 @@ public class WorkTimeCalendar implements Serializable, Dict{
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDateCalendar() {
+        return dateCalendar;
     }
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDateCalendar(String dateCalendar) {
+        this.dateCalendar = dateCalendar;
     }
 
     public Integer getWorkTime() {

@@ -42,8 +42,20 @@ public final class DateUtils {
     }
 
     /* Конвертация строки в дату */
-    public static Date convertStrToDate(String dateStr, Locale locale){        
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", locale);
+    public static Date convertStrToDate(String dateStr, String formatStr){
+        DateFormat format = new SimpleDateFormat(formatStr);
+        Date date = null;
+        try {
+            date = format.parse(dateStr);
+        } catch (ParseException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return date;
+    }
+    
+    /* Конвертация строки в дату */
+    public static Date convertStrToDate(String dateStr, String formatStr, Locale locale){           
+        DateFormat format = new SimpleDateFormat(formatStr, locale);
         Date date = null;
         try {
             date = format.parse(dateStr);
@@ -158,6 +170,14 @@ public final class DateUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.SECOND, seconds); 
+        return cal.getTime();
+    }
+    
+    /* Добавление к дате указанного числа милисекунд */
+    public static Date addMilliseconds(Date date, int miliseconds) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MILLISECOND, miliseconds); 
         return cal.getTime();
     }
     

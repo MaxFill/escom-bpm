@@ -101,8 +101,10 @@
                                 <p:graphicImage value="/resources/icon/table_active-32.png"/>
                                 <p:link href="#{sessionBean.onGetFormURL('/admin/users/'.concat(DictFrmName.FRM_USER_SESSIONS))}" value="#{bundle.Sessions}" target="_blank" />
                                 
-                                <p:graphicImage value="/resources/icon/timer-32.png"/>                                 
-                                <p:link href="#{sessionBean.onGetFormURL('/admin/worktime/'.concat(DictFrmName.FRM_CALENDAR))}" value="#{bundle.WorkTime}" target="_blank" />
+                                <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
+                                <p:link href="#{sessionBean.onGetFormURL('/admin/worktime/'.concat(DictFrmName.FRM_CALENDAR))}" 
+                                        rendered="#{applicationBean.isCanUsesTasks()}"
+                                        value="#{bundle.WorkTime}" target="_blank" />
                             </p:panelGrid>
                             
                             <p:separator/>
@@ -201,8 +203,10 @@
                     <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/timer-32.png"/>                                 
-                                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" value="#{bundle.Scheduler}" target="_blank" />
+                                <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
+                                <p:link href="#{sessionBean.onGetFormURL('/tasks/'.concat(DictFrmName.FRM_SCHEDULER))}" 
+                                        rendered="#{applicationBean.isCanUsesTasks()}"
+                                        value="#{bundle.Scheduler}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>  
                                 <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}" ignoreAutoUpdate="true" immediate="true" partialSubmit="true"
@@ -289,7 +293,7 @@
                         </p:panelGrid>                        
                     </p:panel>
 
-                    <p:panel id="dictsExplorer" header="#{bundle.Partners}" rendered="#{applicationBean.isCanUsesPartners()}"  toggleable="true" styleClass="dash-panel">
+                    <p:panel id="dictsExplorer" header="#{bundle.Partners}" rendered="#{applicationBean.isCanUsesPartners()}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgPartners" value="/resources/icon/book-32.png"/>

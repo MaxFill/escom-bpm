@@ -41,11 +41,15 @@
     </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>008</param-value>
+        <param-value>009</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-08-21</param-value>
+        <param-value>2018-08-26</param-value>
+    </context-param>  
+    <context-param>
+        <param-name>UseModeshape</param-name>
+        <param-value>false</param-value>
     </context-param>  
               
     <filter>

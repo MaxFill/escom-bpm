@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import javax.ejb.EJB;
 
 import javax.ejb.Stateless;
@@ -89,10 +90,10 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      * Формирование даты планового срока исполнения. Учитывается рабочее время
      * @param task 
      */
-    public void makeDatePlan(Task task){
+    public void makeDatePlan(Task task, Locale locale){
         Integer deltasec = task.getDeltaDeadLine();
         Date startDate = task.getBeginDate();
-        Date planExecDate = workTimeService.calcWorkDay(startDate, deltasec, task.getOwner());
+        Date planExecDate = workTimeService.calcWorkDay(startDate, deltasec, task.getOwner(), locale);
         task.setPlanExecDate(planExecDate);
     }
             

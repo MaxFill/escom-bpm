@@ -9,5 +9,6 @@ public final class DictModules{
     public static final String MODULE_CONTRACTS = "contracts";
     public static final String MODULE_PARTNERS = "partners";
     public static final String MODULE_STAFFS = "staffs";
+    public static final String MODULE_TASKS = "tasks";
 
 }

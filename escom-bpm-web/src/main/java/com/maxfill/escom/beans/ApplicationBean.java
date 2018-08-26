@@ -42,6 +42,8 @@ public class ApplicationBean implements Serializable{
     public static final String WSS_INFO_URL = "wss://escom-demo.ru:9443/EscomServices-1.0/release_info";
 
     private boolean needUpadateSystem;
+    private boolean useModeshape;
+    
     private Licence licence = null;
     private String appName;
     private final Release release = new Release();
@@ -67,7 +69,8 @@ public class ApplicationBean implements Serializable{
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         release.setVersionNumber(ec.getInitParameter("VersionNumber"));
         release.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));
-        release.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), locale));
+        release.setReleaseDate(DateUtils.convertStrToDate(ec.getInitParameter("ReleaseDate"), "yyyy-MM-dd", locale));
+        useModeshape = Boolean.valueOf(ec.getInitParameter("UseModeshape"));
         initLicense();
     }
 
@@ -161,7 +164,7 @@ public class ApplicationBean implements Serializable{
         String number = releaseInfoMap.get("number");
         String page = releaseInfoMap.get("page");
         String dateStr = releaseInfoMap.get("date");
-        Date date = DateUtils.convertStrToDate(dateStr, locale);
+        Date date = DateUtils.convertStrToDate(dateStr, "yyyy-MM-dd", locale);
         updateActualReleaseData(version, number, page, date);
     }
     public synchronized void updateActualReleaseData(String releaseVersion, String releaseNumber, String releasePage, Date releaseDate){
@@ -247,9 +250,16 @@ public class ApplicationBean implements Serializable{
     public boolean isCanUsesDelo(){
         return licence.isCanUses(DictModules.MODULE_DELO);
     }
+    public boolean isCanUsesTasks(){
+        return licence.isCanUses(DictModules.MODULE_TASKS);
+    }
     
     /* GETS & SETS */
-    
+
+    public boolean isUseModeshape() {
+        return useModeshape;
+    }
+        
     public boolean getNeedUpadateSystem() {
         return needUpadateSystem;
     }

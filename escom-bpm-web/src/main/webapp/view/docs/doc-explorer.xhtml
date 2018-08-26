@@ -82,8 +82,9 @@
             </p:panelGrid>
         </h:panelGroup>
         
-        <p:outputLabel value="#{bundle.Partner}:"/>
+        <p:outputLabel value="#{bundle.Partner}:" rendered="#{applicationBean.isCanUsesPartners()}"/>
         <p:selectOneMenu value="#{_bean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
+                         rendered="#{applicationBean.isCanUsesPartners()}"
                         widgetVar="partnerSearche"
                         styleClass="ui-grid-col-12">
                 <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
@@ -154,7 +155,7 @@
         <p:menuitem icon="ui-icon-pencil" value="#{docBean.docIsLock(item) ? bundle.UnLock : bundle.EditVersion}" 
                     actionListener="#{_bean.onSetCurrentItem(item)}"
                     disabled="#{item.mainAttache == null}"
-                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                    rendered="#{item.getClass().getSimpleName() == 'Doc' and applicationBean.useModeshape}"
                     oncomplete="document.getElementById('mainFRM:editDocument').click();"/>
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"

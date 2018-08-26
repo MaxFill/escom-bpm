@@ -91,7 +91,7 @@
                         <p:splitButton  value="#{bundle.View}" title="#{bundle.Commands}" 
                                         actionListener="#{docBean.onViewAttache(attache)}">
                             <p:menuitem icon="ui-icon-pencil" value="#{bundle.EditFile}"
-                                        rendered="#{attache.id != null}"
+                                        rendered="#{attache.id != null and applicationBean.useModeshape}"
                                         actionListener="#{_bean.onSetSelectedAttache(attache)}"
                                         oncomplete="document.getElementById('mainFRM:setLockBtn').click();"/>
                             <p:menuitem icon="ui-icon-arrowthickstop-1-s" title="#{bundle.Download}" value="#{bundle.Download}"
