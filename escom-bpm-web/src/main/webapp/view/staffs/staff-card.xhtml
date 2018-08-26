@@ -64,7 +64,7 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.WorkTime}">     
+        <p:tab title="#{bundle.WorkTime}" rendered="#{applicationBean.isCanUsesTasks()}">     
             <p:panelGrid id="gridWorkTime" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >  
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.inheritsWorkTime}"
                                          itemLabel="#{bundle.StandardWorkingTime}"

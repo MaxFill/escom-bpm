@@ -87,7 +87,7 @@ public class WorkTimeImpl implements WorkTimeService{
         wtc.setDate(clear);
         if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
             wtc.setWeekEnd();
-            wtc.setWorkTime(10);
+            wtc.setWorkTime(24);
             wtc.setBeginTime(0);
         } else {
             wtc.setWorkDay();

@@ -10,7 +10,7 @@ sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
 Обновление EAR
 1. Заходим на стенд и удаляем файл /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear
 2. Копируем файл командой:
-sudo scp /home/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
+sudo scp /opt/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
 
 /* sudo scp /opt/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
 /* docker cp /home/docker/escom-info/datastore/EscomServices-1.0.war escom-info-wildfly:/opt/wildfly/standalone/deployments/

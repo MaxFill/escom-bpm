@@ -41,7 +41,7 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.WorkTime}">             
+        <p:tab title="#{bundle.WorkTime}" rendered="#{applicationBean.isCanUsesTasks()}">             
             <ui:include src="/view/common/work-time.xhtml"/>
         </p:tab>
     </ui:define>
