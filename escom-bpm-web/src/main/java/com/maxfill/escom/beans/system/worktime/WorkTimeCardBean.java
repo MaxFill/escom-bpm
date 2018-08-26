@@ -50,10 +50,15 @@ public class WorkTimeCardBean extends BaseViewBean<BaseView>{
 
     @Override
     public String onCloseCard(Object param){
-        try {
-            beginTime = DateUtils.convertHourToUTCTimeZone(beginTime);
-            Long time = beginTime.getTime();
-            editedItem.setBeginTime(time.intValue());
+        try {                        
+            if (!editedItem.getStandart() && !editedItem.isWorkDay()){
+                editedItem.setWorkTime(0);
+                editedItem.setBeginTime(0);
+            } else {
+                beginTime = DateUtils.convertHourToUTCTimeZone(beginTime);
+                Long time = beginTime.getTime();
+                editedItem.setBeginTime(time.intValue());    
+            }            
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
