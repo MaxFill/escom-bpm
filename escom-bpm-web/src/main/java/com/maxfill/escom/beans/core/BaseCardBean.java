@@ -323,7 +323,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
     
     /* ПЕЧАТЬ: Подготовка параметров отчёта */
-    private Map<String, Object> prepareReportParams(){
+    protected Map<String, Object> prepareReportParams(){
         Map<String, Object> parameters = new HashMap<>();        
         parameters.put("BARCODE", getBarCode(editedItem));
         parameters.put("USER_LOGIN", getCurrentUser().getLogin());

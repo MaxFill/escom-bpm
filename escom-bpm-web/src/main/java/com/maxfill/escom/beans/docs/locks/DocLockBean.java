@@ -42,9 +42,9 @@ public class DocLockBean extends BaseViewBean<BaseView>{
     @Override
     protected void initBean() {
         Date maxDate = DateUtils.addDays(new Date(), 10); 
-        maxLockDate = DateUtils.dateToString(maxDate, DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale());
+        maxLockDate = DateUtils.dateToString(maxDate, DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
         Date minDate = DateUtils.addMinute(new Date(), 10);
-        minLockDate = DateUtils.dateToString(minDate, DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale()); 
+        minLockDate = DateUtils.dateToString(minDate, DateFormat.SHORT, DateFormat.MEDIUM, getLocale()); 
     }
 
     @Override

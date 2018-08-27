@@ -311,10 +311,12 @@ public class SessionBean implements Serializable{
     
     /* Завершение сессии пользователя  */           
     private void doSessionExit(String page) {
-        doSaveUserSettings();
-        appBean.clearUserLock(currentUser);
-        HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        authLogFacade.addAuthExit(currentUser.getLogin(), request);
+        HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();        
+        if (currentUser != null) {
+            doSaveUserSettings();
+            appBean.clearUserLock(currentUser);
+            authLogFacade.addAuthExit(currentUser.getLogin(), request);
+        }        
         redirectToPage(page, Boolean.TRUE);
     }  
     

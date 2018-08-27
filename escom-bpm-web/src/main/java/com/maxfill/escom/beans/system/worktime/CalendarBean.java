@@ -61,7 +61,7 @@ public class CalendarBean extends BaseViewBean {
     private void prepareEvents(){
         int days = current.getActualMaximum(Calendar.DAY_OF_MONTH);
         Calendar calendar = (Calendar)current.clone();
-        Locale locale = sessionBean.getLocale();
+        Locale locale = getLocale();
         while(days > 0){            
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), days, 0, 0, 0);
             Date date = calendar.getTime();

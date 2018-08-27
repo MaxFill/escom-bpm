@@ -10,12 +10,16 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.process.Process;
+import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.ItemUtils;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -216,14 +220,22 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
         StringBuilder builder = new StringBuilder();
         if (docType != null && StringUtils.isNotBlank(docType.getName())){
             builder.append(docType.getName()).append(" '");
-        }
-        if (StringUtils.isNotBlank(regNumber)){
-            builder.append(regNumber);
         }    
         builder.append(getNameEndElipse()).append("' ");
         return builder.toString();
     }    
-     
+    
+    public String getRegInfo(Locale locale){
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(regNumber)){
+            sb.append(ItemUtils.getBandleLabel("NumberShort", locale)).append(" ").append(regNumber);
+        } 
+        if (dateDoc != null){
+            sb.append(" ").append(DateUtils.dateToString(dateDoc, DateFormat.SHORT, null, locale));
+        }
+        return sb.toString();
+    }
+    
     public Partner getPartner() {
         return partner;
     }

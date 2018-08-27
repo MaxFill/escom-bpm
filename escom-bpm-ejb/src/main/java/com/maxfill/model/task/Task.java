@@ -132,7 +132,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @Transient
     @XmlTransient
     private final Integer tempId;
-     
+    
     public Task() {
         tempId = COUNT.incrementAndGet();
     }
@@ -377,7 +377,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public Integer getTempId() {
         return tempId;
     }
-        
+         
     /* *** *** */
 
     @Override

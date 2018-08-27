@@ -386,8 +386,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         task.setDeltaDeadLine(seconds);
-        taskFacade.makeDatePlan(task, sessionBean.getLocale());
-        String strDate = DateUtils.dateToString(task.getPlanExecDate(),  DateFormat.SHORT, DateFormat.MEDIUM, sessionBean.getLocale());
+        taskFacade.makeDatePlan(task, getLocale());
+        String strDate = DateUtils.dateToString(task.getPlanExecDate(),  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
         MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
     }
     

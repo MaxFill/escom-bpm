@@ -62,7 +62,7 @@
 
                             <p:outputLabel value="#{bundle.User}:" />
                             <h:panelGroup id="userPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-                                <p:inputText id="j_username" value="#{loginBean.userName}" title="#{bundle.welcom2}"
+                                <p:inputText value="#{loginBean.userName}" title="#{bundle.welcom2}"
                                              required="true" requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
                                              styleClass="ui-grid-col-9"
                                              disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"/>
@@ -70,7 +70,7 @@
 
                             <p:outputLabel value="#{bundle.password}:"/>
                             <h:panelGroup id="passwordPanel" styleClass="ui-grid-col-12 ui-panelgrid-blank">
-                                <p:password id="j_password" value="#{loginBean.password}"
+                                <p:password value="#{loginBean.password}"
                                             required="true" requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                                             disabled="#{loginBean.isLoginLock() or loginBean.isNeedPinCode()}"
                                             styleClass="ui-grid-col-9"/>
@@ -89,8 +89,7 @@
                                              icon="ui-icon-circle-triangle-e"
                                              update="panelLogin" 
                                              disabled="#{loginBean.isLoginLock()}"
-                                             action="#{loginBean.login()}" ajax="false"
-                                             onstart="return isClose = 1;"/>
+                                             action="#{loginBean.login()}" ajax="false"/>
                         </p:panelGrid>
                         <p:outputLabel value="#{bundle.DeveloperInfo}" style="font-size: x-small;" /> 
                     </p:panelGrid>

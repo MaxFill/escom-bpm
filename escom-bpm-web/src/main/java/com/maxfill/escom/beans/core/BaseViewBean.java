@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -70,7 +71,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public SessionBean getSessionBean() {
         return sessionBean;
     }
-
+    public Locale getLocale(){
+        return sessionBean.getLocale();
+    }
+    
     /**
      * Метод вызывается автоматически при открытии формы
      */

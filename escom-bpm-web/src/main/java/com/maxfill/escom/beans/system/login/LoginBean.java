@@ -59,7 +59,7 @@ public class LoginBean extends BaseViewBean{
         languages = new ArrayList<>();        
         languages.add(new CountryFlags(0, "en", "English"));
         languages.add(new CountryFlags(1, "ru", "Русский"));
-        Locale locale = sessionBean.getLocale(); 
+        Locale locale = getLocale(); 
         String localeLang = locale.getLanguage();
         for (CountryFlags language : languages){            
             if (Objects.equals(language.getName(), localeLang)){
@@ -80,6 +80,10 @@ public class LoginBean extends BaseViewBean{
     public String login() throws NoSuchAlgorithmException{
         Set <FacesMessage> errors = new HashSet <>();
        
+        if (StringUtils.isEmpty(userName) ||  StringUtils.isEmpty(password)){
+            MsgUtils.errorMsg("BadUserOrPassword");            
+            return "";
+        }
         if (!Objects.equals(pinCode, generatePinCode)){   //оба кода должны быть равны (null если не требуется ввод кода)
             errors.add(MsgUtils.prepFormatErrorMsg("BadAccessCode", new Object[]{}));
             makeCountErrLogin(errors);

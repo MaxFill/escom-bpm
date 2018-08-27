@@ -10,6 +10,14 @@
     
     <ui:param name="_bean" value="#{processCardBean}"/>
         
+    <ui:define name="menuExtReports"> 
+        <p:separator />
+        <p:menuitem value="#{bundle.ConcorderList}" icon="ui-icon-document"
+                    disabled="#{_bean.editedItem.id == null}"
+                    actionListener="#{processCardBean.onPreViewListConcorder()}">
+        </p:menuitem>
+    </ui:define>
+    
     <ui:define name="specActionMenu">
         <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
                     disabled="#{processCardBean.isReadOnly()}"

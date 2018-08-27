@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictEditMode;
+import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
@@ -40,6 +41,7 @@ import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -1432,6 +1434,37 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return baseElement;
     }        
         
+    /* ПЕЧАТЬ */
+    /**
+     * Распечатка листа согласования
+     */
+    public void onPreViewListConcorder(){
+        Map<String, Object> params = prepareReportParams();
+        params.put("REPORT_TITLE", MsgUtils.getBandleLabel("ConcorderList"));        
+        //List<Object> dataReport = new ArrayList<>();
+        Process process = getEditedItem();   
+        List<Task> tasks = process.getScheme().getTasks();
+        List<Object> dataReport = tasks.stream().map(task->{
+                String data = DateUtils.dateToString(task.getFactExecDate(),  DateFormat.SHORT, null, getLocale());
+                String result = getLabelFromBundle(task.getResult());
+                String fio = task.getOwner().getFullName();
+                return new ConcordersData(fio, result, data);
+             }).collect(Collectors.toList());
+        //dataReport.add(cdl);
+        StringBuilder docName = new StringBuilder();
+        StringBuilder docNumber = new StringBuilder();
+        List<Doc> docs = process.getDocs();
+        if (!docs.isEmpty()){
+            Doc doc = docs.get(0);            
+            docName.append(doc.getFullName());
+            docNumber.append(doc.getRegInfo(getLocale()));
+        }
+        params.put("DOC_NAME", docName.toString());
+        params.put("DOC_NUMBER", docNumber.toString());   
+        printService.doPrint(dataReport, params, DictPrintTempl.REPORT_CONCORDER_LIST);
+        sessionBean.onViewReport(DictPrintTempl.REPORT_CONCORDER_LIST);
+    }
+    
     @Override
     public Task getSourceItem(){        
         return currentTask;
@@ -1453,4 +1486,27 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         return getEditedItem().getScheme();
     }
    
+    public class ConcordersData{
+        private final String fio;
+        private final String result;
+        private final String date;
+        
+        public ConcordersData(String fio, String result, String date) {
+            this.fio = fio;
+            this.result = result;
+            this.date = date;
+        }
+
+        public String getFio() {
+            return fio;
+        }
+
+        public String getResult() {
+            return result;
+        }
+
+        public String getDate() {
+            return date;
+        }
+    }
 }

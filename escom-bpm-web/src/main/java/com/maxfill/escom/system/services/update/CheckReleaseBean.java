@@ -65,7 +65,7 @@ public class CheckReleaseBean extends BaseViewBean{
         releaseNumber = releaseInfoMap.get("number");
         pageRelease = releaseInfoMap.get("page");
         String dateStr = releaseInfoMap.get("date");
-        dateRelease = DateUtils.convertStrToDate(dateStr,  "yyyy-MM-dd", sessionBean.getLocale());
+        dateRelease = DateUtils.convertStrToDate(dateStr,  "yyyy-MM-dd", getLocale());
     }
 
     /**
@@ -92,7 +92,7 @@ public class CheckReleaseBean extends BaseViewBean{
             MsgUtils.errorMsg("NoGetRealiseInfo");
             return;
         }
-        dateRelease = DateUtils.convertStrToDate(strDateRelease, "yyyy-MM-dd", sessionBean.getLocale());
+        dateRelease = DateUtils.convertStrToDate(strDateRelease, "yyyy-MM-dd", getLocale());
         if (dateRelease == null){
             return;
         }

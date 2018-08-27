@@ -1493,7 +1493,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         List<Doc> docs = new ArrayList<>();
         detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
 
-        Collator collator = Collator.getInstance(sessionBean.getLocale());
+        Collator collator = Collator.getInstance(getLocale());
         
         Comparator<Doc> comparator = (Doc doc1, Doc doc2) -> {
             int rezult;
