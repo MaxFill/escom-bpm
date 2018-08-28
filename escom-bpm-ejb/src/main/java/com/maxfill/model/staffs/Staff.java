@@ -163,6 +163,8 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         }
     }
 
+    /* GETS & SETS */
+    
     @Override
     public String getIconName() {
         return "16_inspector";

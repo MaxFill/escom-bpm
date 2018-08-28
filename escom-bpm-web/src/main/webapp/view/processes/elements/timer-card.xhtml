@@ -6,13 +6,11 @@
                  template="/view/templ/templ-dlg.xhtml">
 
     <ui:param name="_bean" value="#{timerCardBean}"/>
-    
-    <ui:define name="menuActions" >
-    </ui:define>
 
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
-                         actionListener="#{timerCardBean.onCloseCard('save')}">
+                         actionListener="#{timerCardBean.onCloseCard('save')}"
+                         onclick="sendFormSize('#{_bean.getFormName()}');">
            <f:param name="isRequired" value="true"/>
        </p:commandButton>
         <span class="ui-separator">

@@ -53,7 +53,6 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         }
     }
 
-    
     /* Вставка объекта !!!*/
     @Override
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){

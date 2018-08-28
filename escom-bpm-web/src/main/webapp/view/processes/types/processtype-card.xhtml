@@ -50,7 +50,7 @@
     </ui:define>
 
     <ui:define name="childs_rights">
-        <p:tab title="#{bundle.RightsProcesses}">
+        <p:tab title="#{bundle.RightsProcesses}" rendered="#{!_bean.simpleCard()}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>            
         </p:tab>
     </ui:define>

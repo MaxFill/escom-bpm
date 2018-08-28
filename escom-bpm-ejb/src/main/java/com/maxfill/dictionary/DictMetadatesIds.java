@@ -26,4 +26,5 @@ public final class DictMetadatesIds {
     public static final Integer OBJ_RESULT = 23;
     public static final Integer OBJ_PROC_TEMPL = 24;
     public static final Integer OBJ_ASSISTANT = 25;
+    public static final Integer OBJ_REMARK = 26;
 }

@@ -16,7 +16,7 @@
     </ui:define>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Explorer}">
+        <p:tab id="cardTab" title="#{bundle.Company}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">       
                 <p:outputLabel value="#{bundle.Name}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
@@ -47,7 +47,7 @@
     </ui:define>
     
     <ui:define name="childs_rights">
-        <p:tab title="#{bundle.RightsDepartments}">
+        <p:tab title="#{bundle.RightsDepartments}" rendered="#{!_bean.simpleCard()}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>
     </ui:define>

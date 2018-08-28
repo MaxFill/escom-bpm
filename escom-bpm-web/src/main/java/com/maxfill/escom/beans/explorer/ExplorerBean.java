@@ -1879,10 +1879,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     
     @Override
-    public String getFormName() {        
+    public String getFormName() { 
+        /*
         if (isSelectorViewMode()){
             return typeDetail.toLowerCase() + "-selector";
         }
+        */
         return typeDetail.toLowerCase() + "-explorer";       
     }
     

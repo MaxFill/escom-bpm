@@ -12,13 +12,15 @@
                  
         <!-- Состояния объектов -->
         <sql>
-            INSERT states (ID, Name, IsActual, Icon) VALUES (5, N'Draft',   1, N'/resources/icon/doc_draft20.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (6, N'Arhival', 1, N'/resources/icon/doc_storage20.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (7, N'Valid',   1, N'/resources/icon/doc_check20.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (8, N'Edited',  1, N'/resources/icon/doc_lock20.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',  1, N'/resources/icon/execute.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (5, N'Draft',       1, N'/resources/icon/doc_draft20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (6, N'Arhival',     1, N'/resources/icon/doc_storage20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (7, N'Valid',       1, N'/resources/icon/doc_check20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (8, N'Edited',      1, N'/resources/icon/doc_lock20.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',     1, N'/resources/icon/execute.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (10, N'Сompleted',  1, N'/resources/icon/done.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (11, N'Cancelled',  1, N'/resources/icon/cancel.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (12, N'Issued',     1, N'/resources/icon/importante.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (13, N'Removed',    1, N'/resources/icon/cancel.png');            
         </sql>                
         
         <!-- Пользователи -->
@@ -74,6 +76,7 @@
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (23, N'Result', N'Result', N'Results', 0, N'ui-icon-clipboard', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (24, N'ProcTempl', N'ProcessTemplate', N'ProcessTemplate', 0, N'ui-icon-clipboard', NULL, 7);
             INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (25, N'Assistant', N'Assistant', N'Assistant', 0, N'ui-icon-clipboard', NULL, 7);
+            INSERT metadates (Id, ObjectName, BundleName, BundleJurnalName, IsDetailLogging, Icon, NumPattern, StateForNewObj) VALUES (26, N'Remark', N'Remarks', N'Remark', 0, N'ui-icon-clipboard', NULL, 12);
         </sql>
         
         <!-- Доступные переходы между состояними объектов -->
@@ -158,7 +161,10 @@
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(24, 6, 7);            
                         
             INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(25, 7, 6);
-            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(25, 6, 7);            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(25, 6, 7);   
+            
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(26, 12, 13);
+            INSERT metadatesStates (MetadateObj, StateSource, StateTarget) VALUES(26, 13, 12);         
         </sql>
 
         <!-- Доступные состояния объектов метаданных (какие состояния доступны объекту)-->
@@ -240,6 +246,10 @@
             <!-- Assistant -->
             INSERT objectsStates (ObjId, StateId) VALUES (25, 6);
             INSERT objectsStates (ObjId, StateId) VALUES (25, 7);
+            
+            <!-- Remarks -->
+            INSERT objectsStates (ObjId, StateId) VALUES (26, 12);
+            INSERT objectsStates (ObjId, StateId) VALUES (26, 13);
         </sql>
 
         <!-- Фильтры -->
@@ -475,6 +485,21 @@
                     VALUES (0, 2,  25, 1, 1, 1, 1, 0, 1, 0, 0, 7);
             INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
                     VALUES (2, 16, 25, 1, 1, 1, 1, 0, 1, 0, 0, 7);
+                    
+            <!-- Remarks -->                        
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  26, 1, 0, 0, 0, 0, 0, 0, 0, 12); <!-- группа все -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  26, 1, 1, 1, 1, 0, 1, 0, 0, 12); <!-- группа Администраторы -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 26, 1, 1, 1, 1, 0, 1, 0, 0, 12); <!-- роль Владелец -->
+                    
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 0,  26, 1, 0, 0, 0, 0, 0, 0, 0, 13); <!-- группа все -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (0, 2,  26, 1, 1, 1, 1, 0, 1, 0, 0, 13); <!-- группа Администраторы -->
+            INSERT access (ObjType, ObjId, ObjLink, IsRead, IsUpdate, IsCreate, IsDelete, IsExecute, IsChangeRight, IsAddChild, IsAddDetail, State) 
+                    VALUES (2, 16, 26, 1, 1, 1, 1, 0, 1, 0, 0, 13); <!-- роль Владелец -->
         </sql>
         
         <!-- Группы пользователей -->
@@ -940,6 +965,7 @@
         <sql>
             INSERT conditions(Id, Name, Method) VALUES (1, N'EveryoneApproved', N'everyoneApproved');
             INSERT conditions(Id, Name, Method) VALUES (2, N'AllTasksFinished', N'allFinished');
+            INSERT conditions(Id, Name, Method) VALUES (3, N'AllRemarksChecked', N'allRemarksChecked');
         </sql>
         
     </changeSet>

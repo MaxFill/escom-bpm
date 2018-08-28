@@ -526,7 +526,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         List<String> paramList = Collections.singletonList(selectMode.toString());
         paramsMap.put("selectMode", paramList);                
         String frmName = getFacade().getFRM_NAME() + "-explorer";        
-        sessionBean.openDialogFrm(frmName, paramsMap);
+        sessionBean.openCloseableDialog(frmName, paramsMap);
     }        
     
     /* ИЗБРАННОЕ */

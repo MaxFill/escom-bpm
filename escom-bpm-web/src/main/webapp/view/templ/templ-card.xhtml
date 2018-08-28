@@ -11,16 +11,18 @@
         <p:importConstants type="com.maxfill.dictionary.DictDetailSource" var="DictSource" />
             
         #{_bean.onAfterFormLoad()}
-
+        
         <script>
             var isFullPage = #{_bean.isFullPageMode()};
             var formName = '#{_bean.getFormName()}';
-            window.onbeforeunload = function () {
-                if (!isFullPage) {
-                    sendFormSize(formName);
-                }
+            if (isChrome || isOpera){
+                window.onbeforeunload = function () {
+                    if (!isFullPage) {
+                        sendFormSize(formName);
+                    }
+                };
                 return null;
-            };
+            }
         </script> 
 
         <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
@@ -31,8 +33,8 @@
                 </f:facet>
                 <f:facet name="actions">
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                   action="#{_bean.onCancelItemSave()}"  
-                                   onclick="if (itemChange == 1) {onChangeItem();}">
+                                   actionListener="#{_bean.onCancelItemSave()}"  
+                                   onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {onChangeItem();}">
                         <h:outputText styleClass="ui-icon ui-icon-closethick" />
                     </p:commandLink>
                 </f:facet>
@@ -60,7 +62,7 @@
                                              disabled="#{_bean.isReadOnly()}"
                                              icon="ui-icon-disk"
                                              actionListener="#{_bean.prepSaveItemAndClose()}" 
-                                             onclick="if (itemChange == 1) {onChangeItem();}">
+                                             onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {onChangeItem();}">
                                 <f:param name="isRequired" value="true"/>
                             </p:commandButton>
                             <span class="ui-separator">
@@ -89,10 +91,12 @@
                     <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="true">
                         <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
                         <ui:insert name="page_body"/>
-                        <ui:include src="/view/common/dict-rights.xhtml"/>
+                                                
+                        <ui:include src="/view/common/dict-rights.xhtml" />
                         <ui:insert name="childs_rights"/> 
                         <ui:include src="/view/common/dict-info.xhtml"/>
                         <ui:include src="/view/common/dict-log.xhtml"/> 
+                        
                     </p:tabView>
 
                 </p:panelGrid>

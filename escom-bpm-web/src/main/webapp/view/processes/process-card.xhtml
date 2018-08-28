@@ -115,12 +115,12 @@
         </p:tab>
         
         <p:tab title="#{bundle.ApprovalSheet}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" > 
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
                 <p:dataTable id="concorderList" value="#{processCardBean.getTasksFromModel()}" var="task" emptyMessage="#{bundle.EmptyTable}"
                             rowKey="#{task.tempId}" selectionMode="single" 
                             paginator="true" paginatorPosition="bottom" 
                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                            rowsPerPageTemplate="5, 10, 20, 35" 
+                            rowsPerPageTemplate="5, 10, 20, 35" rows="5"
                             currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                             tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
 
@@ -152,15 +152,16 @@
                        <h:outputLabel value="#{processCardBean.getLabelFromBundle(task.result)}"/>
                    </p:column>
 
-               </p:dataTable>
+                </p:dataTable>                        
+            </p:panelGrid>
+        </p:tab>
+
+        <p:tab title="#{bundle.Remarks}">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
+                <ui:include src="/view/processes/remarks/remarks.xhtml"/>
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.ReportsExe}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <ui:include src="/view/tasks/reports.xhtml"/>
-            </p:panelGrid>
-        </p:tab>
     </ui:define>    
     
     <ui:define name="customJavaScript">

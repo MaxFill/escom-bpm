@@ -5,7 +5,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-dlg.xhtml">
-    
+
     <ui:param name="_bean" value="#{userSettingsBean}"/>
 
     <ui:define name="menuActions" >
@@ -22,44 +22,64 @@
         </p:commandButton>
     </ui:define>
 
-    <ui:define name="centerFormContent">
+    <ui:define name="specToolButtons" >
+        <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
+                         actionListener="#{_bean.onCloseCard('save')}"
+                         onclick="sendFormSize('#{_bean.getFormName()}');">
+       </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define> 
+    
+    <ui:define name="centerFormContent">        
         <p:commandButton id="btnSave"
                          style="float: right; display: none;"
                          actionListener="#{userSettingsBean.saveSettings()}"/>
+        <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true">
+            <p:tab title="#{bundle.password}">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-grid-col-12 col-padding">
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
+                        <p:outputLabel value="#{msg.PasswordSecurityInfo}"/>
+                    </p:panelGrid>
+                </p:panelGrid>
 
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{msg.PasswordSecurityInfo}"/>
-            </p:panelGrid>
-        </p:panelGrid>
+                <p:panelGrid columns="2" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
+                             columnClasses="col-padding"
+                             styleClass="ui-grid-col-5 ui-panelgrid-blank col-padding">
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:outputLabel value="#{bundle.CurrentPassword}:"/>
+                        <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
+                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
+                    </p:panelGrid>
 
-        <p:panelGrid columns="2" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
-                     columnClasses="col-padding"
-                     styleClass="ui-grid-col-5 ui-panelgrid-blank col-padding">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                <p:outputLabel value="#{bundle.CurrentPassword}:"/>
-                <p:password id="curPassword" value="#{userSettingsBean.oldPassword}"
-                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.CurrentPassword}] #{bundle.MustBeFilled}"/>
-            </p:panelGrid>
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
-                <p:outputLabel value="#{bundle.NewPassword}:"/>
-                <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
-                            feedback="true" promptLabel="#{bundle.InputNewPassword}"
-                            goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
-                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 col-padding">
+                        <p:outputLabel value="#{bundle.NewPassword}:"/>
+                        <p:password value="#{userSettingsBean.newPassword}" id="newPassword"
+                                    feedback="true" promptLabel="#{bundle.InputNewPassword}"
+                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
+                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.NewPassword}] #{bundle.MustBeFilled}"/>
 
-                <p:outputLabel value="#{bundle.RepeatPassword}:"/>
-                <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
-                            goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
-                            required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
-            </p:panelGrid>
-        </p:panelGrid>
+                        <p:outputLabel value="#{bundle.RepeatPassword}:"/>
+                        <p:password value="#{userSettingsBean.repeatePassword}" id="repeatePassword"
+                                    goodLabel="#{bundle.Good}" weakLabel="#{bundle.Weak}" strongLabel="#{bundle.Strong}"
+                                    required="#{param['isRequired'] == 'true'}" requiredMessage="#{bundle.Field} [#{bundle.RepeatPassword}] #{bundle.MustBeFilled}"/>
+                    </p:panelGrid>
+                </p:panelGrid>
 
-        <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
-            <br/>
-            <h3>#{msg.UsedLDAPauth}</h3>
-        </p:outputPanel>
-
+                <p:outputPanel style="width: 400px; height: 200px;" rendered="#{sessionBean.currentUser.LDAPname.isEmpty()}">
+                    <br/>
+                    <h3>#{msg.UsedLDAPauth}</h3>
+                </p:outputPanel>
+            </p:tab>
+            
+            <p:tab title="#{bundle.Other}">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}" styleClass="ui-grid-col-12 col-padding">
+                    <p:outputLabel value="#{bundle.UseSimpleCard}:"/>
+                    <p:selectBooleanCheckbox value="#{sessionBean.userSettings.simpleCard}" />
+                </p:panelGrid>
+            </p:tab>
+            
+        </p:tabView>
     </ui:define>
 </ui:composition>
-

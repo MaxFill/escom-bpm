@@ -2,35 +2,32 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:f="http://xmlns.jcp.org/jsf/core"      >
-     
-    <p:tab title="#{bundle.Info}">
-    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >        
-        <p:outputLabel value="#{bundle.State}:"/>
-        <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
-                       disabled="#{_bean.isReadOnly()}"
-                       styleClass="ui-grid-col-2"
-                       required="#{param['isRequired'] == 'true'}" 
-                       requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
-            <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
-            <p:ajax event="change" listener="#{_bean.onStateChange()}" update="mainFRM" oncomplete="return itemChange = 1;"/>
-        </p:selectOneMenu>
 
-        <p:outputLabel value="#{bundle.DateCreate}:" />                            
-        <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
-                     styleClass="ui-grid-col-2"
-                     onkeypress="checkEsc();">
-            <f:convertDateTime parent="dd.mm.yy"/>
-        </p:inputText>
+    <p:tab title="#{bundle.Info}" rendered="#{!_bean.simpleCard()}">
+        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >        
+            <p:outputLabel value="#{bundle.State}:"/>
+            <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
+                             disabled="#{_bean.isReadOnly()}"
+                             required="#{param['isRequired'] == 'true'}" 
+                             requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
+                <p:ajax event="change" listener="#{_bean.onStateChange()}" update="mainFRM" oncomplete="return itemChange = 1;"/>
+            </p:selectOneMenu>
 
-        <p:outputLabel value="#{bundle.DateChange}:" />
-        <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
-                     styleClass="ui-grid-col-2"
-                     onkeypress="checkEsc();">
-            <f:convertDateTime parent="dd.mm.yy"/>
-        </p:inputText>
+            <p:outputLabel value="#{bundle.DateCreate}:" />                            
+            <p:inputText value="#{_bean.editedItem.dateCreate}" readonly="true"
+                         onkeypress="checkEsc();">
+                <f:convertDateTime parent="dd.mm.yy"/>
+            </p:inputText>
 
-        <p:outputLabel value="#{bundle.Owner}:" />
-        <ui:include src="/view/common/item-select-list-btn.xhtml" >
+            <p:outputLabel value="#{bundle.DateChange}:" />
+            <p:inputText value="#{_bean.editedItem.dateChange}" readonly="true"
+                         onkeypress="checkEsc();">
+                <f:convertDateTime parent="dd.mm.yy"/>
+            </p:inputText>
+
+            <p:outputLabel value="#{bundle.Owner}:" />
+            <ui:include src="/view/common/item-select-list-btn.xhtml" >
                 <ui:param name="_itemValue" value="#{_bean.editedItem.author}"/>
                 <ui:param name="_itemLabel" value="fullName"/>
                 <ui:param name="_required" value="#{true}" />
@@ -43,23 +40,23 @@
                 <ui:param name="_actionClear" value="setAuthor"/>
                 <ui:param name="_actionSelect" value="onChangeOwner"/>
                 <ui:param name="_update" value=""/>
-        </ui:include>            
+            </ui:include>            
 
-        <p:outputLabel value="Id:" />
-        <p:inputText value="#{_bean.editedItem.id}" readonly="true"
-                     styleClass="ui-grid-col-2"
-                     onkeypress="checkEsc();">
-        </p:inputText>
-        
-        <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
+            <p:outputLabel value="Id:" />
+            <p:inputText value="#{_bean.editedItem.id}" readonly="true"
+                         styleClass="ui-grid-col-2"
+                         onkeypress="checkEsc();">
+            </p:inputText>
+
+            <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
                                      title="#{_bean.getActualInfo()}"
                                      itemLabel="#{bundle.Actual}"
                                      disabled="#{_bean.isReadOnly()}">
                 <p:ajax process="@this" 
                         update="cbActual" 
                         oncomplete="itemChange = 1;"/>
-        </p:selectBooleanCheckbox>
+            </p:selectBooleanCheckbox>
 
-    </p:panelGrid>
+        </p:panelGrid>
     </p:tab>
 </ui:composition>

@@ -30,12 +30,14 @@
         <script>
             var isFullPage = #{_bean.isFullPageMode()};
             var formName = '#{_bean.getFormName()}';
-            window.onbeforeunload = function () {
-                if (!isFullPage) {
-                    sendFormSize(formName);
-                }
-                return false;
-            };
+            if (isChrome || isOpera){
+                window.onbeforeunload = function () {
+                    if (!isFullPage) {
+                        sendFormSize(formName);
+                    }
+                    return null;
+                };
+            }
         </script> 
 
         <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="#{_bean.getSourceBeanId() != null}">            
@@ -57,7 +59,7 @@
 
             <pe:layoutPane id="center" position="center" resizable="true" size="56%">
                 <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
-                    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
                             <f:facet name="left">
                                 <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
@@ -109,7 +111,7 @@
                                                  disabled="#{_bean.checkedItems.isEmpty()}"
                                                  rendered="#{_bean.multySelectMode}"
                                                  actionListener="#{_bean.onMultySelect()}"
-                                                 onclick="return isClose = 1;">
+                                                 onclick="sendFormSize('#{_bean.getFormName()}'); return isClose = 1;">
                                 </p:commandButton>
                                 <ui:insert name="addToolButtons" />
                             </f:facet>

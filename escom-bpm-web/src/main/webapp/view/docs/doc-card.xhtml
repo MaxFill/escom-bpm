@@ -13,7 +13,7 @@
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
             <p:panelGrid id="panelDocCard" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                 
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                         <p:inputTextarea id="nameItem" value="#{_bean.editedItem.name}"
@@ -63,7 +63,7 @@
                    
                 </p:panelGrid>
                 
-                <p:panelGrid columns="2" columnClasses="ui-grid-col-5, ui-grid-col-7" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-5 col-padding, ui-grid-col-7 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Number}:" />  
                         <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 without-spaces">
@@ -113,7 +113,7 @@
                     </h:panelGrid>                    
                 </p:panelGrid>    
 
-                <p:panelGrid columns="1" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
+                <p:panelGrid columns="1" rendered="#{applicationBean.isCanUsesPartners()}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="without-spaces ui-grid-col-12">
                         <p:outputLabel value="#{bundle.Partner}:" />
                         <ui:include src="/view/common/item-select-list-btn.xhtml" >

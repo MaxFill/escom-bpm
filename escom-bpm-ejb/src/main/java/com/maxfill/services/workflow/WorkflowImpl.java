@@ -14,6 +14,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
@@ -792,6 +793,10 @@ public class WorkflowImpl implements Workflow {
                 result = allFinished(scheme);
                 break;
             }
+            case "allRemarksChecked":{
+                result = allRemarksChecked(scheme);
+                break;
+            }
         }
         return result;
     }
@@ -801,7 +806,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    public boolean everyoneApproved(Scheme scheme){
+    private boolean everyoneApproved(Scheme scheme){
         Boolean result = true;
         for (Task task : scheme.getTasks()){
             String taskResult = task.getResult();
@@ -818,7 +823,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    public boolean allFinished(Scheme scheme){
+    private boolean allFinished(Scheme scheme){
         boolean result = true;
         for(Task task : scheme.getTasks()){
             if (task.getFactExecDate() == null){
@@ -828,5 +833,21 @@ public class WorkflowImpl implements Workflow {
         }
         return result;
     }
-        
+    
+    /**
+     * Условие, все замечания учтены?
+     * @param scheme
+     * @return 
+     */
+    private boolean allRemarksChecked(Scheme scheme){
+        boolean result = true;
+        Process process = processFacade.find(scheme.getProcess());
+        for(Remark remark : process.getDetailItems()){
+            if (!remark.isChecked()){
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
 }

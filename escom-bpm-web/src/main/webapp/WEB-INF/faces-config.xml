@@ -130,7 +130,11 @@
             <to-view-id>/view/companies/company-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case> 
-        
+                
+        <navigation-case>
+            <from-outcome>remark-card</from-outcome>
+            <to-view-id>/view/processes/remarks/remark-card.xhtml</to-view-id>
+        </navigation-case> 
         <navigation-case>
             <from-outcome>proctempl-card</from-outcome>
             <to-view-id>/view/processes/templ/proctempl-card.xhtml</to-view-id>

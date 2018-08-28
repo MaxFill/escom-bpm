@@ -19,7 +19,7 @@
             </p:panelGrid>
         </p:tab>
     </ui:define>
-    <ui:define name="childs_rights">
+    <ui:define name="childs_rights" rendered="#{!_bean.simpleCard()}">
         <p:tab title="#{bundle.RightsDocTypes}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>

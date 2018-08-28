@@ -169,7 +169,7 @@ public class FileServiceImpl implements FileService{
             commandLine.addArgument("-f");
             commandLine.addArgument("pdf");
             commandLine.addArgument(file);
-            System.out.println("PDFConvertor command line = " + commandLine.toString());
+            //System.out.println("PDFConvertor command line = " + commandLine.toString());
             DefaultExecutor executor = new DefaultExecutor();
             executor.setExitValue(0);
             executor.execute(commandLine);

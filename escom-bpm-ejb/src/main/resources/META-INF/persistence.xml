@@ -91,6 +91,9 @@
     <class>com.maxfill.model.core.forms.FormsSettings</class>
     <class>com.maxfill.model.process.procedures.Procedure</class>
     <class>com.maxfill.services.worktime.WorkTimeCalendar</class>
+    <class>com.maxfill.model.process.remarks.Remark</class>
+    <class>com.maxfill.model.process.remarks.RemarkLog</class>
+    <class>com.maxfill.model.process.remarks.RemarkStates</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>

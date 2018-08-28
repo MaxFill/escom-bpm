@@ -6,7 +6,7 @@
 
     <p:tab title="#{bundle.Versions}" >                 
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">            
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">            
                 <p:commandButton icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" id="btnScan" rendered="false"         
                                  actionListener="#{sessionBean.openScaningForm()}">
                     <p:ajax event="dialogReturn" listener="#{docCardBean.addAttacheFromScan}" update="versionsTBL"/>

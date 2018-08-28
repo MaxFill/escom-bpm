@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">                
+
+    <p:dataTable id="tblRemarks" var="remark" value="#{processCardBean.editedItem.detailItems}" 
+                rowKey="#{remark.tempId}" selectionMode="single" selection="#{processCardBean.selectedDetail}"
+                emptyMessage="#{bundle.EmptyTable}"
+                paginator="true" paginatorPosition="bottom"  
+                tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                rowsPerPageTemplate="5, 10, 20, 35"  rows="5"
+                currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                sortBy="#{remark.dateCreate}" sortOrder="descending">                        
+        
+        <p:column headerText="#{bundle.Author}" sortBy="#{remark.author.shortFIO}" width="95">
+            <h:outputLabel value="#{remark.author.shortFIO}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.DateChange}" sortBy="#{remark.dateCreate}" style="text-align: center;" width="80">
+            <h:outputLabel value="#{remark.dateChange}">
+                <f:convertDateTime pattern="dd.MM.yy HH:mm" />
+            </h:outputLabel>
+        </p:column>
+        
+        <p:column headerText="#{bundle.Remark}" width="120">
+            <h:outputLabel escape="false" value="#{remark.name}" />
+        </p:column>
+        
+        <p:column headerText="#{bundle.Status}" sortBy="#{remark.state}" width="80">
+            <h:outputLabel value="#{processCardBean.getLabelFromBundle(remark.state.currentState.name)}" />
+        </p:column>       
+        
+        <p:column headerText="#{bundle.Checked}" width="25">
+            <p:selectBooleanCheckbox value="#{remark.checked}"/>
+        </p:column> 
+        
+        <p:column width="36" >
+            <p:commandButton icon="ui-icon-document" title="#{bundle.Open}" 
+                             immediate="true"
+                             actionListener="#{processCardBean.onOpenDetail(remark)}">
+                <p:ajax event="dialogReturn" listener="#{processCardBean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
+            </p:commandButton>
+            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
+                             immediate="true"
+                             disabled="#{processCardBean.isReadOnly() or remark.author != _bean.currentUser}"
+                             update="mainFRM:mainTabView:tblRemarks"
+                             actionListener="#{processCardBean.onDeleteDetail(remark)}">
+                <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+            </p:commandButton>
+        </p:column>
+        
+        <f:facet name="footer">
+            <p:outputLabel value="#{msg.ForAddRemarkSaveProcess}"
+                           rendered="#{processCardBean.editedItem.id == null}"/>
+            <p:commandButton icon="ui-icon-circle-plus" value="#{bundle.Add}" title="#{bundle.AddRemark}" 
+                             immediate="true"
+                             rendered="#{processCardBean.editedItem.id != null}"
+                             disabled="#{processCardBean.isReadOnly()}"
+                             actionListener="#{processCardBean.onCreateDetail()}">
+                <p:ajax event="dialogReturn" listener="#{processCardBean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
+            </p:commandButton>
+        </f:facet>
+    </p:dataTable>
+
+</ui:composition>

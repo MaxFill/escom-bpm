@@ -544,6 +544,15 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return barcode;
     }
     
+    /**
+     * Возвращает признак использования простых карточек
+     * @return 
+     */
+    public boolean simpleCard(){
+        boolean flag = sessionBean.getUserSettings().isSimpleCard();
+        return flag;
+    }
+    
     /* СЛУЖЕБНЫЕ МЕТОДЫ */
 
     /**

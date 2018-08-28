@@ -4,7 +4,7 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
 
-    <p:tab title="#{bundle.LogEventHistory}">
+    <p:tab title="#{bundle.LogEventHistory}" rendered="#{!_bean.simpleCard()}">
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-panelgrid-blank ui-grid-col-12">
             <p:dataTable id="logTbl" var="log" value="#{_bean.editedItem.itemLogs}" 
                          emptyMessage="#{bundle.EmptyTable}"

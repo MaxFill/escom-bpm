@@ -29,5 +29,6 @@ public final class DictObjectName {
     public static final String TASK = "Task";
     public static final String RESULT = "Result";
     public static final String ASSISTANT = "Assistant";   
+    public static final String REMARK = "Remark";
    
 }

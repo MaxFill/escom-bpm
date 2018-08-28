@@ -460,7 +460,7 @@ public class SessionBean implements Serializable{
         }
     }
     
-    public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
+    public void openCloseableDialog(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
         Map<String, Object> options = new HashMap<>();
         options.put("resizable", true);
@@ -476,7 +476,25 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
-    }    
+    }       
+    
+    public void openDialogFrm(String frmName, Map<String, List<String>> paramsMap){
+        Tuple formSize = getFormSize(frmName);
+        Map<String, Object> options = new HashMap<>();
+        options.put("resizable", true);
+        options.put("modal", true);
+        options.put("width", formSize.a);
+        options.put("height", formSize.b);
+        options.put("minWidth", 600);
+        options.put("minHeight", 400);
+        options.put("maximizable", false);
+        options.put("minimizable", false);
+        options.put("closable", false);
+        options.put("closeOnEscape", false);
+        options.put("contentWidth", "100%");
+        options.put("contentHeight", "100%");
+        PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
+    }       
         
     public void openModalDialogFrm(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);

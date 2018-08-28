@@ -17,7 +17,7 @@
     </ui:define>
 
     <ui:define name="page_body">
-      <p:tab title="#{bundle.Explorer}">
+        <p:tab title="#{bundle.Departament}">
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 col-padding">
 
             <p:outputLabel value="#{bundle.Company}:"/>
@@ -56,7 +56,7 @@
       </p:tab>
     </ui:define>
     <ui:define name="childs_rights">
-        <p:tab title="#{bundle.RightsStaffs}">
+        <p:tab title="#{bundle.RightsStaffs}" rendered="#{!_bean.simpleCard()}">
             <ui:include src="/view/common/dict-rights-childs.xhtml"/>
         </p:tab>
     </ui:define>

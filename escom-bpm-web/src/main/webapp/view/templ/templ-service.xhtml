@@ -83,10 +83,16 @@
                     <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
                         <ui:insert name="serviceParams"/>                    
                         <p:separator/>
-                        <p:commandButton value="#{bundle.Save}" id="btnAllSave" icon="ui-icon-disk"
-                                         title="#{bundle.SaveServiceSettings}" style="float: right;"                           
-                                         actionListener="#{_bean.onSaveSettings()}">
-                        </p:commandButton>
+                        <h:panelGrid columns="2">
+                            <p:commandButton value="#{bundle.Save}" id="btnAllSave"
+                                             title="#{bundle.SaveServiceSettings}" style="float: right;"                           
+                                             actionListener="#{_bean.onSaveSettings()}">
+                            </p:commandButton>
+                            <p:commandButton id="btnClose" value="#{bundle.Close}" icon="" title="#{bundle.Close}" immediate="true" 
+                                       actionListener="#{_bean.onCancelItemSave()}"  
+                                       onclick="sendFormSize('#{_bean.getFormName()}')">
+                            </p:commandButton>
+                        </h:panelGrid>
                     </p:panelGrid>
                 </p:panel>
             </p:panelGrid>  

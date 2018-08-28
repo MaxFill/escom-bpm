@@ -6,7 +6,9 @@ import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.core.interfaces.WithDetails;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
+import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -19,12 +21,15 @@ import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
+import com.maxfill.model.process.remarks.Remark;
+import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
@@ -36,6 +41,7 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -82,7 +88,7 @@ import org.primefaces.model.diagram.overlay.Overlay;
  */
 @Named
 @ViewScoped
-public class ProcessCardBean extends BaseCardBean<Process> {
+public class ProcessCardBean extends BaseCardBean<Process> implements WithDetails<Remark>{
     private static final long serialVersionUID = -5558740260204665618L;    
     
     @Inject
@@ -91,6 +97,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private ProcTemplBean procTemplBean;
     @Inject
     private AttacheBean attacheBean;
+    @Inject
+    private RemarkBean remarkBean;
     
     @EJB
     private DocFacade docFacade;
@@ -112,7 +120,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private StateFacade stateFacade;
     @EJB
     private ProcTimerFacade procTimerFacade;
-        
+    @EJB
+    private RemarkFacade remarkFacade;
+    
     private Element selectedElement = null;
 
     private int defX = 8;
@@ -124,6 +134,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     private Task currentTask;
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;
+    
     private final DefaultDiagramModel model = new DefaultDiagramModel();
     
     private String nameTemplate;
@@ -132,6 +143,9 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     
     private final List<Attaches> attaches = new ArrayList<>();
     private Doc selectedDoc;
+    
+    private List<Remark> checkedDetails;
+    private Remark selectedDetail;
     
     @Override
     protected BaseDictFacade getFacade() {
@@ -348,8 +362,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public void modelRefresh(){        
         model.clear();
         restoreModel();
-        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
-        ec.getFlash().put("beanId", beanId);
+        //ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();        
+        //ec.getFlash().put("beanId", beanId);
         
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:diagramm");
         if (!isReadOnly()){
@@ -569,6 +583,7 @@ public class ProcessCardBean extends BaseCardBean<Process> {
      * Открытие карточки задачи
      */  
     public void onOpenTask(){ 
+        setSourceItem(currentTask);
         taskBean.prepEditChildItem(currentTask, getParamsMap());
     }
     
@@ -1465,9 +1480,8 @@ public class ProcessCardBean extends BaseCardBean<Process> {
         sessionBean.onViewReport(DictPrintTempl.REPORT_CONCORDER_LIST);
     }
     
-    @Override
-    public Task getSourceItem(){        
-        return currentTask;
+    public DiagramModel getModel() {
+        return model;
     }
         
     public Task getCurrentTask() {
@@ -1484,6 +1498,73 @@ public class ProcessCardBean extends BaseCardBean<Process> {
     public Scheme getScheme(){
         if (getEditedItem() == null) return null;
         return getEditedItem().getScheme();
+    }
+
+    @Override
+    public List<Remark> getDetails() {
+        return getEditedItem().getDetailItems();
+    }
+
+    @Override
+    public List<Remark> getCheckedDetails() {
+        return checkedDetails;
+    }
+
+    @Override
+    public void setCheckedDetails(List<Remark> checkedDetails) {
+        this.checkedDetails = checkedDetails;
+    }
+
+    @Override
+    public void onDeleteCheckedDetails() {
+        getDetails().removeAll(checkedDetails);
+        onItemChange();
+    }
+
+    @Override
+    public void onCreateDetail() {
+        selectedDetail = remarkFacade.createItem(getCurrentUser(), null, getEditedItem(), new HashMap<>());
+        onOpenDetail(selectedDetail);
+    }
+
+    @Override
+    public void afterCloseDetailItem(SelectEvent event) {
+        if (event.getObject() == null) return;        
+        switch ((String) event.getObject()){
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+            case SysParams.EXIT_NEED_UPDATE:{                
+                if (selectedDetail.getId() == null){
+                    getDetails().add(selectedDetail);
+                }
+                onItemChange();
+                break;
+            }
+        }  
+    }
+
+    @Override
+    public void onDeleteDetail(Remark item) {
+        getDetails().remove(item);
+        onItemChange();
+    }
+
+    @Override
+    public void onOpenDetail(Remark item) {
+        setSourceItem(item);
+        remarkBean.prepEditChildItem((Remark)item, getParamsMap());
+    }
+
+    
+    @Override
+    public Remark getSelectedDetail() {
+        return selectedDetail;
+    }
+
+    @Override
+    public void setSelectedDetail(Remark selectedDetail) {
+       this.selectedDetail = selectedDetail;
     }
    
     public class ConcordersData{

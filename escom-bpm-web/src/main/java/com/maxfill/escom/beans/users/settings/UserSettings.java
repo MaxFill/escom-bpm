@@ -3,15 +3,12 @@ package com.maxfill.escom.beans.users.settings;
 import com.maxfill.utils.Tuple;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /* Класс персональных настроек для пользователя  */
 @XmlRootElement
@@ -33,6 +30,9 @@ public class UserSettings implements Serializable{
     
     @XmlElement(name = "AgreeLicens")
     private boolean agreeLicense = false;
+    
+    @XmlElement(name = "SimpleCard")
+    private boolean simpleCard = false;
 
     public boolean isAgreeLicense() {
         return agreeLicense;
@@ -68,7 +68,14 @@ public class UserSettings implements Serializable{
     public void setReportSetting(ConcurrentHashMap<String, UserReportsSettings> reportSetting) {
         this.reportSetting = reportSetting;
     }       
-    
+
+    public boolean isSimpleCard() {
+        return simpleCard;
+    }
+    public void setSimpleCard(boolean simpleCard) {
+        this.simpleCard = simpleCard;
+    }
+        
     //трансформирует данные класса в xml строку
     @Override
     public String toString() {

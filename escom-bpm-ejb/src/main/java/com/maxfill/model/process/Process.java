@@ -6,9 +6,11 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.staffs.Staff;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
@@ -25,7 +27,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "processes")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates> implements WithDatesPlans{
+public class Process extends BaseDict<ProcessType, Process, Remark, ProcessLog, ProcessStates> implements WithDatesPlans{
     private static final long serialVersionUID = 8735448948976387594L;
 
     @TableGenerator(
@@ -75,12 +77,15 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Column(name="DeadLineType")
     private String deadLineType = "delta"; //вид установки срока исполнения
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")    
+    private List<Remark> detailItems = new ArrayList<>();
+        
     /* Список документов */
     @JoinTable(name = "docsInProcesses", joinColumns = {
         @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "DocumentId", referencedColumnName = "Id")})
     @ManyToMany
-    private List<Doc> docs = new ArrayList<>();
+    private List<Doc> docs = new ArrayList<>();    
     
     /* Состояние */
     @XmlTransient
@@ -193,12 +198,16 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public void setDocs(List<Doc> docs) {
         this.docs = docs;
     }
-        
+           
     @Override
-    public List<Process> getDetailItems() {
-        return null;
+    public List<Remark> getDetailItems() {
+        return detailItems;
     }
-    
+    @Override
+    public void setDetailItems(List<Remark> detailItems) {
+        this.detailItems = detailItems;
+    }
+        
     @Override
     public List<Process> getChildItems() {
         return null;

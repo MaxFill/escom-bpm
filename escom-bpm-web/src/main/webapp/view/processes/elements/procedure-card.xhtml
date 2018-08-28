@@ -4,14 +4,12 @@
                  template="/view/templ/templ-dlg.xhtml"
                  xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-    <ui:param name="_bean" value="#{procedureCardBean}"/>
-    
-    <ui:define name="menuActions" >
-    </ui:define>
+    <ui:param name="_bean" value="#{procedureCardBean}"/>    
 
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.Save}" update="mainFRM"
-                         actionListener="#{_bean.onCloseCard('save')}">
+                         actionListener="#{_bean.onCloseCard('save')}"
+                         onclick="sendFormSize('#{_bean.getFormName()}');">
            <f:param name="isRequired" value="true"/>
        </p:commandButton>
         <span class="ui-separator">

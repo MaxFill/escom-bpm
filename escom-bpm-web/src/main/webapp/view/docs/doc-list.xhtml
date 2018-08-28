@@ -20,28 +20,27 @@
             <p:graphicImage id="itemIcon" value="/resources/icon/#{doc.iconName}.png"/>  
         </p:column>
         
-        <p:column width="16" sortBy="#{doc.state.currentState.name}">
+        <p:column width="16" sortBy="#{doc.state.currentState.name}" priority="4">
             <h:graphicImage id="iconDone" value="#{doc.state.currentState.icon}" title="#{stateBean.getBundleName(state.currentState)}"/>            
         </p:column>
         
-        <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" >
+        <p:column headerText="#{bundle.Number}" sortBy="#{doc.number}" priority="3">
             <h:outputText value="#{doc.regNumber}"/>
         </p:column>
         
-        <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.dateDoc}">
+        <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.dateDoc}" priority="4">
             <h:outputText value="#{doc.dateDoc}" >
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputText>
         </p:column>
         
-        <p:column headerText="#{bundle.DocTypes}" sortBy="#{doc.docType.name}">
+        <p:column headerText="#{bundle.DocTypes}" sortBy="#{doc.docType.name}" priority="5">
             <h:outputText value="#{doc.docType.name}" />
         </p:column>
         
         <p:column headerText="#{bundle.Name}" sortBy="#{doc.name}">
             <p:commandLink value="#{doc.name}" rendered="#{doc.getClass().getSimpleName()== 'Doc'}"
-                           actionListener="#{_bean.setSelectedDoc(doc)}"
-                           oncomplete="document.getElementById('mainFRM:mainTabView:openDocBtn').click();"/>
+                           actionListener="#{docBean.onViewMainAttache(doc)}"/>
         </p:column>                       
 
         <p:column headerText="#{bundle.Commands}" > 
