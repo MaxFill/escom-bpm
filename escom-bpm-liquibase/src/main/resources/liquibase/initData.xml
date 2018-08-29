@@ -19,8 +19,8 @@
             INSERT states (ID, Name, IsActual, Icon) VALUES (9, N'Running',     1, N'/resources/icon/execute.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (10, N'Сompleted',  1, N'/resources/icon/done.png');
             INSERT states (ID, Name, IsActual, Icon) VALUES (11, N'Cancelled',  1, N'/resources/icon/cancel.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (12, N'Issued',     1, N'/resources/icon/importante.png');
-            INSERT states (ID, Name, IsActual, Icon) VALUES (13, N'Removed',    1, N'/resources/icon/cancel.png');            
+            INSERT states (ID, Name, IsActual, Icon) VALUES (12, N'Issued',     1, N'/resources/icon/importance-16.png');
+            INSERT states (ID, Name, IsActual, Icon) VALUES (13, N'Confirmed',  1, N'/resources/icon/done.png');
         </sql>                
         
         <!-- Пользователи -->

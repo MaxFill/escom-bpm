@@ -49,7 +49,6 @@ public class Attaches implements Serializable {
     private Integer number;
             
     @Basic(optional = false)
-    @Size(min = 1, max = 1024)
     @Column(name = "Name", length = 1024)
     private String name;
     
@@ -62,7 +61,6 @@ public class Attaches implements Serializable {
     private Date dateCreate;
     
     @Basic(optional = false)
-    @Size(min = 1, max = 256)
     @Column(name = "Type")
     private String type;
     

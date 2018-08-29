@@ -415,9 +415,8 @@ public class SessionBean implements Serializable{
     }
 
     /* Просмотр вложения  */
-    public void onViewAttache(Attaches attache) {
-        String path = configuration.getUploadPath() + attache.getFullName();
-        Map<String, List<String>> paramMap = getParamsMap();
+    public void onViewAttache(Attaches attache, Map<String, List<String>> paramMap) {
+        String path = configuration.getUploadPath() + attache.getFullName();        
         List<String> pathList = Collections.singletonList(FilenameUtils.removeExtension(path) + ".pdf");        
         paramMap.put("path", pathList);
         openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
@@ -722,8 +721,7 @@ public class SessionBean implements Serializable{
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         } 
-    }
-    
+    }    
     
     /* УСТАНОВКА И ИЗМЕНЕНИЕ ЛОКАЛИ */
     

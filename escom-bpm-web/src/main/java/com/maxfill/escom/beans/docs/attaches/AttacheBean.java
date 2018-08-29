@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.docs.attaches;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -9,18 +10,28 @@ import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.process.remarks.Remark;
+import com.maxfill.model.process.remarks.RemarkFacade;
+import com.maxfill.model.states.StateFacade;
+import com.maxfill.model.states.State;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.files.FileService;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang3.StringUtils;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -38,12 +49,22 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     @EJB
     private AttacheFacade attacheFacade;
     @EJB
-    private AttacheService attacheService;
+    private AttacheService attacheService;    
+    @EJB    
+    private RemarkFacade remarkFacade;    
+    @EJB    
+    private StateFacade stateFacade;
+    
     @Inject
     private DocBean docBean;
-            
+    
     private StreamedContent content;     
        
+    private boolean remarkTabShow = false;
+    private Doc doc;
+    private final List<Remark> remarks = new ArrayList<>();
+    protected String currentTab = "0";
+    
     /* Копирует вложение */
     public Attaches copyAttache(Attaches sourceAttache){
         Attaches newAttache = attacheFacade.copyAttache(sourceAttache);        
@@ -72,7 +93,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         String path = null;
         if (params.containsKey("itemId")){
             Integer docId = Integer.valueOf(params.get("itemId"));
-            Doc doc = docFacade.find(docId);
+            doc = docFacade.find(docId);
             if (doc == null) return;
             docBean.getFacade().actualizeRightItem(doc, getCurrentUser());
             if (docBean.getFacade().isHaveRightView(doc)) {
@@ -89,13 +110,105 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         if (path == null) {
             LOGGER.log(Level.SEVERE, null, "ESCOM_BPM ERROR: file path is null!");
             return;            
+        }        
+        if (appBean.isCanUsesProcess() && doc != null){            
+            remarkTabShow = true;
+            List<Remark> remarklist = doc.getDetailItems();
+            if (!remarklist.isEmpty()){
+                remarks.addAll(remarklist);
+            }
         }
-        
         try {
             content = new DefaultStreamedContent(new FileInputStream(path), "application/pdf");                
         } catch (FileNotFoundException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public String onCancelItemSave() {
+        sourceBean = null;
+        remarks.clear();
+        return super.onCancelItemSave(); 
+    }    
+    
+    /* ЗАМЕЧАНИЯ */
+    
+    public void onCreateRemark(){
+        Remark remark = remarkFacade.createItem(getCurrentUser(), null, doc, new HashMap<>());
+        remarkFacade.create(remark);
+        remarks.add(remark);
+    }
+    
+    public void onSaveRemark(Remark remark){
+        remarkFacade.edit(remark);
+        MsgUtils.succesMessage(getLabelFromBundle("ObjectSaved"));
+    }
+    
+    public List<Remark> getMyRemarks(){
+        return remarks.stream()
+                .filter(remark -> remark.getAuthor().equals(getCurrentUser()))
+                .collect(Collectors.toList());
+    }
+    
+    public List<Remark> getOtherRemarks(){
+        return remarks.stream()
+                .filter(remark -> !remark.getAuthor().equals(getCurrentUser()))
+                .collect(Collectors.toList());
+    }
+        
+    public void onChangeStateRemark(Remark remark, Integer stateId){
+        State state = stateFacade.find(stateId);
+        remark.getState().setCurrentState(state);
+        if (state.equals(stateFacade.getIssuedState())){
+            remark.setChecked(false);
+        }
+        remarkFacade.edit(remark);
+    }
+    
+    public void onDeleteRemark(Remark remark){
+        remarkFacade.remove(remark);
+        remarks.remove(remark);
+    }
+    
+    public String getRemarkHeader(Remark remark){
+        StringBuilder sb = new StringBuilder();
+        //String stateLocalName = stateBean.getBundleName(remark.getState().getCurrentState());
+        sb.append(remark.getAuthor().getName());
+        return StringUtils.abbreviate(sb.toString(), 35);
+    }
+    
+    public void onRemarkCheck(Remark remark){
+        remark.setChecked(true);
+        remarkFacade.edit(remark);
+    }
+    
+    public void onTabChange(TabChangeEvent event) {
+        Tab tab = event.getTab();
+        String tabId = tab.getId();
+        switch (tabId) {
+            case "tabMyRemarks": {
+                currentTab = "0";                
+                break;
+            }
+            case "tabFilter": {
+                currentTab = "1";
+                break;
+            }
+        }
+    }
+    
+    /* GETS & SETS  */
+
+    public String getCurrentTab() {
+        return currentTab;
+    }
+    public void setCurrentTab(String currentTab) {
+        this.currentTab = currentTab;
+    }
+        
+    public List<Remark> getRemarks(){        
+        return remarks;
     }
     
     public StreamedContent getContent() {
@@ -105,6 +218,13 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         this.content = content;
     }
 
+    public boolean isRemarkTabShow() {
+        return remarkTabShow;
+    }
+    public void setRemarkTabShow(boolean remarkTabShow) {
+        this.remarkTabShow = remarkTabShow;
+    }
+    
     @Override
     public String getFormName(){
         return DictFrmName.FRM_DOC_VIEWER;

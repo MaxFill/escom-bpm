@@ -1,10 +1,7 @@
 package com.maxfill.model.process.remarks;
 
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.process.Process;
-import com.maxfill.model.staffs.StaffLog;
-import com.maxfill.model.staffs.StaffStates;
-import com.maxfill.model.users.User;
+import com.maxfill.model.docs.Doc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "remarks")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Remark extends BaseDict<Process, Remark, Remark, RemarkLog, RemarkStates> {    
+public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkStates> {    
     private static final long serialVersionUID = -6292099538231215250L;
     
     @TableGenerator(
@@ -51,7 +48,7 @@ public class Remark extends BaseDict<Process, Remark, Remark, RemarkLog, RemarkS
 
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Process owner;        
+    private Doc owner;        
 
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -65,6 +62,10 @@ public class Remark extends BaseDict<Process, Remark, Remark, RemarkLog, RemarkS
     @Column(name = "Checked")
     private boolean checked;
     
+    @Basic(optional = false)
+    @Column(name = "Content", length = 1024)
+    private String content;
+    
     @Transient
     @XmlTransient
     private final Integer tempId;
@@ -74,19 +75,27 @@ public class Remark extends BaseDict<Process, Remark, Remark, RemarkLog, RemarkS
     public Remark() {
         tempId = COUNT.incrementAndGet();
     }
-
+    
     /* GETS & SETS */        
+
+    @Override
+    public String getIconName() {
+        if (checked){
+            return "/resources/icon/doc_check20.png";
+        } else 
+            return "";        
+    }        
     
     public Integer getTempId() {
         return tempId;
     }
     
     @Override
-    public Process getOwner() {
+    public Doc getOwner() {
         return owner;
     }    
     @Override
-    public void setOwner(Process owner) {
+    public void setOwner(Doc owner) {
         this.owner = owner;
     }
 
@@ -122,8 +131,14 @@ public class Remark extends BaseDict<Process, Remark, Remark, RemarkLog, RemarkS
     }
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }      
+
+    public String getContent() {
+        return content;
     }
-      
+    public void setContent(String content) {
+        this.content = content;
+    }    
     
     /* *** *** */
 

@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.processes.remarks;
 
-import com.maxfill.model.posts.Post;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
 
 import javax.ejb.EJB;
@@ -13,7 +13,7 @@ import javax.inject.Named;
  */
 @Named
 @ViewScoped
-public class RemarkCardBean extends BaseCardBean<Post>{
+public class RemarkCardBean extends BaseCardBean<Remark>{
     private static final long serialVersionUID = -6399475562664755663L;
     
     @EJB
@@ -23,5 +23,5 @@ public class RemarkCardBean extends BaseCardBean<Post>{
     public RemarkFacade getFacade() {        
         return itemsFacade;
     }
-
+    
 }

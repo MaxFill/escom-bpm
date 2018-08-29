@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -291,7 +292,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     public void onViewAttache(Attaches attache){
-        sessionBean.onViewAttache(attache);
+        Doc doc = attache.getDoc();
+        Map<String, List<String>> params = getParamsMap();
+        params.put("itemId", Collections.singletonList(String.valueOf(doc.getId())));
+        sessionBean.onViewAttache(attache, params);
     }
 
     /* Скачивание файла вложения основной версии документа как PDF */

@@ -3,8 +3,8 @@ package com.maxfill.model.process.remarks;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.docs.Doc;
 import javax.ejb.Stateless;
-import com.maxfill.model.process.Process;
 import java.util.Date;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * @author maksim
  */
 @Stateless
-public class RemarkFacade extends BaseDictFacade<Remark, Process, RemarkLog, RemarkStates>{
+public class RemarkFacade extends BaseDictFacade<Remark, Doc, RemarkLog, RemarkStates>{
 
     public RemarkFacade() {
         super(Remark.class, RemarkLog.class, RemarkStates.class);

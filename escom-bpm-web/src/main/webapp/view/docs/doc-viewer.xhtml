@@ -4,35 +4,76 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core"
                  xmlns:pe="http://primefaces.org/ui/extensions"
                  xmlns:h="http://xmlns.jcp.org/jsf/html"
-                 template="/view/templ/templ-dlg.xhtml">
+                 template="/view/templ/templ-frm.xhtml">
 
     <ui:param name="_bean" value="#{attacheBean}"/>
 
-    <ui:define name="menuActions" >
-    </ui:define>
+    <ui:define name="centerContent">   
+        <script>
+            var isFullPage = #{_bean.isFullPageMode()};
+            var formName = '#{_bean.getFormName()}';
 
-    <ui:define name="toolbarComponents" >
-    </ui:define>
+            if (isChrome || isOpera) {
+                window.onbeforeunload = function () {
+                    if (!isFullPage) {
+                        sendFormSize(formName);
+                    }
+                    return null;
+                };
+            }
+        </script> 
 
-    <ui:define name="centerFormContent">   
+        <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="true">            
 
-        <p:panelGrid columns="1" layout="grid" rendered="#{attacheBean.content == null}" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">            
-            <p:panel styleClass="ui-grid-col-12" style="height: 100%;">
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
-                    <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                    <h:panelGroup styleClass="ui-grid-col-12">
-                        <h3>
-                            #{bundle.DocumentPreviewIisNotAvailable}
-                        </h3>
-                    </h:panelGroup>
-                </p:panelGrid>            
-            </p:panel>
-        </p:panelGrid>
+            <pe:layoutPane id="east" position="east" rendered="#{attacheBean.isRemarkTabShow()}" resizable="true" size="30%">
+                <h:form id="eastFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12" style="height: 100%;">
+                        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                            <p:autoUpdate />
+                        </p:messages>
+                        <ui:include src="/view/docs/remarks/remarks-panel.xhtml"/>
+                    </p:panelGrid>
+                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
+                </h:form>
+            </pe:layoutPane>
 
-        <p:panelGrid columns="1" rendered="#{attacheBean.content != null}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-            <pe:documentViewer value="#{attacheBean.content}" height="750" style="width: 100%;"/>                        
-        </p:panelGrid>
+            <pe:layoutPane id="center" position="center" resizable="true" size="70%">
+                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
+                    <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
+                        <f:facet name="header">
+                            #{_bean.getFormHeader()}
+                        </f:facet>
+                        <f:facet name="actions">
+                            <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                           actionListener="#{_bean.onCancelItemSave()}"  
+                                           onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {
+                                                   onChangeItem();
+                                               }">
+                                <h:outputText styleClass="ui-icon ui-icon-closethick" />
+                            </p:commandLink>
+                        </f:facet>                    
+
+                        <p:panelGrid columns="1" rendered="#{attacheBean.content != null}" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12" style="height: 100%;">
+                            <pe:documentViewer value="#{attacheBean.content}" height="800" style="width: 100%;" />                        
+                        </p:panelGrid>
+
+                        <p:panelGrid columns="1" layout="grid" rendered="#{attacheBean.content == null}" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">                        
+                            <p:panel styleClass="ui-grid-col-12" style="height: 100%;">
+                                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-9" styleClass="ui-grid-col-12">
+                                    <p:graphicImage name="/images/escom_logo.jpg"  /> 
+                                    <h:panelGroup styleClass="ui-grid-col-12">
+                                        <h3>
+                                            #{bundle.DocumentPreviewIisNotAvailable}
+                                        </h3>
+                                    </h:panelGroup>
+                                </p:panelGrid>            
+                            </p:panel>
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                     
+                </h:form>
+            </pe:layoutPane>
+        </pe:layout>
     </ui:define>
 
 </ui:composition>
-

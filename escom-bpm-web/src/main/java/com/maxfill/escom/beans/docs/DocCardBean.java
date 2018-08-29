@@ -17,11 +17,15 @@ import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.ProcessTypesDict;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.interfaces.WithDetails;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.docStatuses.DocStatusFacade;
 import com.maxfill.model.companies.Company;
+import com.maxfill.model.process.remarks.Remark;
+import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
@@ -51,7 +55,7 @@ import org.primefaces.PrimeFaces;
 
 @Named
 @ViewScoped
-public class DocCardBean extends BaseCardBean<Doc>{
+public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark>{
     private static final long serialVersionUID = -8151932533993171177L;
 
     private final List<DocStatuses> forDelDocStatus = new ArrayList<>();
@@ -61,12 +65,16 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private Attaches selectedAttache;
     private Doc linkedDoc;
     private Process selectedProcess;
+    private List<Remark> checkedDetails;
+    private Remark selectedDetail;
     
     @Inject
     private DocBean docBean;
     @Inject
     private ProcessBean processBean;
-    
+    @Inject
+    private RemarkBean remarkBean;
+        
     @EJB
     private DocNumeratorService docNumeratorService;
     @EJB
@@ -77,7 +85,9 @@ public class DocCardBean extends BaseCardBean<Doc>{
     private AttacheFacade attacheFacade;
     @EJB
     private ProcessTypesFacade processTypesFacade;
- 
+    @EJB
+    private RemarkFacade remarkFacade;
+
     @Override
     public String doFinalCancelSave() {      
         List<Attaches> notSaveAttaches = getEditedItem().getAttachesList().stream()
@@ -507,6 +517,74 @@ public class DocCardBean extends BaseCardBean<Doc>{
             setTabActiveIndex(1);
             PrimeFaces.current().ajax().update("mainFRM:mainTabView");
         }
+    }
+ 
+    /* ЗАМЕЧАНИЯ */
+    
+    @Override
+    public List<Remark> getDetails() {
+        return getEditedItem().getDetailItems();
+    }
+
+    @Override
+    public List<Remark> getCheckedDetails() {
+        return checkedDetails;
+    }
+
+    @Override
+    public void setCheckedDetails(List<Remark> checkedDetails) {
+        this.checkedDetails = checkedDetails;
+    }
+
+    @Override
+    public void onDeleteCheckedDetails() {
+        getDetails().removeAll(checkedDetails);
+        onItemChange();
+    }
+
+    @Override
+    public void onCreateDetail() {
+        selectedDetail = remarkFacade.createItem(getCurrentUser(), null, getEditedItem(), new HashMap<>());
+        onOpenDetail(selectedDetail);
+    }
+
+    @Override
+    public void afterCloseDetailItem(SelectEvent event) {
+        if (event.getObject() == null) return;        
+        switch ((String) event.getObject()){
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+            case SysParams.EXIT_NEED_UPDATE:{                
+                if (selectedDetail.getId() == null){
+                    getDetails().add(selectedDetail);
+                }
+                onItemChange();
+                break;
+            }
+        }  
+    }
+
+    @Override
+    public void onDeleteDetail(Remark item) {
+        getDetails().remove(item);
+        onItemChange();
+    }
+
+    @Override
+    public void onOpenDetail(Remark item) {
+        setSourceItem(item);
+        remarkBean.prepEditChildItem((Remark)item, getParamsMap());
+    }
+    
+    @Override
+    public Remark getSelectedDetail() {
+        return selectedDetail;
+    }
+
+    @Override
+    public void setSelectedDetail(Remark selectedDetail) {
+       this.selectedDetail = selectedDetail;
     }
     
     /* GETS & SETS */

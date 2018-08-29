@@ -84,7 +84,7 @@
         
         <p:outputLabel value="#{bundle.Partner}:" rendered="#{applicationBean.isCanUsesPartners()}"/>
         <p:selectOneMenu value="#{_bean.model.partnerSearche}" filter="true" converter="partnersConvertor" 
-                         rendered="#{applicationBean.isCanUsesPartners()}"
+                        rendered="#{applicationBean.isCanUsesPartners()}"
                         widgetVar="partnerSearche"
                         styleClass="ui-grid-col-12">
                 <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
@@ -110,6 +110,9 @@
         <p:commandButton id="btnSendDocLink" actionListener="#{_bean.prepareSendMailDocs('asLink')}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docBean.onAfterSendDocToEmail}" update="mainFRM:messages" oncomplete="initDND()"/>
         </p:commandButton>
+        <p:commandButton id="createItemBtn" actionListener="#{_bean.onCreateDetailItem()}" style="display: none;">
+           <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
+       </p:commandButton> 
         
         <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="false" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
             <p:commandButton value="#{bundle.CreateProcess}" process="@this"
@@ -160,7 +163,7 @@
         <p:menuitem icon="ui-icon-zoomin" value="#{bundle.ViewDoc}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     disabled="#{item.mainAttache == null}"
-                    actionListener="#{docBean.onViewAttache(item.getMainAttache())}"/>
+                    actionListener="#{docBean.onViewMainAttache(item)}"/>
         <p:menuitem icon="ui-icon-arrowthickstop-1-s" value="#{bundle.Download}"
                     ajax="false"
                     onstart="return isClose = 1;"
@@ -170,10 +173,12 @@
         <p:menuitem icon="ui-icon-plus" value="#{bundle.ADD_VERSION}"
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}"
                     actionListener="#{docBean.openAttacheAddForm(item)}"/>
+        
         <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"
-                    rendered="#{item.getClass().getSimpleName() == 'Doc'}"
+                    rendered="#{false or item.getClass().getSimpleName() == 'Doc'}"
                     actionListener="#{_bean.onSetCurrentItem(item)}"
                     oncomplete="document.getElementById('mainFRM:btnScan').click();"/> 
+        
         <p:separator />
         <p:menuitem icon="ui-icon-folder-open" value="#{bundle.ShowInFolder}" 
                     rendered="#{item.getClass().getSimpleName() == 'Doc'}" 
@@ -220,6 +225,8 @@
     </ui:define>
     
     <ui:define name="centerFormFooter">
-        <ui:include src="/view/common/file-uppload.xhtml" />
+        <h:panelGroup rendered="#{!_bean.selectorViewMode}">
+            <ui:include src="/view/common/file-uppload.xhtml" />
+        </h:panelGroup>
     </ui:define>
 </ui:composition>

@@ -2,7 +2,6 @@ package com.maxfill.model.states;
 
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.states.State;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -60,5 +59,12 @@ public class StateFacade extends BaseFacade{
     }
     public State getCanceledState(){
         return find(DictStates.STATE_CANCELLED);
+    }
+    
+    public State getConfirmedState(){
+        return find(DictStates.STATE_CONFIRMED);
+    }
+    public State getIssuedState(){
+        return find(DictStates.STATE_ISSUED);
     }
 }

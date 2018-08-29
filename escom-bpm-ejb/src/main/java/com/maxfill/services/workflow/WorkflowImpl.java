@@ -842,9 +842,15 @@ public class WorkflowImpl implements Workflow {
     private boolean allRemarksChecked(Scheme scheme){
         boolean result = true;
         Process process = processFacade.find(scheme.getProcess());
-        for(Remark remark : process.getDetailItems()){
-            if (!remark.isChecked()){
-                result = false;
+        List<Doc> docs = process.getDocs();
+        for (Doc doc : docs){
+            for(Remark remark : doc.getDetailItems()){
+                if (!remark.isChecked()){
+                    result = false;
+                    break;
+                }
+            }
+            if (!result){
                 break;
             }
         }

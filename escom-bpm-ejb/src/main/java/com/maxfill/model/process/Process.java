@@ -27,7 +27,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "processes")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Process extends BaseDict<ProcessType, Process, Remark, ProcessLog, ProcessStates> implements WithDatesPlans{
+public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates> implements WithDatesPlans{
     private static final long serialVersionUID = 8735448948976387594L;
 
     @TableGenerator(
@@ -75,10 +75,7 @@ public class Process extends BaseDict<ProcessType, Process, Remark, ProcessLog, 
     private Integer deltaDeadLine = 0; //срок исполения в секундах
     
     @Column(name="DeadLineType")
-    private String deadLineType = "delta"; //вид установки срока исполнения
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")    
-    private List<Remark> detailItems = new ArrayList<>();
+    private String deadLineType = "delta"; //вид установки срока исполнения    
         
     /* Список документов */
     @JoinTable(name = "docsInProcesses", joinColumns = {
@@ -197,22 +194,18 @@ public class Process extends BaseDict<ProcessType, Process, Remark, ProcessLog, 
     }
     public void setDocs(List<Doc> docs) {
         this.docs = docs;
-    }
-           
-    @Override
-    public List<Remark> getDetailItems() {
-        return detailItems;
-    }
-    @Override
-    public void setDetailItems(List<Remark> detailItems) {
-        this.detailItems = detailItems;
-    }
+    }           
         
     @Override
     public List<Process> getChildItems() {
         return null;
     }
 
+    @Override
+    public List<Process> getDetailItems() {
+        return null;
+    }
+    
     @Override
     public String getRoleJson() {
         return roleJson;

@@ -37,7 +37,7 @@ public class ProcReport implements Serializable, Dict{
     private Integer id;
     
     @Basic(optional = false)    
-    @Column(name = "Content")    
+    @Column(name = "Content", length = 1024)    
     private String content;
     
     @Basic(optional = false)    

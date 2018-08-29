@@ -4,8 +4,8 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
-    <p:dataTable id="tblRemarks" var="remark" value="#{processCardBean.editedItem.detailItems}" 
-                rowKey="#{remark.tempId}" selectionMode="single" selection="#{processCardBean.selectedDetail}"
+    <p:dataTable id="tblRemarks" var="remark" value="#{_bean.editedItem.detailItems}" 
+                rowKey="#{remark.tempId}" selectionMode="single" selection="#{_bean.selectedDetail}"
                 emptyMessage="#{bundle.EmptyTable}"
                 paginator="true" paginatorPosition="bottom"  
                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
@@ -29,7 +29,7 @@
         </p:column>
         
         <p:column headerText="#{bundle.Status}" sortBy="#{remark.state}" width="80">
-            <h:outputLabel value="#{processCardBean.getLabelFromBundle(remark.state.currentState.name)}" />
+            <h:outputLabel value="#{_bean.getLabelFromBundle(remark.state.currentState.name)}" />
         </p:column>       
         
         <p:column headerText="#{bundle.Checked}" width="25">
@@ -39,27 +39,27 @@
         <p:column width="36" >
             <p:commandButton icon="ui-icon-document" title="#{bundle.Open}" 
                              immediate="true"
-                             actionListener="#{processCardBean.onOpenDetail(remark)}">
-                <p:ajax event="dialogReturn" listener="#{processCardBean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
+                             actionListener="#{_bean.onOpenDetail(remark)}">
+                <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
             </p:commandButton>
             <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"
                              immediate="true"
-                             disabled="#{processCardBean.isReadOnly() or remark.author != _bean.currentUser}"
+                             disabled="#{_bean.isReadOnly() or remark.author != _bean.currentUser}"
                              update="mainFRM:mainTabView:tblRemarks"
-                             actionListener="#{processCardBean.onDeleteDetail(remark)}">
+                             actionListener="#{_bean.onDeleteDetail(remark)}">
                 <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
             </p:commandButton>
         </p:column>
         
         <f:facet name="footer">
             <p:outputLabel value="#{msg.ForAddRemarkSaveProcess}"
-                           rendered="#{processCardBean.editedItem.id == null}"/>
+                           rendered="#{_bean.editedItem.id == null}"/>
             <p:commandButton icon="ui-icon-circle-plus" value="#{bundle.Add}" title="#{bundle.AddRemark}" 
                              immediate="true"
-                             rendered="#{processCardBean.editedItem.id != null}"
-                             disabled="#{processCardBean.isReadOnly()}"
-                             actionListener="#{processCardBean.onCreateDetail()}">
-                <p:ajax event="dialogReturn" listener="#{processCardBean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
+                             rendered="#{_bean.editedItem.id != null}"
+                             disabled="#{_bean.isReadOnly()}"
+                             actionListener="#{_bean.onCreateDetail()}">
+                <p:ajax event="dialogReturn" listener="#{_bean.afterCloseDetailItem}" update="mainFRM:mainTabView:tblRemarks"/>
             </p:commandButton>
         </f:facet>
     </p:dataTable>

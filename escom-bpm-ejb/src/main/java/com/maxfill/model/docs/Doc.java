@@ -10,6 +10,7 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.ItemUtils;
 import java.io.IOException;
@@ -51,7 +52,7 @@ import org.apache.commons.lang.StringUtils;
 @Entity
 @Table(name = "docs")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
+public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     private static final long serialVersionUID = 5208895312598249913L;
 
     @TableGenerator(
@@ -105,7 +106,11 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocStates state;
-     
+    
+    /* Замечания */
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")    
+    private List<Remark> detailItems = new ArrayList<>();
+        
     /* Список ссылающихся документов  */
     @OneToMany(mappedBy = "mainDoc")
     private List<Doc> docsLinks = new ArrayList<>();
@@ -159,10 +164,14 @@ public class Doc extends BaseDict<Folder, Doc, Doc, DocLog, DocStates> {
     public void setOwner(Folder owner) {
         this.owner = owner;
     }
-
+    
     @Override
-    public List<Doc> getDetailItems() {
-        return null;
+    public List<Remark> getDetailItems() {
+        return detailItems;
+    }
+    @Override
+    public void setDetailItems(List<Remark> detailItems) {
+        this.detailItems = detailItems;
     }
     
     @Override
