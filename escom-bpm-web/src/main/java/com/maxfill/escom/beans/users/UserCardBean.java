@@ -31,6 +31,7 @@ import javax.inject.Named;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -110,7 +111,7 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         onItemChange();
         getEditedItem().setInbox(folder);
         if (!folderFacade.checkRightAddDetail(folder, getEditedItem())){
-            addRightForChangeFolder(folder);
+            addRightForChangeFolder(folder, new HashSet<>());
         }    
     }
 
@@ -152,21 +153,26 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * @param folder
      */
     public void addRightForChangeFolder(){
-        addRightForChangeFolder(getEditedItem().getInbox());
+        Set<String> errors = new HashSet<>();
+        addRightForChangeFolder(getEditedItem().getInbox(), errors);
+        if (!errors.isEmpty()){
+            MsgUtils.showWarningMsg(errors);
+        }
     }
     
-    public void addRightForChangeFolder(Folder folder){
+    public void addRightForChangeFolder(Folder folder, Set<String> errors ){
         folder = folderFacade.find(getEditedItem().getInbox().getId());
         if (folder.isInherits()){
             MsgUtils.errorFormatMsg("CannotAddRightBecauseInheritsRights", new Object[]{folder.getNameEndElipse()});
             checkFolder(folder);
+            errors.add("OpenFolderAndRemoveInherits");
             return;
         }
         State state = stateFacade.getValidState();
         folderFacade.addItemRightForUser(folder, getEditedItem(), state);
         MsgUtils.succesMsg("AccessRightsChanged");
-    }
-    
+    }        
+            
     /* Формирование отображаемого имени пользователя */    
     public void makeName(){
         getEditedItem().setName(getEditedItem().getShortFIO());

@@ -24,6 +24,7 @@
                 <h:outputLabel value="#{msg.SaveUserBeforeMakeInbox}" rendered="#{_bean.editedItem.id == null}" styleClass="warning-msg"/>
                 <p:commandButton value="#{bundle.AddRight}" title="#{bundle.AddUserRightChangeFolder}" style="float: right;"
                                  actionListener="#{userCardBean.addRightForChangeFolder()}"
+                                 update="mainFRM"
                                  disabled="#{_bean.isReadOnly() and !sessionBean.userAdmin}"
                                  rendered="#{_bean.getEditedItem().getInbox() != null and !_bean.canUserEditFolder(_bean.getEditedItem().getInbox())}">
                 </p:commandButton>

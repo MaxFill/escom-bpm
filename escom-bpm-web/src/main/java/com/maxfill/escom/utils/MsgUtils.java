@@ -101,6 +101,14 @@ public final class MsgUtils{
     }
 
     /**
+     * Отображение 10-ти предупреждающих сообщений. На входе список ключей для ресурса msg
+     * @param warningKeys - список ключей для ресурса msg     
+     */
+    public static void showWarningMsg(Set<String> warningKeys){
+        warningKeys.stream().limit(10).forEach(warning->warnMsg(warning));
+    }
+    
+    /**
      * Вывод сообщения об ошибке
      * @param msg ключ ресурса
      */
