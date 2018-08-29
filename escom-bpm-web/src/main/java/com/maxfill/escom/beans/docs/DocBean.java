@@ -294,7 +294,9 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void onViewAttache(Attaches attache){
         Doc doc = attache.getDoc();
         Map<String, List<String>> params = getParamsMap();
-        params.put("itemId", Collections.singletonList(String.valueOf(doc.getId())));
+        if (doc.getId() != null){
+            params.put("itemId", Collections.singletonList(String.valueOf(doc.getId())));
+        }
         sessionBean.onViewAttache(attache, params);
     }
 

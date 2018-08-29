@@ -29,7 +29,7 @@
                 </f:facet>
                 <f:facet name="actions">
                     <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                   rendered="#{_canClose == null ? true : _canClose}"
+                                   rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"
                                    actionListener="#{_bean.onCancelItemSave()}"  
                                    onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {
                                                onChangeItem();

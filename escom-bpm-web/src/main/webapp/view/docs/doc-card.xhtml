@@ -144,8 +144,11 @@
             </p:panelGrid>
         </p:tab>
         
-        <ui:include src="/view/docs/doc-links.xhtml"/>                
-        <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
+        <h:panelGroup rendered="#{applicationBean.isCanUsesDelo()}">
+            <ui:include src="/view/docs/doc-links.xhtml"/>                
+            <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
+        </h:panelGroup>
+        
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>
         <ui:include src="/view/docs/doc-places.xhtml"/>
 

@@ -6,9 +6,6 @@
                  xmlns:f="http://xmlns.jcp.org/jsf/core">    
 
     <ui:param name="_bean" value="#{schedulerBean}"/>
-
-    <ui:define name="menuActions" >
-    </ui:define>   
         
     <ui:define name="toolbarComponents" >
         <p:commandButton id="btnCreateTask" style="display: none;" actionListener="#{schedulerBean.onCreateTask(_bean)}">

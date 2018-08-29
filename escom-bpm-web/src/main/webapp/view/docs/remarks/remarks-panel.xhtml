@@ -15,7 +15,7 @@
                         rowsPerPageTemplate="5,10,15" rows="5"
                         styleClass="ui-grid-col-12 without-spaces">
 
-                <p:panel menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">
+                <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">
                     <f:facet name="header">
                         <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
                         <h:graphicImage value="#{remark.iconName}"/>
@@ -24,7 +24,7 @@
 
                     <f:facet name="options">
                         <p:menu>
-                            <p:menuitem value="#{bundle.RemarkRemoved}" icon="ui-icon-check"
+                            <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
                                         rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
                                         actionListener="#{_bean.onRemarkCheck(remark)}" update="eastFRM:accord:dgMyRemarks">                                
                             </p:menuitem>
@@ -50,8 +50,8 @@
 
                     <f:facet name="actions">
                         <p:commandLink type="button" title="#{bundle.Save}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                       rendered="#{remark.author eq _bean.currentUser and remark.state.currentState.id == 13}"                                       
-                                       actionListener="#{_bean.onSaveRemark(remark)}">                             
+                                       rendered="#{remark.author eq _bean.currentUser and remark.state.currentState.id == 12}"                                       
+                                       actionListener="#{_bean.onSaveRemark(remark)}">
                             <h:outputText styleClass="ui-icon ui-icon-disk" />
                         </p:commandLink>
                     </f:facet>
@@ -75,7 +75,7 @@
 
                 <p:panel header="#{_bean.getRemarkHeader(remark)}" menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
                     <f:facet name="actions"> 
-                        <p:commandLink type="button" title="#{bundle.RemarkRemoved}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                        <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                        rendered="#{remark.state.currentState.id == 12}"   
                                        update="eastFRM:accord:dgMyRemarks eastFRM:accord:dgAllRemarks"
                                        actionListener="#{_bean.onRemarkCheck(remark)}">                             
