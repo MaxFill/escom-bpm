@@ -102,6 +102,14 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDoc;
 
+    @Size(max = 50)
+    @Column(name = "BookNumber")
+    private String bookNumber;
+     
+    @Column(name = "BookDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date bookDate;
+    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -133,6 +141,22 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public Doc() {
     }
 
+    /* GETS * SETS */
+
+    public String getBookNumber() {
+        return bookNumber;
+    }
+    public void setBookNumber(String bookNumber) {
+        this.bookNumber = bookNumber;
+    }
+
+    public Date getBookDate() {
+        return bookDate;
+    }
+    public void setBookDate(Date bookDate) {
+        this.bookDate = bookDate;
+    }
+        
     @Override
     public DocStates getState() {
         return state;

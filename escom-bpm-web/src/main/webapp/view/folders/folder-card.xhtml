@@ -30,7 +30,7 @@
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
                 </p:inputText>
 
-                <p:outputLabel value="#{bundle.IndexCase}:" />
+                <p:outputLabel value="#{bundle.BookNumber}:" />
                 <h:panelGroup styleClass="ui-grid-col-12">
                     <p:inputText value="#{_bean.editedItem.getParentNumber()}" rendered="#{not empty _bean.editedItem.parent}"
                                  styleClass="ui-grid-col-2"
@@ -46,6 +46,18 @@
                                  disabled="#{_bean.isReadOnly()}">
                     </p:inputText>
                 </h:panelGroup>
+                
+                <p:outputLabel value="#{bundle.BookDate}:" indicateRequired="true"/>
+                <p:calendar value="#{_bean.editedItem.dateDoc}" 
+                            styleClass="ui-grid-col-12"                                    
+                            disabled="#{_bean.isReadOnly()}"
+                            onselect="return itemChange = 1;"                                    
+                            locale="#{sessionBean.locale}"
+                            navigator="true" yearRange="c-120:c+20"
+                            required="#{param['isRequired'] == 'true'}" 
+                            requiredMessage="#{bundle.Field} [#{bundle.BookDate}] #{bundle.MustBeFilled}">
+                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                </p:calendar> 
             </p:panelGrid>
         </p:tab>
 

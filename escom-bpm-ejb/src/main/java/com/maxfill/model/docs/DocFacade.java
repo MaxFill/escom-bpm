@@ -21,7 +21,6 @@ import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.searche.SearcheService;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -242,7 +241,11 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         Folder folder = doc.getOwner();
         doSetDefaultDocType(doc, folder);
         doSetDefaultCompany(doc, folder);
-        doSetDefaultPartner(doc, folder);           
+        doSetDefaultPartner(doc, folder); 
+        
+        doc.setBookDate(folder.getDateDoc());
+        doc.setBookNumber(folder.getFolderNumber());
+        
         doc.setDateDoc(new Date());
         DocType docType = doc.getDocType();
         if (docType != null && docType.getNumerator() != null && DictNumerator.TYPE_AUTO.equals(docType.getNumerator().getTypeCode())){ 

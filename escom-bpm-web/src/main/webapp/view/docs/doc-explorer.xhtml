@@ -135,12 +135,10 @@
         <p:column headerText="#{bundle.Type}" sortBy="#{item.docType.name}" width="90" priority="4">
             <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.docType.name : bundle.Folder}"/>
         </p:column>
-
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" width="90" priority="4"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="80" priority="4" rendered="#{_bean.isNowShowDetail()}" 
-                  sortBy="#{item.dateDoc}">
+        <p:column headerText="#{bundle.Date}" width="80" sortBy="#{item.dateDoc}">
             <h:outputLabel value="#{item.dateDoc}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
@@ -210,7 +208,7 @@
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
-        <p:menuButton icon="ui-icon-print" title="#{bundle.Reports}" >
+        <p:menuButton icon="ui-icon-print" title="#{bundle.Reports}" rendered="false">
             <p:menuitem value="#{bundle.DocReportCountTypes}" 
                         icon="ui-icon-note"
                         onstart="PF('statusDialog').show()"
