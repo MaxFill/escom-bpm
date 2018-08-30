@@ -64,6 +64,7 @@
                             <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
                                              disabled="#{_bean.isReadOnly()}"
                                              icon="ui-icon-disk"
+                                             update="mainFRM"
                                              actionListener="#{_bean.prepSaveItemAndClose()}" 
                                              onclick="sendFormSize('#{_bean.getFormName()}');
                                                              if (itemChange == 1) {
