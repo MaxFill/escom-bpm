@@ -406,17 +406,19 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         Set<Integer> usersId = new HashSet<>();
         usersId.add(user.getId());
 
-        doSetMultyRole(roleName, usersId);
+        doSetMultyRole(roleName.toUpperCase(), usersId);
     }
     
     /* установка (перезапись) списковой роли */
     private void doSetMultyRole(String roleName, Set<Integer> usersId){
-        getRoles().put(roleName, usersId);
+        getRoles().put(roleName.toUpperCase(), usersId);
     }
 
     /* добавление исполнителя в роль */
     public void doAddInRole(String roleName, Integer userId){
         Set<Integer> usersIds;
+        roleName = roleName.toUpperCase();
+        
         if (getRoles().containsKey(roleName)){
             usersIds = getRoles().get(roleName);
         } else {

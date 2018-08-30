@@ -141,6 +141,7 @@
                                                 oncomplete="initDND()">
                                     </p:menuitem>
                                 </p:splitButton>
+                                
                                 <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear" rendered="#{!_bean.isTrashSelected()}">
                                     <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveCheckedToTrash}" title="#{bundle.MoveCheckedToTrash}"
                                                 disabled="#{_bean.checkedItems.isEmpty()}"
@@ -166,6 +167,11 @@
                                                 oncomplete="PF('statusDialog').hide(); initDND();"
                                                 actionListener="#{sessionBean.onViewHelp()}"/>
                                 </p:menuButton>
+                                
+                                <p:commandButton icon="ico_exit" value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
+                                                rendered="#{!_bean.selectorViewMode}"
+                                                onstart="return isClose = 1;"                                     
+                                                actionListener="#{sessionBean.onSessionExit()}"/>
                             </f:facet>
                         </p:toolbar>  
 

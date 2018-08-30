@@ -313,7 +313,10 @@ body{
 .ico_refresh {background-image: url('../resources/icon/refresh.png') !important;}
 .ico_execute {background-image: url('../resources/icon/execute.png') !important;}
 .ico_enter20 {background-image: url('../resources/icon/enter-20.png') !important;}
+
+.ico_exit{background-image: url('../resources/icon/door-open20.png') !important;}
 .ico_exit20 {background-image: url('../resources/icon/exit-20.png') !important;}
+
 .ico_sign {background-image: url('../resources/icon/sign.png') !important;}
 .ico_16_inspector{background-image: url('../resources/icon/inspector.png') !important;}
 .ico_outdoc{background-image: url('../resources/icon/outdoc.png') !important;}

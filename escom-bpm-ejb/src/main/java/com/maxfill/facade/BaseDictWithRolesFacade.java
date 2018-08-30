@@ -58,7 +58,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     /* Проверка вхождения пользователя в роль документа */
     @Override
     public boolean checkUserInRole(T item, String roleName, User user){
-        roleName = roleName.toLowerCase();
+        roleName = roleName.toUpperCase();
         Map<String, Set<Integer>> roles = item.getRoles();
         if (roles.isEmpty() || !roles.containsKey(roleName)) return false;
         Set<Integer> usersIds = (HashSet<Integer>)roles.get(roleName);
