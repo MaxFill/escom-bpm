@@ -800,6 +800,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return 
      */
     protected boolean checkUserInRole(T item, String roleName, User user){
-        return "owner".equals(roleName.toLowerCase()) && Objects.equals(item.getAuthor(), user);
+        return "OWNER".equals(roleName.toUpperCase()) && Objects.equals(item.getAuthor(), user);
     }
 }
