@@ -178,7 +178,7 @@
     </ui:define>
     
     <ui:define name="specSubMenu"> 
-        <p:menuButton value="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
+        <p:menuButton value="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu" rendered="false">
             <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" rendered="false"    
                         oncomplete="document.getElementById('mainFRM:mainTabView:btnScan').click();"/>                             
             <p:separator rendered="false"  />

@@ -45,7 +45,7 @@
 
                     <p:toolbar id="explToolBar">
                         <f:facet name="left">
-                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
+                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" rendered="false" >
                                 <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
                                             disabled="#{_bean.editedItem.id == null}"
                                             actionListener="#{_bean.onPreViewItemCard()}"/>
