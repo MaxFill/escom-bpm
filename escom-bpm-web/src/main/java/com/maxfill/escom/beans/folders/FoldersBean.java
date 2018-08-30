@@ -59,7 +59,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
             //актуализируем права документов папки
             
             TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
-
+            newNode.setExpanded(true);
+            
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
             getFacade().findActualChilds((Folder)folder)
                     .stream()
