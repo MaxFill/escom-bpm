@@ -935,13 +935,15 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private void expandDown(TreeNode node){
         if (node == null) return;
         node.setExpanded(true);
-        BaseDict item = (BaseDict) node.getData();
-        if (isItemTreeType(item)){
-            treeBean.loadChilds(item, node);            
-        } else
-            if (isItemRootType(item)){
-                rootBean.loadChilds(item, node);                
-            }        
+        if (!node.equals(tree)){
+            BaseDict item = (BaseDict) node.getData();
+            if (isItemTreeType(item)){
+                treeBean.loadChilds(item, node);            
+            } else
+                if (isItemRootType(item)){
+                    rootBean.loadChilds(item, node);                
+                }
+            }
         node.getChildren().stream().forEach(childNode -> expandDown(childNode));
     }
     
@@ -1290,8 +1292,9 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
 
     /* Выполняет поиск в дереве объектов */
-    public void onSearcheInTree(){
+    public void onSearcheInTree(){        
         if (StringUtils.isNotBlank(treeSearcheKey)){
+            onExpandTree();
             clearTree(tree);
             List<TreeNode> rezult = new ArrayList<>();
             doSearcheInTree(tree, rezult);
