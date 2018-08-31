@@ -505,7 +505,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * Установка прав объекту для пользователя в текущем состоянии объекта с актуализацией маски доступа
      */
     private void settingRightItem(BaseDict item, Rights newRight, User user) {
-        if (item == null) return;
+        if (item == null || user == null || newRight == null) return;
         item.setRightItem(newRight);
         Integer mask = getAccessMask((T)item, newRight, user);
         item.setRightMask(mask);

@@ -33,8 +33,6 @@
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <ui:insert name="specDetailColumns" />
-        
         <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="95" id="shortName" >
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
@@ -46,9 +44,14 @@
             </h:outputLabel>
             <ui:insert name="specCommandLinks"/>
         </p:column>
-        
+
+        <ui:insert name="specDetailColumns" />
         <ui:insert name="specTreeColumns"/>
-        <ui:insert name="specRootColumns"/>        
+        <ui:insert name="specRootColumns"/>
+        
+        <p:column width="16" sortBy="#{item.state.currentState.name}" priority="4">
+            <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
+        </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1"
                   sortBy="#{item.dateChange}">

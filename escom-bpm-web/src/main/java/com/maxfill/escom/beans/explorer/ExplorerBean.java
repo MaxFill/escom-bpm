@@ -823,7 +823,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     public void onTreeNodeSelect(NodeSelectEvent event) {
         TreeNode node = event.getTreeNode();
         onSelectInTree(node);
-    }
+    }    
     
     /* ДЕРЕВО: Установка текущего элемента в дереве по заданному узлу node */
     public void onSelectInTree(TreeNode node) {        
@@ -838,9 +838,11 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         currentItem = (BaseDict) treeSelectedNode.getData();        
         List<BaseDict> details = null; 
         if (isItemTreeType(currentItem)){
+            treeBean.loadChilds(currentItem, treeSelectedNode);
             details = treeBean.makeGroupContent(currentItem, viewMode);
         } else
             if (isItemRootType(currentItem)){
+                rootBean.loadChilds(currentItem, treeSelectedNode);
                 details = rootBean.makeGroupContent(currentItem, viewMode);
             }
         setDetails(details, DictDetailSource.TREE_SOURCE); 
@@ -933,6 +935,13 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private void expandDown(TreeNode node){
         if (node == null) return;
         node.setExpanded(true);
+        BaseDict item = (BaseDict) node.getData();
+        if (isItemTreeType(item)){
+            treeBean.loadChilds(item, node);            
+        } else
+            if (isItemRootType(item)){
+                rootBean.loadChilds(item, node);                
+            }        
         node.getChildren().stream().forEach(childNode -> expandDown(childNode));
     }
     
@@ -1655,40 +1664,9 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     public void setCurrentViewModeMixed(){
         currentType = typeMixed;
-    }             
-    
-    protected void initLayoutOptions() {
-        LayoutOptions panes = new LayoutOptions();
-        panes.addOption("slidable", false);
-        panes.addOption("resizable", true);
-        layoutOptions.setPanesOptions(panes);
-
-        LayoutOptions west = new LayoutOptions();
-        west.addOption("size", 300);
-        west.addOption("minSize", 300);
-        west.addOption("resizable", true);
-        west.addOption("initClosed", false);
-        layoutOptions.setWestOptions(west);
-
-        LayoutOptions east = new LayoutOptions();;
-        east.addOption("size", 300);  
-        east.addOption("minSize", 300);
-        east.addOption("resizable", true);
-        east.addOption("initClosed", false);
-        layoutOptions.setEastOptions(east);
-
-        LayoutOptions center = new LayoutOptions();
-        center.addOption("size", "40%");
-        center.addOption("resizable", true);
-        center.addOption("closable", false);        
-        layoutOptions.setCenterOptions(center);
     }
     
     /* GETS & SETS */       
-    
-    public LayoutOptions getLayoutOptions() {
-        return layoutOptions;
-    }
 
     public BaseDict getCurrentItem() {
         return currentItem;

@@ -10,7 +10,6 @@ import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -26,8 +25,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -72,10 +69,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Column(name = "IsLocked")
     private boolean isLocked;
 
-    @Column(name = "BookDate")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateDoc;
-        
     @Basic(optional = false)
     @Column(name = "FolderNumber")
     private String folderNumber;
@@ -210,13 +203,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
 
     /* gets & sets */
 
-    public Date getDateDoc() {
-        return dateDoc;
-    }
-    public void setDateDoc(Date dateDoc) {
-        this.dateDoc = dateDoc;
-    }
-    
     @Override
     public Integer getId() {
         return id;

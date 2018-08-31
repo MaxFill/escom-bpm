@@ -80,14 +80,15 @@ public class RedirectFilter implements Filter {
             return;
         } 
         
-        if (userId == null){ 
+        /*
+        if (userId == null){             
             if ("partial/ajax".equals(request.getHeader("Faces-Request"))){
                 response.setContentType("text/xml");
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().printf(AJAX_REDIRECT_XML, reqURL);
                 chain.doFilter(request, response);
                 return;
-            } else {                
+            } else {
                 String targetUrl = reqURL.replaceAll(ctxPath, "").replaceAll("/faces", "").replaceAll("/", "%2F");
                 StringBuilder loginURL = new StringBuilder();
                 loginURL.append(serverURL).append(ctxPath).append("/faces/");
@@ -100,7 +101,28 @@ public class RedirectFilter implements Filter {
                 response.sendRedirect(loginURL.toString());                
                 return;
             }
-        }        
+        } 
+        */
+        if (userId == null){
+            if ("partial/ajax".equals(request.getHeader("Faces-Request"))){  
+                response.setContentType("text/xml");
+                response.setCharacterEncoding("UTF-8");
+                chain.doFilter(request, response);
+                return;
+            } else {
+                String targetUrl = reqURL.replaceAll(ctxPath, "").replaceAll("/faces", "").replaceAll("/", "%2F");
+                StringBuilder loginURL = new StringBuilder();
+                loginURL.append(serverURL).append(ctxPath).append("/faces/");
+                loginURL.append(SysParams.LOGIN_PAGE).append("?from=").append(targetUrl).append(makeParams(request.getParameterMap()));
+                Map<String,String[]> params = request.getParameterMap();
+                if (params.containsKey("docId")){
+                    String[] param = params.get("docId");
+                    loginURL.append("?docId=").append(param[0]);
+                }                
+                response.sendRedirect(loginURL.toString());                
+                return;
+            }
+        }
         
         try {
             chain.doFilter(request, response);

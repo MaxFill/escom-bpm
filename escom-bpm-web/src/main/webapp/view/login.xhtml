@@ -17,8 +17,7 @@
         </f:metadata>     
     </ui:define>
     
-    <ui:define name="body">
-        <ui:include src="/view/common/error-dlg.xhtml"/>
+    <ui:define name="body">        
         #{loginBean.onBeforeOpenCard()}
         <h:form id="loginFRM">            
             <p:panel styleClass="panelLogin" >
@@ -95,7 +94,8 @@
                     </p:panelGrid>
                 </p:outputPanel>
             </p:panel>
-
+                    
         </h:form>
+        <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 </ui:composition>

@@ -224,10 +224,14 @@
                                      actionListener="#{sessionBean.openScaningForm()}"> 
                         <p:ajax event="dialogReturn" listener="#{_bean.addAttacheFromScan}" oncomplete="initDND()"/>
                     </p:commandButton>
-
+                    
+                    <ui:include src="/view/common/exeption-handler.xhtml"/> 
                 </h:form>                
             </pe:layoutPane>
         </pe:layout>
+        
+        <ui:include src="/view/common/error-dlg.xhtml"/>
+        
     </ui:define>
 
     <ui:define name="customJavaScript">

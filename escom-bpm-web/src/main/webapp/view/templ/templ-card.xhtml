@@ -45,7 +45,7 @@
 
                     <p:toolbar id="explToolBar">
                         <f:facet name="left">
-                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" rendered="false" >
+                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
                                 <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
                                             disabled="#{_bean.editedItem.id == null}"
                                             actionListener="#{_bean.onPreViewItemCard()}"/>
@@ -111,10 +111,13 @@
             <ui:insert name="form_scripts"/>
 
             <ui:include src="/view/common/confirm-dlg.xhtml"/>
+            <ui:include src="/view/common/exeption-handler.xhtml"/>            
+            
             <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" /> 
             <p:remoteCommand name="onChangeItem" immediate="true" actionListener="#{_bean.onItemChange()}" oncomplete="return itemChange = 0;"/> 
         </h:form>
 
+        <ui:include src="/view/common/error-dlg.xhtml"/>
         <ui:include src="/view/sys/noSaveDlg.xhtml" />
 
     </ui:define>

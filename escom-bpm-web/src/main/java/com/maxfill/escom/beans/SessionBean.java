@@ -330,26 +330,10 @@ public class SessionBean implements Serializable{
     }
 
     /* Переход на начальную страницу программы */
-    public String goToIndex(){                 
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS); 
-        map.entrySet().removeIf(mapEntry->{
-            boolean flag = false;
-            if (mapEntry instanceof Map.Entry) {
-                Map.Entry entry = (Map.Entry) mapEntry;
-                if (entry.getValue() instanceof Map) {
-                    Map viewScopes = (Map) entry.getValue();
-                    if (viewScopes.isEmpty()){
-                        flag = true;
-                    }
-                }
-            }
-            return flag;
-        });
+    public String goToIndex(){
         return "/view/index?faces-redirect=true";
     }
-
+    
     /* Сохранение настроек текущего пользователя в базу данных */
     private void doSaveUserSettings(){
         if (userSettings == null) return;
@@ -373,6 +357,7 @@ public class SessionBean implements Serializable{
     
     /* Является ли текущий пользователь администратором  */
     public boolean isUserAdmin(){
+        if (currentUser == null) return false;
         if (DictRights.USER_ADMIN_ID.equals(currentUser.getId())){
             return true;
         }
@@ -394,7 +379,7 @@ public class SessionBean implements Serializable{
      * Открытие окна смены пароля в случае если у пользователя установлен признак необходимости его смены
      */
     public void checkUserMastChangePwl(){
-        if (currentUser.isNeedChangePwl()){
+        if (currentUser != null && currentUser.isNeedChangePwl()){
             openSettingsForm();
         }
     }

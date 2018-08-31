@@ -2,14 +2,16 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  xmlns:h="http://xmlns.jcp.org/jsf/html">
-                               
-    <p:dialog id="expireDialog" header="#{msg.SessionExpired}" resizable="false" modal="true" closable="true" closeOnEscape="true" widgetVar="expireDialog" height="240px" width="550px">
-        <p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
-            <p:graphicImage name="/images/session_expired.jpg"/> 
-            <p:outputLabel value="#{msg.SessionTimeout}" style="color: red;"/>
-            <br/>
-            <p:button icon="ui-icon-home" value="#{bundle.GotoLogin}" outcome="/login" style="float: right;" />
-        </p:panelGrid>
+
+    <p:dialog id="expireDialog" header="#{msg.SessionExpired}" resizable="false" modal="true" closable="false" closeOnEscape="false" widgetVar="expireDialog" height="240px" width="500px">
+        <h:form style="font-size: 100%;">
+            <p:panelGrid columns="2" columnClasses="ui-grid-col-6, ui-grid-col-6" styleClass="ui-grid-col-12">
+                <p:graphicImage name="/images/session_expired.jpg"/> 
+                <p:outputLabel value="#{msg.SessionTimeout}" style="color: red;"/>
+                <br/>
+                <p:link href="#{sessionBean.onGetExplorerURL('/login')}" value="#{bundle.GotoLogin}" target="_blank" />                
+            </p:panelGrid>
+        </h:form>
     </p:dialog>
-    
+
 </ui:composition>

@@ -16,7 +16,7 @@ public final class SysParams {
     public static final String APP_NAME = "ProgramName";
         
     public static final String MAIN_PAGE     = "/view/index.xhtml";
-    public static final String LOGIN_PAGE    = "login.xhtml";
+    public static final String LOGIN_PAGE    = "/view/login.xhtml";
     public static final String LOGOUT_PAGE   = "logout.xhtml";
     public static final String LOGIN_ERROR   = "/faces/view/errors/login-error.xhtml";
     public static final String EXPIRE_PAGE   = "/faces/view/errors/expire.xhtml";

@@ -11,40 +11,35 @@
     
     <ui:define name="page_body">       
         <p:tab title="#{bundle.Document}" id="tabDocCard" >
-            <p:panelGrid id="panelDocCard" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
-                
+            <p:panelGrid id="panelDocCard" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
                 <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-5 col-padding, ui-grid-col-7 col-padding" styleClass="without-spaces ui-grid-col-12">
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.Number}:" />  
-                        <h:panelGroup id="regNumberPanel" styleClass="ui-grid-col-12 without-spaces">
-                            <div class="ui-inputgroup">
-                                <p:inputText value="#{_item.regNumber}" id="number"
-                                            title="#{bundle.RegistredDocNumber}"
-                                            onkeypress="checkEsc();"
-                                            rendered="#{_item.docType == null or _item.docType.numerator == null}"
-                                            disabled="#{_bean.isReadOnly()}"
-                                            onchange="return itemChange = 1;"
-                                            requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}">
-                                </p:inputText>
-
-                                <p:inputMask mask="#{_bean.numberMask}" title="#{_item.docType.numerator.name}"
-                                             rendered="#{_item.docType != null and _item.docType.numerator != null}"
-                                             disabled="#{_bean.isReadOnly()}"
-                                             onchange="return itemChange = 1;"
-                                             requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}"
-                                             value="#{_item.regNumber}"/>
-
-                                <p:commandButton icon="ui-icon-gear" title="#{bundle.Generate}"
-                                                 disabled="#{_bean.isReadOnly() or !docCardBean.canRegistred}"
-                                                 actionListener="#{_bean.onGenerateRegNumber(_item)}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"/>
-                                <p:commandButton id="clearNumberBtn"
-                                                 icon="ui-icon-close" title="#{bundle.UnRegistred}"
-                                                 update="docTypePanel datePanel сompanyPanel regNumberPanel"
-                                                 actionListener="#{_bean.onClearRegNumber()}"
-                                                 disabled="#{_bean.isReadOnly() or _bean.canRegistred}"/>
-                            </div>
-                        </h:panelGroup>
+                        <p:outputLabel value="#{bundle.BookNumber}:" />
+                        <p:inputText value="#{docCardBean.editedItem.owner.folderNumber}" 
+                                     disabled="true"
+                                     required="#{param['isRequired'] == 'true'}" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.BookNumber}] #{bundle.MustBeFilled}">
+                        </p:inputText>
+                    </h:panelGrid>
+                        
+                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+                        <p:outputLabel value="#{bundle.BookDate}:" indicateRequired="true"/>
+                        <p:inputText value="#{docCardBean.editedItem.owner.name}" 
+                                     disabled="true"
+                                     required="#{param['isRequired'] == 'true'}" 
+                                     requiredMessage="#{bundle.Field} [#{bundle.BookNumber}] #{bundle.MustBeFilled}">
+                        </p:inputText>
+                    </h:panelGrid>
+                    
+                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
+                        <p:outputLabel value="#{bundle.Number}:" indicateRequired="true" />                           
+                        <p:inputText value="#{_item.regNumber}" id="number"
+                                    title="#{bundle.RegistredDocNumber}"
+                                    onkeypress="checkEsc();"
+                                    disabled="#{_bean.isReadOnly()}"
+                                    onchange="return itemChange = 1;"
+                                    requiredMessage="#{bundle.Field} [#{bundle.Number}] #{bundle.MustBeFilled}">
+                        </p:inputText>
                     </h:panelGrid>
 
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
@@ -60,29 +55,7 @@
                                     requiredMessage="#{bundle.Field} [#{bundle.DateDoc}] #{bundle.MustBeFilled}">
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>                        
-                    </h:panelGrid>                    
-
-                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.BookNumber}:" indicateRequired="true"/>
-                        <p:inputText value="#{_bean.editedItem.bookNumber}" 
-                                     required="#{param['isRequired'] == 'true'}" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.BookNumber}] #{bundle.MustBeFilled}">
-                        </p:inputText>
-                    </h:panelGrid>
-                        
-                    <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.BookDate}:" indicateRequired="true"/>
-                        <p:calendar value="#{_bean.editedItem.bookDate}" 
-                                    styleClass="ui-grid-col-12"                                    
-                                    disabled="#{_bean.isReadOnly()}"
-                                    onselect="return itemChange = 1;"                                    
-                                    locale="#{sessionBean.locale}"
-                                    navigator="true" yearRange="c-120:c+20"
-                                    required="#{param['isRequired'] == 'true'}" 
-                                    requiredMessage="#{bundle.Field} [#{bundle.BookDate}] #{bundle.MustBeFilled}">
-                            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                        </p:calendar>                         
-                    </h:panelGrid>
+                    </h:panelGrid>                                       
                     
                 </p:panelGrid>
                 
@@ -100,7 +73,7 @@
                         <ui:param name="_items" value="#{docTypeBean.findAll()}"/>
                         <ui:param name="_actionClear" value="setDocType"/>
                         <ui:param name="_actionSelect" value="onDocTypeSelected"/>
-                        <ui:param name="_update" value="mainFRM:mainTabView:regNumberPanel mainFRM:mainTabView:docStatusTbl mainFRM:mainTabView:explToolBar"/>
+                        <ui:param name="_update" value=""/>
                     </ui:include>                    
 
                     <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
@@ -121,13 +94,13 @@
                     <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
-                                     disabled="#{_bean.isReadOnly()}"
+                                     disabled="true"
                                      styleClass="ui-grid-col-12"
                                      required="#{param['isRequired'] == 'true'}"
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
-                        <p:ajax event="change" update="regNumberPanel" oncomplete="return itemChange = 1;"/>
+                        <p:ajax event="change" oncomplete="return itemChange = 1;"/>
                     </p:selectOneMenu>
                 </h:panelGrid>                   
 

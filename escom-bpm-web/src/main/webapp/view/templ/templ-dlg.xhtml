@@ -67,12 +67,13 @@
                 </f:facet>
             </p:panel>
 
-            <ui:insert name="form_scripts"/>
-
-            <ui:include src="/view/common/confirm-dlg.xhtml"/>
-            <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />            
+            <ui:insert name="form_scripts"/>            
+            <ui:include src="/view/common/exeption-handler.xhtml"/>
+            
+            <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                            
         </h:form>
 
+        <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 
 </ui:composition>

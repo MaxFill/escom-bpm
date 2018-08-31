@@ -30,7 +30,7 @@
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();">
         <p:ajax event="dialogReturn" oncomplete="initDND()"/>
-    </p:commandButton>
+    </p:commandButton>    
 
     <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
         <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{_bean.currentTab}" >
@@ -47,12 +47,12 @@
                         <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
-                    <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed" styleClass="dragable">
+                    <p:treeNode type="tree" icon="#{treeItem.iconTree}">
                         <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
-                            update="westFRM:accord:toolbarTree westFRM:accord:menuTree mainFRM #{_updates}"
+                            update="westFRM mainFRM #{_updates}"
                             oncomplete="initDND()"/>
                     <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
                             update="westFRM:accord:toolbarTree mainFRM #{_updates}"
@@ -83,7 +83,13 @@
                                 oncomplete="document.getElementById('westFRM:viewTreeCardBtn').click();"/>
                     <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
                                 oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
-                    <p:separator />                
+                    <p:separator /> 
+                    <p:menuitem title="#{bundle.MoveToTrash}"                                     
+                                update="westFRM:accord:tree mainFRM #{_updates}"
+                                actionListener="#{_bean.onMoveTreeItemToTrash()}">
+                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
+                    </p:menuitem>
+                    <p:separator/>
                     <p:menuitem icon="ui-icon-copy" value="#{bundle.Copy}"                                     
                                 onstart="PF('statusDialog').show()"
                                 oncomplete="PF('statusDialog').hide(); initDND()"

@@ -149,7 +149,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         
     @Transient
     @XmlTransient           
-    protected String iconTree;    
+    protected String iconTree = "ui-icon-folder-collapsed";    
     
     @Transient
     @XmlTransient
@@ -193,9 +193,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public void setRightForChild(Rights rightForChild) {
         this.rightForChild = rightForChild;
     }       
-           
-    public String getIconTree(){
-        return "ui-icon-home";
+
+    public String getIconTree() {
+        return iconTree;
+    }
+    public void setIconTree(String iconTree) {
+        this.iconTree = iconTree;
     }
     
     public String getItemKey(){
