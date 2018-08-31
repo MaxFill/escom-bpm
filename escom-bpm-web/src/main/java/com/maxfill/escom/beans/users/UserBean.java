@@ -5,15 +5,12 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
-
-import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,9 +29,6 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     @Inject
     private UserGroupsBean groupsBean;
-
-    @EJB
-    private StaffFacade staffFacade;
 
     /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
     @Override

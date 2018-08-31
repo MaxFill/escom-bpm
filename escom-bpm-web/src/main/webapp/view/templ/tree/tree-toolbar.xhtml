@@ -17,31 +17,7 @@
                                      oncomplete="PF('statusDialog').hide(); initDND()"/>
                     <span class="ui-separator">
                         <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>
-                    <p:commandButton icon="ui-icon-folder-open" title="#{bundle.ExpandTree}"
-                                     update="westFRM" oncomplete="initDND()"
-                                     style="font-size: 90%;"
-                                     actionListener="#{_bean.onExpandTree()}"/>
-                    <p:commandButton icon="ui-icon-folder-collapsed" title="#{bundle.CollapseTree}"
-                                     update="westFRM" oncomplete="initDND()"
-                                     style="font-size: 90%;"
-                                     actionListener="#{_bean.onCollapseTree()}"/>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
                     </span>                    
-
-                    <p:commandButton icon="ui-icon-trash" title="#{bundle.MoveToTrash}"
-                                     disabled="#{_bean.isCanDeleteTreeItem()}"
-                                     style="font-size: 90%;"
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide(); initDND();"
-                                     update="westFRM:accord:tree westFRM:accord:toolbarTree mainFRM #{_updates}"
-                                     actionListener="#{_bean.onMoveTreeItemToTrash()}">
-                        <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
-                    </p:commandButton>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span> 
                         
                     <div class="ui-inputgroup">
                         <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"

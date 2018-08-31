@@ -34,6 +34,15 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         return cnt;
     }
     
+    public void loadChilds(BaseDict item, TreeNode node){
+        if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
+            node.setExpanded(true);
+            List<T> childs = getFacade().findActualChilds(item);
+            childs.stream().forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
+            item.setIconTree("ui-icon-folder-open");
+        }
+    }
+     
     /* Добавление подчинённого объекта в контент */
     protected void addDetailItemInContent(BaseDict item, List<BaseDict> cnt){
         if (getDetailBean().getFacade().preloadCheckRightView(item, getCurrentUser())){
@@ -66,10 +75,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
         if (getFacade().preloadCheckRightView(item, getCurrentUser())) {
             TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
             doExpandTreeNode(newNode);
-            List<T> childs = getFacade().findActualChilds(item);
-            childs.stream()
-                    .forEach(itemChild -> addItemInTree(newNode, itemChild, typeNode)
-            );
+            //List<T> childs = getFacade().findActualChilds(item);
+            //childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild, typeNode));
             rezNode = newNode;
         }
         return rezNode;

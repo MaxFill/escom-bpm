@@ -41,11 +41,11 @@
     </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>010</param-value>
+        <param-value>011</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-08-29</param-value>
+        <param-value>2018-09-01</param-value>
     </context-param>  
     <context-param>
         <param-name>UseModeshape</param-name>
@@ -85,7 +85,7 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>0</session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>/faces/login.xhtml</welcome-file>
@@ -94,7 +94,7 @@
     <error-page>
         <exception-type>javax.faces.application.ViewExpiredException</exception-type>
         <location>/faces/view/errors/expire.xhtml</location>
-    </error-page>    
+    </error-page>        
     <error-page>
         <error-code>404</error-code>
         <location>/faces/view/errors/404.xhtml</location>

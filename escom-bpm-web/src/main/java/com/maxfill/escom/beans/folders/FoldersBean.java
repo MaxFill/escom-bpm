@@ -37,6 +37,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @EJB
     private DocFacade docFacade;
 
+    /*
     @Override
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
@@ -50,8 +51,9 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         addNode(tree, rootFolder);
         return tree;
     }
-
+*/
     /* Добавление узла в дерево при формировании дерева */
+    /*
     public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
         TreeNode resultNode = null;
 
@@ -62,14 +64,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
             newNode.setExpanded(true);
             
             //получаем и рекурсивно обрабатываем дочерние папки этой папки
-            getFacade().findActualChilds((Folder)folder)
-                    .stream()
-                    .forEach(folderChild -> addNode(newNode, folderChild));
+            //getFacade().findActualChilds((Folder)folder).stream().forEach(folderChild -> addNode(newNode, folderChild));
             
             resultNode = newNode;
         }
         return resultNode;
     }
+    */
     
     /* Формирование содержимого контента папки   */ 
     @Override
