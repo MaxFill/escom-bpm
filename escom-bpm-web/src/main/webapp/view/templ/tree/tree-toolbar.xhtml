@@ -6,33 +6,27 @@
     
     <p:defaultCommand target="westFRM:accord:btnTreeSearche" />
     
-    <p:toolbar id="toolbarTree" styleClass="ui-grid-col-12">
-        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{_bean.tree != null}">
-            
-                    <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
-                                     style="font-size: 90%;"
-                                     actionListener="#{_bean.onReloadTreeItems()}"
-                                     update="westFRM mainFRM"
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide(); initDND()"/>
-                    <span class="ui-separator">
-                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                    </span>                    
-                        
-                    <div class="ui-inputgroup">
-                        <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
+    <p:toolbar id="toolbarTree" styleClass="ui-grid-col-12">        
+        <p:toolbarGroup styleClass="ui-grid-col-12" rendered="#{_bean.tree != null}"> 
+            <div class="ui-inputgroup">
+                <p:commandButton icon="ui-icon-refresh" title="#{bundle.Refresh}"
+                                 style="font-size: 90%;"
+                                 actionListener="#{_bean.onReloadTreeItems()}"
+                                 update="westFRM mainFRM"
+                                 onstart="PF('statusDialog').show()"
+                                 oncomplete="PF('statusDialog').hide(); initDND()"/>                        
+                    <p:inputText value="#{_bean.treeSearcheKey}" title="#{bundle.InputCreteriaForSearche}" id="nameSearche"
+                                 disabled="#{!_bean.isShowTree()}"
+                                 onkeypress="checkEsc();"
+                                 style="font-size: 90%;">
+                    </p:inputText>
+                    <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
                                      disabled="#{!_bean.isShowTree()}"
-                                     onkeypress="checkEsc();"
-                                     style="font-size: 90%;">
-                        </p:inputText>
-                        <p:commandButton id="btnTreeSearche" title="#{bundle.Searche}" icon="ui-icon-search"
-                                         disabled="#{!_bean.isShowTree()}"
-                                         update="westFRM mainFRM #{_updates}"
-                                         actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
-                                         oncomplete="initDND()">
-                        </p:commandButton>
-                    </div>
-            
+                                     update="westFRM mainFRM #{_updates}"
+                                     actionListener="#{_bean.onSearcheInTree()}" style="font-size: 90%;" 
+                                     oncomplete="initDND()">
+                    </p:commandButton>
+            </div>            
         </p:toolbarGroup>
     </p:toolbar>
     
