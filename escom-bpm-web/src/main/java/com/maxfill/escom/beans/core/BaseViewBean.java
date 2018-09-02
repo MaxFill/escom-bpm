@@ -23,8 +23,12 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.render.ResponseStateManager;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
+import org.omnifaces.util.Beans;
+import org.omnifaces.util.Faces;
+import static org.omnifaces.util.FacesLocal.getRenderKit;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -82,12 +86,22 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         beanId = this.toString();                
         FacesContext facesContext = FacesContext.getCurrentInstance();
         Map<String, String> params = facesContext.getExternalContext().getRequestParameterMap();
+        
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);                  
-        if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){                
+        Map map = (Map) session.getAttribute(ViewScopeManager.ACTIVE_VIEW_MAPS);
+        
+        //Map<String, Object> viewMap = facesContext.getViewRoot().getViewMap();        
+        //String viewId = Faces.getViewRoot().getViewId();
+        //ResponseStateManager manager = getRenderKit(facesContext).getResponseStateManager();
+        //Object state = manager.getState(facesContext, viewId);
+        
+        if (sourceBean == null && params.containsKey(SysParams.PARAM_BEAN_ID) && StringUtils.isNotEmpty(params.get(SysParams.PARAM_BEAN_ID))){            
             sourceBeanId = params.get(SysParams.PARAM_BEAN_ID);
             sourceBean = (T)sessionBean.getOpenedBeans().get(sourceBeanId);
-        }            
+        } else {            
+            //sessionBean.getKillBeans().add(viewId);
+            //viewMap.entrySet().stream().forEach(rec-> sessionBean.getKillBeans().add((String)rec.getValue()));            
+        }
         doBeforeOpenCard(params);
     }
 

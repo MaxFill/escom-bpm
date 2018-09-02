@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.processes.elements;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
+import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.model.process.conditions.ConditionFacade;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.schemes.elements.ConditionElem;
@@ -34,7 +34,7 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){                        
             if (sourceBean != null){
-                sourceItem = (ConditionElem)((ProcessCardBean)sourceBean).getBaseElement(); 
+                sourceItem = (ConditionElem)((DiagramBean)sourceBean).getBaseElement(); 
                 if (sourceItem.getConditonId() != null){
                     selected = conditionFacade.find(sourceItem.getConditonId());
                 }

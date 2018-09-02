@@ -13,14 +13,14 @@
                 </p:messages>                
                 
                 <p:outputLabel value="#{bundle.SelectingProcessTemplate}:" indicateRequired="true"/>
-                <p:selectOneMenu value="#{processCardBean.selectedTempl}" title="#{bundle.ProcessTemplate}" 
+                <p:selectOneMenu value="#{_bean.selectedTempl}" title="#{bundle.ProcessTemplate}" 
                                  styleClass="ui-grid-col-12"
                                  required="true"
                                  requiredMessage="#{bundle.Field} [#{bundle.ProcessTemplate}] #{bundle.MustBeFilled}"
-                                 valueChangeListener="#{processCardBean.onTemplSelector}" converter="procTemplConverter"
+                                 valueChangeListener="#{_bean.onTemplSelector}" converter="procTemplConverter"
                                  filter="true" filterMatchMode="startsWith">
                     <p:ajax update="LoadFromTemplFRM" partialSubmit="true" />
-                    <f:selectItems value="#{processCardBean.templates}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>                    
+                    <f:selectItems value="#{_bean.templates}" var="item" itemValue="#{item}" itemLabel="#{item.nameEndElipse}"/>                    
                 </p:selectOneMenu>
                 <p:spacer height="5"/>
                 <p:separator/>
@@ -32,7 +32,7 @@
                     <p:commandButton id="btnAction" style="float: right;"
                                      value="#{bundle.Load}"
                                      onclick="PF('LoadFromTemplDLG').hide();"
-                                     actionListener="#{processCardBean.onLoadModelFromTempl()}">
+                                     actionListener="#{_bean.onLoadModelFromTempl()}">
                     </p:commandButton>
                 </h:panelGroup>
             </p:panelGrid>

@@ -178,12 +178,18 @@ public class ExplorerTreeBean extends ExplorerBean{
         //ищем в таблице запись приёмника
         String rkTbl = dropId.substring(LEH_TABLE_NAME, dropId.length());
         String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+        if(!rwKey.matches("\\d+")) {
+            return;
+        }
         Integer tbKey = Integer.parseInt(rwKey);
         dropItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
         if (dropItem != null) {
             //ищем в таблице запись источника
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
             rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
+            if(!rwKey.matches("\\d+")) {
+               return;
+            }
             tbKey = Integer.parseInt(rwKey);
             BaseDict dragItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
             makeCheckedItemList(dragItem);

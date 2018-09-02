@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.processes.elements;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.schemes.elements.TimerElem;
@@ -46,7 +47,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){                        
             if (sourceBean != null){
-                sourceItem = (TimerElem)((ProcessCardBean)sourceBean).getBaseElement();                             
+                sourceItem = (TimerElem)((DiagramBean)sourceBean).getBaseElement();                             
                 if (sourceItem != null){
                     if (sourceItem.getTimerId() != null){
                         procTimer = procTimerFacade.find(sourceItem.getTimerId());

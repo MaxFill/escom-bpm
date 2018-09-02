@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.processes.elements;
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
+import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.model.process.schemes.elements.MessageElem;
 import java.lang.reflect.InvocationTargetException;
 import com.maxfill.model.process.Process;
@@ -24,7 +24,7 @@ import org.primefaces.model.DualListModel;
  */
 @Named
 @ViewScoped
-public class MessageCardBean extends BaseViewBean<ProcessCardBean>{    
+public class MessageCardBean extends BaseViewBean<DiagramBean>{    
     private static final long serialVersionUID = -1566412000716670159L;
 
     @EJB
@@ -40,7 +40,7 @@ public class MessageCardBean extends BaseViewBean<ProcessCardBean>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){
             if (sourceBean != null){
-                sourceItem = (MessageElem)((ProcessCardBean)sourceBean).getBaseElement();
+                sourceItem = (MessageElem)((DiagramBean)sourceBean).getBaseElement();
             }
             if (sourceItem != null){
                 try {
@@ -102,7 +102,7 @@ public class MessageCardBean extends BaseViewBean<ProcessCardBean>{
 
     public DualListModel<String> getRoles() {        
         if (roles == null){            
-            Process process = sourceBean.getEditedItem();
+            Process process = sourceBean.getProcess();
             List<String> source = processFacade.getRoles(process);
             if (liveRoles == null){
                 liveRoles = new ArrayList<>();

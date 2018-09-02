@@ -15,9 +15,9 @@
     </ui:define>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.Explorer}">             
+        <p:tab id="cardTab" title="#{bundle.UsersGroup}">             
             <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12 ui-panelgrid-blank" >
-                <p:outputLabel value="#{bundle.Name}:"/>
+                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                 <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                             styleClass="ui-grid-col-12"
                             onkeypress="checkEsc();"
