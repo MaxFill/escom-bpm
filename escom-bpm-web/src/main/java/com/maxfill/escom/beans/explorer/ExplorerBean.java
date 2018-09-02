@@ -265,6 +265,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
             switch (typeEdit){
                 case DictEditMode.EDIT_MODE: {                    
                     try {                    
+                        editItem.setIconTree(currentItem.getIconTree());
                         BeanUtils.copyProperties(currentItem, editItem);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
