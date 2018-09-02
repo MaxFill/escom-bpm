@@ -34,7 +34,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
             counter.setNumber(0);
             counter.setCompany(doc.getCompany());
             counter.setDocType(doc.getDocType());
-            counter.setYear(Integer.valueOf(EscomUtils.getYearYY(doc.getDateDoc())));
+            counter.setYear(Integer.valueOf(EscomUtils.getYearYY(doc.getItemDate())));
             getCounterFacade().create(counter);
             return counter;
         } else {
@@ -58,7 +58,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
             sb.append("_").append(doc.getCompany().getId());
         }
         if (doc.getDocType().getNumerator().getResetNewYear()){                
-            sb.append("_").append(EscomUtils.getYearYY(doc.getDateDoc()));
+            sb.append("_").append(EscomUtils.getYearYY(doc.getItemDate()));
         }
         
         return sb.toString();
@@ -67,7 +67,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     /* Регистрация документа  */
     @Override
     public void registratedDoc(Doc doc, Set<String> errors){
-        Date dateReg = doc.getDateDoc();
+        Date dateReg = doc.getItemDate();
         if (dateReg == null){
             errors.add("DOCDATE_NO_SET");            
         }

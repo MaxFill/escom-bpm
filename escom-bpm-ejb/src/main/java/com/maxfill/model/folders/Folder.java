@@ -76,6 +76,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Column(name = "FolderNumber")
     private String folderNumber;
 
+    @Column(name = "DateFolder")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date itemDate;
+    
     @OneToMany
     @JoinColumn(name = "owner")
     private List<Doc> detailItems = new ArrayList<>();
@@ -224,6 +228,13 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
         this.childItems = childItems;
     }
 
+    public Date getItemDate() {
+        return itemDate;
+    }
+    public void setItemDate(Date itemDate) {
+        this.itemDate = itemDate;
+    }
+    
     @Override
     public FolderStates getState() {
         return state;

@@ -46,6 +46,17 @@
                                  disabled="#{_bean.isReadOnly()}">
                     </p:inputText>
                 </h:panelGroup>
+                
+                <p:outputLabel value="#{bundle.Date}:" />
+                <p:calendar value="#{_bean.editedItem.itemDate}" 
+                            styleClass="ui-grid-col-12"
+                            onkeypress="checkEsc();"
+                            disabled="#{_bean.isReadOnly()}"
+                            onselect="return itemChange = 1;"                            
+                            locale="#{sessionBean.locale}"
+                            navigator="true" yearRange="c-120:c+20">                    
+                </p:calendar>  
+                
             </p:panelGrid>
         </p:tab>
 

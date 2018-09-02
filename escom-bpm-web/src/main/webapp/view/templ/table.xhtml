@@ -33,7 +33,7 @@
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="95" id="shortName" >
+        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="125" id="shortName" >
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
