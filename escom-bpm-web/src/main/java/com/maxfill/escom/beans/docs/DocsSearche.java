@@ -21,6 +21,7 @@ public class DocsSearche extends SearcheModel{
     private boolean dateDocSearche = false;
     private List<DocType> docTypes;
     private Partner partnerSearche;
+    private String fioSearche;
     
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
@@ -38,6 +39,9 @@ public class DocsSearche extends SearcheModel{
         }
         if (partnerSearche != null){
            paramEQ.put("partner", partnerSearche); 
+        }
+        if (StringUtils.isNotBlank(fioSearche)){
+            paramLIKE.put("fio", fioSearche);
         }
     }        
         
@@ -82,5 +86,13 @@ public class DocsSearche extends SearcheModel{
     public void setPartnerSearche(Partner partnerSearche) {
         this.partnerSearche = partnerSearche;
     }    
+
+    public String getFioSearche() {
+        return fioSearche;
+    }
+    public void setFioSearche(String fioSearche) {
+        this.fioSearche = fioSearche;
+    }
+    
     
 }

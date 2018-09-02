@@ -585,7 +585,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     @Override
     public void setSelectedDetail(Remark selectedDetail) {
        this.selectedDetail = selectedDetail;
-    }
+    }        
     
     /* GETS & SETS */
 

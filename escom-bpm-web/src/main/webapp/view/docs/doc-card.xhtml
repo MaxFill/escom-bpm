@@ -23,11 +23,12 @@
                     </h:panelGrid>
                         
                     <h:panelGrid columns="1" styleClass="without-spaces ui-grid-col-12">
-                        <p:outputLabel value="#{bundle.BookDate}:" indicateRequired="true"/>
-                        <p:inputText value="#{docCardBean.editedItem.owner.name}" 
+                        <p:outputLabel value="#{bundle.BookDate}:" />
+                        <p:inputText value="#{docCardBean.editedItem.owner.itemDate}" 
                                      disabled="true"
                                      required="#{param['isRequired'] == 'true'}" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.BookNumber}] #{bundle.MustBeFilled}">
+                                     requiredMessage="#{bundle.Field} [#{bundle.BookDate}] #{bundle.MustBeFilled}">  
+                            <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                         </p:inputText>
                     </h:panelGrid>
                     
@@ -44,7 +45,7 @@
 
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
                         <p:outputLabel value="#{bundle.Date}:" indicateRequired="true"/>
-                        <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
+                        <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}"  title="#{bundle.DateRegistredDoc}"
                                     styleClass="ui-grid-col-12"
                                     onkeypress="checkEsc();"
                                     disabled="#{_bean.isReadOnly()}"
@@ -86,8 +87,17 @@
                                      onchange="return itemChange = 1;"
                                      required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}">
-                        <f:validateLength maximum="250"  />                        
+                        <f:validateLength maximum="250"/>                        
                     </p:inputTextarea>
+                    
+                    <p:outputLabel value="#{bundle.FIO}:" />
+                    <p:inputText value="#{_bean.editedItem.fio}" styleClass="ui-grid-col-12"                                 
+                                     onkeypress="checkEsc();"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     onchange="return itemChange = 1;">
+                        <f:validateLength maximum="250"/>            
+                    </p:inputText>
+                    
                 </p:panelGrid>       
                     
                 <h:panelGrid columns="1" id="сompanyPanel" rendered="#{applicationBean.isCanUsesStaffs()}" styleClass="ui-grid-col-12 without-spaces">

@@ -57,6 +57,18 @@
             <p:ajax event="change" update="pnDateDocSearche"/>
         </p:selectBooleanCheckbox>   
         
+        <p:outputLabel value="#{bundle.FIO}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+                <p:inputText title="#{bundle.HelpSearcheContext}" value="#{_bean.model.fioSearche}"
+                         widgetVar="fioSearche"
+                         styleClass="ui-grid-col-12"
+                         onkeypress="keyPress();">
+                </p:inputText>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('fioSearche').jq.val('');"/>
+            </div>
+        </h:panelGroup>
+        
         <h:panelGroup id="pnDateDocSearche" styleClass="ui-grid-col-12"> 
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-1, ui-grid-col-11" rendered="#{_bean.model.dateDocSearche}" styleClass="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.With}:"/>
