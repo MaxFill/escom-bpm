@@ -90,11 +90,12 @@
                         <f:validateLength maximum="250"/>                        
                     </p:inputTextarea>
                     
-                    <p:outputLabel value="#{bundle.FIO}:" />
+                    <p:outputLabel value="#{bundle.FIO}:" rendered="false"/>
                     <p:inputText value="#{_bean.editedItem.fio}" styleClass="ui-grid-col-12"                                 
-                                     onkeypress="checkEsc();"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     onchange="return itemChange = 1;">
+                                rendered="false"
+                                onkeypress="checkEsc();"
+                                disabled="#{_bean.isReadOnly()}"
+                                onchange="return itemChange = 1;">
                         <f:validateLength maximum="250"/>            
                     </p:inputText>
                     

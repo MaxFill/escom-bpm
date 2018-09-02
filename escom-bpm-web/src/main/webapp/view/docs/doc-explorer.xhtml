@@ -57,8 +57,8 @@
             <p:ajax event="change" update="pnDateDocSearche"/>
         </p:selectBooleanCheckbox>   
         
-        <p:outputLabel value="#{bundle.FIO}:"/>
-        <h:panelGroup styleClass="ui-grid-col-12">
+        <p:outputLabel value="#{bundle.FIO}:" rendered="false"/>
+        <h:panelGroup styleClass="ui-grid-col-12" rendered="false">
             <div class="ui-inputgroup">
                 <p:inputText title="#{bundle.HelpSearcheContext}" value="#{_bean.model.fioSearche}"
                          widgetVar="fioSearche"

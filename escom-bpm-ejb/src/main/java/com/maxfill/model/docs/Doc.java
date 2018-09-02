@@ -95,10 +95,11 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Column(name = "RegNumber")
     private String regNumber;
     
+    /*
     @Size(max = 50)
     @Column(name = "FIO")
     private String fio;
-     
+    */ 
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
     
@@ -137,12 +138,14 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public Doc() {
     }
 
+    /*
     public String getFio() {
         return fio;
     }
     public void setFio(String fio) {
         this.fio = fio;
     }
+    */
     
     @Override
     public DocStates getState() {
