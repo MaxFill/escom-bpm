@@ -31,7 +31,7 @@ public class DocsSearche extends SearcheModel{
             Date[] dateArray = new Date[2];
             dateArray[0] = dateDocStart;
             dateArray[1] = dateDocEnd;
-            paramDATE.put("dateDoc", dateArray);
+            paramDATE.put("itemDate", dateArray);
         }
         if (!docTypes.isEmpty()){
             paramIN.put("docType", docTypes);
