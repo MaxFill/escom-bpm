@@ -74,7 +74,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     protected FiltersFacade filtersFacade;
     
     @EJB
-    private SearcheService searcheService;
+    private SearcheService searcheService;    
     
     protected BaseTreeBean rootBean;
     protected BaseTreeBean treeBean;
