@@ -1,7 +1,9 @@
 package com.maxfill.escom.beans.processes.elements;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.model.process.schemes.elements.ProcedureElem;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +18,7 @@ import org.apache.commons.beanutils.BeanUtils;
  */
 @Named
 @ViewScoped
-public class ProcedureCardBean extends BaseViewBean<ProcessCardBean>{    
+public class ProcedureCardBean extends BaseViewBean<BaseView>{    
     private static final long serialVersionUID = -8295618285469838899L;
     
     private ProcedureElem editedItem = new ProcedureElem();
@@ -26,7 +28,7 @@ public class ProcedureCardBean extends BaseViewBean<ProcessCardBean>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){
             if (sourceBean != null){
-                sourceItem = (ProcedureElem)((ProcessCardBean)sourceBean).getBaseElement();
+                sourceItem = (ProcedureElem)((DiagramBean)sourceBean).getBaseElement();
             }
             if (sourceItem != null){
                 try {

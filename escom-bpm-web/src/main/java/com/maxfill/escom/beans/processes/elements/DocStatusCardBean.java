@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.processes.elements;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.process.schemes.elements.StatusElem;
@@ -40,7 +41,7 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){            
             if (sourceBean != null){
-                sourceItem = (StatusElem)((ProcessCardBean)sourceBean).getBaseElement(); 
+                sourceItem = (StatusElem)((DiagramBean)sourceBean).getBaseElement(); 
                 if (sourceItem.getDocStatusId() != null){
                     selected = statuseFacade.find(sourceItem.getDocStatusId());
                 }

@@ -28,6 +28,13 @@
     </ui:define>
     
     <ui:define name="CardToolButtons">
+        <p:commandButton value="#{bundle.Scheme}" 
+                        disabled="#{processCardBean.isReadOnly()}"
+                        update="mainFRM:mainTabView:concorderList"
+                        actionListener="#{processCardBean.onOpenScheme()}" >      
+        </p:commandButton>                
+        
+        <p:spacer width="15"/>
         <h:outputLabel value="#{bundle.State}: "/>
         <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
         <p:spacer width="15"/>
@@ -108,11 +115,7 @@
                     </p:commandButton>
                 </h:panelGroup>
             </p:panelGrid>
-        </p:tab>
-        
-        <p:tab title="#{bundle.Scheme}" id="tbScheme"  >  
-            <ui:include src="/view/processes/diagramm.xhtml"/>
-        </p:tab>
+        </p:tab>        
         
         <p:tab title="#{bundle.ApprovalSheet}">
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
@@ -156,143 +159,10 @@
             </p:panelGrid>
         </p:tab>        
         
-    </ui:define>    
-    
-    <ui:define name="customJavaScript">
-        <h:outputScript library="contextMenu" name="contextMenu.js" />
-        <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
-        <h:outputStylesheet library="css" name="processes.css"/> 
-        
-        <script type="text/javascript">        
-            function addContextMenu(componentId){    
-                var menu = [{
-                        name: '#{bundle.Paste}',
-                        img: '/escom-bpm-web/resources/icon/paste.png',
-                        disable: true,
-                        fun: function () {
-                            elementPaste();
-                        }
-                    },{
-                        name: '#{bundle.Close}',
-                        img: '/escom-bpm-web/resources/icon/cancel.png'                        
-                    }];
-
-                var component = $(document.getElementById(componentId)); 
-                component.contextMenu('menu', menu, {});                
-            }
-
-            function addElementMenu(elementIds){    
-                var menu = [{
-                        name: '#{bundle.Properties}',
-                        img: '/escom-bpm-web/resources/images/settings.png',
-                        fun: function () {
-                            elementOpen();
-                        }
-                    },{
-                        name: '#{bundle.Copy}',
-                        img: '/escom-bpm-web/resources/icon/copy.png',
-                        fun: function () {
-                            elementCopy();
-                        }
-                    },{
-                        name: '#{bundle.Delete}',
-                        img: '/escom-bpm-web/resources/images/delete.png',
-                        fun: function () {
-                            elementDelete();
-                        }
-                    }];
-
-                elementIds.forEach(function(elementId){                  
-                    var component = $(document.getElementById(elementId)); 
-                    component.contextMenu('menu', menu, {triggerOn:'contextmenu', displayAround:'trigger', horAdjust:-component.width()+20, verAdjust: +20});
-                });
-            }
-
-            function sendElementClick(info){
-                    //console.log("elementId="+info.target.id);                    
-                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                    var elementId = info.target.id;
-                    if (elementId.indexOf('diagramm') == -1){
-                        var parentElement = info.target.parentElement;                          
-                        elementId = $(parentElement).attr('id');
-                        //console.log("parent elementId="+ elementId);
-                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                    }                    
-                    elementClicked([
-                        {name : 'elementId',value : elementId},
-                        {name : 'posX',     value : xPos},
-                        {name : 'posY',     value : yPos}
-                    ]);
-            }            
-                
-            $(document).on('click', '.ui-diagram > .ui-diagram-element', 
-                function(info) {
-                    sendElementClick(info);
-                });
-
-            $(document).on('contextmenu', '.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    sendElementClick(info);                    
-            });
-            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
-                function(info) {
-                    var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                    var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                    var elementId = info.target.id;
-                    if (elementId == ""){
-                        var parentElement = info.target.parentElement;                              
-                        elementId = $(parentElement).attr('id');
-                        xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                        yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                    }
-                    elementOpen([
-                        {name : 'elementId',value : elementId},
-                        {name : 'posX',     value : xPos},
-                        {name : 'posY',     value : yPos}
-                    ]);
-                });
-
-             function refreshContextMenu(componentId){
-                 //console.log("refresh componentId="+componentId);
-                 var menu = [{
-                        name: '#{bundle.Paste}',
-                        img: '/escom-bpm-web/resources/images/paste.png',
-                        disable: false,
-                        fun: function () {
-                            elementPaste();
-                        }
-                    },{
-                        name: '#{bundle.Close}',
-                        img: '/escom-bpm-web/resources/icon/cancel.png',                        
-                    }];
-
-                var component = $(document.getElementById(componentId)); 
-                component.contextMenu('update', menu, {});  
-            }
-        </script>
-    </ui:define>
-    
-    <ui:define name="form_scripts">
-        <p:remoteCommand name="elementClicked" actionListener="#{processCardBean.onElementClicked}"/>
-        <p:remoteCommand name="elementOpen" actionListener="#{processCardBean.onElementOpenClick()}"/>
-        <p:remoteCommand name="elementCopy" actionListener="#{processCardBean.onElementCopy()}"/>
-        <p:remoteCommand name="elementPaste" actionListener="#{processCardBean.onElementPaste()}"/>
-        <p:remoteCommand name="elementDelete" actionListener="#{processCardBean.onElementDelete}"/>
-        
-        <p:commandButton style="display: none;" id="btnOpenElement" actionListener="#{processCardBean.onElementOpen()}">
-            <p:ajax event="dialogReturn" listener="#{processCardBean.onElementClose}"/>
-        </p:commandButton>
-        <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{processCardBean.onOpenTask()}">
-            <p:ajax event="dialogReturn" listener="#{processCardBean.onAfterTaskClose}"/>
-        </p:commandButton>
-    </ui:define>
+    </ui:define>           
     
     <ui:define name="dialogs">
         <ui:include src="/view/tasks/report.xhtml"/>
-        <ui:include src="/view/processes/templ/save-as-dlg.xhtml"/>
-        <ui:include src="/view/processes/templ/load-from-templ-dlg.xhtml"/>
     </ui:define>
 </ui:composition>
 </html>

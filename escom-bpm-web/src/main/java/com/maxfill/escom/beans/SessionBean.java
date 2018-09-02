@@ -39,7 +39,6 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
-import com.sun.faces.application.view.ViewScopeManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -71,10 +70,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.inject.Named;
-import javax.servlet.http.HttpSession;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
-import org.primefaces.model.diagram.DefaultDiagramModel;
 
 /* Cессионный бин приложения */
 @SessionScoped
@@ -99,8 +96,7 @@ public class SessionBean implements Serializable{
     
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
-    //буфер диаграмм
-    private ConcurrentHashMap<String, DefaultDiagramModel> diagrams = new ConcurrentHashMap<>();
+    private final Set<String> killBeans = new HashSet<>();
     
     private String openFormName;
     
@@ -139,7 +135,7 @@ public class SessionBean implements Serializable{
     private ProcessBean processBean;
     @Inject
     private ProcessTypesBean processTypeBean;
-
+    
     @PostConstruct
     public void init() {                  
         dashboardModel = new DefaultDashboardModel();
@@ -171,7 +167,7 @@ public class SessionBean implements Serializable{
         dashboardModel.addColumn(column6);
 
         temeInit();                
-    }          
+    }   
     
     /* Добавление права объекта источника в буфер  */
     public void addSourceRight(String key, Right right){
@@ -838,16 +834,16 @@ public class SessionBean implements Serializable{
     public ConcurrentHashMap<String, BaseView> getOpenedBeans() {
         return openedBeans;
     }
-
-    public ConcurrentHashMap<String, DefaultDiagramModel> getDiagrams() {
-        return diagrams;
-    }    
     
     /* Возвращает максимальный размер загружаемого файла */    
     public Integer getMaxFileSize(){
         return configuration.getMaxFileSize();
     }
-    
+
+    public Set<String> getKillBeans() {
+        return killBeans;
+    }
+
     public class NotifMsg{
         private final String message;
         private final String url;
@@ -872,4 +868,5 @@ public class SessionBean implements Serializable{
         }
 
     }
+    
 }

@@ -62,11 +62,9 @@
                                  actionListener="#{_bean.deleteFromCheckedGroups()}"/>
                 <p:commandButton id="btnAddGroup" value="#{bundle.Add}" 
                                  icon="ui-icon-circle-plus"
-                                 immediate="true"
                                  disabled="#{_bean.isReadOnly()}"
                                  actionListener="#{_selectorBean.onManySelectItem()}">
-                    <p:ajax event="dialogReturn" listener="#{_bean.addGroupsFromSelector}" 
-                            update="mainFRM:mainTabView:panelGroups"/>
+                    <p:ajax event="dialogReturn" listener="#{_bean.addGroupsFromSelector}" update="mainFRM:mainTabView:panelGroups"/>
                 </p:commandButton>
             </f:facet>
         </p:dataTable>

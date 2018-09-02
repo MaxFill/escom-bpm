@@ -53,6 +53,7 @@ public final class DictFrmName {
     public static final String FRM_MONITOR = "monitor";
 
     public static final String FRM_PROCESS_TEMPL_EXPL = "proctempl-explorer"; 
+    public static final String FRM_DIAGRAMMA = "diagramma";
     
     /* Отчёты */
     public static final String REP_DOC_COUNT_TYPES = "doc-count-types";
