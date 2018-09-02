@@ -73,10 +73,14 @@
                                 oncomplete="document.getElementById('westFRM:createTreeCardBtn').click();"/>
                     <p:separator />
                     <p:menuitem value="#{bundle.Expand}" icon="ui-icon-folder-open" 
-                                update="westFRM" oncomplete="initDND()"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND();"
+                                update="westFRM" 
                                 actionListener="#{_bean.onExpandNode()}"/>
                     <p:menuitem value="#{bundle.Collapse}" icon="ui-icon-folder-collapsed" 
-                                update="westFRM" oncomplete="initDND()"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide(); initDND();"
+                                update="westFRM" 
                                 actionListener="#{_bean.onCollapseNode()}"/>                
                     <p:separator />
                     <p:menuitem value="#{bundle.View}" icon="ui-icon-search"
@@ -85,6 +89,8 @@
                                 oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
                     <p:separator /> 
                     <p:menuitem value="#{bundle.MoveToTrash}" icon="ui-icon-trash"
+                                onstart="PF('statusDialog').show()"
+                                oncomplete="PF('statusDialog').hide();"
                                 update="westFRM:accord:tree mainFRM #{_updates}"
                                 actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
