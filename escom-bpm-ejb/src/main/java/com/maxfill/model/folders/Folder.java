@@ -76,7 +76,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Column(name = "FolderNumber")
     private String folderNumber;
 
-    @Column(name = "ItemDate")
+    @Column(name = "DateFolder")
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
     

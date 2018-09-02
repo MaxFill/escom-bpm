@@ -98,7 +98,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
     
-    @Column(name = "ItemDate")
+    @Column(name = "DateDoc")
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
 
