@@ -139,9 +139,8 @@
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" width="90" priority="4"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.DateDoc}" width="80" priority="4" rendered="#{_bean.isNowShowDetail()}" 
-                  sortBy="#{item.dateDoc}">
-            <h:outputLabel value="#{item.dateDoc}">
+        <p:column headerText="#{bundle.Date}" width="80" priority="4"  sortBy="#{item.itemDate}">
+            <h:outputLabel value="#{item.itemDate}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>

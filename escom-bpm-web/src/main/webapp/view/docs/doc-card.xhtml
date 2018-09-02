@@ -99,7 +99,7 @@
 
                     <h:panelGrid id="datePanel" columns="1" styleClass="without-spaces ui-grid-col-12">                        
                         <p:outputLabel value="#{bundle.DateDoc}:" indicateRequired="true"/>
-                        <p:calendar id="dateDoc" value="#{_bean.editedItem.dateDoc}"  title="#{bundle.DateRegistredDoc}"
+                        <p:calendar id="dateDoc" value="#{_bean.editedItem.itemDate}"  title="#{bundle.DateRegistredDoc}"
                                     styleClass="ui-grid-col-12"
                                     onkeypress="checkEsc();"
                                     disabled="#{_bean.isReadOnly()}"

@@ -98,9 +98,9 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
     
-    @Column(name = "DateDoc")
+    @Column(name = "ItemDate")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateDoc;
+    private Date itemDate;
 
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -142,6 +142,13 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.state = state;
     }
 
+    public Date getItemDate() {
+        return itemDate;
+    }
+    public void setItemDate(Date itemDate) {
+        this.itemDate = itemDate;
+    }
+    
     public Doc getMainDoc() {
         return mainDoc;
     }
@@ -239,8 +246,8 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         if (StringUtils.isNotBlank(regNumber)){
             sb.append(ItemUtils.getBandleLabel("NumberShort", locale)).append(" ").append(regNumber);
         } 
-        if (dateDoc != null){
-            sb.append(" ").append(DateUtils.dateToString(dateDoc, DateFormat.SHORT, null, locale));
+        if (itemDate != null){
+            sb.append(" ").append(DateUtils.dateToString(itemDate, DateFormat.SHORT, null, locale));
         }
         return sb.toString();
     }
@@ -305,12 +312,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.docsDou = docsDou;
     }
 
-    public Date getDateDoc() {
-        return dateDoc;
-    }
-    public void setDateDoc(Date dateDoc) {
-        this.dateDoc = dateDoc;
-    }
+
 
     public List<Attaches> getAttachesList() {
         return attachesList;

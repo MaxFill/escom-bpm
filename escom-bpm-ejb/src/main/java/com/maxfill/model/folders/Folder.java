@@ -10,6 +10,7 @@ import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -25,6 +26,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -73,6 +76,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Column(name = "FolderNumber")
     private String folderNumber;
 
+    @Column(name = "ItemDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date itemDate;
+    
     @OneToMany
     @JoinColumn(name = "owner")
     private List<Doc> detailItems = new ArrayList<>();
@@ -221,6 +228,13 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
         this.childItems = childItems;
     }
 
+    public Date getItemDate() {
+        return itemDate;
+    }
+    public void setItemDate(Date itemDate) {
+        this.itemDate = itemDate;
+    }
+    
     @Override
     public FolderStates getState() {
         return state;

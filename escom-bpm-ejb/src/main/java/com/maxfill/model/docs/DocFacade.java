@@ -243,7 +243,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         doSetDefaultDocType(doc, folder);
         doSetDefaultCompany(doc, folder);
         doSetDefaultPartner(doc, folder);           
-        doc.setDateDoc(new Date());
+        doc.setItemDate(new Date());
         DocType docType = doc.getDocType();
         if (docType != null && docType.getNumerator() != null && DictNumerator.TYPE_AUTO.equals(docType.getNumerator().getTypeCode())){ 
             docNumeratorService.registratedDoc(doc, new HashSet<>());
