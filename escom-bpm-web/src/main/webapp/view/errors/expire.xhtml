@@ -14,7 +14,7 @@
 
         <h:form >
             <p:panel styleClass="panelLogin">
-                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12">
+                <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4, ui-grid-col-8" styleClass="ui-grid-col-12 without-spaces">
                     <p:graphicImage name="/images/session_expired.jpg"  />
                     <h:panelGroup style="width: 100%;">
                         <h3>
@@ -25,7 +25,7 @@
                     <p:commandLink value="#{bundle.GotoLogin}" 
                                    ajax="false"
                                    type="submit"
-                                   action="/login?faces-redirect=true" />  
+                                   action="/view/login?faces-redirect=true" />  
                 </p:panelGrid>
             </p:panel>
         </h:form> 
