@@ -84,7 +84,7 @@
                     <p:menuitem value="#{bundle.Edit}" icon="ui-icon-pencil"
                                 oncomplete="document.getElementById('westFRM:openTreeCardBtn').click();"/>
                     <p:separator /> 
-                    <p:menuitem title="#{bundle.MoveToTrash}"                                     
+                    <p:menuitem value="#{bundle.MoveToTrash}" icon="ui-icon-trash"
                                 update="westFRM:accord:tree mainFRM #{_updates}"
                                 actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />

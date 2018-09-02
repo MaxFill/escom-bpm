@@ -54,6 +54,7 @@
         </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1"
+                  rendered="#{_showDateChange}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
