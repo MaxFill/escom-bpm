@@ -97,7 +97,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
             joinColumns = {@JoinColumn(name = "UserId", referencedColumnName = "Id")}, 
             inverseJoinColumns = {@JoinColumn(name = "GroupId", referencedColumnName = "Id")}
     )
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<UserGroups> usersGroupsList = new ArrayList<>();
               
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", orphanRemoval=true)

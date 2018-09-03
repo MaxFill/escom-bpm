@@ -6,6 +6,7 @@ import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -57,7 +59,10 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
 
     /* Проверка вхождения пользователя в роль документа */
     @Override
-    public boolean checkUserInRole(T item, String roleName, User user){
+    public boolean checkUserInRole(T item, Integer groupId, User user){
+        UserGroups group = roleFacade.find(groupId);
+        String roleName = group.getRoleFieldName();
+        if (StringUtils.isBlank(roleName)) return false;
         roleName = roleName.toUpperCase();
         Map<String, Set<Integer>> roles = item.getRoles();
         if (roles.isEmpty() || !roles.containsKey(roleName)) return false;
