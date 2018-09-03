@@ -837,14 +837,20 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         currentTab = DictExplForm.TAB_TREE;
         treeSelectedNode.setSelected(true);
         currentItem = (BaseDict) treeSelectedNode.getData();        
-        List<BaseDict> details = null; 
+        List<BaseDict> details = null;         
         if (isItemTreeType(currentItem)){
-            treeBean.loadChilds(currentItem, treeSelectedNode);
-            details = treeBean.makeGroupContent(currentItem, viewMode);
+            if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
+                treeBean.loadChilds(currentItem, treeSelectedNode);
+                PrimeFaces.current().ajax().update("westFRM:accord:tree");
+            }
+            details = treeBean.makeGroupContent(currentItem, viewMode);                        
         } else
             if (isItemRootType(currentItem)){
-                rootBean.loadChilds(currentItem, treeSelectedNode);
-                details = rootBean.makeGroupContent(currentItem, viewMode);
+                if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
+                    rootBean.loadChilds(currentItem, treeSelectedNode);
+                    PrimeFaces.current().ajax().update("westFRM:accord:tree");
+                }
+                details = rootBean.makeGroupContent(currentItem, viewMode);                
             }
         setDetails(details, DictDetailSource.TREE_SOURCE); 
                        
