@@ -93,6 +93,7 @@ public class Configuration {
             pdfEncoding = (String) properties.get("DEFAULT_PDF_ENCODING");
             pdfFont = (String) properties.get("DEFAULT_PDF_FONT");
             maxFileSize = Integer.valueOf((String) properties.get("MAX_UPLOAD_SIZE"));
+            maxResultCount = Integer.valueOf((String) properties.get("MAX_QUERY_RESULT_COUNT"));
             smsHostGate = (String) properties.get("SMS_HOST_GATE");
             smsHostProtocol = (String) properties.get("SMS_HOST_PROTOCOL");
             smsHostPort = Integer.valueOf((String) properties.get("SMS_HOST_PORT"));
