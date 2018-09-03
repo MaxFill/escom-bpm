@@ -32,7 +32,7 @@
 
     <context-param> 
         <param-name>org.omnifaces.VIEW_SCOPE_MANAGER_MAX_ACTIVE_VIEW_SCOPES</param-name>
-        <param-value>50</param-value>
+        <param-value>70</param-value>
     </context-param>
 
     <context-param>
@@ -41,11 +41,11 @@
     </context-param>    
     <context-param>
         <param-name>ReleaseNumber</param-name>
-        <param-value>011</param-value>
+        <param-value>012</param-value>
     </context-param>    
     <context-param>
         <param-name>ReleaseDate</param-name>
-        <param-value>2018-09-01</param-value>
+        <param-value>2018-09-03</param-value>
     </context-param>  
     <context-param>
         <param-name>UseModeshape</param-name>

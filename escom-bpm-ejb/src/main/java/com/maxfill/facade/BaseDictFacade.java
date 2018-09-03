@@ -687,7 +687,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                 String accessXML = EscomUtils.decompress(compressXML);
                 StringReader access = new StringReader(accessXML);
                 actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
-                settingRightItem(item, actualRight, user);
+                //settingRightItem(item, actualRight, user);
             } catch (IOException ex) {
                 Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
             }

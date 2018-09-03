@@ -254,7 +254,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             MsgUtils.showErrors(errors);
             return null;
         }        
-        changeNamePasteItem(sourceItem, pasteItem);
+        //changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
@@ -313,6 +313,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         T newItem = createItem(null);
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
+            newItem.setIconTree("ui-icon-folder-collapsed");
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

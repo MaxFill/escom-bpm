@@ -26,6 +26,7 @@
                              onstart="PF('statusDialog').show()"
                              oncomplete="PF('statusDialog').hide(); initDND();">
                 <f:attribute name="action" value="#{'*'}" />
+                <p:confirm header="#{bundle.ConfirmAction}" message="#{msg.AllRecordsLoadedConfirm}" icon="ui-icon-alert" />
             </p:commandButton>
             <p:commandButton value="0-9" title="#{bundle.StartDigital}" style="width: 30px; font-size: 90%;"
                              actionListener="#{_bean.onAbcSearche}"

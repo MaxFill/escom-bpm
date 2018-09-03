@@ -101,6 +101,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         if (getTypeEdit().equals(DictEditMode.INSERT_MODE) && getEditedItem().getAttachesList().size() >0){
             onItemChange(); //установка признака что документ изменён
         }
+        //doc.getAttachesList().size();
     }
      
     @Override
