@@ -253,8 +253,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return null;
-        }        
-        changeNamePasteItem(sourceItem, pasteItem);
+        }
+        //changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
@@ -313,6 +313,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         T newItem = createItem(null);
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
+            newItem.setIconTree("ui-icon-folder-collapsed");
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -322,7 +323,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* Изменение имени вставляемого объекта */
     protected void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
         String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-        pasteItem.setName(name);        
+        pasteItem.setName(name);
     }
 
     /**

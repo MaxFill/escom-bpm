@@ -687,7 +687,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                 String accessXML = EscomUtils.decompress(compressXML);
                 StringReader access = new StringReader(accessXML);
                 actualRight = (Rights) JAXB.unmarshal(access, Rights.class);
-                settingRightItem(item, actualRight, user);
+                //settingRightItem(item, actualRight, user);
             } catch (IOException ex) {
                 Logger.getLogger(BaseDictFacade.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -785,21 +785,22 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @param user
      * @return 
      */    
-    private boolean checkUserRole(T item, Integer groupId, User user) {
-        UserGroups group = roleFacade.find(groupId);
-        String roleName = group.getRoleFieldName();
-        if (StringUtils.isBlank(roleName)) return false;
-        return checkUserInRole(item, roleName, user);
+    private boolean checkUserRole(T item, Integer groupId, User user) {        
+        if (DictRoles.ROLE_OWNER_ID == groupId){
+            return Objects.equals(item.getAuthor(), user);
+        }        
+        return checkUserInRole(item, groupId, user);
     }    
+    
     
     /**
      * Стандартная проверка вхождения пользователя в роль
      * @param item
-     * @param roleName
+     * @param groupId
      * @param user
      * @return 
      */
-    protected boolean checkUserInRole(T item, String roleName, User user){
-        return "OWNER".equals(roleName.toUpperCase()) && Objects.equals(item.getAuthor(), user);
+    protected boolean checkUserInRole(T item, Integer groupId, User user){
+        return false;
     }
 }

@@ -63,7 +63,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
             MsgUtils.showErrors(errors);
             return null;
         }        
-        changeNamePasteItem(sourceItem, pasteItem);
+        //changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
@@ -76,9 +76,10 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         if (ownership == null){
             ownership = sourceItem.getParent();
         }
-        T newItem = createItem(ownership);
+        T newItem = createItem(ownership);       
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
+            newItem.setIconTree("ui-icon-folder-collapsed");
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

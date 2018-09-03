@@ -1087,7 +1087,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
      * @return
      */
     public boolean isCanCopyTreeItem(){
-        return isSelectRootItem();
+        return !isSelectRootItem();
     }
 
     /**
