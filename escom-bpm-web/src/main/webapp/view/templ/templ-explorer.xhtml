@@ -52,7 +52,7 @@
                 <h:form id="eastFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
                     <p:focus context="eastFRM" for="eastFRM:nameSearche"/>           
                     <ui:include src="/view/templ/templ-searche.xhtml">
-                        <ui:param name="_tblUpdate" value="mainFRM westFRM #{_updates}"/>
+                        <ui:param name="_tblUpdate" value="mainFRM #{_updates}"/>
                     </ui:include>
                 </h:form>
             </pe:layoutPane>
