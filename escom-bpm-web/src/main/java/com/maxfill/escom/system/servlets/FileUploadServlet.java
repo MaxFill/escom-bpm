@@ -70,34 +70,42 @@ public class FileUploadServlet extends HttpServlet {
         factory.setRepository(tempDir);
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setSizeMax(conf.getMaxFileSize()); // 1024 * 1024 * 10
+        upload.setHeaderEncoding("UTF-8"); 
         try {
             List items = upload.parseRequest(request);
             Iterator iter = items.iterator();
             String token = "";
+            String fileName = "";
             Folder folder = null;
             while (iter.hasNext()) {
                 FileItem item = (FileItem) iter.next();
 
                 if (item.isFormField()) {                    
-                    if (Objects.equals("token", item.getFieldName())){
-                        token = item.getString();
-                    }
-                    if (Objects.equals("folder", item.getFieldName())){
-                        Integer folderId = Integer.valueOf(item.getString());
-                        folder = folderFacade.find(folderId);
+                    switch(item.getFieldName()){
+                        case "token":{
+                            token = item.getString();
+                            break;
+                        }
+                        case "folder":{
+                            Integer folderId = Integer.valueOf(item.getString());
+                            folder = folderFacade.find(folderId);
+                            break;
+                        }
+                        case "fileName":{
+                            fileName = item.getString();
+                            break;
+                        }
                     }
                 } else {
                     if (folder == null){
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         return;
                     }
+                    
                     User author = userFacade.tokenCorrect(token);
                     if (author != null){
-                        if (processMakeDocument(item, folder, author)) {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        } else{
-                            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                        }
+                        int hsr = processMakeDocument(item, fileName, folder, author);
+                        response.setStatus(hsr);                    
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         return;
@@ -111,17 +119,20 @@ public class FileUploadServlet extends HttpServlet {
     }
     
     /* создание документа и загрузка файла */
-    private boolean processMakeDocument(FileItem item, Folder folder, User author) throws IOException{
-        if (!folderFacade.checkRightAddDetail(folder, author)) return  false;
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("contentType", item.getContentType());
-        params.put("fileName", item.getName());
-        params.put("size", item.getSize());
-        params.put("author", author);
-        Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
-        docFacade.createDocInUserFolder(item.getName(), author, folder, attache);
-        return true;
+    private int processMakeDocument(FileItem item, String fileName, Folder folder, User author) throws IOException{       
+        if (!folderFacade.checkRightAddDetail(folder, author)) return HttpServletResponse.SC_NO_CONTENT;
+        if (folder.getDetailItems().stream().filter(doc->Objects.equals(doc.getName(), fileName)).findFirst().orElse(null) == null){
+            Map<String, Object> params = new HashMap<>();
+            params.put("contentType", item.getContentType());
+            params.put("fileName", fileName);
+            params.put("size", item.getSize());
+            params.put("author", author);
+            Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
+            docFacade.createDocInUserFolder(item.getName(), author, folder, attache);
+            return HttpServletResponse.SC_OK;
+        } else {
+            return HttpServletResponse.SC_CONFLICT;
+        }
     }
     
     /**
