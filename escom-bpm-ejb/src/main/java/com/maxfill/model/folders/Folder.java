@@ -17,6 +17,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
@@ -49,20 +50,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Basic(optional = false)
     @Column(name = "Id")
     @GeneratedValue(strategy=TABLE, generator="idGen")
-    private Integer id;
-            
-    @OneToMany
-    @JoinColumn(name = "parent")
-    private List<Folder> childItems;
-    
-    @JoinColumn(name = "Moderator", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private User moderator;
-    
-    @XmlTransient
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "State", referencedColumnName = "Id")
-    private FolderStates state;
+    private Integer id;            
         
     @Basic(optional = false)
     @Column(name = "IsModeration")
@@ -80,20 +68,33 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
     
+    @XmlTransient
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "State", referencedColumnName = "Id")
+    private FolderStates state;
+        
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<Folder> childItems; 
+        
     @OneToMany
     @JoinColumn(name = "owner")
     private List<Doc> detailItems = new ArrayList<>();
     
+    @JoinColumn(name = "Moderator", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private User moderator;   
+        
     @JoinColumn(name = "DocTypeDefault", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DocType docTypeDefault;
     
     @JoinColumn(name = "PartnerDefault", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Partner partnerDefault;
           
     @JoinColumn(name = "CompanyDefault", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Company companyDefault;
       
     @XmlTransient
@@ -111,7 +112,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Column(name = "IsInheritPartner")
     private boolean inheritPartner = true;
         
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
     private List<FolderLog> itemLogs = new ArrayList<>();
 
     public Folder(){}

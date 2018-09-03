@@ -52,8 +52,9 @@
                     </p:treeNode>
 
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"
-                            update="westFRM mainFRM #{_updates}"
-                            oncomplete="initDND()"/>
+                            update="mainFRM #{_updates}"
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); initDND();"/>
                     <p:ajax event="contextMenu" listener="#{_bean.onTreeNodeSelect}"
                             update="westFRM:accord:toolbarTree mainFRM #{_updates}"
                             oncomplete="initDND()"/>

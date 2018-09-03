@@ -68,29 +68,6 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @GeneratedValue(strategy = TABLE, generator = "docIdGen")
     private Integer id;
 
-    @JoinColumn(name = "Owner", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Folder owner;
-        
-    @JoinColumn(name = "DocType", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private DocType docType;
-    
-    @JoinColumn(name = "Company", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Company company;
-        
-    @JoinColumn(name = "Partner", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Partner partner;
-
-    @JoinColumn(name = "MainDoc", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Doc mainDoc;
-     
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs")
-    private DocDou docsDou;
-
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
@@ -107,34 +84,57 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
 
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs")
+    private DocDou docsDou;
+        
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private DocStates state;
     
     /* Замечания */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.LAZY)    
     private List<Remark> detailItems = new ArrayList<>();
         
     /* Список ссылающихся документов  */
-    @OneToMany(mappedBy = "mainDoc")
+    @OneToMany(mappedBy = "mainDoc", fetch = FetchType.LAZY)
     private List<Doc> docsLinks = new ArrayList<>();
     
     /* Список статусов документа  */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
     private List<DocStatuses> docsStatusList = new ArrayList<>();
     
-    @ManyToMany(mappedBy = "docs", fetch = FetchType.EAGER)
-    private List<Process> processList = new ArrayList<>();
-    
     /* Версии файлов  */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
     private List<Attaches> attachesList = new ArrayList<>();
     
     /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
     private List<DocLog> itemLogs = new ArrayList<>();     
         
+    @JoinColumn(name = "Owner", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Folder owner; 
+        
+    @ManyToMany(mappedBy = "docs", fetch = FetchType.LAZY)
+    private List<Process> processList = new ArrayList<>();
+        
+    @JoinColumn(name = "DocType", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private DocType docType;
+    
+    @JoinColumn(name = "Company", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Company company;
+        
+    @JoinColumn(name = "Partner", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Partner partner;
+
+    @JoinColumn(name = "MainDoc", referencedColumnName = "Id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Doc mainDoc;     
+    
     public Doc() {
     }
 
