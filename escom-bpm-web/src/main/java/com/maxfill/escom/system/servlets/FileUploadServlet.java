@@ -121,14 +121,18 @@ public class FileUploadServlet extends HttpServlet {
     /* создание документа и загрузка файла */
     private int processMakeDocument(FileItem item, String fileName, Folder folder, User author) throws IOException{       
         if (!folderFacade.checkRightAddDetail(folder, author)) return HttpServletResponse.SC_NO_CONTENT;
-        Map<String, Object> params = new HashMap<>();
-        params.put("contentType", item.getContentType());
-        params.put("fileName", fileName);
-        params.put("size", item.getSize());
-        params.put("author", author);
-        Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
-        docFacade.createDocInUserFolder(item.getName(), author, folder, attache);
-        return HttpServletResponse.SC_OK;
+        if (folder.getDetailItems().stream().filter(doc->Objects.equals(doc.getName(), fileName)).findFirst().orElse(null) == null){
+            Map<String, Object> params = new HashMap<>();
+            params.put("contentType", item.getContentType());
+            params.put("fileName", fileName);
+            params.put("size", item.getSize());
+            params.put("author", author);
+            Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
+            docFacade.createDocInUserFolder(item.getName(), author, folder, attache);
+            return HttpServletResponse.SC_OK;
+        } else {
+            return HttpServletResponse.SC_CONFLICT;
+        }
     }
     
     /**
