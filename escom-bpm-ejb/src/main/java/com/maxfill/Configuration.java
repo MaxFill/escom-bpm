@@ -60,6 +60,8 @@ public class Configuration {
     private Integer serverId;
     private Integer maxFileSize;
 
+    private Integer maxResultCount;
+    
     private Key signKey;
     private Boolean useMailSSLConnect;
     
@@ -108,6 +110,9 @@ public class Configuration {
         }
     }
 
+    public Integer getMaxResultCount() {
+        return maxResultCount;
+    }    
     public String getConvertorTXT() {
         return convertorTXT;
     }   
