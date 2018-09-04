@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
@@ -29,6 +30,8 @@ public class AttacheServiceImpl implements AttacheService{
     private static final Logger LOGGER = Logger.getLogger(AttacheServiceImpl.class.getName());
     @EJB
     private AttacheFacade attacheFacade;    
+    @EJB
+    private DocFacade docFacade;
     @EJB
     private Configuration configuration;
     @EJB
@@ -119,5 +122,18 @@ public class AttacheServiceImpl implements AttacheService{
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    @Asynchronous
+    public void uploadAsynhAttache(Doc doc, Map<String, Object> params, InputStream inputStream) throws IOException {
+        Attaches attache = uploadAtache(params, inputStream);
+        Integer version = doc.getNextVersionNumber();
+        attache.setNumber(version);
+        attache.setDoc(doc);
+        String fileName = attache.getName();
+        doc.setName(fileName);
+        doc.getAttachesList().add(attache);
+        docFacade.edit(doc);
     }
 }

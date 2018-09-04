@@ -21,5 +21,6 @@ public interface AttacheService {
     void deleteTmpFiles(String login);
     Attaches findAttacheByDoc(Doc doc);
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
+    void uploadAsynhAttache(Doc doc, Map<String, Object> params, InputStream inputStream) throws IOException;
 
 }
