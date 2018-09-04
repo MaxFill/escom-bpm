@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.event.SelectEvent;
 
 /**
  * Базовый бин реализующий методы ленивой загрузки списков данных из таблиц БД
@@ -23,13 +24,18 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
 
     protected LazyLoadModel<T> lazyModel;
     protected List<T> checkedItems = new ArrayList<>();
+    protected T selected;
     
     /* Атрибуты для фильтра */
     protected Date dateStart;
     protected Date dateEnd;
     protected Map<String,Object> filters = new HashMap <>();
 
-    protected abstract BaseLazyLoadFacade getFacade();
+    protected abstract BaseLazyLoadFacade getFacade();    
+    
+    public void onRowSelect(SelectEvent event){
+        selected = (T) event.getObject();
+    }
     
     public int countItems(){
         return getFacade().countItems(makeFilters(filters));
@@ -56,7 +62,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     public boolean checkedItemsEmpty(){
         return CollectionUtils.isEmpty(checkedItems);
     }
-
+    
     public LazyLoadModel getLazyDataModel(){
         if (lazyModel == null){
             lazyModel = new LazyLoadModel(null, this);
@@ -69,7 +75,14 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     }
 
     /* *** GETS & SETS *** */
-    
+
+    public T getSelected() {
+        return selected;
+    }
+    public void setSelected(T selected) {
+        this.selected = selected;
+    }
+        
     public Date getDateStart() {
         return dateStart;
     }

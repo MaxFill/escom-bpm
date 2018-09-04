@@ -20,9 +20,18 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                         
-                         update="mainFRM"
-                         actionListener="#{userMsgBean.markAsRead()}">
+        <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAllAsRead}"
+                        onstart="PF('statusDialog').show();"
+                        oncomplete="PF('statusDialog').hide();"
+                        update="mainFRM"
+                        actionListener="#{userMsgBean.markAsRead()}">
+        </p:commandButton>
+        <p:commandButton value="#{bundle.MarkSelectedAsRead}"
+                        onstart="PF('statusDialog').show()"
+                        oncomplete="PF('statusDialog').hide();"
+                        update="mainFRM"
+                        disabled="#{userMsgBean.checkedItemsEmpty()}"
+                        actionListener="#{userMsgBean.markSelectedAsRead()}">
         </p:commandButton>
     </ui:define>
 
@@ -71,10 +80,16 @@
                      rowsPerPageTemplate="10,25,50" rows="10" 
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
-                     var="item" sortBy="#{item.dateSent}" sortOrder="descending"
-                     rowKey="#{item.id}"
+                     sortBy="#{item.dateSent}" sortOrder="descending"
+                     var="item" 
                      selection="#{userMsgBean.checkedItems}">
-
+            
+            <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar"/>
+            <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar"/>
+            <p:ajax event="toggleSelect" update="mainFRM:explToolBar"/>
+        
+            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+            
             <p:column width="16" sortBy="#{task.iconName}" >
                 <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
             </p:column>
