@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.explorer;
 
-import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -755,7 +754,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 break;
             }
             default:{
-                detailItems = new ArrayList<>();
+                detailItems = new ArrayList<>();                
                 break;
             }
         }                
