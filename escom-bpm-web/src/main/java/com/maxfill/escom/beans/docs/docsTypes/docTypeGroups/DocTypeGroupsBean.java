@@ -48,7 +48,8 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     
     @Override
     public void doGetCountUsesItem(DocTypeGroups docTypeGroups,  Map<String, Integer> rezult){
-        rezult.put("DocTypes", docTypeFacade.findItemByOwner(docTypeGroups).size());
+        Long count =docTypeFacade.getCountDetails(docTypeGroups);
+        rezult.put("DocTypes", count.intValue());
     }
 
     @Override

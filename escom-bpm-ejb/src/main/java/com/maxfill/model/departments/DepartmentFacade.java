@@ -12,6 +12,7 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,8 +51,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         Predicate crit = builder.equal(c.get(Staff_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq);
+        return query.getResultList();
     }
 
     @Override
@@ -195,10 +196,12 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     /**
      * Отбирает подразделения, относящиеся к компании и находящиеся на верхнем уровне
      * @param owner
+     * @param first
+     * @param pageSize
      * @return
      */
     @Override
-    public List<Department> findActualDetailItems(Company owner){
+    public List<Department> findActualDetailItems(Company owner, int first, int pageSize){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
@@ -217,8 +220,34 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq);       
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+    
+    @Override
+    public Long findCountActualDetails(Company owner){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Department> root = cq.from(Department.class);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.isNull(root.get("parent")));
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("actual"), true));
+        if (owner != null){                    
+            criteries.add(builder.equal(root.get("owner"), owner));
+        }
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+
+        cq.select(builder.count(root)).where(builder.and(predicates));               
+
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
     }
     
     /* Возвращает компанию, в которой находится подразделение */

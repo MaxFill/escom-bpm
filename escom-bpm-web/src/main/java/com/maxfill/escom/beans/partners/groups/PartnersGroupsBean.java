@@ -15,6 +15,8 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.criteria.Order;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Группы контрагентов" */
@@ -33,14 +35,14 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode) {
-        List<BaseDict> cnt = new ArrayList();
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize) {
+        List<BaseDict> cnt = new ArrayList();        
         //загружаем в контент группы контрагента
         List<PartnerGroups> groups = itemsFacade.findActualChilds((PartnerGroups)partnerGroup);
         groups.stream().forEach(group -> addChildItemInContent(group, cnt));
         if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
             //загружаем в контент контрагентов 
-            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup);
+            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize);
             partners.stream().forEach(partner -> addDetailItemInContent(partner, cnt));
         }
         return cnt;

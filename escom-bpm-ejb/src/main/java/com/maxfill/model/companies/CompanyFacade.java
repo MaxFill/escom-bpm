@@ -31,11 +31,6 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
         super(Company.class, CompanyLog.class, CompanyStates.class);
     }
 
-    /**
-     * Отбирает все подчинённые объекты для владельца.
-     * @param owner
-     * @return
-     */
     @Override
     public List<BaseDict> findAllDetailItems(Company owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
@@ -45,8 +40,8 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
         Predicate crit = builder.equal(c.get(Department_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq);        
+        return query.getResultList();
     }
 
     @Override

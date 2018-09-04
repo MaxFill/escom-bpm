@@ -16,8 +16,7 @@ import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFilters;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.escom.beans.core.BaseView;
-import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -25,24 +24,20 @@ import com.maxfill.utils.ItemUtils;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
+import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
-import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.*;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
@@ -62,7 +57,7 @@ import org.primefaces.model.UploadedFile;
 /* Контролер формы обозревателя */
 @Named
 @ViewScoped
-public class ExplorerBean extends BaseViewBean<BaseView>{
+public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private static final long serialVersionUID = 5230153127233924868L;   
 
     @Inject
@@ -103,8 +98,8 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     private Integer typeEdit; //режим редактирования записи
     
-    protected List<BaseDict> checkedItems = new ArrayList<>();  //список выбранных объектов на форме обозревателя/селектора
     protected List<BaseDict> detailItems = new ArrayList<>();   //список подчинённых объектов
+    private int count; //колв-во записей запроса
     
     private final Map<String, Object> createParams = new HashMap<>();
     protected BaseDict dropItem;
@@ -118,14 +113,16 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     private String selectorHeader;
     private String explorerHeader;
     protected String currentTab = "0";
-    private List<SortMeta> sortOrder;
+    
+    //private List<SortMeta> sortOrder;
+    
     private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
     private Integer currentPage = 0;
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
-    private Integer source = DictDetailSource.TREE_SOURCE;
-    protected Integer viewMode;           //режим отображения формы
+    private Integer source = DictDetailSource.ALL_ITEMS_SOURCE;
+    protected Integer viewMode;         //режим отображения формы
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
@@ -638,28 +635,12 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         filterSelectedNode = node;
         filterSelectedNode.setSelected(true);
 
-        Filter filter = (Filter) node.getData();
-        if (filter == null){
-            return;
-        }
+        Filter filter = (Filter) filterSelectedNode.getData();        
 
-        doMakeFilterJurnalHeader(node, filter);
+        doMakeFilterJurnalHeader(filterSelectedNode, filter);        
         
-        List<BaseDict> result = null;
-        if (node.getType().equals(typeDetail)){
-            result = tableBean.makeFilteredContent(filter);                    
-            setCurrentViewModeDetail();
-        } else
-            if (node.getType().equals(typeTree)){
-                result = treeBean.makeFilteredContent(filter);
-                setCurrentViewModeTree();
-            } else
-                if (node.getType().equals(typeRoot)){
-                    result = rootBean.makeFilteredContent(filter);
-                    setCurrentViewModeRoot();
-                }
-
-        setDetails(result, DictDetailSource.FILTER_SOURCE);
+        refreshData();
+        setSource(DictDetailSource.FILTER_SOURCE);
     }
 
     /* ФИЛЬТР: формирование заголовка журнала для разделов фильтров */
@@ -735,34 +716,56 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
 
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя  */
     public List<BaseDict> getDetailItems(){
-        if (detailItems == null) {
-            switch (getSource()){
-                case DictDetailSource.FILTER_SOURCE:{
-                    doFilterTreeNodeSelect(filterSelectedNode);
-                    break;
-                }
-                case DictDetailSource.TREE_SOURCE:{
-                    onSelectInTree(treeSelectedNode);
-                    break;
-                }
-                case DictDetailSource.SEARCHE_SOURCE:{
-                    onSearcheItem();
-                    break;
-                }
-                default:{
-                    detailItems = new ArrayList<>();
-                    break;
-                }
-            }
-        }
         return detailItems;
     }
     
-    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка списка таблицы обозревателя  */
-    public void setDetails(List<BaseDict> details, int source) {
-        setSource(source);
-        this.detailItems = details;
-    }        
+    @Override
+    public List<BaseDict> loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
+        this.filters = filters;
+        switch (getSource()){
+            case DictDetailSource.FILTER_SOURCE:{
+                Filter filter = (Filter) filterSelectedNode.getData();
+                if (filterSelectedNode.getType().equals(typeDetail)){
+                    detailItems = tableBean.makeFilteredContent(filter, first, pageSize);                    
+                    setCurrentViewModeDetail();
+                } else
+                    if (filterSelectedNode.getType().equals(typeTree)){
+                        detailItems = treeBean.makeFilteredContent(filter, first, pageSize);
+                        setCurrentViewModeTree();
+                    } else
+                        if (filterSelectedNode.getType().equals(typeRoot)){
+                            detailItems = rootBean.makeFilteredContent(filter, first, pageSize);
+                            setCurrentViewModeRoot();
+                        }
+                break;
+            }
+            case DictDetailSource.TREE_SOURCE:{                
+                if (isItemTreeType(currentItem)){                    
+                        detailItems = treeBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                        count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
+                    } else
+                        if (isItemRootType(currentItem)){                            
+                            detailItems = rootBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                            count = rootBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
+                        }
+                break;
+            }
+            case DictDetailSource.SEARCHE_SOURCE:{
+                detailItems = doSearcheItems(first, pageSize, sortField, sortOrder, makeFilters(filters));
+                break;
+            }
+            default:{
+                detailItems = new ArrayList<>();
+                break;
+            }
+        }                
+        return detailItems;
+    }    
+    
+    @Override
+    public int countItems(){
+        return count;
+    }
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
     public void onLoadGroupContent(BaseDict item) {
@@ -837,23 +840,23 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         currentTab = DictExplForm.TAB_TREE;
         treeSelectedNode.setSelected(true);
         currentItem = (BaseDict) treeSelectedNode.getData();        
-        List<BaseDict> details = null;         
+        
         if (isItemTreeType(currentItem)){
             if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
                 treeBean.loadChilds(currentItem, treeSelectedNode);
                 PrimeFaces.current().ajax().update("westFRM:accord:tree");
-            }
-            details = treeBean.makeGroupContent(currentItem, viewMode);                        
+            }                                    
         } else
             if (isItemRootType(currentItem)){
                 if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
                     rootBean.loadChilds(currentItem, treeSelectedNode);
                     PrimeFaces.current().ajax().update("westFRM:accord:tree");
                 }
-                details = rootBean.makeGroupContent(currentItem, viewMode);                
             }
-        setDetails(details, DictDetailSource.TREE_SOURCE); 
-                       
+        
+        setSource(DictDetailSource.TREE_SOURCE); 
+        refreshData();
+        
         makeNavigator(currentItem);         
         setCurrentViewModeMixed();
        
@@ -1187,50 +1190,39 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     
     /* Обработка действия по нажатию кнопки Поиск */
-    public void onSearcheItem() {
+    public void onSearcheItem() {        
         if (getModel().isSearcheInGroups() && (treeBean == null || treeSelectedNode == null)) {
             MsgUtils.errorMsg("NO_SEARCHE_GROUPS");
-        } else {
-            doSearcheItems();
-            if (getDetailItems().isEmpty()) {
-                MsgUtils.warnMsg("NO_SEARCHE_FIND");
-                return;
-            }
-            switch (currentTab) {
-                case DictExplForm.TAB_TREE: {
-                    if (treeSelectedNode != null) {
-                        treeSelectedNode.setSelected(false);
-                        treeSelectedNode = null;
-                    }
-                    break;
+            return ;
+        } 
+        setSource(DictDetailSource.SEARCHE_SOURCE);
+        refreshData();        
+        
+        switch (currentTab) {
+            case DictExplForm.TAB_TREE: {
+                if (treeSelectedNode != null) {
+                    treeSelectedNode.setSelected(false);
+                    treeSelectedNode = null;
                 }
-                case DictExplForm.TAB_FILTER: {
-                    if (filterSelectedNode != null) {
-                        filterSelectedNode.setSelected(false);
-                        filterSelectedNode = null;
-                    }
-                    break;
-                }
+                break;
             }
-        }
+            case DictExplForm.TAB_FILTER: {
+                if (filterSelectedNode != null) {
+                    filterSelectedNode.setSelected(false);
+                    filterSelectedNode = null;
+                }
+                break;
+            }
+        }               
     }    
             
     /* Выполняет поиск объектов с учётом критериев поиска  */
-    public void doSearcheItems() {
+    public List<BaseDict> doSearcheItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         List<BaseDict> searcheGroups = new ArrayList<>();
         Map<String, Object> paramEQ = new HashMap<>();
         Map<String, Object> paramLIKE = new HashMap<>();
         Map<String, Object> paramIN = new HashMap<>();
-        Map<String, Date[]> paramDATE = new HashMap<>();
-
-        //готовим группы в которых будет поиск
-        if (model.isSearcheInGroups()) {
-            TreeNode ownerNode = getTreeSelectedNode();
-            if (ownerNode != null) {
-                BaseDict owner = (BaseDict) ownerNode.getData();
-                searcheGroups.addAll(ItemUtils.getChildsItems(owner));                
-            }
-        }
+        Map<String, Date[]> paramDATE = new HashMap<>();       
 
         //добавление в запрос точных критериев
         if (model.isOnlyActualItem()) {
@@ -1285,17 +1277,16 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         
         List<Integer> statesIds = model.getStateSearche().stream().map(item -> item.getId()).collect(Collectors.toList());
 
-        List<BaseDict> result;
-        if (searcheBean instanceof BaseDetailsBean) {
-            result = ((BaseDetailsBean)searcheBean).doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, searcheGroups, addParams);
-        } else {
-            result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
-        }
-        
-        setDetails(result, DictDetailSource.SEARCHE_SOURCE);
+        List<BaseDict> result = searcheBean.doSearche(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
+        count = searcheBean.getFacade().getCountByParameters(statesIds, paramEQ, paramLIKE, paramIN, paramDATE, addParams).intValue();             
+        setSource(DictDetailSource.SEARCHE_SOURCE);
         setCurrentViewModeDetail();        
         makeJurnalHeader(MsgUtils.getBandleLabel(searcheBean.getMetadatesObj().getBundleJurnalName()), MsgUtils.getBandleLabel("SearcheResult"), "DisplaysObjectsSelectedSearche");
         navigator = null;
+        if (result.isEmpty()) {
+            MsgUtils.warnMsg("NO_SEARCHE_FIND");            
+        }
+        return result;
     }
 
     /* Выполняет поиск в дереве объектов */
@@ -1586,6 +1577,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }       
             
     /* Построение объекта для сортировки таблицы обозревателя  */
+    /*
     public List<SortMeta> getSortOrder() {
         if (sortOrder == null){
             sortOrder = new ArrayList<>();
@@ -1605,7 +1597,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
         }
         return sortOrder;
     }    
-    
+    */
     /* Формирование заголовка журнала обозревателя   */ 
     public void makeJurnalHeader(String firstName, String secondName, String toolTipKey){              
         StringBuilder sb = new StringBuilder(firstName);
@@ -1687,14 +1679,7 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     }
     public void setCurrentTab(String currentTab) {
         this.currentTab = currentTab;
-    }
-
-    public void setCheckedItems(List<BaseDict> items) {
-        checkedItems = items;
-    }
-    public List<BaseDict> getCheckedItems() {
-        return checkedItems;
-    }      
+    }    
 
     public void setRootBean(BaseTreeBean rootBean) {
         this.rootBean = rootBean;
@@ -1879,5 +1864,10 @@ public class ExplorerBean extends BaseViewBean<BaseView>{
     @Override
     public String getFormHeader() {
         return explorerHeader;
+    }
+
+    @Override
+    protected BaseLazyLoadFacade getFacade() {
+        return getItemBean(currentItem).getFacade();
     }
 }

@@ -49,14 +49,12 @@ import java.util.Set;
 import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.diagram.ConnectEvent;
@@ -1140,7 +1138,7 @@ public class DiagramBean extends BaseViewBean{
         
     public List<ProcTempl> getTemplates() {
         if (templates == null && process != null){            
-            templates = procTemplBean.findDetailItems(process.getOwner());            
+            templates = procTemplBean.findDetailItems(process.getOwner(), 0, 0);            
         }
         return templates;
     }

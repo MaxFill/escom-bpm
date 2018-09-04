@@ -21,8 +21,6 @@ import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
-import org.apache.commons.lang.StringUtils;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -208,7 +206,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* *** *** */
 
     /* Возвращает актуальные подчинённые объекты для владельца  */
-    public List<T> findActualDetailItems(O owner){
+    public List<T> findActualDetailItems(O owner, int first, int pageSize){
+        if (pageSize == 0){
+            pageSize = configuration.getMaxResultCount();
+        }
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -218,6 +219,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         criteries.add(builder.isNull(c.get("parent")));
         criteries.add(builder.equal(c.get("deleted"), false));
         criteries.add(builder.equal(c.get("actual"), true));
+        
         if (owner == null){
             criteries.add(builder.isNull(c.get("owner")));
         } else {
@@ -227,16 +229,46 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
 
-        cq.select(c).where(builder.and(predicates));               
+        cq.select(c).where(builder.and(predicates));        
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        List<T> result = q.getResultList();
+        Query query = getEntityManager().createQuery(cq);       
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        List<T> result = query.getResultList();
         return result;
     }
 
+    public Long findCountActualDetails(O owner){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<T> root = cq.from(itemClass);   
+        List<Predicate> criteries = new ArrayList<>();
+
+        criteries.add(builder.isNull(root.get("parent")));
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("actual"), true));
+        
+        if (owner == null){
+            criteries.add(builder.isNull(root.get("owner")));
+        } else {
+            criteries.add(builder.equal(root.get("owner"), owner));
+        }
+
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+                       
+        cq.select(builder.count(root)).where(builder.and(predicates));
+
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
+            
     /**
      * Отбирает все подчинённые объекты для владельца. Переопределяется в бинах объектов
      * @param owner
+     * @param first
+     * @param pageSize
      * @return
      */
     public List<BaseDict> findAllDetailItems(T owner){
@@ -266,7 +298,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
     /* Отбор объектов, созданных пользователем  */
-    public List<T> findItemsCreatedByUser(User user){
+    public List<T> findItemsCreatedByUser(User user, int first, int pageSize){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -275,27 +307,26 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq); 
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }    
     
-    /* Отбор актуальных объектов по их владельцу  */
-    public List<BaseDict> findItemByOwner(O owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+    public Long getCountDetails(BaseDict owner){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(itemClass);
-        Root<T> c = cq.from(itemClass);
-        Predicate crit1 = builder.equal(c.get("owner"), owner);
-        Predicate crit2 = builder.equal(c.get("deleted"), false);
-        Predicate crit3 = builder.equal(c.get("actual"), true);
-        cq.select(c).where(builder.and(crit1, crit2, crit3));
-        cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
-    }
-            
+        CriteriaQuery<Long> cq = builder.createQuery(Long.class);
+        Root<T> root = cq.from(itemClass);
+        Predicate crit1 = builder.equal(root.get("owner"), owner);
+        Predicate crit2 = builder.equal(root.get("deleted"), false);
+        Predicate crit3 = builder.equal(root.get("actual"), true);
+        cq.select(builder.count(root)).where(builder.and(crit1, crit2, crit3));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }    
+    
     /* Отбор объектов находящихся в корзине */
-    public List<T> loadFromTrash(){
+    public List<T> loadFromTrash(int first, int pageSize){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -303,8 +334,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit2 = builder.equal(c.get("deleted"), true);
         cq.select(c).where(builder.and(crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<T> q = getEntityManager().createQuery(cq);
-        return filtrationTrashResult(q.getResultList());
+        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return filtrationTrashResult(query.getResultList());
     }
 
     /**
@@ -325,7 +358,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
     /* Отбор не актуальных объектов  */
-    public List<T> loadNotActualItems(){
+    public List<T> loadNotActualItems(int first, int pageSize){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -334,8 +367,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq); 
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }                       
     
     /* Возвращает документы, заблокированные пользователем */
@@ -368,19 +403,40 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* ПОИСК из формы поиска */
 
-    public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
+    public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize) {
         CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
-        TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);
-        query.setMaxResults(configuration.getMaxResultCount());
+        TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);        
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 
+    public Long getCountByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> cq = builder.createQuery(Long.class);                
+        
+        Root<T> root = cq.from(itemClass);
+        Predicate[] predicates = makePredicate(builder, root, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+        
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        
+        Query query = getEntityManager().createQuery(cq); 
+        return (Long) query.getSingleResult();
+    }
+    
     protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> entityClass, Map<String, Object> addParams) {
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<EC> criteriaQuery = builder.createQuery(entityClass);
         Root<EC> root = criteriaQuery.from(entityClass);
         
+        criteriaQuery.orderBy(builder.asc(root.get("name")));
+        
+        Predicate[] predicates = makePredicate(builder, root, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+        return criteriaQuery.select(root).where(builder.and(predicates));        
+    }
+    
+    private Predicate[] makePredicate(CriteriaBuilder builder, Root root, List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
         List<Predicate> criteries = new ArrayList<>(); 
         criteries.add(builder.equal(root.get("deleted"), false));
         
@@ -408,12 +464,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
         addLikePredicates(root, criteries, builder, paramLIKE);
         addJoinPredicatesAndOrders(root, criteries, builder, addParams);
-        
-        criteriaQuery.orderBy(builder.asc(root.get("name")));
-        
+                       
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
-        return criteriaQuery.select(root).where(builder.and(predicates));        
+        return predicates;
     }
     
     protected void addLikePredicates(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> paramLIKE){
@@ -432,7 +486,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     public abstract String getFRM_NAME();
     
     /* возвращает список изменённых пользователем документов */
-    public List<T> findLastChangedItemsByUser(User user){    
+    public List<T> findLastChangedItemsByUser(User user, int first, int pageSize){    
         Date lastDate = DateUtils.addMounth(new Date(), -1);
 
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -453,12 +507,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         sq.having(builder.greaterThan(expMaxDate, lastDate));
 
         cq.select(rootItems);
-        cq.where(rootItems.get("id").in(sq));        
+        cq.where(builder.and(rootItems.get("id").in(sq), builder.equal(rootItems.get("deleted"), false))); 
  
-        Query q = getEntityManager().createQuery(cq);
-        List<T> results = q.getResultList();
-
-        return results;
+        Query query = getEntityManager().createQuery(cq);
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }    
 
     /**
@@ -777,7 +831,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return actualRight;
     }
 
-/* *** РОЛИ *** */
+    /* *** РОЛИ *** */
     
     /**
      * Проверяет вхождение текущего пользователя в роль
@@ -791,8 +845,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             return Objects.equals(item.getAuthor(), user);
         }        
         return checkUserInRole(item, groupId, user);
-    }    
-    
+    }        
     
     /**
      * Стандартная проверка вхождения пользователя в роль

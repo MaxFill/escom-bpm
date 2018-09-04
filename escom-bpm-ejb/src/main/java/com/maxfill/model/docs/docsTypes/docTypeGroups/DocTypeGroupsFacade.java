@@ -5,13 +5,9 @@ import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocType_;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsLog;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -82,8 +78,8 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
         Predicate crit = builder.equal(c.get(DocType_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq);       
+        return query.getResultList();
     }
 
     /**

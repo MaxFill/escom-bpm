@@ -21,14 +21,12 @@ import com.maxfill.services.print.PrintService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
@@ -302,8 +300,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @param owner
      * @return 
      */
-    public List<T> findDetailItems(BaseDict owner){
-        return (List<T>) getFacade().findActualDetailItems(owner).stream()
+    public List<T> findDetailItems(BaseDict owner, int first, int pageSize){
+        return (List<T>) getFacade().findActualDetailItems(owner, first, pageSize).stream()
                 .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
                 .collect(Collectors.toList());
     }
@@ -558,11 +556,11 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /*  ФИЛЬТРЫ */
     
     /* ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра  */
-    public List<T> makeFilteredContent(Filter filter) {
+    public List<T> makeFilteredContent(Filter filter, int first, int pageSize) {
         List<T> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
-                result = getFacade().loadFromTrash();
+                result = getFacade().loadFromTrash(first, pageSize);
                 break;
             }           
             case DictFilters.FAVORITE_ID: {
@@ -570,15 +568,15 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 break;
             }            
             case DictFilters.USER_CREATED_ID: {
-                result = getFacade().findItemsCreatedByUser(getCurrentUser());
+                result = getFacade().findItemsCreatedByUser(getCurrentUser(), first, pageSize);
                 break;
             }
             case DictFilters.LAST_CHANGE_ID: {
-                result = getFacade().findLastChangedItemsByUser(getCurrentUser());
+                result = getFacade().findLastChangedItemsByUser(getCurrentUser(), first, pageSize);
                 break;
             }
             case DictFilters.NOTACTUAL_ID: {
-                result = getFacade().loadNotActualItems();
+                result = getFacade().loadNotActualItems(first, pageSize);
                 break;
             }
             case DictFilters.ON_MY_EDIT: {
@@ -595,8 +593,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }
     
     /* ПОИСК: Выполняет поиск объектов */
-    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams){
-        List<T> sourceItems = getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
+    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
+        List<T> sourceItems = getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
         return prepareSetDetails(sourceItems);
     }
     

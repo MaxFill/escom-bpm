@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.persistence.criteria.Order;
+import org.primefaces.model.SortOrder;
 
 /* Сервисный бин "Папки документов" */
 
@@ -74,13 +76,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     
     /* Формирование содержимого контента папки   */ 
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode) {
-        List<BaseDict> cnt = new ArrayList();
+    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode, int first, int pageSize) {
+        List<BaseDict> cnt = new ArrayList();    
         //загружаем в контент дочерние папки
         List<Folder> folders = getFacade().findActualChilds((Folder)folder);
         folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
         //загружаем в контент документы
-        List<Doc> docs = getDetailBean().getFacade().findItemByOwner(folder);
+        List<Doc> docs = getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize);
         docs.stream().forEach(doc -> addDetailItemInContent(doc, cnt));
         return cnt;
     }
@@ -123,7 +125,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public List<List<?>> doGetDependency(Folder folder){
         List<List<?>> dependency = new ArrayList<>();
-        List detail = docFacade.findActualDetailItems(folder);
+        List detail = docFacade.findActualDetailItems(folder, 0, 0);
         if (!detail.isEmpty()) {
             dependency.add(detail);
         }

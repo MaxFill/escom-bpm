@@ -19,7 +19,9 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import com.maxfill.model.staffs.Staff;
+import javax.persistence.criteria.Order;
 import org.apache.commons.collections.CollectionUtils;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Подразделения" */
@@ -92,13 +94,14 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         
     /* Формирование контента подразделения  */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode) {
+    public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode, int first, int pageSize) {
         List<BaseDict> cnt = new ArrayList();
+        List<Order> orders = new ArrayList<>();
         //загружаем в контент подразделения
         List<Department> departments = itemFacade.findActualChilds((Department)department);
         departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));
         //загружаем в контент штатные единицы
-        List<BaseDict> staffs = staffFacade.findItemByOwner((Department)department);
+        List<Staff> staffs = staffFacade.findActualDetailItems((Department)department, first, pageSize);
         staffs.stream().forEach(staff -> addDetailItemInContent(staff, cnt));
         return cnt;
     }
@@ -120,7 +123,8 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* Формирует число ссылок на department в связанных объектах  */
     @Override
     public void doGetCountUsesItem(Department department,  Map<String, Integer> rezult){
-        rezult.put("Staffs", staffFacade.findItemByOwner(department).size());
+        Long count = staffFacade.getCountDetails(department);
+        rezult.put("Staffs", count.intValue());
     }
 
     /**

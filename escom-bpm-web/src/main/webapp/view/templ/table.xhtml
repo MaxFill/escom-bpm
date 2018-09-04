@@ -4,16 +4,14 @@
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
        
-    <p:dataTable id="tblDetail" value="#{_bean.detailItems}" var="item" 
+    <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_bean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces" style="font-size: 90%;"
-                 sortMode="multiple" sortBy="#{_bean.sortOrder}"
-                 selection="#{_bean.checkedItems}"
-                 rowKey="#{item.itemKey}">
+                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces" style="font-size: 90%;"                 
+                 selection="#{_bean.checkedItems}">
 
         <f:facet name="header">
             #{_bean.jurnalHeader}
@@ -54,7 +52,6 @@
         </p:column>
         
         <p:column headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1"
-                  rendered="#{_showDateChange}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>

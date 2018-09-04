@@ -26,7 +26,14 @@
     <ui:param name="_updates"          value="mainFRM:fileUploadFRM" />
     
     <!-- специфичные поля поиска -->
-    <ui:define name="searche">         
+    <ui:define name="searche"> 
+        <p:outputLabel value="#{bundle.Company}:" indicateRequired="true"/>
+        <p:selectOneMenu value="#{_bean.model.companySearche}" filter="true" converter="companyConvertor"                         
+                        widgetVar="companySearche"
+                        styleClass="ui-grid-col-12">
+                <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />  
+        </p:selectOneMenu> 
+        
         <p:selectBooleanCheckbox itemLabel="#{bundle.FullTextSearche}" widgetVar="cbFullSearche"
                                  title="#{bundle.FullTextSearcheMode}"
                                  value="#{_bean.model.fullTextSearche}">
@@ -89,7 +96,7 @@
                         styleClass="ui-grid-col-12">
                 <f:selectItems value="#{partnersBean.findAll()}" var="partner" itemValue="#{partner}" itemLabel="#{partner.nameEndElipse}" />
                 <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
-            </p:selectOneMenu>  
+        </p:selectOneMenu>  
     </ui:define>
     
     <!-- специфичные пункты в меню тулбара обозревателя -->
@@ -132,6 +139,10 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
+        <p:column headerText="#{bundle.Company}" sortBy="#{item.company.name}" width="90" priority="3">
+            <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.company.name : ''}"/>
+        </p:column>
+        
         <p:column headerText="#{bundle.Type}" sortBy="#{item.docType.name}" width="90" priority="4">
             <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.docType.name : bundle.Folder}"/>
         </p:column>

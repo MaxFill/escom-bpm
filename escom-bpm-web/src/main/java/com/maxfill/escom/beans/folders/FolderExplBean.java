@@ -34,6 +34,7 @@ import javax.inject.Named;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 /* Расширение контролёра обозревателя архива */
@@ -114,18 +115,9 @@ public class FolderExplBean extends ExplorerTreeBean{
         currentTab = DictExplForm.TAB_PROC;
         procSelectedNode.setSelected(true);
         currentItem = (ProcessType) procSelectedNode.getData();
-                
-        List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
-                     .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
-                     .collect(Collectors.toList()); 
-
-        Set<Doc> docsSet = new HashSet<>();
-        processes.forEach(p->p.getDocs().stream()
-                .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))                
-                .forEach(doc->docsSet.add(doc))
-        );        
-        setDetails(new ArrayList<>(docsSet), DictDetailSource.PROCESS_SOURCE); 
         
+        setSource(DictDetailSource.PROCESS_SOURCE);
+        refreshData();
         makeNavigator(currentItem);
         setCurrentViewModeDetail();
        
@@ -135,35 +127,59 @@ public class FolderExplBean extends ExplorerTreeBean{
             journalName = currentItem.getName();
         }        
         makeJurnalHeader(rootItem.getName(), journalName, "DisplaysDocsForRunningProcesses");
-    }
+    }       
     
-    /* Формирует список объектов для таблицы обозревателя  */
     @Override
-    public List<BaseDict> getDetailItems(){
-        if (detailItems == null) {
-            switch (getSource()){
-                case DictDetailSource.FILTER_SOURCE:{
-                    doFilterTreeNodeSelect(filterSelectedNode);
-                    break;
-                }
-                case DictDetailSource.TREE_SOURCE:{
-                    onSelectInTree(treeSelectedNode);
-                    break;
-                }
-                case DictDetailSource.SEARCHE_SOURCE:{
-                    onSearcheItem();
-                    break;
-                }
-                case DictDetailSource.PROCESS_SOURCE:{
-                    onSelectInProc(procSelectedNode);
-                    break;
-                }
-                default:{
-                    detailItems = new ArrayList<>();
-                    break;
-                }
+    public List<BaseDict> loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
+        this.filters = filters;
+        switch (getSource()){
+            case DictDetailSource.FILTER_SOURCE:{
+                Filter filter = (Filter) filterSelectedNode.getData();
+                if (filterSelectedNode.getType().equals(typeDetail)){
+                    detailItems = tableBean.makeFilteredContent(filter, first, pageSize);                    
+                    setCurrentViewModeDetail();
+                } else
+                    if (filterSelectedNode.getType().equals(typeTree)){
+                        detailItems = treeBean.makeFilteredContent(filter, first, pageSize);
+                        setCurrentViewModeTree();
+                    } else
+                        if (filterSelectedNode.getType().equals(typeRoot)){
+                            detailItems = rootBean.makeFilteredContent(filter, first, pageSize);
+                            setCurrentViewModeRoot();
+                        }
+                break;
             }
-        }
+            case DictDetailSource.TREE_SOURCE:{                
+                if (isItemTreeType(currentItem)){                    
+                        detailItems = treeBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                    } else
+                        if (isItemRootType(currentItem)){                            
+                            detailItems = rootBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                        }
+                break;
+            }
+            case DictDetailSource.SEARCHE_SOURCE:{
+                detailItems = doSearcheItems(first, pageSize, sortField, sortOrder, makeFilters(filters));
+                break;
+            }
+            case DictDetailSource.PROCESS_SOURCE:{
+                    List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
+                                 .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
+                                 .collect(Collectors.toList()); 
+
+                    Set<Doc> docsSet = new HashSet<>();
+                    processes.forEach(p->p.getDocs().stream()
+                            .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))                
+                            .forEach(doc->docsSet.add(doc))
+                    );
+                    break;
+                }
+            default:{
+                detailItems = new ArrayList<>();
+                break;
+            }
+        }        
+
         return detailItems;
     }
     
