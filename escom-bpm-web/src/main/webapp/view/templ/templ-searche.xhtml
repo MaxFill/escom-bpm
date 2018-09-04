@@ -57,11 +57,6 @@
         </p:panelGrid>
 
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">        
-            <p:selectOneRadio value="#{_bean.model.searcheInGroups}" layout="pageDirection" rendered="#{_bean.treeBean != null}" styleClass="ui-grid-col-12">
-                <f:selectItem itemLabel="#{bundle.SearcheWitchOutGroup}" itemValue="#{false}" />
-                <f:selectItem itemLabel="#{bundle.SearcheInCurrentGroup}" itemValue="#{true}" />
-            </p:selectOneRadio>
-
             <p:selectBooleanCheckbox itemLabel="#{bundle.SearcheOnlyActualItems}" 
                                      title="#{bundle.SearcheOnlyActualItemsComments}" 
                                      value="#{_bean.model.onlyActualItem}">

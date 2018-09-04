@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import java.util.Date;
@@ -21,10 +22,11 @@ public class DocsSearche extends SearcheModel{
     private boolean dateDocSearche = false;
     private List<DocType> docTypes;
     private Partner partnerSearche;
-    private String fioSearche;
+    private Company companySearche;
     
     @Override
     public void addSearcheParams(Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<BaseDict> searcheGroups, Map<String, Object> addParams){
+        paramEQ.put("company", companySearche);
         if (StringUtils.isNotBlank(numberSearche)){
             paramLIKE.put("regNumber", numberSearche);
         }
@@ -39,11 +41,17 @@ public class DocsSearche extends SearcheModel{
         }
         if (partnerSearche != null){
            paramEQ.put("partner", partnerSearche); 
-        }
-        if (StringUtils.isNotBlank(fioSearche)){
-            paramLIKE.put("fio", fioSearche);
-        }
+        }        
     }        
+       
+    /* GETS & SETS */
+
+    public Company getCompanySearche() {
+        return companySearche;
+    }
+    public void setCompanySearche(Company companySearche) {
+        this.companySearche = companySearche;
+    }
         
     public List<DocType> getDocTypes() {
         return docTypes;
@@ -86,13 +94,5 @@ public class DocsSearche extends SearcheModel{
     public void setPartnerSearche(Partner partnerSearche) {
         this.partnerSearche = partnerSearche;
     }    
-
-    public String getFioSearche() {
-        return fioSearche;
-    }
-    public void setFioSearche(String fioSearche) {
-        this.fioSearche = fioSearche;
-    }
-    
     
 }
