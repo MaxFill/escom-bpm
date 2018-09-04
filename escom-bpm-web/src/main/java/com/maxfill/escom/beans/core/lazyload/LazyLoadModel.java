@@ -6,6 +6,7 @@ import org.primefaces.model.SortOrder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
     private static final long serialVersionUID = 7191520294306205834L;
@@ -20,11 +21,9 @@ public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
 
     @Override
     public T getRowData(String rowKey) {
-        for(T item : datasource) {
-            if(item.getId().equals(rowKey))
-                return item;
-        }
-        return null;
+        Integer id = Integer.valueOf(rowKey);
+        T item = datasource.stream().filter(row->Objects.equals(row.getId(), id)).findFirst().orElse(null);     
+        return item;
     }
 
     @Override

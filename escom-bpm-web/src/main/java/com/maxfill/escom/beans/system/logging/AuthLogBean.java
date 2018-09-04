@@ -31,8 +31,6 @@ import java.util.Map;
 public class AuthLogBean extends LazyLoadBean{
     private static final long serialVersionUID = -2035201127652612778L;
 
-    private Authlog selected;
-
     private String orientationName = "Portret";
     private boolean orientation;
     private boolean onlyCurPageExp;
@@ -170,8 +168,9 @@ public class AuthLogBean extends LazyLoadBean{
         return orientationName;
     }
 
+    @Override
     public Authlog getSelected() {
-        return selected;
+        return (Authlog)selected;
     }
     public void setSelected(Authlog selected) {
         this.selected = selected;
