@@ -253,7 +253,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return null;
-        }        
+        }
         //changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
@@ -323,7 +323,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* Изменение имени вставляемого объекта */
     protected void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
         String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-        pasteItem.setName(name);        
+        pasteItem.setName(name);
     }
 
     /**

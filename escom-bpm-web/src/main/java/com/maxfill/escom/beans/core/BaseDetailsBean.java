@@ -76,7 +76,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         if (ownership == null){
             ownership = sourceItem.getParent();
         }
-        T newItem = createItem(ownership);
+        T newItem = createItem(ownership);       
         try {
             BeanUtils.copyProperties(newItem, sourceItem);
             newItem.setIconTree("ui-icon-folder-collapsed");
