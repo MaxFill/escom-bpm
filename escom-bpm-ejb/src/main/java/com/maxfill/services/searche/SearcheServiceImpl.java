@@ -77,6 +77,10 @@ public class SearcheServiceImpl implements SearcheService {
     @Asynchronous
     @Override
     public void addFullTextIndex(Doc doc){
+        if (doc == null){
+            LOGGER.log(Level.SEVERE, null, "ERROR: AddFullTextIndex doc is NULL!");
+            return;
+        }
         String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
         executeChangeIndex(doc, sql);
     }
@@ -89,7 +93,7 @@ public class SearcheServiceImpl implements SearcheService {
     }
 
     /* Изменение потнотекстового индекса */
-    private void executeChangeIndex(Doc doc, String sql){
+    private void executeChangeIndex(Doc doc, String sql){        
         try (Connection connection = getFullTextSearcheConnection()) {            
             if(connection != null) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
@@ -100,7 +104,7 @@ public class SearcheServiceImpl implements SearcheService {
                     preparedStatement.execute();
                 }
             }
-        } catch (SQLException ex) {
+        } catch (SQLException ex) {            
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }

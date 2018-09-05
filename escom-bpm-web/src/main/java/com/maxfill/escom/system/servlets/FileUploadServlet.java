@@ -4,7 +4,6 @@ import com.maxfill.Configuration;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.users.UserFacade;
-import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
@@ -129,8 +128,12 @@ public class FileUploadServlet extends HttpServlet {
             params.put("size", item.getSize());
             params.put("author", author);            
             Doc doc = docFacade.createDocInUserFolder(item.getName(), author, folder, null);
-            attacheService.uploadAsynhAttache(doc, params, item.getInputStream());
-            return HttpServletResponse.SC_OK;
+            if (doc == null){
+                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            } else {
+                attacheService.uploadAsynhAttache(doc, params, item.getInputStream());
+                return HttpServletResponse.SC_OK;
+            }
         } else {
             return HttpServletResponse.SC_CONFLICT;
         }

@@ -1598,14 +1598,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (item == null) return;        
         onSetCurrentItem(item);
         BaseTableBean bean = getItemBean(item);
-        bean.setSourceItem(item);
-        Map<String, List<String>> paramsMap = new HashMap<>();
-        List<String> itemIds = Collections.singletonList(bean.toString());
-        String beanName = bean.getClass().getSimpleName().substring(0, 1).toLowerCase() + bean.getClass().getSimpleName().substring(1);
-        List<String> beanNameList = Collections.singletonList(beanName);
-        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
-        paramsMap.put(SysParams.PARAM_BEAN_NAME, beanNameList);         
-        sessionBean.openDialogFrm(DictFrmName.FRM_OBJECT_ADMIN, paramsMap);               
+        bean.setSourceItem(item);        
+        sessionBean.openDialogFrm(DictFrmName.FRM_OBJECT_ADMIN, bean.getParamsMap());
     }           
     
     /* Установка текущей страницы списка данных в обозревателе/селекторе  */
