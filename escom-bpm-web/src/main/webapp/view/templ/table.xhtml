@@ -6,7 +6,7 @@
        
     <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true"
                  emptyMessage="#{bundle.EmptyTable}"
-                 paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}"
+                 paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}" 
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_bean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
@@ -31,7 +31,7 @@
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="125" id="shortName" >
+        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="135" id="shortName" >
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
@@ -83,7 +83,7 @@
                                      actionListener="#{_bean.onEditDetailItem(item)}" 
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND()"/>
                     </p:commandButton>
                     <p:commandButton title="#{bundle.View}" icon="ui-icon-search"
                                      actionListener="#{_bean.onViewDetailItem(item)}"
@@ -100,7 +100,7 @@
                                      actionListener="#{_bean.onEditDetailItem(item)}" 
                                      onstart="PF('statusDialog').show()"
                                      oncomplete="PF('statusDialog').hide();">
-                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
+                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM" oncomplete="initDND()"/>
                     </p:commandButton>
 
                     <p:menuButton >

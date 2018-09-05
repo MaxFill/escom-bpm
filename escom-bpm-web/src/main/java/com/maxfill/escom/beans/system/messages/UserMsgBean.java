@@ -81,7 +81,7 @@ public class UserMsgBean extends LazyLoadBean {
      * Обработка события нажатия флага отображения только новых сообщений
      */
     public void onChangeChBoxShowMsgType(){
-        refreshData();
+        refreshLazyData();
     }
     
     public void onSetSelectedMessage(UserMessages message){

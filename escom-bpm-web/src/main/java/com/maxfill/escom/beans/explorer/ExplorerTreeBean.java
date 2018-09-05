@@ -10,7 +10,6 @@ import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.utils.ItemUtils;
 import org.primefaces.model.TreeNode;
-
 import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
@@ -277,7 +276,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             dropNode.getChildren().add(dragNode);
             makeNavigator(dragItem);
         });
-        reloadDetailsItems();
+        refreshLazyData();
     }
 
     /* DRAG & DROP: отработка команды на перемещение из таблицы в дерево  */

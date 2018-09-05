@@ -202,6 +202,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      */
     @Override
     public List<Department> findActualDetailItems(Company owner, int first, int pageSize){
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);

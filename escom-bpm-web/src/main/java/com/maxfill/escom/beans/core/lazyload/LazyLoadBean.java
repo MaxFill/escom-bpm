@@ -50,7 +50,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
     }
 
-    public void refreshData(){
+    public void refreshLazyData(){
         lazyModel = null;
     }
 

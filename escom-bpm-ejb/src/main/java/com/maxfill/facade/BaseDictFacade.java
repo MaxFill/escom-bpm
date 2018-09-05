@@ -207,9 +207,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* Возвращает актуальные подчинённые объекты для владельца  */
     public List<T> findActualDetailItems(O owner, int first, int pageSize){
-        if (pageSize == 0){
-            pageSize = configuration.getMaxResultCount();
-        }
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -299,6 +298,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* Отбор объектов, созданных пользователем  */
     public List<T> findItemsCreatedByUser(User user, int first, int pageSize){
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -327,6 +328,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* Отбор объектов находящихся в корзине */
     public List<T> loadFromTrash(int first, int pageSize){
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -359,6 +362,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* Отбор не актуальных объектов  */
     public List<T> loadNotActualItems(int first, int pageSize){
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -404,6 +409,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* ПОИСК из формы поиска */
 
     public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize) {
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);        
         query.setFirstResult(first);
@@ -487,6 +494,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* возвращает список изменённых пользователем документов */
     public List<T> findLastChangedItemsByUser(User user, int first, int pageSize){    
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
+        
         Date lastDate = DateUtils.addMounth(new Date(), -1);
 
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

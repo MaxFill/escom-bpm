@@ -137,7 +137,6 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize){
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Order> orders = new ArrayList<>();
         List<Department> departments = departmentFacade.findActualDetailItems((Company)company, first, pageSize);        
         departments.stream().forEach(department -> addDetailItemInContent(department, cnt));        
         //загружаем в контент штатные единицы

@@ -15,7 +15,7 @@
                     onclick="document.getElementById('mainFRM:btnMarkAllAsRead').click();">
         </p:menuitem>
         <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="mainFRM" actionListener="#{userMsgBean.refreshData()}">
+                    update="mainFRM" actionListener="#{userMsgBean.refreshLazyData()}">
         </p:menuitem>
     </ui:define>
 

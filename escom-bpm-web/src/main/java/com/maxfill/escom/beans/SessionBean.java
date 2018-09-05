@@ -96,7 +96,6 @@ public class SessionBean implements Serializable{
     
     //буфер бинов 
     private final ConcurrentHashMap<String, BaseView > openedBeans = new ConcurrentHashMap<>();
-    private final Set<String> killBeans = new HashSet<>();
     
     private String openFormName;
     
@@ -838,10 +837,6 @@ public class SessionBean implements Serializable{
     /* Возвращает максимальный размер загружаемого файла */    
     public Integer getMaxFileSize(){
         return configuration.getMaxFileSize();
-    }
-
-    public Set<String> getKillBeans() {
-        return killBeans;
     }
 
     public class NotifMsg{
