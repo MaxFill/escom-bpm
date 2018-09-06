@@ -263,12 +263,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
                 attache.setDoc(doc);
                 String fileName = attache.getName();
                 doc.setName(fileName);
-                doc.getAttachesList().add(attache);
-                String conv = configuration.getConvertorPDF();
-                if (StringUtils.isNotBlank(conv) && !"PDF".equals(attache.getExtension().toUpperCase())){
-                    String fullPatth = configuration.getUploadPath() + attache.getFullName();
-                    fileService.makeCopyToPDF(fullPatth, configuration.getConvertorPDF());
-                }
+                doc.getAttachesList().add(attache);                
             }
         }
     }

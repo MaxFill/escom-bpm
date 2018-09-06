@@ -201,27 +201,31 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @return
      */
     @Override
-    public List<Department> findActualDetailItems(Company owner, int first, int pageSize){
+    public List<Department> findActualDetailItems(Company owner, int first, int pageSize, String sortField, String sortOrder){
         first = 0;
         pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
-        Root<Department> c = cq.from(Department.class);   
+        Root<Department> root = cq.from(Department.class);   
         List<Predicate> criteries = new ArrayList<>();
 
-        criteries.add(builder.isNull(c.get("parent")));
-        criteries.add(builder.equal(c.get("deleted"), false));
-        criteries.add(builder.equal(c.get("actual"), true));
+        criteries.add(builder.isNull(root.get("parent")));
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("actual"), true));
         if (owner != null){                    
-            criteries.add(builder.equal(c.get("owner"), owner));
+            criteries.add(builder.equal(root.get("owner"), owner));
         }
 
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
 
-        cq.select(c).where(builder.and(predicates));               
-        cq.orderBy(builder.asc(c.get("name")));
+        cq.select(root).where(builder.and(predicates));               
+        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+            cq.orderBy(builder.asc(root.get(sortField)));
+        } else {
+            cq.orderBy(builder.desc(root.get(sortField)));
+        };
         Query query = getEntityManager().createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);

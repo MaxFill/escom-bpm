@@ -27,6 +27,7 @@ import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
@@ -46,6 +47,7 @@ import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -281,7 +283,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     TreeNode newNode;
                     if (isItemDetailType(editItem)) {
                         getDetailItems().add(editItem);
-                        onSetCurrentItem(editItem);
+                        //onSetCurrentItem(editItem);
                         break;
                     }
                     if (isItemRootType(editItem)){
@@ -741,26 +743,26 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 case DictDetailSource.FILTER_SOURCE:{
                     Filter filter = (Filter) filterSelectedNode.getData();
                     if (filterSelectedNode.getType().equals(typeDetail)){
-                        loadItems = tableBean.makeFilteredContent(filter, first, pageSize);                    
-                        setCurrentViewModeDetail();
+                        loadItems = tableBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());                    
+                        setCurrentViewModeDetail();                        
                     } else
                         if (filterSelectedNode.getType().equals(typeTree)){
-                            loadItems = treeBean.makeFilteredContent(filter, first, pageSize);
+                            loadItems = treeBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());
                             setCurrentViewModeTree();
                         } else
                             if (filterSelectedNode.getType().equals(typeRoot)){
-                                loadItems = rootBean.makeFilteredContent(filter, first, pageSize);
+                                loadItems = rootBean.makeFilteredContent(filter, first, pageSize, sortField,  sortOrder.name());
                                 setCurrentViewModeRoot();
                             }
                     break;
                 }
                 case DictDetailSource.TREE_SOURCE:{                
                     if (isItemTreeType(currentItem)){                    
-                            loadItems = treeBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                            loadItems = treeBean.makeGroupContent(currentItem, viewMode, first, pageSize, sortField,  sortOrder.name());
                             //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                         } else
                             if (isItemRootType(currentItem)){                            
-                                loadItems = rootBean.makeGroupContent(currentItem, viewMode, first, pageSize);
+                                loadItems = rootBean.makeGroupContent(currentItem, viewMode, first, pageSize, sortField,  sortOrder.name());
                                 //count = rootBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                             }
                     break;
@@ -779,7 +781,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 }
             }
         }
-        if (loadItems.isEmpty()){
+        if (loadItems == null){
             detailItems = new ArrayList<>();
         } else {
             pageSize = first + pageSize;
@@ -790,6 +792,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 first = currentPage;
             }
             detailItems = loadItems.subList(first, pageSize);
+            
+            //list.stream().sorted(Comparator.reverseOrder());
         }
         return detailItems;
     }    

@@ -103,9 +103,7 @@
                                                  disabled="#{_bean.canCreateItem}"
                                                  rendered="#{_treeBean == null or _bean.isShowTree()}" 
                                                  actionListener="#{_bean.onCreateDetailItem()}">
-                                    <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" 
-                                            onstart="PF('statusDialog').show()"
-                                            oncomplete="PF('statusDialog').hide(); initDND();"/>
+                                    <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
                                 </p:commandButton>                                    
 
                                 <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 

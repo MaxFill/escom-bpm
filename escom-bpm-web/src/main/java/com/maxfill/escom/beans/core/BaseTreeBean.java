@@ -9,7 +9,6 @@ import org.primefaces.model.TreeNode;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.CollectionUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T , O >{
@@ -23,9 +22,9 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Базовый метод формирования детального списка для группы  */
-    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize){
+    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();        
-        List<BaseDict> details = getDetailBean().getFacade().findActualDetailItems(group, first, pageSize);
+        List<BaseDict> details = getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder);
         details.stream().forEach(item -> addDetailItemInContent(item, cnt));
         return cnt;
     }

@@ -192,7 +192,9 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
 
     @Override
-    public List<User> findActualDetailItems(UserGroups group, int first, int pageSize){
+    public List<User> findActualDetailItems(UserGroups group, int first, int pageSize, String sortField, String sortOrder){
+        //TODO нужно сделать сортировку
+        //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         List<User> detailItems = freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).collect(Collectors.toList());
         return detailItems;

@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.persistence.criteria.Order;
-import org.primefaces.model.SortOrder;
 
 /* Компании юр лица */
 @Named
@@ -65,7 +63,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
                 }
                 case DictObjectName.COMPANY:{
                     typeNode = DictObjectName.COMPANY;
-                    childs = departmentFacade.findActualDetailItems((Company)item, 0, 0);
+                    childs = departmentFacade.findActualDetailItems((Company)item, 0, 0, "name", "ASCENDING");
                     break;
                 }
             }
@@ -134,10 +132,10 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     
     /* Формирование контента компании */
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize){
+    public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();
         //загружаем в контент подразделения
-        List<Department> departments = departmentFacade.findActualDetailItems((Company)company, first, pageSize);        
+        List<Department> departments = departmentFacade.findActualDetailItems((Company)company, first, pageSize, sortField,  sortOrder);        
         departments.stream().forEach(department -> addDetailItemInContent(department, cnt));        
         //загружаем в контент штатные единицы
         List<Staff> staffs = staffFacade.findStaffByCompany((Company)company, null);

@@ -55,6 +55,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.h2.result.SortOrder;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.diagram.ConnectEvent;
@@ -1138,7 +1139,7 @@ public class DiagramBean extends BaseViewBean{
         
     public List<ProcTempl> getTemplates() {
         if (templates == null && process != null){            
-            templates = procTemplBean.findDetailItems(process.getOwner(), 0, 0);            
+            templates = procTemplBean.findDetailItems(process.getOwner(), 0, 0, "name", "ASCENDING");            
         }
         return templates;
     }

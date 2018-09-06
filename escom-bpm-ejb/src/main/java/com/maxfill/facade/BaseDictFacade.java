@@ -44,6 +44,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.xml.bind.JAXB;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Абстрактный фасад для справочников
@@ -206,30 +207,34 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* *** *** */
 
     /* Возвращает актуальные подчинённые объекты для владельца  */
-    public List<T> findActualDetailItems(O owner, int first, int pageSize){
+    public List<T> findActualDetailItems(O owner, int first, int pageSize, String sortField, String sortOrder){
         first = 0;
         pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
-        Root<T> c = cq.from(itemClass);   
+        Root<T> root = cq.from(itemClass);   
         List<Predicate> criteries = new ArrayList<>();
 
-        criteries.add(builder.isNull(c.get("parent")));
-        criteries.add(builder.equal(c.get("deleted"), false));
-        criteries.add(builder.equal(c.get("actual"), true));
+        criteries.add(builder.isNull(root.get("parent")));
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("actual"), true));
         
         if (owner == null){
-            criteries.add(builder.isNull(c.get("owner")));
+            criteries.add(builder.isNull(root.get("owner")));
         } else {
-            criteries.add(builder.equal(c.get("owner"), owner));
+            criteries.add(builder.equal(root.get("owner"), owner));
         }
 
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
 
-        cq.select(c).where(builder.and(predicates));        
-        cq.orderBy(builder.asc(c.get("name")));
+        cq.select(root).where(builder.and(predicates));        
+        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+            cq.orderBy(builder.asc(root.get(sortField)));
+        } else {
+            cq.orderBy(builder.desc(root.get(sortField)));
+        }
         Query query = getEntityManager().createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
@@ -327,16 +332,20 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }    
     
     /* Отбор объектов находящихся в корзине */
-    public List<T> loadFromTrash(int first, int pageSize){
+    public List<T> loadFromTrash(int first, int pageSize, String sortField, String sortOrder){
         first = 0;
         pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
-        Root<T> c = cq.from(itemClass); 
-        Predicate crit2 = builder.equal(c.get("deleted"), true);
-        cq.select(c).where(builder.and(crit2));
-        cq.orderBy(builder.asc(c.get("name")));
+        Root<T> root = cq.from(itemClass); 
+        Predicate crit2 = builder.equal(root.get("deleted"), true);
+        cq.select(root).where(builder.and(crit2));
+        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+            cq.orderBy(builder.asc(root.get(sortField)));
+        } else {
+            cq.orderBy(builder.desc(root.get(sortField)));
+        }
         TypedQuery<T> query = getEntityManager().createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);

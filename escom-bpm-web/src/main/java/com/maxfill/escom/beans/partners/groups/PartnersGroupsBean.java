@@ -9,14 +9,11 @@ import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.PartnersFacade;
-
 import java.util.*;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.criteria.Order;
-import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Группы контрагентов" */
@@ -35,14 +32,14 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize) {
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
         List<BaseDict> cnt = new ArrayList();        
         //загружаем в контент группы контрагента
         List<PartnerGroups> groups = itemsFacade.findActualChilds((PartnerGroups)partnerGroup);
         groups.stream().forEach(group -> addChildItemInContent(group, cnt));
         if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
             //загружаем в контент контрагентов 
-            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize);
+            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize, sortField,  sortOrder);
             partners.stream().forEach(partner -> addDetailItemInContent(partner, cnt));
         }
         return cnt;

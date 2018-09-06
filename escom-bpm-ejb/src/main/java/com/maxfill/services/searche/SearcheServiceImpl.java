@@ -98,18 +98,32 @@ public class SearcheServiceImpl implements SearcheService {
     }
 
     /* Изменение потнотекстового индекса */
-    private void executeChangeIndex(Doc doc, String sql){        
+    private void executeChangeIndex(Doc doc, String sql){
+        Attaches attache = doc.getMainAttache();
+        
+        if (attache != null){
+            String basePath = conf.getUploadPath();            
+        
+            File pdf = new File(basePath + attache.getFullNamePDF());
+            if (!pdf.exists()){
+                String convPDF = conf.getConvertorPDF();
+                if (StringUtils.isNotBlank(convPDF)){
+                    fileService.makeCopyToPDF(basePath + attache.getFullName(), convPDF);
+                }
+            }
+        }
+            
         try (Connection connection = getFullTextSearcheConnection()) {            
             if(connection != null) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
                     preparedStatement.setInt(1, doc.getId());
                     preparedStatement.setString(2, doc.getName());
-                    preparedStatement.setString(3, loadAttacheContent(doc.getMainAttache()));
+                    preparedStatement.setString(3, loadAttacheContent(attache));
                     preparedStatement.setInt(4, doc.getId());
                     preparedStatement.execute();
                 }
             }
-        } catch (SQLException ex) {            
+        } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
@@ -145,21 +159,14 @@ public class SearcheServiceImpl implements SearcheService {
     }
     
     /* Получение текстового контента из файла pdf */
-    private String loadContentFromPDF(String basePath, String ext){
+    private String loadContentFromPDF(String basePath, String ext){        
+        String pdfFileName = basePath + "pdf";                  
+        
         String convertTXT = conf.getConvertorTXT();
         if (org.apache.commons.lang.StringUtils.isEmpty(convertTXT)) return "";
         
-        String content = "";        
-        String pdfFileName = basePath + "pdf";
+        String content = "";
         String txtFileName = basePath + "txt";
-        
-        File pdf = new File(pdfFileName);
-        if (!pdf.exists()){
-            String convPDF = conf.getConvertorPDF();
-            if (org.apache.commons.lang3.StringUtils.isNotBlank(convPDF)){
-                fileService.makeCopyToPDF(basePath + ext, convPDF);
-            }
-        }    
         try {
             CommandLine commandLine = CommandLine.parse(convertTXT);
             commandLine.addArgument(pdfFileName);

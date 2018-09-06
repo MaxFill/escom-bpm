@@ -228,7 +228,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         PrimeFaces.current().dialog().openDynamic(formName + "-card", options, paramsMap);
     }  
     
-    /* Действия перед созданием объекта */
+    /* Действия перед созданием объекта. Сюда попадаем только если создание идёт через графический интерфейс пользователя */
     protected void prepCreate(T newItem, BaseDict parent, Set<String> errors){
         getFacade().makeRightItem(newItem, getCurrentUser());
         if (getFacade().isHaveRightCreate(newItem)) {
@@ -298,10 +298,14 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /**
      * Формирует список дочерних объектов, доступных текущему пользователю
      * @param owner
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
      * @return 
      */
-    public List<T> findDetailItems(BaseDict owner, int first, int pageSize){
-        return (List<T>) getFacade().findActualDetailItems(owner, first, pageSize).stream()
+    public List<T> findDetailItems(BaseDict owner, int first, int pageSize, String sortField, String sortOrder){
+        return (List<T>) getFacade().findActualDetailItems(owner, first, pageSize, sortField, sortOrder).stream()
                 .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
                 .collect(Collectors.toList());
     }
@@ -556,11 +560,11 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /*  ФИЛЬТРЫ */
     
     /* ФИЛЬТРЫ: формирование списка результатов для выбранного фильтра  */
-    public List<T> makeFilteredContent(Filter filter, int first, int pageSize) {
+    public List<T> makeFilteredContent(Filter filter, int first, int pageSize, String sortField, String sortOrder) {
         List<T> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
-                result = getFacade().loadFromTrash(first, pageSize);
+                result = getFacade().loadFromTrash(first, pageSize, sortField, sortOrder);
                 break;
             }           
             case DictFilters.FAVORITE_ID: {

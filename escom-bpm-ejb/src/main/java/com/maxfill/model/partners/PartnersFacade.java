@@ -103,7 +103,9 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
-    public List<Partner> findActualDetailItems(PartnerGroups group, int first, int pageSize){
+    public List<Partner> findActualDetailItems(PartnerGroups group, int first, int pageSize, String sortField, String sortOrder){
+        //TODO нужно сделать сортировку
+        //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
         List<Partner> detailItems = freshGroup.getPartnersList().stream()
                 .filter(partner -> !partner.isDeleted() && partner.isActual())
