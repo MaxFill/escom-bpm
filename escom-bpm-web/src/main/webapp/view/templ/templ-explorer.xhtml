@@ -64,7 +64,7 @@
                             <f:facet name="left">
                                 <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
                                                  title="#{bundle.Refresh}"                                  
-                                                 actionListener="#{_bean.reloadDetailsItems()}"
+                                                 actionListener="#{_bean.refreshLazyData()}"
                                                  update="mainFRM #{_updates}"
                                                  oncomplete="initDND()"/> 
 

@@ -5,5 +5,5 @@ import java.io.InputStream;
 
 public interface FileService {
     void doUpload(Attaches attache, InputStream inputStream);
-    String loadAttacheContent(Attaches attache);
+    void makeCopyToPDF(String file, String pdfConvertor);
 }

@@ -19,10 +19,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections.CollectionUtils;
 
 @ViewScoped
 @Named
-public class UserMsgBean extends LazyLoadBean {
+public class UserMsgBean extends LazyLoadBean<UserMessages> {
     private static final long serialVersionUID = -7376087892834532742L;
 
     private boolean showOnlyUnread;
@@ -77,6 +78,13 @@ public class UserMsgBean extends LazyLoadBean {
         }
     }
 
+    public void markSelectedAsRead(){
+        if (CollectionUtils.isEmpty(checkedItems)) return;
+        checkedItems.stream()
+                .filter(message->message.getDateReading() == null)
+                .forEach(message->markAsRead((UserMessages)message)); 
+    }
+    
     /**
      * Обработка события нажатия флага отображения только новых сообщений
      */
@@ -113,7 +121,6 @@ public class UserMsgBean extends LazyLoadBean {
     }
     
     /* GETS & SETS */
-    
     public boolean isShowOnlyUnread() {
         return showOnlyUnread;
     }

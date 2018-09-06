@@ -1,8 +1,15 @@
 package com.maxfill.services.searche;
 
 import com.maxfill.Configuration;
+import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.services.files.FileService;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +18,8 @@ import java.util.logging.Logger;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -70,11 +79,13 @@ public class SearcheServiceImpl implements SearcheService {
     
     @Asynchronous
     @Override
-    public void addFullTextIndex(Doc doc){
+    public void addFullTextIndex(Doc doc){        
         if (doc == null){
             LOGGER.log(Level.SEVERE, null, "ERROR: AddFullTextIndex doc is NULL!");
             return;
         }
+        System.out.println("ADD FULL TEXT INDEX for [" + doc.getName() + "]");
+        
         String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
         executeChangeIndex(doc, sql);
     }
@@ -93,7 +104,7 @@ public class SearcheServiceImpl implements SearcheService {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
                     preparedStatement.setInt(1, doc.getId());
                     preparedStatement.setString(2, doc.getName());
-                    preparedStatement.setString(3, fileService.loadAttacheContent(doc.getMainAttache()));
+                    preparedStatement.setString(3, loadAttacheContent(doc.getMainAttache()));
                     preparedStatement.setInt(4, doc.getId());
                     preparedStatement.execute();
                 }
@@ -103,6 +114,67 @@ public class SearcheServiceImpl implements SearcheService {
         }
     }
 
+    public String loadAttacheContent(Attaches attache){
+        if (attache == null) return "";
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(conf.getUploadPath());
+        attache.getShortName(sb);
+        sb.append(".");
+        if ("txt".equals(attache.getExtension().toLowerCase())){
+            sb.append(attache.getExtension());            
+            return loadContentFromTXT(new File(sb.toString()));
+        } else {            
+            return loadContentFromPDF(sb.toString(), attache.getExtension());
+        }
+    } 
+    
+    private String loadContentFromTXT(File txtFile){
+        String content = "";
+        if (txtFile.exists()){
+            try {
+                    String path = txtFile.getPath();
+                    byte[] encoded = Files.readAllBytes(Paths.get(path));
+                    Charset encoding = StandardCharsets.UTF_8;
+                    content = new String(encoded, encoding);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        return content;
+    }
+    
+    /* Получение текстового контента из файла pdf */
+    private String loadContentFromPDF(String basePath, String ext){
+        String convertTXT = conf.getConvertorTXT();
+        if (org.apache.commons.lang.StringUtils.isEmpty(convertTXT)) return "";
+        
+        String content = "";        
+        String pdfFileName = basePath + "pdf";
+        String txtFileName = basePath + "txt";
+        
+        File pdf = new File(pdfFileName);
+        if (!pdf.exists()){
+            String convPDF = conf.getConvertorPDF();
+            if (org.apache.commons.lang3.StringUtils.isNotBlank(convPDF)){
+                fileService.makeCopyToPDF(basePath + ext, convPDF);
+            }
+        }    
+        try {
+            CommandLine commandLine = CommandLine.parse(convertTXT);
+            commandLine.addArgument(pdfFileName);
+            DefaultExecutor executor = new DefaultExecutor();
+            executor.setExitValue(0);
+            executor.execute(commandLine);          //создан временный файл txt    
+            File txtFile = new File(txtFileName);   
+            content = loadContentFromTXT(txtFile);
+            txtFile.delete();                       //удалён временный файл
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return content;
+    }
+    
     @Override
     public Connection getFullTextSearcheConnection() throws SQLException {
         if (StringUtils.isBlank(conf.getFullSearcheConnect())) return null;
