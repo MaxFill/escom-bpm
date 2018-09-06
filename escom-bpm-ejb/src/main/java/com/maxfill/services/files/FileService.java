@@ -5,6 +5,5 @@ import java.io.InputStream;
 
 public interface FileService {
     void doUpload(Attaches attache, InputStream inputStream);
-    void uploadScan(Attaches attache, byte[] data);
-    void doCopy(Attaches sourceAttache, Attaches targetAttache);
+    String loadAttacheContent(Attaches attache);
 }

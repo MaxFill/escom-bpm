@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.docs.attaches;
 
-import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -69,8 +68,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     public Attaches copyAttache(Attaches sourceAttache){
         Attaches newAttache = attacheFacade.copyAttache(sourceAttache);        
         newAttache.setAuthor(sessionBean.getCurrentUser());                
-        fileService.doCopy(sourceAttache, newAttache);
-        
+        attacheService.doCopy(sourceAttache, newAttache);        
         return newAttache;
     }
     
@@ -132,6 +130,10 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         return super.onCancelItemSave(); 
     }    
     
+    public String getAttachePath(Attaches attache){
+        return conf.getUploadPath() + attache.getFullName();
+    }
+            
     /* ЗАМЕЧАНИЯ */
     
     public void onCreateRemark(){

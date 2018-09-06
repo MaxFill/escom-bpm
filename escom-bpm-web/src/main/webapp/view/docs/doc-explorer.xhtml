@@ -185,7 +185,7 @@
                     actionListener="#{docBean.openAttacheAddForm(item)}"/>
         
         <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}"
-                    rendered="#{false or item.getClass().getSimpleName() == 'Doc'}"
+                    rendered="false"
                     actionListener="#{_bean.onSetCurrentItem(item)}"
                     oncomplete="document.getElementById('mainFRM:btnScan').click();"/> 
         

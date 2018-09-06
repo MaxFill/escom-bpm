@@ -2,74 +2,59 @@ package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Asynchronous;
+import javax.ejb.AccessTimeout;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.lang3.StringUtils;
 
-@Stateless
+@Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
+@Lock(LockType.WRITE)
+@AccessTimeout(value = 20, unit = TimeUnit.SECONDS)
 public class FileServiceImpl implements FileService{
     protected static final Logger LOGGER = Logger.getLogger(FileServiceImpl.class.getName());
     
     @EJB
-    protected Configuration conf;
-    
-    @Override
-    @Asynchronous
-    public void doCopy(Attaches sourceAttache, Attaches targetAttache){
-        String uploadPath = conf.getUploadPath();
-        StringBuilder sb = new StringBuilder();        
-        Path targetPath = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullName()).toString());
-        
-        sb.setLength(0);        
-        Path targetPathPDF = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullNamePDF()).toString());
-        
-        sb.setLength(0);        
-        Path sourcePath = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullName()).toString());
-        
-        sb.setLength(0);
-        Path sourcePathPDF = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullNamePDF()).toString());
-        try  {
-            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-            Files.copy(sourcePathPDF, targetPathPDF, StandardCopyOption.REPLACE_EXISTING);
-        } catch(IOException e){
-            LOGGER.log(Level.SEVERE, null, e);
-        }
-    }
+    protected Configuration conf;    
     
     @Override
     //@Asynchronous
     // отключил, потому что при загрузке файлов из почтового сообщения почтовый ящик может закрыться раньше чем отработает upload!
     public void doUpload(Attaches attache, InputStream inputStream) {
-        try {
-            String uploadPath = conf.getUploadPath();
-            StringBuilder sb = new StringBuilder();
-            //String fileName = attache.getName();
+        try {                                    
             String fileExt = attache.getExtension();
-            String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
-            Path path = Paths.get(basePath);
-            //File outputFile = new File(basePath);
-
-            Files.copy(inputStream, path); //outputFile.toPath());
+            String guid = attache.getGuid();
+            
+            StringBuilder sb = new StringBuilder(conf.getUploadPath());
+            sb.append(guid.substring(0, 2))
+                .append(File.separator)
+                .append(guid.substring(2, 4));
+                                            
+            Files.createDirectories(Paths.get(sb.toString())); 
+      
+            String fullPath = sb.append(File.separator).append(guid).append(".").append(fileExt).toString();
+                        
+            Files.copy(inputStream, Paths.get(fullPath)); 
 
             String convPDF = conf.getConvertorPDF();
             if (StringUtils.isNotBlank(convPDF) && !Objects.equals(fileExt.toUpperCase(), "PDF")){
-                makeCopyToPDF(basePath, convPDF);
+                makeCopyToPDF(fullPath, convPDF);
             }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -83,87 +68,8 @@ public class FileServiceImpl implements FileService{
             }
         }
     }
-
-    public Charset detectCharset(File f, String[] charsets) {
-
-        Charset charset = null;
-
-        for (String charsetName : charsets) {
-            charset = detectCharset(f, Charset.forName(charsetName));
-            if (charset != null) {
-                break;
-            }
-        }
-
-        return charset;
-    }
-
-    private Charset detectCharset(File f, Charset charset) {
-        try {
-            BufferedInputStream input = new BufferedInputStream(new FileInputStream(f));
-
-            CharsetDecoder decoder = charset.newDecoder();
-            decoder.reset();
-
-            byte[] buffer = new byte[512];
-            boolean identified = false;
-            while ((input.read(buffer) != -1) && (!identified)) {
-                identified = identify(buffer, decoder);
-            }
-
-            input.close();
-
-            if (identified) {
-                return charset;
-            } else {
-                return null;
-            }
-
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private boolean identify(byte[] bytes, CharsetDecoder decoder) {
-        try {
-            decoder.decode(ByteBuffer.wrap(bytes));
-        } catch (CharacterCodingException e) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    @Asynchronous
-    public void uploadScan(Attaches attache, byte[] data){
-        FileOutputStream outputStream = null;
-        try {            
-            String uploadPath = conf.getUploadPath();
-            StringBuilder sb = new StringBuilder();
-            String fileName = attache.getName();
-            String fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-            String basePath = sb.append(uploadPath).append(attache.getGuid()).append(".").append(fileExt).toString();
-            File outputFile = new File(basePath);
-            outputStream = new FileOutputStream(outputFile);
-            outputStream.write(data, 0, data.length);
-            if (!Objects.equals(fileExt.toLowerCase(), "pdf")){                                   
-                makeCopyToPDF(basePath, conf.getConvertorPDF());
-            }
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        } finally {
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
     
     private void makeCopyToPDF(String file, String pdfConvertor) {       
-        if (StringUtils.isBlank(pdfConvertor)) return;
         try {            
             CommandLine commandLine = CommandLine.parse(pdfConvertor);
             commandLine.addArgument("-f");
@@ -177,6 +83,57 @@ public class FileServiceImpl implements FileService{
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
+      
+    @Override
+    public String loadAttacheContent(Attaches attache){
+        if (attache == null) return "";
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(conf.getUploadPath()).append(attache.getGuid()).append(".");
+        if ("txt".equals(attache.getExtension().toLowerCase())){
+            sb.append(attache.getExtension());            
+            return loadContentFromTXT(new File(sb.toString()));
+        } else {            
+            return loadContentFromPDF(sb.toString());
+        }
+    } 
+        
+    private String loadContentFromTXT(File txtFile){
+        String content = "";
+        if (txtFile.exists()){
+            try {
+                    String path = txtFile.getPath();
+                    byte[] encoded = Files.readAllBytes(Paths.get(path));
+                    Charset encoding = StandardCharsets.UTF_8;
+                    content = new String(encoded, encoding);
+                } catch (IOException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+        return content;
+    }
     
-    
+    /* Получение текстового контента из файла pdf */
+    private String loadContentFromPDF(String basePath){
+        String convertTXT = conf.getConvertorTXT();
+        if (org.apache.commons.lang.StringUtils.isEmpty(convertTXT)) return "";
+        
+        String content = "";        
+        String pdfFileName = basePath + "pdf";
+        String txtFileName = basePath + "txt";
+        
+        try {
+            CommandLine commandLine = CommandLine.parse(convertTXT);
+            commandLine.addArgument(pdfFileName);
+            DefaultExecutor executor = new DefaultExecutor();
+            executor.setExitValue(0);
+            executor.execute(commandLine);          //создан временный файл txt    
+            File txtFile = new File(txtFileName);   
+            content = loadContentFromTXT(txtFile);
+            txtFile.delete();                       //удалён временный файл
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return content;
+    }
 }

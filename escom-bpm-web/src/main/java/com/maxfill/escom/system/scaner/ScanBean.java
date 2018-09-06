@@ -31,7 +31,7 @@ public class ScanBean extends BaseViewBean{
         attache.setSize(Integer.toUnsignedLong(length));
         attache.setAuthor(sessionBean.getCurrentUser());
         attache.setDateCreate(new Date());
-        fileService.uploadScan(attache, data);
+        //fileService.uploadScan(attache, data);
         return super.onCloseCard();
     }
 
