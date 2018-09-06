@@ -274,7 +274,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     try {                    
                         editItem.setIconTree(currentItem.getIconTree());
                         BeanUtils.copyProperties(currentItem, editItem);
-                        onSetCurrentItem(editItem);
+                        //onSetCurrentItem(editItem);
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         LOGGER.log(Level.SEVERE, null, ex);
                     }
@@ -289,7 +289,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 case DictEditMode.INSERT_MODE:{
                     TreeNode newNode;
                     if (isItemDetailType(editItem)) {
-                        getDetailItems().add(editItem);
+                        detailItems.add(editItem);
+                        loadItems.add(editItem);
                         //onSetCurrentItem(editItem);
                         break;
                     }
@@ -356,7 +357,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     treeBean.delFromFavorites(item);
                 }
         });
-        getDetailItems().removeAll(getCheckedItems());        
+        loadItems.removeAll(getCheckedItems());        
     }
     
     /* ИЗБРАННОЕ: удаление из избранного записи контента. */  
@@ -367,7 +368,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (isItemTreeType(item)){
                 treeBean.delFromFavorites(item);
             }
-        getDetailItems().remove(item);         
+        loadItems.remove(item);         
     }
     
     /* ИЗБРАННОЕ: добавление записи контента в избранное  */
@@ -418,7 +419,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                             restoreItemInTree(item);
                         }
             });
-        getDetailItems().removeAll(getCheckedItems());     
+        loadItems.removeAll(getCheckedItems());     
     } 
     
     /* КОРЗИНА: восстановление в дереве из корзины объекта  */
@@ -449,8 +450,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     restoreItemInTree(item);
                 }
             }
-
-        getDetailItems().remove(item);         
+        loadItems.remove(item);         
     }
     
     /* КОРЗИНА: помещение в корзину отмеченных записей контента  */
@@ -473,7 +473,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
         } else {            
-            getDetailItems().removeAll(getCheckedItems());
+            loadItems.removeAll(getCheckedItems());            
         }
     }
     
@@ -520,7 +520,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КОРЗИНА: полная очистка корзины без проверки на наличие зависимых связей 
     Очистка удаляет все дочерние и детальные объекты! Команда доступна только администратору */
     public void onClearTrash() {        
-        getDetailItems().stream().forEach((item -> {
+        detailItems.stream().forEach((item -> {
             if (isItemDetailType(item)){
                 tableBean.deleteItem(item);
             } else
@@ -551,7 +551,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     rootBean.deleteItem(item);
                 }
             }
-        getDetailItems().remove(item);        
+        loadItems.remove(item);        
     }
     
     /* ФИЛЬТРЫ */
@@ -730,9 +730,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }        
 
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя  */
+    
     public List<BaseDict> getDetailItems(){        
         return detailItems;
-    }
+    }    
     
     @Override
     public void refreshLazyData(){

@@ -32,9 +32,7 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.NodeSelectEvent;
-import org.primefaces.event.TabChangeEvent;
 import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
@@ -185,7 +183,7 @@ public class FolderExplBean extends ExplorerTreeBean{
                 String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
-                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, getDetailItems());
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, detailItems);
                 makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево
