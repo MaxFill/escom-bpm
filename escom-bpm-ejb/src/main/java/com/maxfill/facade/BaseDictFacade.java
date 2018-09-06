@@ -208,6 +208,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /* Возвращает актуальные подчинённые объекты для владельца  */
     public List<T> findActualDetailItems(O owner, int first, int pageSize, String sortField, String sortOrder){
+        //Внимание! поле sortField может не быть в таблице, поэтому сортировку я отключил!
         first = 0;
         pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
@@ -230,11 +231,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         predicates = criteries.toArray(predicates);
 
         cq.select(root).where(builder.and(predicates));        
-        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
-            cq.orderBy(builder.asc(root.get(sortField)));
-        } else {
-            cq.orderBy(builder.desc(root.get(sortField)));
-        }
+
         Query query = getEntityManager().createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
@@ -341,11 +338,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Root<T> root = cq.from(itemClass); 
         Predicate crit2 = builder.equal(root.get("deleted"), true);
         cq.select(root).where(builder.and(crit2));
-        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
-            cq.orderBy(builder.asc(root.get(sortField)));
-        } else {
-            cq.orderBy(builder.desc(root.get(sortField)));
-        }
         TypedQuery<T> query = getEntityManager().createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);

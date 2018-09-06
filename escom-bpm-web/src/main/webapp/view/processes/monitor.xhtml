@@ -108,7 +108,7 @@
             </p:column>
             
             <p:column headerText="#{bundle.Name}">
-                <p:commandLink value="#{item.getNameEndElipse()}" title="#{bundle.Open}"
+                <p:commandLink value="#{item.nameEndElipse}" title="#{bundle.Open}"
                                actionListener="#{monitorBean.setCurrentItem(item)}"
                                oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>                        
             </p:column>

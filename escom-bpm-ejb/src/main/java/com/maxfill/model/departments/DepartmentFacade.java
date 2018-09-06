@@ -220,12 +220,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
 
-        cq.select(root).where(builder.and(predicates));               
-        if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
-            cq.orderBy(builder.asc(root.get(sortField)));
-        } else {
-            cq.orderBy(builder.desc(root.get(sortField)));
-        };
+        cq.select(root).where(builder.and(predicates));        
         Query query = getEntityManager().createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);

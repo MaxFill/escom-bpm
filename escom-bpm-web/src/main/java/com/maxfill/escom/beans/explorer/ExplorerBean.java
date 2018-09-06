@@ -799,8 +799,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (first > pageSize){                
                 first = currentPage;
             }
-            detailItems = loadItems.subList(first, pageSize);                                                         
-
+            detailItems = loadItems.subList(first, pageSize);                        
+            
             if (extractors.containsKey(sortField)){
                 Function<BaseDict, String> extract = extractors.get(sortField);
                     
@@ -813,7 +813,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                             .sorted(Comparator.comparing(extract).reversed())
                             .collect(Collectors.toList());
                 }
-            }
+            }            
         }
         return detailItems;
     }    
