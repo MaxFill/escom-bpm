@@ -50,7 +50,7 @@
             <artifactId>omnifaces</artifactId>
             <version>3.2</version>
         </dependency>
-
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>

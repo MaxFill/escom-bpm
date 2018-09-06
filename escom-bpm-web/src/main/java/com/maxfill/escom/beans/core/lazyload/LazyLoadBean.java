@@ -4,6 +4,7 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.model.BaseDict;
 import java.util.ArrayList;
 import org.apache.commons.collections.CollectionUtils;
 import org.primefaces.model.SortOrder;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import org.primefaces.event.SelectEvent;
 
 /**
@@ -32,6 +34,8 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     protected Map<String,Object> filters = new HashMap <>();
 
     protected abstract BaseLazyLoadFacade getFacade();    
+    
+    protected final Map<String, Function<T, String>> extractors = new HashMap<>();          
     
     public void onRowSelect(SelectEvent event){
         selected = (T) event.getObject();
@@ -76,6 +80,10 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
 
     /* *** GETS & SETS *** */
 
+    public Map<String, Function<T, String>> getExtractors() {
+        return extractors;
+    }
+    
     public T getSelected() {
         return selected;
     }

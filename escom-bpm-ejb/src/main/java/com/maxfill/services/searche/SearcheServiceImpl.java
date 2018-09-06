@@ -3,7 +3,6 @@ package com.maxfill.services.searche;
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.services.files.FileService;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -33,8 +32,6 @@ public class SearcheServiceImpl implements SearcheService {
     
     @EJB 
     private Configuration conf;
-    @EJB
-    private FileService fileService;
     
     @Override
     public Set<Integer> fullSearche(String keyword){
@@ -99,19 +96,7 @@ public class SearcheServiceImpl implements SearcheService {
 
     /* Изменение потнотекстового индекса */
     private void executeChangeIndex(Doc doc, String sql){
-        Attaches attache = doc.getMainAttache();
-        
-        if (attache != null){
-            String basePath = conf.getUploadPath();            
-        
-            File pdf = new File(basePath + attache.getFullNamePDF());
-            if (!pdf.exists()){
-                String convPDF = conf.getConvertorPDF();
-                if (StringUtils.isNotBlank(convPDF)){
-                    fileService.makeCopyToPDF(basePath + attache.getFullName(), convPDF);
-                }
-            }
-        }
+        Attaches attache = doc.getMainAttache();        
             
         try (Connection connection = getFullTextSearcheConnection()) {            
             if(connection != null) {

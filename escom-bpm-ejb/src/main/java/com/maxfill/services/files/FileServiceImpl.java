@@ -13,6 +13,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.lang.StringUtils;
 
 @Singleton
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -25,8 +26,6 @@ public class FileServiceImpl implements FileService{
     @Override
     //@Asynchronous
     // отключил, потому что при загрузке файлов из почтового сообщения почтовый ящик может закрыться раньше чем отработает upload!
-    //@Lock(LockType.WRITE)
-    //@AccessTimeout(value = 20, unit = TimeUnit.SECONDS)
     public void doUpload(Attaches attache, InputStream inputStream) {
         try {                                    
             String fileExt = attache.getExtension();
@@ -39,8 +38,15 @@ public class FileServiceImpl implements FileService{
                                             
             Files.createDirectories(Paths.get(sb.toString()));       
             sb.append(File.separator).append(guid).append(".").append(fileExt);
-            Files.copy(inputStream, Paths.get(sb.toString())); 
-            
+            Files.copy(inputStream, Paths.get(sb.toString()));                                  
+        
+            //File pdf = new File(basePath + attache.getFullNamePDF());
+            if (!"PDF".equals(fileExt.toUpperCase())){
+                String convPDF = conf.getConvertorPDF();
+                if (StringUtils.isNotBlank(convPDF)){
+                    makeCopyToPDF(conf.getUploadPath() + attache.getFullName(), convPDF);
+                }
+            }        
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
         } finally {
@@ -56,6 +62,12 @@ public class FileServiceImpl implements FileService{
     
     //@Lock(LockType.WRITE)
     //@AccessTimeout(value = 20, unit = TimeUnit.SECONDS)
+    /**
+     * Конвертация загруженного файла в pdf 
+     * Метод нельзя сделать ассинхронным, потому что pdf далее нужен сервису полнотекстового поиска!
+     * @param file
+     * @param pdfConvertor 
+     */
     @Override
     public synchronized void makeCopyToPDF(String file, String pdfConvertor) {       
         try {            

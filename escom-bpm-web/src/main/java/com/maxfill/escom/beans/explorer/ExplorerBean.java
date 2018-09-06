@@ -19,7 +19,6 @@ import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.utils.ItemUtils;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -27,7 +26,6 @@ import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
@@ -46,8 +44,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -129,7 +127,16 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
-        
+
+    @Override
+    protected void initBean() {
+        extractors.put("name", BaseDict::getName);
+        extractors.put("iconName", BaseDict::getIconName);  
+        extractors.put("nameEndElipse", BaseDict::getNameEndElipse);
+        super.initBean(); 
+    }
+      
+    
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -791,9 +798,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (first > pageSize){                
                 first = currentPage;
             }
-            detailItems = loadItems.subList(first, pageSize);
-            
-            //list.stream().sorted(Comparator.reverseOrder());
+            detailItems = loadItems.subList(first, pageSize);                                                         
+
+            if (extractors.containsKey(sortField)){
+                Function<BaseDict, String> extract = extractors.get(sortField);
+                    
+                if (sortOrder.equals(SortOrder.ASCENDING)){
+                    detailItems = detailItems.stream()
+                            .sorted(Comparator.comparing(extract))
+                            .collect(Collectors.toList());
+                } else {
+                    detailItems = detailItems.stream()
+                            .sorted(Comparator.comparing(extract).reversed())
+                            .collect(Collectors.toList());
+                }
+            }
         }
         return detailItems;
     }    
