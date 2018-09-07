@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
+import org.primefaces.PrimeFaces;
 
 /* Контролер формы обозревателя c поддержкой групп */
 @Named
@@ -73,6 +74,7 @@ public class ExplorerTreeBean extends ExplorerBean{
         }
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
+            PrimeFaces.current().ajax().update("mainFRM:tblDetail");
         }
     }
 

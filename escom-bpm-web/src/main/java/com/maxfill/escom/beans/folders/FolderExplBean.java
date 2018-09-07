@@ -97,7 +97,7 @@ public class FolderExplBean extends ExplorerTreeBean{
         setCurrentViewModeDetail();
                
         if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
-            processTypesBean.loadChilds(currentItem, treeSelectedNode);
+            processTypesBean.loadChilds(currentItem, procSelectedNode);
             PrimeFaces.current().ajax().update("westFRM:accord:tree");
         }        
         

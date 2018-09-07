@@ -123,6 +123,7 @@
                         <p:inputText id="login" value="#{_bean.editedItem.login}"
                                      disabled="#{_bean.isReadOnly()}"
                                      required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
                                      onkeypress="checkEsc();"
                                      onchange="return itemChange = 1;">
                         </p:inputText>                    

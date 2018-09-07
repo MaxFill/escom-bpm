@@ -101,6 +101,11 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         PrimeFaces.current().dialog().openDynamic("/view/admin/users/sessions", options, null);
     }
 
+    @Override
+    protected void actualizeRightForDropItem(BaseDict dropItem){
+        groupsBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
+    }
+    
     /* Формирует число ссылок на user в связанных объектах */
     @Override
     public void doGetCountUsesItem(User user, Map <String, Integer> rezult) {

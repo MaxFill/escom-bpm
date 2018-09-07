@@ -85,27 +85,30 @@
                                                  rendered="#{_treeBean != null}"
                                                  update="mainFRM westFRM "
                                                  oncomplete="initDND()"/>
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
+                                
+                                <h:panelGroup rendered="#{!_bean.isTrashSelected()}">
+                                    <span class="ui-separator" >
+                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                    </span>
 
-                                <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
-                                                 disabled="#{_bean.checkedItems.isEmpty()}"
-                                                 update="mainFRM:explToolBar"
-                                                 onstart="PF('statusDialog').show()"
-                                                 oncomplete="PF('statusDialog').hide(); initDND();"
-                                                 actionListener="#{_bean.onCopySelectedItem()}"/>
-                                <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
-                                                 disabled="#{_bean.canPasteItem}"
-                                                 onstart="PF('statusDialog').show()"
-                                                 oncomplete="PF('statusDialog').hide(); initDND();"
-                                                 actionListener="#{_bean.onPasteItemToTable()}"
-                                                 update="mainFRM westFRM"/>
+                                    <p:commandButton icon="ui-icon-copy" title="#{bundle.Copy}"
+                                                     disabled="#{_bean.checkedItems.isEmpty()}"
+                                                     update="mainFRM:explToolBar"
+                                                     onstart="PF('statusDialog').show()"
+                                                     oncomplete="PF('statusDialog').hide(); initDND();"
+                                                     actionListener="#{_bean.onCopySelectedItem()}"/>
+                                    <p:commandButton icon="ui-icon-clipboard" title="#{bundle.Paste}" 
+                                                     disabled="#{_bean.canPasteItem}"
+                                                     onstart="PF('statusDialog').show()"
+                                                     oncomplete="PF('statusDialog').hide(); initDND();"
+                                                     actionListener="#{_bean.onPasteItemToTable()}"
+                                                     update="mainFRM westFRM"/>
 
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
-
+                                    <span class="ui-separator">
+                                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                                    </span>
+                                </h:panelGroup>
+                                
                                 <p:commandButton icon="ui-icon-circle-plus" title="#{_CreateItemLabel}" 
                                                  disabled="#{_bean.canCreateItem}"
                                                  rendered="#{_treeBean == null or _bean.isShowTree()}" 
