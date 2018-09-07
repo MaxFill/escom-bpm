@@ -38,7 +38,7 @@ public class ApplicationBean implements Serializable{
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationBean.class.getName());
 
-    private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpe?g)$/";
+    private static final String ALLOW_FILE_TYPES = "/(\\.|\\/)(pdf|docx|xlsx|xls|doc|rtf|txt|odt|zip|rar|png|tiff|gif|jpg|jpe?g)$/";
     public static final String WSS_INFO_URL = "wss://escom-demo.ru:9443/EscomServices-1.0/release_info";
 
     private boolean needUpadateSystem;
