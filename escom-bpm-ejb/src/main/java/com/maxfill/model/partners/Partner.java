@@ -182,6 +182,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         this.templRegNumber = templRegNumber;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }

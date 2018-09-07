@@ -132,7 +132,17 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     
     public Doc() {
     }
-
+    
+    @Override
+    public String getCompanyName() {
+        return company != null ? company.getName() : "";
+    }
+    
+    @Override
+    public String getDocTypeName(){
+        return docType != null ? docType.getName() : "";
+    }
+        
     @Override
     public DocStates getState() {
         return state;
@@ -142,6 +152,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.state = state;
     }
 
+    @Override
     public Date getItemDate() {
         return itemDate;
     }
@@ -312,8 +323,6 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.docsDou = docsDou;
     }
 
-
-
     public List<Attaches> getAttachesList() {
         return attachesList;
     }
@@ -321,6 +330,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.attachesList = attachesList;
     }
 
+    @Override
     public String getRegNumber() {
         return regNumber;
     }

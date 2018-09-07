@@ -28,8 +28,8 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     private static final long serialVersionUID = -523024840800823503L;
 
     @Inject
-    private UserGroupsBean groupsBean;
-
+    private UserGroupsBean groupsBean;  
+    
     /* Пользователя при вставке нужно копировать только если он вставляется не в группу! */
     @Override
     public boolean isNeedCopyOnPaste(User pasteItem, BaseDict target) {

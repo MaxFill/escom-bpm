@@ -31,6 +31,7 @@ import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -64,7 +65,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         return sourceItems.stream()
                     .filter(item -> getFacade().preloadCheckRightView(item, getCurrentUser()))
                     .collect(Collectors.toList());
-    }
+    }    
     
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 

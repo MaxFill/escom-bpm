@@ -139,18 +139,19 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Company}" sortBy="#{item.company.name}" width="90" priority="3">
-            <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.company.name : ''}"/>
+        <p:column id="colCompany" headerText="#{bundle.Company}" sortBy="#{item.companyName}" width="90" priority="3">
+            <h:outputText value="#{item.companyName}"/>
         </p:column>
         
-        <p:column headerText="#{bundle.Type}" sortBy="#{item.docType.name}" width="90" priority="4">
-            <h:outputText value="#{item.getClass().getSimpleName() == 'Doc' ? item.docType.name : bundle.Folder}"/>
+        <p:column id="colDocType" headerText="#{bundle.Type}" sortBy="#{item.docTypeName}" width="90" priority="4">
+            <h:outputText value="#{item.docTypeName}"/>
         </p:column>
 
-        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" width="80" priority="4"  >
+        <p:column id="colNumber" headerText="#{bundle.Number}" sortBy="#{item.regNumber}" width="80" priority="4"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
-        <p:column headerText="#{bundle.Date}" width="80" priority="4"  sortBy="#{item.itemDate}">
+        
+        <p:column id="colItemDate" headerText="#{bundle.Date}" width="80" sortBy="#{item.itemDate}" priority="3" >
             <h:outputLabel value="#{item.itemDate}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>

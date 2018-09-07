@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 
 /* Контролер формы обозревателя c поддержкой групп */
 @Named
@@ -181,6 +182,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             return;
         }
         Integer tbKey = Integer.parseInt(rwKey);
+        tbKey = tbKey - currentPage;
         dropItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
         if (dropItem != null) {
             //ищем в таблице запись источника
@@ -190,6 +192,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                return;
             }
             tbKey = Integer.parseInt(rwKey);
+            tbKey = tbKey - currentPage;
             BaseDict dragItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
             makeCheckedItemList(dragItem);
             if (!checkedItems.isEmpty()) {
@@ -283,14 +286,20 @@ public class ExplorerTreeBean extends ExplorerBean{
     public void moveItemToGroup(){
         checkedItems.stream().forEach(dragItem -> {
             if (isItemTreeType(dragItem)){
-                treeBean.moveGroupToGroup(dropItem, dragItem);
-                onReloadTreeItems();
+                treeBean.moveGroupToGroup(dropItem, dragItem);  
+                TreeNode drag = EscomBeanUtils.findTreeNode(tree, dragItem);
+                TreeNode parentDragNode = drag.getParent();
+                if (parentDragNode != null && CollectionUtils.isNotEmpty(parentDragNode.getChildren())){                    
+                    parentDragNode.getChildren().remove(drag);
+                }
+                dropItem.setIconTree("ui-icon-folder-collapsed");
+                onSelectInTree(dropNode);
             } else {
                 tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
                 loadItems.removeAll(checkedItems);
             }
         });        
     }
-    
+   
 
 }

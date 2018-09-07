@@ -2,7 +2,7 @@
 fjuM610zVG1X
 
 sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
-
+sudo scp -r root@62.173.140.9:/home/file_name.sql /home/maksim/Загрузки/
 
 default_time_zone='+03:00'
 [skills_info posts_count="3" chart_width="363"  chart_height="363" excerpt_count="100"]

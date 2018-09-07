@@ -32,6 +32,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
+            node.getChildren().clear();
             List<T> childs = getFacade().findActualChilds(item);
             childs.stream().forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
             item.setIconTree("ui-icon-folder-open");

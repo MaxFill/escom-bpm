@@ -15,6 +15,9 @@ function initDND() {                        //строки дерева исто
             var droppedItem = $(ui.draggable);
             droppedItem.fadeOut('slow');
 
+            //console.log('dragId=' + draggableId);
+            //console.log('dropId=' + droppableId);
+            
             dropToTable([
                 {name: 'dragId', value: draggableId},
                 {name: 'dropId', value: droppableId}
@@ -35,11 +38,14 @@ function initDND() {                        //строки дерева исто
         scope: 'test',
         hoverClass: 'hoverClass',
         tolerance: 'pointer',
-        drop: function (event, ui) {
+        drop: function (event, ui) {            
             var draggableId = $(ui.draggable).attr("id");
             var droppableId = $(this).parent().parent().attr("id");
             var droppedItem = $(ui.draggable);
 
+            //console.log('dragId=' + draggableId);
+            //console.log('dropId=' + droppableId);
+            
             droppedItem.fadeOut('slow');
 
             dropToTree([

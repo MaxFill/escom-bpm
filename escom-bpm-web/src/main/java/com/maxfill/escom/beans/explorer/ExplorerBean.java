@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.model.Visibility;
 
 /* Контролер формы обозревателя */
 @Named
@@ -118,7 +119,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     //private List<SortMeta> sortOrder;
     
     private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
-    private Integer currentPage = 0;
+    protected Integer currentPage = 0;
     protected final LayoutOptions layoutOptions = new LayoutOptions();
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
@@ -126,17 +127,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     protected Integer viewMode;         //режим отображения формы
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
-    private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
-
-    @Override
-    protected void initBean() {
-        extractors.put("name", BaseDict::getName);
-        extractors.put("iconName", BaseDict::getIconName);  
-        extractors.put("nameEndElipse", BaseDict::getNameEndElipse);
-        super.initBean(); 
-    }
+    private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать    
+         
+    private SortOrder defSortOrder = SortOrder.ASCENDING;
+    private String defSortField = "name";    
       
-    
     /* Cобытие при открытии формы обозревателя/селектора  */
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
@@ -289,7 +284,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 case DictEditMode.INSERT_MODE:{
                     TreeNode newNode;
                     if (isItemDetailType(editItem)) {
-                        detailItems.add(editItem);
+                        //detailItems.add(editItem);
                         loadItems.add(editItem);
                         //onSetCurrentItem(editItem);
                         break;
@@ -739,7 +734,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void refreshLazyData(){
         detailItems = null;
         loadItems = null;
-        currentPage = 0;
+        //currentPage = 0;
         super.refreshLazyData();
     }
         
@@ -797,23 +792,28 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 pageSize = loadItems.size();
             }
             if (first > pageSize){                
-                first = currentPage;
-            }
-            detailItems = loadItems.subList(first, pageSize);                        
-            
-            if (extractors.containsKey(sortField)){
-                Function<BaseDict, String> extract = extractors.get(sortField);
-                    
-                if (sortOrder.equals(SortOrder.ASCENDING)){
-                    detailItems = detailItems.stream()
-                            .sorted(Comparator.comparing(extract))
-                            .collect(Collectors.toList());
-                } else {
-                    detailItems = detailItems.stream()
-                            .sorted(Comparator.comparing(extract).reversed())
-                            .collect(Collectors.toList());
-                }
+                first = pageSize;
             }            
+                        
+            if (!Objects.equals(defSortField, sortField) || !Objects.equals(defSortOrder, sortOrder)) {
+                if (currentItem == null){
+                    loadItems = tableBean.sortDetails(loadItems, sortField, sortOrder);
+                } else {
+                    if (isItemDetailType(currentItem)){
+                        loadItems = tableBean.sortDetails(loadItems, sortField, sortOrder);
+                    } else
+                        if (isItemTreeType(currentItem)){
+                            loadItems = treeBean.sortDetails(loadItems, sortField, sortOrder);
+                        } else {
+                            if (isItemRootType(currentItem)){
+                                loadItems = rootBean.sortDetails(loadItems, sortField, sortOrder);
+                            }
+                        }
+                }
+                defSortField = sortField;
+                defSortOrder = sortOrder;
+            }
+            detailItems = loadItems.subList(first, pageSize);
         }
         return detailItems;
     }    
@@ -825,7 +825,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     @Override
     public int countItems(){
         return loadItems.size();
-    }
+    }    
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
     public void onLoadGroupContent(BaseDict item) {
@@ -858,10 +858,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* ДЕРЕВО: обновление дерева объектов  */
     public void onReloadTreeItems() {
         tree = null;
-        treeSelectedNode = null;
-        refreshLazyData();
+        treeSelectedNode = null;        
         setSource(DictDetailSource.ALL_ITEMS_SOURCE);
         jurnalHeader = null;
+        refreshLazyData();
+        checkedItems.clear();
     }    
 
     /* ДЕРЕВО: сбросить в дереве установки развёртывания и выделения */  
@@ -1453,8 +1454,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         getCheckedItems().add(item);        
         return onCloseCard(getCheckedItems());
     }
-    
-    
+        
     /* СЕЛЕКТОР: закрытие селектора без выбора объектов  */
     public String onClose() {
         getCheckedItems().clear();        
@@ -1507,7 +1507,12 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (doc == null) return;
         
         Folder owner = (Folder) doc.getOwner();
-        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), owner);     
+        onExpandTree();        
+        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), owner); 
+        if (node == null){
+            MsgUtils.errorMsg("FolderCouldNotBeFound");
+            return;
+        }
         if (getTreeSelectedNode() != null) {
             getTreeSelectedNode().setSelected(false);
         }
@@ -1515,6 +1520,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         setTreeSelectedNode(node);
         setSelectedDocId(null);
         expandUp(node);
+        checkedItems.add(doc);
         if (!DictExplForm.TAB_TREE.equals(currentTab)){
             RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
         }
@@ -1896,6 +1902,20 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void setSelectedDocId(Integer selectedDocId) {
         this.selectedDocId = selectedDocId;
     }   
+
+    public SortOrder getDefSortOrder() {
+        return defSortOrder;
+    }
+    public void setDefSortOrder(SortOrder defSortOrder) {
+        this.defSortOrder = defSortOrder;
+    }
+
+    public String getDefSortField() {
+        return defSortField;
+    }
+    public void setDefSortField(String defSortField) {
+        this.defSortField = defSortField;
+    }    
     
     @Override
     public Boolean isEastShow(){

@@ -123,18 +123,28 @@ public class AttacheServiceImpl implements AttacheService{
     @Asynchronous
     public void doCopy(Attaches sourceAttache, Attaches targetAttache){
         String uploadPath = configuration.getUploadPath();
-        StringBuilder sb = new StringBuilder();        
-        Path targetPath = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullName()).toString());
         
-        sb.setLength(0);        
-        Path targetPathPDF = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullNamePDF()).toString());
+        String guid = targetAttache.getGuid();
+        StringBuilder sb = new StringBuilder(uploadPath);
+        sb.append(guid.substring(0, 2)).append(File.separator).append(guid.substring(2, 4));
         
-        sb.setLength(0);        
-        Path sourcePath = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullName()).toString());
+        try {
+            Files.createDirectories(Paths.get(sb.toString()));
         
-        sb.setLength(0);
-        Path sourcePathPDF = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullNamePDF()).toString());
-        try  {
+            sb.setLength(0);
+            Path targetPath = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullName()).toString());
+
+            sb.setLength(0);        
+            Path targetPathPDF = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullNamePDF()).toString());
+
+
+            sb.setLength(0);        
+            Path sourcePath = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullName()).toString());
+
+            sb.setLength(0);
+
+            Path sourcePathPDF = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullNamePDF()).toString());
+        
             Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
             Files.copy(sourcePathPDF, targetPathPDF, StandardCopyOption.REPLACE_EXISTING);
         } catch(IOException e){

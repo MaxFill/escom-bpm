@@ -10,7 +10,6 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.folders.FoldersBean;
-
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.escom.utils.EscomFileUtils;
@@ -21,7 +20,6 @@ import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.statuses.StatusesDoc;
-
 import java.io.IOException;
 import java.text.MessageFormat;
 import javax.ejb.EJB;
@@ -55,8 +53,26 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @EJB
     private AttacheFacade attacheFacade;
     @EJB
-    private DocFacade docsFacade;
+    private DocFacade docsFacade;    
     
+     @Override
+    protected void initBean() {
+        columns.put(0, "colCheck");
+        columns.put(1, "colIcon");        
+        columns.put(2, "colName");
+        columns.put(3, "colCompany");
+        columns.put(4, "colDocType");
+        columns.put(5, "colNumber");
+        columns.put(6, "colItemDate");
+        columns.put(7, "colStateIcon");
+        columns.put(8, "colDateChange");
+        columns.put(9, "colDateCreate");
+        columns.put(10, "colAuthor");
+        columns.put(11, "colButton");
+        columns.entrySet().stream().forEach(col->visibleColumns.put(col.getValue(), true));
+        super.initBean(); 
+    }    
+        
     /* перед вставкой скопированного документа */
     @Override
     public void preparePasteItem(Doc pasteItem, Doc sourceItem, BaseDict owner) {

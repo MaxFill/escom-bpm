@@ -23,7 +23,7 @@
     
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.TermApproval}" width="60" priority="3" sortBy="#{item.termHours}">
+        <p:column headerText="#{bundle.TermApproval}" width="60" priority="3" >
              <h:outputLabel value="#{''.concat(item.termHours).concat(' ').concat(bundle.HourShort)}"/>                            
         </p:column>
     </ui:define>

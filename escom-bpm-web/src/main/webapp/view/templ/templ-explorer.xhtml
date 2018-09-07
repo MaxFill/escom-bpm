@@ -43,7 +43,7 @@
         <pe:layout fullPage="true" style="font-size: 80%;" stateCookie="#{_bean.getSourceBeanId() != null}">            
 
             <pe:layoutPane id="west" position="west" rendered="#{_bean.isWestShow()}" resizable="true" size="20%" >
-                <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">
+                <h:form id="westFRM" style="font-size: 90%;  height: 100%;" onkeypress="checkEsc();">                    
                     <ui:include src="/view/templ/tree/tree.xhtml" />
                 </h:form>
             </pe:layoutPane>
@@ -59,6 +59,10 @@
 
             <pe:layoutPane id="center" position="center" resizable="true" size="56%">
                 <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
+                    <p:remoteCommand name="dropToTree"  actionListener="#{_bean.dropToTree}"  oncomplete="initDND()"/>
+                    <p:remoteCommand name="dropToTable" actionListener="#{_bean.dropToTable}" oncomplete="initDND()"/>
+                    <p:remoteCommand name="dropToNavig" actionListener="#{_bean.dropToNavig}" oncomplete="initDND()"/>
+                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                    
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
                             <f:facet name="left">
@@ -104,8 +108,13 @@
                                                  rendered="#{_treeBean == null or _bean.isShowTree()}" 
                                                  actionListener="#{_bean.onCreateDetailItem()}">
                                     <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
-                                </p:commandButton>                                    
-
+                                </p:commandButton>                                
+                                
+                                <p:commandButton id="toggler" rendered="false" type="button" title="#{bundle.Columns}" style="float: right;" icon="ui-icon-calculator" />           
+                                <p:columnToggler rendered="false" datasource="mainFRM:tblDetail" trigger="toggler">
+                                    <p:ajax event="toggle" listener="#{_detailBean.onToggle}" update="mainFRM:tblDetail" />
+                                </p:columnToggler>
+                                
                                 <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 
                                                  title="#{bundle.SelectChecked}"
                                                  disabled="#{_bean.checkedItems.isEmpty()}"
@@ -167,7 +176,7 @@
                                                 oncomplete="PF('statusDialog').hide(); initDND();"
                                                 actionListener="#{sessionBean.onViewHelp()}"/>
                                 </p:menuButton>
-                                
+                                                                
                                 <p:commandButton icon="ico_exit" value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
                                                 rendered="#{!_bean.selectorViewMode}"
                                                 onstart="return isClose = 1;"                                     
@@ -190,12 +199,6 @@
                     <ui:insert name="form_scripts"/>
 
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
-
-                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />
-
-                    <p:remoteCommand name="dropToTree"   actionListener="#{_bean.dropToTree}"  update="westFRM mainFRM" oncomplete="initDND()"/>
-                    <p:remoteCommand name="dropToTable"  actionListener="#{_bean.dropToTable}" update="westFRM mainFRM" oncomplete="initDND()"/>
-                    <p:remoteCommand name="dropToNavig"  actionListener="#{_bean.dropToNavig}" update="westFRM mainFRM" oncomplete="initDND()"/>                           
 
                     <ui:insert name="btnDisplayNone" />
 

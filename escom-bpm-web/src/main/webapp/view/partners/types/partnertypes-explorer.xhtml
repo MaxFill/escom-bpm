@@ -21,7 +21,7 @@
     
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.FullName}" >
+        <p:column headerText="#{bundle.FullName}" sortBy="#{item.fullName}">
             #{item.fullName}
         </p:column>
     </ui:define>

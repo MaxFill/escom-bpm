@@ -4,18 +4,18 @@
                 xmlns:h="http://java.sun.com/jsf/html" 
                 xmlns:p="http://primefaces.org/ui">
        
-    <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true"
+    <p:dataTable id="tblDetail" value="#{_bean.lazyDataModel}" var="item" lazy="true" widgetVar="tblDetail"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom" first="#{_bean.currentPage}" 
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50, 75" rows="#{_bean.rowsInPage}"
+                 rowsPerPageTemplate="5, 10, 15, 20, 35, 50" rows="#{_bean.rowsInPage}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces" style="font-size: 90%;"
-                 sortBy="#{item.name}"
+                 sortBy="#{_bean.defSortField}" sortOrder="#{_bean.defSortOrder}"
                  selection="#{_bean.checkedItems}">
 
         <f:facet name="header">
-            #{_bean.jurnalHeader}
+            <p:outputLabel value="#{_bean.jurnalHeader}" />           
         </f:facet>
         
         <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
@@ -23,16 +23,16 @@
                 oncomplete="document.getElementById('mainFRM:viewCardBtn').click();"/>
         <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
         <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="toggleSelect" update="mainFRM:explToolBar" oncomplete="initDND()"/>
-        <p:ajax event="page" listener="#{_bean.onPageChange}" oncomplete="initDND()"/>             
+        <p:ajax event="toggleSelect" update="mainFRM:explToolBar" oncomplete="initDND();"/>
+        <p:ajax event="page" listener="#{_bean.onPageChange}" oncomplete="initDND();"/>             
         
-        <p:column width="16" selectionMode="multiple" style="text-align:center"/>
+        <p:column id="colCheck" width="16" selectionMode="multiple" style="text-align:center"/>
         
-        <p:column width="16" sortBy="#{item.iconName}" id="colIcon" priority="3">
+        <p:column id="colIcon" width="16" sortBy="#{item.iconName}" priority="3">
             <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
         </p:column>
 
-        <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}" width="135" id="shortName" >
+        <p:column id="colName" headerText="#{bundle.Name}" sortBy="#{item.name}" width="135" >
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
@@ -48,32 +48,29 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column width="16" sortBy="#{item.state.currentState.name}" priority="4">
+        <p:column width="16" id="colStateIcon" sortBy="#{item.stateName}" priority="4">
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
         
-        <p:column headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1"
-                  sortBy="#{item.dateChange}">
+        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1" sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.DateCreate}" width="80" priority="4" styleClass="columnExt2"
+        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}"                   
                   rendered="#{_showDateCreate}"
-                  sortBy="#{item.dateCreate}">
+                  width="80" priority="4" styleClass="columnExt2" sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
 
-        <p:column headerText="#{bundle.Owner}" width="80" priority="5" styleClass="columnExt2"
-                  rendered="#{_showAuthor}"
-                  sortBy="#{item.author.shortFIO}">
+        <p:column id="colAuthor" headerText="#{bundle.Owner}" rendered="#{_showAuthor}" width="80" priority="5" styleClass="columnExt2" sortBy="#{item.authorName}">
             #{item.author.shortFIO}
         </p:column>
 
-        <p:column style="text-align: center;" width="60" >
+        <p:column id="colButton" headerText="#{bundle.Commands}" style="text-align: center;" width="60" >
             <h:panelGroup rendered="#{!item.deleted and item.actual and _bean.selectorViewMode}" >
                 <div class="ui-inputgroup">
                     <p:commandButton title="#{bundle.Select}" icon="ui-icon-check"                                
