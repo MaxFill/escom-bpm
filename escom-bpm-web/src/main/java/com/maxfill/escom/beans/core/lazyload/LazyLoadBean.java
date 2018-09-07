@@ -71,9 +71,21 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         extractors.put("fullName", BaseDict::getFullName);
         extractors.put("code", BaseDict::getCode);
         
+        columns.put(0, "colCheck");
+        columns.put(1, "colIcon");        
+        columns.put(2, "colName");
+        initColumns();
+        columns.put(7, "colStateIcon");
+        columns.put(8, "colDateChange");
+        columns.put(9, "colDateCreate");
+        columns.put(10, "colAuthor");
+        columns.put(11, "colButton");
         super.initBean(); 
     }    
-        
+
+    protected void initColumns(){
+    }
+    
     public List<BaseDict> sortDetails(List<BaseDict> items, String sortField, SortOrder sortOrder){
         if (extractors.containsKey(sortField)){            
             if (sortField.toLowerCase().contains("date")){
@@ -167,6 +179,16 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
             UIComponent col = (UIComponent) table.getColumns().get(i);
             columns.put(i, col.getId());
         }
+    }
+    
+    /**
+     * Возвращает флаг видимости столбца по его имени
+     * @param column
+     * @return
+     */
+    public boolean isVisibleColumn(String column){
+        if (!visibleColumns.containsKey(column)) return true;
+        return visibleColumns.get(column);
     }
     
     /* *** GETS & SETS *** */

@@ -59,6 +59,10 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >
+        <p:confirmDialog global="true" severity="info" showEffect="fade" hideEffect="fade"  >
+            <p:commandButton value="#{bundle.Yes}" type="button" styleClass="ui-confirmdialog-yes"  />
+            <p:commandButton value="#{bundle.Cancel}" type="button" styleClass="ui-confirmdialog-no" />
+        </p:confirmDialog>
 
         <p:commandButton value="#{bundle.Clear}" id="btnClear"
                          actionListener="#{authLogBean.onClearData()}"
@@ -103,7 +107,7 @@
                     </p:commandButton>
                 </p:panelGrid>
 
-                <p:commandButton id="toggler" type="button" title="#{bundle.Columns}" style="float: right;" icon="ui-icon-calculator" >
+                <p:commandButton id="toggler" rendered="false" type="button" title="#{bundle.Columns}" style="float: right;" icon="ui-icon-calculator" >
                 </p:commandButton>
 
                 <p:columnToggler datasource="tblLog" trigger="toggler">

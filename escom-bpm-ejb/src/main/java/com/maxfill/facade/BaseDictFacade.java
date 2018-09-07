@@ -455,7 +455,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
         
         for (Map.Entry<String, Object> param : paramIN.entrySet()) { 
-            Predicate predicate = root.get(param.getKey()).in((Set<Integer>)param.getValue());
+            Predicate predicate = root.get(param.getKey()).in((List<Integer>)param.getValue());
             criteries.add(predicate);
         }                
         

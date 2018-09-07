@@ -55,23 +55,13 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @EJB
     private DocFacade docsFacade;    
     
-     @Override
-    protected void initBean() {
-        columns.put(0, "colCheck");
-        columns.put(1, "colIcon");        
-        columns.put(2, "colName");
+     @Override        
+    protected void initColumns(){
         columns.put(3, "colCompany");
         columns.put(4, "colDocType");
         columns.put(5, "colNumber");
         columns.put(6, "colItemDate");
-        columns.put(7, "colStateIcon");
-        columns.put(8, "colDateChange");
-        columns.put(9, "colDateCreate");
-        columns.put(10, "colAuthor");
-        columns.put(11, "colButton");
-        columns.entrySet().stream().forEach(col->visibleColumns.put(col.getValue(), true));
-        super.initBean(); 
-    }    
+    }
         
     /* перед вставкой скопированного документа */
     @Override

@@ -515,7 +515,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КОРЗИНА: полная очистка корзины без проверки на наличие зависимых связей 
     Очистка удаляет все дочерние и детальные объекты! Команда доступна только администратору */
     public void onClearTrash() {        
-        detailItems.stream().forEach((item -> {
+        loadItems.stream().forEach((item -> {
             if (isItemDetailType(item)){
                 tableBean.deleteItem(item);
             } else
@@ -792,7 +792,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 pageSize = loadItems.size();
             }
             if (first > pageSize){                
-                first = pageSize;
+                first = currentPage;
             }            
                         
             if (!Objects.equals(defSortField, sortField) || !Objects.equals(defSortOrder, sortOrder)) {
@@ -813,6 +813,9 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 defSortField = sortField;
                 defSortOrder = sortOrder;
             }
+            if (first > pageSize){                
+                first = pageSize;
+            } 
             detailItems = loadItems.subList(first, pageSize);
         }
         return detailItems;
@@ -824,6 +827,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             
     @Override
     public int countItems(){
+        if (loadItems == null) return 0;
         return loadItems.size();
     }    
     
@@ -1556,8 +1560,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     
     public void onViewDocument(BaseDict item){
-        onSetCurrentItem(item);
-        docBean.onViewMainAttache((Doc) currentItem);
+        //onSetCurrentItem(item);
+        docBean.onViewMainAttache((Doc) item);
     }
     
     /* ПЕЧАТЬ */

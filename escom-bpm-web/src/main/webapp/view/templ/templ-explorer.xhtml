@@ -66,15 +66,18 @@
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
                             <f:facet name="left">
+                                <p:commandButton rendered="false" id="toggler" type="button" icon="ui-icon-calculator" 
+                                                 title="#{bundle.Columns}" style="float: left;">                                 
+                                </p:commandButton>            
+                                <p:columnToggler datasource="tblDetail" trigger="toggler">
+                                    <p:ajax event="toggle" listener="#{_detailBean.onToggle}" update="tblDetail" />
+                                </p:columnToggler>
+                                
                                 <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
                                                  title="#{bundle.Refresh}"                                  
                                                  actionListener="#{_bean.refreshLazyData()}"
                                                  update="mainFRM #{_updates}"
                                                  oncomplete="initDND()"/> 
-
-                                <span class="ui-separator">
-                                    <span class="ui-icon ui-icon-grip-dotted-vertical" />
-                                </span>
 
                                 <p:commandButton icon="ui-icon-arrowthick-1-n" title="#{bundle.Up}"
                                                  actionListener="#{_bean.onGotoUpLevelContent()}"
@@ -109,11 +112,6 @@
                                                  actionListener="#{_bean.onCreateDetailItem()}">
                                     <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
                                 </p:commandButton>                                
-                                
-                                <p:commandButton id="toggler" rendered="false" type="button" title="#{bundle.Columns}" style="float: right;" icon="ui-icon-calculator" />           
-                                <p:columnToggler rendered="false" datasource="mainFRM:tblDetail" trigger="toggler">
-                                    <p:ajax event="toggle" listener="#{_detailBean.onToggle}" update="mainFRM:tblDetail" />
-                                </p:columnToggler>
                                 
                                 <p:commandButton value="#{bundle.SelectChecked}" icon="ui-icon-check" 
                                                  title="#{bundle.SelectChecked}"

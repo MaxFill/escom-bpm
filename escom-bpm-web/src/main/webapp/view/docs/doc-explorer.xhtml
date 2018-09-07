@@ -39,8 +39,9 @@
                                  value="#{_bean.model.fullTextSearche}">
         </p:selectBooleanCheckbox>
         
-        <p:selectCheckboxMenu value="#{_bean.model.docTypes}" label="#{bundle.DocTypeSelector}"
-                              widgetVar="cbmDocType"
+        <p:outputLabel value="#{bundle.DocTypes}:"/>
+        <p:selectCheckboxMenu value="#{_bean.model.docTypes}" 
+                              widgetVar="cbmDocType" multiple="true"
                               converter="docsTypesConvertor"
                               filter="true" filterMatchMode="startsWith" styleClass="ui-grid-col-12">
             <f:selectItems value="#{docTypeBean.findAll()}" var="item" itemLabel="#{item.getName()}" itemValue="#{item}"/>
@@ -139,19 +140,27 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column id="colCompany" headerText="#{bundle.Company}" sortBy="#{item.companyName}" width="90" priority="3">
+        <p:column id="colCompany" headerText="#{bundle.Company}" 
+                  visible="#{_detailBean.isVisibleColumn('colCompany')}"
+                  sortBy="#{item.companyName}" width="90" priority="3">
             <h:outputText value="#{item.companyName}"/>
         </p:column>
         
-        <p:column id="colDocType" headerText="#{bundle.Type}" sortBy="#{item.docTypeName}" width="90" priority="4">
+        <p:column id="colDocType" headerText="#{bundle.Type}" 
+                  visible="#{_detailBean.isVisibleColumn('colDocType')}"
+                  sortBy="#{item.docTypeName}" width="90" priority="4">
             <h:outputText value="#{item.docTypeName}"/>
         </p:column>
 
-        <p:column id="colNumber" headerText="#{bundle.Number}" sortBy="#{item.regNumber}" width="80" priority="4"  >
+        <p:column id="colNumber" headerText="#{bundle.Number}" 
+                  visible="#{_detailBean.isVisibleColumn('colNumber')}"
+                  sortBy="#{item.regNumber}" width="80" priority="4"  >
             <h:outputText value="#{item.regNumber}"/>            
         </p:column>
         
-        <p:column id="colItemDate" headerText="#{bundle.Date}" width="80" sortBy="#{item.itemDate}" priority="3" >
+        <p:column id="colItemDate" headerText="#{bundle.Date}" width="80" 
+                  visible="#{_detailBean.isVisibleColumn('colItemDate')}"
+                  sortBy="#{item.itemDate}" priority="3" >
             <h:outputLabel value="#{item.itemDate}">
                 <f:convertDateTime type="date" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>

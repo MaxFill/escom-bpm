@@ -79,15 +79,6 @@ public class AuthLogBean extends LazyLoadBean{
     }
 
     /**
-     * Возвращает флаг видимости столбца по его имени
-     * @param column
-     * @return
-     */
-    public boolean isVisibleColumn(String column){
-        return visibleColumns.get(column);
-    }
-
-    /**
      * Обработка команды очистки журнала
      */
     public void onClearData(){
