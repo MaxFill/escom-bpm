@@ -4,7 +4,6 @@ import com.maxfill.Configuration;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
@@ -14,6 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +30,6 @@ public class AttacheServiceImpl implements AttacheService{
     private static final Logger LOGGER = Logger.getLogger(AttacheServiceImpl.class.getName());
     @EJB
     private AttacheFacade attacheFacade;    
-    @EJB
-    private DocFacade docFacade;
     @EJB
     private Configuration configuration;
     @EJB
@@ -79,14 +77,11 @@ public class AttacheServiceImpl implements AttacheService{
     
     @Override
     public void deleteAttache(Attaches attache){
-        try{
-            StringBuilder sb = new StringBuilder(configuration.getUploadPath());
-            sb.append(attache.getFullName());
-            String fileName = sb.toString();
+        try{            
+            String fileName = configuration.getUploadPath() + attache.getFullName();
             File file = new File(fileName);
-            file.delete();
-            String pdfFileName = FilenameUtils.removeExtension(fileName)+".pdf";
-            File pdfFile = new File(pdfFileName);
+            file.delete();            
+            File pdfFile = new File(FilenameUtils.removeExtension(fileName)+".pdf");
             pdfFile.delete();
         } catch (Exception ex){
             LOGGER.log(Level.SEVERE, null, ex);
@@ -126,14 +121,34 @@ public class AttacheServiceImpl implements AttacheService{
 
     @Override
     @Asynchronous
-    public void uploadAsynhAttache(Doc doc, Map<String, Object> params, InputStream inputStream) throws IOException {
-        Attaches attache = uploadAtache(params, inputStream);
-        Integer version = doc.getNextVersionNumber();
-        attache.setNumber(version);
-        attache.setDoc(doc);
-        String fileName = attache.getName();
-        doc.setName(fileName);
-        doc.getAttachesList().add(attache);
-        docFacade.edit(doc);
+    public void doCopy(Attaches sourceAttache, Attaches targetAttache){
+        String uploadPath = configuration.getUploadPath();
+        
+        String guid = targetAttache.getGuid();
+        StringBuilder sb = new StringBuilder(uploadPath);
+        sb.append(guid.substring(0, 2)).append(File.separator).append(guid.substring(2, 4));
+        
+        try {
+            Files.createDirectories(Paths.get(sb.toString()));
+        
+            sb.setLength(0);
+            Path targetPath = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullName()).toString());
+
+            sb.setLength(0);        
+            Path targetPathPDF = (Path) Paths.get(sb.append(uploadPath).append(targetAttache.getFullNamePDF()).toString());
+
+
+            sb.setLength(0);        
+            Path sourcePath = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullName()).toString());
+
+            sb.setLength(0);
+
+            Path sourcePathPDF = (Path) Paths.get(sb.append(uploadPath).append(sourceAttache.getFullNamePDF()).toString());
+        
+            Files.copy(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(sourcePathPDF, targetPathPDF, StandardCopyOption.REPLACE_EXISTING);
+        } catch(IOException e){
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 }

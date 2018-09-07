@@ -8,140 +8,142 @@
 
     <ui:composition template="/view/templ/templ-dlg.xhtml">     
 
-    <ui:param name="_bean" value="#{userMsgBean}"/>
+        <ui:param name="_bean" value="#{userMsgBean}"/>
 
-    <ui:define name="menuActions" >
-        <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                    
-                    onclick="document.getElementById('mainFRM:btnMarkAllAsRead').click();">
-        </p:menuitem>
-        <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="mainFRM" actionListener="#{userMsgBean.refreshData()}">
-        </p:menuitem>
-    </ui:define>
+        <ui:define name="menuActions" >
+            <p:menuitem icon="ui-icon-check" value="#{bundle.MarkAsReads}" title="#{bundle.MarkAllAsRead}"                    
+                        onclick="document.getElementById('mainFRM:btnMarkAllAsRead').click();">
+            </p:menuitem>
+            <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
+                        update="mainFRM" actionListener="#{userMsgBean.refreshLazyData()}">
+            </p:menuitem>
+        </ui:define>
 
-    <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAllAsRead}"
-                        onstart="PF('statusDialog').show();"
-                        oncomplete="PF('statusDialog').hide();"
-                        update="mainFRM"
-                        actionListener="#{userMsgBean.markAsRead()}">
-        </p:commandButton>
-        <p:commandButton value="#{bundle.MarkSelectedAsRead}"
-                        onstart="PF('statusDialog').show()"
-                        oncomplete="PF('statusDialog').hide();"
-                        update="mainFRM"
-                        disabled="#{userMsgBean.checkedItemsEmpty()}"
-                        actionListener="#{userMsgBean.markSelectedAsRead()}">
-        </p:commandButton>
-    </ui:define>
+        <ui:define name="toolbarComponents" >
+            <p:commandButton id="btnMarkAllAsRead" value="#{bundle.MarkAllAsRead}"
+                             onstart="PF('statusDialog').show();"
+                             oncomplete="PF('statusDialog').hide();"
+                             update="mainFRM"
+                             actionListener="#{userMsgBean.markAsRead()}">
+            </p:commandButton>
+            <p:commandButton value="#{bundle.MarkSelectedAsRead}"
+                             onstart="PF('statusDialog').show()"
+                             oncomplete="PF('statusDialog').hide();"
+                             update="mainFRM"
+                             disabled="#{userMsgBean.checkedItemsEmpty()}"
+                             actionListener="#{userMsgBean.markSelectedAsRead()}">
+            </p:commandButton>
+        </ui:define>
 
-    <ui:define name="centerFormContent">
-        <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{userMsgBean.showOnlyUnread}" toggleSpeed="500" widgetVar="panel">
-            <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
-                                    itemLabel="#{bundle.ShowOnlyUnReadMessage}">
-                    <p:ajax update="mainFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
-            </p:selectBooleanCheckbox>
-            <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
-                <p:panelGrid columns="2" styleClass="without-spaces">
-                    #{bundle.With}
-                    <p:calendar value="#{userMsgBean.dateStart}" id="dateStart"
-                                widgetVar="dateCreateStartSearche"
-                                showHour="true" showMinute="true" pages="2"
-                                navigator="true" yearRange="c-12:c+20"
-                                disabled="#{userMsgBean.showOnlyUnread}"
-                                locale="#{sessionBean.locale}"
-                                pattern="dd.MM.yyyy HH:mm:ss"
-                                required="#{param['isRequired'] == 'true'}"
-                                requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
-                    </p:calendar>
-                    #{bundle.At}
-                    <p:calendar value="#{userMsgBean.dateEnd}" id="dateEnd"
-                                widgetVar="dateCreateEndSearche"
-                                navigator="true" yearRange="c-12:c+20" pages="2"
-                                showHour="true" showMinute="true"
-                                disabled="#{userMsgBean.showOnlyUnread}"
-                                locale="#{sessionBean.locale}"
-                                pattern="dd.MM.yyyy HH:mm:ss"
-                                required="#{param['isRequired'] == 'true'}"
-                                requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
-                    </p:calendar>
+        <ui:define name="centerFormContent">
+            <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{userMsgBean.showOnlyUnread}" toggleSpeed="500" widgetVar="panel">
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
+                                             itemLabel="#{bundle.ShowOnlyUnReadMessage}">
+                        <p:ajax update="mainFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
+                    </p:selectBooleanCheckbox>
+                    <p:panelGrid columns="2" columnClasses="without-spaces" styleClass="without-spaces">
+                        <p:panelGrid columns="2" styleClass="without-spaces">
+                            #{bundle.With}
+                            <p:calendar value="#{userMsgBean.dateStart}" id="dateStart"
+                                        widgetVar="dateCreateStartSearche"
+                                        showHour="true" showMinute="true" pages="2"
+                                        navigator="true" yearRange="c-12:c+20"
+                                        disabled="#{userMsgBean.showOnlyUnread}"
+                                        locale="#{sessionBean.locale}"
+                                        pattern="dd.MM.yyyy HH:mm:ss"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        requiredMessage="#{bundle.Field} [#{bundle.DateStart}  #{bundle.MustBeFilled}">
+                            </p:calendar>
+                            #{bundle.At}
+                            <p:calendar value="#{userMsgBean.dateEnd}" id="dateEnd"
+                                        widgetVar="dateCreateEndSearche"
+                                        navigator="true" yearRange="c-12:c+20" pages="2"
+                                        showHour="true" showMinute="true"
+                                        disabled="#{userMsgBean.showOnlyUnread}"
+                                        locale="#{sessionBean.locale}"
+                                        pattern="dd.MM.yyyy HH:mm:ss"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
+                            </p:calendar>
+                        </p:panelGrid>
+
+                        <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM">
+                            <f:param name="isRequired" value="true"/>
+                        </p:commandButton>
+                    </p:panelGrid>
                 </p:panelGrid>
+            </p:panel>
 
-                <p:commandButton value="#{bundle.Find}" id="btnSearche" update="mainFRM">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>
-            </p:panelGrid>
-        </p:panel>
+            <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
+                         emptyMessage="#{bundle.EmptyTable}" 
+                         paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="10,25,50" rows="10" 
+                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                         sortBy="#{item.dateSent}" sortOrder="descending"
+                         var="item" 
+                         selection="#{userMsgBean.checkedItems}">
 
-        <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"
-                     emptyMessage="#{bundle.EmptyTable}" 
-                     paginator="true" paginatorPosition="bottom"
-                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                     rowsPerPageTemplate="10,25,50" rows="10" 
-                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
-                     sortBy="#{item.dateSent}" sortOrder="descending"
-                     var="item" 
-                     selection="#{userMsgBean.checkedItems}">
-            
-            <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar"/>
-            <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar"/>
-            <p:ajax event="toggleSelect" update="mainFRM:explToolBar"/>
-        
-            <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-            
-            <p:column width="16" sortBy="#{task.iconName}" >
-                <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
-            </p:column>
-            
-            <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}" priority="2">
-                <h:outputLabel value="#{item.dateSent}">
-                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
-                </h:outputLabel>
-            </p:column>
+                <p:ajax event="rowSelectCheckbox" update="mainFRM:explToolBar"/>
+                <p:ajax event="rowUnselectCheckbox" update="mainFRM:explToolBar"/>
+                <p:ajax event="toggleSelect" update="mainFRM:explToolBar"/>
 
-            <p:column headerText="#{bundle.Name}" sortBy="#{item.name}" priority="1">
-                <h:outputLabel value="#{item.name}"/>
-            </p:column>
+                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
 
-            <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}" priority="3">
-                <h:outputLabel value="#{item.sender}"/>
-            </p:column>
+                <p:column width="16" sortBy="#{task.iconName}" >
+                    <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
+                </p:column>
 
-            <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}" priority="4">
-                <h:outputLabel value="#{item.dateReading}" >
-                    <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
-                </h:outputLabel>
-            </p:column>
+                <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}" priority="2">
+                    <h:outputLabel value="#{item.dateSent}">
+                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                    </h:outputLabel>
+                </p:column>
 
-            <p:column priority="1">
-                <p:commandLink  value="#{bundle.GoToTask}"
-                                rendered="#{item.task != null}"
-                                actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                oncomplete="document.getElementById('mainFRM:openTaskBtn').click();"/>
-                <p:spacer width="5"/>
-                <p:commandLink  value="#{bundle.GoToDocument}"
-                                rendered="#{item.document != null}"
-                                actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                oncomplete="document.getElementById('mainFRM:openDocBtn').click();"/>
-            </p:column>
-            <p:column>
-                <p:commandButton icon="ui-icon-check" title="#{bundle.MarkAsRead}"
-                                update="messageTBL"
-                                rendered="#{item.dateReading == null}"
-                                actionListener="#{userMsgBean.markAsRead(item)}">
-                </p:commandButton>
-            </p:column>
-        </p:dataTable>
-        
-        <p:commandButton id="openDocBtn" style="display: none;"
-                         actionListener="#{userMsgBean.onGoToDocument()}">
-            <p:ajax event="dialogReturn" update="messageTBL"/>
-        </p:commandButton>
-        <p:commandButton id="openTaskBtn" style="display: none;"
-                         actionListener="#{userMsgBean.onOpenTask(_bean)}">
-            <p:ajax event="dialogReturn" update="messageTBL"/>
-        </p:commandButton>
-    </ui:define>
-</ui:composition>
+                <p:column headerText="#{bundle.Name}" sortBy="#{item.name}" priority="1">
+                    <h:outputLabel value="#{item.name}"/>
+                </p:column>
+
+                <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}" priority="3">
+                    <h:outputLabel value="#{item.sender}"/>
+                </p:column>
+
+                <p:column headerText="#{bundle.DateRead}" sortBy="#{item.dateReading}" priority="4">
+                    <h:outputLabel value="#{item.dateReading}" >
+                        <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
+                    </h:outputLabel>
+                </p:column>
+
+                <p:column priority="1">
+                    <p:commandLink  value="#{bundle.GoToTask}"
+                                    rendered="#{item.task != null}"
+                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                    oncomplete="document.getElementById('mainFRM:openTaskBtn').click();"/>
+                    <p:spacer width="5"/>
+                    <p:commandLink  value="#{bundle.GoToDocument}"
+                                    rendered="#{item.document != null}"
+                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                    oncomplete="document.getElementById('mainFRM:openDocBtn').click();"/>
+                </p:column>
+                <p:column>
+                    <p:commandButton icon="ui-icon-check" title="#{bundle.MarkAsRead}"
+                                     update="messageTBL"
+                                     rendered="#{item.dateReading == null}"
+                                     actionListener="#{userMsgBean.markAsRead(item)}">
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+
+            <p:commandButton id="openDocBtn" style="display: none;"
+                             actionListener="#{userMsgBean.onGoToDocument()}">
+                <p:ajax event="dialogReturn" update="messageTBL"/>
+            </p:commandButton>
+            <p:commandButton id="openTaskBtn" style="display: none;"
+                             actionListener="#{userMsgBean.onOpenTask(_bean)}">
+                <p:ajax event="dialogReturn" update="messageTBL"/>
+            </p:commandButton>
+        </ui:define>
+    </ui:composition>
 </html>

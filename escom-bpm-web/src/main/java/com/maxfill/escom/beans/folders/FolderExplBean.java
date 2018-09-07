@@ -31,9 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.component.tabview.Tab;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
-import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.TreeNode;
 
 /* Расширение контролёра обозревателя архива */
@@ -52,8 +52,7 @@ public class FolderExplBean extends ExplorerTreeBean{
     @EJB
     private DocFacade docFacade;
     
-    private TreeNode procTree;
-    private TreeNode procSelectedNode;             
+    private TreeNode procTree;            
     
     /* Расширение для поиска в дереве папок по индексу дела */
     @Override
@@ -72,31 +71,7 @@ public class FolderExplBean extends ExplorerTreeBean{
                 makeSelectedFilter(filter);
             }
         }
-    }
-     
-    /* Обработка события переключения между панелью фильтров и панелью дерева в аккордионе  */
-    @Override
-    public void onTreeTabChange(TabChangeEvent event) {
-        Tab tab = event.getTab();
-        String tabId = tab.getId();
-        switch (tabId) {
-            case "tabTree": {
-                currentTab = DictExplForm.TAB_TREE;
-                onSelectInTree(treeSelectedNode);
-                break;
-            }
-            case "tabFilter": {
-                currentTab = DictExplForm.TAB_FILTER;
-                doFilterTreeNodeSelect(filterSelectedNode);
-                break;
-            }
-            case "tabProc":{
-               currentTab = DictExplForm.TAB_PROC;
-               onSelectInProc(procSelectedNode);
-               break;
-            }
-        }
-    }
+    }     
     
     /* ДЕРЕВО: обработка события установки текущего элемента в дереве */
     public void onProcNodeSelect(NodeSelectEvent event) {
@@ -104,7 +79,8 @@ public class FolderExplBean extends ExplorerTreeBean{
         onSelectInProc(node);
     }
     
-    private void onSelectInProc(TreeNode node){
+    @Override
+    protected void onSelectInProc(TreeNode node){
         if (node == null) return;
         
         if (procSelectedNode != null) {
@@ -114,57 +90,37 @@ public class FolderExplBean extends ExplorerTreeBean{
         currentTab = DictExplForm.TAB_PROC;
         procSelectedNode.setSelected(true);
         currentItem = (ProcessType) procSelectedNode.getData();
-                
-        List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
-                     .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
-                     .collect(Collectors.toList()); 
-
-        Set<Doc> docsSet = new HashSet<>();
-        processes.forEach(p->p.getDocs().stream()
-                .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))                
-                .forEach(doc->docsSet.add(doc))
-        );        
-        setDetails(new ArrayList<>(docsSet), DictDetailSource.PROCESS_SOURCE); 
         
+        setSource(DictDetailSource.PROCESS_SOURCE);
+        refreshLazyData();
         makeNavigator(currentItem);
         setCurrentViewModeDetail();
-       
+               
+        if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
+            processTypesBean.loadChilds(currentItem, treeSelectedNode);
+            PrimeFaces.current().ajax().update("westFRM:accord:tree");
+        }        
+        
         BaseDict rootItem = (BaseDict) procTree.getChildren().get(0).getData();
         String journalName = "";
         if (!rootItem.equals(currentItem)){
             journalName = currentItem.getName();
         }        
         makeJurnalHeader(rootItem.getName(), journalName, "DisplaysDocsForRunningProcesses");
-    }
+    }        
     
-    /* Формирует список объектов для таблицы обозревателя  */
     @Override
-    public List<BaseDict> getDetailItems(){
-        if (detailItems == null) {
-            switch (getSource()){
-                case DictDetailSource.FILTER_SOURCE:{
-                    doFilterTreeNodeSelect(filterSelectedNode);
-                    break;
-                }
-                case DictDetailSource.TREE_SOURCE:{
-                    onSelectInTree(treeSelectedNode);
-                    break;
-                }
-                case DictDetailSource.SEARCHE_SOURCE:{
-                    onSearcheItem();
-                    break;
-                }
-                case DictDetailSource.PROCESS_SOURCE:{
-                    onSelectInProc(procSelectedNode);
-                    break;
-                }
-                default:{
-                    detailItems = new ArrayList<>();
-                    break;
-                }
-            }
-        }
-        return detailItems;
+    protected List<BaseDict> loadDocs(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
+        List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
+                                 .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
+                                 .collect(Collectors.toList()); 
+
+        loadItems = new ArrayList<>();
+        processes.forEach(p->p.getDocs().stream()
+                .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))
+                .forEach(doc->loadItems.add(doc))
+        );
+        return loadItems;
     }
     
    /* Обработка события drop в дерево объектов  */
@@ -227,7 +183,8 @@ public class FolderExplBean extends ExplorerTreeBean{
                 String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
-                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, getDetailItems());
+                tbKey = tbKey - currentPage;
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, detailItems);
                 makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево

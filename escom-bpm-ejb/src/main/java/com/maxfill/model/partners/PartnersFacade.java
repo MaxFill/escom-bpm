@@ -10,6 +10,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.partners.types.PartnerTypes;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -101,13 +103,24 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
     
     /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
-    public List<Partner> findActualDetailItems(PartnerGroups group){
+    public List<Partner> findActualDetailItems(PartnerGroups group, int first, int pageSize, String sortField, String sortOrder){
+        //TODO нужно сделать сортировку
+        //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
         List<Partner> detailItems = freshGroup.getPartnersList().stream()
                 .filter(partner -> !partner.isDeleted() && partner.isActual())
                 .collect(Collectors.toList());        
         return detailItems;
     }         
+    
+    @Override
+    public Long findCountActualDetails(PartnerGroups group){
+        PartnerGroups freshGroup = partnersGroupsFacade.find(group.getId());
+        return freshGroup.getPartnersList()
+                .stream()
+                .filter(partner -> !partner.isDeleted() && partner.isActual())
+                .count();
+    }
     
     @Override
     protected Integer getMetadatesObjId() {

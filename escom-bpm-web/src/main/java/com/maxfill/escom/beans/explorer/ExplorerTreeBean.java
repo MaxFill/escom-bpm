@@ -10,7 +10,6 @@ import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.utils.ItemUtils;
 import org.primefaces.model.TreeNode;
-
 import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.CollectionUtils;
 
 /* Контролер формы обозревателя c поддержкой групп */
 @Named
@@ -130,7 +130,7 @@ public class ExplorerTreeBean extends ExplorerBean{
                 String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
-                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, getDetailItems());
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, detailItems);
                 makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево
@@ -182,7 +182,8 @@ public class ExplorerTreeBean extends ExplorerBean{
             return;
         }
         Integer tbKey = Integer.parseInt(rwKey);
-        dropItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+        tbKey = tbKey - currentPage;
+        dropItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
         if (dropItem != null) {
             //ищем в таблице запись источника
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
@@ -191,7 +192,8 @@ public class ExplorerTreeBean extends ExplorerBean{
                return;
             }
             tbKey = Integer.parseInt(rwKey);
-            BaseDict dragItem = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+            tbKey = tbKey - currentPage;
+            BaseDict dragItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
             makeCheckedItemList(dragItem);
             if (!checkedItems.isEmpty()) {
                 Set<String> errors = new HashSet<>();
@@ -233,7 +235,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
             rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
             Integer tbKey = Integer.parseInt(rwKey);
-            BaseDict flDrag = EscomBeanUtils.findUITableContent(getDetailItems(), tbKey);
+            BaseDict flDrag = EscomBeanUtils.findUITableContent(detailItems, tbKey);
             BaseDict dragItem = flDrag;
             Set<String> errors = new HashSet<>();
             if (isItemDetailType(flDrag)){
@@ -277,21 +279,27 @@ public class ExplorerTreeBean extends ExplorerBean{
             dropNode.getChildren().add(dragNode);
             makeNavigator(dragItem);
         });
-        reloadDetailsItems();
+        refreshLazyData();
     }
 
     /* DRAG & DROP: отработка команды на перемещение из таблицы в дерево  */
     public void moveItemToGroup(){
         checkedItems.stream().forEach(dragItem -> {
             if (isItemTreeType(dragItem)){
-                treeBean.moveGroupToGroup(dropItem, dragItem);
-                onReloadTreeItems();
+                treeBean.moveGroupToGroup(dropItem, dragItem);  
+                TreeNode drag = EscomBeanUtils.findTreeNode(tree, dragItem);
+                TreeNode parentDragNode = drag.getParent();
+                if (parentDragNode != null && CollectionUtils.isNotEmpty(parentDragNode.getChildren())){                    
+                    parentDragNode.getChildren().remove(drag);
+                }
+                dropItem.setIconTree("ui-icon-folder-collapsed");
+                onSelectInTree(dropNode);
             } else {
                 tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
-                getDetailItems().removeAll(checkedItems);
+                loadItems.removeAll(checkedItems);
             }
         });        
     }
-    
+   
 
 }

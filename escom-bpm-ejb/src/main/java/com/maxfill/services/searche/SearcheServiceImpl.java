@@ -76,7 +76,13 @@ public class SearcheServiceImpl implements SearcheService {
     
     @Asynchronous
     @Override
-    public void addFullTextIndex(Doc doc){
+    public void addFullTextIndex(Doc doc){        
+        if (doc == null){
+            LOGGER.log(Level.SEVERE, null, "ERROR: AddFullTextIndex doc is NULL!");
+            return;
+        }
+        System.out.println("ADD FULL TEXT INDEX for [" + doc.getName() + "]");
+        
         String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
         executeChangeIndex(doc, sql);
     }
@@ -90,12 +96,14 @@ public class SearcheServiceImpl implements SearcheService {
 
     /* Изменение потнотекстового индекса */
     private void executeChangeIndex(Doc doc, String sql){
+        Attaches attache = doc.getMainAttache();        
+            
         try (Connection connection = getFullTextSearcheConnection()) {            
             if(connection != null) {
                 try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
                     preparedStatement.setInt(1, doc.getId());
                     preparedStatement.setString(2, doc.getName());
-                    preparedStatement.setString(3, loadContent(doc.getMainAttache()));
+                    preparedStatement.setString(3, loadAttacheContent(attache));
                     preparedStatement.setInt(4, doc.getId());
                     preparedStatement.execute();
                 }
@@ -105,18 +113,20 @@ public class SearcheServiceImpl implements SearcheService {
         }
     }
 
-    private String loadContent(Attaches attache){
+    public String loadAttacheContent(Attaches attache){
         if (attache == null) return "";
         
         StringBuilder sb = new StringBuilder();
-        sb.append(conf.getUploadPath()).append(attache.getGuid()).append(".");
+        sb.append(conf.getUploadPath());
+        attache.getShortName(sb);
+        sb.append(".");
         if ("txt".equals(attache.getExtension().toLowerCase())){
             sb.append(attache.getExtension());            
             return loadContentFromTXT(new File(sb.toString()));
         } else {            
-            return loadContentFromPDF(sb.toString());
+            return loadContentFromPDF(sb.toString(), attache.getExtension());
         }
-    }
+    } 
     
     private String loadContentFromTXT(File txtFile){
         String content = "";
@@ -134,14 +144,14 @@ public class SearcheServiceImpl implements SearcheService {
     }
     
     /* Получение текстового контента из файла pdf */
-    private String loadContentFromPDF(String basePath){
+    private String loadContentFromPDF(String basePath, String ext){        
+        String pdfFileName = basePath + "pdf";                  
+        
         String convertTXT = conf.getConvertorTXT();
-        if (StringUtils.isEmpty(convertTXT)) return "";
+        if (org.apache.commons.lang.StringUtils.isEmpty(convertTXT)) return "";
         
-        String content = "";        
-        String pdfFileName = basePath + "pdf";
+        String content = "";
         String txtFileName = basePath + "txt";
-        
         try {
             CommandLine commandLine = CommandLine.parse(convertTXT);
             commandLine.addArgument(pdfFileName);
@@ -156,7 +166,7 @@ public class SearcheServiceImpl implements SearcheService {
         }
         return content;
     }
-
+    
     @Override
     public Connection getFullTextSearcheConnection() throws SQLException {
         if (StringUtils.isBlank(conf.getFullSearcheConnect())) return null;

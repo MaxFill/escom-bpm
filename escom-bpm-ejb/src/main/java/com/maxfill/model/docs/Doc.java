@@ -66,17 +66,12 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Basic(optional = false)
     @Column(name = "Id")
     @GeneratedValue(strategy = TABLE, generator = "docIdGen")
-    private Integer id;
+    private Integer id;          
 
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
     
-    /*
-    @Size(max = 50)
-    @Column(name = "FIO")
-    private String fio;
-    */ 
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
     
@@ -102,7 +97,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     
     /* Список статусов документа  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
-    private List<DocStatuses> docsStatusList = new ArrayList<>();
+    private List<DocStatuses> docsStatusList = new ArrayList<>();   
     
     /* Версии файлов  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
@@ -111,7 +106,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
     private List<DocLog> itemLogs = new ArrayList<>();     
-        
+    
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Folder owner; 
@@ -137,16 +132,17 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     
     public Doc() {
     }
-
-    /*
-    public String getFio() {
-        return fio;
-    }
-    public void setFio(String fio) {
-        this.fio = fio;
-    }
-    */
     
+    @Override
+    public String getCompanyName() {
+        return company != null ? company.getName() : "";
+    }
+    
+    @Override
+    public String getDocTypeName(){
+        return docType != null ? docType.getName() : "";
+    }
+        
     @Override
     public DocStates getState() {
         return state;
@@ -156,6 +152,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.state = state;
     }
 
+    @Override
     public Date getItemDate() {
         return itemDate;
     }
@@ -326,8 +323,6 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.docsDou = docsDou;
     }
 
-
-
     public List<Attaches> getAttachesList() {
         return attachesList;
     }
@@ -335,6 +330,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         this.attachesList = attachesList;
     }
 
+    @Override
     public String getRegNumber() {
         return regNumber;
     }

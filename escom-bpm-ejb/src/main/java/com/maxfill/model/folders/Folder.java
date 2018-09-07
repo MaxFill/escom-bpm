@@ -1,6 +1,6 @@
 package com.maxfill.model.folders;
 
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.BaseDict;;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docsTypes.DocType;
@@ -8,7 +8,6 @@ import com.maxfill.model.partners.Partner;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
 import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "folders")
 @DiscriminatorColumn(name="REF_TYPE")
-public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderStates>{
+public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderStates> {
     private static final long serialVersionUID = -7531636538666889579L;
 
     @TableGenerator(
@@ -205,10 +204,14 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
      * Возвращает индекс дела для отображения его в таблице обозревателя
      * @return
      */
+    @Override
     public String getRegNumber(){
         return getFolderFullNumber();
+    }   
+    public void setRegNumber(String regNumber) {
+        folderNumber = regNumber;
     }
-
+    
     /* gets & sets */
 
     @Override
@@ -229,9 +232,10 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
         this.childItems = childItems;
     }
 
+    @Override
     public Date getItemDate() {
         return itemDate;
-    }
+    }    
     public void setItemDate(Date itemDate) {
         this.itemDate = itemDate;
     }
@@ -321,6 +325,8 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
         this.partnerDefault = partnerDefault;
     }
 
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;

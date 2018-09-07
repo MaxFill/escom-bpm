@@ -10,7 +10,6 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import java.text.MessageFormat;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -74,13 +73,13 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     
     /* Формирование содержимого контента папки   */ 
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode) {
-        List<BaseDict> cnt = new ArrayList();
+    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+        List<BaseDict> cnt = new ArrayList();    
         //загружаем в контент дочерние папки
         List<Folder> folders = getFacade().findActualChilds((Folder)folder);
         folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
         //загружаем в контент документы
-        List<Doc> docs = getDetailBean().getFacade().findItemByOwner(folder);
+        List<Doc> docs = getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField,  sortOrder);
         docs.stream().forEach(doc -> addDetailItemInContent(doc, cnt));
         return cnt;
     }
@@ -123,7 +122,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public List<List<?>> doGetDependency(Folder folder){
         List<List<?>> dependency = new ArrayList<>();
-        List detail = docFacade.findActualDetailItems(folder);
+        List detail = docFacade.findActualDetailItems(folder, 0, 0, "name", "ASCENDING");
         if (!detail.isEmpty()) {
             dependency.add(detail);
         }

@@ -3,6 +3,7 @@ package com.maxfill.model.attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -113,16 +114,34 @@ public class Attaches implements Serializable {
         guid = EscomUtils.generateGUID();
     }
 
+    /**
+     * Возвращает имя файла без расширения
+     * @param sb
+     * @return 
+     */
+    public String getShortName(StringBuilder sb){        
+        sb.append(guid.substring(0, 2))
+            .append(File.separator)
+            .append(guid.substring(2, 4))
+            .append(File.separator)
+            .append(guid);
+        return sb.toString();
+    }
+    
     /* Возвращает полное имя файла на сервере  */
     public String getFullName(){
         StringBuilder sb = new StringBuilder();
-        return sb.append(getGuid()).append(".").append(getExtension()).toString();
+        getShortName(sb);
+        sb.append(".").append(getExtension());
+        return sb.toString();
     }
     
     /* Возвращает полное имя pdf файла на сервере  */
     public String getFullNamePDF(){
         StringBuilder sb = new StringBuilder();
-        return sb.append(getGuid()).append(".pdf").toString();
+        getShortName(sb);
+        sb.append(".pdf").toString();
+        return sb.toString();
     }
         
     public String getNamePDF(){

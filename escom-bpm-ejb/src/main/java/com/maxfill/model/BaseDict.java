@@ -176,6 +176,62 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         
     public BaseDict(){}
 
+    public String getCompanyName() {
+        return "";
+    }
+    
+    public String getDocTypeName(){
+        return "";
+    }
+    
+    public String getRegNumber(){
+        return "";
+    }
+    
+    public Date getItemDate(){
+        return null;
+    }
+    
+    public String getStateName(){
+        return getState() != null ? getState().getCurrentState().getName() : "";
+    }
+    
+    public String getAuthorName(){
+        return author != null ? author.getName() : "";
+    }
+    
+    public String getLogin(){
+        return "";
+    }
+    
+    public String getEmail(){
+        return "";
+    }
+    
+    public String getEmployeeFIO(){
+        return "";
+    }
+    
+    public String getPostName(){
+        return "";
+    }
+    
+    public Date getPlanExecDate(){
+        return null;
+    }
+    
+    public Date getBeginDate(){
+        return null;
+    }
+    
+    public Date getEndDate(){
+        return null;
+    }
+    
+    public String getCode(){
+        return "";
+    }
+    
     public String getFullName() {
         return name;
     }

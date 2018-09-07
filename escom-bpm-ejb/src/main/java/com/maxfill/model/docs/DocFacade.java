@@ -17,11 +17,11 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
+import com.maxfill.services.files.FileService;
 import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.searche.SearcheService;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,6 +56,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     private FoldersFacade folderFacade;
     @EJB
     private DocNumeratorService docNumeratorService;
+    @EJB
+    private FileService fileService;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
@@ -233,7 +235,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
 
     @Override
     public void create(Doc doc) {
-        super.create(doc);
+        super.create(doc);        
         searcheService.addFullTextIndex(doc);
     }
 
@@ -261,7 +263,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
                 attache.setDoc(doc);
                 String fileName = attache.getName();
                 doc.setName(fileName);
-                doc.getAttachesList().add(attache);
+                doc.getAttachesList().add(attache);                
             }
         }
     }

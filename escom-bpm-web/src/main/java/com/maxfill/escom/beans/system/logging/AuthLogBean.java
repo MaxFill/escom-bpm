@@ -9,13 +9,7 @@ import com.maxfill.model.authlog.AuthLogFacade;
 import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.model.authlog.Authlog;
 import com.maxfill.utils.DateUtils;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.ToggleEvent;
-import org.primefaces.model.Visibility;
-
 import javax.ejb.EJB;
-import javax.faces.component.UIComponent;
-import javax.faces.event.AjaxBehaviorEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.io.IOException;
@@ -82,38 +76,6 @@ public class AuthLogBean extends LazyLoadBean{
     public String getBundleName(String keyBundle){
         if (keyBundle == null) return null;
         return MsgUtils.getBandleLabel(keyBundle);
-    }
-
-    /**
-     * Обработка события перемещения столбцов в таблице
-     * @param event
-     */
-    public void onColumnReorder(AjaxBehaviorEvent event){
-        DataTable table = (DataTable) event.getSource();
-        columns.clear();
-        for (int i = 0; i < table.getColumns().size(); i++) {
-            UIComponent col = (UIComponent) table.getColumns().get(i);
-            columns.put(i, col.getId());
-        }
-    }
-
-    /**
-     * Обработка события скрытия/отображения колонок таблицы
-     * @param event
-     */
-    public void onToggle(ToggleEvent event){
-        Integer columnIndex = (Integer) event.getData();
-        String column = columns.get(columnIndex);
-        visibleColumns.replace(column, event.getVisibility() == Visibility.VISIBLE);
-    }
-
-    /**
-     * Возвращает флаг видимости столбца по его имени
-     * @param column
-     * @return
-     */
-    public boolean isVisibleColumn(String column){
-        return visibleColumns.get(column);
     }
 
     /**

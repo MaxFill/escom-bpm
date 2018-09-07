@@ -1,10 +1,7 @@
 package com.maxfill.escom.beans.core;
 
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
-
-import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.BaseDict;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import org.primefaces.model.DefaultTreeNode;
@@ -12,8 +9,6 @@ import org.primefaces.model.TreeNode;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T , O >{
@@ -27,9 +22,9 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Базовый метод формирования детального списка для группы  */
-    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode){   
-        List<BaseDict> cnt = new ArrayList();
-        List<BaseDict> details = getDetailBean().getFacade().findActualDetailItems(group);
+    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
+        List<BaseDict> cnt = new ArrayList();        
+        List<BaseDict> details = getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder);
         details.stream().forEach(item -> addDetailItemInContent(item, cnt));
         return cnt;
     }
@@ -37,6 +32,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
+            node.getChildren().clear();
             List<T> childs = getFacade().findActualChilds(item);
             childs.stream().forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
             item.setIconTree("ui-icon-folder-open");
@@ -107,8 +103,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {        
         List<BaseDict> details = getFacade().findAllDetailItems(ownerItem);
         if (details != null){
-            details.stream().forEach(detail -> getDetailBean().moveToTrash((T) detail, errors)
-            );
+            details.stream().forEach(detail -> getDetailBean().moveToTrash((T) detail, errors));
         }
     }
 
@@ -121,8 +116,8 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
      */
     @Override
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
-        List<BaseDict> details = getFacade().findAllDetailItems(item);
-        if (CollectionUtils.isNotEmpty(details)) {
+        Long count = getFacade().getCountDetails(item);
+        if (count > 0) {
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);
             errors.add(error);

@@ -21,7 +21,6 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.assistants.Assistant;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.services.ldap.LdapUtils;
-import com.maxfill.services.users.UsersService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.ItemUtils;
@@ -66,8 +65,6 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     private DepartmentFacade departmentFacade;
     @EJB    
     private UserGroupsFacade userGroupsFacade;
-    @EJB    
-    private UsersService usersService;
     @EJB
     private UserMessagesFacade messagesFacade;
 
@@ -194,14 +191,21 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return !q.getResultList().isEmpty();
     }
 
-    /* Возвращает обновлённый список контрагентов для группы контрагентов  */
     @Override
-    public List<User> findActualDetailItems(UserGroups group){
+    public List<User> findActualDetailItems(UserGroups group, int first, int pageSize, String sortField, String sortOrder){
+        //TODO нужно сделать сортировку
+        //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         List<User> detailItems = freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).collect(Collectors.toList());
         return detailItems;
     }
     
+    @Override
+    public Long findCountActualDetails(UserGroups group){
+        UserGroups freshGroup = userGroupsFacade.find(group.getId());
+        return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).count();        
+    }
+     
     /* Ищет пользователя по login исключая ID указанного пользователя  */
     public List<User> findByLoginExcludeId(String login, Integer userId){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);

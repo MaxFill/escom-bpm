@@ -154,13 +154,24 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return  sb.toString() ;
     }
 
+    @Override
+    public String getEmployeeFIO(){
+        return employee != null ? employee.getShortFIO() : "";
+    }
+        
     /* Возвращает email штатной единицы (из user)  */
+    @Override
     public String getEmail() {
         if (employee != null) {
             return employee.getEmail();
         } else {
             return null;
         }
+    }
+    
+    @Override
+    public String getPostName(){
+        return post != null ? post.getName() : "";
     }
 
     /* GETS & SETS */

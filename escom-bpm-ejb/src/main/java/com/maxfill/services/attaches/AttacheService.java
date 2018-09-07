@@ -1,4 +1,3 @@
-
 package com.maxfill.services.attaches;
 
 import com.maxfill.model.attaches.Attaches;
@@ -21,6 +20,5 @@ public interface AttacheService {
     void deleteTmpFiles(String login);
     Attaches findAttacheByDoc(Doc doc);
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
-    void uploadAsynhAttache(Doc doc, Map<String, Object> params, InputStream inputStream) throws IOException;
-
+    void doCopy(Attaches sourceAttache, Attaches targetAttache);
 }

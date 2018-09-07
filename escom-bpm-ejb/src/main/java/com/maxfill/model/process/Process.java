@@ -247,6 +247,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.reports = reports;
     }
     
+    @Override
     public String getRegNumber() {
         return regNumber;
     }

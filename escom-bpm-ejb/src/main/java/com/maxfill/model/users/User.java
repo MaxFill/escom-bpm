@@ -249,6 +249,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.pwl = pwl;
     }
 
+    @Override
     public String getLogin() {
         return login;
     }
@@ -326,6 +327,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
         this.mobilePhone = mobilePhone;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }

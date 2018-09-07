@@ -9,20 +9,20 @@
                      actionListener="#{_bean.onCreateTreeItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"> 
-        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
     <p:commandButton id="createRootCardBtn" style="display: none;"
                      actionListener="#{_bean.onCreateRootItem()}" 
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();"> 
-        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
     <p:commandButton id="openTreeCardBtn" style="display: none;"
                      actionListener="#{_bean.onEditTreeItem()}"
                      onstart="PF('statusDialog').show()"
                      oncomplete="PF('statusDialog').hide();" > 
-        <p:ajax event="dialogReturn" update="westFRM mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
+        <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND()"/>
     </p:commandButton>
 
     <p:commandButton id="viewTreeCardBtn" style="display: none;"
@@ -44,11 +44,11 @@
                         selection="#{_bean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
 
                     <p:treeNode type="#{_bean.typeRoot}" icon="#{treeItem.iconTree}" >
-                        <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
+                        <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
                     <p:treeNode type="tree" icon="#{treeItem.iconTree}" styleClass="dragable">
-                        <h:outputText value="#{treeItem.getNameEndElipse()}" title="#{treeItem.name}"/>
+                        <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"

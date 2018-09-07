@@ -6,16 +6,12 @@ import com.maxfill.model.docs.docsTypes.DocTypeFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.Doc_;
-import com.maxfill.model.folders.FolderLog;
-import com.maxfill.model.folders.Folder;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.model.folders.FolderStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +54,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * @return
      */
     @Override
-    public List<BaseDict> findAllDetailItems(Folder owner){
+    public List<BaseDict> findAllDetailItems(Folder owner){        
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
@@ -66,8 +62,8 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         Predicate crit = builder.equal(c.get(Doc_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
+        Query query = getEntityManager().createQuery(cq);        
+        return query.getResultList();
     }
 
     /**

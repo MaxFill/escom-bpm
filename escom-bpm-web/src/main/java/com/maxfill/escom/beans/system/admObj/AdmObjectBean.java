@@ -32,7 +32,7 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
             setSourceItem(sourceBean.getSourceItem());
         }
     }
-    
+        
     /* Вычисление числа ссылок на объект в связанных объектах */
     public Set<Map.Entry<String, Integer>> countUsesItem() {
         Map<String, Integer> rezult = new HashMap<>();
@@ -60,9 +60,14 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
             MsgUtils.errorMsg("DoNotSpecifyValueReplacement");
         }
     }
-
+    
     /* Gets & Sets */
 
+    public String getReplaceItemName(){
+        if (replaceItem == null) return "";
+        return replaceItem.getName() + " ID=" + replaceItem.getId();
+    }
+    
     public BaseTableBean getItemBean() {        
         return (BaseTableBean)getSourceBean();
     }
@@ -74,6 +79,11 @@ public class AdmObjectBean extends BaseViewBean<BaseView>{
     @Override
     public String getFormName() {
         return DictFrmName.FRM_OBJECT_ADMIN;
+    }
+    
+    public String getObjectClassName(){
+        if (getSourceItem() == null) return "";
+        return getSourceItem().getClass().getSimpleName();
     }
     
     public Map<String, Integer> getRezultUpdate() {

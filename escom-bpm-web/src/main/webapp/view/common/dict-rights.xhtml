@@ -6,15 +6,15 @@
 
     <p:tab title="#{_bean.getRightsForObjectTitle()}" rendered="#{!_bean.simpleCard() and _bean.editedItem != null}">
 
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12" >
-            <p:panelGrid columns="2" columnClasses="ui-grid-col-1, ui-grid-col-11" styleClass="ui-grid-col-12" >
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+            <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces" >
                 <p:selectBooleanCheckbox value="#{_bean.editedItem.inherits}"                                 
                                          disabled="#{_bean.isReadOnly() || !_bean.isHaveRightChangeRight()}"                                     
                                          valueChangeListener="#{_bean.onInheritsChange}">
                     <p:ajax update="tblRight inherits" process="@this" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
-                <h:outputLabel id="inherits" value="#{_bean.inheritsRightName}"/>
-            </p:panelGrid>
+                <p:outputLabel id="inherits" value="#{_bean.inheritsRightName}"/>
+            </h:panelGrid>
 
             <p:dataTable id="tblRight" value="#{_bean.rights}" var="right" expandableRowGroups="true"
                          tableStyle="table-layout: auto;" styleClass="ui-grid-col-12" style="font-size: 80%;"

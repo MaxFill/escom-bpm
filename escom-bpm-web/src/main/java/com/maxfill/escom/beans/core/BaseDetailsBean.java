@@ -5,7 +5,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.services.attaches.AttacheService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -104,37 +103,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     public void moveGroupToGroup(BaseDict dropItem, T dragItem) {
         dragItem.setParent(dropItem);
         getFacade().edit(dragItem);
-    }
-
-
-    /* ПОИСК: Выполняет поиск объектов c учётом групп */
-    public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, List<O> searcheGroups, Map<String, Object> addParams){
-        List<T> sourceItems = getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
-        if (searcheGroups.isEmpty()){
-            return prepareSetDetails(sourceItems);
-        } else {
-            List<T> searcheItems = new ArrayList<>();
-            for (T item : sourceItems) {
-                boolean include = false;
-
-                List<O> itemGroups = getGroups((T)item);
-                if (itemGroups != null) {
-                    for (O group : searcheGroups) {
-                        if (itemGroups.contains(group)) {
-                            include = true;
-                            break;
-                        }
-                    }
-                } else {
-                    include = true;
-                }
-                if (include){
-                    searcheItems.add(item);
-                }
-            }
-            return prepareSetDetails(searcheItems);
-        }
-    }
+    }    
 
     /**
     * Определяет доступность кнопки "Создать" на панели обозревателя
