@@ -11,7 +11,6 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictNumerator;
-import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;

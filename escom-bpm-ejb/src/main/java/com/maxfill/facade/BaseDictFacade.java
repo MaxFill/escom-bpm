@@ -220,7 +220,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(orderBuilder(builder, c));
         TypedQuery<T> query = getEntityManager().createQuery(cq);       
-        return query.getResultStream()      
+        return query.getResultStream().parallel()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }
@@ -255,7 +255,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         
-        return query.getResultStream()      
+        return query.getResultStream().parallel()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }
@@ -289,8 +289,6 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /**
      * Отбирает все подчинённые объекты для владельца. Переопределяется в бинах объектов
      * @param owner
-     * @param first
-     * @param pageSize
      * @return
      */
     public List<BaseDict> findAllDetailItems(T owner){
@@ -317,7 +315,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<T> query = getEntityManager().createQuery(cq);
                 
-        return query.getResultStream().filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
+        return query.getResultStream().parallel()
+                .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     }
 
     /* Отбор объектов, созданных пользователем  */
@@ -335,7 +334,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream()      
+        return query.getResultStream().parallel()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }    
@@ -365,7 +364,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return filtrationTrashResult(query.getResultStream())       
+        return filtrationTrashResult(query.getResultStream()).parallel()       
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());        
     }
@@ -399,7 +398,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream()      
+        return query.getResultStream().parallel()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }                       
@@ -441,22 +440,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);        
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream()      
+        return query.getResultStream().parallel()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
-    }
-
-    public Long getCountByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<Long> cq = builder.createQuery(Long.class);                
-        
-        Root<T> root = cq.from(itemClass);
-        Predicate[] predicates = makePredicate(builder, root, states, paramEQ, paramLIKE, paramIN, paramDATE, addParams);
-        
-        cq.select(builder.count(root)).where(builder.and(predicates));
-        
-        Query query = getEntityManager().createQuery(cq); 
-        return (Long) query.getSingleResult();
     }
     
     protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> entityClass, Map<String, Object> addParams) {
@@ -482,7 +468,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
         
         for (Map.Entry<String, Object> param : paramIN.entrySet()) { 
-            Predicate predicate = root.get(param.getKey()).in((List<Integer>)param.getValue());
+            Predicate predicate = root.get(param.getKey()).in(param.getValue());
             criteries.add(predicate);
         }                
         
@@ -579,7 +565,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             cq.orderBy(builder.asc(c.get("name")));                   
             
             TypedQuery<T> query = getEntityManager().createQuery(cq);       
-            return query.getResultStream()      
+            return query.getResultStream().parallel()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
         } else {
@@ -599,7 +585,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(orderBuilder(builder, c));
         TypedQuery<T> query = getEntityManager().createQuery(cq);
-        return query.getResultStream()      
+        return query.getResultStream().parallel()    
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     } 
 

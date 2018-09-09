@@ -1263,8 +1263,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 }
                 break;
             }
-        }
-        PrimeFaces.current().executeScript("PF('accordion').select(0);");        
+        }        
     }    
             
     /* Выполняет поиск объектов с учётом критериев поиска  */
