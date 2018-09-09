@@ -100,7 +100,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
     private Integer typeEdit; //режим редактирования записи
     
-    protected List<BaseDict> detailItems = new ArrayList<>();   //список объектов, отображаемых на странице таблицы обозревателя
     protected List<BaseDict> loadItems = new ArrayList<>();     //список объектов, полученных запросом, для отображения в таблице обозревателя
     
     private final Map<String, Object> createParams = new HashMap<>();
@@ -180,9 +179,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     
     /* КАРТОЧКИ: открытие карточки объекта для редактирование */
-    public void onEditDetailItem(){
-        onEditDetailItem(getCurrentItem());
-    }
     public void onEditDetailItem(BaseDict item){
         currentItem = item;
         setTypeEdit(DictEditMode.EDIT_MODE);
@@ -445,7 +441,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     restoreItemInTree(item);
                 }
             }
-        loadItems.remove(item);         
+        refreshLazyData();
     }
     
     /* КОРЗИНА: помещение в корзину отмеченных записей контента  */
@@ -468,7 +464,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
         } else {            
-            loadItems.removeAll(getCheckedItems());            
+            refreshLazyData();            
         }
     }
     
@@ -478,7 +474,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         getCheckedItems().add(item);
         onMoveCheckedContentToTrash();
     }
-    public void onMoveContentToTrash(BaseDict item, Set<String> errors){
+    
+    private void moveContentToTrash(BaseDict item, Set<String> errors){
         if (item == null) return;
         
         if (isItemDetailType(item)){
@@ -495,15 +492,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             } else
                 if (isItemRootType(item)){
                     rootBean.moveToTrash(item, errors);
-                }              
+                }        
     }
     
     /* КОРЗИНА: перемещение записи из дерева в корзину  */
     public void onMoveTreeItemToTrash(){
-        if (treeSelectedNode == null) return;
-        
+        if (treeSelectedNode == null) return;        
         Set<String> errors = new HashSet<>();
-        onMoveContentToTrash(currentItem, errors);
+        moveContentToTrash(currentItem, errors);
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
         } else {
@@ -546,7 +542,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     rootBean.deleteItem(item);
                 }
             }
-        loadItems.remove(item);        
+        refreshLazyData();       
     }
     
     /* ФИЛЬТРЫ */
@@ -557,38 +553,35 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             filterTree = new DefaultTreeNode("Root", null);
             filterTree.setExpanded(true);
             
-            //формируем корневой элемент для фильтров detail объекта
-            List<Filter> sourceTreeItems = filtersFacade.findRootItems();
-            Metadates tableMD = tableBean.getMetadatesObj();
-            final String tableJurnalName = tableMD.getBundleJurnalName();
-            sourceTreeItems.stream()
+            //формируем корневой элемент для фильтров detail объекта            
+            Metadates tableMD = tableBean.getMetadatesObj();            
+            filtersFacade.findRootItems(getCurrentUser())            
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
                     .forEach(treeItem -> {
                         treeItem.setIcon(tableMD.getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeDetail, tableJurnalName, tableMD);
+                        addFilterInTree(filterTree, treeItem, typeDetail, tableMD.getBundleJurnalName(), tableMD);
                     }
             );
 
             //формируем корневой элемент для фильтров tree объекта
-            if (treeBean != null){
-                sourceTreeItems = filtersFacade.findRootItems();
-                Metadates treeMD = treeBean.getMetadatesObj();
-                final String treeJurnalName = treeMD.getBundleJurnalName();
-                sourceTreeItems.stream()
+            if (treeBean != null){            
+                Metadates treeMD = treeBean.getMetadatesObj();                
+                filtersFacade.findRootItems(getCurrentUser())
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
                     .forEach(treeItem -> {
                         treeItem.setIcon(treeMD.getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeTree, treeJurnalName, treeMD);
+                        addFilterInTree(filterTree, treeItem, typeTree, treeMD.getBundleJurnalName(), treeMD);
                     }
                 );
             }
             //формируем корневой элемент для фильтров root объекта
-            if (rootBean != null){
-                sourceTreeItems = filtersFacade.findRootItems();
-                Metadates rootMD = rootBean.getMetadatesObj();
-                final String treeJurnalName = rootMD.getBundleJurnalName();
-                sourceTreeItems.stream()
+            if (rootBean != null){                
+                Metadates rootMD = rootBean.getMetadatesObj();                
+                filtersFacade.findRootItems(getCurrentUser())
+                    .filter(treeItem -> !(DictFilters.ON_MY_EDIT == treeItem.getId() && !appBean.isUseModeshape()))
                     .forEach(treeItem -> {
                         treeItem.setIcon(rootMD.getIconObject());
-                        addFilterInTree(filterTree, treeItem, typeRoot, treeJurnalName, rootMD);
+                        addFilterInTree(filterTree, treeItem, typeRoot, rootMD.getBundleJurnalName(), rootMD);
                     }
                 );
             }
@@ -724,22 +717,17 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         onSetCurrentItem(item);        
     }        
 
-    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя  */
-    
-    public List<BaseDict> getDetailItems(){        
-        return detailItems;
-    }    
+    /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: возвращает список объектов для таблицы обозревателя  */       
     
     @Override
     public void refreshLazyData(){
-        detailItems = null;
         loadItems = null;
-        //currentPage = 0;
         super.refreshLazyData();
+        checkedItems.clear();
     }
-        
+         
     @Override
-    public List<BaseDict> loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
+    public List<BaseDict> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
         if (loadItems == null) {
             switch (getSource()){
@@ -759,13 +747,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                             }
                     break;
                 }
-                case DictDetailSource.TREE_SOURCE:{                
-                    if (isItemTreeType(currentItem)){                    
-                            loadItems = treeBean.makeGroupContent(currentItem, viewMode, first, pageSize, sortField,  sortOrder.name());
+                case DictDetailSource.TREE_SOURCE:{ 
+                    BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
+                    if (isItemTreeType(treeItem)){                    
+                            loadItems = treeBean.makeGroupContent(treeItem, viewMode, first, pageSize, sortField,  sortOrder.name());
                             //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                         } else
-                            if (isItemRootType(currentItem)){                            
-                                loadItems = rootBean.makeGroupContent(currentItem, viewMode, first, pageSize, sortField,  sortOrder.name());
+                            if (isItemRootType(treeItem)){                            
+                                loadItems = rootBean.makeGroupContent(treeItem, viewMode, first, pageSize, sortField,  sortOrder.name());
                                 //count = rootBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                             }
                     break;
@@ -783,42 +772,39 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     break;
                 }
             }
+        }        
+
+        pageSize = first + pageSize;
+        if (pageSize > loadItems.size()){
+            pageSize = loadItems.size();
         }
-        if (loadItems == null){
-            detailItems = new ArrayList<>();
-        } else {
-            pageSize = first + pageSize;
-            if (pageSize > loadItems.size()){
-                pageSize = loadItems.size();
-            }
-            if (first > pageSize){                
-                first = currentPage;
-            }            
-                        
-            if (!Objects.equals(defSortField, sortField) || !Objects.equals(defSortOrder, sortOrder)) {
-                if (currentItem == null){
+        if (first > pageSize){                
+            first = currentPage;
+        }            
+
+        if (!Objects.equals(defSortField, sortField) || !Objects.equals(defSortOrder, sortOrder)) {
+            if (currentItem == null){
+                loadItems = tableBean.sortDetails(loadItems, sortField, sortOrder);
+            } else {
+                if (isItemDetailType(currentItem)){
                     loadItems = tableBean.sortDetails(loadItems, sortField, sortOrder);
-                } else {
-                    if (isItemDetailType(currentItem)){
-                        loadItems = tableBean.sortDetails(loadItems, sortField, sortOrder);
-                    } else
-                        if (isItemTreeType(currentItem)){
-                            loadItems = treeBean.sortDetails(loadItems, sortField, sortOrder);
-                        } else {
-                            if (isItemRootType(currentItem)){
-                                loadItems = rootBean.sortDetails(loadItems, sortField, sortOrder);
-                            }
+                } else
+                    if (isItemTreeType(currentItem)){
+                        loadItems = treeBean.sortDetails(loadItems, sortField, sortOrder);
+                    } else {
+                        if (isItemRootType(currentItem)){
+                            loadItems = rootBean.sortDetails(loadItems, sortField, sortOrder);
                         }
-                }
-                defSortField = sortField;
-                defSortOrder = sortOrder;
+                    }
             }
-            if (first > pageSize){                
-                first = pageSize;
-            } 
-            detailItems = loadItems.subList(first, pageSize);
+            defSortField = sortField;
+            defSortOrder = sortOrder;
         }
-        return detailItems;
+        if (first > pageSize){                
+            first = pageSize;
+        }        
+
+        return loadItems.subList(first, pageSize);
     }    
     
     protected List<BaseDict> loadDocs(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
@@ -1116,7 +1102,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
     /* КОПИРОВАНИЕ: вызов копирования объекта из дерева */
     public void onCopySelectedTreeItem() {
-        if (isCanCopyTreeItem()){
+        if (isCanCopyTreeItem()){            
             onCopyItem(currentItem);
         } else {
             MsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{currentItem.getName()});
@@ -1129,10 +1115,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (item.getId() == 0){
             MsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{item.getName()});
             return;
-        }
-        List<BaseDict> sourceItems = new ArrayList<>();
-        sourceItems.add(item);
-        doCopyItems(sourceItems);
+        }        
+        doCopyItems(Collections.singletonList(item));
     }
 
     /* КОПИРОВАНИЕ: копирование объектов в память  */
@@ -1279,7 +1263,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 }
                 break;
             }
-        }               
+        }
+        PrimeFaces.current().executeScript("PF('accordion').select(0);");        
     }    
             
     /* Выполняет поиск объектов с учётом критериев поиска  */
@@ -1404,18 +1389,26 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 dragItems.stream().forEach(dragItem -> onAddContentInFavorites(dragItem));
                 break;
             }
+            default:{
+                MsgUtils.warnMsg("OperationIsNotApplicable");
+                PrimeFaces.current().ajax().update("mainFRM:tblDetail");
+            }
         }
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
         }    
     }
-    
+         
     /* DRAG & DROP: перемещение объекта в корзину */
     public void dropItemToTrash(){
         Set<String> errors = new HashSet<>();
-        checkedItems.stream().forEach(dragItem -> onMoveContentToTrash(dragItem, errors));
-        if (!errors.isEmpty()){            
+        checkedItems.stream().forEach(dragItem -> moveContentToTrash(dragItem, errors));
+        if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
+        } else {
+            refreshLazyData();
+            //обновление нужно потому что больше его выполнить некому!
+            PrimeFaces.current().ajax().update("mainFRM:tblDetail");
         }
     }
     
@@ -1424,11 +1417,17 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         checkedItems.stream().forEach(dragItem -> {
             if (isItemDetailType(dragItem)){
                 tableBean.moveItemToNotActual(dragItem);
-            }
+            } else 
+                if (isItemTreeType(dragItem)){
+                    treeBean.moveItemToNotActual(dragItem);
+                } else 
+                    if (isItemRootType(dragItem)){
+                        rootBean.moveItemToNotActual(dragItem);
+                    }
         });    
     }
             
-/* *** СЕЛЕКТОР *** */
+    /* *** СЕЛЕКТОР *** */
     
     /* СЕЛЕКТОР: определяет режим множественного выбора в селекторе  */
     public boolean isMultySelectMode(){
@@ -1526,7 +1525,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         expandUp(node);
         checkedItems.add(doc);
         if (!DictExplForm.TAB_TREE.equals(currentTab)){
-            RequestContext.getCurrentInstance().execute("PF('accordion').select(0);");
+            PrimeFaces.current().executeScript("PF('accordion').select(0);");            
         }
     }
     
@@ -1572,7 +1571,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         params.put("USER_LOGIN", getCurrentUser().getLogin());
         params.put("REPORT_TITLE", MsgUtils.getBandleLabel("DocJournal"));
         List<Doc> docs = new ArrayList<>();
-        detailItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
+        loadItems.stream().filter(item -> item instanceof Doc).forEach(item -> docs.add((Doc) item)); 
 
         Collator collator = Collator.getInstance(getLocale());
         

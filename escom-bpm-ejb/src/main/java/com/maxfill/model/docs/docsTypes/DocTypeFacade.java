@@ -4,17 +4,13 @@ import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc_;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.docs.docsTypes.DocTypeLog;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.docs.docsTypes.DocTypeStates;
 import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -38,7 +34,7 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
     public DocTypeFacade() {
         super(DocType.class, DocTypeLog.class, DocTypeStates.class);
     }  
-
+    
     @Override
     public String getFRM_NAME() {
         return DocType.class.getSimpleName().toLowerCase();

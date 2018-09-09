@@ -34,6 +34,9 @@ public class FoldersServlet extends HttpServlet{
     /**
      * Запрос на получение ветки дерева
      * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
@@ -55,11 +58,9 @@ public class FoldersServlet extends HttpServlet{
         }
         try {
             Integer parentId = Integer.parseInt(sParentId);
-            Folder parent = foldersFacade.find(parentId);
+            Folder parent = foldersFacade.find(parentId);            
 
-            List<Folder> folders = foldersFacade.findActualChilds(parent);
-
-            List<FolderForTransfer> transfer = folders.stream()
+            List<FolderForTransfer> transfer = foldersFacade.findActualChilds(parent, user)
                     .map(f-> new FolderForTransfer(f.getId(), f.getName(), !foldersFacade.checkRightAddDetail(f, user)))
                     .collect(Collectors.toList());
 

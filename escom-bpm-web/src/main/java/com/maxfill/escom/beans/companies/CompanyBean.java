@@ -11,7 +11,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentFacade;
 import com.maxfill.model.staffs.Staff;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -46,36 +45,29 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @Override
     public List<Company> getGroups(Company item) {
         return null;
-    }
+    }   
 
     @Override
-    public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
-        TreeNode rezNode = null;
-
-        if (itemsFacade.preloadCheckRightView(item, getCurrentUser())){
-            List<Department> childs = new ArrayList<>();
-            
+    public void loadChilds(BaseDict item, TreeNode node){
+        if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
+            node.setExpanded(true);
+            node.getChildren().clear();            
             switch (item.getClass().getSimpleName()){
-                case DictObjectName.DEPARTAMENT:{
-                    typeNode = "tree";
-                    childs = departmentFacade.findActualChilds((Department)item);
+                case DictObjectName.DEPARTAMENT:{                    
+                    departmentFacade.findActualChilds((Department)item, getCurrentUser())
+                            .forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
                     break;
                 }
-                case DictObjectName.COMPANY:{
-                    typeNode = DictObjectName.COMPANY;
-                    childs = departmentFacade.findActualDetailItems((Company)item, 0, 0, "name", "ASCENDING");
+                case DictObjectName.COMPANY:{                    
+                    departmentFacade.findActualDetailItems((Company)item, 0, 0, "name", "ASCENDING", getCurrentUser())
+                            .forEach(itemChild -> addItemInTree(node, itemChild, DictObjectName.COMPANY));
                     break;
                 }
-            }
-            TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
-            doExpandTreeNode(newNode);
-            String finalTypeNode = typeNode;
-            childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild, finalTypeNode));
-            rezNode = newNode;
+            }            
+            item.setIconTree("ui-icon-folder-open");
         }
-        return rezNode;
     }
-
+    
     /* Удаление подчинённых объектов из корзины */
     @Override
     protected void deleteDetails(Company company) {
@@ -118,12 +110,13 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
     public List<List<?>> doGetDependency(Company company){
+        //TODO тут не эффективные запросы, возвращающие много инф, достаточно колва
         List<List<?>> dependency = new ArrayList<>();
         List<Department> departments = departmentFacade.findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
             dependency.add(departments); //копируются все подразделения, кроме удалённых в корзину
         }
-        List<Staff> staffs = staffFacade.findStaffByCompany(company, null); //копируются все штединицы, кроме удалённых в корзину
+        List<Staff> staffs = staffFacade.findStaffByCompany(company, null, getCurrentUser()); //копируются все штединицы, кроме удалённых в корзину
         if (!staffs.isEmpty()) {
             dependency.add(staffs);
         }
@@ -134,21 +127,10 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @Override
     public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();
-        //загружаем в контент подразделения
-        List<Department> departments = departmentFacade.findActualDetailItems((Company)company, first, pageSize, sortField,  sortOrder);        
-        departments.stream().forEach(department -> addDetailItemInContent(department, cnt));        
-        //загружаем в контент штатные единицы
-        List<Staff> staffs = staffFacade.findStaffByCompany((Company)company, null);
-        staffs.stream().forEach(staff -> addStaffInCnt(staff, cnt));
+        cnt.addAll(departmentFacade.findActualDetailItems((Company)company, first, pageSize, sortField,  sortOrder, getCurrentUser()));                
+        cnt.addAll(staffFacade.findStaffByCompany((Company)company, null, getCurrentUser()));
         return cnt;
-    }
-
-    /* Добавляет штатную единицу в контент  */ 
-    public void addStaffInCnt(Staff staff, List<BaseDict> cnts) {
-        if (staffBean.getFacade().preloadCheckRightView(staff, getCurrentUser())){
-            cnts.add(staff);
-        }
-    }           
+    }       
      
     /* Формирует число ссылок на Компанию в подчинённых объектах   */
     @Override
@@ -194,8 +176,4 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         return departmentBean;
     }
 
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
-    }
 }

@@ -8,7 +8,6 @@ import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.users.groups.UserGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
-
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -33,15 +32,11 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     private UserGroupsFacade itemFacade;     
     
     public List<UserGroups> findOnlyGroups(){
-        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP).stream()
-                    .filter(item -> itemFacade.preloadCheckRightView(item, getCurrentUser()))
-                    .collect(Collectors.toList());
+        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP, getCurrentUser());
     }
     
     public List<UserGroups> findOnlyRoles(){
-        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD).stream()
-                    .filter(item -> itemFacade.preloadCheckRightView(item, getCurrentUser()))
-                    .collect(Collectors.toList());
+        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD, getCurrentUser());
     }
         
     @Override
@@ -62,7 +57,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     @Override
     public List<List<?>> doGetDependency(UserGroups group){
         List<List<?>> dependency = new ArrayList<>();
-        List<UserGroups> userGroups = itemFacade.findActualChilds(group);
+        List<UserGroups> userGroups = itemFacade.findActualChilds(group, getCurrentUser()).collect(Collectors.toList());
         if (!userGroups.isEmpty()) {
             dependency.add(userGroups);
         }
@@ -72,7 +67,8 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     @Override
     public void preparePasteItem(UserGroups pasteItem, UserGroups sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
-        pasteItem.setParent((UserGroups)target);    
+        pasteItem.setParent((UserGroups)target); 
+        pasteItem.setDetailItems(sourceItem.getDetailItems()); //копируем только ссылки!
     }
     
     /* Формирует число ссылок на userGroups в связанных объектах  */

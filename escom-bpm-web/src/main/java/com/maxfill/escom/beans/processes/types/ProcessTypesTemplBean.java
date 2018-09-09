@@ -51,9 +51,4 @@ public class ProcessTypesTemplBean extends BaseTreeBean<ProcessType, ProcessType
     public Class <ProcessType> getOwnerClass() {
         return null;
     }
-    
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
-    }
 }

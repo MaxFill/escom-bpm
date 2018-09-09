@@ -264,6 +264,7 @@ public class SessionBean implements Serializable{
         Object[] params = new Object[]{item.getName()};
         if (favoriteService.addInFavorites(item, metadates, getCurrentUser())){
             MsgUtils.succesFormatMsg("ObjectAddedToFavorites", params);
+            PrimeFaces.current().ajax().update("mainFRM:tblDetail");
         } else {
             MsgUtils.warnFormatMsg("ObjectAlreadyAddedFavorites", params);
         }

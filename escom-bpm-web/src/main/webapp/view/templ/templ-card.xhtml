@@ -81,7 +81,7 @@
                                 <p:separator />        
                                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"
                                             disabled="#{_bean.editedItem.id == null}"
-                                            actionListener="#{_bean.addInFavorites(_bean.editedItem)}"/> 
+                                            actionListener="#{_bean.addInFavorites()}"/> 
                                 <p:separator />
                                 <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
                                             onstart="PF('statusDialog').show()"

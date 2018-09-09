@@ -30,7 +30,7 @@ public interface Workflow {
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme);
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
-    void run(Process process, WFConnectedElem startElement, Set<String> errors);
+    void run(Process process, WFConnectedElem startElement, Set<String> errors, User currentUser);
     void stop(Process process, User user, Set<String> errors);
     void start(Process process, User user, Set<String> errors);
     void executeTask(Process process, Task task, Result result, User user, Set<String> errors);

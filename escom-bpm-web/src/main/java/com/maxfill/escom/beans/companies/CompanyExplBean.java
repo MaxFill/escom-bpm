@@ -24,7 +24,7 @@ public class CompanyExplBean extends ExplorerTreeBean{
      */
     @Override
     public boolean isCanCopyTreeItem(){
-        return getTreeSelectedNode() == null;
+        return getTreeSelectedNode() != null;
     }
 
     /**

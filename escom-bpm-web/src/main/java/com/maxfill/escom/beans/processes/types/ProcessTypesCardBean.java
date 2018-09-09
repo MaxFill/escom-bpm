@@ -8,7 +8,6 @@ import com.maxfill.model.task.result.ResultFacade;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.result.Result;
-
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
@@ -61,7 +60,7 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     
     public DualListModel<Result> getResults() {
         if (results == null){
-            List<Result> allResults = resultFacade.findAll();
+            List<Result> allResults = resultFacade.findAll(getCurrentUser());
             allResults.removeAll(getTaskResults());
             results = new DualListModel<>(allResults, getTaskResults());
         }

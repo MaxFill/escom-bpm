@@ -15,7 +15,17 @@
                  selection="#{_bean.checkedItems}">
 
         <f:facet name="header">
-            <p:outputLabel value="#{_bean.jurnalHeader}" />             
+            <p:panelGrid columns="1" styleClass="ui-panelgrid-blank">
+                <h:panelGroup>
+                    <p:commandButton rendered="false" id="toggler" type="button" icon="ui-icon-calculator" 
+                                     title="#{bundle.Columns}" style="float: left;">                                 
+                    </p:commandButton>            
+                    <p:columnToggler rendered="false" datasource="tblDetail" trigger="toggler">
+                        <p:ajax event="toggle" listener="#{_detailBean.onToggle}" update="tblDetail" />
+                    </p:columnToggler>
+                    <p:outputLabel value="#{_bean.jurnalHeader}" />
+                </h:panelGroup>                        
+            </p:panelGrid>
         </f:facet>
         
         <p:ajax event="rowSelect" update="mainFRM:explToolBar" oncomplete="initDND();" />
@@ -28,8 +38,9 @@
         
         <p:column id="colCheck" width="16" selectionMode="multiple" style="text-align:center"/>
         
-        <p:column id="colIcon" width="16" sortBy="#{item.iconName}" priority="3" visible="#{_detailBean.isVisibleColumn('colIcon')}">
-            <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/> 
+        <p:column id="colIcon" width="16" sortBy="#{item.iconName}" headerText="" visible="#{_detailBean.isVisibleColumn('colIcon')}">
+            <p:graphicImage id="itemIcon" value="/resources/icon/#{item.iconName}.png" styleClass="#{item.deleted ? '' : 'dropoint'}"/>
+            <h:outputLabel value="[#{item.id}]"/>
         </p:column>
 
         <p:column id="colName" headerText="#{bundle.Name}" sortBy="#{item.name}" width="135" visible="#{_detailBean.isVisibleColumn('colName')}">
@@ -48,13 +59,13 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column width="16" id="colStateIcon" priority="4" 
+        <p:column width="16" id="colStateIcon" headerText=""
                   visible="#{_detailBean.isVisibleColumn('colStateIcon')}"
                   sortBy="#{item.stateName}">
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
         
-        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="80" priority="3" styleClass="columnExt1" 
+        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="80" 
                   visible="#{_detailBean.isVisibleColumn('colDateChange')}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
@@ -64,7 +75,7 @@
 
         <p:column id="colDateCreate" headerText="#{bundle.DateCreate}"                   
                   rendered="#{_showDateCreate}"                  
-                  width="80" priority="4" styleClass="columnExt2" 
+                  width="80"
                   visible="#{_detailBean.isVisibleColumn('colDateCreate')}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
@@ -73,7 +84,7 @@
         </p:column>
 
         <p:column id="colAuthor" headerText="#{bundle.Owner}" rendered="#{_showAuthor}" 
-                  width="80" priority="5" styleClass="columnExt2" 
+                  width="80" 
                   visible="#{_detailBean.isVisibleColumn('colAuthor')}"
                   sortBy="#{item.authorName}">
             #{item.author.shortFIO}

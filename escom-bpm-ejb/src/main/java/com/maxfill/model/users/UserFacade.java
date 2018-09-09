@@ -192,12 +192,11 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     }
 
     @Override
-    public List<User> findActualDetailItems(UserGroups group, int first, int pageSize, String sortField, String sortOrder){
+    public List<User> findActualDetailItems(UserGroups group, int first, int pageSize, String sortField, String sortOrder, User currentUser){
         //TODO нужно сделать сортировку
         //slist = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
-        List<User> detailItems = freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).collect(Collectors.toList());
-        return detailItems;
+        return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted() && user.isActual()).collect(Collectors.toList());        
     }
     
     @Override
@@ -233,15 +232,16 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     
     /* Создание пользователя из службы интеграции с LDAP  */
     public void createUserFromLDAP(LdapUsers ldapUser){
-        Post post = postFacade.onGetPostByName(ldapUser.getPost());
-        Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany());
+        User admin = getAdmin();
+        Post post = postFacade.onGetPostByName(ldapUser.getPost(), admin);
+        Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany(), admin);
         Department department = departmentFacade.onGetDepartamentByName(company, ldapUser.getDepartament());        
-        UserGroups mainGroup = userGroupsFacade.onGetGroupByName(ldapUser.getPrimaryGroupName());
+        UserGroups mainGroup = userGroupsFacade.onGetGroupByName(ldapUser.getPrimaryGroupName(), admin);
         User user = doCreateUser(mainGroup, ldapUser.getName(), ldapUser.getLogin(), ldapUser.getPhone(), ldapUser.getMail(), ldapUser.getDistinguishedName());
         staffFacade.createStaff(department, post, user);
         
         for (String groupName : ldapUser.getGroups()){
-            UserGroups userGroup = userGroupsFacade.onGetGroupByName(groupName);
+            UserGroups userGroup = userGroupsFacade.onGetGroupByName(groupName, admin);
             userGroup.getUsersList().add(user);
             user.getUsersGroupsList().add(userGroup);
             edit(user);
@@ -256,8 +256,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         if (StringUtils.isNotBlank(ldapUser.getPhone())){
             user.setPhone(ldapUser.getPhone());
         }
-        Post post = postFacade.onGetPostByName(ldapUser.getPost());
-        Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany());
+        Post post = postFacade.onGetPostByName(ldapUser.getPost(), getAdmin());
+        Company company = companyFacade.onGetCompanyByName(ldapUser.getCompany(), getAdmin());
         Department department = departmentFacade.onGetDepartamentByName(company, ldapUser.getDepartament());
         
         List<Staff> staffs = staffFacade.findStaffsByUser(user);        

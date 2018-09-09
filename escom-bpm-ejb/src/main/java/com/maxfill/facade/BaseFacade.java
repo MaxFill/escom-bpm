@@ -67,24 +67,7 @@ public abstract class BaseFacade<T> {
     public T find(Object id) {        
         getEntityManager().getEntityManagerFactory().getCache().evict(entityClass); 
         return (T) getEntityManager().find(entityClass, id);       
-    }
-    
-    /**
-     * Отбирает все записи, кроме удалённых в корзину и не актуальных 
-     * @return 
-     */ 
-    public List<T> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass);        
-        Predicate crit1 = builder.equal(c.get("actual"), true);
-        Predicate crit2 = builder.equal(c.get("deleted"), false);
-        cq.select(c).where(builder.and(crit1, crit2));
-        cq.orderBy(orderBuilder(builder, c));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
-    }
+    }    
 
     public List<T> findRange(int[] range) {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
@@ -101,22 +84,7 @@ public abstract class BaseFacade<T> {
         cq.select(getEntityManager().getCriteriaBuilder().count(rt));
         Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
-    }    
-    
-    /* Возвращает только актуальные дочерние элементы для parent */
-    public List<T> findActualChilds(T parent){
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass);
-        Predicate crit1 = builder.equal(c.get("parent"), parent);
-        Predicate crit2 = builder.equal(c.get("deleted"), false);
-        Predicate crit3 = builder.equal(c.get("actual"), true);
-        cq.select(c).where(builder.and(crit1, crit2, crit3));
-        cq.orderBy(orderBuilder(builder, c));
-        Query q = getEntityManager().createQuery(cq);
-        return q.getResultList();
-    }      
+    }                
     
     /* Возвращает все дочерние элементы для parent */
     public List<T> findAllChilds(T parent){

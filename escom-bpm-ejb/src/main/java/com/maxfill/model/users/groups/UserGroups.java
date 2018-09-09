@@ -151,7 +151,8 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     public void setRoleFieldName(String roleFieldName) {
         this.roleFieldName = roleFieldName;
     }
-           
+    
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;
@@ -174,7 +175,7 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.users.groups.UsersGroups[ id=" + id + " ]";
+        return "UsersGroups[ id=" + id + " ] " + getName();
     }
 
     }

@@ -132,7 +132,8 @@ public class ExplorerTreeBean extends ExplorerBean{
                 String rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
-                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, detailItems);
+                tbKey = tbKey - currentPage;
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, loadItems);
                 makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево
@@ -185,7 +186,7 @@ public class ExplorerTreeBean extends ExplorerBean{
         }
         Integer tbKey = Integer.parseInt(rwKey);
         tbKey = tbKey - currentPage;
-        dropItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
+        dropItem = EscomBeanUtils.findUITableContent(loadItems, tbKey);
         if (dropItem != null) {
             //ищем в таблице запись источника
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
@@ -195,7 +196,7 @@ public class ExplorerTreeBean extends ExplorerBean{
             }
             tbKey = Integer.parseInt(rwKey);
             tbKey = tbKey - currentPage;
-            BaseDict dragItem = EscomBeanUtils.findUITableContent(detailItems, tbKey);
+            BaseDict dragItem = EscomBeanUtils.findUITableContent(loadItems, tbKey);
             makeCheckedItemList(dragItem);
             if (!checkedItems.isEmpty()) {
                 Set<String> errors = new HashSet<>();
@@ -237,16 +238,16 @@ public class ExplorerTreeBean extends ExplorerBean{
             rkTbl = dragId.substring(LEH_TABLE_NAME, dragId.length());
             rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
             Integer tbKey = Integer.parseInt(rwKey);
-            BaseDict flDrag = EscomBeanUtils.findUITableContent(detailItems, tbKey);
+            BaseDict flDrag = EscomBeanUtils.findUITableContent(loadItems, tbKey);
             BaseDict dragItem = flDrag;
             Set<String> errors = new HashSet<>();
             if (isItemDetailType(flDrag)){
                 tableBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
             } else
-            if (isItemTreeType(flDrag)){
-                dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
-                treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
-            }
+                if (isItemTreeType(flDrag)){
+                    dragNode = EscomBeanUtils.findTreeNode(tree, dragItem);
+                    treeBean.prepareMoveItemToGroup(dropItem, dragItem, errors);
+                }
             if (!errors.isEmpty()) {
                 MsgUtils.showErrors(errors);
             }
@@ -286,22 +287,19 @@ public class ExplorerTreeBean extends ExplorerBean{
 
     /* DRAG & DROP: отработка команды на перемещение из таблицы в дерево  */
     public void moveItemToGroup(){
-        checkedItems.stream().forEach(dragItem -> {
-            if (isItemTreeType(dragItem)){
-                treeBean.moveGroupToGroup(dropItem, dragItem);  
-                TreeNode drag = EscomBeanUtils.findTreeNode(tree, dragItem);
-                TreeNode parentDragNode = drag.getParent();
-                if (parentDragNode != null && CollectionUtils.isNotEmpty(parentDragNode.getChildren())){                    
-                    parentDragNode.getChildren().remove(drag);
-                }
-                dropItem.setIconTree("ui-icon-folder-collapsed");
-                onSelectInTree(dropNode);
-            } else {
-                tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
-                loadItems.removeAll(checkedItems);
+        BaseDict dragItem = checkedItems.get(0);         
+        if (isItemTreeType(dragItem)){
+            treeBean.moveGroupToGroup(dropItem, dragItem);  
+            TreeNode drag = EscomBeanUtils.findTreeNode(tree, dragItem);
+            TreeNode parentDragNode = drag.getParent();
+            if (parentDragNode != null && CollectionUtils.isNotEmpty(parentDragNode.getChildren())){                    
+                parentDragNode.getChildren().remove(drag);
             }
-        });        
-    }
-   
-
+            dropItem.setIconTree("ui-icon-folder-collapsed");
+            onSelectInTree(dropNode);
+        } else {
+            tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
+            loadItems.removeAll(checkedItems);
+        }
+    }   
 }

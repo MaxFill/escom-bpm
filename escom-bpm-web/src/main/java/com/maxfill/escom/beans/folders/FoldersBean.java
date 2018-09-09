@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
@@ -74,13 +75,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     /* Формирование содержимого контента папки   */ 
     @Override
     public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        List<BaseDict> cnt = new ArrayList();    
-        //загружаем в контент дочерние папки
-        List<Folder> folders = getFacade().findActualChilds((Folder)folder);
-        folders.stream().forEach(fl -> addChildItemInContent(fl, cnt));        
-        //загружаем в контент документы
-        List<Doc> docs = getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField,  sortOrder);
-        docs.stream().forEach(doc -> addDetailItemInContent(doc, cnt));
+        List<BaseDict> cnt = getFacade().findActualChilds((Folder)folder, getCurrentUser()).collect(Collectors.toList());
+        cnt.addAll(getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField,  sortOrder, getCurrentUser()));        
         return cnt;
     }
        
@@ -122,11 +118,11 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public List<List<?>> doGetDependency(Folder folder){
         List<List<?>> dependency = new ArrayList<>();
-        List detail = docFacade.findActualDetailItems(folder, 0, 0, "name", "ASCENDING");
+        List detail = docFacade.findActualDetailItems(folder, 0, 0, "name", "ASCENDING", getCurrentUser());
         if (!detail.isEmpty()) {
             dependency.add(detail);
         }
-        List<Folder> childs = foldersFacade.findActualChilds(folder);
+        List<Folder> childs = foldersFacade.findActualChilds(folder, getCurrentUser()).collect(Collectors.toList());
         if (!childs.isEmpty()) {
             dependency.add(childs);
         }
@@ -145,11 +141,6 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     public String getTypeName(Folder folder){
         return MsgUtils.getBandleLabel("FolderType");
     }        
-            
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
-    }
     
     /* GETS & SETS */
 

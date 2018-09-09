@@ -11,15 +11,14 @@ import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.nullsFirst;
 import org.apache.commons.collections.CollectionUtils;
 import org.primefaces.model.SortOrder;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.faces.component.UIComponent;
-import javax.faces.event.AjaxBehaviorEvent;
+import javax.faces.context.FacesContext;
+import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleEvent;
@@ -47,7 +46,6 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     protected final Map<String, Function<BaseDict, ?>> extractors = new HashMap<>();          
 
     protected final Map<String, Boolean> visibleColumns = new HashMap <>();
-    protected final Map<Integer, String> columns = new HashMap <>();
     
     @Override
     protected void initBean() {
@@ -71,15 +69,15 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         extractors.put("fullName", BaseDict::getFullName);
         extractors.put("code", BaseDict::getCode);
         
-        columns.put(0, "colCheck");
-        columns.put(1, "colIcon");        
-        columns.put(2, "colName");
+        visibleColumns.put("colCheck", Boolean.TRUE);
+        visibleColumns.put("colIcon", Boolean.TRUE);
+        visibleColumns.put("colName", Boolean.TRUE);
         initColumns();
-        columns.put(7, "colStateIcon");
-        columns.put(8, "colDateChange");
-        columns.put(9, "colDateCreate");
-        columns.put(10, "colAuthor");
-        columns.put(11, "colButton");
+        visibleColumns.put("colStateIcon", Boolean.TRUE);
+        visibleColumns.put("colDateChange", Boolean.TRUE);
+        visibleColumns.put("colDateCreate", Boolean.TRUE);
+        visibleColumns.put("colAuthor", Boolean.TRUE);
+        visibleColumns.put("colButton", Boolean.TRUE);     
         super.initBean(); 
     }    
 
@@ -129,11 +127,16 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         return getFacade().deleteItems(makeFilters(filters));
     }
 
-    public List<T> loadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
+    public List<T> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
         return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
     }
 
+    public boolean isEmptyLazyModel(){
+        if (lazyModel == null) return true;
+        return lazyModel.isDataEmpty();
+    }
+    
     public void refreshLazyData(){
         lazyModel = null;
     }
@@ -164,21 +167,12 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
      */
     public void onToggle(ToggleEvent event){
         Integer columnIndex = (Integer) event.getData();
-        String column = columns.get(columnIndex);
-        visibleColumns.replace(column, event.getVisibility() == Visibility.VISIBLE);
-    }
-    
-    /**
-     * Обработка события перемещения столбцов в таблице
-     * @param event
-     */
-    public void onColumnReorder(AjaxBehaviorEvent event){
-        DataTable table = (DataTable) event.getSource();
-        columns.clear();
-        for (int i = 0; i < table.getColumns().size(); i++) {
-            UIComponent col = (UIComponent) table.getColumns().get(i);
-            columns.put(i, col.getId());
-        }
+        //String column = columns.get(columnIndex);        
+        DataTable dataTable = (DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent("mainFRM").findComponent("tblDetail");
+        List<UIColumn> uIColumns = dataTable.getColumns();
+        UIColumn col = uIColumns.get(columnIndex);
+        String colId = col.getClientId().substring(18);
+        visibleColumns.replace(colId, event.getVisibility() == Visibility.VISIBLE);
     }
     
     /**

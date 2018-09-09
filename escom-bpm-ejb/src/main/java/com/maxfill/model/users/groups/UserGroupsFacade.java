@@ -14,9 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -74,7 +78,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
   
     /* Получение списка групп root уровня нужного типа, например, групп, являющихся ролями */
     @Override
-    public List<UserGroups> findActualChilds(UserGroups parent){
+    public Stream<UserGroups> findActualChilds(UserGroups parent, User currentUser){
         getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
@@ -91,11 +95,12 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        TypedQuery<UserGroups> query = getEntityManager().createQuery(cq);       
+        return query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     }
     
-    public List<UserGroups> findGroupsByType(Integer typeActualize){
+    public List<UserGroups> findGroupsByType(Integer typeActualize, User currentUser){
         getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
@@ -111,8 +116,10 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        TypedQuery<UserGroups> query = getEntityManager().createQuery(cq);       
+        return query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
     }
 
     protected void addPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
@@ -128,18 +135,28 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     @Override
     public void create(UserGroups usersGroups) {
         super.create(usersGroups);        
-        List<User> usersListNew = usersGroups.getUsersList();
-        for (User usersListNewUsers : usersListNew) {
-            usersListNewUsers.getUsersGroupsList().add(usersGroups);
-            getEntityManager().merge(usersListNewUsers);
+        if (CollectionUtils.isNotEmpty(usersGroups.getUsersList())){
+            usersGroups.getUsersList().forEach(user->{
+                user.getUsersGroupsList().add(usersGroups);
+                getEntityManager().merge(user);
+            });            
         }
     }
     
     @Override
     public void edit(UserGroups usersGroups) { 
         UserGroups persistentUsersGroups = getEntityManager().find(UserGroups.class, usersGroups.getId());
+                
         List<User> usersListOld = persistentUsersGroups.getUsersList();
+        if (usersListOld == null){
+            usersListOld = new ArrayList<>();    
+        }
+                
         List<User> usersListNew = usersGroups.getUsersList();
+        if (usersListNew == null){
+            usersListNew = new ArrayList<>();    
+        }
+        
         List<User> attachedUsersListNew = new ArrayList<>();
         for (User usersListNewUsersToAttach : usersListNew) {
             usersListNewUsersToAttach = getEntityManager().getReference(usersListNewUsersToAttach.getClass(), usersListNewUsersToAttach.getId());
@@ -147,17 +164,21 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         }
         usersListNew = attachedUsersListNew;
         usersGroups.setUsersList(usersListNew);
+        
         usersGroups = getEntityManager().merge(usersGroups);
-        for (User usersListOldUsers : usersListOld) {
-            if (!usersListNew.contains(usersListOldUsers)) {
-                usersListOldUsers.getUsersGroupsList().remove(usersGroups);
-                getEntityManager().merge(usersListOldUsers);
+        
+        if (CollectionUtils.isNotEmpty(usersListOld) ){
+            for (User usersListOldUsers : usersListOld) {
+                if (!usersListNew.contains(usersListOldUsers)) {
+                    usersListOldUsers.getUsersGroupsList().remove(usersGroups);
+                    getEntityManager().merge(usersListOldUsers);
+                }
             }
-        }
-        for (User usersListNewUsers : usersListNew) {
-            if (!usersListOld.contains(usersListNewUsers)) {
-                usersListNewUsers.getUsersGroupsList().add(usersGroups);
-                getEntityManager().merge(usersListNewUsers);
+            for (User usersListNewUsers : usersListNew) {
+                if (!usersListOld.contains(usersListNewUsers)) {
+                    usersListNewUsers.getUsersGroupsList().add(usersGroups);
+                    getEntityManager().merge(usersListNewUsers);
+                }
             }
         }
     }  
@@ -168,11 +189,11 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     }
  
     /* Ищет группу пользователей с указанным названием и если не найдена то создаёт новую  */
-    public UserGroups onGetGroupByName(String groupName){
+    public UserGroups onGetGroupByName(String groupName, User currentUser){
         if (StringUtils.isBlank(groupName)){
             return null;
         }
-        for (UserGroups group : findAll()){
+        for (UserGroups group : findAll(currentUser)){
             if (Objects.equals(group.getName(), groupName)){
                 return group;
             }

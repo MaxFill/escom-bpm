@@ -150,7 +150,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
      * @param detailInfo 
      */    
     private void doUpdateUser(List<LdapUsers> ldapUsers, StringBuilder detailInfo, LdapSettings settings){
-        List<User> users = userFacade.findAll();        
+        List<User> users = userFacade.findAll(userFacade.getAdmin());        
         for(LdapUsers ldapUser : ldapUsers){
             User user = isNewUser(ldapUser, users);
             if (user == null){

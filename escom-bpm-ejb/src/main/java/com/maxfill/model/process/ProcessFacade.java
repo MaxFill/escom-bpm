@@ -152,5 +152,4 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         return process;
     }
     
-    
 }

@@ -21,7 +21,6 @@ public class MailBoxFacade extends BaseFacade<Mailbox>{
         super(Mailbox.class);
     }
 
-    @Override
     public List<Mailbox> findAll() {
         getEntityManager().getEntityManagerFactory().getCache().evict(Mailbox.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

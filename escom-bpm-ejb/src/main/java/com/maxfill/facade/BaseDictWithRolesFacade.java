@@ -9,7 +9,6 @@ import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -98,11 +97,11 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @param roleName
      * @return 
      */
-    private List<User> actualiseRole(T item, String roleName){
+    private List<User> actualiseRole(T item, String roleName, User currentUser){
         Map<String, Set<Integer>> roles = item.getRoles();
         if (CollectionUtils.isEmpty(roles) || !roles.containsKey(roleName)) return new ArrayList<>();
         Set<Integer> usersIds = roles.get(roleName);
-        return userFacade.findByIds(usersIds);
+        return userFacade.findByIds(usersIds, currentUser);
     }
             
     /**
@@ -111,13 +110,14 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @param rolesJson
      * @param subject
      * @param content - текст сообщения
+     * @param currentUser
      */
-    public void sendRoleMessage(T item, String rolesJson, String subject, String content){
+    public void sendRoleMessage(T item, String rolesJson, String subject, String content, User currentUser){
         Gson gson = new Gson();
         Set<User> addressee = new HashSet<>();
         List<String> roles = gson.fromJson(rolesJson, List.class);
         roles.forEach(role->{
-            addressee.addAll(actualiseRole(item, role));
+            addressee.addAll(actualiseRole(item, role, currentUser));
         });        
         addressee.forEach(user-> 
             messagesFacade.createSystemMessage(user, subject, content, new Tuple(item, null))

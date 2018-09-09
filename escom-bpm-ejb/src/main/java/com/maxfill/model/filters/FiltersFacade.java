@@ -2,10 +2,9 @@ package com.maxfill.model.filters;
 
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.filters.Filter;
-import com.maxfill.model.filters.FilterLog;
-import com.maxfill.model.filters.FiltersStates;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.users.User;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -53,5 +52,11 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
         //cq.orderBy(builder.asc(root.get("name")));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
+    }
+    
+    /* К фильтрам пока права не настроены, поэтому всегда true */
+    @Override
+    protected Boolean preloadCheckRightView(BaseDict item, User user) {    
+        return Boolean.TRUE;
     }
 }

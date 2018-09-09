@@ -306,7 +306,12 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
 
     /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
     public String getNameEndElipse(){
-        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);
+        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);        
+    }
+    
+    /* Формирует строку ограниченной длинны из названия обекта, заканчивающуюся точками */
+    public String getNameForTree(){
+        return StringUtils.abbreviate(getName(), SysParams.LENGHT_SHORT_NAME_ELIPSE);
     }
 
     /**

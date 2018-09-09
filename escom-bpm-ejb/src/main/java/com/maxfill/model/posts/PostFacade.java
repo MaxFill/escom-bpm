@@ -13,8 +13,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import com.maxfill.model.staffs.Staff_;
+import com.maxfill.model.users.User;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -45,13 +45,14 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
     /**
      * Ищет должность по имени и если не найдена то создаёт новую должность 
      * @param postName Наименование искомой должности
+     * @param currentUser
      * @return Должность
      */
-    public Post onGetPostByName(String postName){
+    public Post onGetPostByName(String postName, User currentUser){
         if (StringUtils.isBlank(postName)){ 
             return null;
         }
-        for (Post post : findAll()){
+        for (Post post : findAll(currentUser)){
             if (Objects.equals(post.getName(), postName)){
                 return post;
             }

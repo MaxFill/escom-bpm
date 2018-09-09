@@ -19,9 +19,8 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import com.maxfill.model.staffs.Staff;
-import javax.persistence.criteria.Order;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
-import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Подразделения" */
 @Named
@@ -94,14 +93,8 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* Формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        List<BaseDict> cnt = new ArrayList();
-        List<Order> orders = new ArrayList<>();
-        //загружаем в контент подразделения
-        List<Department> departments = itemFacade.findActualChilds((Department)department);
-        departments.stream().forEach(depart -> addChildItemInContent(depart, cnt));
-        //загружаем в контент штатные единицы
-        List<Staff> staffs = staffFacade.findActualDetailItems((Department)department, first, pageSize, sortField,  sortOrder);
-        staffs.stream().forEach(staff -> addDetailItemInContent(staff, cnt));
+        List<BaseDict> cnt = itemFacade.findActualChilds((Department)department, getCurrentUser()).collect(Collectors.toList());
+        cnt.addAll(staffFacade.findActualDetailItems((Department)department, first, pageSize, sortField,  sortOrder, getCurrentUser()));        
         return cnt;
     }
 
@@ -155,10 +148,5 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     @Override
     public BaseDetailsBean getDetailBean() {
         return staffBean;
-    }
-
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
     }
 }

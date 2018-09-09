@@ -34,7 +34,6 @@ public class CounterFacade extends BaseFacade<Counter>{
         return q.getResultList();
     }
     
-    @Override
     public List<Counter> findAll() {
         getEntityManager().getEntityManagerFactory().getCache().evict(Counter.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

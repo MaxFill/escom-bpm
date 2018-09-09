@@ -16,7 +16,6 @@ import com.maxfill.utils.EscomUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
@@ -63,8 +62,7 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
                 .map(NumberUtils::toInt)
                 .collect(Collectors.toList());
         
-        List<Doc> sendDocs = new ArrayList<>();
-        sendDocs.addAll(docFacade.findByIds(docIds));
+        List<Doc> sendDocs = docFacade.findByIds(docIds, getCurrentUser());
         prepareMessage(sendDocs);
     }
     

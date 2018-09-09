@@ -11,6 +11,7 @@ import com.maxfill.model.folders.Folder_;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
+import com.maxfill.model.users.User;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.EJB;
@@ -60,11 +61,11 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }       
     
     /* Ищет компанию с указанным названием, и если не найдена то создаёт новую  */
-    public Company onGetCompanyByName(String companyName){
+    public Company onGetCompanyByName(String companyName, User currentUser){
         if (StringUtils.isBlank(companyName)){
             return null;
         }
-        for (Company company : findAll()){
+        for (Company company : findAll(currentUser)){
             if (Objects.equals(company.getName(), companyName)){
                 return company;
             }

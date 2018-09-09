@@ -31,7 +31,6 @@ import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.states.State;
 import com.maxfill.utils.Tuple;
-import java.util.function.Function;
 import java.util.logging.Logger;
 
 /**
@@ -58,14 +57,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     @Override
     public abstract BaseDictFacade getFacade();
-    public abstract BaseDetailsBean getOwnerBean();     //возвращает бин владельца объекта
-        
-    /* Формирование списка детальных данных в таблице обозревателя  */
-    public List<T> prepareSetDetails(List<T> sourceItems) {
-        return sourceItems.stream()
-                    .filter(item -> getFacade().preloadCheckRightView(item, getCurrentUser()))
-                    .collect(Collectors.toList());
-    }    
+    public abstract BaseDetailsBean getOwnerBean();     //возвращает бин владельца объекта           
     
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
@@ -291,9 +283,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Возвращает список актуальных объектов, доступных для просмотра текущему пользователю */
     public List<T> findAll(){        
-        return (List<T>) getFacade().findAll().stream()
-                    .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
-                    .collect(Collectors.toList());
+        return getFacade().findAll(getCurrentUser());
     }
     
     /**
@@ -306,9 +296,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @return 
      */
     public List<T> findDetailItems(BaseDict owner, int first, int pageSize, String sortField, String sortOrder){
-        return (List<T>) getFacade().findActualDetailItems(owner, first, pageSize, sortField, sortOrder).stream()
-                .filter(item -> getFacade().preloadCheckRightView((T)item, getCurrentUser()))
-                .collect(Collectors.toList());
+        return getFacade().findActualDetailItems(owner, first, pageSize, sortField, sortOrder, getCurrentUser());
     }
     
     /* Копирование объекта */
@@ -536,13 +524,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* ИЗБРАННОЕ */
     
     /* ИЗБРАННОЕ: отбор избранных записей для текущего пользователя     */
-    public List<T> findFavorites() {        
-        List<Integer> favorIds = new ArrayList<>();
-        List<FavoriteObj> favorites = getCurrentUser().getFavoriteObjList();
-        favorites.stream()
+    public List<T> findFavorites(User currentUser) {        
+        List<Integer> favorIds = currentUser.getFavoriteObjList().stream()
                 .filter(item -> (item.getMetadateObj().getId().equals(getMetadatesObj().getId())))
-                .forEach(item -> favorIds.add(item.getObjId()));
-        return getFacade().findByIds(favorIds);
+                .map(item->item.getObjId())
+                .collect(Collectors.toList());
+        return getFacade().findByIds(favorIds, currentUser);
     }   
 
     /* ИЗБРАННОЕ: удаление объекта из избранного   */
@@ -555,7 +542,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @param item
      */
     public void addInFavorites(BaseDict item){
-        sessionBean.addInFavorites(item, getMetadatesObj());
+        sessionBean.addInFavorites(item, getMetadatesObj());        
     }
 
     /*  ФИЛЬТРЫ */
@@ -565,11 +552,11 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         List<T> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
-                result = getFacade().loadFromTrash(first, pageSize, sortField, sortOrder);
+                result = getFacade().loadFromTrash(first, pageSize, sortField, sortOrder, getCurrentUser());
                 break;
             }           
             case DictFilters.FAVORITE_ID: {
-                result = findFavorites();
+                result = findFavorites(getCurrentUser());
                 break;
             }            
             case DictFilters.USER_CREATED_ID: {
@@ -581,7 +568,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 break;
             }
             case DictFilters.NOTACTUAL_ID: {
-                result = getFacade().loadNotActualItems(first, pageSize);
+                result = getFacade().loadNotActualItems(first, pageSize, getCurrentUser());
                 break;
             }
             case DictFilters.ON_MY_EDIT: {
@@ -589,7 +576,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 break;
             }
         }
-        return prepareSetDetails(result);
+        return result;
     }
     
     /* ПОИСК: Выполняет инициализацию модели данных поиска */
@@ -599,8 +586,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* ПОИСК: Выполняет поиск объектов */
     public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
-        List<T> sourceItems = getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize);
-        return prepareSetDetails(sourceItems);
+       return getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */

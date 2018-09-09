@@ -65,14 +65,7 @@
                     <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                    
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:toolbar id="explToolBar">
-                            <f:facet name="left">
-                                <p:commandButton rendered="false" id="toggler" type="button" icon="ui-icon-calculator" 
-                                                 title="#{bundle.Columns}" style="float: left;">                                 
-                                </p:commandButton>            
-                                <p:columnToggler datasource="tblDetail" trigger="toggler">
-                                    <p:ajax event="toggle" listener="#{_detailBean.onToggle}" update="tblDetail" />
-                                </p:columnToggler>
-                                
+                            <f:facet name="left">                                
                                 <p:commandButton id="btnRefreshRight" icon="ui-icon-refresh" 
                                                  title="#{bundle.Refresh}"                                  
                                                  actionListener="#{_bean.refreshLazyData()}"
@@ -130,7 +123,7 @@
                                 <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
                                                rendered="#{sessionBean.userAdmin and _bean.isTrashSelected()}">
                                     <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
-                                                disabled="#{_bean.detailItems.isEmpty()}"
+                                                disabled="#{_bean.isEmptyLazyModel()}"
                                                 update="mainFRM"
                                                 actionListener="#{_bean.onClearTrash()}"
                                                 oncomplete="initDND()">
@@ -202,13 +195,6 @@
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
 
                     <ui:insert name="btnDisplayNone" />
-
-                    <p:commandButton id="editCardBtn" style="display: none;"
-                                     actionListener="#{_bean.onEditDetailItem()}" 
-                                     onstart="PF('statusDialog').show()"
-                                     oncomplete="PF('statusDialog').hide();">                        
-                        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseForm}" update="mainFRM westFRM" oncomplete="initDND()"/>
-                    </p:commandButton>
 
                     <p:commandButton id="viewCardBtn" style="display: none;"
                                      actionListener="#{_bean.onViewDetailItem()}"

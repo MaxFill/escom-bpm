@@ -119,12 +119,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
                 sb.append(company.getName());
             }
         return sb.toString();
-    }
-
-    @Override
-    public String getNameEndElipse() {
-        return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);
-    }    
+    }   
     
     /* Формирует наименование Компания + Подразделение   */
     public String getOrgUnit() {

@@ -15,6 +15,7 @@ import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ public class FolderExplBean extends ExplorerTreeBean{
     
     @EJB
     private DocFacade docFacade;
+    @EJB
+    private ProcessFacade processFacade;
     
     private TreeNode procTree;            
     
@@ -111,16 +114,17 @@ public class FolderExplBean extends ExplorerTreeBean{
     
     @Override
     protected List<BaseDict> loadDocs(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
-        List<Process> processes = ((List<Process>) currentItem.getDetailItems()).stream()
-                                 .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
-                                 .collect(Collectors.toList()); 
-
-        loadItems = new ArrayList<>();
+        List<Process> processes = processFacade.findActualDetailItems((ProcessType)currentItem, 0, 0, sortField, sortField, getCurrentUser())
+            .stream()
+            .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
+            .collect(Collectors.toList()); 
+        
+        List<BaseDict> docs = new ArrayList<>();
         processes.forEach(p->p.getDocs().stream()
                 .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))
-                .forEach(doc->loadItems.add(doc))
+                .forEach(doc->docs.add(doc))
         );
-        return loadItems;
+        return docs;
     }
     
    /* Обработка события drop в дерево объектов  */
@@ -184,7 +188,7 @@ public class FolderExplBean extends ExplorerTreeBean{
                 String rwKey = rkTbl.substring(0, rkTbl.indexOf(":"));
                 Integer tbKey = Integer.parseInt(rwKey);
                 tbKey = tbKey - currentPage;
-                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, detailItems);
+                BaseDict dragItem = (BaseDict) ItemUtils.findItemInDetailByKeyRow(tbKey, loadItems);
                 makeCheckedItemList(dragItem);
                 if (!checkedItems.isEmpty()){
                     switch (currentTab){ //в зависимости от того, какое открыто дерево

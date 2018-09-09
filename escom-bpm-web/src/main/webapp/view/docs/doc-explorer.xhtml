@@ -214,7 +214,7 @@
                     selection="#{_bean.procSelectedNode}" style="width: auto; overflow-y: auto;">
 
                 <p:treeNode type="tree" expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                    <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
+                    <h:outputText value="#{treeItem.nameForTree}" title="#{treeItem.name}"/>
                 </p:treeNode>
 
                 <p:ajax event="select" listener="#{_bean.onProcNodeSelect}"

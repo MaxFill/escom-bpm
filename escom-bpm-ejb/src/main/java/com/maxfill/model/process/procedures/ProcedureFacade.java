@@ -18,7 +18,6 @@ public class ProcedureFacade extends BaseFacade<Procedure>{
         super(Procedure.class);
     }
     
-    @Override
     public List<Procedure> findAll() {                        
         getEntityManager().getEntityManagerFactory().getCache().evict(Procedure.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

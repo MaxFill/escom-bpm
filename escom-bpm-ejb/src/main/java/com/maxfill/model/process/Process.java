@@ -6,13 +6,10 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
-import com.maxfill.model.staffs.Staff;
 import org.apache.commons.lang.StringUtils;
-
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
@@ -81,7 +78,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @JoinTable(name = "docsInProcesses", joinColumns = {
         @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "DocumentId", referencedColumnName = "Id")})
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Doc> docs = new ArrayList<>();    
     
     /* Состояние */

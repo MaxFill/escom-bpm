@@ -11,6 +11,7 @@ import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictNumerator;
+import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
@@ -29,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.*;
@@ -81,20 +83,26 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         return Doc.class.getSimpleName().toLowerCase();
     }
 
+    @Override
+    public Boolean preloadCheckRightView(BaseDict item, User user) {
+        return super.preloadCheckRightView(item, user);
+    }
+        
     /* Возвращает документы, заблокированные пользователем */
     @Override
-    public List<Doc> loadLockDocuments(User editor){
+    public List<Doc> loadLockDocuments(User currentUser){
         getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
         Root<Attaches> root = cq.from(Attaches.class);
         Join docJoin = root.join(Attaches_.doc);
-        Predicate crit1 = builder.equal(root.get(Attaches_.lockAuthor), editor);
+        Predicate crit1 = builder.equal(root.get(Attaches_.lockAuthor), currentUser);
         cq.select(docJoin);
         cq.where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);        
-        List r = q.getResultList();
-        return (List<Doc>)r;
+        Query query = getEntityManager().createQuery(cq);                        
+        return (List<Doc>) query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
     }
     
     /* Возвращает документы с указанным Контрагентом  */

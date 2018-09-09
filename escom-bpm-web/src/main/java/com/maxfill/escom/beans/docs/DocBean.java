@@ -55,12 +55,12 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @EJB
     private DocFacade docsFacade;    
     
-     @Override        
+    @Override        
     protected void initColumns(){
-        columns.put(3, "colCompany");
-        columns.put(4, "colDocType");
-        columns.put(5, "colNumber");
-        columns.put(6, "colItemDate");
+        visibleColumns.put("colCompany", Boolean.TRUE);
+        visibleColumns.put("colDocType", Boolean.TRUE);
+        visibleColumns.put("colNumber", Boolean.TRUE);
+        visibleColumns.put("colItemDate", Boolean.TRUE);
     }
         
     /* перед вставкой скопированного документа */

@@ -10,11 +10,11 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.Partner;
 import com.maxfill.model.partners.PartnersFacade;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Группы контрагентов" */
 @Named
@@ -32,15 +32,10 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        List<BaseDict> cnt = new ArrayList();        
-        //загружаем в контент группы контрагента
-        List<PartnerGroups> groups = itemsFacade.findActualChilds((PartnerGroups)partnerGroup);
-        groups.stream().forEach(group -> addChildItemInContent(group, cnt));
-        if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){
-            //загружаем в контент контрагентов 
-            List<Partner> partners = partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize, sortField,  sortOrder);
-            partners.stream().forEach(partner -> addDetailItemInContent(partner, cnt));
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {        
+        List<BaseDict> cnt = itemsFacade.findActualChilds((PartnerGroups)partnerGroup, getCurrentUser()).collect(Collectors.toList());        
+        if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){            
+            cnt.addAll(partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize, sortField,  sortOrder, getCurrentUser()));            
         }
         return cnt;
     }
@@ -65,7 +60,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     @Override
     public List<List<?>> doGetDependency(PartnerGroups group){
         List<List<?>> dependency = new ArrayList<>();
-        List<PartnerGroups> partnerGroups = itemsFacade.findActualChilds(group);
+        List<PartnerGroups> partnerGroups = itemsFacade.findActualChilds(group, getCurrentUser()).collect(Collectors.toList());
         if (!partnerGroups.isEmpty()) {
             dependency.add(partnerGroups);
         }
@@ -116,8 +111,4 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
         return partnerBean;
     }
 
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
-    }
 }

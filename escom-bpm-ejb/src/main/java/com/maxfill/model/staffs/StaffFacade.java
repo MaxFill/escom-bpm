@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -83,14 +85,12 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
 
     @Override
-    protected List<Staff> filtrationTrashResult(List<Staff> trashes){
-        List<Staff> result = trashes.stream()
+    protected Stream<Staff> filtrationTrashResult(Stream<Staff> trashes){
+        return trashes
                 .filter(item ->
                         (item.getCompany() == null || (item.getCompany() != null && !item.getCompany().isDeleted())) &&
                         (item.getOwner() == null || (item.getOwner() != null && !item.getOwner().isDeleted()))
-                )
-                .collect(Collectors.toList());
-        return result;
+                );                
     }
        
     /* Создание новой штатной единицы  */
@@ -194,9 +194,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
      * @param company
      * @param department
+     * @param currentUser
      * @return
      */
-    public List<Staff> findStaffByCompany(Company company, Department department){
+    public List<Staff> findStaffByCompany(Company company, Department department, User currentUser){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
@@ -210,8 +211,10 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         }
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();
+        TypedQuery<Staff> query = getEntityManager().createQuery(cq);       
+        return query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
     }
 
     /**

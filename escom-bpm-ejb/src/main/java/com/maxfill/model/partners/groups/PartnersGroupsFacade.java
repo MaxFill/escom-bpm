@@ -20,6 +20,7 @@ import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.apache.commons.collections.CollectionUtils;
 
 /* Группы контрагентов */
 @Stateless
@@ -45,10 +46,11 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     @Override
     public void create(PartnerGroups group) {
         super.create(group);
-        List<Partner> partners = group.getPartnersList();
-        for (Partner partner : partners) {
-            partner.getPartnersGroupsList().add(group);
-            getEntityManager().merge(partner);
+        if (CollectionUtils.isNotEmpty(group.getPartnersList())){
+            group.getPartnersList().forEach(partner-> {
+                partner.getPartnersGroupsList().add(group);
+                getEntityManager().merge(partner);
+            });
         }
     }
 

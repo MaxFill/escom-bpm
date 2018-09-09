@@ -38,10 +38,10 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     @Override
     public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target) {
-        super.preparePasteItem(pasteItem, sourceItem, target);
+        super.preparePasteItem(pasteItem, sourceItem, target);        
         if(!isNeedCopyOnPaste(pasteItem, target)) {
             addItemToGroup(pasteItem, target);
-        }
+        }        
     }
 
     /* при перемещении пользователя drag&drop */
@@ -115,7 +115,10 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     /* Проверка возможности удаления user */
     @Override
     protected void checkAllowedDeleteItem(User user, Set <String> errors) {
-        super.checkAllowedDeleteItem(user, errors);
+        super.checkAllowedDeleteItem(user, errors);        
+        if (user.getId().equals(0)){
+            errors.add("OperationIsNotApplicable");
+        }
         if(!staffFacade.findStaffsByUser(user).isEmpty()) {
             Object[] messageParameters = new Object[]{user.getShortFIO()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);

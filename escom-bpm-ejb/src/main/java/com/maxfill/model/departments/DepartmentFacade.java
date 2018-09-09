@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -198,10 +199,13 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @param owner
      * @param first
      * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param currentUser
      * @return
      */
     @Override
-    public List<Department> findActualDetailItems(Company owner, int first, int pageSize, String sortField, String sortOrder){
+    public List<Department> findActualDetailItems(Company owner, int first, int pageSize, String sortField, String sortOrder, User currentUser){
         first = 0;
         pageSize = configuration.getMaxResultCount();
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
@@ -221,10 +225,12 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         predicates = criteries.toArray(predicates);
 
         cq.select(root).where(builder.and(predicates));        
-        Query query = getEntityManager().createQuery(cq);       
+        TypedQuery<Department> query = getEntityManager().createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultList();
+        return query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
     }
     
     @Override

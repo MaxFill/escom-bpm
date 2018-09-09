@@ -13,6 +13,7 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 
 /* Фасад для сущности "Группы видов документов" */
 @Stateless
@@ -24,7 +25,7 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
     public DocTypeGroupsFacade() {
         super(DocTypeGroups.class, DocTypeGroupsLog.class, DocTypeGroupsStates.class);
     }
-
+    
     @Override
     public Class<DocTypeGroups> getItemClass() {
         return DocTypeGroups.class;

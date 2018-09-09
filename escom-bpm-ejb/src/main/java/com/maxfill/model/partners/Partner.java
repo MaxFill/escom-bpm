@@ -146,6 +146,7 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
         this.partnersGroupsList = partnersGroupsList;
     }
     
+    @Override
     public String getCode() {
         return code;
     }

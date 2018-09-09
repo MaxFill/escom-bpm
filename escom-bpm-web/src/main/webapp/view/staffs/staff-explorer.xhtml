@@ -28,11 +28,11 @@
        
     <!-- специфичные колонки таблицы обозревателя для "Штатной единицы"-->
     <ui:define name="specDetailColumns">       
-        <p:column headerText="#{bundle.Employee}" sortBy="#{item.employeeFIO}" 
+        <p:column id="colEmployee" headerText="#{bundle.Employee}" sortBy="#{item.employeeFIO}" 
                   rendered="#{_bean.isNowShowDetail()}">
             <h:outputLabel value="#{item.employeeFIO}"/>
         </p:column>
-        <p:column headerText="#{bundle.Post}" sortBy="#{item.postName}" 
+        <p:column id="colPoast" headerText="#{bundle.Post}" sortBy="#{item.postName}" 
                   rendered="#{_bean.isNowShowDetail()}">
             <h:outputLabel value="#{item.postName}"/>
         </p:column>

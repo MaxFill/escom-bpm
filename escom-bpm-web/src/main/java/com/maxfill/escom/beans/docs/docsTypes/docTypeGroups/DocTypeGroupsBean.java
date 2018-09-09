@@ -6,15 +6,17 @@ import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocTypeFacade;
+import java.util.ArrayList;
 
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import org.primefaces.model.TreeNode;
 
 /* Бин для сущности "Группы видов документов" */
 @Named
@@ -39,6 +41,18 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     public void preparePasteItem(DocTypeGroups pasteItem, DocTypeGroups sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((DocTypeGroups)target);
+        pasteItem.setDetailItems(sourceItem.getDetailItems()); //копируем только ссылки!
+    }
+    
+      /* Возвращает списки зависимых объектов, необходимых для копирования */
+    @Override
+    public List<List<?>> doGetDependency(DocTypeGroups group){
+        List<List<?>> dependency = new ArrayList<>();
+        List<DocTypeGroups> groups = itemsFacade.findActualChilds(group, getCurrentUser()).collect(Collectors.toList());
+        if (!groups.isEmpty()) {
+            dependency.add(groups);
+        }              
+        return dependency;
     }
     
     @Override
@@ -65,10 +79,5 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     @Override
     public BaseDetailsBean getDetailBean() {
         return docTypeBean;
-    }
-
-    @Override
-    protected void doExpandTreeNode(TreeNode node){
-        node.setExpanded(true);
     }
 }

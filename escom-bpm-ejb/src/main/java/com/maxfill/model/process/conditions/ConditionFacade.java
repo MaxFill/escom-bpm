@@ -19,7 +19,6 @@ public class ConditionFacade extends BaseFacade<Condition>{
         super(Condition.class);
     }
     
-    @Override
     public List<Condition> findAll() {                        
         getEntityManager().getEntityManagerFactory().getCache().evict(Condition.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

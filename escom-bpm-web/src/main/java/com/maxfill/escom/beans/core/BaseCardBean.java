@@ -465,6 +465,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         
     /* ПРОЧИЕ МЕТОДЫ */
 
+    public void addInFavorites(){
+        sessionBean.addInFavorites(getEditedItem(), getMetadatesObj());
+    }
+    
     /* При изменении в карточке объекта опции "Наследование прав"  */
     public void onInheritsChange(ValueChangeEvent event) {
         onItemChange();

@@ -29,7 +29,6 @@ import com.maxfill.services.notification.NotificationService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.ItemUtils;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXB;
@@ -399,7 +398,7 @@ public class WorkflowImpl implements Workflow {
             ProcReport report = new ProcReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
             process.getReports().add(report);
             task.getReports().add(report);
-            run(process, startElement, errors);
+            run(process, startElement, errors, user);
         }
     }
     
@@ -455,7 +454,7 @@ public class WorkflowImpl implements Workflow {
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, user);
-        run(process, startElement, errors); 
+        run(process, startElement, errors, user); 
     }
 
     /**
@@ -499,11 +498,12 @@ public class WorkflowImpl implements Workflow {
      * @param process
      * @param startElement
      * @param errors 
+     * @param currentUser 
      */
     @Override
-    public void run(Process process, WFConnectedElem startElement, Set<String> errors) {   
+    public void run(Process process, WFConnectedElem startElement, Set<String> errors, User currentUser) {   
         Set<Task> exeTasks = new HashSet<>();
-        doRun(startElement.getAnchors(), process, exeTasks, errors);
+        doRun(startElement.getAnchors(), process, exeTasks, errors, currentUser);
         if (errors.isEmpty()){
             startTasks(exeTasks, process.getScheme());            
             packScheme(process.getScheme());
@@ -520,7 +520,7 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param errors 
      */
-    private void doRun(Set<AnchorElem> anchors, Process process, Set<Task> exeTasks, Set<String> errors){
+    private void doRun(Set<AnchorElem> anchors, Process process, Set<Task> exeTasks, Set<String> errors, User currentUser){
         Scheme scheme = process.getScheme();
         anchors.stream()
                 .filter(anchor->anchor.isSource())
@@ -548,9 +548,9 @@ public class WorkflowImpl implements Workflow {
                                 .forEach(condition->{
                                     condition.setDone(true);
                                     if (checkCondition(condition, scheme, errors)){
-                                        doRun(condition.getSecussAnchors(), process, exeTasks, errors);
+                                        doRun(condition.getSecussAnchors(), process, exeTasks, errors, currentUser);
                                     } else {
-                                        doRun(condition.getFailAnchors(), process, exeTasks, errors);
+                                        doRun(condition.getFailAnchors(), process, exeTasks, errors, currentUser);
                                     }
                                 });
 
@@ -559,7 +559,7 @@ public class WorkflowImpl implements Workflow {
                         targetStates.forEach(stateElem->{
                                     stateElem.setDone(true);
                                     changingDoc(stateElem, scheme, errors);
-                                    doRun(stateElem.getAnchors(), process, exeTasks, errors);
+                                    doRun(stateElem.getAnchors(), process, exeTasks, errors, currentUser);
                                 });
 
                         //обрабатываем логические элементы
@@ -568,7 +568,7 @@ public class WorkflowImpl implements Workflow {
                                 .filter(logic-> canExeLogic(logic, scheme))
                                 .forEach(logic-> {
                                     logic.setDone(true);
-                                    doRun(logic.getAnchors(), process, exeTasks, errors);
+                                    doRun(logic.getAnchors(), process, exeTasks, errors, currentUser);
                                 });
 
                         //обрабатываем таймеры
@@ -594,15 +594,15 @@ public class WorkflowImpl implements Workflow {
                                     }
                                     if (procTimer.getStartDate().before(new Date())){
                                         procTimerFacade.updateNextStart(procTimer);
-                                        doRun(timerEl.getAnchors(), process, exeTasks, errors);
+                                        doRun(timerEl.getAnchors(), process, exeTasks, errors, currentUser);
                                     }
                                 });
                         
                         //обрабатываем сообщения
                         Set<MessageElem> messages = findMessages(connectors, scheme.getElements().getMessages());
                         messages.stream().forEach(msgEl->{
-                            processFacade.sendRoleMessage(process, msgEl.getRecipientsJSON(), msgEl.getContent(), "");
-                            doRun(msgEl.getAnchors(), process, exeTasks, errors);
+                            processFacade.sendRoleMessage(process, msgEl.getRecipientsJSON(), msgEl.getContent(), "", currentUser);
+                            doRun(msgEl.getAnchors(), process, exeTasks, errors, currentUser);
                         });
                                 
                         //обработка выходов из процесса -> переход в связанный(е) процесс(ы)

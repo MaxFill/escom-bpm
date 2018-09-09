@@ -3,12 +3,10 @@ package com.maxfill.escom.beans.core;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T , O >{
@@ -22,63 +20,31 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Базовый метод формирования детального списка для группы  */
-    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
-        List<BaseDict> cnt = new ArrayList();        
-        List<BaseDict> details = getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder);
-        details.stream().forEach(item -> addDetailItemInContent(item, cnt));
-        return cnt;
+    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){        
+        return getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder, getCurrentUser());        
     }
     
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
             node.getChildren().clear();
-            List<T> childs = getFacade().findActualChilds(item);
-            childs.stream().forEach(itemChild -> addItemInTree(node, itemChild, "tree"));
+            getFacade().findActualChilds(item, getCurrentUser()).forEach(itemChild -> addItemInTree(node, (BaseDict)itemChild, "tree"));
             item.setIconTree("ui-icon-folder-open");
         }
-    }
-     
-    /* Добавление подчинённого объекта в контент */
-    protected void addDetailItemInContent(BaseDict item, List<BaseDict> cnt){
-        if (getDetailBean().getFacade().preloadCheckRightView(item, getCurrentUser())){
-            cnt.add(item);
-        }
-    }
-    
-    /* Добавление дочернего объекта в контент */
-    protected void addChildItemInContent(T item, List<BaseDict> cnt){
-        if (getFacade().preloadCheckRightView(item, getCurrentUser())){
-            cnt.add(item);
-        }
-    }
+    }         
     
     /* Формирование дерева */
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
         tree.setExpanded(true);
-        List<T> rootItem = getFacade().findRootItems();
-        List<BaseDict> sourceTreeItems = rootItem.stream()
-                .filter(item -> getFacade().preloadCheckRightView(item, getCurrentUser()))
-                .collect(Collectors.toList());
-        sourceTreeItems.stream().forEach(treeItem -> addItemInTree(tree, treeItem, "tree"));
+        getFacade().findRootItems(getCurrentUser()).forEach(treeItem -> addItemInTree(tree, (BaseDict)treeItem, "tree"));
         return tree;
     }
 
     /* Добавление узла в дерево при его формировании  */
     public TreeNode addItemInTree(TreeNode parentNode, BaseDict item, String typeNode) {
-        TreeNode rezNode = null;
-        if (getFacade().preloadCheckRightView(item, getCurrentUser())) {
-            TreeNode newNode = new DefaultTreeNode(typeNode, item, parentNode);
-            doExpandTreeNode(newNode);
-            //List<T> childs = getFacade().findActualChilds(item);
-            //childs.stream().forEach(itemChild -> addItemInTree(newNode, itemChild, typeNode));
-            rezNode = newNode;
-        }
-        return rezNode;
-    }              
-    
-    protected void doExpandTreeNode(TreeNode node){}
+        return new DefaultTreeNode(typeNode, item, parentNode);                
+    }
     
     /* Удаление подчинённых (связанных) объектов */
     @Override
