@@ -19,7 +19,7 @@ public final class DictFrmName {
     public static final String FRM_MESSAGE = "message-card";
     public static final String FRM_PROCEDURE = "procedure-card";
     public static final String FRM_STATE = "state-card";
-    public static final String FRM_DOC_STATUS = "doc-status-card";
+    public static final String FRM_DOC_STATUS = "docstate-card";
     public static final String FRM_EXIT = "exit-card";
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 

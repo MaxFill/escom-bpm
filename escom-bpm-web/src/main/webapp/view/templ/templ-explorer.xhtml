@@ -123,7 +123,7 @@
                                 <p:splitButton value="#{bundle.Actions}" icon="ui-icon-gear"                   
                                                rendered="#{sessionBean.userAdmin and _bean.isTrashSelected()}">
                                     <p:menuitem value="#{bundle.ClearTrash}" icon="ui-icon-close" title="#{bundle.FullClearTrash}"
-                                                disabled="#{_bean.isEmptyLazyModel()}"
+                                                disabled="#{_bean.isEmptyDetails()}"
                                                 update="mainFRM"
                                                 actionListener="#{_bean.onClearTrash()}"
                                                 oncomplete="initDND()">

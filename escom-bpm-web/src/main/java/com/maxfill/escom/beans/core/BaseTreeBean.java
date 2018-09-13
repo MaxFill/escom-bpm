@@ -11,7 +11,7 @@ import java.util.Set;
 /* Реализация методов для древовидных объектов (подразделения, группы и т.п.) */
 public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> extends BaseDetailsBean<T , O >{
     private static final long serialVersionUID = -2983279513793115056L;
-    
+
     /* Установка специфичных атрибутов при создании объекта  */ 
     @Override
     public void setSpecAtrForNewItem(T item) {

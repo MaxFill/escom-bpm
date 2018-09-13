@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.companies;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.companies.Company;
@@ -14,10 +15,7 @@ import com.maxfill.model.staffs.Staff;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
@@ -110,7 +108,6 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
     public List<List<?>> doGetDependency(Company company){
-        //TODO тут не эффективные запросы, возвращающие много инф, достаточно колва
         List<List<?>> dependency = new ArrayList<>();
         List<Department> departments = departmentFacade.findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
@@ -127,8 +124,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @Override
     public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();
-        cnt.addAll(departmentFacade.findActualDetailItems((Company)company, first, pageSize, sortField,  sortOrder, getCurrentUser()));                
-        cnt.addAll(staffFacade.findStaffByCompany((Company)company, null, getCurrentUser()));
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+            cnt.addAll(departmentFacade.findActualDetailItems((Company) company, first, pageSize, sortField, sortOrder, getCurrentUser()));
+        } else {
+            cnt.addAll(staffFacade.findStaffByCompany((Company) company, null, getCurrentUser()));
+        }
         return cnt;
     }       
      

@@ -235,7 +235,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public String getFullName() {
         return name;
     }
-    
+
+    public String getCuratorName(){
+        return "";
+    }
+
     public List<D> getDetailItems() {
         return detailItems;
     }

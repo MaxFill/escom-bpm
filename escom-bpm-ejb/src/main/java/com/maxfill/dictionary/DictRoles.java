@@ -9,6 +9,7 @@ public final class DictRoles {
     public static final String ROLE_EDITOR = "Editor";
     public static final String ROLE_EXECUTOR = "Executor";
     public static final String ROLE_CONCORDER = "Concorder";
+    public static final String ROLE_CURATOR = "Curator";
     public static final String ROLE_CONTROLLER = "Controller";
     public static final String ROLE_REGISTRATOR = "Registrator";
     public static final String ROLE_CHIEF = "Chief";
@@ -20,5 +21,6 @@ public final class DictRoles {
     public static final int ROLE_CONTROLLER_ID = 19;
     public static final int ROLE_REGISTRATOR_ID = 20;
     public static final int ROLE_CHIEF_ID = 20;
+    public static final int ROLE_CURATOR_ID = 21;
     
 }

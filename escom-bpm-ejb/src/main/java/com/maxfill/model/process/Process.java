@@ -9,6 +9,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.users.User;
 import org.apache.commons.lang.StringUtils;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -48,6 +49,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @JoinColumn(name = "Company", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Company company;
+
+    @XmlTransient
+    @JoinColumn(name = "Curator", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private User curator;
 
     @Size(max = 50)
     @Column(name = "RegNumber")
@@ -107,6 +113,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     /* GETS & SETS */
 
     @Override
+    public String getCuratorName(){
+        return curator != null ? curator.getName() : "";
+    }
+
+    @Override
     public String getIconName() {
         return "process";
     }
@@ -127,6 +138,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Override
     public void setOwner(ProcessType owner) {
         this.owner = owner;
+    }
+
+    public User getCurator() {
+        return curator;
+    }
+    public void setCurator(User curator) {
+        this.curator = curator;
     }
 
     @Override

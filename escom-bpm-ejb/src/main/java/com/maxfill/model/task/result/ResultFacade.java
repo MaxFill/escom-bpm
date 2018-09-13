@@ -51,6 +51,7 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
     }
     
     public List<Result> findTaskResults(Results item) {
+        if (item == null) return new ArrayList<>();
         String json = item.getAvaibleResultsJSON();
         if (StringUtils.isEmpty(json)) return new ArrayList<>();
         

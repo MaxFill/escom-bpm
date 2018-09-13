@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.core;
 
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.users.User;
 import com.maxfill.services.attaches.AttacheService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.TreeNode;
@@ -23,8 +24,13 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     protected AttacheService attacheService;
 
     public abstract List<O> getGroups(T item);          //возвращает список групп объекта
-    
-    /* Действия перед созданием объекта */
+
+    /**
+     * Проверки на возможность создания дочернего/подчинённого объекта
+     * @param newItem
+     * @param parent
+     * @param errors
+     */
     @Override
     protected void prepCreate(T newItem, BaseDict parent, Set<String> errors){
         boolean isAllowedEditOwner = true;
@@ -52,20 +58,35 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         }
     }
 
-    /* Вставка объекта !!!*/
+    /**
+     * Вставка объекта, имеющего владельца
+     * @param sourceItem
+     * @param recipient
+     * @param errors
+     * @return
+     */
     @Override
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){
-        T pasteItem = doCopy(sourceItem);
+        T pasteItem = doCopy(sourceItem); //создан новый объект (копия)
         preparePasteItem(pasteItem, sourceItem, recipient);
-        prepCreate(pasteItem, pasteItem.getParent(), errors); 
-        if (!errors.isEmpty()){
+        prepCreate(pasteItem, pasteItem.getParent(), errors);
+        if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
             return null;
-        }        
-        //changeNamePasteItem(sourceItem, pasteItem);
+        }
+        changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
+    }
+
+    /**
+     * Добавление объекта в группу
+     * Выполняется в бине группы!
+     * @param item
+     * @param group
+     */
+    public void addItemInGroup(BaseDict item, T group){
     }
 
     /* Копирование объекта */

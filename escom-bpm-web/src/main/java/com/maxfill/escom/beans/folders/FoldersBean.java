@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.folders;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.folders.FoldersFacade;
@@ -13,10 +14,7 @@ import java.text.MessageFormat;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -36,50 +34,18 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private FoldersFacade foldersFacade;
     @EJB
     private DocFacade docFacade;
-
-    /*
-    @Override
-    public TreeNode makeTree() {
-        TreeNode tree = new DefaultTreeNode("Root", null);
-        tree.setExpanded(true);       
-        //To do! тут нужно получать видимо права для тек. пользователя?      
-        Folder rootFolder = getFacade().find(ROOT_FOLDER_ID);
-        if (rootFolder == null){
-            throw new NullPointerException("RootFolder null in make tree metod!"); 
-        }
-        //makeRightForChilds(rootFolder); //получаем права документов для текущей папки
-        addNode(tree, rootFolder);
-        return tree;
-    }
-*/
-    /* Добавление узла в дерево при формировании дерева */
-    /*
-    public TreeNode addNode(TreeNode parentNode, BaseDict folder) {
-        TreeNode resultNode = null;
-
-        if (getFacade().preloadCheckRightView(folder, getCurrentUser())) { //проверяем право на просмотр папки текущему пользователю
-            //актуализируем права документов папки
-            
-            TreeNode newNode = new DefaultTreeNode("tree", folder, parentNode);
-            newNode.setExpanded(true);
-            
-            //получаем и рекурсивно обрабатываем дочерние папки этой папки
-            //getFacade().findActualChilds((Folder)folder).stream().forEach(folderChild -> addNode(newNode, folderChild));
-            
-            resultNode = newNode;
-        }
-        return resultNode;
-    }
-    */
     
     /* Формирование содержимого контента папки   */ 
+
     @Override
     public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        List<BaseDict> cnt = getFacade().findActualChilds((Folder)folder, getCurrentUser()).collect(Collectors.toList());
-        cnt.addAll(getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField,  sortOrder, getCurrentUser()));        
-        return cnt;
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+            return getFacade().findActualChilds((Folder) folder, getCurrentUser()).collect(Collectors.toList());
+        } else {
+            return getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField, sortOrder, getCurrentUser());
+        }
     }
-       
+
     /* Действия перед удалением папки  */
     @Override
     protected void preDeleteItem(Folder folder) {       

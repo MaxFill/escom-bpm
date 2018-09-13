@@ -36,23 +36,15 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         return !(target instanceof UserGroups);
     }
 
-    @Override
-    public void preparePasteItem(User pasteItem, User sourceItem, BaseDict target) {
-        super.preparePasteItem(pasteItem, sourceItem, target);        
-        if(!isNeedCopyOnPaste(pasteItem, target)) {
-            addItemToGroup(pasteItem, target);
-        }        
-    }
-
     /* при перемещении пользователя drag&drop */
     @Override
     public boolean addItemToGroup(User user, BaseDict targetGroup) {
         if(user == null || targetGroup == null) return false;
 
-        UserGroups group = (UserGroups) targetGroup;
-        if(!user.getUsersGroupsList().contains((UserGroups) targetGroup)) {
+        //UserGroups group = (UserGroups) targetGroup;
+        if(!user.getUsersGroupsList().contains(targetGroup)) {
             user.getUsersGroupsList().add((UserGroups) targetGroup);
-            group.getUsersList().add(user);
+            //group.getUsersList().add(user);
             getFacade().edit(user);
         }
         return true;
@@ -69,6 +61,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if(sourceNode != null) {
             UserGroups sourceGroup = (UserGroups) sourceNode.getData();
             user.getUsersGroupsList().remove(sourceGroup);
+            sourceGroup.getUsersList().remove(user);
         }
         user.getUsersGroupsList().add((UserGroups) targetGroup);
         getFacade().edit(user);

@@ -67,13 +67,18 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             if (!docs.isEmpty()){
                 process.setDocs(docs);
             }
-            makeProcName(process);            
+            makeProcName(process);
         }
+        if (params.containsKey("author")) {
+            process.setCurator((User)params.get("author"));
+        }
+        /*
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
         String number = numeratorService.doRegistrNumber(process, numeratorPattern, null, new Date());
         process.setRegNumber(number);
-        
+        */
         addRole(process, DictRoles.ROLE_CONCORDER);
+        addRole(process, DictRoles.ROLE_CURATOR);
     }
 
     /**

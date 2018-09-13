@@ -11,6 +11,8 @@ import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.conditions.ConditionFacade;
+import com.maxfill.model.process.procedures.Procedure;
+import com.maxfill.model.process.procedures.ProcedureFacade;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.AnchorElem;
 import com.maxfill.model.process.schemes.elements.ConditionElem;
@@ -80,7 +82,7 @@ import org.primefaces.model.diagram.overlay.Overlay;
  */
 @Named
 @Dependent
-public class DiagramBean extends BaseViewBean{    
+public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private static final long serialVersionUID = -4403976059082444626L;
     
     @Inject
@@ -96,6 +98,8 @@ public class DiagramBean extends BaseViewBean{
     private ProcessTemplFacade processTemplFacade;
     @EJB
     private ProcTimerFacade procTimerFacade;
+    @EJB
+    private ProcedureFacade procedureFacade;
     @EJB
     private TaskFacade taskFacade;
     @EJB
@@ -116,26 +120,37 @@ public class DiagramBean extends BaseViewBean{
     private String nameTemplate;
     private ProcTempl selectedTempl;
     private List<ProcTempl> templates;    
+    private Scheme scheme;
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();  
     
-    private Process process;     
-     
+    private Process process;
+
     @Override
+    public String onCloseCard(Object param){
+        workflow.packScheme(scheme);
+        return super.onCloseCard(param);
+    }
+
     public void doBeforeOpenCard(Map params) {
-        if (sourceBean != null){
-            model.setMaxConnections(-1);
-            model.getDefaultConnectionOverlays().add(new ArrowOverlay(20, 20, 1, 1));
-            FlowChartConnector connector = new FlowChartConnector();
-            connector.setPaintStyle("{strokeStyle:'#98AFC7', lineWidth:2}");
-            connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
-            connector.setCornerRadius(10);
-            model.setDefaultConnector(connector);
-            process = ((ProcessCardBean)sourceBean).getEditedItem();
-            loadModel(getScheme());            
+        if (!isReadOnly()){
+            addElementContextMenu();
         }
-    } 
-    
+    }
+
+    public void prepareModel(Process process){
+        this.process = process;
+        model.setMaxConnections(-1);
+        model.getDefaultConnectionOverlays().add(new ArrowOverlay(20, 20, 1, 1));
+        FlowChartConnector connector = new FlowChartConnector();
+        connector.setPaintStyle("{strokeStyle:'#98AFC7', lineWidth:2}");
+        connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
+        connector.setCornerRadius(10);
+        model.setDefaultConnector(connector);
+        scheme = process.getScheme();
+        loadModel(scheme);
+    }
+
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
     
     /**
@@ -175,33 +190,33 @@ public class DiagramBean extends BaseViewBean{
      * Формирует графическую схему из данных модели процесса
      */
     private void restoreModel(){                
-        Map<String, Element> elementMap = new HashMap <>();        
-        getScheme().getElements().getTasks().forEach((k, taskEl)->{             
+        Map<String, Element> elementMap = new HashMap <>();
+        scheme.getElements().getTasks().forEach((k, taskEl)->{             
             if (taskEl.getTask() == null){
                 Staff staff = null;
                 if (taskEl.getStaffId() != null){
                     staff = staffFacade.find(taskEl.getStaffId());
                 }
-                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), staff, getCurrentUser(), process.getPlanExecDate(), getScheme(), taskEl.getUid());
+                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), staff, getCurrentUser(), process.getPlanExecDate(), scheme, taskEl.getUid());
                 taskEl.setTask(task);
-                getScheme().getTasks().add(task);
+                scheme.getTasks().add(task);
             }
             elementMap.put(k, createElement(taskEl));
         });
-        getScheme().getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
-        getScheme().getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v))); 
-        getScheme().getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
-        getScheme().getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
-        getScheme().getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
-        getScheme().getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
-        getScheme().getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
-        getScheme().getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
-        StartElem startElem = getScheme().getElements().getStartElem();
+        scheme.getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
+        scheme.getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
+        scheme.getElements().getLogics().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getEnters().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getStates().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getConditions().forEach((k, v)->elementMap.put(k, createElement(v)));
+        StartElem startElem = scheme.getElements().getStartElem();
         if (startElem != null){
             elementMap.put(startElem.getUid(), createElement(startElem));
         }
         List<Connection> connections = new ArrayList <>();
-        getScheme().getElements().getConnectors().stream().forEach(connectorElem->{
+        scheme.getElements().getConnectors().stream().forEach(connectorElem->{
             AnchorElem anchorFrom = connectorElem.getFrom();            
             Element fromEl = elementMap.get(anchorFrom.getOwnerUID());
             EndPoint endPointFrom = getEndPointById(fromEl, anchorFrom.getUid());
@@ -255,7 +270,7 @@ public class DiagramBean extends BaseViewBean{
      */
     public void onElementDelete(){
         Set<String> errors = new HashSet <>();
-        workflow.removeElement(baseElement, getScheme(), errors);
+        workflow.removeElement(baseElement, scheme, errors);
         if (errors.isEmpty()) {
             model.removeElement(selectedElement);
             modelRefresh();            
@@ -279,15 +294,15 @@ public class DiagramBean extends BaseViewBean{
             if (selectedElement != null){
                 selectedElement.setX(x + "em");
                 selectedElement.setY(y + "em");
-                defX = Integer.valueOf(x);
-                defY = Integer.valueOf(y);
                 baseElement = (WFConnectedElem) selectedElement.getData();
                 baseElement.setPosX(Integer.valueOf(x));
                 baseElement.setPosY(Integer.valueOf(y));
+                defX = Integer.valueOf(x) + 5;
+                defY = Integer.valueOf(y) + 5;
             }
         }
-    }   
-    
+    }
+
     /**
      * Обоработка события контекстного меню для открытия карточки свойств визуального компонента 
      */
@@ -353,6 +368,9 @@ public class DiagramBean extends BaseViewBean{
             } else 
                 if (baseElement instanceof StatusElem){           
                     doCopyElement(new StatusElem());
+                }
+                if (baseElement instanceof ProcedureElem){
+                    doCopyElement(new ProcedureElem());
                 } else {
                     MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
                 }                                 
@@ -391,13 +409,19 @@ public class DiagramBean extends BaseViewBean{
                     Condition condition = conditionFacade.find(sourceElem.getConditonId());
                     createCondition(condition, defX, defY, new HashSet<>());
                     finalAddElement();
-                } else  
-                    if (baseElement instanceof StatusElem){
-                        StatusElem sourceElem = (StatusElem) baseElement;                        
-                        StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
-                        createState(docStatus, sourceElem.getStyleType(), defX, defY, new HashSet<>());
+                } else
+                    if (baseElement instanceof ProcedureElem){
+                        ProcedureElem sourceElem = (ProcedureElem) baseElement;
+                        Procedure procedure = procedureFacade.find(sourceElem.getProcedureId());
+                        createProcedure(procedure, defX, defY, new HashSet<>());
                         finalAddElement();
-                    }
+                    } else
+                        if (baseElement instanceof StatusElem){
+                            StatusElem sourceElem = (StatusElem) baseElement;
+                            StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
+                            createState(docStatus, sourceElem.getStyleType(), defX, defY, new HashSet<>());
+                            finalAddElement();
+                        }
         } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -455,7 +479,6 @@ public class DiagramBean extends BaseViewBean{
             case SysParams.EXIT_NEED_UPDATE:{          
                 Element task = model.findElement(baseElement.getUid());
                 task.setStyleClass(baseElement.getStyle());
-                PrimeFaces.current().ajax().update("mainFRM:concorderList");      
                 modelRefresh();
                 break;
             }
@@ -504,9 +527,9 @@ public class DiagramBean extends BaseViewBean{
      * Обработка события добавления в схему процесса визуального компонента "Состояния" 
      * @param name
      */
-    public void onAddStateElement(String name){
+    public void onAddStateElement(){
         baseElement = createState(null, "success", defX, defY, new HashSet<>());        
-        finalAddElement();        
+        finalAddElement();
     }
 
     /**
@@ -553,7 +576,7 @@ public class DiagramBean extends BaseViewBean{
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
     public void onAddStartElement(){       
-        if (getScheme().getElements().getStartElem() == null){
+        if (scheme.getElements().getStartElem() == null){
             baseElement = createStart(3, 3, new HashSet<>());        
             finalAddElement();            
         } else {
@@ -574,8 +597,8 @@ public class DiagramBean extends BaseViewBean{
      * @param elementId 
      */
     private void finalAddElement(){
-        defX = defX + 7;
-        defY = defY + 7;        
+        defX = defX + 5;
+        defY = defY + 5;
         onElementOpen();
     }
     
@@ -600,7 +623,7 @@ public class DiagramBean extends BaseViewBean{
         createSourceEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_NO);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP); 
         conditionElem.setAnchors(makeAnchorElems(conditionElem, endPoints));
-        workflow.addCondition(conditionElem, getScheme(), errors);
+        workflow.addCondition(conditionElem, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(conditionElem);
             return conditionElem;
@@ -610,7 +633,7 @@ public class DiagramBean extends BaseViewBean{
 
     private TimerElem createTimer(String name, int x, int y, Set<String> errors){        
         TimerElem timer = new TimerElem(null, x, y);
-        ProcTimer procTimer = procTimerFacade.createTimer(process, getScheme(), timer.getUid());
+        ProcTimer procTimer = procTimerFacade.createTimer(process, scheme, timer.getUid());
         timer.setProcTimer(procTimer);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -618,7 +641,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         timer.setAnchors(makeAnchorElems(timer, endPoints));
-        workflow.addTimer(timer, getScheme(), errors);
+        workflow.addTimer(timer, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(timer);
             return timer;
@@ -634,7 +657,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         element.setAnchors(makeAnchorElems(element, endPoints));
-        workflow.addMessage(element, getScheme(), errors);
+        workflow.addMessage(element, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(element);
             return element;
@@ -642,18 +665,23 @@ public class DiagramBean extends BaseViewBean{
         return null;
     }
      
-    private ProcedureElem createProcedure(String name, int x, int y, Set<String> errors){        
-        ProcedureElem element = new ProcedureElem(null, x, y);
+    private ProcedureElem createProcedure(Procedure procedure, int x, int y, Set<String> errors){
+        ProcedureElem procedureElem;
+        if (procedure != null){
+            procedureElem = new ProcedureElem(procedure.getName(), procedure.getId(), x, y);
+        } else {
+            procedureElem = new ProcedureElem("???", null, x, y);
+        }
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
-        element.setAnchors(makeAnchorElems(element, endPoints));
-        workflow.addProcedure(element, getScheme(), errors);
+        procedureElem.setAnchors(makeAnchorElems(procedureElem, endPoints));
+        workflow.addProcedure(procedureElem, scheme, errors);
         if (errors.isEmpty()) {
-            modelAddElement(element);
-            return element;
+            modelAddElement(procedureElem);
+            return procedureElem;
         }
         return null;
     }        
@@ -672,7 +700,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT); 
         logic.setAnchors(makeAnchorElems(logic, endPoints));
-        workflow.addLogic(logic, getScheme(), errors);
+        workflow.addLogic(logic, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(logic);
             return logic;
@@ -693,7 +721,7 @@ public class DiagramBean extends BaseViewBean{
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
         enter.setAnchors(makeAnchorElems(enter, endPoints));
-        workflow.addEnter(enter, getScheme(), errors);
+        workflow.addEnter(enter, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(enter);
             return enter;
@@ -713,7 +741,7 @@ public class DiagramBean extends BaseViewBean{
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         start.setAnchors(makeAnchorElems(start, endPoints));
-        workflow.addStart(start, getScheme(), errors);
+        workflow.addStart(start, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(start);
             return start;
@@ -734,7 +762,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.TOP, DictWorkflowElem.STYLE_MAIN);
         createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM, DictWorkflowElem.STYLE_MAIN);
         exit.setAnchors(makeAnchorElems(exit, endPoints));
-        workflow.addExit(exit, getScheme(), errors);
+        workflow.addExit(exit, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(exit);
             return exit;
@@ -750,7 +778,7 @@ public class DiagramBean extends BaseViewBean{
      */
     private TaskElem createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
         TaskElem taskElem = new TaskElem(taskName, x, y);
-        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), process.getPlanExecDate(), getScheme(), taskElem.getUid());
+        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), process.getPlanExecDate(), scheme, taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -758,7 +786,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
-        workflow.addTask(taskElem, getScheme(), errors);
+        workflow.addTask(taskElem, scheme, errors);
         if (errors.isEmpty()){
             modelAddElement(taskElem);
             return taskElem;
@@ -788,7 +816,7 @@ public class DiagramBean extends BaseViewBean{
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
         stateEl.setAnchors(makeAnchorElems(stateEl, endPoints));
         stateEl.setStyleType(styleType);
-        workflow.addState(stateEl, getScheme(), errors);
+        workflow.addState(stateEl, scheme, errors);
         if (errors.isEmpty()) {
             modelAddElement(stateEl);
             return stateEl;
@@ -941,7 +969,7 @@ public class DiagramBean extends BaseViewBean{
             }
         }
         
-        if (workflow.createConnector(sourceAnchor, targetAnchor, getScheme(), label, errors) != null){  //если коннектор создался            
+        if (workflow.createConnector(sourceAnchor, targetAnchor, scheme, label, errors) != null){  //если коннектор создался            
             if (org.apache.commons.lang.StringUtils.isNotBlank(label)){
                 Connection connection = findConnection(sourcePoint, targetPoint);
                 connection.getOverlays().clear();
@@ -971,7 +999,7 @@ public class DiagramBean extends BaseViewBean{
         Set<String> errors = new HashSet <>();
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
         AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
-        workflow.removeConnector(sourceAnchor, targetAnchor, getScheme(), errors);
+        workflow.removeConnector(sourceAnchor, targetAnchor, scheme, errors);
     }
 
     public void onConnectionChange(ConnectionChangeEvent event) {
@@ -1003,7 +1031,7 @@ public class DiagramBean extends BaseViewBean{
                 .forEach(element-> {            
             sb.append("'mainFRM:diagramm-").append(element.getId()).append("', "); 
         });
-        sb.append("])");      
+        sb.append("]);");
         PrimeFaces.current().executeScript(sb.toString());
     }    
     
@@ -1043,7 +1071,6 @@ public class DiagramBean extends BaseViewBean{
      */
     public void onSaveModelAsTempl(){
         Set<String> errors = new HashSet<>();
-        Scheme scheme = getScheme();
         workflow.validateScheme(scheme, false, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
@@ -1166,18 +1193,11 @@ public class DiagramBean extends BaseViewBean{
     }
     public void setCurrentTask(Task currentTask) {
         this.currentTask = currentTask;
-    }         
-
-    public void setProcess(Process process) {
-        this.process = process;
     }
+
     public Process getProcess() {
         return process;
     }
-         
-    private Scheme getScheme(){
-        return process.getScheme();
-    }        
 
     @Override
     public String getFormName() {
@@ -1188,5 +1208,9 @@ public class DiagramBean extends BaseViewBean{
     public String getFormHeader() {
         return getLabelFromBundle("Scheme");
     }
-        
+
+    @Override
+    public boolean isFullPageMode(){
+        return false;
+    }
 }

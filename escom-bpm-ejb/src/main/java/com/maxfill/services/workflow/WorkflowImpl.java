@@ -7,6 +7,8 @@ import com.maxfill.dictionary.DictResults;
 import com.maxfill.model.process.conditions.ConditionFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.process.ProcessFacade;
+import com.maxfill.model.process.procedures.Procedure;
+import com.maxfill.model.process.procedures.ProcedureFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
@@ -62,6 +64,8 @@ public class WorkflowImpl implements Workflow {
     private StateFacade stateFacade;
     @EJB
     private ConditionFacade conditionFacade;
+    @EJB
+    private ProcedureFacade procedureFacade;
     @EJB
     private StatusesDocFacade statusesFacade;
     @EJB
@@ -266,7 +270,9 @@ public class WorkflowImpl implements Workflow {
             String message = MessageFormat.format("ImpossibleRemove", new Object[]{connector.toString()});
             errors.add(message);
         } else {
-            scheme.getElements().getConnectors().remove(connector);
+            if (scheme.getElements().getConnectors().contains(connector)) {
+                scheme.getElements().getConnectors().remove(connector);
+            }
         }
     }
 
@@ -370,6 +376,10 @@ public class WorkflowImpl implements Workflow {
                 .filter(rec->rec.getValue().getConditonId() == null)
                 .findFirst()
                 .map(rec->errors.add("IncorrectConditionRouteProcess"));
+        scheme.getElements().getProcedures().entrySet().stream()
+                .filter(rec->rec.getValue().getProcedureId() == null)
+                .findFirst()
+                .map(rec->errors.add("IncorrectProcedureRouteProcess"));
         scheme.getElements().getStates().entrySet().stream()
                 .filter(rec->rec.getValue().getDocStatusId() == null)
                 .findFirst()
@@ -481,7 +491,6 @@ public class WorkflowImpl implements Workflow {
     
     /**
      * Обработка выхода из процесса
-     * @param scheme
      * @param exitElem 
      */
     private void finish(Process process, ExitElem exitElem, Set<String> errors) {
@@ -536,6 +545,13 @@ public class WorkflowImpl implements Workflow {
                             .collect(Collectors.toList());
                     
                     if (!connectors.isEmpty()){
+                        //выполнение процедур
+                        Set<ProcedureElem> procedures = findProcedures(connectors, scheme.getElements().getProcedures());
+                        procedures.forEach(procedureElem->{
+                            executeProcedure(procedureElem, scheme, errors);
+                            doRun(procedureElem.getAnchors(), process, exeTasks, errors, currentUser);
+                        });
+
                         //запуск задач
                         connectors.stream()
                             .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
@@ -636,7 +652,18 @@ public class WorkflowImpl implements Workflow {
                 .filter(element->Objects.nonNull(element))
                 .collect(Collectors.toSet());
     }
-    
+
+    /**
+     * Находит элементы 'Процедура' в модели процесса к которым идут коннекторы
+     * @return
+     */
+    private Set<ProcedureElem> findProcedures(List<ConnectorElem> connectors, Map<String, ProcedureElem> elements){
+        return connectors.stream()
+                .map(connector->elements.get(connector.getTo().getOwnerUID()))
+                .filter(element->Objects.nonNull(element))
+                .collect(Collectors.toSet());
+    }
+
     /**
      * Находит элементы 'Сообщение' в модели процесса к которым идут коннекторы
      * @return 
@@ -744,7 +771,24 @@ public class WorkflowImpl implements Workflow {
         }
         return status;
     }
-    
+
+    /* *** ПРОЦЕДУРЫ *** */
+
+    private void executeProcedure(ProcedureElem procedureElem, Scheme scheme, Set<String> errors){
+        Procedure procedure = procedureFacade.find(procedureElem.getProcedureId());
+        if (procedure == null) return;
+        switch (procedure .getMethod()) {
+            case "callNumerator": {
+                callNumerator(scheme);
+                break;
+            }
+        }
+    }
+
+    private void callNumerator(Scheme scheme){
+
+    }
+
     /* *** ВЕТВЛЕНИЯ *** */
     
     /**

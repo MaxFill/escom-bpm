@@ -66,7 +66,7 @@ public class MessageCardBean extends BaseViewBean<DiagramBean>{
     }
     
     /**
-     * Сохранение ролей в строку для полседующей записи в базу     
+     * Сохранение ролей в строку для последующей записи в базу
      */
     public void saveRoleToJson(){
         Gson gson = new Gson();
@@ -80,7 +80,12 @@ public class MessageCardBean extends BaseViewBean<DiagramBean>{
             liveRoles = gson.fromJson(sourceItem.getRecipientsJSON(), List.class);        
         }
     }
-    
+
+    public String getLabelForRoleFromBundle(String role){
+        String key = StringUtils.capitalize(role.toLowerCase());
+        return getLabelFromBundle(key);
+    }
+
     /* GETS & SETS */
     
     @Override

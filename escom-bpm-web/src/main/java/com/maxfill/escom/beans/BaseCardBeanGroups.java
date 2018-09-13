@@ -26,10 +26,7 @@ public abstract class BaseCardBeanGroups<T extends BaseDict, O extends BaseDict>
     
     /* Удаление отмеченных групп из редактируемого объекта. Вызов с карточки объекта */
     public void deleteFromCheckedGroups(){        
-        checkedGroups.stream()
-                .filter(group -> group.getId() != 0)
-                .forEach(group -> deleteFromGroup(group, getEditedItem())
-        );
+        checkedGroups.forEach(group -> deleteFromGroup(group, getEditedItem()));
         onItemChange();
     }    
     

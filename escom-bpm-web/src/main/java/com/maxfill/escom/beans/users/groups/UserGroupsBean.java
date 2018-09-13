@@ -1,10 +1,14 @@
 package com.maxfill.escom.beans.users.groups;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.utils.MsgUtils;
+import com.maxfill.model.partners.groups.PartnerGroups;
+import com.maxfill.model.users.User;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.users.groups.UserGroupsFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.users.groups.UserGroups;
@@ -13,10 +17,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /* Сервисный бин "Группы пользователей" */
@@ -27,10 +28,39 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
 
     @Inject
     private UserBean userBean;
-    
+
     @EJB
-    private UserGroupsFacade itemFacade;     
-    
+    private UserGroupsFacade itemFacade;
+    @EJB
+    private UserFacade userFacade;
+
+    /**
+     * Добавление объекта в группу
+     * Выполняется в бине группы!
+     * @param item
+     * @param group
+     */
+    public void addItemInGroup(BaseDict user, UserGroups group){
+        if(user == null || group == null) return;
+
+        if(!group.getUsersList().contains(user)) {
+            group.getUsersList().add((User)user);
+            //((User) user).getUsersGroupsList().add(group);
+            getFacade().edit(group);
+        }
+    }
+
+    @Override
+    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+        List<BaseDict> cnt = new ArrayList<>();
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+            cnt.addAll(itemFacade.findActualChilds((UserGroups) group, getCurrentUser()).collect(Collectors.toList()));
+        } else {
+            cnt.addAll(itemFacade.findDetails((UserGroups)group, first, pageSize, sortField,  sortOrder, getCurrentUser()));
+        }
+        return cnt;
+    }
+
     public List<UserGroups> findOnlyGroups(){
         return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP, getCurrentUser());
     }
@@ -61,6 +91,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
         if (!userGroups.isEmpty()) {
             dependency.add(userGroups);
         }
+        //тут не нужно ещё дополнительно указывать Users, так как они скопируются автоматом
         return dependency;
     }
     

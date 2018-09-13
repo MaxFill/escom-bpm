@@ -32,10 +32,12 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {        
-        List<BaseDict> cnt = itemsFacade.findActualChilds((PartnerGroups)partnerGroup, getCurrentUser()).collect(Collectors.toList());        
-        if (Objects.equals(viewMode, DictExplForm.EXPLORER_MODE)){            
-            cnt.addAll(partnersFacade.findActualDetailItems((PartnerGroups)partnerGroup, first, pageSize, sortField,  sortOrder, getCurrentUser()));            
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+        List<BaseDict> cnt = new ArrayList<>();
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+            cnt.addAll(itemsFacade.findActualChilds((PartnerGroups) partnerGroup, getCurrentUser()).collect(Collectors.toList()));
+        } else {
+            cnt.addAll(itemsFacade.findDetails((PartnerGroups)partnerGroup, first, pageSize, sortField,  sortOrder, getCurrentUser()));
         }
         return cnt;
     }
@@ -54,6 +56,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     public void preparePasteItem(PartnerGroups pasteItem, PartnerGroups sourceItem, BaseDict target){ 
         super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((PartnerGroups)target);
+        pasteItem.setDetailItems(sourceItem.getDetailItems()); //копируем только ссылки!
     }
     
     /* Возвращает списки зависимых объектов, необходимых для копирования */

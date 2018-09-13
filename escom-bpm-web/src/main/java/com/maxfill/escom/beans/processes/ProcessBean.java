@@ -1,10 +1,11 @@
 package com.maxfill.escom.beans.processes;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
-import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.types.ProcessType;
 import org.primefaces.model.TreeNode;
 
@@ -22,6 +23,8 @@ import java.util.List;
 @SessionScoped
 public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     private static final long serialVersionUID = 8861162094837813935L;
+
+    private DiagramBean diagramBean;
 
     @EJB
     private ProcessFacade processFacade;
@@ -57,5 +60,18 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     public boolean canCreateItem(TreeNode treeSelectedNode){
         return treeSelectedNode == null || ((BaseDict)treeSelectedNode.getData()).getId() == 0;
     }
-    
+
+    @Override
+    public SearcheModel initSearcheModel() {
+        return new ProcessSearche();
+    }
+
+    /* GETS & SETS */
+
+    public DiagramBean getDiagramBean() {
+        return diagramBean;
+    }
+    public void setDiagramBean(DiagramBean diagramBean) {
+        this.diagramBean = diagramBean;
+    }
 }

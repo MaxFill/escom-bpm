@@ -75,8 +75,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             owner = sourceItem.getOwner();
         }
         pasteItem.setOwner((Folder) owner);        
-    }    
-    
+    }
+
     @Override
     protected void doPasteMakeSpecActions(Doc sourceItem, Doc pasteItem){
         super.doPasteMakeSpecActions(sourceItem, pasteItem);

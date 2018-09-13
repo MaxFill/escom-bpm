@@ -67,13 +67,19 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     }
 
     /* Получение списка пользователей в группах */ 
-    public List<User> findDetail(UserGroups group) {
+    public List<User> findDetails(UserGroups group, int first, int pageSize, String sortField, String sortOrder, User currentUser) {
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);   
         cq.select(root).distinct(true).where(root.get(User_.usersGroupsList).in(group)).orderBy(cb.asc(root.get(User_.secondName)));
-        Query q = getEntityManager().createQuery(cq);       
-        return q.getResultList();  
+        TypedQuery<User> query = getEntityManager().createQuery(cq);
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultStream().parallel()
+                .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                .collect(Collectors.toList());
     }
   
     /* Получение списка групп root уровня нужного типа, например, групп, являющихся ролями */

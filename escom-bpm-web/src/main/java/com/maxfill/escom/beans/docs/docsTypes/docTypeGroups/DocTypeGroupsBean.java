@@ -41,17 +41,21 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     public void preparePasteItem(DocTypeGroups pasteItem, DocTypeGroups sourceItem, BaseDict target){
         super.preparePasteItem(pasteItem, sourceItem, target);
         pasteItem.setParent((DocTypeGroups)target);
-        pasteItem.setDetailItems(sourceItem.getDetailItems()); //копируем только ссылки!
+        //pasteItem.setDetailItems(sourceItem.getDetailItems()); //копируем только ссылки!
     }
     
       /* Возвращает списки зависимых объектов, необходимых для копирования */
     @Override
     public List<List<?>> doGetDependency(DocTypeGroups group){
         List<List<?>> dependency = new ArrayList<>();
-        List<DocTypeGroups> groups = itemsFacade.findActualChilds(group, getCurrentUser()).collect(Collectors.toList());
-        if (!groups.isEmpty()) {
-            dependency.add(groups);
-        }              
+        List<DocTypeGroups> childs = itemsFacade.findActualChilds(group, getCurrentUser()).collect(Collectors.toList());
+        if (!childs.isEmpty()) {
+            dependency.add(childs);
+        }
+        List<DocType> details =  docTypeFacade.findActualDetailItems(group, 0, 0, "name", "ASCENDING", getCurrentUser());
+        if (!details.isEmpty()) {
+            dependency.add(details);
+        }
         return dependency;
     }
     

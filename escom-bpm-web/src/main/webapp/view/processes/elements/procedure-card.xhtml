@@ -15,15 +15,21 @@
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
-    
+    </ui:define>
+
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{procedureCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Procedure}"  >
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                                        
+                    <p:selectOneMenu value="#{procedureCardBean.selected}" converter="procedureConvertor"
+                                     styleClass="ui-grid-col-12"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Procedure}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{procedureBean.findAll()}" var="item" itemLabel="#{procedureCardBean.getLabelFromBundle(item.getName())}" itemValue="#{item}"/>
+                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                    </p:selectOneMenu>
                 </p:panelGrid>
-            </p:tab>            
-
+            </p:tab>
         </p:tabView>
     </ui:define>
 </ui:composition>

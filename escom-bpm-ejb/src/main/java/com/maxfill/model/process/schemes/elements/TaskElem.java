@@ -52,7 +52,6 @@ public class TaskElem extends WFConnectedElem{
     public String getCaption() {
         if (task != null){
             StringBuilder sb = new StringBuilder();
-            sb.append("<").append(task.getName()).append(">").append(" ");
             Staff owner = task.getOwner();
             if (owner != null){
                 if (owner.getPost() != null){

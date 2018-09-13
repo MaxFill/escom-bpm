@@ -131,11 +131,6 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         this.filters = filters;
         return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
     }
-
-    public boolean isEmptyLazyModel(){
-        if (lazyModel == null) return true;
-        return lazyModel.isDataEmpty();
-    }
     
     public void refreshLazyData(){
         lazyModel = null;

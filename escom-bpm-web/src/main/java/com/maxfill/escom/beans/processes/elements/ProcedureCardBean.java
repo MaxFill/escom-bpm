@@ -5,11 +5,15 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
+import com.maxfill.model.process.procedures.Procedure;
+import com.maxfill.model.process.procedures.ProcedureFacade;
 import com.maxfill.model.process.schemes.elements.ProcedureElem;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Level;
 import org.omnifaces.cdi.ViewScoped;
+
+import javax.ejb.EJB;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -20,7 +24,12 @@ import org.apache.commons.beanutils.BeanUtils;
 @ViewScoped
 public class ProcedureCardBean extends BaseViewBean<BaseView>{    
     private static final long serialVersionUID = -8295618285469838899L;
-    
+
+    @EJB
+    private ProcedureFacade procedureFacade;
+
+    private Procedure selected;
+
     private ProcedureElem editedItem = new ProcedureElem();
     private ProcedureElem sourceItem;
     
@@ -29,6 +38,9 @@ public class ProcedureCardBean extends BaseViewBean<BaseView>{
         if (sourceItem == null){
             if (sourceBean != null){
                 sourceItem = (ProcedureElem)((DiagramBean)sourceBean).getBaseElement();
+                if (sourceItem.getProcedureId() != null){
+                    selected = procedureFacade.find(sourceItem.getProcedureId());
+                }
             }
             if (sourceItem != null){
                 try {
@@ -42,7 +54,11 @@ public class ProcedureCardBean extends BaseViewBean<BaseView>{
     
     @Override
     public String onCloseCard(Object param){
-        try {            
+        try {
+            if (selected != null){
+                editedItem.setProcedureId(selected.getId());
+                editedItem.setCaption(selected.getName());
+            }
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -58,6 +74,15 @@ public class ProcedureCardBean extends BaseViewBean<BaseView>{
     @Override
     public String getFormHeader() {
         return getLabelFromBundle("Procedure");
+    }
+
+    /* GETS & SETS */
+
+    public Procedure getSelected() {
+        return selected;
+    }
+    public void setSelected(Procedure selected) {
+        this.selected = selected;
     }
 
     public ProcedureElem getEditedItem() {

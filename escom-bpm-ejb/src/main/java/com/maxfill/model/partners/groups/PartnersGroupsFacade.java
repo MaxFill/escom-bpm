@@ -1,6 +1,7 @@
 package com.maxfill.model.partners.groups;
 
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.partners.Partner_;
 import com.maxfill.model.partners.PartnersFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.partners.groups.PartnerGroups;
@@ -15,11 +16,16 @@ import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+
+import com.maxfill.model.users.User_;
 import org.apache.commons.collections.CollectionUtils;
 
 /* Группы контрагентов */
@@ -31,6 +37,22 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
 
     public PartnersGroupsFacade() {
         super(PartnerGroups.class, PartnerGroupsLog.class, PartnerGroupsStates.class);
+    }
+
+    /* Получение списка пользователей в группах */
+    public List<Partner> findDetails(PartnerGroups group, int first, int pageSize, String sortField, String sortOrder, User currentUser) {
+        first = 0;
+        pageSize = configuration.getMaxResultCount();
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Partner> cq = cb.createQuery(Partner.class);
+        Root<Partner> root = cq.from(Partner.class);
+        cq.select(root).distinct(true).where(root.get(Partner_.partnersGroupsList).in(group)).orderBy(cb.asc(root.get("name")));
+        TypedQuery<Partner> query = getEntityManager().createQuery(cq);
+        query.setFirstResult(first);
+        query.setMaxResults(pageSize);
+        return query.getResultStream().parallel()
+                .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                .collect(Collectors.toList());
     }
 
     @Override

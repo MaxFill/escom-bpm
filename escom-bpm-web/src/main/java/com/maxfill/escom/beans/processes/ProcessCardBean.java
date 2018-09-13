@@ -31,6 +31,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +54,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     @Inject
     private TaskBean taskBean;
+    @Inject
+    private ProcessBean processBean;
+
     @Inject
     private AttacheBean attacheBean;    
     
@@ -131,14 +135,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     @Override
     public String doFinalCancelSave() {
-        /*
-        sessionBean.getKillBeans().forEach(viewId->{
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            ResponseStateManager manager = getRenderKit(facesContext).getResponseStateManager();
-            Hacks.removeViewState(facesContext, manager, viewId);
-        });
-        sessionBean.getKillBeans().clear();
-        */
         return closeItemForm(exitParam);  //закрыть форму объекта
     }
     
@@ -158,11 +154,21 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         taskBean.prepEditChildItem(currentTask, getParamsMap());
     }
     
-    public void onOpenScheme(){        
-        diagramBean.setProcess(getEditedItem());
-        sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());        
+    public void onOpenScheme(){
+        processBean.setDiagramBean(diagramBean);
+        diagramBean.prepareModel(getEditedItem());
+        sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());
     }
-    
+    public void onSchemeClose(SelectEvent event){
+        if (event.getObject() == null) return;
+        String result = (String) event.getObject();
+        switch (result) {
+            case SysParams.EXIT_NOTHING_TODO: {
+                break;
+            }
+        }
+    }
+
     /**
      * Обработка события закрытия карточки задачи
      * @param event
@@ -186,7 +192,21 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             }
         }
     }
-    
+
+    public void onChangeCurator(SelectEvent event){
+        if (event.getObject() instanceof String) return;
+        List<User> items = (List<User>) event.getObject();
+        if (items.isEmpty()){return;}
+        User item = items.get(0);
+        getEditedItem().setCurator(item);
+        onItemChange();
+    }
+    public void onChangeCurator(ValueChangeEvent event){
+        User user = (User) event.getNewValue();
+        getEditedItem().setCurator(user);
+        onItemChange();
+    }
+
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     
     /**

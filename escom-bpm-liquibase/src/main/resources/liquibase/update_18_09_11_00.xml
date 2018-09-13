@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog 
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
+    
+     <changeSet id="user-auth-double-factor" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="Curator" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="Curator" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Curator"
+                                  baseTableName="processes"
+                                  constraintName="FK_curator"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="users"/>
+
+         <sql>
+             INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('1', 'callNumerator', 'MakeRegNumber');
+         </sql>
+     </changeSet>
+
+</databaseChangeLog> 

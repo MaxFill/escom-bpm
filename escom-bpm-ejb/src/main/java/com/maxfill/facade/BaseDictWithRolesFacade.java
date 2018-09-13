@@ -142,7 +142,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     public void addRole(T item, String roleName){        
         Map<String, Set<Integer>> roles = item.getRoles();
         if (!roles.containsKey(roleName)){
-            roles.put(roleName, new HashSet<>());
+            roles.put(roleName.toUpperCase(), new HashSet<>());
         }
     }
     

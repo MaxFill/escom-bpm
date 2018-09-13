@@ -95,7 +95,7 @@
                         <p:autoUpdate />
                     </p:messages>
 
-                    <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" style="height: 100%;">
+                    <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" activeIndex="#{_bean.tabActiveIndex}" dynamic="false" style="height: 100%;">
                         <p:ajax event="tabChange" listener="#{_bean.onTabChange}" />
                         <ui:insert name="page_body"/>
 

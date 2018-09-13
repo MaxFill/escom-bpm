@@ -21,7 +21,23 @@
      
     <ui:param name="_CreateGroupLabel" value="#{bundle.CreateGroup}" />
     <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />
-    
+
+    <!-- специфичные поля поиска -->
+    <ui:define name="searche">
+        <p:outputLabel value="#{bundle.Curator}:"/>
+        <h:panelGroup styleClass="ui-grid-col-12">
+            <div class="ui-inputgroup">
+                <p:selectOneMenu value="#{_bean.model.curator}" filter="true" converter="usersConvertor"
+                                 widgetVar="curatorSearche"
+                                 styleClass="ui-grid-col-12">
+                    <f:selectItems value="#{userBean.findAll()}" var="user" itemValue="#{user}" itemLabel="#{user.shortFIO}" />
+                    <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}"/>
+                </p:selectOneMenu>
+                <p:commandButton styleClass="btnClear" icon="ui-icon-close" onclick="PF('curatorSearche').selectValue();"/>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
         <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
@@ -32,15 +48,8 @@
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
-        <p:column headerText="#{bundle.DateBegin}" sortBy="#{item.beginDate}">
-            <h:outputText value="#{proc.beginDate}" >
-                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-            </h:outputText>
-        </p:column>
-        <p:column headerText="#{bundle.DateEnd}" sortBy="#{item.endDate}">
-            <h:outputText value="#{proc.endDate}" >
-                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-            </h:outputText>
+        <p:column headerText="#{bundle.Curator}" sortBy="#{item.curatorName}">
+            <h:outputText value="#{item.curatorName}" />
         </p:column>
     </ui:define>
         

@@ -36,17 +36,18 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     private DocFacade docFacade;
     @EJB 
     private FoldersFacade foldersFacade;
-    
-    /* Специфичные действия перед вставкой скопированного объекта */
+
+
+    /* Специфичные действия перед вставкой Вида документа объекта */
     @Override
-    public void preparePasteItem(DocType pasteItem, DocType sourceItem, BaseDict owner){
+    public void preparePasteItem(DocType pasteItem, DocType sourceItem, BaseDict owner) {
         super.preparePasteItem(pasteItem, sourceItem, owner);
-        if (owner == null){
+        if (owner == null) {
             owner = sourceItem.getOwner();
         }
         pasteItem.setOwner((DocTypeGroups) owner);
     }
-    
+
     @Override
     public DocTypeFacade getFacade() {
         return itemsFacade;

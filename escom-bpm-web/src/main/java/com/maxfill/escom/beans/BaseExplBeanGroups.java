@@ -30,4 +30,27 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
         return true;
     }
 
+    @Override
+    public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){
+        if(!isNeedCopyOnPaste(sourceItem, recipient)) { //если объект вставляется в группу как сссылка
+            getGroupBean().addItemInGroup(sourceItem, recipient);
+            if (sourceItem.getId() != 0) {
+                addItemToGroup(sourceItem, recipient);
+            }
+            return sourceItem;
+        } else { //если объект необходимо вставлять как копию
+            T pasteItem = doCopy(sourceItem); //создан новый объект (копия)
+            preparePasteItem(pasteItem, sourceItem, recipient);
+            prepCreate(pasteItem, pasteItem.getParent(), errors);
+            if (!errors.isEmpty()) {
+                MsgUtils.showErrors(errors);
+                return null;
+            }
+            changeNamePasteItem(sourceItem, pasteItem);
+            getFacade().create(pasteItem);
+            doPasteMakeSpecActions(sourceItem, pasteItem);
+            return pasteItem;
+        }
+    }
+
 }

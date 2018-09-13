@@ -167,6 +167,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @return
      */
     public T checkCanCreateItem(BaseDict parent, BaseDict owner, Set<String> errors, Map<String, Object> params){
+        params.put("author", getCurrentUser());
         T newItem = createItem(parent, owner, getCurrentUser(), params);
         prepCreate(newItem, parent, errors);
         return newItem;
@@ -235,8 +236,15 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Установка специфичных атрибутов при создании объекта  */ 
     public void setSpecAtrForNewItem(T item) {}
-    
-    /* Вставка объекта !!!*/
+
+    /**
+     * Вставка объекта, не имеющего владельца
+     * Объект вставляется как новый объект (копия)
+     * @param sourceItem
+     * @param recipient
+     * @param errors
+     * @return
+     */
     public T doPasteItem(T sourceItem, BaseDict recipient, Set<String> errors){       
         T pasteItem = doCopy(sourceItem);
         preparePasteItem(pasteItem, sourceItem, recipient);
@@ -245,12 +253,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             MsgUtils.showErrors(errors);
             return null;
         }
-        //changeNamePasteItem(sourceItem, pasteItem);
+        changeNamePasteItem(sourceItem, pasteItem);
         getFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
     }
-    
+
     protected void doPasteMakeSpecActions(T sourceItem, T pasteItem){        
     }
     
@@ -313,8 +321,11 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Изменение имени вставляемого объекта */
     protected void changeNamePasteItem(BaseDict sourceItem, BaseDict pasteItem){
-        String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
-        pasteItem.setName(name);
+        if (Objects.equals(sourceItem.getParent(), pasteItem.getParent())
+                && Objects.equals(sourceItem.getOwner(), pasteItem.getOwner())) {
+            String name = getBandleLabel("CopyItem") + " " + pasteItem.getName();
+            pasteItem.setName(name);
+        }
     }
 
     /**

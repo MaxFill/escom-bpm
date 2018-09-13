@@ -452,10 +452,12 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     if (isItemDetailType(item)){
                         tableBean.moveToTrash(item, errors);
                     } else
-                        if (isItemTreeType(item)){
+                        if (isItemTreeType(item)) {
                             treeBean.moveToTrash(item, errors);
-                            TreeNode node = EscomBeanUtils.findTreeNode(tree, item); 
-                            node.getParent().getChildren().remove(node); 
+                            TreeNode node = EscomBeanUtils.findTreeNode(tree, item);
+                            if (node != null && node.getParent() != null){
+                                node.getParent().getChildren().remove(node);
+                            }
                         } else
                             if (isItemRootType(item)){
                                 rootBean.moveToTrash(item, errors);
@@ -527,11 +529,18 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     /* КОРЗИНА: удаление из корзины выбранных записей контента */
     public void onClearCheckedContentTrash(){
-        getCheckedItems().stream().forEach((item -> onDeleteContentFromTrash(item)));
+        getCheckedItems().stream().forEach((item -> deleteContentFromTrash(item)));
+        refreshLazyData();
     }
-    
+
+
     /* КОРЗИНА: удаление из корзины объекта контента  */
-    public void onDeleteContentFromTrash(BaseDict item){
+    public void onDeleteContentFromTrash(BaseDict item) {
+        deleteContentFromTrash(item);
+        refreshLazyData();
+    }
+
+    public void deleteContentFromTrash(BaseDict item){
         if (isItemDetailType(item)){
             tableBean.deleteItem(item);
         } else
@@ -542,7 +551,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                     rootBean.deleteItem(item);
                 }
             }
-        refreshLazyData();       
     }
     
     /* ФИЛЬТРЫ */
@@ -816,7 +824,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (loadItems == null) return 0;
         return loadItems.size();
     }    
-    
+
+    public boolean isEmptyDetails(){
+        return CollectionUtils.isEmpty(loadItems);
+    }
+
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: раскрытие содержимого группы/папки (провалиться внутрь группы в обозревателе)  */ 
     public void onLoadGroupContent(BaseDict item) {
         onSetCurrentItem(item);
@@ -1112,10 +1124,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* КОПИРОВАНИЕ: вызов копирования объекта из таблицы обозревателя */
     public void onCopyItem(BaseDict item) {
         if (item == null){return;}
-        if (item.getId() == 0){
-            MsgUtils.errorFormatMsg("ObjectNotCopied", new Object[]{item.getName()});
-            return;
-        }        
         doCopyItems(Collections.singletonList(item));
     }
 
@@ -1186,6 +1194,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
         if (!rezults.isEmpty()){
             MsgUtils.succesMsg("PasteCopiedObjectDone");
+            //Вот тут должна быть так же и вставка в дерево или его обновление если скопированный в таблице объект является древовидным!
             refreshLazyData();
         }
     }
@@ -1210,17 +1219,21 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
         if (!errors.isEmpty()) return null;
 
+        //если объект копируется, то с ним нужно скопировать зависимости
         if (bean.isNeedCopyOnPaste(sourceItem, recipient)){
             List<List<?>> dependency = bean.doGetDependency(sourceItem);
             if (CollectionUtils.isNotEmpty(dependency)){
                 copyPasteDependency(dependency, pasteItem, errors);
                 pasteItem = bean.findItem(pasteItem.getId());
             }
-            return pasteItem;
-        } else {
-            bean.preparePasteItem(pasteItem, sourceItem, recipient);
-            return sourceItem;
         }
+        return pasteItem;
+        /*else //если объект не копируется, а только создаётся ссылка
+            {
+                bean.preparePasteItem(pasteItem, sourceItem, recipient);
+                return sourceItem;
+            }
+            */
     }    
     
     /* ВСТАВКА копирование дочерних и подчинённых объектов */
@@ -1809,10 +1822,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
     public Integer getFilterId() {
         return filterId;
-    }
-
-    public Set<BaseDict> getCopiedItems() {
-        return copiedItems;
     }
     
     public Integer getRowsInPage() {

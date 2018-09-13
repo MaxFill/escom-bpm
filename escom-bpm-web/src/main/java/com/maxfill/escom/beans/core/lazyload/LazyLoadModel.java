@@ -22,8 +22,7 @@ public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
     @Override
     public T getRowData(String rowKey) {
         Integer id = Integer.valueOf(rowKey);
-        T item = datasource.stream().filter(row->Objects.equals(row.getId(), id)).findFirst().orElse(null);     
-        return item;
+        return datasource.stream().filter(row->Objects.equals(row.getId(), id)).findFirst().orElse(null);
     }
 
     @Override

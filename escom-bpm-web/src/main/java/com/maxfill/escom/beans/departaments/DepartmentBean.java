@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.departaments;
 
+import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentFacade;
@@ -11,10 +12,7 @@ import com.maxfill.model.companies.Company;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import java.text.MessageFormat;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -93,9 +91,13 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* Формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        List<BaseDict> cnt = itemFacade.findActualChilds((Department)department, getCurrentUser()).collect(Collectors.toList());
-        cnt.addAll(staffFacade.findActualDetailItems((Department)department, first, pageSize, sortField,  sortOrder, getCurrentUser()));        
-        return cnt;
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+            return itemFacade.findActualChilds((Department) department, getCurrentUser()).collect(Collectors.toList());
+        } else {
+            List<BaseDict> cnt = new ArrayList<>();
+            cnt.addAll(staffFacade.findActualDetailItems((Department) department, first, pageSize, sortField, sortOrder, getCurrentUser()));
+            return cnt;
+        }
     }
 
     /**

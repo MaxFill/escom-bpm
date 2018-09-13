@@ -114,6 +114,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         if (sourceNode != null){
             PartnerGroups sourceGroup = (PartnerGroups)sourceNode.getData();
             partner.getPartnersGroupsList().remove(sourceGroup);
+            sourceGroup.getPartnersList().remove(partner);
         }                             
         partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
         getFacade().edit(partner);

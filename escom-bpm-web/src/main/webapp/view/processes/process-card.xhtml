@@ -28,10 +28,11 @@
     </ui:define>
     
     <ui:define name="CardToolButtons">
-        <p:commandButton value="#{bundle.Scheme}" 
-                        disabled="#{processCardBean.isReadOnly()}"
+        <p:commandButton value="#{bundle.Scheme}"
+                        disabled="#{processCardBean.isReadOnly() or _bean.editedItem.id == null}"
                         update="mainFRM:mainTabView:concorderList"
-                        actionListener="#{processCardBean.onOpenScheme()}" >      
+                        actionListener="#{processCardBean.onOpenScheme()}" >
+            <p:ajax event="dialogReturn" listener="#{_bean.onSchemeClose}" />
         </p:commandButton>                
         
         <p:spacer width="15"/>
@@ -65,8 +66,24 @@
                          onchange="return itemChange = 1;"
                          disabled="#{processCardBean.isReadOnly()}"
                          required="#{param['isRequired'] == 'true'}"
-                         requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                
-                
+                         requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>
+
+                <p:outputLabel value="#{bundle.Curator}:" indicateRequired="true" />
+                <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                    <ui:param name="_itemValue" value="#{_bean.editedItem.curator}"/>
+                    <ui:param name="_itemLabel" value="fullName"/>
+                    <ui:param name="_required" value="#{true}" />
+                    <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                    <ui:param name="_converter" value="usersConvertor" />
+                    <ui:param name="_itemPanel" value="curatorPanel"/>
+                    <ui:param name="_titleItem" value="#{bundle.Curator}"/>
+                    <ui:param name="_selectorBean" value="#{userBean}"/>
+                    <ui:param name="_items" value="#{userBean.findAll()}"/>
+                    <ui:param name="_actionClear" value="setCurator"/>
+                    <ui:param name="_actionSelect" value="onChangeCurator"/>
+                    <ui:param name="_update" value=""/>
+                </ui:include>
+
                 <p:outputLabel value="#{bundle.TermApproval}:" indicateRequired="true"/> 
                 <p:calendar id="dtPlanExecDate" value="#{processCardBean.editedItem.planExecDate}"  
                             styleClass="without-spaces" pages="2"

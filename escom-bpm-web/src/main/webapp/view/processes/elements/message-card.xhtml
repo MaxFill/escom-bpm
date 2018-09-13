@@ -33,11 +33,11 @@
                                 showCheckbox="true"
                                 required="#{param['isRequired'] == 'true'}" 
                                 requiredMessage="#{bundle.Field} [#{bundle.SelectedRoles}] #{bundle.MustBeFilled}"
-                                itemLabel="#{messageCardBean.getLabelFromBundle(role)}" itemValue="#{role}">
+                                itemLabel="#{messageCardBean.getLabelForRoleFromBundle(role)}" itemValue="#{role}">
                         <f:facet name="sourceCaption">#{bundle.AvailableRoles}</f:facet>
                         <f:facet name="targetCaption">#{bundle.SelectedRoles}</f:facet>
                     </p:pickList>
-                                                            
+
                 </p:panelGrid>
             </p:tab>
                         
