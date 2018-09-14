@@ -6,6 +6,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.task.Task;
+import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -32,6 +33,9 @@ public class SchedulerBean extends BaseViewBean {
 
     @EJB
     private TaskFacade taskFacade;
+    @EJB
+    private Workflow workflow;
+    
     @Inject
     private TaskBean taskBean;    
             
@@ -95,6 +99,7 @@ public class SchedulerBean extends BaseViewBean {
                 } else {                
                     taskFacade.edit(task);
                 }
+                updateProcess(task);
                 modelRefresh();
                 break;
             }
@@ -106,6 +111,7 @@ public class SchedulerBean extends BaseViewBean {
                 } else {
                     taskFacade.edit(task);
                 }
+                updateProcess(task);
                 modelRefresh();
                 break;
             }
@@ -113,6 +119,10 @@ public class SchedulerBean extends BaseViewBean {
                 break;
             }
         }        
+    }
+    
+    private void updateProcess(Task task){
+        workflow.replaceReportExecutor(task, getCurrentUser()); 
     }
     
     /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */

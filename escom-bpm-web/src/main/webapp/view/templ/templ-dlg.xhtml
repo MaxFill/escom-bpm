@@ -3,6 +3,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-frm.xhtml">
 
     <ui:define name="centerContent"> 
@@ -21,58 +22,68 @@
                 };
             }
         </script> 
-
-        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
-            <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
-                <f:facet name="header">
-                    #{_bean.getFormHeader()}
-                </f:facet>
-                <f:facet name="actions">
-                    <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                   rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"
-                                   actionListener="#{_bean.onCancelItemSave()}"  
-                                   onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {
-                                               onChangeItem();
-                                           }">
-                        <h:outputText styleClass="ui-icon ui-icon-closethick" />
-                    </p:commandLink>
-                </f:facet>
-                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
-                    <p:toolbar id="explToolBar">
-                        <f:facet name="left">
-                            <ui:insert name="toolbarComponents"/>
+        <p:layout fullPage="true" styleClass="ui-grid-col-12 without-spaces">
+            <p:layoutUnit position="south" rendered="#{_bean.isSouthShow()}" size="90%" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
+                <h:form id="southFRM"  style="font-size: 80%; height: 100%;" styleClass="ui-grid-col-12" > 
+                    <ui:insert name="southFormContent"/>
+                </h:form>
+            </p:layoutUnit>
+            <p:layoutUnit position="center" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
+                <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
+                    <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
+                        <f:facet name="header">
+                            #{_bean.getFormHeader()}
                         </f:facet>
-                        <f:facet name="right">
-                            <ui:insert name="specToolButtons"/>
-                            <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
-                                <ui:insert name="menuActions" />  
-                                <p:separator />
-                                <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
-                                            onstart="PF('statusDialog').show()"
-                                            oncomplete="PF('statusDialog').hide();"
-                                            actionListener="#{sessionBean.onViewHelp()}"/>
-                            </p:menuButton>
+                        <f:facet name="actions">
+                            <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                           rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"
+                                           actionListener="#{_bean.onCancelItemSave()}"  
+                                           onclick="sendFormSize('#{_bean.getFormName()}');
+                                                   if (itemChange == 1) {
+                                                       onChangeItem();
+                                                   }">
+                                <h:outputText styleClass="ui-icon ui-icon-closethick" />
+                            </p:commandLink>
                         </f:facet>
-                    </p:toolbar>  
+                        <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                        
+                            <p:toolbar id="explToolBar">
+                                <f:facet name="left">
+                                    <ui:insert name="toolbarComponents"/>
+                                </f:facet>
+                                <f:facet name="right">
+                                    <ui:insert name="specToolButtons"/>
+                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                        <ui:insert name="menuActions" />  
+                                        <p:separator />
+                                        <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 
+                                                    onstart="PF('statusDialog').show()"
+                                                    oncomplete="PF('statusDialog').hide();"
+                                                    actionListener="#{sessionBean.onViewHelp()}"/>
+                                    </p:menuButton>
+                                </f:facet>
+                            </p:toolbar>  
 
-                    <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
-                        <p:autoUpdate />
-                    </p:messages>
+                            <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+                                <p:autoUpdate />
+                            </p:messages>
 
-                    <ui:insert name="centerFormContent"/>
+                            <ui:insert name="centerFormContent"/>
 
-                </p:panelGrid>
-                <f:facet name="footer">
-                    <ui:insert name="centerFormFooter"/>
-                </f:facet>
-            </p:panel>
+                        </p:panelGrid>
+                        <f:facet name="footer">
+                            <ui:insert name="centerFormFooter"/>
+                        </f:facet>
+                    </p:panel>
 
-            <ui:insert name="form_scripts"/>            
-            <ui:include src="/view/common/exeption-handler.xhtml"/>
+                    <ui:insert name="form_scripts"/>            
+                    <ui:include src="/view/common/exeption-handler.xhtml"/>
+
+                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                            
+                </h:form>
+            </p:layoutUnit>
             
-            <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                            
-        </h:form>
-
+    </p:layout>
+        
         <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 

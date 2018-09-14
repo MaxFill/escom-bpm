@@ -23,12 +23,8 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.faces.render.ResponseStateManager;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
-import org.omnifaces.util.Beans;
-import org.omnifaces.util.Faces;
-import static org.omnifaces.util.FacesLocal.getRenderKit;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -151,7 +147,9 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     public Boolean isEastShow(){
         return false;
     }    
-    
+    public Boolean isSouthShow(){
+        return false;
+    }
     public abstract String getFormHeader();
     
     /* ПРОЧИЕ */

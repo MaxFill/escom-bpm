@@ -34,4 +34,5 @@ public interface Workflow {
     void stop(Process process, User user, Set<String> errors);
     void start(Process process, User user, Set<String> errors);
     void executeTask(Process process, Task task, Result result, User user, Set<String> errors);
+    void replaceReportExecutor(Task task, User user);
 }

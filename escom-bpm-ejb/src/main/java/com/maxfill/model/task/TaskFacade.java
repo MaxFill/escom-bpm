@@ -5,6 +5,7 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.BaseDictWithRolesFacade;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
@@ -18,8 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.EJB;
-
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -86,9 +87,17 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         return results;
     }        
     
+    @Override
+    public void setSpecAtrForNewItem(Task task, Map<String, Object> params) {    
+        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
+        String number = numeratorService.doRegistrNumber(task, numeratorPattern, null, new Date());
+        task.setRegNumber(number);
+    }
+    
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время
      * @param task 
+     * @param locale 
      */
     public void makeDatePlan(Task task, Locale locale){
         Integer deltasec = task.getDeltaDeadLine();

@@ -1,11 +1,6 @@
-package com.maxfill.model.process.reports;
+package com.maxfill.model.task;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.process.Process;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -14,7 +9,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,13 +21,14 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Сущность "Отчёт по исполнению процесса"
+ *
+ * @author maksim
  */
 @Entity
-@Table(name = "processReports")
-public class ProcReport implements Serializable, Dict{
-    private static final long serialVersionUID = 6494874383764066822L;
-
+@Table(name = "tasksReports")
+public class TaskReport implements Serializable, Dict{
+    private static final long serialVersionUID = -8028605453168798790L;
+    
     @Id
     @Basic(optional = false)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -51,22 +46,13 @@ public class ProcReport implements Serializable, Dict{
     @XmlTransient
     @JoinColumn(name = "Author", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private User author;
-    
+    private User author;    
+      
     @XmlTransient
-    @JoinColumn(name = "Executor", referencedColumnName = "Id")
+    @JoinColumn(name = "Task", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Staff executor;
+    private Task task;
     
-    @XmlTransient    
-    @JoinColumn(name = "Process", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Process process;          
-    
-    @JoinColumn(name = "Version", referencedColumnName = "Id")
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Attaches version; 
-        
     @Basic(optional = false)
     @Column(name = "DateCreate")
     @Temporal(TemporalType.TIMESTAMP)
@@ -77,26 +63,22 @@ public class ProcReport implements Serializable, Dict{
     private Integer tempId;
     
     private static final AtomicInteger COUNT = new AtomicInteger(0);
-        
-    public ProcReport() {
+
+    public TaskReport() {
         tempId = COUNT.incrementAndGet();
     }
-
-    public ProcReport(User author, Staff executor, Process process) {
-        this("", "NoAgreementWasMade",  author, executor, process);
-    }
     
-    public ProcReport(String content, String status, User author, Staff executor, Process process) {
+    public TaskReport(String content, String status, User author, Task task) {        
         this();
         this.content = content;
         this.status = status;
         this.author = author;
-        this.executor = executor;
-        this.process = process;
+        this.task = task;
+        this.dateCreate = new Date();
     }
-          
-    /* GETS & SETS */
     
+    /* GETS & SETS */
+
     @Override
     public Integer getId() {
         return id;
@@ -113,11 +95,25 @@ public class ProcReport implements Serializable, Dict{
         this.content = content;
     }
 
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public User getAuthor() {
         return author;
     }
     public void setAuthor(User author) {
         this.author = author;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     public Date getDateCreate() {
@@ -127,45 +123,19 @@ public class ProcReport implements Serializable, Dict{
         this.dateCreate = dateCreate;
     }
 
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Process getProcess() {
-        return process;
-    }
-    public void setProcess(Process process) {
-        this.process = process;
-    }
-
-    public Staff getExecutor() {
-        return executor;
-    }
-    public void setExecutor(Staff executor) {
-        this.executor = executor;
-    }
-
-    public Attaches getVersion() {
-        return version;
-    }
-    public void setVersion(Attaches version) {
-        this.version = version;
-    }    
-    
     public Integer getTempId() {
         return tempId;
     }
-        
+    public void setTempId(Integer tempId) {
+        this.tempId = tempId;
+    }
+    
     /* *** *** */
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + Objects.hashCode(this.executor);
-        hash = 53 * hash + Objects.hashCode(this.process);
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -180,21 +150,16 @@ public class ProcReport implements Serializable, Dict{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ProcReport other = (ProcReport) obj;
-        if (!Objects.equals(this.executor, other.executor)) {
-            return false;
-        }
-        if (!Objects.equals(this.process, other.process)) {
+        final TaskReport other = (TaskReport) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
 
-
-
     @Override
     public String toString() {
-        return "ProcExeReport{" + "id=" + id + '}';
-    }        
-    
+        return "TaskReport{" + "id=" + id + '}';
+    }
+        
 }

@@ -2,6 +2,7 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-dlg.xhtml"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
@@ -208,7 +209,7 @@
         <p:commandButton title="Clear" icon="ui-icon-closethick"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onClearModel()}"
-                         update="diagramm">
+                         update="southFRM:diagramm">
             <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
         </p:commandButton>
         <span class="ui-separator">
@@ -217,8 +218,8 @@
         <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
     </ui:define>
 
-    <ui:define name="centerFormContent">  
-        <p:diagram id="diagramm" value="#{_bean.model}" style="height:1600px" styleClass="ui-widget-content" var="el" widgetVar="DiagrammWG" >
+    <ui:define name="southFormContent">  
+        <p:diagram id="diagramm" value="#{_bean.model}" style="height:1600px; width: 1600px;" styleClass="ui-widget-content" var="el" widgetVar="DiagrammWG" >
             <f:facet name="element" >
                 <h:outputLabel value="#{_bean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
                 <p:graphicImage value="#{_bean.getElementImage(el)}" styleClass="diagramm-image"/>
@@ -226,8 +227,9 @@
             <p:ajax event="connect"    disabled="#{_bean.isReadOnly()}" listener="#{_bean.onConnect}" />
             <p:ajax event="disconnect" disabled="#{_bean.isReadOnly()}" listener="#{_bean.onDisconnect}" />
             <p:ajax event="connectionChange" disabled="#{_bean.isReadOnly()}" listener="#{_bean.onConnectionChange}" />
-        </p:diagram>
-
+        </p:diagram>            
+        
+        
         <p:remoteCommand name="elementClicked" actionListener="#{_bean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{_bean.onElementOpenClick()}"/>
         <p:remoteCommand name="elementCopy" actionListener="#{_bean.onElementCopy()}"/>

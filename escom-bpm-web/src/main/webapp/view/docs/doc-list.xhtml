@@ -28,8 +28,8 @@
             <h:outputText value="#{doc.regNumber}"/>
         </p:column>
         
-        <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.dateDoc}" priority="4">
-            <h:outputText value="#{doc.dateDoc}" >
+        <p:column headerText="#{bundle.DateDoc}" sortBy="#{doc.itemDate}" priority="4">
+            <h:outputText value="#{doc.itemDate}" >
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputText>
         </p:column>

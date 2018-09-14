@@ -9,7 +9,6 @@ import com.maxfill.model.BaseDict;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
-
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.metadates.MetadatesStates;
 import com.maxfill.model.users.User;
@@ -20,10 +19,8 @@ import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
-
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;

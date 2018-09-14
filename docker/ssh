@@ -19,7 +19,8 @@ sudo scp /opt/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root
 Подключаемся к контейнеру:
 docker exec -i -t wildfly8443 bash
 Подключаемся к mysql командой:
-mysql -uescom -p пароль qwerty
+mysql -uescom -p 
+пароль qwerty
 удаляем схему командой:
 DROP DATABASE escomdb;
 создаём базу данных командой:

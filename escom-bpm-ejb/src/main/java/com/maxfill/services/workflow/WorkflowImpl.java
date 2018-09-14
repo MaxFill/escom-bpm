@@ -22,9 +22,11 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.process.timers.ProcTimerFacade;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.task.TaskReport;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
 import com.maxfill.services.notification.NotificationService;
@@ -47,6 +49,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.ejb.Asynchronous;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -91,7 +94,7 @@ public class WorkflowImpl implements Workflow {
         } else {
             scheme.getElements().getTasks().put(taskElem.getUid(), taskElem);
             if (taskElem.getTask() != null){
-                scheme.getTasks().add(taskElem.getTask());
+                scheme.getTasks().add(taskElem.getTask());                
             }
         }
     }
@@ -226,8 +229,8 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors) {
         //ToDo проверка на возможность удаления
-        if (element instanceof TaskElem){
-            scheme.getElements().getTasks().remove(element.getUid());            
+        if (element instanceof TaskElem){            
+            scheme.getElements().getTasks().remove(element.getUid());
         } else if (element instanceof EnterElem){
             scheme.getElements().getEnters().remove(element.getUid());
         } else if (element instanceof ExitElem){
@@ -405,9 +408,22 @@ public class WorkflowImpl implements Workflow {
             taskFacade.taskDone(task, result, user);            
             scheme.getTasks().remove(task);
             scheme.getTasks().add(task); //TODO это лишнее ?  
-            ProcReport report = new ProcReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, process, task);
-            process.getReports().add(report);
-            task.getReports().add(report);
+            
+            //Запись отчёта по задаче
+            TaskReport taskReport = new TaskReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, user, task);            
+            task.getReports().add(taskReport);
+            
+            //получить отчёт процесса, относящийся к данному согласующему и обновить его значения
+            ProcReport procReport = process.getReports().stream()
+                    .filter(report-> Objects.equals(task.getOwner(), report.getExecutor()))
+                    .findFirst()
+                    .orElse(new ProcReport(user, task.getOwner(), process));
+            procReport.setStatus(task.getResult());
+            procReport.setDateCreate(new Date());            
+            Doc doc = process.getDocument(); //запись в отчёт версии, за которую проголосовал 
+            if (doc != null){
+                procReport.setVersion(doc.getMainAttache());
+            }            
             run(process, startElement, errors, user);
         }
     }
@@ -899,5 +915,48 @@ public class WorkflowImpl implements Workflow {
             }
         }
         return result;
+    }
+    
+    /* *** ПРОЧЕЕ *** */
+    
+    /**
+     * Замена исполнителя в отчёте по процессу (листе согласования)
+     * @param task
+     * @param user 
+     */
+    @Asynchronous
+    @Override    
+    public void replaceReportExecutor(Task task, User user){
+        Scheme scheme = task.getScheme();
+        if (scheme == null) return;        
+        
+        Process process = processFacade.find(scheme.getProcess().getId());        
+        Set<ProcReport> procReports = process.getReports();
+        
+        Staff newExecutor = task.getOwner();
+        Staff oldExecutor = scheme.getTasks().stream()
+                .filter(t->t.getId().equals(task.getId()))
+                .findFirst()
+                .map(t-> t.getOwner())
+                .orElse(null);
+        if (oldExecutor != null){
+            List<Staff> oldExecutors = scheme.getTasks().stream() //список всех таких, т.к. их может быть в модели больше чем один!
+                    .filter(t->t.getOwner().equals(oldExecutor) && !t.getId().equals(task.getId()))
+                    .map(t-> t.getOwner())
+                    .collect(Collectors.toList());
+            if (oldExecutors.isEmpty()){
+                ProcReport oldExecutorReport = procReports.stream()
+                        .filter(report-> report.getDateCreate() == null && Objects.equals(report.getExecutor(), oldExecutor))
+                        .findFirst().orElse(null);
+                if (oldExecutorReport != null){
+                    procReports.remove(oldExecutorReport);
+                }
+            }
+        }        
+        
+        //добавить в лист согласования нового исполнителя, если его там нет
+        ProcReport procReport = new ProcReport(user, newExecutor, process);
+        procReports.add(procReport);
+        processFacade.edit(process);
     }
 }

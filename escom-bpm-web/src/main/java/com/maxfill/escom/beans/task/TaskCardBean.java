@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.task;
 
+import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictResults;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
@@ -8,6 +9,7 @@ import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
+import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.task.result.ResultFacade;
 import com.maxfill.model.task.TaskFacade;
@@ -23,7 +25,6 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.services.workflow.Workflow;
-import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
 import java.time.DayOfWeek;
@@ -32,15 +33,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
-
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
@@ -62,8 +65,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ResultFacade resultFacade;
     @EJB
     private ProcessFacade processFacade;    
-    @EJB
-    private WorkTimeService workTimeService;
     
     @Inject
     private ProcessBean processBean;
@@ -81,10 +82,21 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private int reminderDeltaDay = 0;
     private int reminderDeltaHour = 0;
     private int reminderDeltaMinute = 0;
-    private String[] reminderDays;
-    private List<String> sourceDays;
-    
+      
     private ProcReport currentReport;
+    
+    private List<String> selectedDays;
+    
+    private List<SelectItem> daysOfWeek = new ArrayList<>();
+    {        
+        daysOfWeek.add(new SelectItem("Sun", getBandleLabel("SUNDAY")));
+        daysOfWeek.add(new SelectItem("Mon", getBandleLabel("MONDAY")));
+        daysOfWeek.add(new SelectItem("Tue", getBandleLabel("TUESDAY")));
+        daysOfWeek.add(new SelectItem("Wed", getBandleLabel("WEDNESDAY")));
+        daysOfWeek.add(new SelectItem("Thu", getBandleLabel("THURSDAY")));
+        daysOfWeek.add(new SelectItem("Fri", getBandleLabel("FRIDAY")));
+        daysOfWeek.add(new SelectItem("Sat", getBandleLabel("SATURDAY")));
+    }
     
     @Override
     public void doPrepareOpen(Task task){              
@@ -95,7 +107,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             readOnly = true;
         }
         initDateFields(task);        
-    }    
+    }
       
     /**
      * Проверка корректности задачи 
@@ -147,7 +159,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
                         break;
                     }
                     case "everyweek":{
-                        if (reminderDays == null){
+                        if (selectedDays == null){
                             errors.add(MsgUtils.getMessageLabel("ReminderPeriodIncorrect"));
                         }
                         break;
@@ -195,9 +207,16 @@ public class TaskCardBean extends BaseCardBean<Task>{
         super.onBeforeSaveItem(task);
     }
     
+    @Override
+    protected void onAfterSaveItem(Task task){
+        //изменение в листе согласования процесса, если изменили задачу        
+        if (task.getScheme() == null) return;   //задача не связана с процессом                 
+        if (getTypeEdit() == DictEditMode.CHILD_MODE) return ;   
+        workflow.replaceReportExecutor(task, getCurrentUser());               
+    } 
+     
     /**
      * Обработка события выполнения задачи
-     * @param result
      * @return 
      */
     public String onExecute(){ 
@@ -258,12 +277,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.errorMsg("LinkProcessIncorrect");
             return;
         }
-        List<Doc> docs = process.getDocs();
-        if (CollectionUtils.isEmpty(docs)){
+        Doc doc = process.getDocument();
+        if (doc == null){
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
-        }
-        Doc doc = docs.stream().findFirst().orElse(null);       
+        }        
         docBean.prepEditItem(doc, getParamsMap());                
     }
     
@@ -275,15 +293,17 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (process == null){ 
             MsgUtils.errorMsg("LinkProcessIncorrect");
             return;
-        }
-        
-        List<Doc> docs = process.getDocs();
-        if (CollectionUtils.isEmpty(docs)){
+        }        
+        Doc doc = process.getDocument();
+        if (doc == null){
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
-        }
-        Doc doc = docs.stream().findFirst().orElse(null);
-        docBean.onViewMainAttache(doc);
+        }        
+        if (doc != null){
+            docBean.onViewMainAttache(doc);
+        } else {
+            MsgUtils.errorMsg("DocumentDoNotContainMajorVersion");
+        }    
     }
     
     private Process getProcess(){
@@ -345,7 +365,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         } 
         
         if (StringUtils.isNotEmpty(task.getReminderDays())){
-            reminderDays = task.getReminderDays().split(",");
+            String[] arr = task.getReminderDays().split(",");
+            selectedDays = new ArrayList<>(Arrays.asList(arr));            
         }
     }
     
@@ -353,8 +374,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         task.setDeltaDeadLine(seconds);
-        if (reminderDays != null){
-            task.setReminderDays(String.join(",", reminderDays));
+        if (selectedDays != null){
+            task.setReminderDays(String.join(",", selectedDays));
         }
         if ("singl".equals(task.getReminderType())){
             int sec = reminderDeltaDay * 86400;
@@ -463,23 +484,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
         this.deadLineDeltaHour = deadLineDeltaHour;
     }    
 
-    public String[] getReminderDays() {
-        return reminderDays;
-    }
-    public void setReminderDays(String[] reminderDays) {
-        this.reminderDays = reminderDays;
-    }
-
-    public List<String> getSourceDays() {
-        if (sourceDays == null){
-            sourceDays = new ArrayList<>();
-            for (DayOfWeek dayOfWeek : Arrays.asList(DayOfWeek.values())){
-                sourceDays.add(String.valueOf(dayOfWeek.getValue()));
-            }
-        }
-        return sourceDays;
-    }  
-
     public ProcReport getCurrentReport() {
         return currentReport;
     }
@@ -520,4 +524,20 @@ public class TaskCardBean extends BaseCardBean<Task>{
     protected BaseDictFacade getFacade() {
         return taskFacade;
     }
+    
+    public List<SelectItem> getDaysOfWeek() {
+        return daysOfWeek;
+    }
+    public void setDaysOfWeek(List<SelectItem> daysOfWeek) {
+        this.daysOfWeek = daysOfWeek;
+    }
+    
+    public List<String> getSelectedDays() {
+        return selectedDays;
+    }
+    public void setSelectedDays(List<String> selectedDays) {
+        this.selectedDays = selectedDays;
+    }
+    
+    
 }

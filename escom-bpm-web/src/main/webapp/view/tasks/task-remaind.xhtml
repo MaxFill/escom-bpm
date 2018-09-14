@@ -4,7 +4,7 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">      
         
-    <p:panelGrid id="pnRemainder" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                         
+    <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                         
         <p:selectBooleanCheckbox value="#{true}" disabled="true" 
                                  itemLabel="#{bundle.ReminderAssigningEvent}"
                                  rendered="#{taskCardBean.editedItem.scheme != null}"> 
@@ -57,27 +57,27 @@
                     <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                 </p:calendar>
                 <p:outputLabel value="#{bundle.EveryWeek}:"/>
-            </h:panelGrid>
+            </h:panelGrid>        
         </h:panelGrid>
 
-        <p:panelGrid id="pnRemainderRepeatValues" columns="2" columnClasses="ui-grid-col-3 ui-grid-col-7" styleClass="without-spaces">
-            <p:spacer width="15" />
-            <p:panelGrid columns="2" columnClasses="ui-grid-col-1 ui-grid-col-11" styleClass="without-spaces">
-                <p:outputLabel value="#{bundle.Days}:"/>
-                <p:selectManyCheckbox id="reminderWeekDays" value="#{taskCardBean.reminderDays}" layout="grid" columns="3"
-                                      onchange="return itemChange = 1;"
-                                      disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
-                    <f:selectItems value="#{taskCardBean.sourceDays}" var="day" itemLabel="#{taskCardBean.getDayWeekName(day)}" itemValue="#{day}" />
-                </p:selectManyCheckbox>
-            
-                <p:outputLabel value="#{bundle.Time}:"/>
-                <p:calendar id="reminderWeekTime" value="#{taskCardBean.editedItem.reminderTime}" 
-                            pattern="HH:mm" timeOnly="true" 
-                            disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
-                    <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-                </p:calendar>
-            </p:panelGrid>
-        </p:panelGrid>
+        <h:panelGrid id="pnRemainderRepeatValues" columns="2" styleClass="ui-grid-col-12 without-spaces"> 
+            <p:spacer width="45" />
+            <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">              
+                <p:selectManyMenu value="#{taskCardBean.selectedDays}" showCheckbox="true" styleClass="ui-grid-col-12"
+                                  onchange="return itemChange = 1;"
+                                  disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
+                    <f:selectItems value="#{taskCardBean.daysOfWeek}" var="day" itemValue="#{day.label}" itemLabel="#{day.label}"/>
+                </p:selectManyMenu>
+
+                <h:panelGrid columns="1">
+                    <p:outputLabel value="#{bundle.Time}:"/>
+                    <p:calendar value="#{taskCardBean.getEditedItem().reminderTime}" pattern="HH:mm" timeOnly="true" styleClass="ui-grid-col-12"
+                                disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
+                        <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+                    </p:calendar>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:panelGrid>
         
         <p:separator rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
         <p:outputLabel value="#{''.concat(bundle.NextReminder).concat(' ').concat(bundle.AtTime)}" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>

@@ -1,13 +1,11 @@
 package com.maxfill.model.staffs;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
 import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
@@ -24,7 +22,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 /* Штатная единица */
@@ -113,7 +110,9 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
             sb.append(employee.getShortFIO()).append(" ");
         }
         if (owner != null && StringUtils.isNotBlank(owner.getName())){
-            sb.append(owner.getFullName()).append(" ").append(owner.getOwner().getName());
+            sb.append(owner.getFullName())
+                    .append(" ")        
+                    .append(owner.getOwner() != null ? owner.getOwner().getName() : "");
         } else
             if (company != null){
                 sb.append(company.getName());

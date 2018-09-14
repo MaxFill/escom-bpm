@@ -113,6 +113,10 @@
                                oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>                        
             </p:column>
 
+            <p:column headerText="#{bundle.Number}" >
+                <h:outputLabel value="#{item.getRegNumber()}"/>
+            </p:column>
+            
             <p:column headerText="#{bundle.DateBegin}" width="90" sortBy="#{item.beginDate}">
                 <h:outputLabel value="#{item.beginDate}">
                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>

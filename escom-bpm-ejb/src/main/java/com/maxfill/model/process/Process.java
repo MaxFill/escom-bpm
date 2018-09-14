@@ -9,6 +9,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
 import org.apache.commons.lang.StringUtils;
 import javax.persistence.*;
@@ -53,8 +54,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @XmlTransient
     @JoinColumn(name = "Curator", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private User curator;
+    private Staff curator;
 
+    @XmlTransient
+    @JoinColumn(name = "Document", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Doc document;
+        
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
@@ -98,14 +104,14 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval=true)
     private Scheme scheme;
-    
+        
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<ProcessLog> itemLogs = new ArrayList<>();
 
     /* Отчёты по исполнению */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "process")
-    private List<ProcReport> reports = new ArrayList<>();
+    private Set<ProcReport> reports = new HashSet<>();
     
     public Process() {
     }
@@ -140,13 +146,20 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.owner = owner;
     }
 
-    public User getCurator() {
+    public Staff getCurator() {
         return curator;
     }
-    public void setCurator(User curator) {
+    public void setCurator(Staff curator) {
         this.curator = curator;
     }
 
+    public Doc getDocument() {
+        return document;
+    }
+    public void setDocument(Doc document) {
+        this.document = document;
+    }
+    
     @Override
     public ProcessStates getState() {
         return state;
@@ -255,10 +268,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.itemLogs = itemLogs;
     }
 
-    public List<ProcReport> getReports() {
+    public Set<ProcReport> getReports() {
         return reports;
     }
-    public void setReports(List<ProcReport> reports) {
+    public void setReports(Set<ProcReport> reports) {
         this.reports = reports;
     }
     

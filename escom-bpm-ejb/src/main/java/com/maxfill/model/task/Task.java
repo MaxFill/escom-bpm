@@ -12,7 +12,6 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.result.Result;
 import java.io.IOException;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.*;
@@ -20,8 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import static javax.persistence.GenerationType.TABLE;
+import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -56,8 +55,8 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     /* Ссылка на схему процесса */
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Scheme scheme;
-
+    private Scheme scheme;    
+    
     /* Дата выдачи (назначения) поручения */
     @Column(name = "BeginDate")
     @Temporal(TemporalType.TIMESTAMP)
@@ -111,10 +110,14 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     private String avaibleResultsJSON;    
     
     @Column(name = "RoleJson", length = 2048)
-    private String roleJson;
-       
+    private String roleJson;       
+      
+    @Size(max = 50)
+    @Column(name = "RegNumber")
+    private String regNumber;
+        
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
-    private List<ProcReport> reports = new ArrayList<>();
+    private List<TaskReport> reports = new ArrayList<>();
         
     /* Категории */
     //ToDo добавить категории
@@ -183,6 +186,14 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
             return "task";
         }
     }  
+
+    @Override
+    public String getRegNumber() {
+        return regNumber;
+    }
+    public void setRegNumber(String regNumber) {
+        this.regNumber = regNumber;
+    }        
     
     @Override
     public Map<String, Set<Integer>> getRoles() {
@@ -260,11 +271,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public void setTaskLinkUID(String taskLinkUID) {
         this.taskLinkUID = taskLinkUID;
     }
-
-    public List<ProcReport> getReports() {
+    
+    public List<TaskReport> getReports() {
         return reports;
     }
-    public void setReports(List<ProcReport> reports) {
+    public void setReports(List<TaskReport> reports) {
         this.reports = reports;
     }
     

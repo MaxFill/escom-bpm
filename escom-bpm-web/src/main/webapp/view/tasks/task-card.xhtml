@@ -15,8 +15,7 @@
             function sendResult(result) {
                 saveResult([                  
                     {name: 'result', value: result}
-                ]);                
-                return;
+                ]);
             }
         </script>
         <p:remoteCommand name="saveResult" actionListener="#{taskCardBean.onExecute()}"  />
@@ -42,7 +41,7 @@
         <p:tab title="#{bundle.Task}"  >            
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
-                <h:panelGroup id="typeDocPanel" styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
+                <h:panelGroup styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{taskCardBean.editedItem.owner}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
@@ -172,16 +171,17 @@
                 </p:panelGrid>
                 <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
 
-                <p:commandLink  value="#{bundle.GoToProcess}"
-                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'processCardBean'}"
-                                actionListener="#{taskCardBean.onOpenProcess()}"/>
-                <p:commandLink  value="#{bundle.GoToDocument}"
-                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null and taskCardBean.beanName ne 'docCardBean'}"
-                                actionListener="#{taskCardBean.onOpenDocument()}"/>
-                <p:commandLink  value="#{bundle.ViewDoc}"
-                                rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}"
-                                actionListener="#{taskCardBean.onViewDocument()}"/>
-
+                <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" >
+                    <p:commandLink  value="#{bundle.GoToProcess}"
+                                    rendered="#{taskCardBean.sourceBean == null}"
+                                    actionListener="#{taskCardBean.onOpenProcess()}"/>
+                    <p:commandLink  value="#{bundle.GoToDocument}"
+                                    rendered="#{taskCardBean.sourceBean == null}"
+                                    actionListener="#{taskCardBean.onOpenDocument()}"/>
+                    <p:commandLink  value="#{bundle.ViewDoc}"
+                                    actionListener="#{taskCardBean.onViewDocument()}"/>
+                </h:panelGrid>
+                
                 <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
@@ -207,10 +207,6 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.Reminder}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}">
-            <ui:include src="/view/tasks/task-remaind.xhtml"/>
-        </p:tab>
-
         <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">                   
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 
@@ -225,6 +221,10 @@
             </p:panelGrid>
         </p:tab>
             
+        <p:tab title="#{bundle.Reminder}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_COMPLETED}">
+            <ui:include src="/view/tasks/task-remaind.xhtml"/>
+        </p:tab>
+        
     </ui:define>
     
      <ui:define name="extColumnsRights">

@@ -9,17 +9,14 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
@@ -70,7 +67,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             makeProcName(process);
         }
         if (params.containsKey("author")) {
-            process.setCurator((User)params.get("author"));
+            User user = (User)params.get("author");
+            if (user.getStaff() != null){
+                process.setCurator(user.getStaff());
+            }
         }
         /*
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
@@ -79,6 +79,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         */
         addRole(process, DictRoles.ROLE_CONCORDER);
         addRole(process, DictRoles.ROLE_CURATOR);
+                
     }
 
     /**

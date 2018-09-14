@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd"> 
     
-     <changeSet id="user-auth-double-factor" author="filatov" context="initdata" runOnChange="true">
+     <changeSet id="process_add_role_curator" author="filatov" context="initdata" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
                 <columnExists tableName="processes" columnName="Curator" />
@@ -22,11 +22,83 @@
                                   referencedColumnNames="Id"
                                   onUpdate="NO ACTION"
                                   onDelete="NO ACTION"
-                                  referencedTableName="users"/>
+                                  referencedTableName="staffs"/>
 
          <sql>
-             INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('1', 'callNumerator', 'MakeRegNumber');
+            INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('1', 'callNumerator', 'MakeRegNumber');
          </sql>
      </changeSet>
-
+     
+    <changeSet id="processReports_add_Executor" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processReports" columnName="Executor" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processReports">
+            <column name="Executor" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Executor"
+                                  baseTableName="processReports"
+                                  constraintName="FK_executor"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="staffs"/>         
+    </changeSet>
+     
+   <changeSet id="processReports_add_Version" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processReports" columnName="Version" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processReports">
+            <column name="Version" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Version"
+                                  baseTableName="processReports"
+                                  constraintName="FK_Version"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="attaches"/>         
+    </changeSet>   
+             
+    <changeSet id="process_add_document" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="Document" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="Document" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Document"
+                                  baseTableName="processes"
+                                  constraintName="FK_document"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="docs"/>         
+    </changeSet>     
+        
+    <changeSet id="task_add_RegNumber" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="taske" columnName="RegNumber" />
+            </not>
+        </preConditions>
+        <addColumn tableName="tasks">
+            <column name="RegNumber" type="varchar(55)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

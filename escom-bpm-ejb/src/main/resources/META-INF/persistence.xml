@@ -94,16 +94,14 @@
     <class>com.maxfill.model.process.remarks.Remark</class>
     <class>com.maxfill.model.process.remarks.RemarkLog</class>
     <class>com.maxfill.model.process.remarks.RemarkStates</class>
+    <class>com.maxfill.model.task.TaskReport</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
-    
     <properties>
-      <property name="javax.persistence.schema-generation.database.action" value="create"/>     
-            
+      <property name="javax.persistence.schema-generation.database.action" value="create"/>
       <!--property name="eclipselink.logging.level" value="FINE"/-->
       <!--property name="eclipselink.logging.logger" value="ServerLogger"/-->
       <!--property name="eclipselink.logging.level.sql" value="FINE"/-->
       <!--property name="eclipselink.logging.parameters" value="true"/-->
-      
       <!--property name="show_sql" value="true"/-->
       <!--property name="showSql" value="true"/-->
     </properties>

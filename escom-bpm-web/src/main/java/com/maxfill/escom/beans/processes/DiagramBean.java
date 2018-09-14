@@ -57,7 +57,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.h2.result.SortOrder;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.diagram.ConnectEvent;
@@ -129,9 +128,15 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     @Override
     public String onCloseCard(Object param){
         workflow.packScheme(scheme);
+        if (isItemChange){
+            param = SysParams.EXIT_NEED_UPDATE;
+        } else {
+            param = SysParams.EXIT_NOTHING_TODO;
+        }
         return super.onCloseCard(param);
     }
 
+    @Override
     public void doBeforeOpenCard(Map params) {
         if (!isReadOnly()){
             addElementContextMenu();
@@ -158,8 +163,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public void modelRefresh(){        
         model.clear();
-        restoreModel();        
-        PrimeFaces.current().ajax().update("mainFRM:diagramm");
+        restoreModel();
+        onItemChange();        
+        PrimeFaces.current().ajax().update("southFRM:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
         }
@@ -169,10 +175,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Очистка визуальной схемы процесса
      */
     public void onClearModel(){        
-        Scheme scheme = new Scheme(process);
+        scheme = new Scheme(process);
         process.setScheme(scheme);
         model.clear();
-        modelRefresh();
+        modelRefresh();        
     }        
     
     /**
@@ -272,7 +278,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         Set<String> errors = new HashSet <>();
         workflow.removeElement(baseElement, scheme, errors);
         if (errors.isEmpty()) {
-            model.removeElement(selectedElement);
+            model.removeElement(selectedElement);            
             modelRefresh();            
         } else {
             MsgUtils.showErrors(errors);
@@ -301,6 +307,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 defY = Integer.valueOf(y) + 5;
             }
         }
+        onItemChange();
     }
 
     /**
@@ -308,7 +315,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public void onElementOpenClick(){
         onElementClicked();        
-        PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnOpenElement').click();");
+        PrimeFaces.current().executeScript("document.getElementById('southFRM:btnOpenElement').click();");
     }
 
     /**
@@ -380,7 +387,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         try { 
             copiedElement = elem;
             BeanUtils.copyProperties(copiedElement, baseElement);
-            PrimeFaces.current().executeScript("refreshContextMenu('mainFRM:diagramm');");
+            PrimeFaces.current().executeScript("refreshContextMenu('southFRM:diagramm');");
             MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);        
@@ -391,6 +398,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Обработка события вставки скопированного элемента
      */
     public void onElementPaste(){
+        onItemChange();
         try {
             if (baseElement instanceof TaskElem){           
                 TaskElem newTaskElem = createTask(null, "", defX, defY, new HashSet<>());                
@@ -433,13 +441,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     public void onOpenTask(){ 
         setSourceItem(currentTask);
         taskBean.prepEditChildItem(currentTask, getParamsMap());
-    }
-    
-    /**
-     * Обработка события после закрытия карточки поручения
-     */
-    public void onAfterTaskEdit(){
-        modelRefresh();
     }
     
     /**
@@ -599,6 +600,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private void finalAddElement(){
         defX = defX + 5;
         defY = defY + 5;
+        onItemChange();
         onElementOpen();
     }
     
@@ -788,7 +790,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         taskElem.setAnchors(makeAnchorElems(taskElem, endPoints));
         workflow.addTask(taskElem, scheme, errors);
         if (errors.isEmpty()){
-            modelAddElement(taskElem);
+            modelAddElement(taskElem);            
             return taskElem;
         } 
         return null;
@@ -1000,6 +1002,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
         AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
         workflow.removeConnector(sourceAnchor, targetAnchor, scheme, errors);
+        onItemChange();
     }
 
     public void onConnectionChange(ConnectionChangeEvent event) {
@@ -1024,12 +1027,12 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-        PrimeFaces.current().executeScript("addContextMenu('mainFRM:diagramm')");
+        PrimeFaces.current().executeScript("addContextMenu('southFRM:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
                 .forEach(element-> {            
-            sb.append("'mainFRM:diagramm-").append(element.getId()).append("', "); 
+            sb.append("'southFRM:diagramm-").append(element.getId()).append("', "); 
         });
         sb.append("]);");
         PrimeFaces.current().executeScript(sb.toString());
@@ -1056,14 +1059,14 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (termHours != null){
             Date planExecDate = DateUtils.addHour(new Date(), termHours);
             process.setPlanExecDate(planExecDate);
-        }
-        
-        Scheme scheme = new Scheme(process);        
+        }        
+        scheme = new Scheme(process);        
         scheme.setPackElements(selectedTempl.getElements());               
         process.setScheme(scheme);        
         loadModel(scheme);
-        PrimeFaces.current().ajax().update("mainFRM:diagramm");
+        PrimeFaces.current().ajax().update("southFRM:diagramm");
         addElementContextMenu();
+        onItemChange();
     }      
     
     /**
@@ -1212,5 +1215,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     @Override
     public boolean isFullPageMode(){
         return false;
+    }
+    
+    @Override
+    public Boolean isSouthShow(){
+        return true;
     }
 }
