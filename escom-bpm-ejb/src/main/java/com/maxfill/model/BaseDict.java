@@ -187,6 +187,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public String getRegNumber(){
         return "";
     }
+    public void setRegNumber(String number){        
+    }
     
     public Date getItemDate(){
         return null;

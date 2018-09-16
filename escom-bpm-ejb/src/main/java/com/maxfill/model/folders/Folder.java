@@ -208,6 +208,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public String getRegNumber(){
         return getFolderFullNumber();
     }   
+    @Override
     public void setRegNumber(String regNumber) {
         folderNumber = regNumber;
     }

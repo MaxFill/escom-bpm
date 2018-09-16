@@ -58,15 +58,13 @@
         <p:separator />            
 
         <h:panelGroup >
-            <p:commandButton icon="ui-icon-check"
-                        value="#{bundle.Test}" title="#{bundle.CheckSentMessage}"
+            <p:commandButton value="#{bundle.Test}" title="#{bundle.CheckSentMessage}"
                         actionListener="#{mailSenderBean.onCheckConnect()}"
                         update="mainFRM:eastFRM">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
 
-            <p:commandButton icon="ui-icon-extlink" value="#{bundle.MessagesBox}"
-                             immediate="true"
+            <p:commandButton value="#{bundle.MessagesBox}"                             
                              title="#{bundle.PreviewMessagesBox}"                            
                              actionListener="#{mailSenderBean.onOpenMailBox()}"/>
         </h:panelGroup>                   

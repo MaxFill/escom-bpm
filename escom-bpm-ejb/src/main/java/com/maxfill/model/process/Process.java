@@ -110,7 +110,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     private List<ProcessLog> itemLogs = new ArrayList<>();
 
     /* Отчёты по исполнению */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "process")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "process")
     private Set<ProcReport> reports = new HashSet<>();
     
     public Process() {

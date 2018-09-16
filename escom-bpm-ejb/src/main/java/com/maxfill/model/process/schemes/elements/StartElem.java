@@ -18,7 +18,7 @@ public class StartElem extends WFConnectedElem{
     public StartElem() {
     }
 
-    public StartElem(String caption, int x, int y) {
+    public StartElem(String caption, String x, String y) {
         this.caption = caption;
         this.posX = x;
         this.posY = y;

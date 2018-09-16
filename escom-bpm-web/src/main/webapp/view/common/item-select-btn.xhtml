@@ -23,7 +23,7 @@
         <h:panelGroup id="#{_itemPanel}" styleClass="ui-grid-col-12 col-padding">
             <div class="ui-inputgroup">
                 <p:inputText id="#{_itemPanel}_item" value="#{_itemValue[_itemLabel]}" title="#{_titleItem}"
-                             disabled="#{_disabled}" style="color: blue; width: 100%;"                             
+                             disabled="#{_disabled}" style="color: blue;" styleClass="ui-grid-col-12"
                              readonly="true" 
                              validator="#{_bean[_validateAction]}"
                              required="#{param['isRequired'] == _required}"

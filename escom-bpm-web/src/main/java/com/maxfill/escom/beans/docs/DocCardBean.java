@@ -48,6 +48,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 
@@ -105,9 +106,9 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     }
      
     @Override
-    protected void checkItemBeforeSave(Doc doc, Set<String> errors){        
+    protected void checkItemBeforeSave(Doc doc, FacesContext context, Set<String> errors){        
         checkRegNumber(doc, errors);
-        super.checkItemBeforeSave(doc, errors);
+        super.checkItemBeforeSave(doc, context, errors);
     }
         
     @Override

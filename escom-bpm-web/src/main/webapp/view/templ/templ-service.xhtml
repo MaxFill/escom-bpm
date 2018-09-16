@@ -20,7 +20,7 @@
                 return null;
             };
         </script> 
-        <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" >                
+        <h:form id="mainFRM" style="font-size: 85%; height: 100%;" styleClass="ui-grid-col-12" >                
             <p:panelGrid layout="grid" columns="3" columnClasses="ui-grid-col-3 col-grid-expl, ui-grid-col-6 col-grid-expl, ui-grid-col-3 col-grid-expl" styleClass="ui-grid-col-12 without-spaces">
 
                 <p:panel id="westFRM" rendered="#{_bean.isWestShow()}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;">
@@ -80,17 +80,13 @@
                     <f:facet name="header">
                         <p:outputLabel value="#{bundle.ServiceParams}" />
                     </f:facet>
-                    <p:panelGrid columns="1"  columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank">                               
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                               
                         <ui:insert name="serviceParams"/>                    
                         <p:separator/>
                         <h:panelGrid columns="2">
                             <p:commandButton value="#{bundle.Save}" id="btnAllSave"
                                              title="#{bundle.SaveServiceSettings}" style="float: right;"                           
                                              actionListener="#{_bean.onSaveSettings()}">
-                            </p:commandButton>
-                            <p:commandButton id="btnClose" value="#{bundle.Close}" icon="" title="#{bundle.Close}" immediate="true" 
-                                       actionListener="#{_bean.onCancelItemSave()}"  
-                                       onclick="sendFormSize('#{_bean.getFormName()}')">
                             </p:commandButton>
                         </h:panelGrid>
                     </p:panelGrid>
@@ -99,18 +95,16 @@
 
             <ui:insert name="form_scripts"/>
 
-            <ui:include src="/view/common/confirm-dlg.xhtml"/>
-            <p:remoteCommand name="formSize" actionListener="#{sessionBean.onFormSize()}" immediate="true"/>
-
+            <ui:include src="/view/common/confirm-dlg.xhtml"/> 
         </h:form>
     </ui:define>
 
     <ui:define name="dialogs">
-        <p:dialog header="#{bundle.Detail}" modal="true" closeOnEscape="true" resizable="true" maximizable="true" widgetVar="dlgDetail">            
-            <h:form id="logFRM">
-                <p:outputPanel id="logDetailPanel" style="width: 600px; height: 400px;">
-                    <p:inputTextarea value="#{_bean.selectedEvent.details}" style="width: 100%; height: 100%;" readonly="true"/>
-                </p:outputPanel>
+        <p:dialog header="#{bundle.Detail}" modal="true" closeOnEscape="true" resizable="true" widgetVar="dlgDetail">            
+            <h:form id="logFRM" style="width: 600px; height: 400px;">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                 
+                    <p:inputTextarea value="#{_bean.selectedEvent.details}" readonly="true" styleClass="ui-grid-col-12" autoResize="true" />
+                </p:panelGrid>
             </h:form>
         </p:dialog>
         <ui:insert name="dialogsAdd"></ui:insert>

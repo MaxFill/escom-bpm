@@ -140,25 +140,17 @@
                     <p:panel id="services" header="#{bundle.Services}" rendered="#{sessionBean.userAdmin}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage value="/resources/icon/service-32.png"/>
-                                <p:commandLink value="#{bundle.MailService}"
-                                               actionListener="#{sessionBean.setOpenFormName('mail-sender-service')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:graphicImage value="/resources/icon/service-32.png"/>                                
+                                <p:link href="#{sessionBean.onGetFormURL('/services/mail/'.concat('sender-service'))}" value="#{bundle.MailService}" target="_blank" />
 
-                                <p:graphicImage value="/resources/icon/service-32.png"/>
-                                <p:commandLink value="#{bundle.ServiceReaderEmail}"
-                                               actionListener="#{sessionBean.setOpenFormName('mail-reader-service')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:graphicImage value="/resources/icon/service-32.png"/>                                
+                                <p:link href="#{sessionBean.onGetFormURL('/services/mail/'.concat('reader-service'))}" value="#{bundle.ServiceReaderEmail}" target="_blank" />
 
+                                <p:graphicImage value="/resources/icon/service-32.png"/>                                
+                                <p:link href="#{sessionBean.onGetFormURL('/services/notification/'.concat('ldap'))}" value="#{bundle.LdapService}" target="_blank" />
+                                
                                 <p:graphicImage value="/resources/icon/service-32.png"/>
-                                <p:commandLink value="#{bundle.LdapService}" 
-                                               actionListener="#{sessionBean.setOpenFormName('ldap')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
-
-                                <p:graphicImage value="/resources/icon/service-32.png"/>
-                                <p:commandLink value="#{bundle.ServiceNotification}" 
-                                               actionListener="#{sessionBean.setOpenFormName('notification')}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>
+                                <p:link href="#{sessionBean.onGetFormURL('/services/notification/'.concat('notification'))}" value="#{bundle.ServiceNotification}" target="_blank" />
                             </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>
@@ -170,13 +162,10 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" value="#{bundle.ProcessExplorer}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/control-32.png"/>
-                                <p:commandLink value="#{bundle.ProcessExecutionControl}"                                           
-                                               actionListener="#{sessionBean.openMonitorForm()}"/>
-
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/monitor')}" value="#{bundle.ProcessExecutionControl}" target="_blank" />
+                                
                                 <p:graphicImage id="imgProcessTemplates" value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" 
-                                        rendered="#{sessionBean.userAdmin}"
-                                        value="#{bundle.ProcessTemplates}" target="_blank" />                                
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" rendered="#{sessionBean.userAdmin}" value="#{bundle.ProcessTemplates}" target="_blank" />
                             </p:panelGrid>
                             <p:fileUpload id="file" style="font-size: small;"
                                           styleClass="ui-grid-col-12"

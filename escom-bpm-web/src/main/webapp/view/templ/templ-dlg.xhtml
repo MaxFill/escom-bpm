@@ -26,6 +26,7 @@
             <p:layoutUnit position="south" rendered="#{_bean.isSouthShow()}" size="90%" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
                 <h:form id="southFRM"  style="font-size: 80%; height: 100%;" styleClass="ui-grid-col-12" > 
                     <ui:insert name="southFormContent"/>
+                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>
             </p:layoutUnit>
             <p:layoutUnit position="center" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
@@ -77,13 +78,12 @@
 
                     <ui:insert name="form_scripts"/>            
                     <ui:include src="/view/common/exeption-handler.xhtml"/>
-
+                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
                     <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                            
                 </h:form>
-            </p:layoutUnit>
-            
-    </p:layout>
-        
+            </p:layoutUnit>            
+        </p:layout>
+
         <ui:include src="/view/common/error-dlg.xhtml"/>
     </ui:define>
 

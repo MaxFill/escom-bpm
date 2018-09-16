@@ -10,14 +10,12 @@
                  paginator="true" paginatorPosition="bottom"  
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                 rows="25" rowsPerPageTemplate="25,50,100" 
+                 rows="15" rowsPerPageTemplate="15, 25, 35, 50" 
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                  rowKey="#{item.id}" sortBy="#{item.dateStart}"
-                 selection="#{_bean.selectedEvent}" selectionMode="single">   
+                 selection="#{_bean.selectedEvent}" selectionMode="single">
 
-        <p:ajax event="rowDblselect" 
-                listener="#{_bean.onRowDblClck}"
-                oncomplete="PF('dlgDetail').show();" update="logFRM:logDetailPanel"/> 
+        <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClck}" oncomplete="PF('dlgDetail').show();" update="logFRM"/> 
 
         <p:column headerText="#{bundle.DateStart}" sortBy="#{item.dateStart}">
             <h:outputLabel value="#{item.dateStart}" >
@@ -37,7 +35,7 @@
         </p:column>
         <p:column headerText="" >
             <p:commandButton icon="ui-icon-zoomin" title="#{bundle.View}"
-                             update="logFRM:logDetailPanel"
+                             update="logFRM"
                              actionListener="#{_bean.setSelectedEvent(item)}"
                              oncomplete="PF('dlgDetail').show();"/>
             <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}"

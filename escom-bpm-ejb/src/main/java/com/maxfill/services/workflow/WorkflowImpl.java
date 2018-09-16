@@ -4,6 +4,8 @@ import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
+import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.conditions.ConditionFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.process.ProcessFacade;
@@ -14,6 +16,7 @@ import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
+import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.conditions.Condition;
 import com.maxfill.model.process.remarks.Remark;
@@ -30,6 +33,7 @@ import com.maxfill.model.task.TaskReport;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
 import com.maxfill.services.notification.NotificationService;
+import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import com.maxfill.utils.ItemUtils;
@@ -51,6 +55,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.ejb.Asynchronous;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Сервис реализует методы управления бизнес-процессами
@@ -75,6 +80,8 @@ public class WorkflowImpl implements Workflow {
     private TaskFacade taskFacade;
     @EJB
     private NotificationService notificationService;
+    @EJB
+    private NumeratorService numeratorService;
     @EJB
     private Configuration config;
     @EJB
@@ -349,7 +356,9 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getConnectors().isEmpty()){
             errors.add("DiagramNotHaveConnectors");
         }
-        
+        if (scheme.getElements().getTasks().isEmpty()){
+            errors.add("DiagramNotHaveTasks");
+        }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         if (checkTasks){
             for(Task task : scheme.getTasks()){ 
@@ -632,9 +641,9 @@ public class WorkflowImpl implements Workflow {
                         
                         //обрабатываем сообщения
                         Set<MessageElem> messages = findMessages(connectors, scheme.getElements().getMessages());
-                        messages.stream().forEach(msgEl->{
-                            processFacade.sendRoleMessage(process, msgEl.getRecipientsJSON(), msgEl.getContent(), "", currentUser);
-                            doRun(msgEl.getAnchors(), process, exeTasks, errors, currentUser);
+                        messages.stream().forEach(message->{
+                            sendMessage(process, message, currentUser);
+                            doRun(message.getAnchors(), process, exeTasks, errors, currentUser);
                         });
                                 
                         //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
@@ -788,21 +797,42 @@ public class WorkflowImpl implements Workflow {
         return status;
     }
 
+    /* *** УВЕДОМЛЕНИЯ  *** */
+    
+    private void sendMessage(Process process, MessageElem message, User user){        
+        StringBuilder sb = new StringBuilder();        
+        String subject = message.getContent();
+        processFacade.sendRoleMessage(process, message.getRecipientsJSON(), subject, sb, user);
+    }
+    
     /* *** ПРОЦЕДУРЫ *** */
 
     private void executeProcedure(ProcedureElem procedureElem, Scheme scheme, Set<String> errors){
         Procedure procedure = procedureFacade.find(procedureElem.getProcedureId());
         if (procedure == null) return;
         switch (procedure .getMethod()) {
-            case "callNumerator": {
-                callNumerator(scheme);
+            case "regProcess": {
+                callNumerator(scheme.getProcess(), processFacade);
+                break;
+            }
+            case "regDoc": {
+                callNumerator(scheme.getProcess().getDocument(), docFacade);
                 break;
             }
         }
     }
 
-    private void callNumerator(Scheme scheme){
-
+    /**
+     * Формирование номера по шаблону
+     * @param scheme 
+     */
+    private void callNumerator(BaseDict item, BaseDictFacade facade){
+        if (item == null) return;
+        if (StringUtils.isBlank(item.getRegNumber())){
+            NumeratorPattern numeratorPattern = facade.getMetadatesObj().getNumPattern();
+            String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, new Date());
+            item.setRegNumber(number);
+        }
     }
 
     /* *** ВЕТВЛЕНИЯ *** */

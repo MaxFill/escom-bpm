@@ -4,20 +4,12 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
-import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.EscomUtils;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.*;
 import javax.mail.search.FlagTerm;
-import javax.xml.bind.JAXB;
-import java.io.IOException;
-import java.io.StringReader;
-import java.text.DateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -36,13 +28,9 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
     }
 
     @Override
-    public ServicesEvents doExecuteTask(Services service, MailSettings settings) {
-        Date startDate = new Date();
-        detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
-
-        ServicesEvents selectedEvent = new ServicesEvents(service);
-        selectedEvent.setDateStart(startDate);
-        selectedEvent.setResult(RESULT_FAIL);
+    public ServicesEvents doExecuteTask(Services service, MailSettings settings) {       
+        ServicesEvents selectedEvent = startAction(service);
+        
         Session session = null;
         Folder inbox = null;
         try {

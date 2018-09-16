@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
+import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.process.schemes.elements.MessageElem;
 import java.lang.reflect.InvocationTargetException;
 import com.maxfill.model.process.Process;
@@ -57,7 +58,7 @@ public class MessageCardBean extends BaseViewBean<DiagramBean>{
     public String onCloseCard(Object param){
         try {
             liveRoles = roles.getTarget();
-            saveRoleToJson();            
+            saveRoleToJson();
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

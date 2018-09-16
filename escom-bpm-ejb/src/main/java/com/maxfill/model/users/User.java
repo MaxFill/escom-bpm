@@ -81,6 +81,9 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     @Column(name = "EmailSign", length = 2048)
     private String emailSign;
     
+    @Column(name = "Locale")
+    private String locale;
+    
     @Column(name = "DuplicateMessagesEmail")
     private boolean duplicateMessagesEmail = true;
 
@@ -142,7 +145,14 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
             return super.getFullName(); //To change body of generated methods, choose Tools | Templates.
         }
     }
-    
+
+    public String getLocale() {
+        return locale;
+    }
+    public void setLocale(String locale) {
+        this.locale = locale;
+    }
+        
     @Override
     public UserStates getState() {
         return state;

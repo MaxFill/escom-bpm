@@ -22,11 +22,7 @@
                                   referencedColumnNames="Id"
                                   onUpdate="NO ACTION"
                                   onDelete="NO ACTION"
-                                  referencedTableName="staffs"/>
-
-         <sql>
-            INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('1', 'callNumerator', 'MakeRegNumber');
-         </sql>
+                                  referencedTableName="staffs"/>         
      </changeSet>
      
     <changeSet id="processReports_add_Executor" author="filatov" context="initdata" runOnChange="true">
@@ -92,11 +88,51 @@
     <changeSet id="task_add_RegNumber" author="filatov" context="initdata" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
-                <columnExists tableName="taske" columnName="RegNumber" />
+                <columnExists tableName="tasks" columnName="RegNumber" />
             </not>
         </preConditions>
         <addColumn tableName="tasks">
             <column name="RegNumber" type="varchar(55)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="registation_rprocedures_add" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('1', 'regProcess', 'RegisterProcess');
+            INSERT INTO `procedures` (`Id`, `Method`, `Name`) VALUES ('2', 'regDoc', 'RegisterDocument');
+        </sql>
+    </changeSet>
+        
+    <changeSet id="usermessage_add_process" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="userMessages" columnName="Process" />
+            </not>
+        </preConditions>
+        <addColumn tableName="userMessages">
+            <column name="Process" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Process"
+                                  baseTableName="userMessages"
+                                  constraintName="FK_Process"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="processes"/>         
+    </changeSet> 
+    
+    <changeSet id="user_add_locale" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="Locale" />
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="Locale" type="varchar(55)" >
                 <constraints nullable="true"/>
             </column>
         </addColumn>

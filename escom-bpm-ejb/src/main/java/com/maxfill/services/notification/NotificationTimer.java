@@ -24,12 +24,7 @@ public class NotificationTimer extends BaseTimer<NotificationSettings> {
     
     @Override
     protected ServicesEvents doExecuteTask(Services service, NotificationSettings settings) {         
-        Date startDate = new Date();
-        detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
-        ServicesEvents selectedEvent = new ServicesEvents();
-        selectedEvent.setServiceId(service);
-        selectedEvent.setDateStart(startDate);
-        selectedEvent.setResult(RESULT_FAIL);
+        ServicesEvents selectedEvent = startAction(service);
         try { 
             notificationService.makeNotifications();            
             selectedEvent.setResult(RESULT_SUCCESSFULLY);

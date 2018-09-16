@@ -12,7 +12,7 @@ public class LogicElem extends WFConnectedElem{
     public LogicElem() {
     }
 
-    public LogicElem(String caption, int x, int y) {
+    public LogicElem(String caption, String x, String y) {
         this.caption = caption;
         this.posX = x;
         this.posY = y;

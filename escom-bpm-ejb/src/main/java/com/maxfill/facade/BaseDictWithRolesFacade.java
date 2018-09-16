@@ -7,15 +7,18 @@ import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.states.BaseStateItem;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.utils.Tuple;
+import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -60,6 +63,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     @Override
     public boolean checkUserInRole(T item, Integer groupId, User user){
         UserGroups group = roleFacade.find(groupId);
+        if (group == null) return false;
         String roleName = group.getRoleFieldName();
         if (StringUtils.isBlank(roleName)) return false;
         roleName = roleName.toUpperCase();
@@ -109,19 +113,34 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @param item - документ или процесс
      * @param rolesJson
      * @param subject
-     * @param content - текст сообщения
+     * @param sb
      * @param currentUser
      */
-    public void sendRoleMessage(T item, String rolesJson, String subject, String content, User currentUser){
+    public void sendRoleMessage(T item, String rolesJson, String subject, StringBuilder sb, User currentUser){
         Gson gson = new Gson();
         Set<User> addressee = new HashSet<>();
         List<String> roles = gson.fromJson(rolesJson, List.class);
         roles.forEach(role->{
             addressee.addAll(actualiseRole(item, role, currentUser));
-        });        
-        addressee.forEach(user-> 
-            messagesFacade.createSystemMessage(user, subject, content, new Tuple(item, null))
-        );
+        });
+        addressee.forEach(user-> {
+            Locale locale;
+            if (StringUtils.isNotBlank(user.getLocale())){
+                locale = LocaleUtils.toLocale(user.getLocale());
+            } else {
+                locale = configuration.getServerLocale();
+            }
+            String itemName = item.getClass().getSimpleName().toLowerCase();
+            sb.append("<a href=");               
+            sb.append(configuration.getServerURL());
+            sb.append("faces/view/").append("doc".equals(itemName) ? "docs/" : "process/").append(itemName).append("-card").append(".xhtml").append("?itemId=");
+            sb.append(item.getId());
+            sb.append("&openMode=0");
+            sb.append(">");
+            sb.append(ItemUtils.getBandleLabel("GoTo" + item.getClass().getSimpleName(), locale));
+            sb.append("</a>"); 
+            messagesFacade.createSystemMessage(user, subject, sb, Collections.singletonMap(itemName, item));
+        });
     }
     
     /**

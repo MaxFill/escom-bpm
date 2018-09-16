@@ -31,7 +31,7 @@ public class MessageElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
     
-    public MessageElem(String content, int x, int y) {
+    public MessageElem(String content, String x, String y) {
         this.content = content;        
         this.posX = x;
         this.posY = y;

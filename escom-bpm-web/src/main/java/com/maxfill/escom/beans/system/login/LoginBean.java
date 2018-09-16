@@ -152,6 +152,7 @@ public class LoginBean extends BaseViewBean{
         httpSession.setAttribute("UserLogin", userName);
         authLogFacade.addAuthEnter(userName, request, isNeedPinCode());
         user.getUsersGroupsList().size();
+        user.setLocale(sessionBean.getLocale().toString());
         sessionBean.setCurrentUser(user);
         UserSettings userSettings = new UserSettings();
         byte[] compressXML = user.getUserSettings();

@@ -85,14 +85,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         TypedQuery<Task> q = getEntityManager().createQuery(cq);
         List<Task> results = q.getResultList();
         return results;
-    }        
-    
-    @Override
-    public void setSpecAtrForNewItem(Task task, Map<String, Object> params) {    
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(task, numeratorPattern, null, new Date());
-        task.setRegNumber(number);
-    }
+    }           
     
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время

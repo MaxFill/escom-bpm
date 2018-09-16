@@ -6,6 +6,7 @@ import com.maxfill.model.process.templates.ProcTempl;
 import com.maxfill.model.process.templates.ProcessTemplFacade;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
@@ -50,11 +51,11 @@ public class ProcTemplCardBean extends BaseCardBean<ProcTempl>{
     }
     
     @Override
-    protected void checkItemBeforeSave(ProcTempl procTempl, Set<String> errors){                
+    protected void checkItemBeforeSave(ProcTempl procTempl, FacesContext context, Set<String> errors){                
         if (procTempl.getIsDefault() == false && procTempl.getOwner().getTemplates().size() < 2){
             errors.add(MsgUtils.getMessageLabel("OneTemplateShouldBeMain"));
         }
-        super.checkItemBeforeSave(procTempl, errors);
+        super.checkItemBeforeSave(procTempl, context, errors);
     } 
     
 }

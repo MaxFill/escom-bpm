@@ -28,16 +28,9 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
     }
     
     @Override
-    public ServicesEvents doExecuteTask(Services service, LdapSettings settings){
-        LOG.log(Level.INFO, "Executing LDAP task!");
-        StringBuilder detailInfo = new StringBuilder("");        
-        Date startDate = new Date();
-        detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
-
-        ServicesEvents selectedEvent = new ServicesEvents();
-        selectedEvent.setServiceId(service);
-        selectedEvent.setDateStart(startDate);
-        selectedEvent.setResult(RESULT_FAIL);
+    public ServicesEvents doExecuteTask(Services service, LdapSettings settings){   
+        StringBuilder detailInfo = new StringBuilder();     
+        ServicesEvents selectedEvent = startAction(service);        
         try {
             if (settings.getUpdateUsers()){
                 detailInfoAddRow("The mode is set to: ADD_AND_UPDATE_ALL");

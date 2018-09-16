@@ -125,6 +125,15 @@ public abstract class BaseTimer<P> {
         return null;
     }
 
+    protected ServicesEvents startAction(Services service){        
+        detailInfoAddRow("The service started in " + DateUtils.dateToString(new Date(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
+        ServicesEvents selectedEvent = new ServicesEvents();
+        selectedEvent.setDateStart(new Date());
+        selectedEvent.setResult(RESULT_FAIL);
+        selectedEvent.setServiceId(service);  
+        return selectedEvent;
+    }
+    
     /**
      * Завершающее действие в doExecuteTask
      * @param event

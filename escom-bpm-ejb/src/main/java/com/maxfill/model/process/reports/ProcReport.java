@@ -1,5 +1,6 @@
 package com.maxfill.model.process.reports;
 
+import com.maxfill.dictionary.DictResults;
 import com.maxfill.model.Dict;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
@@ -25,6 +26,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Отчёт по исполнению процесса"
@@ -93,8 +95,8 @@ public class ProcReport implements Serializable, Dict{
         this.author = author;
         this.executor = executor;
         this.process = process;
-    }
-          
+    }      
+    
     /* GETS & SETS */
     
     @Override

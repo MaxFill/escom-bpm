@@ -223,18 +223,27 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
      * @param errors
      */
     @Override
-    protected void checkItemBeforeSave(User user, Set<String> errors) {       
-        super.checkItemBeforeSave(user, errors);
-
+    protected void checkItemBeforeSave(User user, FacesContext context, Set<String> errors) {       
+        super.checkItemBeforeSave(user, context, errors);
+        
         String login = user.getLogin();
         Integer userId = user.getId();
         List<User> existUsers = getFacade().findByLoginExcludeId(login, userId);
         if (!existUsers.isEmpty()) {
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:login");
+            input.setValid(false);
             errors.add(MessageFormat.format(MsgUtils.getMessageLabel("UserLoginIsExsist"), new Object[]{login}));
         }
         if (user.isDoubleFactorAuth() && StringUtils.isBlank(user.getMobilePhone())){
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:phone");
+            input.setValid(false);
             errors.add(MessageFormat.format(MsgUtils.getMessageLabel("NeedSetMobilePhone"), new Object[]{}));
         }
+        if (user.isDuplicateMessagesEmail() && StringUtils.isBlank(user.getEmail())){
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:email");
+            input.setValid(false);
+            errors.add("NoEmailSpecified");
+        }      
     }
 
     /**

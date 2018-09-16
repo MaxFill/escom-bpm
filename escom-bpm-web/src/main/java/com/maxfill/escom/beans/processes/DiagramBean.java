@@ -41,6 +41,7 @@ import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,7 +84,7 @@ import org.primefaces.model.diagram.overlay.Overlay;
 @Dependent
 public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private static final long serialVersionUID = -4403976059082444626L;
-    
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.00"); 
     @Inject
     private ProcTemplBean procTemplBean;        
     @Inject
@@ -108,8 +109,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             
     private Element selectedElement = null;
 
-    private int defX = 8;
-    private int defY = 8;
+    private double defX = 8;
+    private double defY = 8;
     
     private WFConnectedElem baseElement;
     private WFConnectedElem copiedElement;
@@ -178,7 +179,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         scheme = new Scheme(process);
         process.setScheme(scheme);
         model.clear();
-        modelRefresh();        
+        modelRefresh();
     }        
     
     /**
@@ -249,13 +250,13 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         conn.getOverlays().add(new ArrowOverlay(20, 20, 1, 1));
         String label = "";
         String keyLabel = connectorElem.getCaption();
-        if(org.apache.commons.lang.StringUtils.isNotBlank(keyLabel)) {                         
+        if(StringUtils.isNotBlank(keyLabel)) {                         
             label = MsgUtils.getBandleLabel(keyLabel);
         }        
         conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));       
         if (connectorElem.isDone()){
             FlowChartConnector connector = new FlowChartConnector();
-            connector.setPaintStyle("{strokeStyle:'#020202', lineWidth:3}");
+            connector.setPaintStyle("{strokeStyle:'blue', lineWidth:3}");
             connector.setCornerRadius(10); 
             conn.setConnector(connector);
         }
@@ -263,7 +264,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     }
     
     private Element createElement(WFConnectedElem wfElement){
-        Element element = new Element(wfElement, wfElement.getPosX() + "em", wfElement.getPosY() + "em");        
+        String x = wfElement.getPosX() + "px";
+        String y = wfElement.getPosY() + "px";
+        Element element = new Element(wfElement, x, y);        
         List<EndPoint> endPoints = restoreEndPoints(wfElement.getAnchors());
         endPoints.forEach(endPoint -> element.addEndPoint(endPoint));
         element.setId(wfElement.getUid());
@@ -292,22 +295,20 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     public void onElementClicked() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String paramId = params.get("elementId");
-        if (org.apache.commons.lang.StringUtils.isNotBlank(paramId)) {
-            String x = params.get("posX");
-            String y = params.get("posY");
+        if (StringUtils.isNotBlank(paramId)) {          
+            defX = Float.valueOf(params.get("posX"));
+            defY = Float.valueOf(params.get("posY"));            
+            String x = getX();
+            String y = getY();
             String id = paramId.substring(paramId.indexOf("-") + 1);
             selectedElement = model.findElement(id);
             if (selectedElement != null){
-                selectedElement.setX(x + "em");
-                selectedElement.setY(y + "em");
                 baseElement = (WFConnectedElem) selectedElement.getData();
-                baseElement.setPosX(Integer.valueOf(x));
-                baseElement.setPosY(Integer.valueOf(y));
-                defX = Integer.valueOf(x) + 5;
-                defY = Integer.valueOf(y) + 5;
+                baseElement.setPosX(x);
+                baseElement.setPosY(y);                
             }
+            onItemChange();
         }
-        onItemChange();
     }
 
     /**
@@ -373,14 +374,20 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             if (baseElement instanceof ConditionElem){
                 doCopyElement(new ConditionElem());
             } else 
-                if (baseElement instanceof StatusElem){           
+                if (baseElement instanceof StatusElem){
                     doCopyElement(new StatusElem());
-                }
-                if (baseElement instanceof ProcedureElem){
-                    doCopyElement(new ProcedureElem());
-                } else {
-                    MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
-                }                                 
+                } else 
+                    if (baseElement instanceof MessageElem){
+                        doCopyElement(new MessageElem());
+                    } else
+                        if (baseElement instanceof TimerElem){
+                            doCopyElement(new TimerElem());
+                        } else
+                            if (baseElement instanceof ProcedureElem){
+                                doCopyElement(new ProcedureElem());
+                            } else {
+                                MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
+                            }                                 
     }
     
     private void doCopyElement(WFConnectedElem elem){
@@ -400,10 +407,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     public void onElementPaste(){
         onItemChange();
         try {
-            if (baseElement instanceof TaskElem){           
-                TaskElem newTaskElem = createTask(null, "", defX, defY, new HashSet<>());                
+            if (copiedElement instanceof TaskElem){           
+                TaskElem newTaskElem = createTask(null, "", new HashSet<>());                
                 Task newTask = newTaskElem.getTask();
-                TaskElem sourceTaskElem = (TaskElem) baseElement;
+                TaskElem sourceTaskElem = (TaskElem) copiedElement;
                 Task sourceTask = sourceTaskElem.getTask();
                 BeanUtils.copyProperties(newTask, sourceTask); 
                 newTask.setTaskLinkUID(newTaskElem.getUid()); 
@@ -412,24 +419,32 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 newTask.setName(sb.toString());
                 finalAddElement();
             } else 
-                if (baseElement instanceof ConditionElem){
-                    ConditionElem sourceElem = (ConditionElem) baseElement;
+                if (copiedElement instanceof ConditionElem){
+                    ConditionElem sourceElem = (ConditionElem) copiedElement;
                     Condition condition = conditionFacade.find(sourceElem.getConditonId());
-                    createCondition(condition, defX, defY, new HashSet<>());
+                    createCondition(condition, new HashSet<>());
                     finalAddElement();
                 } else
-                    if (baseElement instanceof ProcedureElem){
-                        ProcedureElem sourceElem = (ProcedureElem) baseElement;
+                    if (copiedElement instanceof ProcedureElem){
+                        ProcedureElem sourceElem = (ProcedureElem) copiedElement;
                         Procedure procedure = procedureFacade.find(sourceElem.getProcedureId());
-                        createProcedure(procedure, defX, defY, new HashSet<>());
+                        createProcedure(procedure, new HashSet<>());
                         finalAddElement();
                     } else
-                        if (baseElement instanceof StatusElem){
-                            StatusElem sourceElem = (StatusElem) baseElement;
+                        if (copiedElement instanceof StatusElem){
+                            StatusElem sourceElem = (StatusElem) copiedElement;
                             StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
-                            createState(docStatus, sourceElem.getStyleType(), defX, defY, new HashSet<>());
+                            createState(docStatus, sourceElem.getStyleType(), new HashSet<>());
                             finalAddElement();
-                        }
+                        } else
+                            if (copiedElement instanceof TimerElem){
+                                createTimer(new HashSet<>());
+                                finalAddElement();
+                            } else
+                                if (copiedElement instanceof MessageElem){ 
+                                    createMessage(new HashSet<>());
+                                    finalAddElement();
+                                }
         } catch (IllegalAccessException | InvocationTargetException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -501,9 +516,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         Set<String> errors = new HashSet<>();
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
-            baseElement = createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), defX, defY, metodErr); 
-            defX = defX + 5;
-            defY = defY + 5;
+            beforeAddElement();
+            baseElement = createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), metodErr); 
             if (!metodErr.isEmpty()){
                 errors.addAll(metodErr);
             }
@@ -520,7 +534,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param bundleName
      */
     public void onAddLogicElement(String bundleName){              
-        baseElement = createLogic(bundleName, defX, defY, new HashSet <>());        
+        beforeAddElement();
+        baseElement = createLogic(bundleName, new HashSet <>());        
         finalAddElement();
     }
 
@@ -529,7 +544,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param name
      */
     public void onAddStateElement(){
-        baseElement = createState(null, "success", defX, defY, new HashSet<>());        
+        beforeAddElement();
+        baseElement = createState(null, "success", new HashSet<>());        
         finalAddElement();
     }
 
@@ -537,7 +553,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Обработка события добавления в схему процесса визуального компонента "Условие" 
      */
     public void onAddConditionElement(){
-        baseElement = createCondition(null, defX, defY, new HashSet<>());
+        beforeAddElement();
+        baseElement = createCondition(null, new HashSet<>());
         finalAddElement();
     }
 
@@ -545,7 +562,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Обработка события добавления в схему процесса визуального компонента "Таймер"
      */
     public void onAddTimerElement() {
-        baseElement = createTimer(null, defX, defY, new HashSet<>());
+        beforeAddElement();
+        baseElement = createTimer(new HashSet<>());
         finalAddElement(); 
     }
     
@@ -553,7 +571,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Обработка события добавления в схему процесса визуального компонента "Процедура"
      */
     public void onAddProcElement() {
-        baseElement = createProcedure(null, defX, defY, new HashSet<>());
+        beforeAddElement();
+        baseElement = createProcedure(null, new HashSet<>());
         finalAddElement(); 
     }
     
@@ -561,15 +580,17 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Обработка события добавления в схему процесса визуального компонента "Сообщение"
      */
     public void onAddMessageElement() {
-        baseElement = createMessage(null, defX, defY, new HashSet<>());
+        beforeAddElement();
+        baseElement = createMessage(new HashSet<>());
         finalAddElement(); 
     }
     
     /**
      * Обработка события добавления в схему процесса визуального компонента "Вход" 
      */
-    public void onAddEnterElement(){       
-        baseElement = createEnter(defX, defY, new HashSet<>());
+    public void onAddEnterElement(){
+        beforeAddElement();
+        baseElement = createEnter(new HashSet<>());
         finalAddElement();
     }
     
@@ -578,7 +599,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public void onAddStartElement(){       
         if (scheme.getElements().getStartElem() == null){
-            baseElement = createStart(3, 3, new HashSet<>());        
+            defX = 3;
+            defY = 3;
+            baseElement = createStart(new HashSet<>());        
             finalAddElement();            
         } else {
             MsgUtils.errorMsg("SchemeCanBeOnlyOneStartElement");
@@ -588,9 +611,15 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /**
      * Обработка события добавления в схему процесса визуального компонента "Выход" 
      */
-    public void onAddExitElement(){               
-        baseElement = createExit(Boolean.TRUE, defX, defY, new HashSet<>());        
+    public void onAddExitElement(){
+        beforeAddElement();
+        baseElement = createExit(Boolean.TRUE, new HashSet<>());        
         finalAddElement();
+    }
+    
+    private void beforeAddElement(){
+        defX = defX + 45;
+        defY = defY + 45;    
     }
     
     /**
@@ -598,8 +627,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param elementId 
      */
     private void finalAddElement(){
-        defX = defX + 5;
-        defY = defY + 5;
         onItemChange();
         onElementOpen();
     }
@@ -613,8 +640,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param errors
      * @return
      */
-    private ConditionElem createCondition(Condition condition, int x, int y, Set<String> errors){
+    private ConditionElem createCondition(Condition condition, Set<String> errors){
         ConditionElem conditionElem;
+        String x = getX();
+        String y = getY();
         if (condition != null){            
             conditionElem = new ConditionElem(condition.getName(), condition.getId(), x, y);
         } else {
@@ -633,9 +662,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return null;
     }
 
-    private TimerElem createTimer(String name, int x, int y, Set<String> errors){        
-        TimerElem timer = new TimerElem(null, x, y);
-        ProcTimer procTimer = procTimerFacade.createTimer(process, scheme, timer.getUid());
+    private TimerElem createTimer(Set<String> errors){        
+        TimerElem timer = new TimerElem(null, getX(), getY());
+        ProcTimer procTimer  = procTimerFacade.createTimer(process, scheme, timer.getUid());        
         timer.setProcTimer(procTimer);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -651,8 +680,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return null;
     }
     
-    private MessageElem createMessage(String name, int x, int y, Set<String> errors){        
-        MessageElem element = new MessageElem(null, x, y);
+    private MessageElem createMessage(Set<String> errors){        
+        MessageElem element = new MessageElem(null, getX(), getY());
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
@@ -667,8 +696,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return null;
     }
      
-    private ProcedureElem createProcedure(Procedure procedure, int x, int y, Set<String> errors){
+    private ProcedureElem createProcedure(Procedure procedure, Set<String> errors){
         ProcedureElem procedureElem;
+        String x = getX();
+        String y = getY();
         if (procedure != null){
             procedureElem = new ProcedureElem(procedure.getName(), procedure.getId(), x, y);
         } else {
@@ -694,8 +725,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param y
      * @param errors
      */
-    private LogicElem createLogic(String name, int x, int y, Set<String> errors){
-        LogicElem logic = new LogicElem(name, x, y);
+    private LogicElem createLogic(String name, Set<String> errors){
+        LogicElem logic = new LogicElem(name,  getX(), getY());
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -716,8 +747,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param y
      * @param errors
      */
-    private EnterElem createEnter(int x, int y, Set<String> errors){
-        EnterElem enter = new EnterElem("", x, y);
+    private EnterElem createEnter(Set<String> errors){
+        EnterElem enter = new EnterElem("",  getX(), getY());
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);
@@ -737,8 +768,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param y
      * @param errors
      */
-    private StartElem createStart(int x, int y, Set<String> errors){
-        StartElem start = new StartElem("", x, y);
+    private StartElem createStart(Set<String> errors){
+        StartElem start = new StartElem("",  getX(), getY());
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
@@ -757,8 +788,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param y
      * @param errors
      */
-    private ExitElem createExit(Boolean finalize, int x, int y, Set<String> errors){
-        ExitElem exit = new ExitElem("", finalize, x, y);
+    private ExitElem createExit(Boolean finalize, Set<String> errors){        
+        ExitElem exit = new ExitElem("", finalize, getX(), getY());
         List<EndPoint> endPoints = new ArrayList<>();
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT, DictWorkflowElem.STYLE_MAIN);
         createTargetEndPoint(endPoints, EndPointAnchor.TOP, DictWorkflowElem.STYLE_MAIN);
@@ -778,8 +809,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param x
      * @param y
      */
-    private TaskElem createTask(Staff executor, String taskName, int x, int y, Set<String> errors){
-        TaskElem taskElem = new TaskElem(taskName, x, y);
+    private TaskElem createTask(Staff executor, String taskName, Set<String> errors){        
+        TaskElem taskElem = new TaskElem(taskName, getX(), getY());
         Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), process.getPlanExecDate(), scheme, taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
@@ -804,8 +835,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param errors
      * @return
      */
-    private StatusElem createState(StatusesDoc docStatus, String styleType, int x, int y, Set<String> errors){        
+    private StatusElem createState(StatusesDoc docStatus, String styleType, Set<String> errors){        
         StatusElem stateEl;
+        String x = getX();
+        String y = getY();
         if (docStatus != null){
             stateEl = new StatusElem(docStatus.getBundleName(), docStatus.getId(), x, y);
         } else {
@@ -1126,6 +1159,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             TaskElem taskElem = (TaskElem) wfElement;
             return taskElem.getCaption();
         }
+        if (wfElement instanceof ProcedureElem){
+            ProcedureElem elem = (ProcedureElem) wfElement;
+            return elem.getCaption();
+        }
         return MsgUtils.getBandleLabel(bundleName);
     } 
             
@@ -1151,11 +1188,19 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     }   
     
     public boolean isReadOnly(){
-        return false;
+        return sourceBean.isReadOnly();
+    }
+
+    private String getX(){
+        return (DECIMAL_FORMAT.format(defX)).replace(",", ".");
+    }
+    
+    private String getY(){
+        return (DECIMAL_FORMAT.format(defY)).replace(",", ".");
     }
     
     /* GETS & SETS */     
-
+    
     public WFConnectedElem getBaseElement() {
         return baseElement;
     }                      

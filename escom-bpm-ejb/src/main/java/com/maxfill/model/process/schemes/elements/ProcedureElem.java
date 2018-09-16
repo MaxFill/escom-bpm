@@ -22,7 +22,7 @@ public class ProcedureElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
     
-    public ProcedureElem(String caption, Integer procedureId, int x, int y) {
+    public ProcedureElem(String caption, Integer procedureId, String x, String y) {
         this.caption = caption;
         this.procedureId = procedureId;
         this.posX = x;

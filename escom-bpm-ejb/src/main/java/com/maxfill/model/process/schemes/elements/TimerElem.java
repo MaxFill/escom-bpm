@@ -27,7 +27,7 @@ public class TimerElem extends WFConnectedElem {
         this.uid = EscomUtils.generateGUID();
     }
     
-    public TimerElem(String caption, int x, int y) {
+    public TimerElem(String caption, String x, String y) {
         this.caption = caption;
         this.posX = x;
         this.posY = y;

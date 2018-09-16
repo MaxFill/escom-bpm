@@ -3,6 +3,7 @@ package com.maxfill.model.messages;
 import com.maxfill.model.Dict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.process.Process;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -56,6 +57,10 @@ public class UserMessages implements Serializable, Dict{
     @JoinColumn(name = "Document", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Doc document;
+    
+    @JoinColumn(name = "Process", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Process process;
     
     @JoinColumn(name = "Task", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -142,7 +147,14 @@ public class UserMessages implements Serializable, Dict{
     public void setDocument(Doc document) {
         this.document = document;
     }
-            
+
+    public Process getProcess() {
+        return process;
+    }
+    public void setProcess(Process process) {
+        this.process = process;
+    }       
+    
     @Override
     public int hashCode() {
         int hash = 0;

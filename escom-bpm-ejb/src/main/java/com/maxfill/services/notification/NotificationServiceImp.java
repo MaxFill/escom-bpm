@@ -1,6 +1,7 @@
 package com.maxfill.services.notification;
 
 import com.maxfill.Configuration;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.task.TaskFacade;
@@ -10,9 +11,10 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task;
 import com.maxfill.services.Services;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.Tuple;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -71,15 +73,17 @@ public class NotificationServiceImp implements NotificationService{
      * @param msg 
      */
     @Override
-    public void makeNotification(Task task, String msg){
-        Doc doc = null;
+    public void makeNotification(Task task, String msg){        
+        Map<String, BaseDict> links = new HashMap<>();
+        links.put("task", task);
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
             List<Doc> docs = task.getScheme().getProcess().getDocs();
             if (CollectionUtils.isNotEmpty(docs)){
-                doc = docs.stream().findFirst().orElse(null);
+                Doc doc = docs.stream().findFirst().orElse(null);
+                links.put("doc", doc);
             }
         }
-        messagesFacade.createSystemMessage(task.getOwner().getEmployee(), msg, "", new Tuple(doc, task));
+        messagesFacade.createSystemMessage(task.getOwner().getEmployee(), msg, new StringBuilder(), links);
     }    
     
 }

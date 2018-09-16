@@ -7,7 +7,6 @@ import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -31,10 +30,9 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     @EJB
     private MailService mailService;
 
-
     public void onCheckConnect(){
-        String subject = "Mail test from Escom3"; 
-        String content = "<h1>Hello!</h1><br/><h2>This is the test message from escom3</h2>";
+        String subject = "Mail test from escom-bpm.web"; 
+        String content = "<h1>Hello!</h1><br/><h2>This is the test message from escom-bpm.web</h2>";
  
         Authenticator auth = new MailAuth(getSettings().getUser(), getSettings().getPassword());
         
@@ -72,7 +70,7 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     }
     
     public void onOpenMailBox(){
-        sessionBean.openDialogFrm(DictFrmName.FRM_MAIL_BOX, null);
+        sessionBean.openDialogFrm(DictFrmName.FRM_MAIL_BOX, getParamsMap());
     }
 
     @Override

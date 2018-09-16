@@ -156,6 +156,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Process process = createItem(author, null, owner, params);
         makeRightItem(process, author);
         return process;
-    }
+    }   
     
 }

@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.faces.component.UIInput;
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 
@@ -42,12 +44,14 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
 
     /* Проверка корректности Контрагента перед сохранением карточки */
     @Override
-    protected void checkItemBeforeSave(Partner partner, Set<String> errors) {       
+    protected void checkItemBeforeSave(Partner partner, FacesContext context, Set<String> errors) {       
         String code = partner.getCode();
         Integer partnerId = partner.getId();
         List<Partner> existPartner = getFacade().findByCodeExclId(code, partnerId);
         if (!existPartner.isEmpty()) {
             String partnerName = existPartner.get(0).getName();
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:code");
+            input.setValid(false);
             Object[] params = new Object[]{partnerName, code};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerCodeIsExsist"), params);
             errors.add(error);
@@ -55,10 +59,13 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         
         existPartner = getFacade().findByNameAndTypeExclId(partner.getName(), partner.getType(), partnerId);
         if (!existPartner.isEmpty()) {
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:nameItem");
+            input.setValid(false);
             Object[] params = new Object[]{getTitleName()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("PartnerIsExsist"), params);
             errors.add(error);
         }
+        //super.checkItemBeforeSave(partner, context, errors);
     }
     
     @Override

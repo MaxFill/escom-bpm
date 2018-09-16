@@ -156,10 +156,12 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
     
     private StringBuilder prepareDocLinks(Doc doc){        
         StringBuilder links = new StringBuilder();
+        //ссылка для скачивания оригинала
         String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/document");
         links.append(MsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
+        //ссылка для открытия на просмотр
         String urlViewDoc = EscomBeanUtils.doGetItemURL(doc, "docs/doc-viewer");
         links.append(MsgUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
         links.append("<a href=").append(urlViewDoc).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");

@@ -62,15 +62,15 @@
 
             function sendElementClick(info) {
                 //console.log("elementId="+info.target.id);                    
-                var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
+                var xPos = info.target.offsetLeft; // / parseFloat($("body").css("font-size"));
+                var yPos = info.target.offsetTop; // / parseFloat($("body").css("font-size"));
                 var elementId = info.target.id;
                 if (elementId.indexOf('diagramm') == -1) {
                     var parentElement = info.target.parentElement;
                     elementId = $(parentElement).attr('id');
                     //console.log("parent elementId="+ elementId);
-                    xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                    yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
+                    xPos = parentElement.offsetLeft; // / parseFloat($("body").css("font-size"));
+                    yPos = parentElement.offsetTop; // / parseFloat($("body").css("font-size"));
                 }
                 elementClicked([
                     {name: 'elementId', value: elementId},
@@ -88,26 +88,6 @@
                     function (info) {
                         sendElementClick(info);
                     });
-
-            /*
-            $(document).on('dblclick', '.ui-diagram > .ui-diagram-element',
-                    function (info) {
-                        var xPos = Math.round(info.target.offsetLeft / parseFloat($("body").css("font-size")));
-                        var yPos = Math.round(info.target.offsetTop / parseFloat($("body").css("font-size")));
-                        var elementId = info.target.id;
-                        if (elementId == "") {
-                            var parentElement = info.target.parentElement;
-                            elementId = $(parentElement).attr('id');
-                            xPos = Math.round(parentElement.offsetLeft / parseFloat($("body").css("font-size")));
-                            yPos = Math.round(parentElement.offsetTop / parseFloat($("body").css("font-size")));
-                        }
-                        elementOpen([
-                            {name: 'elementId', value: elementId},
-                            {name: 'posX', value: xPos},
-                            {name: 'posY', value: yPos}
-                        ]);
-                    });
-            */
 
             function refreshContextMenu(componentId) {
                 //console.log("refresh componentId="+componentId);
@@ -205,7 +185,9 @@
                          update="SaveAsTemplFRM"
                          onclick="PF('SaveAsTemplDLG').show();">
         </p:commandButton>
-
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
         <p:commandButton title="Clear" icon="ui-icon-closethick"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onClearModel()}"

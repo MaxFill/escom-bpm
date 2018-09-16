@@ -408,7 +408,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @param msg
      */
     public void sendSystemMsg(User receiver, String msg) {
-        messagesFacade.createSystemMessage(receiver, msg, msg, null);
+        messagesFacade.createSystemMessage(receiver, msg, new StringBuilder(), null);
     }
 
     /* Дополнения при выполнении поиска пользователей через форму поиска */

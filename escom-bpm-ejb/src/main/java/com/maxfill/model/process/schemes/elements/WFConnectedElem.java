@@ -18,11 +18,11 @@ public abstract class WFConnectedElem extends WFElement{
 
     @XmlElement(name = "posX")
     @Transient
-    protected int posX;
+    protected String posX;
 
     @XmlElement(name = "posY")
     @Transient
-    protected int posY;
+    protected String posY;
 
     @XmlElement(name = "anchors")
     @Transient
@@ -37,17 +37,17 @@ public abstract class WFConnectedElem extends WFElement{
         this.anchors = anchors;
     }
 
-    public int getPosX() {
+    public String getPosX() {
         return posX;
     }
-    public void setPosX(int posX) {
+    public void setPosX(String posX) {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public String getPosY() {
         return posY;
     }
-    public void setPosY(int posY) {
+    public void setPosY(String posY) {
         this.posY = posY;
     }
 

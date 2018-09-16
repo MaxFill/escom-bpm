@@ -4,23 +4,17 @@ import com.google.gson.Gson;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
-import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.Session;
-import javax.xml.bind.JAXB;
-import java.io.StringReader;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.MessagingException;
 
 /**
@@ -39,15 +33,8 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
     }
 
     @Override
-    public ServicesEvents doExecuteTask(Services service, MailSettings settings){
-        LOG.log(Level.INFO, "Executing MAIL SENDER task!");
-        Date startDate = new Date();
-        detailInfoAddRow("The service started in " + DateUtils.dateToString(startDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
-
-        ServicesEvents selectedEvent = new ServicesEvents();
-        selectedEvent.setServiceId(service);
-        selectedEvent.setDateStart(startDate);
-        selectedEvent.setResult(RESULT_FAIL);
+    public ServicesEvents doExecuteTask(Services service, MailSettings settings){        
+        ServicesEvents selectedEvent = startAction(service);        
         try {
             List<Mailbox> messages = mailBoxFacade.findAll();
             if (!messages.isEmpty()){
@@ -76,12 +63,13 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
                 }    
             } else {
                 detailInfoAddRow("No message to sent!");
+                selectedEvent.setResult(RESULT_SUCCESSFULLY);
             }    
         } catch(RuntimeException | IOException | MessagingException e){
             detailInfoAddRow(e.getMessage());
         } finally{
             finalAction(selectedEvent);
-            service.getServicesEventsList().add(selectedEvent); 
+            service.getServicesEventsList().add(selectedEvent);             
             return selectedEvent;
         }     
     }

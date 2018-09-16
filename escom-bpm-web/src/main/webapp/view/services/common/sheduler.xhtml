@@ -5,7 +5,7 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">    
+    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">    
         <p:toolbar>
             <f:facet name="left">
                 <p:commandButton title="#{bundle.RunOnSchedule}" icon="ui-icon-circle-triangle-e"
@@ -15,7 +15,7 @@
                              onclick="document.getElementById('mainFRM:btnEastSaves').click();">
                     <f:param name="isRequired" value="true"/>
                 </p:commandButton>
-                <p:commandButton title="#{bundle.Stop}" icon="ui-icon-circle-close"
+                <p:commandButton title="#{bundle.Stop}" icon="ui-icon-stop"
                              disabled="#{!_bean.service.started}" rendered="#{_bean.scheduler.autoStart}"
                              actionListener="#{_bean.onStopService()}"
                              update="mainFRM:westFRM, mainFRM:centerFRM">
@@ -26,10 +26,11 @@
                 </span>
                 <p:commandButton icon="ui-icon-play" title="#{bundle.StartImmediately}"
                              actionListener="#{_bean.doRunService()}"
+                             disabled="#{_bean.service.started}"
                              onclick="document.getElementById('mainFRM:btnEastSave').click();"
                              onstart="PF('statusDialog').show()"
                              oncomplete="PF('statusDialog').hide();"
-                             update="mainFRM:centerFRM, logFRM:logDetailPanel">
+                             update="mainFRM:centerFRM, logFRM">
                 </p:commandButton>
             </f:facet>
          </p:toolbar>

@@ -22,9 +22,9 @@
         </p:commandButton>
     </ui:define>
 
-    <ui:define name="centerFormContent">
-        <h:panelGroup id="msgPanel">
-            <p:panelGrid columns="2"  columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
+    <ui:define name="centerFormContent"> 
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-3, ui-grid-col-12" styleClass="ui-grid-col-12">
                 <p:outputLabel value="#{bundle.Subject}" indicateRequired="true"/>
                 <h:panelGroup>
                     <p:inputText value="#{mailMessageBean.selected.subject}" id="subject" title="#{bundle.Subject}"
@@ -78,8 +78,7 @@
             </p:panelGrid>
 
             <p:textEditor value="#{mailMessageBean.content}" height="300" styleClass="ui-grid-col-12"/>
-
-        </h:panelGroup>
+        </p:panelGrid>
     </ui:define>
  
 </ui:composition>

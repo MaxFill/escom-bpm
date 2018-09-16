@@ -3,15 +3,15 @@ package com.maxfill.model.messages;
 import com.maxfill.Configuration;
 import com.maxfill.services.mail.MailBoxFacade;
 import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.model.process.Process;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.messages.UserMessages;
-import com.maxfill.model.messages.UserMessages_;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.Tuple;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -66,11 +66,11 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param addressee
      * @param subject
      * @param content
-     * @param tuple
+     * @param links
      */
-    public void createSystemMessage(User addressee, String subject, String content, Tuple tuple){        
+    public void createSystemMessage(User addressee, String subject, StringBuilder content, Map<String, BaseDict> links){        
         String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
-        createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, tuple);
+        createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, links);
     }
 
     /**
@@ -80,24 +80,37 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param senderEmail
      * @param subject
      * @param content
-     * @param tuple
+     * @param links
      */
-    public void createMessage(User addressee, String senderName, String senderEmail, String subject, String content, Tuple tuple){        
+    public void createMessage(User addressee, String senderName, String senderEmail, String subject, StringBuilder content, Map<String, BaseDict> links){
         UserMessages message = new UserMessages();
         message.setName(subject);
         message.setAddressee(addressee);
-        message.setDateSent(new Date());        
-        if (tuple != null){
-            message.setDocument((Doc)tuple.a);
-            message.setTask((Task)tuple.b);
-        }
+        message.setDateSent(new Date());
+        links.entrySet().forEach(row->{
+            switch (row.getKey()){
+                case "doc":{
+                    message.setDocument((Doc)row.getValue());
+                    break;
+                }
+                case "task":{
+                    message.setTask((Task)row.getValue()); 
+                    break;
+                }
+                case "process":{
+                    message.setProcess((Process)row.getValue()); 
+                    break;
+                }
+            }
+        });
+        
         message.setSender(senderName);
         message.setImportance(1);
         create(message);
         if (addressee.isDuplicateMessagesEmail()){
             String emailAdress = addressee.getEmail();
             if (StringUtils.isNotBlank(emailAdress)){
-                mailBoxFacade.createMailBox(subject, emailAdress, senderEmail, content);
+                mailBoxFacade.createMailBox(subject, emailAdress, senderEmail, content.toString());
             }
         }
     }

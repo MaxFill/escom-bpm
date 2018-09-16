@@ -492,14 +492,7 @@ public class SessionBean implements Serializable{
         options.put("contentWidth", "100%");
         options.put("contentHeight", "100%");
         PrimeFaces.current().dialog().openDynamic(frmName, options, paramsMap);        
-    }
-    
-    /**
-     * Открытие формы монитора контроля процессов
-     */
-    public void openMonitorForm(){        
-        openDialogFrm(DictFrmName.FRM_MONITOR, getParamsMap());
-    }    
+    }     
     
     /* Открытие окна сканирования */
     public void openScaningForm(){
@@ -520,7 +513,7 @@ public class SessionBean implements Serializable{
         List<String> openModeList = new ArrayList<>();
         openModeList.add(mode); 
         List<Integer> idList = docs.stream().map(BaseDict::getId).collect(Collectors.toList());
-        String docIds = org.apache.commons.lang3.StringUtils.join(idList, ",");
+        String docIds = StringUtils.join(idList, ",");
         List<String> docsList = new ArrayList<>();
         docsList.add(docIds); 
         Map<String, List<String>> paramMap = getParamsMap();

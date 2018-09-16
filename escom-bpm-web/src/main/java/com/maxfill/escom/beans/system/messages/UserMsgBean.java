@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.system.messages;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
+import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.facade.BaseLazyLoadFacade;
@@ -10,7 +11,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
 import com.maxfill.model.task.Task;
 import com.maxfill.utils.DateUtils;
-
+import com.maxfill.model.process.Process;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
@@ -31,6 +32,8 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
 
     @Inject
     private DocBean docBean;
+    @Inject
+    private ProcessBean processBean;
     @Inject
     private TaskBean taskBean;
     
@@ -101,7 +104,14 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
         Doc doc = selectedMessages.getDocument();
         if (doc == null) return;                
         docBean.prepEditItem(doc, getParamsMap());
-    }    
+    }
+    
+    public void onGoToProcess(){
+        if (selectedMessages == null) return;
+        Process process = selectedMessages.getProcess();
+        if (process == null) return;
+        processBean.prepEditItem(process, getParamsMap());
+    }
     
     @Override
     protected Map<String, Object> makeFilters(Map filters) {

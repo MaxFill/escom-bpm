@@ -4,7 +4,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-dlg.xhtml"> 
-    
+
     <ui:param name="_bean" value="#{mailBoxBean}"/>
 
     <ui:define name="menuActions" >
@@ -20,40 +20,39 @@
     </ui:define>
 
     <ui:define name="centerFormContent">
-        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
-            <p:dataTable id="tblDetail"
-                                 value="#{mailBoxBean.messages}" var="item" 
-                                 emptyMessage="#{bundle.EmptyTable}"
-                                 paginator="true" paginatorPosition="bottom"  
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                                 rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.dateCreate}"
-                                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                                 rowKey="#{item.id}" selectionMode="single">
+        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+            <p:dataTable id="tblDetail" value="#{mailBoxBean.messages}" var="item" 
+                         emptyMessage="#{bundle.EmptyTable}"
+                         paginator="true" paginatorPosition="bottom"  
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                         rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.dateCreate}"
+                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
+                         rowKey="#{item.id}" selectionMode="single">
 
-                        <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
-                            #{item.sender}
-                        </p:column> 
-                        <p:column headerText="#{bundle.Subject}" sortBy="#{item.subject}">
-                            #{item.subject}
-                        </p:column>                        
-                        <p:column headerText="#{bundle.Addresses}" sortBy="#{item.addresses}">
-                            #{item.addresses}
-                        </p:column> 
-                        <p:column headerText="#{bundle.Author}" sortBy="#{item.author.shortFIO}">
-                            #{item.author.shortFIO}
-                        </p:column> 
-                        <p:column headerText="#{bundle.DateCreate}" sortBy="#{item.dateCreate}"> 
-                            <h:outputLabel value="#{item.dateCreate}">
-                                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                            </h:outputLabel>
-                        </p:column>
-                        <p:column headerText="#{bundle.Commands}" style="text-align: center;" > 
-                            <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
-                                             update="tblDetail"
-                                             actionListener="#{mailBoxBean.deleteMessage(item)}"/>
-                        </p:column> 
-                    </p:dataTable>
+                <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
+                    #{item.sender}
+                </p:column> 
+                <p:column headerText="#{bundle.Subject}" sortBy="#{item.subject}">
+                    #{item.subject}
+                </p:column>                        
+                <p:column headerText="#{bundle.Addresses}" sortBy="#{item.addresses}">
+                    #{item.addresses}
+                </p:column> 
+                <p:column headerText="#{bundle.Author}" sortBy="#{item.author.shortFIO}">
+                    #{item.author.shortFIO}
+                </p:column> 
+                <p:column headerText="#{bundle.DateCreate}" sortBy="#{item.dateCreate}"> 
+                    <h:outputLabel value="#{item.dateCreate}">
+                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                    </h:outputLabel>
+                </p:column>
+                <p:column headerText="#{bundle.Commands}" style="text-align: center;" > 
+                    <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
+                                     update="tblDetail"
+                                     actionListener="#{mailBoxBean.deleteMessage(item)}"/>
+                </p:column> 
+            </p:dataTable>
         </p:panelGrid>
     </ui:define>
 </ui:composition>

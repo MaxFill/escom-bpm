@@ -19,35 +19,30 @@
         </ui:define>
 
         <ui:define name="specActionMenu">
-            <p:menuitem icon="ui-icon-play" value="#{bundle.Run}"
-                        disabled="#{processCardBean.isReadOnly()}"
-                        onclick="document.getElementById('mainFRM:btnRun').click();"/>
-            <p:menuitem icon="ui-icon-stop" value="#{bundle.Stop}"
-                        disabled="#{processCardBean.isDisableBtnStop()}"
-                        onclick="document.getElementById('mainFRM:btnStop').click();"/>
         </ui:define>
 
-        <ui:define name="CardToolButtons">
-            <p:commandButton value="#{bundle.Scheme}"
-                             disabled="#{processCardBean.isReadOnly() or _bean.editedItem.id == null}"
+        <ui:define name="specSubMenu">
+            <p:commandButton value="#{bundle.Scheme}" icon="ico_process"
+                             disabled="#{_bean.editedItem.id == null}"
                              update="mainFRM:mainTabView:concorderList"
                              actionListener="#{processCardBean.onOpenScheme()}" >
                 <p:ajax event="dialogReturn" listener="#{_bean.onSchemeClose}" />
-            </p:commandButton>                
-
-            <p:spacer width="15"/>
+            </p:commandButton>
+        </ui:define>
+        
+        <ui:define name="CardToolButtons">            
             <h:outputLabel value="#{bundle.State}: "/>
             <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
             <p:spacer width="15"/>
             
-            <p:menuButton id="btnRun" icon="ui-icon-play" title="#{bundle.StartProcess}" disabled="#{processCardBean.isReadOnly()}">
-                <p:menuitem value="#{bundle.SendToAll}" icon="ui-icon-play" update="mainFRM"
-                            actionListener="#{processCardBean.onRun()}"
+            <p:menuButton icon="ui-icon-play" title="#{bundle.StartProcess}" disabled="#{processCardBean.isReadOnly()}">
+                <p:menuitem value="#{bundle.NewEditionSendToAll}" icon="ui-icon-play" update="mainFRM"
+                            actionListener="#{processCardBean.onRun('send_all')}"
                             oncomplete="return itemChange = 0;">
                     <f:param name="isRequired" value="true"/>
                 </p:menuitem>
                 <p:menuitem value="#{bundle.SendJustDoNotAgree}" icon="ui-icon-play" update="mainFRM"
-                            actionListener="#{processCardBean.onRun()}"
+                            actionListener="#{processCardBean.onRun('not_agree')}"
                             oncomplete="return itemChange = 0;">
                     <f:param name="isRequired" value="true"/>
                 </p:menuitem>
@@ -118,45 +113,32 @@
                         <ui:param name="_actionSelect" value="onDocSelected"/>
                         <ui:param name="_validateAction" value="checkDocument"/>                    
                         <ui:param name="_update" value=""/>
-                    </ui:include>     
-
-                    <p:outputLabel value="#{bundle.Documents}:" />
-                    <ui:include src="/view/docs/doc-list.xhtml" >
-                        <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
-                    </ui:include>                
-
-                    <f:facet name="footer">
-                        <p:commandButton id="btnAddFile" style="display: none;"  
-                                         actionListener="#{processCardBean.onAddFile()}"
-                                         update="mainFRM:mainTabView:tblDocs"> 
-                        </p:commandButton>
+                    </ui:include>                         
+            
+                    <p:panel header="#{bundle.Documents}" toggleable="true" collapsed="true" styleClass="ui-grid-col-12">
+                        <ui:include src="/view/docs/doc-list.xhtml" >
+                            <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
+                        </ui:include>
                         <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
                                          rendered="#{!_bean.isReadOnly()}"
                                          actionListener="#{docBean.onManySelectItem()}"> 
                             <p:ajax event="dialogReturn" listener="#{_bean.onDocsSelected}" update="tblDocs"/>
                         </p:commandButton>
+                    </p:panel>
 
-                        <p:fileUpload value="#{fileUploadView.file}" auto="true" mode="advanced" styleClass="ui-grid-col-6"
-                                      rendered="#{!processCardBean.isReadOnly()}" style="float:right;"
-                                      allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
-                                      sizeLimit="#{sessionBean.maxFileSize}"
-                                      invalidFileMessage = "#{bundle.INVALID_FILE_TYPE}"
-                                      invalidSizeMessage = "#{bundle.INVALID_FILE_SIZE}"
-                                      fileLimitMessage   = "#{bundle.INVALID_FILE_COUNT}"
-                                      process="@this" dragDropSupport="true"
-                                      label="#{bundle.SelectFileAndCreateDoc}" 
-                                      cancelLabel="#{bundle.Cancel}"
-                                      uploadLabel="#{bundle.SaveFiles}"
-                                      fileUploadListener="#{processCardBean.onUploadFile}"                           
-                                      onstart="PF('statusDialog').show()"
-                                      oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:mainTabView:btnAddFile').click();">
-                        </p:fileUpload> 
-                    </f:facet>
                 </p:panelGrid>
             </p:tab>        
 
             <p:tab title="#{bundle.ApprovalSheet}">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" > 
+                    <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces" >                         
+                        <p:outputLabel value="#{bundle.NumberSheetConcorder}:" />
+                        <p:inputText value="#{processCardBean.editedItem.regNumber}" title="#{bundle.AutomaticallyGenerated}" 
+                                     styleClass="ui-grid-col-12"
+                                     placeholder="#{bundle.AutomaticallyGenerated}"
+                                     readonly="true"/>
+                    </h:panelGrid>
+                    
                     <p:dataTable id="concorderList" value="#{processCardBean.editedItem.getReports()}" var="report" emptyMessage="#{bundle.EmptyTable}"
                                  rowKey="#{report.tempId}" selectionMode="single" 
                                  paginator="true" paginatorPosition="bottom" 
@@ -178,7 +160,11 @@
                                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                             </h:outputLabel>
                         </p:column>
-
+                        
+                        <p:column width="16">
+                            <h:graphicImage value="#{resultBean.getResultIcon(report.status)}"/>
+                        </p:column>
+                        
                         <p:column headerText="#{bundle.Status}" >
                             <h:outputLabel value="#{processCardBean.getLabelFromBundle(report.status)}"/>
                         </p:column>

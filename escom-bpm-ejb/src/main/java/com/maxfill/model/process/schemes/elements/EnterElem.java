@@ -20,7 +20,7 @@ public class EnterElem extends WFConnectedElem{
     public EnterElem() {
     }
 
-    public EnterElem(String caption, int x, int y) {
+    public EnterElem(String caption, String x, String y) {
         this.caption = caption;
         this.posX = x;
         this.posY = y;

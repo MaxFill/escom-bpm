@@ -23,7 +23,7 @@ public class ExitElem extends WFConnectedElem{
     public ExitElem() {
     }
 
-    public ExitElem(String caption, Boolean finalize, int x, int y) {
+    public ExitElem(String caption, Boolean finalize, String x, String y) {
         this.caption = caption;
         this.finalize = finalize;
         this.posX = x;

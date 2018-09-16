@@ -131,7 +131,7 @@ public final class EscomBeanUtils {
         String serverURL = makeServerURL();
         String docURL = "";        
 
-        if (!org.apache.commons.lang3.StringUtils.isEmpty(serverURL)){
+        if (!StringUtils.isEmpty(serverURL)){
             StringBuilder builder = new StringBuilder();
             builder.append(serverURL);
 

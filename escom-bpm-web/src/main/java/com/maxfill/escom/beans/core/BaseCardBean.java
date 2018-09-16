@@ -28,6 +28,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.faces.context.FacesContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.event.TabChangeEvent;
 
@@ -154,8 +155,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             T item = getEditedItem();
             onBeforeSaveItem(item);
             Set<String> errors = new LinkedHashSet<>();
-            checkItemBeforeSave(item, errors);
-            if (!errors.isEmpty()) {
+            FacesContext context = FacesContext.getCurrentInstance();
+            checkItemBeforeSave(item, context, errors);
+            if (!errors.isEmpty()) {                
+                context.validationFailed();
                 MsgUtils.showErrors(errors);
                 return Boolean.FALSE; 
             }
@@ -207,9 +210,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     /**
      * Проверка корректности полей объекта перед сохранением
      * @param item
+     * @param context
      * @param errors
      */
-    protected void checkItemBeforeSave(T item, Set<String> errors) {
+    protected void checkItemBeforeSave(T item, FacesContext context, Set<String> errors) {
         checkCorrectItemRight(item, errors);                
         
         //Проверка на дубль

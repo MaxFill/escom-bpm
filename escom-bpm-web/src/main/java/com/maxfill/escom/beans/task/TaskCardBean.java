@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
@@ -84,7 +85,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private int reminderDeltaMinute = 0;
       
     private ProcReport currentReport;
-    
+    private boolean isChangeExecutor;
     private List<String> selectedDays;
     
     private List<SelectItem> daysOfWeek = new ArrayList<>();
@@ -115,14 +116,16 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param errors 
      */
     @Override
-    protected void checkItemBeforeSave(Task task, Set<String> errors) {
+    protected void checkItemBeforeSave(Task task, FacesContext context, Set<String> errors) {
         saveDateFields(task);
-        super.checkItemBeforeSave(task, errors);
+        super.checkItemBeforeSave(task, context, errors);
         ///проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
         }        
         if (task.getOwner() == null){
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:staffPanel_item");
+            input.setValid(false);
             errors.add(MsgUtils.getMessageLabel("ExecutorNotSet"));
         }
         //проверка для срока исполнения
@@ -211,8 +214,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
     protected void onAfterSaveItem(Task task){
         //изменение в листе согласования процесса, если изменили задачу        
         if (task.getScheme() == null) return;   //задача не связана с процессом                 
-        if (getTypeEdit() == DictEditMode.CHILD_MODE) return ;   
-        workflow.replaceReportExecutor(task, getCurrentUser());               
+        if (getTypeEdit() == DictEditMode.CHILD_MODE) return ;
+        if (isChangeExecutor){
+            workflow.replaceReportExecutor(task, getCurrentUser());
+        }
     } 
      
     /**
@@ -233,18 +238,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
             return "";
-        } 
-        
-        doSaveItem();        
-        task = (Task) sourceBean.getSourceItem(); 
+        }
+        doSaveItem();
         if (task.getScheme() != null){
-            Process process;
-            if (sourceBean instanceof ProcessCardBean){
-                process = ((ProcessCardBean)sourceBean).getEditedItem();
-            } else {
-                process = processFacade.find(task.getScheme().getProcess().getId());
-            }
-
+            Process process = processFacade.find(task.getScheme().getProcess().getId());
             workflow.executeTask(process, task, result, getCurrentUser(), errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
@@ -321,10 +318,13 @@ public class TaskCardBean extends BaseCardBean<Task>{
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()) return;
         getEditedItem().setOwner(items.get(0));
+        isChangeExecutor = true;
         onItemChange();
     }
     public void onExecutorChanged(ValueChangeEvent event){
-         getEditedItem().setOwner((Staff) event.getNewValue());
+        getEditedItem().setOwner((Staff) event.getNewValue());
+        isChangeExecutor = true;
+        onItemChange();
     }
     
     public Boolean isShowExtTaskAtr(){

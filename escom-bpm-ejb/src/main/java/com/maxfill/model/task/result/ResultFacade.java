@@ -5,9 +5,6 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.Results;
-import com.maxfill.model.task.result.Result;
-import com.maxfill.model.task.result.ResultLog;
-import com.maxfill.model.task.result.ResultStates;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -17,7 +14,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
-
 
 /**
  * Фасад для сущности "Результаты задачи"

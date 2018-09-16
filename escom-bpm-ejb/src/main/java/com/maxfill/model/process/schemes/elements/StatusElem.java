@@ -28,7 +28,7 @@ public class StatusElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
-    public StatusElem(String caption, Integer docStatusId, int x, int y) {
+    public StatusElem(String caption, Integer docStatusId, String x, String y) {
         this.caption = caption;
         this.docStatusId = docStatusId;
         this.posX = x;

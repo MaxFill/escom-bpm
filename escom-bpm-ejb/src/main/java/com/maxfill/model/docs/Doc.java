@@ -334,6 +334,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public String getRegNumber() {
         return regNumber;
     }
+    @Override
     public void setRegNumber(String regNumber) {
         this.regNumber = regNumber;
     }

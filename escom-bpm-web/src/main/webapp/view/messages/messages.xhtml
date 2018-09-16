@@ -117,6 +117,10 @@
                 </p:column>
 
                 <p:column priority="1">
+                    <p:commandLink  value="#{bundle.GoToProcess}"
+                                    rendered="#{item.task != null}"
+                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
+                                    oncomplete="document.getElementById('mainFRM:openProcessBtn').click();"/>
                     <p:commandLink  value="#{bundle.GoToTask}"
                                     rendered="#{item.task != null}"
                                     actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
@@ -136,12 +140,13 @@
                 </p:column>
             </p:dataTable>
 
-            <p:commandButton id="openDocBtn" style="display: none;"
-                             actionListener="#{userMsgBean.onGoToDocument()}">
+            <p:commandButton id="openDocBtn" style="display: none;" actionListener="#{userMsgBean.onGoToDocument()}">
                 <p:ajax event="dialogReturn" update="messageTBL"/>
             </p:commandButton>
-            <p:commandButton id="openTaskBtn" style="display: none;"
-                             actionListener="#{userMsgBean.onOpenTask(_bean)}">
+            <p:commandButton id="openTaskBtn" style="display: none;" actionListener="#{userMsgBean.onOpenTask(_bean)}">
+                <p:ajax event="dialogReturn" update="messageTBL"/>
+            </p:commandButton>
+            <p:commandButton id="openProcessBtn" style="display: none;" actionListener="#{userMsgBean.onGoToProcess()}">
                 <p:ajax event="dialogReturn" update="messageTBL"/>
             </p:commandButton>
         </ui:define>

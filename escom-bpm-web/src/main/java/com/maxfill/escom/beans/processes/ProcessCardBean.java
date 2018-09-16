@@ -5,26 +5,19 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
-import com.maxfill.escom.beans.docs.attaches.AttacheBean;
-import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.docs.DocFacade;
-import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
-import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
-import java.io.IOException;
 import java.text.DateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -35,13 +28,9 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIInput;
 import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.UploadedFile;
-import org.primefaces.model.diagram.Element;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -53,15 +42,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
        
     @Inject
     private DiagramBean diagramBean;
-    
     @Inject
     private ProcessBean processBean;
 
-    @Inject
-    private AttacheBean attacheBean;    
-    
-    @EJB
-    private DocFacade docFacade;
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -71,10 +54,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private StateFacade stateFacade;
 
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
-    private ProcReport currentReport;          
-    
-    private final List<Attaches> attaches = new ArrayList<>();
-    
+    private ProcReport currentReport;        
     private Doc selectedDoc;    
     
     @Override
@@ -106,9 +86,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
 
     @Override
-    protected void checkItemBeforeSave(Process process, Set<String> errors){
+    protected void checkItemBeforeSave(Process process, FacesContext context, Set<String> errors){
         checkDocument(getEditedItem().getDocument(), errors);
-        super.checkItemBeforeSave(process, errors);
+        super.checkItemBeforeSave(process, context, errors);
     }    
     
     public void checkDocument(){
@@ -153,19 +133,23 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         diagramBean.prepareModel(getEditedItem());
         sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());
     }
+    
     public void onSchemeClose(SelectEvent event){
         if (event.getObject() == null) return;
         String result = (String) event.getObject();
         if (result.equals(SysParams.EXIT_NOTHING_TODO)) return;                
         Process process = getEditedItem();
         Scheme scheme = process.getScheme();
+        Staff curator = process.getCurator();
         List<Task> liveTasks = getTasksFromModel();
         List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks());
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
         scheme.getTasks().removeAll(forRemoveTasks);     
         List<ProcReport> removeRepors = forRemoveTasks.stream()
                 .map(task->process.getReports().stream()
-                        .filter(report-> report.getDateCreate() == null && Objects.equals(task.getOwner(), report.getExecutor()))
+                        .filter(report-> report.getDateCreate() == null 
+                                && Objects.equals(task.getOwner(), report.getExecutor()) 
+                                && !Objects.equals(curator, report.getExecutor()))
                         .findFirst().orElse(null))
                 .collect(Collectors.toList());
         Set<ProcReport> procReports = process.getReports();        
@@ -230,8 +214,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /**
      * Обработка события запуска процесса на исполнение
+     * @param option
      */
-    public void onRun(){
+    public void onRun(String option){
         Set<String> errors = new HashSet<>();
         validatePlanDate(getEditedItem().getPlanExecDate(), errors);
         if (!errors.isEmpty()){
@@ -324,36 +309,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void onDeleteDocFromChilds(Doc doc){
         getEditedItem().getDocs().remove(doc);
         onItemChange();
-    }
-    
-    /**
-     * Обработка события добавления файла в процесс с созданием документа
-     */
-    public void onAddFile(){
-        User author = getCurrentUser();
-        Folder folder = author.getInbox();
-        if (folder == null){
-            MsgUtils.errorMsg("NoDefaultUserFolderSpecified");
-            return;
-        }
-        Attaches attache = attaches.get(0); 
-        Map<String, Object> params = new HashMap<>();
-        params.put("attache", attache);
-        params.put("name", attache.getName());
-        Doc doc = docFacade.createDocInUserFolder(attache.getName(), author, folder, attache);
-        getEditedItem().getDocs().add(doc);
-        if (getEditedItem().getDocument() == null){
-            getEditedItem().setDocument(doc);
-        }
-        onItemChange();
-    }
-    
-    /* Загрузка файла через контрол на форме карточки процеса */
-    public void onUploadFile(FileUploadEvent event) throws IOException{       
-        attaches.clear();
-        UploadedFile uploadFile = EscomFileUtils.handleUploadFile(event);        
-        attaches.add(attacheBean.uploadAtache(uploadFile));
-    }  
+    }    
     
     /**
      * Обработка события выбора документа(ов) из селектора

@@ -4,7 +4,6 @@ import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +24,7 @@ public class ConditionElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
-    public ConditionElem(String caption, Integer conditonId, int x, int y) {
+    public ConditionElem(String caption, Integer conditonId, String x, String y) {
         this.caption = caption;
         this.conditonId = conditonId;
         this.posX = x;
