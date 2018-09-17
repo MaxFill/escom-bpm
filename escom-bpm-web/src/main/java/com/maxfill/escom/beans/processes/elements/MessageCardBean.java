@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.process.schemes.elements.MessageElem;
 import java.lang.reflect.InvocationTargetException;
 import com.maxfill.model.process.Process;

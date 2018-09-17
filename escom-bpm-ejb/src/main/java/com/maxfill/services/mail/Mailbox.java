@@ -57,6 +57,9 @@ public class Mailbox implements Serializable {
     @ManyToOne(optional = false)
     private User author;
     
+    @Column(name = "AuthorName")
+    private String authorName;
+    
     @Size(max = 50)
     @Column(name = "Sender")
     private String sender;
@@ -92,6 +95,13 @@ public class Mailbox implements Serializable {
         this.id = id;
     }
 
+    public String getAuthorName() {
+        return authorName;
+    }
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+    
     public String getSubject() {
         return subject;
     }

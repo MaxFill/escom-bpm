@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,6 +199,12 @@ public class AttacheBean extends BaseViewBean<BaseView>{
                 break;
             }
         }
+    }
+    
+    public void onNotifyRemark(Remark remark){
+        Map<String, List<String>> params = getParamsMap();        
+        params.put("remarkID", Collections.singletonList(remark.getId().toString()));
+        sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
     }
     
     /* GETS & SETS  */

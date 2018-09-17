@@ -8,16 +8,16 @@
     <ui:param name="_bean" value="#{mailReaderBean}"/>    
 
     <ui:define name="serviceParams">
-        <p:outputLabel value="#{bundle.MailServer}"/>
-        <p:inputText id="server" style="width: 100%;"
+        <p:outputLabel value="#{bundle.MailServer}:"/>
+        <p:inputText id="server" styleClass="ui-grid-col-12"
                      title="#{bundle.MailServer}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.MailServer}] #{bundle.MustBeFilled}"
                      value="#{mailReaderBean.settings.serverAdress}"/>
         <p:message for="server" display="tooltip"/>
 
-        <p:outputLabel value="#{bundle.IMAPport}"/>
-        <p:inputText id="smtpPort" style="width: 100%;"
+        <p:outputLabel value="#{bundle.IMAPport}:"/>
+        <p:inputText id="smtpPort" styleClass="ui-grid-col-12"
                      title="#{bundle.IMAPport}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
@@ -44,16 +44,16 @@
                                  itemLabel="#{bundle.DeleteIfUnknownSender}">
         </p:selectBooleanCheckbox>
 
-        <p:outputLabel value="#{bundle.Login}"/>
-        <p:inputText id="login" style="width: 100%;"
+        <p:outputLabel value="#{bundle.Login}:"/>
+        <p:inputText id="login" styleClass="ui-grid-col-12"
                      title="#{bundle.Login}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
                      value="#{mailReaderBean.settings.user}"/>
         <p:message for="login"/>
 
-        <p:outputLabel value="#{bundle.password}"/>
-        <p:inputText id="password" style="width: 100%;"
+        <p:outputLabel value="#{bundle.password}:"/>
+        <p:inputText id="password" styleClass="ui-grid-col-12"
                      title="#{bundle.password}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"

@@ -151,7 +151,10 @@ public class MailServiceImpl implements MailService{
     /**
      * Отправка сообщения
      * @param session
+     * @param sender
      * @param recipients
+     * @param copyes
+     * @param content
      */
     @Override
     public void sendMultiMessage(Session session, String sender, String recipients, String copyes, String content, String subject, String encoding, Map<String,String> attachments) throws MessagingException, UnsupportedEncodingException {

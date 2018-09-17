@@ -1,6 +1,7 @@
 package com.maxfill.services.mail;
 
 import com.maxfill.facade.BaseFacade;
+import com.maxfill.model.users.User;
 import com.maxfill.services.mail.Mailbox;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class MailBoxFacade extends BaseFacade<Mailbox>{
         getEntityManager().remove(message);
     }
     
-    public void createMailBox(String subject, String adresses, String sender, String content){
+    public void createMailBox(String subject, String adresses, String sender, String content, String authorName){
         try {
             Mailbox mailbox = new Mailbox();
             mailbox.setSubject(subject);
@@ -49,6 +50,7 @@ public class MailBoxFacade extends BaseFacade<Mailbox>{
             mailbox.setActual(true);
             mailbox.setCopies("");
             mailbox.setDateCreate(new Date());
+            mailbox.setAuthorName(authorName);
             create(mailbox);
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

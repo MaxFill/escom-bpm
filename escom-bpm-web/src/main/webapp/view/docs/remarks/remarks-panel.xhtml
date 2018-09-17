@@ -44,7 +44,13 @@
                                         update="eastFRM:accord:dgMyRemarks"
                                         actionListener="#{_bean.onDeleteRemark(remark)}">                                                              
                                 <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                            </p:menuitem>                            
+                            </p:menuitem> 
+                            <p:separator />
+                            <p:menuitem value="#{bundle.Notify}" icon="ui-icon-mail-closed"
+                                        disabled="#{remark.author ne _bean.currentUser}"
+                                        rendered="#{remark.state.currentState.id == 12}"                                        
+                                        actionListener="#{_bean.onNotifyRemark(remark)}">
+                            </p:menuitem>
                         </p:menu>
                     </f:facet>
 

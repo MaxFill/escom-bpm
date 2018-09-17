@@ -2,6 +2,7 @@ package com.maxfill.model.process.remarks;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.process.Process;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,8 +49,12 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
 
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Doc owner;        
+    private Doc owner;
 
+    @JoinColumn(name = "Process", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Process process;
+    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -108,6 +113,13 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
         this.id = id;
     }
 
+    public Process getProcess() {
+        return process;
+    }
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+    
     @Override
     public RemarkStates getState() {
         return state;

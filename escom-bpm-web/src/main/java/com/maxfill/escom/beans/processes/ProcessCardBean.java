@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictPrintTempl;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.MsgUtils;
@@ -16,6 +17,7 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
@@ -80,7 +82,18 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @param process
      */
     @Override
-    protected void onBeforeSaveItem(Process process){                 
+    protected void onBeforeSaveItem(Process process){
+        if (process.getCurator() != null){
+            User userCurator = process.getCurator().getEmployee();
+            if (!processFacade.checkUserInRole(process, DictRoles.ROLE_CURATOR_ID, userCurator)){
+                process.doAddInRole(DictRoles.ROLE_CURATOR, userCurator.getId());
+            }
+        }        
+        Set<Integer> usersIds = process.getScheme().getTasks().stream()
+                .filter(task->task.getOwner() != null)
+                .map(task->task.getOwner().getEmployee().getId())
+                .collect(Collectors.toSet());
+        process.doSetMultyRole(DictRoles.ROLE_CONCORDER, usersIds);
         workflow.packScheme(getScheme());
         super.onBeforeSaveItem(process);
     }
@@ -224,8 +237,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             return;
         }
         onItemChange();
-        if (doSaveItem()){            
-            workflow.start(getEditedItem(), getCurrentUser(), errors);
+        if (doSaveItem()){
+            Map<String, Object> params = new HashMap<>();
+            params.put(option, true);
+            workflow.start(getEditedItem(), getCurrentUser(), params, errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
             } else {
@@ -279,7 +294,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     @Override
     public boolean isReadOnly(){
         if (getEditedItem() == null) return false;
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning() || getEditedItem().isCompleted() ;
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning() ;
     }    
     
     public void onOpenExeReport(ProcReport report){

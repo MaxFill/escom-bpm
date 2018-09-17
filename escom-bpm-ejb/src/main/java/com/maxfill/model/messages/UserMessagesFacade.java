@@ -70,7 +70,8 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      */
     public void createSystemMessage(User addressee, String subject, StringBuilder content, Map<String, BaseDict> links){        
         String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
-        createMessage(addressee, senderName, conf.getDefaultSenderEmail(), subject, content, links);
+        String senderEmail = conf.getDefaultSenderEmail();
+        createMessage(addressee, senderName, senderEmail, subject, content, links);
     }
 
     /**
@@ -110,9 +111,22 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         if (addressee.isDuplicateMessagesEmail()){
             String emailAdress = addressee.getEmail();
             if (StringUtils.isNotBlank(emailAdress)){
-                mailBoxFacade.createMailBox(subject, emailAdress, senderEmail, content.toString());
+                mailBoxFacade.createMailBox(subject, emailAdress, senderEmail, content.toString(), senderName);
             }
         }
+    }
+    
+    /**
+     * Отправка сообщения пользователям из списка
+     * @param recipients
+     * @param sender
+     * @param subject
+     * @param content
+     * @param subject
+     * @param links
+     */
+    public void sendMessageUsers(List<User> recipients, User sender, String subject, StringBuilder content, Map<String, BaseDict> links){
+        recipients.forEach(recipient->createMessage(recipient, sender.getName(), sender.getEmail(), subject, content, links));
     }
     
     public Integer getCountUnReadMessage(User addressee){

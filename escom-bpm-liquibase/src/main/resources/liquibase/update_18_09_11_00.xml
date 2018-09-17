@@ -137,4 +137,37 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="mailbox_add_authorName" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="mailbox" columnName="AuthorName" />
+            </not>
+        </preConditions>
+        <addColumn tableName="mailbox">
+            <column name="AuthorName" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="remarks_add_process" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="remarks" columnName="Process" />
+            </not>
+        </preConditions>
+        <addColumn tableName="remarks">
+            <column name="Process" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+         <addForeignKeyConstraint baseColumnNames="Process"
+                                  baseTableName="remarks"
+                                  constraintName="FK_remarks_process"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="processes"/>         
+    </changeSet> 
 </databaseChangeLog> 

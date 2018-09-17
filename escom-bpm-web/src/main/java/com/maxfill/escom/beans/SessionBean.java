@@ -438,8 +438,13 @@ public class SessionBean implements Serializable{
         if (StringUtils.isNotEmpty(openFormName)){
             openDialogFrm(openFormName, getParamsMap());
         }
-    }
+    }      
     
+    /**
+     * Используется при открытии селекторов объектов
+     * @param frmName
+     * @param paramsMap 
+     */
     public void openCloseableDialog(String frmName, Map<String, List<String>> paramsMap){
         Tuple formSize = getFormSize(frmName);
         Map<String, Object> options = new HashMap<>();

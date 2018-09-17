@@ -8,8 +8,14 @@ import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -150,5 +158,52 @@ public class AttacheServiceImpl implements AttacheService{
         } catch(IOException e){
             LOGGER.log(Level.SEVERE, null, e);
         }
+    }
+    
+    /**
+     * Формирование zip архива из файлов папки во временной папке пользователя
+     * @param folder
+     * @param user
+     * @return 
+     */
+    @Override
+    public String makeFolderZIP(Folder folder, User user){
+        String zipFile = new StringBuilder()
+                    .append(configuration.getTempFolder())
+                    .append(folder.getName())
+                    .append("_")
+                    .append(user.getLogin())
+                    .append(".zip").toString();
+        byte[] buf = new byte[1024];
+        
+        File f = new File(zipFile);        
+        
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f), Charset.forName("Cp866"))) {
+            folder.getDetailItems().stream()
+                .filter(doc->doc.getMainAttache() != null)
+                .forEach(doc->{
+                        Attaches attache = doc.getMainAttache();                        
+                        try (InputStream inputStream = new FileInputStream(configuration.getUploadPath() + attache.getFullName())) {                            
+                            ZipEntry zipEntry = new ZipEntry(new String(attache.getName().getBytes(), "UTF-8"));
+                            out.putNextEntry(zipEntry);
+
+                            int len;
+                            while ((len = inputStream.read(buf)) > 0) {
+                                out.write(buf, 0, len);
+                            }
+                            out.closeEntry();
+                        } catch (FileNotFoundException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            LOGGER.log(Level.SEVERE, null, ex);
+                        }
+                    }
+            );
+        } catch (FileNotFoundException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return zipFile;
     }
 }

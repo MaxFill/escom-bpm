@@ -250,13 +250,13 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         conn.getOverlays().add(new ArrowOverlay(20, 20, 1, 1));
         String label = "";
         String keyLabel = connectorElem.getCaption();
-        if(StringUtils.isNotBlank(keyLabel)) {                         
+        if(StringUtils.isNotBlank(keyLabel)) {
             label = MsgUtils.getBandleLabel(keyLabel);
         }        
         conn.getOverlays().add(new LabelOverlay(label, "flow-label", 0.5));       
         if (connectorElem.isDone()){
             FlowChartConnector connector = new FlowChartConnector();
-            connector.setPaintStyle("{strokeStyle:'blue', lineWidth:3}");
+            connector.setPaintStyle("{strokeStyle:'blue', lineWidth:2}");
             connector.setCornerRadius(10); 
             conn.setConnector(connector);
         }
@@ -307,7 +307,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 baseElement.setPosX(x);
                 baseElement.setPosY(y);                
             }
-            onItemChange();
+            if (!isReadOnly()){
+                onItemChange();
+            }
         }
     }
 
@@ -1005,7 +1007,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         }
         
         if (workflow.createConnector(sourceAnchor, targetAnchor, scheme, label, errors) != null){  //если коннектор создался            
-            if (org.apache.commons.lang.StringUtils.isNotBlank(label)){
+            if (StringUtils.isNotBlank(label)){
                 Connection connection = findConnection(sourcePoint, targetPoint);
                 connection.getOverlays().clear();
                 Overlay overlay = new LabelOverlay(MsgUtils.getBandleLabel(label), "flow-label", 0.5);
@@ -1188,6 +1190,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     }   
     
     public boolean isReadOnly(){
+        if (sourceBean == null) return false;
         return sourceBean.isReadOnly();
     }
 

@@ -7,44 +7,41 @@
 
     <ui:param name="_bean" value="#{mailSenderBean}"/>
             
-    <ui:define name="serviceParams">        
-        <p:inputText id="server" style="width: 100%;"
+    <ui:define name="serviceParams">
+        <p:outputLabel value="#{bundle.SMTPserver}:"/>
+        <p:inputText id="server" styleClass="ui-grid-col-12"
                      title="#{bundle.MailServer}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.MailServer}] #{bundle.MustBeFilled}"
                      value="#{mailSenderBean.settings.serverAdress}"/>
-        <p:message for="server" display="tooltip"/>
 
-        <p:outputLabel value="#{bundle.SMTPport}"/>
-        <p:inputText id="smtpPort" style="width: 100%;"
+        <p:outputLabel value="#{bundle.SMTPport}:"/>
+        <p:inputText id="smtpPort" styleClass="ui-grid-col-12"
                      title="#{bundle.SMTPport}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.SMTPport}] #{bundle.MustBeFilled}"
-                     value="#{mailSenderBean.settings.port}"/>
-        <p:message for="smtpPort" display="tooltip"/>
+                     value="#{mailSenderBean.settings.port}"/>        
 
         <p:selectBooleanCheckbox value="#{mailSenderBean.settings.useSSL}"
                                  itemLabel="#{bundle.UseSSL}">
         </p:selectBooleanCheckbox>
 
-        <p:outputLabel value="#{bundle.Login}"/>
-        <p:inputText id="login" style="width: 100%;"
+        <p:outputLabel value="#{bundle.Login}:"/>
+        <p:inputText id="login" styleClass="ui-grid-col-12"
                      title="#{bundle.Login}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.Login}] #{bundle.MustBeFilled}"
                      value="#{mailSenderBean.settings.user}"/>
-        <p:message for="login"/>
 
-        <p:outputLabel value="#{bundle.password}"/>
-        <p:inputText id="password" style="width: 100%;"
+        <p:outputLabel value="#{bundle.password}:"/>
+        <p:inputText id="password" styleClass="ui-grid-col-12"
                      title="#{bundle.password}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
                      value="#{mailSenderBean.settings.password}"/>
-        <p:message for="password"/>
-
-        <p:outputLabel value="#{bundle.AdressSender}"/>
-        <p:inputText id="adressSender" style="width: 100%;"
+        
+        <p:outputLabel value="#{bundle.AdressSender}:"/>
+        <p:inputText id="adressSender" styleClass="ui-grid-col-12"
                      title="#{bundle.Login}"
                      validatorMessage="#{bundle.EMail}: #{validator.INVALID_EMAIL}"
                      required="#{param['isRequired'] == 'true'}"
@@ -53,7 +50,6 @@
             <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
             <f:validator validatorId="escom.emailValidator" />
         </p:inputText>
-        <p:message for="adressSender" display="tooltip"/>
 
         <p:separator />            
 
@@ -66,7 +62,8 @@
 
             <p:commandButton value="#{bundle.MessagesBox}"                             
                              title="#{bundle.PreviewMessagesBox}"                            
-                             actionListener="#{mailSenderBean.onOpenMailBox()}"/>
+                             actionListener="#{mailSenderBean.onOpenMailBox()}">
+            </p:commandButton>
         </h:panelGroup>                   
 
     </ui:define>

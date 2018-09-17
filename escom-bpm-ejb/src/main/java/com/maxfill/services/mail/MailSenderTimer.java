@@ -54,7 +54,7 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
                         String copyes = message.getCopies();
                         String encoding = conf.getEncoding();
                         mailService.sendMultiMessage(session, from, to, copyes, content, subject, encoding, attachments);
-                        detailInfoAddRow("The message id=" + message.getId() + " is sent!");
+                        detailInfoAddRow("The message to [" + to + "] is sent!");
                         mailBoxFacade.remove(message);
                     }
                     selectedEvent.setResult(RESULT_SUCCESSFULLY);

@@ -99,9 +99,10 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * Формирует список пользователей, входящих в роль
      * @param item - процесс или документ
      * @param roleName
+     * @param currentUser
      * @return 
      */
-    private List<User> actualiseRole(T item, String roleName, User currentUser){
+    public List<User> actualiseRole(T item, String roleName, User currentUser){
         Map<String, Set<Integer>> roles = item.getRoles();
         if (CollectionUtils.isEmpty(roles) || !roles.containsKey(roleName)) return new ArrayList<>();
         Set<Integer> usersIds = roles.get(roleName);

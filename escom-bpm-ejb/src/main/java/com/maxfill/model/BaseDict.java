@@ -480,7 +480,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     
     /* установка (перезапись) списковой роли */
-    private void doSetMultyRole(String roleName, Set<Integer> usersId){
+    public void doSetMultyRole(String roleName, Set<Integer> usersId){
         getRoles().put(roleName.toUpperCase(), usersId);
     }
 

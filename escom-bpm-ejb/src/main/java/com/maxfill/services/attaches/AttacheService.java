@@ -3,6 +3,7 @@ package com.maxfill.services.attaches;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.users.User;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -21,4 +22,5 @@ public interface AttacheService {
     Attaches findAttacheByDoc(Doc doc);
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
     void doCopy(Attaches sourceAttache, Attaches targetAttache);
+    String makeFolderZIP(Folder folder, User user);
 }

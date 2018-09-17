@@ -5,7 +5,6 @@ import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.task.Task;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

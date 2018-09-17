@@ -7,7 +7,6 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import com.maxfill.model.process.ProcessFacade;
@@ -18,12 +17,14 @@ import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
+import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
@@ -31,6 +32,7 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import org.primefaces.event.SelectEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -40,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -48,7 +49,6 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
-import org.springframework.util.CollectionUtils;
 
 /**
  * Контролер формы "Поручение"
@@ -65,7 +65,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @EJB
     private ResultFacade resultFacade;
     @EJB
-    private ProcessFacade processFacade;    
+    private ProcessFacade processFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -185,23 +185,56 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @param result
      * @param errors 
      */
-    private void checkTaskBeforeExecute(Task task, Result result, Set<String> errors ){
-        if (StringUtils.isEmpty(task.getComment()) || task.getComment().length() < 3){
-            switch (result.getName()){
-                case DictResults.RESULT_CANCELLED :{
-                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
-                    break;
-                }
-                case DictResults.RESULT_REFUSED :{
-                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
-                    break;
-                }
-                case DictResults.RESULT_AGREE_WITH_REMARK :{
-                    errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
-                    break;
-                }
+    private void checkTaskBeforeExecute(Task task, Result result, Set<String> errors ){        
+        switch (result.getName()){
+            case DictResults.RESULT_CANCELLED :{
+                checkReport(task, errors);
+                break;
             }
+            case DictResults.RESULT_REFUSED :{
+                checkReport(task, errors);
+                if (!isHaveActualRemarks(task, errors)){
+                    errors.add(MsgUtils.getMessageLabel("NoYourRemarksActionRequiresRemarks"));
+                }
+                break;
+            }
+            case DictResults.RESULT_AGREE_WITH_REMARK :{
+                checkReport(task, errors);                
+                if (!isHaveActualRemarks(task, errors)){
+                    errors.add(MsgUtils.getMessageLabel("NoYourRemarksActionRequiresRemarks"));
+                }
+                break;
+            }
+            case DictResults.RESULT_AGREED :{
+                if (isHaveActualRemarks(task, errors)){
+                    errors.add(MsgUtils.getMessageLabel("ActionNotAvailableHaveActualRemarks"));
+                }
+                break;
+            }
+        }        
+    }
+    
+    private void checkReport(Task task, Set<String> errors){
+        if (StringUtils.isEmpty(task.getComment()) || task.getComment().length() < 3){
+            errors.add(MsgUtils.getMessageLabel("ReportIsNotFilled"));
         }
+    }
+    
+    /**
+     * Проверка наличия у текущего пользователя актуальных (не снятых) замечаний
+     * @param task
+     * @param user
+     * @param errors 
+     */
+    private boolean isHaveActualRemarks(Task task, Set<String> errors){
+        Process process = task.getScheme().getProcess();
+        Doc doc = process.getDocument();
+        if (doc == null) return false;
+        Remark remark = doc.getDetailItems().stream()
+                .filter(r -> Objects.equals(r.getAuthor(), getCurrentUser()))
+                .findFirst()
+                .orElse(null);
+        return remark != null;
     }
     
     @Override
@@ -241,8 +274,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         }
         doSaveItem();
         if (task.getScheme() != null){
-            Process process = processFacade.find(task.getScheme().getProcess().getId());
-            workflow.executeTask(process, task, result, getCurrentUser(), errors);
+            Process process = processFacade.find(task.getScheme().getProcess().getId());            
+            workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
                 return "";

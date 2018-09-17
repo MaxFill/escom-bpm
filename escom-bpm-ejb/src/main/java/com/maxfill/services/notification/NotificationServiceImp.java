@@ -2,6 +2,7 @@ package com.maxfill.services.notification;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.process.Process;
 import com.maxfill.model.staffs.StaffFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.task.TaskFacade;
@@ -77,7 +78,9 @@ public class NotificationServiceImp implements NotificationService{
         Map<String, BaseDict> links = new HashMap<>();
         links.put("task", task);
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
-            List<Doc> docs = task.getScheme().getProcess().getDocs();
+            Process process = task.getScheme().getProcess();
+            links.put("process", process);
+            List<Doc> docs = process.getDocs();
             if (CollectionUtils.isNotEmpty(docs)){
                 Doc doc = docs.stream().findFirst().orElse(null);
                 links.put("doc", doc);

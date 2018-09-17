@@ -204,14 +204,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         
     /* Возвращает текущую версию вложения  */
     public Attaches getMainAttache() {
-        Attaches rezult = null;
-        for (Attaches attache : attachesList){
-            if (Boolean.TRUE.equals(attache.getCurrent())){
-                rezult = attache;
-                break;
-            }
-        }
-        return rezult;
+        return attachesList.stream().filter(a -> a.getCurrent()).findFirst().orElse(null);        
     }
     
     /* Вычисление значка папки модерируемая-немодерируемая  */

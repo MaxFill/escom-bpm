@@ -31,7 +31,8 @@ public final class DictFrmName {
     public static final String FRM_MAIL_MESSAGE = "mail-message";
     public static final String FRM_MAIL_BOX = "mail-box";
 
-    public static final String FRM_NOTIFICATION = "notification";
+    public static final String FRM_NOTIFICATION = "notification"; //форма настройки службы уведомлений
+    public static final String FRM_NOTIFY = "notify-card";        //форма отправки уведомления по процессу/документу
     public static final String FRM_LDAP = "ldap";
                     
     public static final String FRM_CHECK_RELEASE = "check-release";

@@ -110,6 +110,12 @@
                     <p:separator/>
                     <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                                 actionListener="#{_bean.onAddContentInFavorites()}"/>
+                    <p:menuitem icon="ui-icon-extlink" value="#{bundle.UploadToFile}" 
+                                ajax="false"                                
+                                oncomplete="initDND();"
+                                action="#{_bean.onUploadToFile()}">
+                        <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmCreateZIPFolder}" icon="ui-icon-alert" />
+                    </p:menuitem>
                     <p:separator/>
 
                     <p:menuitem icon="ui-icon-key" value="#{bundle.Administation}"

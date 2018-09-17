@@ -19,6 +19,7 @@ public final class DictLogEvents {
     
     public static final String PROCESS_START = "ProcessStarted";
     public static final String PROCESS_CANCELED = "ProcessСanceled";
+    public static final String PROCESS_FINISHED = "ProcessFinished";
     
     public static final String TASK_FINISHED = "TaskIsDone";
     public static final String TASK_ASSIGNED = "TaskIsAssigned";

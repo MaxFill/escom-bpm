@@ -4,11 +4,14 @@ import com.maxfill.dictionary.DictDetailSource;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.EscomFileUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.utils.ItemUtils;
+import java.io.File;
 import org.primefaces.model.TreeNode;
 import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;
@@ -19,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.ejb.EJB;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 
 /* Контролер формы обозревателя c поддержкой групп */
@@ -28,6 +33,9 @@ import org.primefaces.PrimeFaces;
 public class ExplorerTreeBean extends ExplorerBean{
     private static final long serialVersionUID = -5568149615717031598L;
 
+    @EJB
+    private AttacheService attacheService;
+            
     protected static final String TREE_ITEMS_NAME  = "westFRM:accord:tree:";
     protected static final String TREE_FILTERS_NAME = "westFRM:accord:filtersTree:";
 
@@ -38,6 +46,22 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
+    
+    /**
+     * Выгрузка файлов документов текущей папки в архив
+     */
+    public void onUploadToFile(){
+        if (currentItem == null) return;
+        Folder folder = (Folder) currentItem;
+        String pathZipFile = attacheService.makeFolderZIP(folder, getCurrentUser());
+        if (StringUtils.isNoneBlank(pathZipFile)){
+            EscomFileUtils.attacheDownLoad(pathZipFile, folder.getPath());
+            File zipFile = new File(pathZipFile);
+            zipFile.delete();
+        } else {
+            MsgUtils.errorMsg("FailedGenerateZIP");
+        }
+    }
     
     /* Обработка drop помещения объекта в дерево */
     protected void doDropToTree(List<BaseDict> dragItems){

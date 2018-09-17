@@ -30,6 +30,16 @@ public class ProcTimerFacade extends BaseFacade<ProcTimer>{
     }        
     
     /**
+     * Остановка таймера
+     * @param timer 
+     */
+    public void stopTimer(ProcTimer timer){
+        timer = find(timer.getId()); 
+        timer.setStartDate(null);
+        edit(timer);
+    }
+    
+    /**
      * Установка в таймере даты следующего запуска
      * @param timer 
      */

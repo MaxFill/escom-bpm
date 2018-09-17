@@ -242,8 +242,8 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
         if (user.isDuplicateMessagesEmail() && StringUtils.isBlank(user.getEmail())){
             UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:email");
             input.setValid(false);
-            errors.add("NoEmailSpecified");
-        }      
+            errors.add(MsgUtils.getMessageLabel("NoEmailSpecified"));
+        }
     }
 
     /**
