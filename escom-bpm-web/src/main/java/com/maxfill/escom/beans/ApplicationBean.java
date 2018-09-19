@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans;
 
+import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictModules;
 import com.maxfill.dictionary.SysParams;
@@ -13,9 +14,9 @@ import com.maxfill.model.users.sessions.UsersSessions;
 import com.maxfill.services.licenses.ActivateApp;
 import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.collections4.MapUtils;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
@@ -24,12 +25,15 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 
 @Named
 @ApplicationScoped
@@ -49,6 +53,8 @@ public class ApplicationBean implements Serializable{
     private final Release release = new Release();
 
     @EJB
+    private Configuration configuration;
+    @EJB
     private UpdateInfo updateInfo;
     @EJB
     private ActivateApp activateApp;
@@ -66,6 +72,17 @@ public class ApplicationBean implements Serializable{
     public void init() {
         appName = MsgUtils.getBandleLabel(SysParams.APP_NAME);
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpServletRequest request = (HttpServletRequest) ec.getRequest();        
+        try {
+            String serverURL = new URL(request.getScheme(),
+                    request.getServerName(),
+                    request.getServerPort(),
+                    request.getContextPath()).toString();
+            configuration.setServerAppURL(serverURL + "/faces/view");
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException();
+        }
         Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         release.setVersionNumber(ec.getInitParameter("VersionNumber"));
         release.setReleaseNumber(ec.getInitParameter("ReleaseNumber"));

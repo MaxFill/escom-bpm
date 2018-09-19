@@ -7,8 +7,8 @@
     <ui:param name="_bean" value="#{notifyCardBean}"/>    
 
     <ui:define name="specToolButtons" >
-        <p:commandButton icon="ui-icon-mail-close" value="#{bundle.Send}" title="#{bundle.Send}" update="mainFRM"
-                         actionListener="#{_bean.onSend()}">
+        <p:commandButton icon="ui-icon-mail-closed" value="#{bundle.Send}" title="#{bundle.Send}" update="mainFRM"
+                         actionListener="#{notifyCardBean.onSend()}">
            <f:param name="isRequired" value="true"/>
        </p:commandButton>
         <span class="ui-separator">
@@ -22,18 +22,17 @@
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.Message}:" indicateRequired="true"/>
                     <p:inputTextarea value="#{_bean.content}" styleClass="ui-grid-col-12"
-                                     rows="1" autoResize="true"
+                                     rows="3" autoResize="true"
                                      required="#{param['isRequired'] == 'true'}" 
                                      requiredMessage="#{bundle.Field} [#{bundle.Message}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>
                     
                     <p:outputLabel value="#{bundle.Recipients}:" indicateRequired="true"/>
-                    <p:pickList id="pickList" value="#{_bean.users}" var="user" converter="userConverter"
+                    <p:pickList id="pickList" value="#{_bean.users}" var="user" converter="usersConvertor"
                                 itemValue="#{user}" itemLabel="#{user.name}"
                                 showCheckbox="true"
                                 required="#{param['isRequired'] == 'true'}" 
-                                requiredMessage="#{bundle.Field} [#{bundle.Recipients}] #{bundle.MustBeFilled}"
-                                itemLabel="#{_bean.getLabelForRoleFromBundle(role)}" itemValue="#{role}">
+                                requiredMessage="#{bundle.Field} [#{bundle.Recipients}] #{bundle.MustBeFilled}">                            
                         <f:facet name="sourceCaption">#{bundle.Users}</f:facet>
                         <f:facet name="targetCaption">#{bundle.Recipients}</f:facet>
                     </p:pickList>

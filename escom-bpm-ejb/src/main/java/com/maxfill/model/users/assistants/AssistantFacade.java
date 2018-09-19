@@ -5,6 +5,7 @@ import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.users.User;
 import java.util.List;
+import java.util.Objects;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -21,11 +22,6 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
     }
 
     @Override
-    public Class<Assistant> getItemClass() {
-        return Assistant.class;
-    }
-
-    @Override
     public int replaceItem(Assistant oldItem, Assistant newItem) {
         return 0;
     }
@@ -34,11 +30,6 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_ASSISTANT;
     }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.ASSISTANT.toLowerCase();
-    }
  
     @Override
     protected void dublicateCheckAddCriteria(CriteriaBuilder builder, Root<Assistant> root, List<Predicate> criteries, Assistant item){
@@ -46,4 +37,16 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
        criteries.add(builder.equal(root.get("owner"), item.getOwner()));
     }
 
+    /**
+     * Определяет, является пользователь slave заместителем для chief
+     * @param chief
+     * @param slave
+     * @return 
+     */
+    public boolean isAssistant(User chief, User slave){
+        return chief.getAssistants().stream()
+                .filter(assist->Objects.equals(slave, assist.getUser()))
+                .findFirst()
+                .orElse(null) != null;
+    }
 }

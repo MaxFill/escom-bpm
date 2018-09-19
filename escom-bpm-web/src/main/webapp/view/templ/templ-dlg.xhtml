@@ -7,8 +7,6 @@
                 template="/view/templ/templ-frm.xhtml">
 
     <ui:define name="centerContent"> 
-        #{_bean.onAfterFormLoad()}
-
         <script>
             var isFullPage = #{_bean.isFullPageMode()};
             var formName = '#{_bean.getFormName()}';
@@ -22,6 +20,7 @@
                 };
             }
         </script> 
+        
         <p:layout fullPage="true" styleClass="ui-grid-col-12 without-spaces">
             <p:layoutUnit position="south" rendered="#{_bean.isSouthShow()}" size="90%" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
                 <h:form id="southFRM"  style="font-size: 80%; height: 100%;" styleClass="ui-grid-col-12" > 
@@ -29,6 +28,7 @@
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>
             </p:layoutUnit>
+            
             <p:layoutUnit position="center" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
                 <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
                     <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >

@@ -102,8 +102,9 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
+    }    
     
+    @Override
     public Date getBeginDate() {
         return beginDate;
     }
@@ -111,6 +112,7 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
         this.beginDate = beginDate;
     }
 
+    @Override
     public Date getEndDate() {
         return endDate;
     }

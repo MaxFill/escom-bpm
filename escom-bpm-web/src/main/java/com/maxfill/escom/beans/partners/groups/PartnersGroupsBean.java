@@ -2,13 +2,12 @@ package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.partners.groups.PartnersGroupsFacade;
 import com.maxfill.model.partners.groups.PartnerGroups;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.partners.PartnersBean;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.partners.Partner;
-import com.maxfill.model.partners.PartnersFacade;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -27,12 +26,10 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     
     @EJB
     private PartnersGroupsFacade itemsFacade;
-    @EJB
-    private PartnersFacade partnersFacade;
     
     /* Формирование контента группы контрагента */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+    public List<BaseDict> makeGroupContent(BaseDict partnerGroup, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
         List<BaseDict> cnt = new ArrayList<>();
         if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
             cnt.addAll(itemsFacade.findActualChilds((PartnerGroups) partnerGroup, getCurrentUser()).collect(Collectors.toList()));

@@ -3,11 +3,7 @@ package com.maxfill.model.numPuttern;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.docs.docsTypes.DocType_;
-import com.maxfill.model.numPuttern.NumeratorPatternLog;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.model.numPuttern.NumeratorPatternStates;
-
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -24,16 +20,6 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
 
     public NumeratorPatternFacade() {
         super(NumeratorPattern.class, NumeratorPatternLog.class, NumeratorPatternStates.class);
-    }
-
-    @Override
-    public Class<NumeratorPattern> getItemClass() {
-        return NumeratorPattern.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return NumeratorPattern.class.getSimpleName().toLowerCase();
     }
 
     @Override

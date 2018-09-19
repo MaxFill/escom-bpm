@@ -47,6 +47,7 @@ public class NotifyCardBean extends BaseViewBean{
             Integer remarkID = Integer.valueOf((String)params.get("remarkID"));
             Remark remark = remarkFacade.find(remarkID);
             if (remark != null){
+                content = remark.getContent();
                 process = remark.getProcess();
                 if (process != null){
                     source.addAll(processFacade.actualiseRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));

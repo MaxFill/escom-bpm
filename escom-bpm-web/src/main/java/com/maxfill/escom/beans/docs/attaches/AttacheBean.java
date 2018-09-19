@@ -4,15 +4,19 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.model.process.Process;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.states.State;
+import com.maxfill.model.task.Task;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.files.FileService;
 import java.io.FileInputStream;
@@ -23,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
@@ -54,12 +59,18 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     private RemarkFacade remarkFacade;    
     @EJB    
     private StateFacade stateFacade;
+    @EJB    
+    private ProcessFacade processFacade;
+    @EJB    
+    private TaskFacade taskFacade;
     
     @Inject
     private DocBean docBean;
     
     private StreamedContent content;     
-       
+      
+    private Process process;
+    private Task task;
     private boolean remarkTabShow = false;
     private Doc doc;
     private final List<Remark> remarks = new ArrayList<>();
@@ -109,8 +120,17 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         if (path == null) {
             LOGGER.log(Level.SEVERE, null, "ESCOM_BPM ERROR: file path is null!");
             return;            
-        }        
-        if (appBean.isCanUsesProcess() && doc != null){            
+        } 
+        if (params.containsKey("processID")){
+            Integer processId = Integer.valueOf(params.get("processID"));
+            process = processFacade.find(processId);
+        }
+        if (params.containsKey("taskID")){
+            Integer taskId = Integer.valueOf(params.get("taskID"));
+            task = taskFacade.find(taskId);
+        }
+        
+        if (appBean.isCanUsesProcess() && doc != null && process != null){            
             remarkTabShow = true;
             List<Remark> remarklist = doc.getDetailItems();
             if (!remarklist.isEmpty()){
@@ -139,6 +159,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     
     public void onCreateRemark(){
         Remark remark = remarkFacade.createItem(getCurrentUser(), null, doc, new HashMap<>());
+        remark.setProcess(process);
         remarkFacade.create(remark);
         remarks.add(remark);
     }
@@ -207,6 +228,17 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
     }
     
+    /**
+     * Возможность создавать замечания
+     * Если есть задача и она находится в работе
+     * @return 
+     */
+    public boolean isCanModifyRemark() {
+        if (task == null)return false;
+        State stateRun = stateFacade.getRunningState();
+        return Objects.equals(stateRun, task.getState().getCurrentState());        
+    }            
+                    
     /* GETS & SETS  */
 
     public String getCurrentTab() {
@@ -233,7 +265,11 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     public void setRemarkTabShow(boolean remarkTabShow) {
         this.remarkTabShow = remarkTabShow;
     }
-    
+
+    public Process getProcess() {
+        return process;
+    }
+        
     @Override
     public String getFormName(){
         return DictFrmName.FRM_DOC_VIEWER;

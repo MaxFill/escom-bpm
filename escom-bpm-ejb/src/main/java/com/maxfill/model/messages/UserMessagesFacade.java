@@ -6,11 +6,16 @@ import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.utils.ItemUtils;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -20,6 +25,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.apache.commons.lang3.LocaleUtils;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,9 +34,16 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
 
     @EJB
     private Configuration conf;
-    
+    @EJB
+    private DocFacade docFacade;
+    @EJB
+    private TaskFacade taskFacade;
+    @EJB
+    private ProcessFacade proccessFacade;
     @EJB
     private MailBoxFacade mailBoxFacade;    
+    @EJB
+    private UserFacade userFacade;
     
     public UserMessagesFacade() {
         super(UserMessages.class);
@@ -69,7 +82,7 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param links
      */
     public void createSystemMessage(User addressee, String subject, StringBuilder content, Map<String, BaseDict> links){        
-        String senderName = ItemUtils.getBandleLabel("System", conf.getServerLocale());
+        String senderName = ItemUtils.getBandleLabel("System", userFacade.getUserLocale(addressee));
         String senderEmail = conf.getDefaultSenderEmail();
         createMessage(addressee, senderName, senderEmail, subject, content, links);
     }
@@ -88,18 +101,34 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         message.setName(subject);
         message.setAddressee(addressee);
         message.setDateSent(new Date());
+        Locale locale = userFacade.getUserLocale(addressee);
         links.entrySet().forEach(row->{
             switch (row.getKey()){
                 case "doc":{
-                    message.setDocument((Doc)row.getValue());
+                    Doc doc = (Doc)row.getValue();
+                    message.setDocument(doc);
+                    content.append("<br/>")
+                            .append(ItemUtils.getBandleLabel("GoToDocument", locale))
+                            .append(" ")
+                            .append(docFacade.getItemHREF(doc));
                     break;
                 }
                 case "task":{
-                    message.setTask((Task)row.getValue()); 
+                    Task task = (Task)row.getValue();
+                    message.setTask(task);
+                    content.append("<br/>")
+                            .append(ItemUtils.getBandleLabel("GoToTask", locale))
+                            .append(" ")
+                            .append(taskFacade.getItemHREF(task));
                     break;
                 }
                 case "process":{
-                    message.setProcess((Process)row.getValue()); 
+                    Process process = (Process)row.getValue();
+                    message.setProcess(process); 
+                    content.append("<br/>")
+                            .append(ItemUtils.getBandleLabel("GoToProcess", locale))
+                            .append(" ")
+                            .append(proccessFacade.getItemHREF(process));
                     break;
                 }
             }
@@ -141,11 +170,41 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
         return ((Long) query.getSingleResult()).intValue();
     }
 
+    /**
+     * Удаление сообщений по пользователю
+     * @param user
+     * @return 
+     */
     public int removeMessageByUser(User user){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
         Root root = cd.from(UserMessages.class);
         Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), user);
+        cd.where(crit1);
+        Query query = getEntityManager().createQuery(cd);
+        return query.executeUpdate();
+    }
+    
+    /**
+     * Удаление сообщений по процессу
+     * @param process
+     * @return 
+     */
+    public int removeMessageByProcess(Process process){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
+        Root root = cd.from(UserMessages.class);
+        Predicate crit1 = builder.equal(root.get(UserMessages_.process), process);
+        cd.where(crit1);
+        Query query = getEntityManager().createQuery(cd);
+        return query.executeUpdate();
+    }
+    
+    public int removeMessageByTask(Task task){
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
+        Root root = cd.from(UserMessages.class);
+        Predicate crit1 = builder.equal(root.get(UserMessages_.task), task);
         cd.where(crit1);
         Query query = getEntityManager().createQuery(cd);
         return query.executeUpdate();

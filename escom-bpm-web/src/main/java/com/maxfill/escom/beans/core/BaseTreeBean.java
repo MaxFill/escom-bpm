@@ -20,7 +20,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     }
     
     /* Базовый метод формирования детального списка для группы  */
-    public List<BaseDict> makeGroupContent(BaseDict group, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){        
+    public List<BaseDict> makeGroupContent(BaseDict group, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){        
         return getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder, getCurrentUser());        
     }
     

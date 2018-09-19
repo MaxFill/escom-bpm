@@ -316,6 +316,7 @@ public class WorkflowImpl implements Workflow {
     
     @Override
     public void unpackScheme(Scheme scheme) {
+        if (scheme == null || scheme.getPackElements() == null ) return;
         try {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
@@ -646,7 +647,10 @@ public class WorkflowImpl implements Workflow {
                         Set<StatusElem> targetStates = findTargetStates(connectors, scheme.getElements().getStates());
                         targetStates.forEach(stateElem->{
                                     stateElem.setDone(true);
-                                    changingDoc(stateElem, scheme, errors);
+                                    StatusesDoc status = changingDoc(stateElem, scheme, errors);
+                                    if (status != null && stateElem.getIsSaveInProc()){
+                                        process.setResult(status.getBundleName());
+                                    }
                                     doRun(stateElem.getAnchors(), process, exeTasks, currentUser, params, errors);
                                 });
 
@@ -791,16 +795,18 @@ public class WorkflowImpl implements Workflow {
                 .collect(Collectors.toSet());
     }    
     
+    /* *** СТАТУСЫ *** */
+    
     /**
      * Выполнение изменений в документе
      * @param stateElem
      * @param scheme
      * @param errors 
-     */
-    private void changingDoc(StatusElem stateElem, Scheme scheme, Set<String> errors){
+     */    
+    private StatusesDoc changingDoc(StatusElem stateElem, Scheme scheme, Set<String> errors){
         final StatusesDoc status = getNewDocStatus(stateElem, errors);
         final State state = getNewDocState(stateElem, errors);
-        if (!errors.isEmpty()) return;
+        if (!errors.isEmpty()) return null;
         List<Doc> docs = scheme.getProcess().getDocs();
         if (CollectionUtils.isNotEmpty(docs)){
             docs.forEach(d -> {
@@ -824,6 +830,7 @@ public class WorkflowImpl implements Workflow {
                 }
             });
         }
+        return status;
     }              
     
     private State getNewDocState(StatusElem stateElem, Set<String> errors){
@@ -997,7 +1004,7 @@ public class WorkflowImpl implements Workflow {
     /* *** ПРОЧЕЕ *** */
     
     /**
-     * Замена исполнителя в отчёте по процессу (листе согласования)
+     * Замена исполнителя в отчёте по процессу (листе согласования)      
      * @param task
      * @param user 
      */

@@ -2,8 +2,7 @@ package com.maxfill.utils;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.Folder;
-import org.apache.commons.lang.StringUtils;
-
+import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -58,6 +57,7 @@ public final class ItemUtils {
 
     /**
      * Формирование составного номера папки
+     * @param sb
      * @param folder
      * @return
      */
@@ -105,4 +105,12 @@ public final class ItemUtils {
             item.getChildItems().stream().forEach(child -> addChildInList((BaseDict) child, childItems));
         }
     }
+    
+    /* Формирует ссылку URL для объекта  */
+    public static String getItemURL(BaseDict item, String itemPagePath, String serverURL){
+        StringBuilder builder = new StringBuilder(serverURL);        
+        builder.append(itemPagePath).append("?itemId=").append(item.getId());
+        return builder.toString();        
+    }     
+    
 }

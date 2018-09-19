@@ -4,7 +4,6 @@ import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.statuses.StatusesDocLog;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.statuses.StatusesDocStates;
 import javax.ejb.Stateless;
 
@@ -16,16 +15,6 @@ public class StatusesDocFacade extends BaseDictFacade<StatusesDoc, StatusesDoc, 
 
     public StatusesDocFacade() {
         super(StatusesDoc.class, StatusesDocLog.class, StatusesDocStates.class);
-    }
-
-    @Override
-    public Class<StatusesDoc> getItemClass() {
-        return StatusesDoc.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.STATUS_DOCS.toLowerCase();
     }
 
     @Override

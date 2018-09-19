@@ -20,6 +20,7 @@ import com.maxfill.model.states.State;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.io.IOException;
 import java.io.StringReader;
@@ -80,8 +81,25 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         this.stateClass = stateClass;
     }
 
-    public abstract Class<T> getItemClass();
+    public Class<T> getItemClass(){
+        return itemClass;
+    }
+       
+    public String getFRM_NAME(){
+        return itemClass.getSimpleName().toLowerCase();
+    }
+        
+    public String getItemHREF(T item){
+        String url = ItemUtils.getItemURL(item, getItemFormPath(), configuration.getServerAppURL());
+        StringBuilder links = new StringBuilder();
+        links.append("<a href=").append(url).append(">").append(item.getName()).append("</a>");        
+        return links.toString();
+    }
 
+    protected String getItemFormPath(){
+        return "";
+    }
+    
     public Tuple findDublicateExcludeItem(T item){
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
@@ -136,7 +154,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setActual(true);
             item.setDeleted(false);
             item.setInherits(true);
-            item.doSetSingleRole(DictRoles.ROLE_OWNER, author);
+            item.doSetSingleRole(DictRoles.ROLE_OWNER, author.getId());
             doSetState(item, getMetadatesObj().getStateForNewObj());
             detectParentOwner(item, parent, owner);
             setSpecAtrForNewItem(item, params);
@@ -503,8 +521,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return metadatesFacade.find(getMetadatesObjId());
     }    
     
-    protected abstract Integer getMetadatesObjId();
-    public abstract String getFRM_NAME();
+    protected abstract Integer getMetadatesObjId();   
     
     /* возвращает список изменённых пользователем документов */
     public List<T> findLastChangedItemsByUser(User user, int first, int pageSize){    

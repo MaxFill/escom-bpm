@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.companies;
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.escom.beans.core.BaseTreeBean;
@@ -122,7 +123,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     
     /* Формирование контента компании */
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict company, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
+    public List<BaseDict> makeGroupContent(BaseDict company, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();
         if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
             cnt.addAll(departmentFacade.findActualDetailItems((Company) company, first, pageSize, sortField, sortOrder, getCurrentUser()));

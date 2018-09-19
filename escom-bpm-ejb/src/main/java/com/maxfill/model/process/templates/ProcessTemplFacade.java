@@ -1,7 +1,6 @@
 package com.maxfill.model.process.templates;
 
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.process.types.ProcessType;
 import javax.ejb.Stateless;
@@ -37,15 +36,8 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
         update.where(builder.and(crit1, crit2, crit3));
         Query query = getEntityManager().createQuery(update);
         query.executeUpdate();
-    }
+    }        
     
-    /* *** *** */
-    
-    @Override
-    public Class<ProcTempl> getItemClass() {
-        return ProcTempl.class;
-    }
-
     @Override
     public int replaceItem(ProcTempl oldItem, ProcTempl newItem) {       
         return 0;
@@ -56,9 +48,5 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
         return DictMetadatesIds.OBJ_PROC_TEMPL;
     }
 
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.PROCESS_TEMPLATE.toLowerCase();
-    }
     
 }

@@ -29,6 +29,7 @@ public class Configuration {
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
 
+    private String serverAppURL;
     private String serverOS;
     private Locale serverLocale;
     private String serverURL;
@@ -111,6 +112,8 @@ public class Configuration {
         }
     }
 
+    /* GETS & SETS */
+    
     public Integer getMaxResultCount() {
         return maxResultCount;
     }    
@@ -224,4 +227,11 @@ public class Configuration {
         serverLocale = new Locale(nameLocale);
     }
 
+    public String getServerAppURL() {
+        return serverAppURL;
+    }
+    public void setServerAppURL(String serverAppURL) {
+        this.serverAppURL = serverAppURL;
+    }
+    
 }

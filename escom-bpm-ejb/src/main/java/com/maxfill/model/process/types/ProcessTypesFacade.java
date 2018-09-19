@@ -4,12 +4,8 @@ import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.process.types.ProcessType;
-import com.maxfill.model.process.types.ProcessTypeLog;
-import com.maxfill.model.process.types.ProcessTypeStates;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -26,11 +22,6 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
     }
 
     @Override
-    public Class <ProcessType> getItemClass() {
-        return ProcessType.class;
-    }
-
-    @Override
     public int replaceItem(ProcessType oldItem, ProcessType newItem) {
         return 0;
     }
@@ -38,11 +29,6 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
     @Override
     protected Integer getMetadatesObjId() {
         return 21;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.PROCESS_TYPE.toLowerCase();
     }
 
     /**

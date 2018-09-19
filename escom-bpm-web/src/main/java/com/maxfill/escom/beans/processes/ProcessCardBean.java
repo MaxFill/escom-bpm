@@ -6,6 +6,7 @@ import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.states.StateFacade;
@@ -33,6 +34,8 @@ import java.util.stream.Collectors;
 import javax.faces.component.UIInput;
 import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.component.tabview.Tab;
+import org.primefaces.event.TabChangeEvent;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -46,18 +49,21 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private DiagramBean diagramBean;
     @Inject
     private ProcessBean processBean;
-
+    @Inject
+    private TaskBean taskBean;  
+    
     @EJB
     private ProcessFacade processFacade;
     @EJB
     private Workflow workflow;
-
     @EJB
     private StateFacade stateFacade;
 
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
-    private ProcReport currentReport;        
+    private ProcReport currentReport;  
+    private Task currentTask;
     private Doc selectedDoc;    
+    private String accordDocsTab = null;
     
     @Override
     protected BaseDictFacade getFacade() {
@@ -66,16 +72,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     @Override
     protected void doPrepareOpen(Process item) {
-    }
-    
-    @Override
-    public void onAfterFormLoad() {
-        if (getEditedItem() == null) return;
-        if (getEditedItem().getScheme() == null){
-            Scheme scheme = new Scheme(getEditedItem());
-            getEditedItem().setScheme(scheme);
-        } 
-    }
+    }    
 
     /**
      * Перед сохранением процесса
@@ -85,8 +82,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     protected void onBeforeSaveItem(Process process){
         if (process.getCurator() != null){
             User userCurator = process.getCurator().getEmployee();
-            if (!processFacade.checkUserInRole(process, DictRoles.ROLE_CURATOR_ID, userCurator)){
-                process.doAddInRole(DictRoles.ROLE_CURATOR, userCurator.getId());
+            if (!processFacade.checkUserInRole(process, DictRoles.ROLE_CURATOR_ID, userCurator)){                
+                process.doSetSingleRole(DictRoles.ROLE_CURATOR, userCurator.getId());
             }
         }        
         Set<Integer> usersIds = process.getScheme().getTasks().stream()
@@ -94,7 +91,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 .map(task->task.getOwner().getEmployee().getId())
                 .collect(Collectors.toSet());
         process.doSetMultyRole(DictRoles.ROLE_CONCORDER, usersIds);
-        workflow.packScheme(getScheme());
         super.onBeforeSaveItem(process);
     }
 
@@ -165,14 +161,17 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                                 && !Objects.equals(curator, report.getExecutor()))
                         .findFirst().orElse(null))
                 .collect(Collectors.toList());
-        Set<ProcReport> procReports = process.getReports();        
+                
         //создаём записи в "листе согласования" для всех участников согласования из модели процесса        
         Set<ProcReport> newReports = liveTasks.stream()
                 .filter(task->task.getOwner() != null)
                 .map(task -> new ProcReport(getCurrentUser(), task.getOwner(), process))
                 .collect(Collectors.toSet()); //список исполнителей из модели
+        
+        Set<ProcReport> procReports = process.getReports();
         procReports.removeAll(removeRepors);
         procReports.addAll(newReports);        
+        
         //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
         List<ProcTimer> liveTimers = getProcTimersFromModel();
         List<ProcTimer> forRemoveTimers = new ArrayList<>(getScheme().getTimers());
@@ -180,10 +179,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (!forRemoveTimers.isEmpty()){
             getScheme().getTimers().removeAll(forRemoveTimers);
         }
-        PrimeFaces.current().ajax().update("mainFRM:mainTabView:concorderList");
+        
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
         onItemChange();
     }
-
+    
     public void onChangeCurator(SelectEvent event){
         if (event.getObject() instanceof String) return;
         List<Staff> items = (List<Staff>) event.getObject();
@@ -220,7 +220,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                     .findFirst().orElse(new ProcReport(getCurrentUser(), newCurator, process));
             procReports.add(curatorReport);
         }
-        PrimeFaces.current().ajax().update("mainFRM:mainTabView:concorderList");
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
     }
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
@@ -267,7 +267,37 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
     }           
     
-    /* ПРОЧИЕ МЕТОДЫ */
+    /* *** ЗАДАЧИ *** */
+    
+    public void onAfterTaskClose(SelectEvent event){
+        String action = (String) event.getObject();
+        switch (action){
+            case SysParams.EXIT_EXECUTE:{
+                doAfterTaskChange();
+                break;
+            }
+            case SysParams.EXIT_NEED_UPDATE:{
+                doAfterTaskChange();
+                break;
+            }
+            case SysParams.EXIT_NOTHING_TODO:{
+                break;
+            }
+        }
+    }
+    
+    private void doAfterTaskChange(){
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
+        onItemChange();
+    }
+    
+    public void onOpenTask(){
+        if (currentTask == null) return;
+        setSourceItem(currentTask);
+        taskBean.prepEditChildItem(currentTask, getParamsMap());
+    }        
+    
+    /* *** ПРОЧИЕ МЕТОДЫ *** */
     
     /**
      * Проверка срока исполнения
@@ -311,12 +341,34 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void onDocSelected(SelectEvent event){
         if (event.getObject() instanceof String) return;
         List<Doc> items = (List<Doc>) event.getObject();
-        if (items.isEmpty()) return;
+        if (items.isEmpty()){
+            MsgUtils.warnMsg("NothingСhosen");
+            return;
+        }
+        Process process = getEditedItem();
         Doc doc = items.get(0);
         onItemChange();
-        getEditedItem().setDocument(doc);
+        process.setDocument(doc);
+        if (!process.getDocs().contains(doc)){
+            process.getDocs().add(doc);
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:accordDocs");
+        }
+        if (StringUtils.isBlank(process.getName())){
+            processFacade.makeProcName(process); 
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:nameItem");
+        }
     }
-            
+       
+    public void onAccordDocsTabChange(TabChangeEvent event){
+        Tab tab = event.getTab();
+        String tabId = tab.getId();
+        if ("tabDocs".equals(tabId)){
+            accordDocsTab = "0";
+        } else {
+            accordDocsTab = null;
+        }                
+    }
+    
     /**
      * Обработка события удаления документа из списка документов процесса
      * @param doc
@@ -390,7 +442,21 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void setSelectedDoc(Doc selectedDoc) {
         this.selectedDoc = selectedDoc;
     }    
-        
+
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+    public void setCurrentTask(Task currentTask) {
+        this.currentTask = currentTask;
+    }
+
+    public String getAccordDocsTab() {
+        return accordDocsTab;
+    }
+    public void setAccordDocsTab(String accordDocsTab) {
+        this.accordDocsTab = accordDocsTab;
+    }
+           
     public ProcReport getCurrentReport() {
         return currentReport;
     }
@@ -434,9 +500,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }              
     
     public Scheme getScheme(){
-        if (getEditedItem() == null) return null;
         return getEditedItem().getScheme();
-    }    
+    }
     
     public class ConcordersData{
         private final String fio;

@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -50,6 +51,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
 
 /* Пользователи */
 @Stateless
@@ -408,7 +410,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @param msg
      */
     public void sendSystemMsg(User receiver, String msg) {
-        messagesFacade.createSystemMessage(receiver, msg, new StringBuilder(), null);
+        messagesFacade.createSystemMessage(receiver, msg, new StringBuilder(), new HashMap<>());
     }
 
     /* Дополнения при выполнении поиска пользователей через форму поиска */
@@ -469,20 +471,22 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         messagesFacade.removeMessageByUser(user);
         super.remove(user);
     }
-    /* *** *** */
-    
-    @Override
-    public Class<User> getItemClass() {
-        return User.class;
-    }
     
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_USERS;
     }
-    
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.USER.toLowerCase();
+
+    /**
+     * Возвращает локаль пользователя
+     * @param user
+     * @return 
+     */
+    public Locale getUserLocale(User user){                    
+        if (StringUtils.isNotBlank(user.getLocale())){
+            return LocaleUtils.toLocale(user.getLocale());
+        } else {
+            return configuration.getServerLocale();
+        }      
     }
 }

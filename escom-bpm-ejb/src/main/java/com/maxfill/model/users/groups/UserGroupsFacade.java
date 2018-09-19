@@ -30,11 +30,6 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         super(UserGroups.class, UserGroupsLog.class, UserGroupsStates.class);
     }
 
-    @Override
-    public Class<UserGroups> getItemClass() {
-        return UserGroups.class;
-    }
-
     /* Получение прав доступа для иерархического справочника */
     @Override
     public Rights getRightItem(BaseDict item, User user) {
@@ -131,12 +126,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     protected void addPredicatesAndOrders(Root root, List<Predicate> predicates, CriteriaBuilder builder, Map<String, Object> addParams) {
         predicates.add(builder.equal(root.get("typeActualize"), DictRights.ACTUALISE_IN_GROUP)); 
         predicates.add(builder.notEqual(root.get("id"), 0));
-    }    
-    
-    @Override
-    public String getFRM_NAME() {
-        return UserGroups.class.getSimpleName().toLowerCase();
-    }
+    }        
     
     @Override
     public void create(UserGroups usersGroups) {

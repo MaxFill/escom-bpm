@@ -4,7 +4,6 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
 import com.maxfill.model.process.schemes.elements.StatusElem;
 import com.maxfill.model.states.State;
@@ -71,7 +70,7 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
                 editedItem.setDocStateId(selectedState.getId());
             }
             editedItem.setStyleType(style);
-            BeanUtils.copyProperties(sourceItem, editedItem);
+            BeanUtils.copyProperties(sourceItem, editedItem);            
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -106,6 +105,10 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         this.selectedState = selectedState;
     }
 
+    public StatusElem getEditedItem() {
+        return editedItem;
+    }
+        
     @Override
     public String getFormHeader() {
         return getLabelFromBundle("SetDocStatus");

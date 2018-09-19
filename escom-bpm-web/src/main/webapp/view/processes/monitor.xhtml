@@ -8,24 +8,22 @@
     <ui:param name="_bean" value="#{monitorBean}"/>
 
     <ui:define name="menuActions" >
-        <p:menuitem icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="mainFRM:monitorTable" actionListener="#{monitorBean.onRefreshData()}">
-        </p:menuitem>
-    </ui:define>   
-    
-    <ui:define name="customStyleCSS">
     </ui:define>
-    
+
+    <ui:define name="form_scripts">
+        <p:remoteCommand name="afterFormLoad" actionListener="#{_bean.onAfterFormLoad()}" autoRun="true"/>
+    </ui:define>
+
     <ui:define name="toolbarComponents" >  
-        <p:commandButton icon="ui-icon-refresh" value="#{bundle.Refresh}"
-                    update="mainFRM:monitorTable" actionListener="#{monitorBean.onRefreshData()}">
+        <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
+                         actionListener="#{monitorBean.onRefreshData()}">
         </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
         <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >
             <p:panelGrid columns="4" columnClasses="ui-grid-col-6 ui-grid-col-5 ui-grid-col-1" styleClass="without-spaces">
-                <h:panelGrid columns="1" styleClass="without-spaces">
+                <p:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Initiator}:" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{monitorBean.initiator}"/>
@@ -41,15 +39,31 @@
                         <ui:param name="_actionSelect" value="onChangeInitiator"/>
                         <ui:param name="_update" value=""/>
                     </ui:include>
-                </h:panelGrid>
-                                
-                <h:panelGrid columns="1" styleClass="without-spaces">
+
+                    <p:outputLabel value="#{bundle.Curator}:" />
+                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{monitorBean.curator}"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
+                        <ui:param name="_required" value="#{false}"/>
+                        <ui:param name="_disabled" value="#{false}"/>
+                        <ui:param name="_converter" value="staffConvertor" />
+                        <ui:param name="_itemPanel" value="curatorPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.Curator}"/>
+                        <ui:param name="_selectorBean" value="#{staffBean}"/>
+                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setCurator"/>
+                        <ui:param name="_actionSelect" value="onChangeCurator"/>
+                        <ui:param name="_update" value=""/>
+                    </ui:include>
+                </p:panelGrid>
+
+                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12"  styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.TermExecution}:"/>
                     <h:panelGrid columns="2" styleClass="without-spaces">
                         <h:outputLabel value="#{bundle.With}"/>                    
                         <p:calendar value="#{monitorBean.dateStart}" id="dateStart"
                                     widgetVar="dateCreateStartSearche"
-                                    showHour="true" showMinute="true"
+                                    showHour="true" showMinute="true" pages="3"
                                     navigator="true" yearRange="c-10:c+20"
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
@@ -61,32 +75,28 @@
                         <p:calendar value="#{monitorBean.dateEnd}" id="dateEnd"
                                     widgetVar="dateCreateEndSearche"
                                     navigator="true" yearRange="c-10:c+20"
-                                    showHour="true" showMinute="true"
+                                    showHour="true" showMinute="true" pages="3"
                                     locale="#{sessionBean.locale}"
                                     pattern="dd.MM.yyyy HH:mm:ss"
                                     required="false"
                                     requiredMessage="#{bundle.Field} #{bundle.DateEnd} #{bundle.MustBeFilled}">
                         </p:calendar>
                     </h:panelGrid>                                        
-                </h:panelGrid>
-                
+                </p:panelGrid>
+
                 <h:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.States}:" />
                     <p:selectManyMenu value="#{monitorBean.states}" converter="stateConvertor" var="st" showCheckbox="true">
                         <f:selectItems value="#{processBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
-                         <p:column>
-                             <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
+                        <p:column>
+                            <h:outputText value="#{monitorBean.getLabelFromBundle(st.name)}" />
                         </p:column>
                     </p:selectManyMenu>
                 </h:panelGrid>
-                
-                <p:commandButton value="#{bundle.Find}" id="btnSearche" 
-                                 actionListener="#{monitorBean.onRefreshData()}" update="mainFRM">
-                    <f:param name="isRequired" value="true"/>
-                </p:commandButton>
+
             </p:panelGrid>
         </p:panel>
-        
+
         <p:treeTable id="monitorTable" value="#{monitorBean.root}" var="item" 
                      selectionMode="single" 
                      emptyMessage="#{bundle.EmptyTable}" 
@@ -96,57 +106,45 @@
                      currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord}"                     
                      sortBy="#{item.planExecDate}" sortOrder="descending"
                      rowStyleClass="#{sessionBean.isItemDelay(item) ? 'error-info' : null}"
-                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                
+                     tableStyle="table-layout: auto; font-size: 90%;" styleClass="ui-grid-col-12 without-spaces">                
 
             <p:column width="20" sortBy="#{item.iconName}" >
                 <p:spacer width="3"/>
-                <p:graphicImage value="/resources/icon/#{item.iconName}20.png" /> 
+                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
             </p:column>
 
-            <p:column headerText="#{''.concat(bundle.Initiator).concat(' / ').concat(bundle.Executor)}">
+            <p:column headerText="#{''.concat(bundle.Curator).concat(' / ').concat(bundle.Executor)}">
                 <h:outputLabel value="#{monitorBean.onGetItemTitle(item)}"/>
             </p:column>
-            
+
             <p:column headerText="#{bundle.Name}">
-                <p:commandLink value="#{item.nameEndElipse}" title="#{bundle.Open}"
+                <p:commandLink value="#{''.concat(item.getRegNumber()).concat(' ').concat(item.nameEndElipse)}" title="#{bundle.Open}"
                                actionListener="#{monitorBean.setCurrentItem(item)}"
-                               oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>                        
+                               oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>
             </p:column>
 
-            <p:column headerText="#{bundle.Number}" >
-                <h:outputLabel value="#{item.getRegNumber()}"/>
-            </p:column>
-            
-            <p:column headerText="#{bundle.DateBegin}" width="90" sortBy="#{item.beginDate}">
-                <h:outputLabel value="#{item.beginDate}">
-                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                </h:outputLabel>
-            </p:column>
-            
-            <p:column headerText="#{bundle.Term}" width="90" sortBy="#{item.planExecDate}">
+            <p:column headerText="#{bundle.Term}" width="80" sortBy="#{item.planExecDate}">
                 <h:outputLabel value="#{item.planExecDate}">
                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                 </h:outputLabel>
             </p:column>
 
             <p:column headerText="#{bundle.Status}" >
-                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
-            </p:column>
-
-            <p:column width="16" sortBy="#{item.state.currentState.icon}">
                 <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>
-            </p:column>
-            
-            <p:column headerText="#{bundle.Result}" >
-                <h:outputLabel value="#{monitorBean.onGetItemResult(item)}"/>
+                <p:spacer width="3"/>
+                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
+            </p:column>            
+
+            <p:column headerText="#{bundle.Result}">
+                <h:outputLabel value="#{monitorBean.getLabelFromBundle(item.getResult())}"/>
             </p:column>
 
         </p:treeTable>
-        
+
         <p:commandButton id="btnOpenItem" style="display: none;"
                          actionListener="#{monitorBean.onOpenItem()}">
             <p:ajax event="dialogReturn" update="monitorTable" listener="#{monitorBean.onAfterItemCloseForm}"/>
         </p:commandButton>
-        
+
     </ui:define>
 </ui:composition>

@@ -12,6 +12,7 @@ docker build --rm -t wildfly-img /home/docker/wildfly/
 docker run --name datastorage datastorage-img true;
 docker run --name wildfly -d --volumes-from datastorage -p 8443:8443 wildfly-img 
 docker run --name wildfly --restart unless-stopped -d --volumes-from datastorage -p 8090:8080 -p 8444:8443 wildfly-img 
+docker run --name escom-info-wildfly -d --volumes-from datastorage -p 8443:8443 wildfly-img
 
 netstat -ltupn
 docker ps -a

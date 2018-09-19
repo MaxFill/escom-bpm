@@ -23,18 +23,16 @@
 
         <ui:define name="specSubMenu">
             <p:commandButton value="#{bundle.Scheme}" icon="ico_process"
-                             disabled="#{_bean.editedItem.id == null}"
-                             update="mainFRM:mainTabView:concorderList"
                              actionListener="#{processCardBean.onOpenScheme()}" >
                 <p:ajax event="dialogReturn" listener="#{_bean.onSchemeClose}" />
             </p:commandButton>
         </ui:define>
-        
+
         <ui:define name="CardToolButtons">            
             <h:outputLabel value="#{bundle.State}: "/>
             <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
             <p:spacer width="15"/>
-            
+
             <p:menuButton icon="ui-icon-play" title="#{bundle.StartProcess}" disabled="#{processCardBean.isReadOnly()}">
                 <p:menuitem value="#{bundle.NewEditionSendToAll}" icon="ui-icon-play" update="mainFRM"
                             actionListener="#{processCardBean.onRun('send_all')}"
@@ -47,7 +45,7 @@
                     <f:param name="isRequired" value="true"/>
                 </p:menuitem>
             </p:menuButton> 
-            
+
             <p:spacer width="2"/>
             <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
                              disabled="#{processCardBean.isDisableBtnStop()}"
@@ -104,7 +102,7 @@
                         <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
                         <ui:param name="_itemLabel" value="fullName"/>
                         <ui:param name="_required" value="true" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly() or _bean.editedItem.id == null}"/>
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                         <ui:param name="_itemPanel" value="documentPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.DocumentForConcorded}"/>
                         <ui:param name="_selectorBean" value="#{docBean}"/>
@@ -114,18 +112,20 @@
                         <ui:param name="_validateAction" value="checkDocument"/>                    
                         <ui:param name="_update" value=""/>
                     </ui:include>                         
-            
-                    <p:panel header="#{bundle.Documents}" toggleable="true" collapsed="true" styleClass="ui-grid-col-12">
-                        <ui:include src="/view/docs/doc-list.xhtml" >
-                            <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
-                        </ui:include>
-                        <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
-                                         rendered="#{!_bean.isReadOnly()}"
-                                         actionListener="#{docBean.onManySelectItem()}"> 
-                            <p:ajax event="dialogReturn" listener="#{_bean.onDocsSelected}" update="tblDocs"/>
-                        </p:commandButton>
-                    </p:panel>
 
+                    <p:accordionPanel id="accordDocs" activeIndex="#{_bean.accordDocsTab}">
+                        <p:ajax event="tabChange" listener="#{_bean.onAccordDocsTabChange}"/>
+                        <p:tab id="tabDocs" title="#{bundle.Documents}" >
+                            <ui:include src="/view/docs/doc-list.xhtml" >
+                                <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
+                            </ui:include>
+                            <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
+                                             rendered="#{!_bean.isReadOnly()}"
+                                             actionListener="#{docBean.onManySelectItem()}"> 
+                                <p:ajax event="dialogReturn" listener="#{_bean.onDocsSelected}" update="tblDocs"/>
+                            </p:commandButton>
+                        </p:tab>
+                    </p:accordionPanel>
                 </p:panelGrid>
             </p:tab>        
 
@@ -137,47 +137,106 @@
                                      placeholder="#{bundle.AutomaticallyGenerated}"
                                      readonly="true"/>
                     </h:panelGroup>
-                    
-                    <p:dataTable id="concorderList" value="#{processCardBean.editedItem.getReports()}" var="report" emptyMessage="#{bundle.EmptyTable}"
-                                 rowKey="#{report.tempId}" selectionMode="single" 
-                                 paginator="true" paginatorPosition="bottom" 
-                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                                 rowsPerPageTemplate="5, 10, 15, 20, 25, 30, 35" rows="10"
-                                 currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                                 tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                                         
 
-                        <p:column width="16">
-                            <h:graphicImage value="#{processCardBean.getCuratorImage(report.executor)}"/>                     
-                        </p:column>
+                    <p:accordionPanel id="accord" widgetVar="accordion" >
+                        <p:tab title="#{bundle.ApprovalSheet}">
+                            <p:dataTable id="concorderList" value="#{processCardBean.editedItem.getReports()}" var="report" emptyMessage="#{bundle.EmptyTable}"
+                                         rowKey="#{report.tempId}" selectionMode="single" 
+                                         paginator="true" paginatorPosition="bottom" 
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30, 35" rows="10"
+                                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                                         
 
-                        <p:column headerText="#{bundle.Employee}" >                        
-                            <h:outputText value="#{report.executor.getStaffFIO()}" />                                    
-                        </p:column>
+                                <p:column width="16">
+                                    <h:graphicImage value="#{processCardBean.getCuratorImage(report.executor)}"/>                     
+                                </p:column>
 
-                        <p:column headerText="#{bundle.Date}" width="90" >
-                            <h:outputLabel value="#{report.dateCreate}">
-                                <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
-                            </h:outputLabel>
-                        </p:column>
-                        
-                        <p:column width="16">
-                            <h:graphicImage value="#{resultBean.getResultIcon(report.status)}"/>
-                        </p:column>
-                        
-                        <p:column headerText="#{bundle.Status}" >
-                            <h:outputLabel value="#{processCardBean.getLabelFromBundle(report.status)}"/>
-                        </p:column>
+                                <p:column headerText="#{bundle.Employee}" >                        
+                                    <h:outputText value="#{report.executor.getStaffFIO()}" />                                    
+                                </p:column>
 
-                        <p:column headerText="#{bundle.VersionDoc}" >
-                            <h:outputText value="#{report.version.number}" />                                    
-                        </p:column>
+                                <p:column headerText="#{bundle.Date}" width="90" >
+                                    <h:outputLabel value="#{report.dateCreate}">
+                                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                    </h:outputLabel>
+                                </p:column>
 
-                    </p:dataTable>                        
+                                <p:column width="16">
+                                    <h:graphicImage value="#{resultBean.getResultIcon(report.status)}"/>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Status}" >
+                                    <h:outputLabel value="#{processCardBean.getLabelFromBundle(report.status)}"/>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.VersionDoc}" >
+                                    <h:outputText value="#{report.version.number}" />                                    
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:tab>
+                        <p:tab title="#{bundle.Tasks}">
+                            <p:dataTable id="taskList" value="#{_bean.getTasks()}" var="item" emptyMessage="#{bundle.EmptyTable}"
+                                         rowKey="#{item.tempId}" selectionMode="single" 
+                                         paginator="true" paginatorPosition="bottom" 
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
+                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30, 35" rows="10"
+                                         currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                                         tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"> 
+
+                                <p:column width="20" sortBy="#{item.iconName}" >
+                                    <p:spacer width="3"/>
+                                    <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Executor}" sortBy="#{item.owner.employee.name}">
+                                    <h:outputLabel value="#{item.owner.employee.name}"/>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Name}" sortBy="#{item.nameEndElipse}">
+                                    <p:commandLink value="#{item.nameEndElipse}" title="#{bundle.Open}"
+                                                   actionListener="#{_bean.setCurrentTask(item)}"
+                                                   oncomplete="document.getElementById('mainFRM:btnOpenTask').click();"/>                        
+                                </p:column>
+
+                                <p:column headerText="#{bundle.DateBegin}" width="80" sortBy="#{item.beginDate}">
+                                    <h:outputLabel value="#{item.beginDate}">
+                                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                    </h:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Term}" width="80" sortBy="#{item.planExecDate}">
+                                    <h:outputLabel value="#{item.planExecDate}">
+                                        <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                                    </h:outputLabel>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Status}" >
+                                    <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
+                                </p:column>
+
+                                <p:column width="16" sortBy="#{item.state.currentState.icon}">
+                                    <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>
+                                </p:column>
+
+                                <p:column headerText="#{bundle.Result}" >
+                                    <h:outputLabel value="#{_bean.getLabelFromBundle(item.getResult())}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:tab>
+                    </p:accordionPanel>
                 </p:panelGrid>
-            </p:tab>        
+            </p:tab>               
 
-        </ui:define>           
+        </ui:define>
 
+        <ui:define  name="form_scripts">
+            <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{_bean.onOpenTask()}">
+                <p:ajax event="dialogReturn" listener="#{_bean.onAfterTaskClose}"/>
+            </p:commandButton>
+        </ui:define>
+        
         <ui:define name="dialogs">
             <ui:include src="/view/tasks/report.xhtml"/>
         </ui:define>

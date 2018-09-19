@@ -1,5 +1,6 @@
 package com.maxfill.model.docs;
 
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.folders.FoldersFacade;
@@ -17,7 +18,6 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
-import com.maxfill.services.files.FileService;
 import com.maxfill.services.mail.MailSettings;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.searche.SearcheService;
@@ -57,16 +57,9 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     private FoldersFacade folderFacade;
     @EJB
     private DocNumeratorService docNumeratorService;
-    @EJB
-    private FileService fileService;
     
     public DocFacade() {
         super(Doc.class, DocLog.class, DocStates.class);
-    }
-
-    @Override
-    public Class<Doc> getItemClass() {
-        return Doc.class;
     }
 
     @Override
@@ -76,12 +69,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         }
         super.dublicateCheckAddCriteria(builder, root, criteries, doc);
     }
-
-    @Override
-    public String getFRM_NAME() {
-        return Doc.class.getSimpleName().toLowerCase();
-    }
-
+        
     @Override
     public Boolean preloadCheckRightView(BaseDict item, User user) {
         return super.preloadCheckRightView(item, user);
@@ -201,7 +189,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     /* Установка состояния редактирования документа */
     public void doSetEditState(Doc doc, User user){
         doSetStateById(doc, DictStates.STATE_EDITED);
-        doc.doSetSingleRole(DictRoles.ROLE_EDITOR, user);
+        doc.doSetSingleRole(DictRoles.ROLE_EDITOR, user.getId());
         edit(doc);
     }
     
@@ -469,4 +457,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         return count;
     }
     
+    @Override
+    protected String getItemFormPath(){
+        return "/docs/doc-explorer.xhtml";
+    }    
 }

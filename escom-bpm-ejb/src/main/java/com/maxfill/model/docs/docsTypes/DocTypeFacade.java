@@ -26,19 +26,9 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
     @EJB
     private DocTypeGroupsFacade docTypeGroupsFacade;
 
-    @Override
-    public Class<DocType> getItemClass() {
-        return DocType.class;
-    }
-
     public DocTypeFacade() {
         super(DocType.class, DocTypeLog.class, DocTypeStates.class);
-    }  
-    
-    @Override
-    public String getFRM_NAME() {
-        return DocType.class.getSimpleName().toLowerCase();
-    }
+    }     
 
     @Override
     protected Integer getMetadatesObjId() {

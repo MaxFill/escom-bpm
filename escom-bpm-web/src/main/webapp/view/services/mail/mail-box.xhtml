@@ -39,8 +39,8 @@
                 <p:column headerText="#{bundle.Addresses}" sortBy="#{item.addresses}">
                     #{item.addresses}
                 </p:column> 
-                <p:column headerText="#{bundle.Author}" sortBy="#{item.author.shortFIO}">
-                    #{item.author.shortFIO}
+                <p:column headerText="#{bundle.Author}" sortBy="#{item.authorName}">
+                    #{item.authorName}
                 </p:column> 
                 <p:column headerText="#{bundle.DateCreate}" sortBy="#{item.dateCreate}"> 
                     <h:outputLabel value="#{item.dateCreate}">

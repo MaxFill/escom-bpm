@@ -31,16 +31,16 @@
                             <p:separator />
                             <p:menuitem value="#{bundle.Confirmed}" icon="ui-icon-circle-check"
                                         rendered="#{remark.state.currentState.id == 12}"
-                                        disabled="#{remark.author ne _bean.currentUser}"
+                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
                                         actionListener="#{_bean.onChangeStateRemark(remark, 13)}" update="eastFRM:accord:dgMyRemarks">                                
                             </p:menuitem>
                             <p:menuitem value="#{bundle.RemarkIssued}" icon="ui-icon-notice"
-                                        disabled="#{remark.author ne _bean.currentUser}"
+                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
                                         rendered="#{remark.state.currentState.id == 13}"
                                         actionListener="#{_bean.onChangeStateRemark(remark, 12)}" update="eastFRM:accord:dgMyRemarks">
                             </p:menuitem>                        
                             <p:menuitem value="#{bundle.Delete}" icon="ui-icon-trash"
-                                        disabled="#{remark.author ne _bean.currentUser}"
+                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
                                         update="eastFRM:accord:dgMyRemarks"
                                         actionListener="#{_bean.onDeleteRemark(remark)}">                                                              
                                 <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
@@ -100,7 +100,10 @@
     </p:accordionPanel>
 
     <p:contextMenu for="eastFRM:accord:tabMyRemarks">
-        <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" actionListener="#{_bean.onCreateRemark()}" update="eastFRM:accord:dgMyRemarks"/>
+        <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" 
+                    disabled="#{!_bean.isCanModifyRemark()}"
+                    actionListener="#{_bean.onCreateRemark()}" update="eastFRM:accord:dgMyRemarks">
+        </p:menuitem>
     </p:contextMenu>    
 
 </ui:composition>

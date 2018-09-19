@@ -127,7 +127,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private Integer selectMode;         //режим выбора для селектора
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
     private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать    
-         
+    private Integer itemId;
+               
     private SortOrder defSortOrder = SortOrder.ASCENDING;
     private String defSortField = "name";    
       
@@ -143,10 +144,24 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 if (params.containsKey("filterId")) {
                     filterId = Integer.valueOf(params.get("filterId"));
                 }
-            } 
+            }
+            if (params.containsKey("itemId")){
+                itemId = Integer.valueOf(params.get("itemId"));
+            }
         }        
     }
 
+    @Override
+    public void onAfterFormLoad() {
+        if (itemId != null){
+            currentItem = tableBean.findItem(itemId);            
+            if (currentItem != null){
+                onEditDetailItem(currentItem);
+                itemId = null;
+            }
+        }
+    }
+    
     /* КАРТОЧКИ ОБЪЕКТОВ */
     
     /* КАРТОЧКИ: открытие карточки объекта для просмотра */
@@ -533,7 +548,6 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         refreshLazyData();
     }
 
-
     /* КОРЗИНА: удаление из корзины объекта контента  */
     public void onDeleteContentFromTrash(BaseDict item) {
         deleteContentFromTrash(item);
@@ -758,11 +772,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 case DictDetailSource.TREE_SOURCE:{ 
                     BaseDict treeItem = (BaseDict) treeSelectedNode.getData(); 
                     if (isItemTreeType(treeItem)){                    
-                            loadItems = treeBean.makeGroupContent(treeItem, viewMode, first, pageSize, sortField,  sortOrder.name());
+                            loadItems = treeBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());                            
                             //count = treeBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                         } else
                             if (isItemRootType(treeItem)){                            
-                                loadItems = rootBean.makeGroupContent(treeItem, viewMode, first, pageSize, sortField,  sortOrder.name());
+                                loadItems = rootBean.makeGroupContent(treeItem, tableBean, viewMode, first, pageSize, sortField,  sortOrder.name());
                                 //count = rootBean.getDetailBean().getFacade().findCountActualDetails(currentItem).intValue();
                             }
                     break;

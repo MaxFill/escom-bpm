@@ -7,6 +7,7 @@ import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.BaseDict;
@@ -25,6 +26,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -38,7 +40,7 @@ import org.primefaces.model.TreeNode;
 public class MonitorBean extends BaseViewBean<BaseView>{    
     private static final long serialVersionUID = 3695442325119569465L;
     
-    private TreeNode root;
+    private TreeNode root = new DefaultTreeNode(null, null);
     private TreeNode selectedNode;
     private BaseDict currentItem;
     
@@ -46,6 +48,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private Date dateStart;
     private Date dateEnd;
     private User initiator;
+    private Staff curator;
     private List<State> states = new ArrayList<>();
             
     @EJB
@@ -58,6 +61,17 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     @Inject
     private TaskBean taskBean;
     
+    private Integer taskId;
+    
+    @Override
+    public void onAfterFormLoad(){ 
+        if (taskId != null){
+            currentItem = taskBean.findItem(taskId);
+            onOpenItem();
+            taskId = null;
+        }
+    }
+        
     @Override
     public String getFormHeader() {
         return getLabelFromBundle("ProcessExecutionControl");
@@ -67,11 +81,18 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * Обновление данных журнала процессов
      */
     public void onRefreshData(){
-        root = null;
+        root = new DefaultTreeNode(null, null);; 
+        if (loadTree() == 0){
+            MsgUtils.warnMsg("NO_SEARCHE_FIND");
+        }
+        PrimeFaces.current().ajax().update("mainFRM:monitorTable");
     }
     
     @Override
     public void doBeforeOpenCard(Map<String, String> params) { 
+         if (params.containsKey("itemId")){
+            taskId = Integer.valueOf(params.get("itemId"));
+        }
         states.add(stateFacade.getRunningState());
     }    
     
@@ -85,9 +106,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         } else {
             taskBean.prepEditItem((Task)currentItem, getParamsMap());
         }
-    }        
+    }
     
-    private void loadTree(){        
+    private int loadTree(){        
         List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()));
         processes.forEach(proc->{
             TreeNode processNode = new DefaultTreeNode(proc, root);
@@ -103,6 +124,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
                 processNode.setExpanded(selectedNode.isExpanded());               
             }
         });
+        return processes.size();
     }
     
     /**
@@ -120,25 +142,14 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         if (initiator != null){
             filters.put("author", initiator);
         }
+        if (curator != null){
+            filters.put("curator", curator);
+        }
         if (!states.isEmpty()){
             filters.put("states", states);
         }
         return filters;
-    }
-         
-    /**
-     * Формирует данные результата для записи в таблице монитора
-     * @param item
-     * @return 
-     */
-    public String onGetItemResult(BaseDict item){
-        if (item instanceof Task){
-            Task task = (Task) item;
-            return getLabelFromBundle(task.getResult());
-        } else {
-            return ""; //TODO что можно вывести для исполняеющего процесса? 
-        }
-    }
+    }         
     
     /**
      * Формирует заголовок для записи в таблице монитора
@@ -148,12 +159,16 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     public String onGetItemTitle(BaseDict item){
         if (item instanceof Task){
             Staff staff = (Staff)item.getOwner();
-            return staff.getEmployee().getNameEndElipse();
+            return staff.getEmployee().getShortFIO();
         } else {
-            return item.getAuthor().getNameEndElipse();
-        }        
-    }
-    
+            if (item instanceof Process){
+                Process process = (Process) item;
+                return process.getCurator().getEmployee().getShortFIO();
+            }
+        }
+        return "";
+    }        
+        
     /**
      * Обработка события изменения инициатора в фильтре на форме
      * @param event 
@@ -167,6 +182,20 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     public void onChangeInitiator(ValueChangeEvent event){
         initiator = (User) event.getNewValue();
     }        
+    
+    /**
+     * Обработка события изменения Куратора в фильтре на форме
+     * @param event 
+     */
+    public void onChangeCurator(SelectEvent event){
+        if (event.getObject() instanceof String) return;
+        List<Staff> staff = (List<Staff>) event.getObject();
+        if (staff.isEmpty()) return;
+        curator = staff.get(0);
+    }
+    public void onChangeCurator(ValueChangeEvent event){
+        curator = (Staff) event.getNewValue();
+    }
     
     public void onAfterItemCloseForm(SelectEvent event){
         String result = (String) event.getObject();
@@ -190,7 +219,14 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     public void setInitiator(User initiator) {
         this.initiator = initiator;
     }
-    
+
+    public Staff getCurator() {
+        return curator;
+    }
+    public void setCurator(Staff curator) {
+        this.curator = curator;
+    }
+        
     public TreeNode getSelectedNode() {
         return selectedNode;
     }
@@ -207,10 +243,6 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
 
     public TreeNode getRoot() {
-        if (root == null){
-            root = new DefaultTreeNode(null, null);
-            loadTree();
-        }
         return root;
     }   
 

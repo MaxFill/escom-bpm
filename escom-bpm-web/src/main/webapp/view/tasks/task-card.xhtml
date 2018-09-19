@@ -27,7 +27,7 @@
                <f:param name="isRequired" value="true"/>
         </p:commandButton>
         
-        <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}" >
+        <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.isShowBtnResults()}" >
             <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" type="button" 
                              update="mainFRM"
                              icon="#{'ico_'.concat(result.getIconName())}"
@@ -46,7 +46,7 @@
                         <ui:param name="_itemValue" value="#{taskCardBean.editedItem.owner}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
-                        <ui:param name="_disabled" value="#{taskCardBean.readOnly}"/>
+                        <ui:param name="_disabled" value="#{!taskCardBean.canChangeExecutor()}"/>
                         <ui:param name="_converter" value="staffConvertor" />
                         <ui:param name="_itemPanel" value="staffPanel"/>
                         <ui:param name="_titleItem" value="#{bundle.Executor}"/>

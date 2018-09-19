@@ -40,6 +40,9 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Column(name = "AvaibleResults")
     private String avaibleResultsJSON;
     
+    @Column(name = "DefaultTaskName")
+    private String defaultTaskName;
+    
     /* Список шаблонов */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<ProcTempl> templates = new ArrayList<>();
@@ -64,6 +67,13 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     
     /* GETS & SETS */
 
+    public String getDefaultTaskName() {
+        return defaultTaskName;
+    }
+    public void setDefaultTaskName(String defaultTaskName) {
+        this.defaultTaskName = defaultTaskName;
+    }
+    
     public List<ProcTempl> getTemplates() {
         return templates;
     }

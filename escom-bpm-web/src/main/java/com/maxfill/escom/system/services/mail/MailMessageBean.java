@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.services.mail.MailBoxFacade;
@@ -102,7 +101,7 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
                     break;
                 }
                 case MODE_SEND_LINK_CARD : {
-                    links = prepareDocCardLinks(doc);                    
+                    links = new StringBuilder(docFacade.getItemHREF(doc)); 
                     break;
                 }
                 case MODE_SEND_ATTACHE_PDF : {
@@ -157,26 +156,17 @@ public class MailMessageBean extends BaseViewBean<BaseView>{
     private StringBuilder prepareDocLinks(Doc doc){        
         StringBuilder links = new StringBuilder();
         //ссылка для скачивания оригинала
-        String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/document");
+        String urlDownLoad = sessionBean.doGetItemURL(doc, "/docs/document.xhtml");
         links.append(MsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
         links.append("<a href=").append(urlDownLoad).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         //ссылка для открытия на просмотр
-        String urlViewDoc = EscomBeanUtils.doGetItemURL(doc, "docs/doc-viewer");
+        String urlViewDoc = sessionBean.doGetItemURL(doc, "/docs/doc-viewer.xhtml");
         links.append(MsgUtils.getBandleLabel("LinkForViewDocumentInProgram")).append(": ");
         links.append("<a href=").append(urlViewDoc).append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
         links.append("<br />");
         return links;
-    }
-    
-    private StringBuilder prepareDocCardLinks(Doc doc){
-        StringBuilder links = new StringBuilder();
-        String urlDownLoad = EscomBeanUtils.doGetItemURL(doc, "docs/doc-card");
-        links.append(MsgUtils.getBandleLabel("LinkForDownloadDocument")).append(": ");
-        links.append("<a href=").append(urlDownLoad).append("&openMode=0").append(">").append(FilenameUtils.removeExtension(doc.getFullName())).append("</a>");
-        links.append("<br />");
-        return links;
-    }
+    }    
 
     /**
      * Отправка сообщения

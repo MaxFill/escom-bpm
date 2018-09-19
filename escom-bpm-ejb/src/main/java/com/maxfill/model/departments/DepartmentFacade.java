@@ -57,18 +57,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     }
 
     @Override
-    public String getFRM_NAME() {
-        return Department.class.getSimpleName().toLowerCase();
-    }  
-
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DEPARTAMENTS;
-    }
-
-    @Override
-    public Class<Department> getItemClass() {
-        return Department.class;
     }
 
     @Override

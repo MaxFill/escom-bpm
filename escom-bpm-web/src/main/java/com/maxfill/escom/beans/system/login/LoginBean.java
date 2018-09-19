@@ -137,11 +137,19 @@ public class LoginBean extends BaseViewBean{
         }
         */
         initCurrentUser(user);
-        if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
-            targetPage = SysParams.MAIN_PAGE;
-        }
         generatePinCode = null;
-        return targetPage + "?faces-redirect=true";        
+        
+        if (StringUtils.isBlank(targetPage) || targetPage.contains(SysParams.LOGIN_PAGE)){
+            targetPage = SysParams.MAIN_PAGE;            
+        } 
+        StringBuilder sb = new StringBuilder(targetPage);        
+        if (targetPage.contains("?")){
+            sb.append("&");
+        } else {
+            sb.append("?");
+        }
+        sb.append("faces-redirect=true");
+        return sb.toString();
     }
     
     /* Инициализация текущего пользователя */
@@ -224,8 +232,8 @@ public class LoginBean extends BaseViewBean{
     }
     public void setSelectedLang(CountryFlags selectedLang) {
         this.selectedLang = selectedLang;
-    }    
-
+    } 
+    
     public String getTargetPage() {
         return targetPage;
     }

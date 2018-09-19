@@ -85,6 +85,9 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     
     @Column(name="DeadLineType")
     private String deadLineType = "delta"; //вид установки срока исполнения    
+     
+    @Column(name = "Result")
+    private String result; 
         
     /* Список документов */
     @JoinTable(name = "docsInProcesses", joinColumns = {
@@ -103,7 +106,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @XmlTransient
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval=true)
-    private Scheme scheme;
+    private Scheme scheme = new Scheme();
         
     /* Лог */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
@@ -159,7 +162,14 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public void setDocument(Doc document) {
         this.document = document;
     }
-    
+
+    public String getResult() {
+        return result;
+    }
+    public void setResult(String result) {
+        this.result = result;
+    }
+        
     @Override
     public ProcessStates getState() {
         return state;

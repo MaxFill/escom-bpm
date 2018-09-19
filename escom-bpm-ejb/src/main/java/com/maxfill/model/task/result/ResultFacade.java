@@ -27,11 +27,6 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
     }
 
     @Override
-    public Class<Result> getItemClass() {
-        return Result.class;
-    }
-
-    @Override
     public int replaceItem(Result oldItem, Result newItem) {
         return 0;
     }
@@ -39,11 +34,6 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_RESULT;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.RESULT.toLowerCase();
     }
     
     public List<Result> findTaskResults(Results item) {

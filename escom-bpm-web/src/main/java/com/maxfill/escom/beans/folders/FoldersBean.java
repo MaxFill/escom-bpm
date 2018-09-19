@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.folders;
 
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.folders.Folder;
@@ -9,9 +10,7 @@ import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.Doc;
 import java.text.MessageFormat;
-import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.util.*;
@@ -25,7 +24,6 @@ import javax.inject.Inject;
 @SessionScoped
 public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     private static final long serialVersionUID = 2678662239530806110L;
-    private static final Integer ROOT_FOLDER_ID = 0;
     
     @Inject
     private DocBean docBean;
@@ -38,8 +36,8 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     /* Формирование содержимого контента папки   */ 
 
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict folder, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+    public List<BaseDict> makeGroupContent(BaseDict folder, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE) && tableBean == this){
             return getFacade().findActualChilds((Folder) folder, getCurrentUser()).collect(Collectors.toList());
         } else {
             return getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField, sortOrder, getCurrentUser());

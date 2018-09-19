@@ -187,7 +187,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param scheme
      */
     public void loadModel(Scheme scheme){       
-        if (scheme == null) return;
         workflow.unpackScheme(scheme);
         model.clear();
         restoreModel();
@@ -410,7 +409,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         onItemChange();
         try {
             if (copiedElement instanceof TaskElem){           
-                TaskElem newTaskElem = createTask(null, "", new HashSet<>());                
+                TaskElem newTaskElem = createTask(null, new HashSet<>());                
                 Task newTask = newTaskElem.getTask();
                 TaskElem sourceTaskElem = (TaskElem) copiedElement;
                 Task sourceTask = sourceTaskElem.getTask();
@@ -519,7 +518,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         for (Staff executor : executors) {
             Set<String> metodErr = new HashSet<>();
             beforeAddElement();
-            baseElement = createTask(executor, MsgUtils.getMessageLabel("AgreeDocument"), metodErr); 
+            baseElement = createTask(executor, metodErr); 
             if (!metodErr.isEmpty()){
                 errors.addAll(metodErr);
             }
@@ -811,7 +810,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param x
      * @param y
      */
-    private TaskElem createTask(Staff executor, String taskName, Set<String> errors){        
+    private TaskElem createTask(Staff executor, Set<String> errors){
+        String taskName = process.getOwner().getDefaultTaskName();
         TaskElem taskElem = new TaskElem(taskName, getX(), getY());
         Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), process.getPlanExecDate(), scheme, taskElem.getUid());
         taskElem.setTask(task);

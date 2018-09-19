@@ -279,14 +279,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         List<User> users = (List<User>) event.getObject();
         if (users.isEmpty()) return;
         User user = users.get(0);
-        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user);
+        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user.getId());
         getEditedItem().setAuthor(user);
         onItemChange();        
     }
     public void onChangeOwner(ValueChangeEvent event){
         User user = (User) event.getNewValue();
         getEditedItem().setAuthor(user);
-        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user);
+        getEditedItem().doSetSingleRole(DictRoles.ROLE_OWNER, user.getId());
     }
     
     public boolean lockChangeOwner(){

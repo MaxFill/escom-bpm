@@ -54,16 +54,6 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
                 .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public Class<PartnerGroups> getItemClass() {
-        return PartnerGroups.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.PARTNER_GROUP.toLowerCase();
-    }
          
     @Override
     public void create(PartnerGroups group) {

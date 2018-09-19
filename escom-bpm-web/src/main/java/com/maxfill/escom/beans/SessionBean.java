@@ -38,6 +38,7 @@ import com.maxfill.services.files.FileService;
 import com.maxfill.services.print.PrintService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
+import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -416,7 +417,7 @@ public class SessionBean implements Serializable{
      * @return  
      */
     public String onGetExplorerURL(String formName){        
-        StringBuilder sb = EscomBeanUtils.makePageURL(formName);
+        StringBuilder sb = makePageURL(formName);
         return sb.toString();
     }
     
@@ -426,10 +427,21 @@ public class SessionBean implements Serializable{
      * @return 
      */
     public String onGetFormURL(String formName){
-        StringBuilder sb = EscomBeanUtils.makePageURL(formName);
+        StringBuilder sb = makePageURL(formName);
         sb.append("?beanId=").append("&beanName=");        
         return sb.toString();
     }
+    
+    public StringBuilder makePageURL(String page){
+        StringBuilder sb = new StringBuilder(configuration.getServerAppURL());
+        sb.append(page).append(".xhtml");
+        return sb;
+    }    
+    
+    /* Формирует ссылку URL для объекта  */
+    public String doGetItemURL(BaseDict item, String itemPagePath){        
+        return ItemUtils.getItemURL(item, itemPagePath, configuration.getServerAppURL()); 
+    } 
     
     /**
      * Открытие формы диалога

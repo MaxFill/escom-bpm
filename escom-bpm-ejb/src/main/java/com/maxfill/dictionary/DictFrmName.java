@@ -6,10 +6,13 @@ public final class DictFrmName {
     private DictFrmName() {
     }        
     
+    public static final String DOC_CARD = "/docs/doc-card.xhtml";
+    public static final String PROCESS_CARD = "/processes/process-card.xhtml";
+    public static final String TASK_CARD = "/tasks/task-card.xhtml";
+    
     public static final String FRM_DOC_VIEWER = "doc-viewer";
     public static final String FRM_DOC_LOCK = "doclock";
-    public static final String FRM_DOC_EXPLORER = "doc-explorer";
-
+    public static final String FRM_DOC_EXPLORER = "doc-explorer";    
     public static final String FRM_USER_SETTINGS = "user-settings";
     public static final String FRM_USER_MESSAGES = "messages";
     public static final String FRM_USER_SESSIONS = "sessions";

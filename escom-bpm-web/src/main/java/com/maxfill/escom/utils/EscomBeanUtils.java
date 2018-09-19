@@ -3,20 +3,13 @@ package com.maxfill.escom.utils;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.folders.FolderNavigation;
 import com.maxfill.model.users.User;
-import com.maxfill.utils.ItemUtils;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.primefaces.model.TreeNode;
@@ -124,44 +117,7 @@ public final class EscomBeanUtils {
             }
         }
         return result;
-    }       
-    
-    /* Формирует ссылку URL для объекта  */
-    public static String doGetItemURL(BaseDict item, String page){       
-        String serverURL = makeServerURL();
-        String docURL = "";        
-
-        if (!StringUtils.isEmpty(serverURL)){
-            StringBuilder builder = new StringBuilder();
-            builder.append(serverURL);
-
-            builder.append("/faces/view/").append(page).append(".xhtml").append("?itemId=");
-            builder.append(item.getId());
-            docURL = builder.toString();
-        }
-        return docURL;
-    }
-    
-    public static StringBuilder makePageURL(String page){
-        StringBuilder sb = new StringBuilder(makeServerURL());
-        sb.append("/faces/view").append(page).append(".xhtml");
-        return sb;        
-    }
-    
-    public static String makeServerURL(){
-        ExternalContext ectx = FacesContext.getCurrentInstance().getExternalContext();
-        HttpServletRequest request = (HttpServletRequest) ectx.getRequest();        
-        try {
-            String serverURL = new URL(request.getScheme(),
-                    request.getServerName(),
-                    request.getServerPort(),
-                    request.getContextPath()).toString();
-            return serverURL;
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(ItemUtils.class.getName()).log(Level.SEVERE, null, ex);
-            throw new RuntimeException();
-        }
-    }
+    }              
     
     /* Формирует ключ открываемого объекта */
     public static String makeOpenItemKey(String itemKey, Integer openMode, User user){

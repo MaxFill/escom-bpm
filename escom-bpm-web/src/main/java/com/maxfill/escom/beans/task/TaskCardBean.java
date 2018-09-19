@@ -2,11 +2,13 @@ package com.maxfill.escom.beans.task;
 
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictResults;
+import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import com.maxfill.model.process.ProcessFacade;
@@ -25,12 +27,14 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.TaskStates;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -66,6 +71,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ResultFacade resultFacade;
     @EJB
     private ProcessFacade processFacade;
+    @EJB
+    private AssistantFacade assistantFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -240,6 +247,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @Override
     protected void onBeforeSaveItem(Task task){
         saveDateFields(task);
+        if (isChangeExecutor){
+            replaceReportExecutor(task, getCurrentUser());
+        }
         super.onBeforeSaveItem(task);
     }
     
@@ -247,7 +257,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     protected void onAfterSaveItem(Task task){
         //изменение в листе согласования процесса, если изменили задачу        
         if (task.getScheme() == null) return;   //задача не связана с процессом                 
-        if (getTypeEdit() == DictEditMode.CHILD_MODE) return ;
+        if (getTypeEdit() == DictEditMode.CHILD_MODE) return;
         if (isChangeExecutor){
             workflow.replaceReportExecutor(task, getCurrentUser());
         }
@@ -262,11 +272,12 @@ public class TaskCardBean extends BaseCardBean<Task>{
         currentResult = params.get("result");
         if (StringUtils.isEmpty(currentResult)) return "";
         
+        Task task = getEditedItem();
+                
         List<Result> rs = resultFacade.findByName(currentResult);
         Result result = rs.get(0);
         Set<String> errors = new HashSet<>();
-        
-        Task task = getEditedItem();                 
+                                 
         checkTaskBeforeExecute(task, result, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrors(errors);
@@ -274,6 +285,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
         }
         doSaveItem();
         if (task.getScheme() != null){
+            if (isChangeExecutor){
+               workflow.replaceReportExecutor(task, getCurrentUser());
+            }
             Process process = processFacade.find(task.getScheme().getProcess().getId());            
             workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
             if (!errors.isEmpty()){
@@ -286,6 +300,41 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return closeItemForm(SysParams.EXIT_EXECUTE);
     }
     
+    private void replaceReportExecutor(Task task, User user){
+        if (sourceBean instanceof ProcessCardBean){
+            Scheme scheme = task.getScheme();
+            if (scheme == null) return;        
+
+            Process process = scheme.getProcess();
+            Set<ProcReport> procReports = process.getReports();
+
+            Staff newExecutor = task.getOwner();
+            Staff oldExecutor = scheme.getTasks().stream()
+                    .filter(t->t.getId().equals(task.getId()))
+                    .findFirst()
+                    .map(t-> t.getOwner())
+                    .orElse(null);
+            if (oldExecutor != null){
+                List<Staff> oldExecutors = scheme.getTasks().stream() //список всех таких, т.к. их может быть в модели больше чем один!
+                        .filter(t->t.getOwner().equals(oldExecutor) && !t.getId().equals(task.getId()))
+                        .map(t-> t.getOwner())
+                        .collect(Collectors.toList());
+                if (oldExecutors.isEmpty()){
+                    ProcReport oldExecutorReport = procReports.stream()
+                            .filter(report-> report.getDateCreate() == null && Objects.equals(report.getExecutor(), oldExecutor))
+                            .findFirst().orElse(null);
+                    if (oldExecutorReport != null){
+                        procReports.remove(oldExecutorReport);
+                    }
+                }
+            }
+
+            //добавить в лист согласования нового исполнителя, если его там нет
+            ProcReport procReport = new ProcReport(user, newExecutor, process);
+            procReports.add(procReport);
+        }
+    }
+     
     /**
      * Обработка события открытия карточки процесса 
      */
@@ -328,12 +377,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (doc == null){
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
-        }        
-        if (doc != null){
-            docBean.onViewMainAttache(doc);
-        } else {
-            MsgUtils.errorMsg("DocumentDoNotContainMajorVersion");
-        }    
+        }  
+        Map<String, List<String>> params = getParamsMap();
+        params.put("processID", Collections.singletonList(process.getId().toString()));
+        params.put("taskID", Collections.singletonList(getEditedItem().getId().toString()));
+        docBean.doViewMainAttache(doc, params);
     }
     
     private Process getProcess(){
@@ -473,6 +521,30 @@ public class TaskCardBean extends BaseCardBean<Task>{
             MsgUtils.warnMsg("SelectedDateIsWeekend");
         }
         */
+    }
+    
+    public boolean isShowBtnResults(){
+        Task task = getEditedItem();
+        State currentState = task.getState().getCurrentState();
+        return DictStates.STATE_RUNNING == currentState.getId() 
+                && taskFacade.checkUserInRole(task, DictRoles.ROLE_EXECUTOR_ID, getCurrentUser());
+    }
+    
+    /**
+     * Определяет, можно ли редактировать Исполнителя
+     * @return 
+     */
+    public boolean canChangeExecutor(){
+        Task task = getEditedItem();
+        State currentState = task.getState().getCurrentState();
+        if (DictStates.STATE_DRAFT == currentState.getId()) return true;
+        if (task.getScheme() == null){
+            return isReadOnly();
+        }
+        User executor = task.getOwner().getEmployee();
+        return DictStates.STATE_RUNNING == currentState.getId() 
+                && (taskFacade.checkUserInRole(task, DictRoles.ROLE_EXECUTOR_ID, getCurrentUser())
+                || assistantFacade.isAssistant(executor, getCurrentUser()));
     }
     
     /* GETS & SETS */

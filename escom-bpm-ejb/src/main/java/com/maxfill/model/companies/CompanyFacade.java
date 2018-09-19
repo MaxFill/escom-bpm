@@ -13,7 +13,6 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -44,16 +43,6 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
         Query query = getEntityManager().createQuery(cq);        
         return query.getResultList();
     }
-
-    @Override
-    public Class<Company> getItemClass() {
-        return Company.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return Company.class.getSimpleName().toLowerCase();
-    }            
 
     @Override
     protected Integer getMetadatesObjId() {

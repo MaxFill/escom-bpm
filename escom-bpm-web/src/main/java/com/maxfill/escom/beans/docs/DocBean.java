@@ -283,12 +283,21 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
 
     /* Просмотр файла вложения основной версии документа как PDF */
     public void onViewMainAttache(Doc doc) {
+        doViewMainAttache(doc, getParamsMap());
+    }
+
+    public void onViewAttache(Attaches attache){  
+        doViewAttache(attache, getParamsMap());        
+    }
+
+    /* Просмотр файла вложения основной версии документа как PDF */
+    public void doViewMainAttache(Doc doc, Map<String, List<String>> params) {
         if (doc == null) return;
         getFacade().actualizeRightItem(doc, getCurrentUser());
         if (getFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
-                onViewAttache(attache);
+                doViewAttache(attache, params);
             } else {
                 MsgUtils.warnMsg("DocumentDoNotContainMajorVersion");
             }
@@ -296,16 +305,15 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
             MsgUtils.warnMsg("RightViewNo");
         }
     }
-
-    public void onViewAttache(Attaches attache){
-        Doc doc = attache.getDoc();
-        Map<String, List<String>> params = getParamsMap();
+    
+    private void doViewAttache(Attaches attache, Map<String, List<String>> params){
+        Doc doc = attache.getDoc();         
         if (doc.getId() != null){
             params.put("itemId", Collections.singletonList(String.valueOf(doc.getId())));
         }
         sessionBean.onViewAttache(attache, params);
     }
-
+        
     /* Скачивание файла вложения основной версии документа как PDF */
     public void attacheDownLoadPDF(Attaches attache){
         if (attache == null) return;

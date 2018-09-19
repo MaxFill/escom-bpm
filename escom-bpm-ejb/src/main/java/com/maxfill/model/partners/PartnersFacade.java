@@ -36,16 +36,6 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         super(Partner.class, PartnersLog.class, PartnerStates.class);
     }
 
-    @Override
-    public Class<Partner> getItemClass() {
-        return Partner.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return Partner.class.getSimpleName().toLowerCase();
-    }          
-    
     public List<Partner> findByCodeExclId(String code, Integer partnerId){
         getEntityManager().getEntityManagerFactory().getCache().evict(Partner.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

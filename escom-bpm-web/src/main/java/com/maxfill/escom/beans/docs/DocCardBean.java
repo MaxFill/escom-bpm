@@ -206,12 +206,12 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         
     /* Запрос на формирование ссылки URL для просмотра документа  */
     public void onGetDocViewURL(Doc doc){
-        docURL = EscomBeanUtils.doGetItemURL(doc, "docs/document");
+        docURL = sessionBean.doGetItemURL(doc, "/docs/document.xhtml");
     }
     
     /* Запрос на формирование ссылки URL на открытие карточки документа */
     public void onGetDocOpenURL(Doc doc){
-        docURL = EscomBeanUtils.doGetItemURL(doc, "folders/folder-explorer");
+        docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
             
     /* РЕГИСТРАЦИЯ */

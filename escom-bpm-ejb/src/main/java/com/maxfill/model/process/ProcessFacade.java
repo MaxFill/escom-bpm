@@ -1,6 +1,6 @@
 package com.maxfill.model.process;
 
-import com.maxfill.dictionary.DictObjectName;
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;
@@ -9,6 +9,8 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.messages.UserMessagesFacade;
+import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.users.User;
@@ -32,14 +34,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     private ProcessTypesFacade processTypesFacade;
     @EJB
     private DocFacade docFacade;
-        
+    @EJB
+    private UserMessagesFacade messagesFacade;
+    @EJB
+    private RemarkFacade remarkFacade;
+    
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
-    }
-
-    @Override
-    public Class <Process> getItemClass() {
-        return Process.class;
     }
 
     @Override
@@ -53,16 +54,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     }
 
     @Override
-    public String getFRM_NAME() {
-        return DictObjectName.PROCESS.toLowerCase();
-    }
-
-    @Override
     public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {       
         if (params.containsKey("documents")){
             List<Doc> docs = (List<Doc>)params.get("documents");
             if (!docs.isEmpty()){
                 process.setDocs(docs);
+                process.setDocument(docs.get(0));
             }
             makeProcName(process);
         }
@@ -157,5 +154,17 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         makeRightItem(process, author);
         return process;
     }   
+        
+    @Override
+    public void remove(Process process){
+        messagesFacade.removeMessageByProcess(process);
+        process.getScheme().getTasks().forEach(task->messagesFacade.removeMessageByTask(task));
+        remarkFacade.removeRemarksByProcess(process);
+        super.remove(process);
+    } 
     
+    @Override
+    protected String getItemFormPath(){
+        return "/processes/process-explorer.xhtml";
+    }  
 }

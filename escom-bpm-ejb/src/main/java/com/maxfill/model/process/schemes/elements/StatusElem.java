@@ -24,6 +24,9 @@ public class StatusElem extends WFConnectedElem{
     @XmlElement(name = "state")
     private Integer docStateId;
     
+    @XmlElement(name = "save") //запись в результат процесса
+    private Boolean isSaveInProc = true;
+       
     public StatusElem() {
         this.uid = EscomUtils.generateGUID();
     }
@@ -43,6 +46,13 @@ public class StatusElem extends WFConnectedElem{
     
     /* Gets & Sets */
 
+    public Boolean getIsSaveInProc() {
+        return isSaveInProc;
+    }
+    public void setIsSaveInProc(Boolean isSaveInProc) {
+        this.isSaveInProc = isSaveInProc;
+    }
+    
     public Integer getDocStatusId() {
         return docStatusId;
     }

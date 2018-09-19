@@ -103,6 +103,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @return 
      */
     public List<User> actualiseRole(T item, String roleName, User currentUser){
+        roleName = roleName.toUpperCase();
         Map<String, Set<Integer>> roles = item.getRoles();
         if (CollectionUtils.isEmpty(roles) || !roles.containsKey(roleName)) return new ArrayList<>();
         Set<Integer> usersIds = roles.get(roleName);
@@ -125,21 +126,8 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
             addressee.addAll(actualiseRole(item, role, currentUser));
         });
         addressee.forEach(user-> {
-            Locale locale;
-            if (StringUtils.isNotBlank(user.getLocale())){
-                locale = LocaleUtils.toLocale(user.getLocale());
-            } else {
-                locale = configuration.getServerLocale();
-            }
             String itemName = item.getClass().getSimpleName().toLowerCase();
-            sb.append("<a href=");               
-            sb.append(configuration.getServerURL());
-            sb.append("faces/view/").append("doc".equals(itemName) ? "docs/" : "process/").append(itemName).append("-card").append(".xhtml").append("?itemId=");
-            sb.append(item.getId());
-            sb.append("&openMode=0");
-            sb.append(">");
-            sb.append(ItemUtils.getBandleLabel("GoTo" + item.getClass().getSimpleName(), locale));
-            sb.append("</a>"); 
+            sb.append(getItemHREF(item));            
             messagesFacade.createSystemMessage(user, subject, sb, Collections.singletonMap(itemName, item));
         });
     }
@@ -159,10 +147,11 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @param roleName
      * @param item 
      */
-    public void addRole(T item, String roleName){        
+    public void addRole(T item, String roleName){
+        roleName = roleName.toUpperCase();
         Map<String, Set<Integer>> roles = item.getRoles();
         if (!roles.containsKey(roleName)){
-            roles.put(roleName.toUpperCase(), new HashSet<>());
+            roles.put(roleName, new HashSet<>());
         }
     }
     

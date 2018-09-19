@@ -3,7 +3,6 @@ package com.maxfill.model.posts;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,16 +24,6 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
 
     public PostFacade() {
         super(Post.class, PostLog.class, PostStates.class);
-    }
-
-    @Override
-    public Class<Post> getItemClass() {
-        return Post.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.POST.toLowerCase();
     }
 
     @Override

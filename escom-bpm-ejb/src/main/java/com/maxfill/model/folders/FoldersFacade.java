@@ -30,17 +30,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
 
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
-    }
-
-    @Override
-    public Class<Folder> getItemClass() {
-        return Folder.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return Folder.class.getSimpleName().toLowerCase();
-    }      
+    }    
        
     @Override
     public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {

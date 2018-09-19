@@ -170,4 +170,30 @@
                                   onDelete="NO ACTION"
                                   referencedTableName="processes"/>         
     </changeSet> 
+    
+    <changeSet id="process_add_Result" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="Result" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="Result" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="process_type_add_DefaultTaskName" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processesTypes" columnName="DefaultTaskName" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processesTypes">
+            <column name="DefaultTaskName" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

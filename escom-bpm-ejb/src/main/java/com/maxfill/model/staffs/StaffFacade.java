@@ -262,16 +262,6 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         int count = 0;
         return count;
     }
-
-    @Override
-    public Class<Staff> getItemClass() {
-        return Staff.class;
-    }
-    
-    @Override
-    public String getFRM_NAME() {
-        return DictObjectName.STAFF.toLowerCase();
-    }
     
     @Override
     protected Integer getMetadatesObjId() {

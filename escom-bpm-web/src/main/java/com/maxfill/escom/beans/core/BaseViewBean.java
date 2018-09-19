@@ -57,12 +57,12 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
     @PostConstruct
     protected void init(){
         initBean();
-        //System.out.println("Create  " + this.getClass().getSimpleName());
+        System.out.println("Create  " + this.getClass().getSimpleName());
     }
 
     @PreDestroy
     protected void destroy(){
-        //System.out.println("Destroy " + this.getClass().getSimpleName());
+        System.out.println("Destroy " + this.getClass().getSimpleName());
     }
 
     protected void initBean(){};
@@ -182,9 +182,8 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         Map<String, List<String>> paramsMap = new HashMap<>();
         if (beanId == null){
             beanId = this.toString();
-        }
-        List<String> itemIds = Collections.singletonList(beanId);
-        paramsMap.put(SysParams.PARAM_BEAN_ID, itemIds);
+        }        
+        paramsMap.put(SysParams.PARAM_BEAN_ID, Collections.singletonList(beanId));
         sessionBean.getOpenedBeans().put(beanId, this);
         return paramsMap;
     }

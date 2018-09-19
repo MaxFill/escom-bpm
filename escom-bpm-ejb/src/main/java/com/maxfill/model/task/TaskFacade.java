@@ -1,11 +1,10 @@
 package com.maxfill.model.task;
 
+import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.BaseDictWithRolesFacade;
-import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
@@ -19,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -181,7 +179,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      * @param user 
      */
     public void inicializeExecutor(Task task, User user){
-        task.doSetSingleRole(DictRoles.ROLE_EXECUTOR, user);
+        task.doSetSingleRole(DictRoles.ROLE_EXECUTOR, user.getId());
         doSaveRoleToJson(task);
     }
      
@@ -199,12 +197,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
     }
     
-    /* *** ПРОЧЕЕ *** */
-    
-    @Override
-    public Class<Task> getItemClass() {
-        return Task.class;
-    }
+    /* *** ПРОЧЕЕ *** */  
 
     @Override
     public int replaceItem(Task oldItem, Task newItem) {
@@ -217,7 +210,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     }
 
     @Override
-    public String getFRM_NAME() {
-        return DictObjectName.TASK.toLowerCase();
-    }
+    protected String getItemFormPath(){
+        return "/processes/monitor.xhtml";
+    }  
 }

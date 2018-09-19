@@ -22,16 +22,6 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
     }
 
     @Override
-    public Class<Filter> getItemClass() {
-        return Filter.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return Filter.class.getSimpleName().toLowerCase();
-    }
-
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_FILTERS;
     }

@@ -11,7 +11,6 @@ import com.maxfill.model.rights.RightFacade;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
-import com.maxfill.model.favorites.FavoriteObj;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.users.User;
@@ -269,7 +268,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         pasteItem.setState(null);
         pasteItem.setId(null);                    //нужно сбросить скопированный id!
         pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
-        pasteItem.doSetSingleRole(DictRoles.ROLE_OWNER, getCurrentUser());
+        pasteItem.doSetSingleRole(DictRoles.ROLE_OWNER, getCurrentUser().getId());
         getFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
     };  
     

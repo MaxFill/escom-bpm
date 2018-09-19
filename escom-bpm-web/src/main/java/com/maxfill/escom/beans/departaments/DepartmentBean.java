@@ -6,6 +6,7 @@ import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentFacade;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.companies.CompanyBean;
+import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
@@ -90,7 +91,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
         
     /* Формирование контента подразделения  */     
     @Override
-    public List<BaseDict> makeGroupContent(BaseDict department, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
+    public List<BaseDict> makeGroupContent(BaseDict department, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
         if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
             return itemFacade.findActualChilds((Department) department, getCurrentUser()).collect(Collectors.toList());
         } else {

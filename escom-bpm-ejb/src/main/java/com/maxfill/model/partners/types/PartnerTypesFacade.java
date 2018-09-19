@@ -22,16 +22,6 @@ public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerType
     }
 
     @Override
-    public Class<PartnerTypes> getItemClass() {
-        return PartnerTypes.class;
-    }
-
-    @Override
-    public String getFRM_NAME() {
-        return PartnerTypes.class.getSimpleName().toLowerCase();
-    }
-
-    @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_PARTNER_TYPES;
     }

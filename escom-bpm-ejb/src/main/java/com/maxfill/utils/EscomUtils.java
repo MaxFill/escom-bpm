@@ -5,7 +5,6 @@ import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.update.ReleaseInfo;
 import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;
-
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -30,6 +29,7 @@ public final class EscomUtils {
      * в хранилище java. Это гемор, так как придётся после устаревания сертификата обновлять сертификат у всех клиентов.
      * Код оставлен для примера.
      * @param licenceNumber
+     * @return 
      */
     public static String getReleaseInfo(String licenceNumber){
         String result= "";

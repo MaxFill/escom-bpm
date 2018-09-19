@@ -55,7 +55,7 @@ public class FolderExplBean extends ExplorerTreeBean{
     @EJB
     private ProcessFacade processFacade;
     
-    private TreeNode procTree;            
+    private TreeNode procTree;
     
     /* Расширение для поиска в дереве папок по индексу дела */
     @Override
@@ -74,6 +74,7 @@ public class FolderExplBean extends ExplorerTreeBean{
                 makeSelectedFilter(filter);
             }
         }
+        super.onAfterFormLoad();
     }     
     
     /* ДЕРЕВО: обработка события установки текущего элемента в дереве */
@@ -101,7 +102,7 @@ public class FolderExplBean extends ExplorerTreeBean{
                
         if ("ui-icon-folder-collapsed".equals(currentItem.getIconTree())){
             processTypesBean.loadChilds(currentItem, procSelectedNode);
-            PrimeFaces.current().ajax().update("westFRM:accord:tree");
+            PrimeFaces.current().ajax().update("westFRM:accord:procTree");
         }        
         
         BaseDict rootItem = (BaseDict) procTree.getChildren().get(0).getData();
@@ -112,19 +113,25 @@ public class FolderExplBean extends ExplorerTreeBean{
         makeJurnalHeader(rootItem.getName(), journalName, "DisplaysDocsForRunningProcesses");
     }        
     
+    /**
+     * Загрузка в таблицу обозревателя документов, относящихся к процессам
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @return 
+     */
     @Override
     protected List<BaseDict> loadDocs(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters){
-        List<Process> processes = processFacade.findActualDetailItems((ProcessType)currentItem, 0, 0, sortField, sortField, getCurrentUser())
+        return processFacade.findActualDetailItems((ProcessType)currentItem, 0, 0, sortField, sortField, getCurrentUser())
             .stream()
-            .filter(p-> Objects.equals(DictStates.STATE_RUNNING, p.getState().getCurrentState()))
-            .collect(Collectors.toList()); 
-        
-        List<BaseDict> docs = new ArrayList<>();
-        processes.forEach(p->p.getDocs().stream()
-                .filter(doc->docFacade.preloadCheckRightView(doc, getCurrentUser()))
-                .forEach(doc->docs.add(doc))
-        );
-        return docs;
+            .filter(process-> 
+                    Objects.equals(DictStates.STATE_RUNNING, process.getState().getCurrentState().getId())
+                    && process.getDocument() != null 
+                    && docFacade.preloadCheckRightView(process.getDocument(), getCurrentUser()))
+            .map(process->process.getDocument())
+            .collect(Collectors.toList());                
     }
     
    /* Обработка события drop в дерево объектов  */

@@ -17,6 +17,10 @@
     <ui:define name="toolbarComponents" >        
     </ui:define>
 
+    <ui:define name="form_scripts">
+        <p:remoteCommand name="afterFormLoad" actionListener="#{_bean.onAfterFormLoad()}" autoRun="true"/>
+    </ui:define>
+    
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
                          actionListener="#{_bean.onCloseCard('save')}"
