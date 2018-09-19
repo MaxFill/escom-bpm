@@ -16,6 +16,7 @@ import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.users.User;
 import com.maxfill.services.mail.MailSettings;
@@ -436,10 +437,25 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     @Override
     public void remove(Doc doc){
         searcheService.deleteFullTextIndex(doc);
-        attacheService.deleteAttaches(doc.getAttachesList());
+        attacheService.deleteAttaches(doc.getAttachesList());        
         super.remove(doc);
     }           
 
+    public Long findCountCompanyLinks(Company company){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Doc> root = cq.from(Doc.class);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get(Doc_.company), company));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
+    
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DOCS; 

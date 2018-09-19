@@ -79,7 +79,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date itemDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "docs", orphanRemoval=true)
     private DocDou docsDou;
         
     @XmlTransient
@@ -88,7 +88,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     private DocStates state;
     
     /* Замечания */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.LAZY)    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner", fetch = FetchType.LAZY, orphanRemoval=true)    
     private List<Remark> detailItems = new ArrayList<>();
         
     /* Список ссылающихся документов  */
@@ -96,7 +96,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     private List<Doc> docsLinks = new ArrayList<>();
     
     /* Список статусов документа  */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<DocStatuses> docsStatusList = new ArrayList<>();   
     
     /* Версии файлов  */

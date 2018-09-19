@@ -19,6 +19,7 @@ import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.docStatuses.DocStatuses;
 import com.maxfill.model.docs.docsTypes.DocType;
 import com.maxfill.model.folders.Folder;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.statuses.StatusesDoc;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -34,6 +35,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -54,6 +56,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     private AttacheFacade attacheFacade;
     @EJB
     private DocFacade docsFacade;    
+    @EJB
+    private ProcessFacade processFacade;
     
     @Override        
     protected void initColumns(){
@@ -142,6 +146,15 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         statusesForAdd.stream().map(statusDoc -> new DocStatuses(doc, statusDoc))
                 .forEach(docsStatus -> docsStatuses.add(docsStatus));
         return statusesForAdd.size();
+    }
+    
+    @Override
+    protected void checkAllowedDeleteItem(Doc doc, Set<String> errors){
+        if (processFacade.findCountDocLinks(doc) > 0 ) {
+            Object[] messageParameters = new Object[]{doc.getName()};
+            String error = MessageFormat.format(getMessageLabel("DocumentUsedInProcesses"), messageParameters);
+            errors.add(error);
+        }
     }
     
     @Override

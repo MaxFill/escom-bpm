@@ -6,6 +6,7 @@ import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
@@ -13,6 +14,7 @@ import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
@@ -23,6 +25,11 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
 import java.util.Set;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * Фасад для сущности "Процессы"
@@ -167,4 +174,49 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     protected String getItemFormPath(){
         return "/processes/process-explorer.xhtml";
     }  
+    
+    public Long findCountDocLinks(Doc doc){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Process> root = cq.from(Process.class);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get(Process_.document), doc));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
+    
+    public Long findCountStaffLinks(Staff staff){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Process> root = cq.from(Process.class);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get(Process_.curator), staff));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
+    
+    public Long findCountCompanyLinks(Company company){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Process> root = cq.from(Process.class);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get(Process_.company), company));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
 }

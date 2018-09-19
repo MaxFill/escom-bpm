@@ -10,7 +10,6 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
 import com.maxfill.model.folders.FoldersFacade;
 import com.maxfill.model.BaseDict;
-
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.text.MessageFormat;

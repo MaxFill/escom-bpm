@@ -81,7 +81,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * Обновление данных журнала процессов
      */
     public void onRefreshData(){
-        root = new DefaultTreeNode(null, null);; 
+        root = new DefaultTreeNode(null, null);
         if (loadTree() == 0){
             MsgUtils.warnMsg("NO_SEARCHE_FIND");
         }

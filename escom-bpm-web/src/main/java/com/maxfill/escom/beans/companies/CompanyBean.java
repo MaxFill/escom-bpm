@@ -9,10 +9,14 @@ import com.maxfill.model.companies.CompanyFacade;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.departments.DepartmentFacade;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.staffs.Staff;
+import java.text.MessageFormat;
 import org.primefaces.model.TreeNode;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -35,6 +39,10 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     private CompanyFacade itemsFacade;
     @EJB
     private DepartmentFacade departmentFacade;   
+    @EJB
+    private DocFacade docsFacade;    
+    @EJB
+    private ProcessFacade processFacade;
     
     @Override
     public CompanyFacade getFacade() {
@@ -160,6 +168,16 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
             errors.add(error);
         }
         */
+        if (processFacade.findCountCompanyLinks(company) > 0 ) {
+            Object[] messageParameters = new Object[]{company.getName()};
+            String error = MessageFormat.format(getMessageLabel("CompanyUsedInProcesses"), messageParameters);
+            errors.add(error);
+        }
+        if (docsFacade.findCountCompanyLinks(company) > 0 ) {
+            Object[] messageParameters = new Object[]{company.getName()};
+            String error = MessageFormat.format(getMessageLabel("CompanyUsedInDocs"), messageParameters);
+            errors.add(error);
+        }
     }
 
     @Override

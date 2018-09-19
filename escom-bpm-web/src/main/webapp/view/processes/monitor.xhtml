@@ -128,14 +128,16 @@
                     <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                 </h:outputLabel>
             </p:column>
-
-            <p:column headerText="#{bundle.Status}" >
-                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>
-                <p:spacer width="3"/>
+            
+            <p:column width="16">
+                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
+            </p:column>
+            
+            <p:column headerText="#{bundle.Status}">                
                 <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
-            </p:column>            
+            </p:column>
 
-            <p:column headerText="#{bundle.Result}">
+            <p:column headerText="#{bundle.Result}" width="100">
                 <h:outputLabel value="#{monitorBean.getLabelFromBundle(item.getResult())}"/>
             </p:column>
 

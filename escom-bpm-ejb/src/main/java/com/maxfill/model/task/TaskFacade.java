@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -198,6 +199,21 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     }
     
     /* *** ПРОЧЕЕ *** */  
+    
+    public Long findCountStaffLinks(Staff staff){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root<Task> root = cq.from(Task.class);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get(Task_.owner), staff));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
 
     @Override
     public int replaceItem(Task oldItem, Task newItem) {

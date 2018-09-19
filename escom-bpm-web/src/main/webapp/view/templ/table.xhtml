@@ -134,8 +134,7 @@
                                     actionListener="#{_bean.onCopyItem(item)}"/>
 
                         <p:menuitem icon="ui-icon-trash" value="#{bundle.MoveToTrash}"
-                                    disabled="#{item.id == 0}"
-                                    update="westFRM mainFRM"
+                                    disabled="#{item.id == 0}"                                    
                                     actionListener="#{_bean.onMoveContentToTrash(item)}"
                                     oncomplete="initDND()">
                             <p:confirm header="#{bundle.MoveToTrash}" message="#{bundle.ConfirmMoveToTrash}" icon="ui-icon-alert" />

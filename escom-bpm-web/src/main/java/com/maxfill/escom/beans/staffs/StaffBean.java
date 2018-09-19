@@ -8,12 +8,14 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.departments.Department;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.posts.Post;
+import com.maxfill.model.process.ProcessFacade;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
-
 import javax.ejb.EJB;
 import javax.inject.Named;
 import java.text.MessageFormat;
@@ -24,7 +26,6 @@ import java.util.Set;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
-
 import org.primefaces.model.TreeNode;
 
 /* Сервисный бин "Штатные единицы" */
@@ -40,7 +41,11 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     private CompanyBean companyBean;
     @EJB
     private StaffFacade itemsFacade;
-
+    @EJB
+    private ProcessFacade processFacade;
+    @EJB
+    private TaskFacade taskFacade;
+    
     /**
      * Проверка перед созданием штатной единицы
      * @param newItem
@@ -132,6 +137,16 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
          if(!userFacade.findUserByMainStaff(staff).isEmpty()) {
             Object[] messageParameters = new Object[]{staff.getName()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("StaffUsedInUsers"), messageParameters);
+            errors.add(error);
+        }
+        if (processFacade.findCountStaffLinks(staff) > 0 ) {
+            Object[] messageParameters = new Object[]{staff.getName()};
+            String error = MessageFormat.format(getMessageLabel("StaffUsedInProcesses"), messageParameters);
+            errors.add(error);
+        }
+        if (taskFacade.findCountStaffLinks(staff) > 0 ) {
+            Object[] messageParameters = new Object[]{staff.getName()};
+            String error = MessageFormat.format(getMessageLabel("StaffUsedInTasks"), messageParameters);
             errors.add(error);
         }
     }

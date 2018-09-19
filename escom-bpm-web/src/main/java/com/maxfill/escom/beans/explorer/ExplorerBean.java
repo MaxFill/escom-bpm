@@ -481,7 +481,9 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (!errors.isEmpty()) {
             MsgUtils.showErrors(errors);
         } else {            
-            refreshLazyData();            
+            refreshLazyData();
+            PrimeFaces.current().ajax().update("westFRM");
+            PrimeFaces.current().ajax().update("mainFRM");
         }
     }
     
