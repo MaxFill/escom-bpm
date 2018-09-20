@@ -366,15 +366,18 @@ public class WorkflowImpl implements Workflow {
             errors.add("DiagramNotHaveTasks");
         }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
-        if (checkTasks){
+        if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
+                if (StringUtils.isBlank(task.getName())){
+                    errors.add("");
+                }
                 switch (task.getDeadLineType()){
                     case "data":{
                         if (task.getPlanExecDate() == null){
                             errors.add("TasksNoHaveDeadline");
                         } else 
                             if (task.getPlanExecDate().before(new Date())){
-                                errors.add("DeadlineSpecifiedInPastTime");
+                                errors.add("DeadlineTaskInPastTime");
                             } else 
                                 if (task.getPlanExecDate().after(planEndDate)) { 
                                     errors.add("TaskExecTimeLongerThanProcessDeadLine");

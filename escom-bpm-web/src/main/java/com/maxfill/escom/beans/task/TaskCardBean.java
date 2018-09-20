@@ -128,7 +128,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     protected void checkItemBeforeSave(Task task, FacesContext context, Set<String> errors) {
         saveDateFields(task);
         super.checkItemBeforeSave(task, context, errors);
-        ///проверка наличия результатов
+        
+        //проверка наличия результатов
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
         }        
@@ -137,13 +138,14 @@ public class TaskCardBean extends BaseCardBean<Task>{
             input.setValid(false);
             errors.add(MsgUtils.getMessageLabel("ExecutorNotSet"));
         }
-        //проверка для срока исполнения
+        
+        //проверка срока исполнения
         switch (task.getDeadLineType()){
             case "delta":{
                 if (task.getDeltaDeadLine() == 0){
                    errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
                 }
-                if (task.getBeginDate() == null){
+                if (task.getBeginDate() == null && task.getScheme() == null){ //если задача тз процесса, то дата начала не нужнаы
                     errors.add(MsgUtils.getMessageLabel("DateBeginNoSet"));
                 }
                 break;

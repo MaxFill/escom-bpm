@@ -312,11 +312,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void validatePlanDate(Date planDate, Set<String> errors){
         Date today = new Date();
         if (today.after(planDate)){
-            String errMsg = MsgUtils.getMessageLabel("DeadlineSpecifiedInPastTime");
             FacesContext context = FacesContext.getCurrentInstance();
             UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:dtPlanExecDate");
             input.setValid(false);
-            errors.add(errMsg);            
+            errors.add("DeadlineProcessInPastTime");            
             context.validationFailed();
         }
     }    

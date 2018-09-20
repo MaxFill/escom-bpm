@@ -11,13 +11,13 @@
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
                          actionListener="#{_bean.onCloseCard('save')}"
                          onclick="sendFormSize('#{_bean.getFormName()}');">
-           <f:param name="isRequired" value="true"/>
-       </p:commandButton>
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
     </ui:define>   
-    
+
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" >
             <p:tab title="#{bundle.Start}"  >
@@ -29,7 +29,7 @@
                         <f:selectItem itemLabel="#{bundle.Date}" itemValue="on_date" />  
                         <p:ajax update="pnDateStart" event="valueChange" process="@this"/>
                     </p:selectOneRadio>
-                        
+
                     <h:panelGrid id="pnDateStart" columns="2" styleClass="without-spaces">
                         <p:outputLabel value="#{bundle.DateStart}:" indicateRequired="true"/>
                         <p:calendar value="#{timerCardBean.procTimer.startDate}"                
@@ -44,7 +44,7 @@
                     </h:panelGrid>         
                 </p:panelGrid>
             </p:tab>
-            
+
             <p:tab title="#{bundle.Repeat}" >
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
                     <p:outputLabel value="#{bundle.Repeat}:"/>
@@ -55,14 +55,14 @@
                         <f:selectItem itemLabel="#{bundle.RepeatEveryMonth}" itemValue="everymounth"/> 
                         <p:ajax update="pnRepeat" event="valueChange"/>
                     </p:selectOneRadio> 
-                    
+
                     <p:panelGrid id="pnRepeat" layout="grid" columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces ui-grid-col-12">                        
                         <p:outputLabel value="#{bundle.Days}:" rendered="#{timerCardBean.procTimer.repeatType eq 'everyweek'}"/>
                         <p:selectManyCheckbox id="reminderWeekDays" value="#{timerCardBean.reminderDays}" layout="grid" columns="3"
                                               rendered="#{timerCardBean.procTimer.repeatType eq 'everyweek'}">
                             <f:selectItems value="#{timerCardBean.sourceDays}" var="day" itemLabel="#{timerCardBean.getDayWeekName(day)}" itemValue="#{day}" />
                         </p:selectManyCheckbox>                        
-                        
+
                         <p:outputLabel value="#{bundle.Each}:" rendered="#{timerCardBean.procTimer.repeatType ne 'no'}"/>
                         <h:panelGroup>
                             <p:spinner id="basic" value="#{timerCardBean.procTimer.repeatEachInterval}" 

@@ -92,7 +92,7 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     /* Формирование контента подразделения  */     
     @Override
     public List<BaseDict> makeGroupContent(BaseDict department, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
-        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE) && tableBean == this) {
             return itemFacade.findActualChilds((Department) department, getCurrentUser()).collect(Collectors.toList());
         } else {
             List<BaseDict> cnt = new ArrayList<>();

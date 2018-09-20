@@ -88,7 +88,7 @@ public class NotificationServiceImp implements NotificationService{
         Locale locale = userFacade.getUserLocale(resipient);
         
         StringBuilder sb = new StringBuilder();
-        sb.append(ItemUtils.getBandleLabel(msgKeySubject, locale));
+        sb.append(ItemUtils.getMessageLabel(msgKeySubject, locale));
         sb.append(" <").append(task.getName()).append(">");
         
         Map<String, BaseDict> links = new HashMap<>();

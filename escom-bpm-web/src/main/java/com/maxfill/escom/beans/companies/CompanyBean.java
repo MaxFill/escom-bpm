@@ -133,7 +133,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     @Override
     public List<BaseDict> makeGroupContent(BaseDict company, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){
         List<BaseDict> cnt = new ArrayList();
-        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE)) {
+        if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE) && tableBean == this) {
             cnt.addAll(departmentFacade.findActualDetailItems((Company) company, first, pageSize, sortField, sortOrder, getCurrentUser()));
         } else {
             cnt.addAll(staffFacade.findStaffByCompany((Company) company, null, getCurrentUser()));
