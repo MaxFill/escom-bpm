@@ -136,10 +136,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
         return super.makeHeader(sb);
     }
-         
+    
+    /* *** СХЕМА ПРОЦЕССА *** */ 
+    
     public void onOpenScheme(){
         processBean.setDiagramBean(diagramBean);
-        diagramBean.prepareModel(getEditedItem());
+        diagramBean.setReadOnly(isReadOnly());
+        diagramBean.prepareModel(getEditedItem());        
         sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());
     }
     
@@ -183,6 +186,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
         onItemChange();
     }
+    
+    /* *** КУРАТОР *** */
     
     public void onChangeCurator(SelectEvent event){
         if (event.getObject() instanceof String) return;

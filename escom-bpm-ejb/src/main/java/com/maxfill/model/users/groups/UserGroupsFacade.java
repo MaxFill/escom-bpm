@@ -67,11 +67,23 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         pageSize = configuration.getMaxResultCount();
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);   
-        cq.select(root).distinct(true).where(root.get(User_.usersGroupsList).in(group)).orderBy(cb.asc(root.get(User_.secondName)));
+        Root<User> root = cq.from(User.class); 
+        
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(cb.equal(root.get("deleted"), false));
+        criteries.add(cb.equal(root.get("actual"), true));
+        criteries.add(root.get(User_.usersGroupsList).in(group));
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        
+        cq.select(root)
+                .distinct(true)
+                .where(predicates)
+                .orderBy(cb.asc(root.get(User_.secondName)));
+        
         TypedQuery<User> query = getEntityManager().createQuery(cq);
-        query.setFirstResult(first);
-        query.setMaxResults(pageSize);
+        //query.setFirstResult(first);
+        //query.setMaxResults(pageSize);
         return query.getResultStream().parallel()
                 .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                 .collect(Collectors.toList());

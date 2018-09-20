@@ -15,12 +15,14 @@
     </ui:define>
 
     <ui:define name="toolbarComponents" >  
-        <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
+        <p:commandButton id="btnSearche" icon="ui-icon-search" value="#{bundle.Find}"
                          actionListener="#{monitorBean.onRefreshData()}">
         </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
+        <p:defaultCommand target="mainFRM:btnSearche" />
+                
         <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >
             <p:panelGrid columns="4" columnClasses="ui-grid-col-6 ui-grid-col-5 ui-grid-col-1" styleClass="without-spaces">
                 <p:panelGrid columns="1" styleClass="without-spaces">

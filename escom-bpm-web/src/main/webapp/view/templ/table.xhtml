@@ -43,7 +43,7 @@
             <h:outputLabel value="[#{item.id}]"/>
         </p:column>
 
-        <p:column id="colName" headerText="#{bundle.Name}" sortBy="#{item.name}" width="135" visible="#{_detailBean.isVisibleColumn('colName')}">
+        <p:column id="colName" headerText="#{bundle.Name}" sortBy="#{item.name}" visible="#{_detailBean.isVisibleColumn('colName')}">
             <p:commandLink value="#{item.nameEndElipse}" title="#{item.name}" 
                            rendered="#{_bean.isItemTreeType(item)}"
                            actionListener="#{_bean.onLoadGroupContent(item)}"
@@ -59,13 +59,13 @@
         <ui:insert name="specTreeColumns"/>
         <ui:insert name="specRootColumns"/>
         
-        <p:column width="16" id="colStateIcon" headerText=""
+        <p:column id="colStateIcon" headerText="" width="16"
                   visible="#{_detailBean.isVisibleColumn('colStateIcon')}"
                   sortBy="#{item.stateName}">
             <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
         </p:column>
         
-        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="80" 
+        <p:column id="colDateChange" headerText="#{bundle.DateChange}" width="75" 
                   visible="#{_detailBean.isVisibleColumn('colDateChange')}"
                   sortBy="#{item.dateChange}">
             <h:outputLabel value="#{item.dateChange}">
@@ -73,9 +73,8 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}"                   
-                  rendered="#{_showDateCreate}"                  
-                  width="80"
+        <p:column id="colDateCreate" headerText="#{bundle.DateCreate}" width="75"
+                  rendered="#{_showDateCreate}"                                    
                   visible="#{_detailBean.isVisibleColumn('colDateCreate')}"
                   sortBy="#{item.dateCreate}">
             <h:outputLabel value="#{item.dateCreate}">
@@ -83,8 +82,7 @@
             </h:outputLabel>
         </p:column>
 
-        <p:column id="colAuthor" headerText="#{bundle.Owner}" rendered="#{_showAuthor}" 
-                  width="80" 
+        <p:column id="colAuthor" headerText="#{bundle.Owner}" rendered="#{_showAuthor}" width="80"                   
                   visible="#{_detailBean.isVisibleColumn('colAuthor')}"
                   sortBy="#{item.authorName}">
             #{item.author.shortFIO}

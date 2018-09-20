@@ -4,6 +4,7 @@ import com.maxfill.Configuration;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
@@ -42,7 +43,9 @@ public class AttacheServiceImpl implements AttacheService{
     private Configuration configuration;
     @EJB
     private FileService fileService;
-
+    @EJB
+    private DocFacade docsFacade;
+    
     /**
      * Загрузка файла на сервер с созданием Attaches
      * @param params
@@ -181,14 +184,19 @@ public class AttacheServiceImpl implements AttacheService{
         
         String charsetName;
         switch (os){
+            case "Windows":{
+                charsetName = "UTF-8";
+                break;
+            }
             case "Linux":{
                 charsetName = "Cp866";
                 break;
             }
-            default: charsetName = "UTF-8";
+            default: charsetName = configuration.getEncoding();
         }
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f), Charset.forName(charsetName))) {
-            folder.getDetailItems().stream()
+            docsFacade.findActualDetailItems(folder, 0, 0, "", "", user)
+                .stream()
                 .filter(doc->doc.getMainAttache() != null)
                 .forEach(doc->{
                         Attaches attache = doc.getMainAttache();                        

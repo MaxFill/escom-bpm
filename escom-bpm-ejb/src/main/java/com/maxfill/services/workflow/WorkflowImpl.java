@@ -33,6 +33,7 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.task.TaskReport;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
+import com.maxfill.model.users.UserFacade;
 import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.utils.DateUtils;
@@ -46,6 +47,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +89,8 @@ public class WorkflowImpl implements Workflow {
     private Configuration config;
     @EJB
     private ProcTimerFacade procTimerFacade;
+    @EJB
+    private UserFacade userFacade;
     
     /**
      * Добавление поручения в схему процесса
@@ -432,6 +436,20 @@ public class WorkflowImpl implements Workflow {
         }
     }
     
+    @Override
+    public void executeTimer(ProcTimer procTimer, Set<String> errors){
+        User admin = userFacade.getAdmin();
+        Process process = processFacade.find(procTimer.getProcess().getId());
+        if (process == null){            
+            errors.add("WorkflowIncorrectData");
+            return;
+        }
+        Scheme scheme = process.getScheme();
+        unpackScheme(scheme);
+        TimerElem startElement = scheme.getElements().getTimers().get(procTimer.getTimerLinkUID());
+        run(process, startElement, admin, new HashMap<>(), errors);
+    }
+    
     /**
      * Получить отчёт процесса, относящийся к согласующему и обновить его значения
      * @param process
@@ -471,11 +489,10 @@ public class WorkflowImpl implements Workflow {
                 task.setComment(null);
                 if ("delta".equals(task.getDeadLineType())){
                     task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
-                }
-                StringBuilder msg = new StringBuilder();
-                msg.append(ItemUtils.getMessageLabel("YouReceivedNewTask", config.getServerLocale()));
-                msg.append(" <").append(task.getName()).append(">!");
-                notificationService.makeNotification(task, msg.toString()); //уведомление о назначении задачи
+                }                
+                
+                notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
+                
                 taskFacade.makeReminder(task); 
                 taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
                 taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
@@ -535,13 +552,12 @@ public class WorkflowImpl implements Workflow {
      * @param keyMessage
      * @param currentUser 
      */
-    private void stopTasks(Process process, State state, String keyMessage, User currentUser){
-        String msg = ItemUtils.getMessageLabel(keyMessage, config.getServerLocale());
+    private void stopTasks(Process process, State state, String keyMessage, User currentUser){        
         process.getScheme().getTasks().stream()                
                 .filter(task->task.getState().getCurrentState().equals(stateFacade.getRunningState()))
                 .forEach(task->{
                         task.getState().setCurrentState(state);
-                        notificationService.makeNotification(task, msg); //уведомление об аннулировании задачи
+                        notificationService.makeNotification(task, keyMessage); //уведомление об аннулировании задачи
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_CANCELLED, currentUser);
                     });
     }

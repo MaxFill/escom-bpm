@@ -4,11 +4,9 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.schemes.elements.TimerElem;
 import com.maxfill.model.process.timers.ProcTimer;
-import com.maxfill.model.process.timers.ProcTimerFacade;
 import java.lang.reflect.InvocationTargetException;
 import java.time.DayOfWeek;
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
@@ -30,10 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 @Named
 @ViewScoped
 public class TimerCardBean extends BaseViewBean<BaseView>{    
-    private static final long serialVersionUID = -5186880746110498838L;
-    
-    @EJB
-    private ProcTimerFacade procTimerFacade;
+    private static final long serialVersionUID = -5186880746110498838L;   
     
     private ProcTimer procTimer = null;
     private TimerElem sourceItem = null;
@@ -49,11 +43,14 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
             if (sourceBean != null){
                 sourceItem = (TimerElem)((DiagramBean)sourceBean).getBaseElement();                             
                 if (sourceItem != null){
+                    procTimer = sourceItem.getProcTimer();
+                    /*
                     if (sourceItem.getTimerId() != null){
                         procTimer = procTimerFacade.find(sourceItem.getTimerId());
                     } else {
                         procTimer = sourceItem.getProcTimer();
                     }
+                    */
                     try {
                         BeanUtils.copyProperties(editedItem, sourceItem);
                         restoreFields(procTimer);
@@ -68,6 +65,9 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
     private void checkTimer(Set<String> errors){
         if ("on_date".equals(procTimer.getStartType()) && procTimer.getStartDate() == null){
             errors.add("DateStartNoSet");
+        }
+        if (!"on_date".equals(procTimer.getStartType())){
+            procTimer.setStartDate(null);
         }
     }
         

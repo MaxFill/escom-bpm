@@ -290,6 +290,10 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         return find(DictRights.USER_ADMIN_ID);
     }
     
+    public boolean isAdmin(User user){
+        return Objects.equals(user, getAdmin());
+    }
+    
     /* Формирование значений для Фамилии Имени Отчества посредством разбивки строки на части  */
     private void onUpdateUserFIO(User user, String name){
         String firstName = "";

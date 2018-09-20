@@ -44,11 +44,11 @@
                         selection="#{_bean.treeSelectedNode}" style="width: auto; overflow-y: auto;">
 
                     <p:treeNode type="#{_bean.typeRoot}" icon="#{treeItem.iconTree}" >
-                        <h:outputText value="#{treeItem.nameForTree}" title="#{treeItem.name}"/>
+                        <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
                     <p:treeNode type="tree" icon="#{treeItem.iconTree}" styleClass="dragable">
-                        <h:outputText value="#{treeItem.nameForTree}" title="#{treeItem.name}"/>
+                        <h:outputText value="#{treeItem.nameEndElipse}" title="#{treeItem.name}"/>
                     </p:treeNode>
 
                     <p:ajax event="select" listener="#{_bean.onTreeNodeSelect}"

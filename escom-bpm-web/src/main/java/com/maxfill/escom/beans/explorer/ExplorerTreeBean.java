@@ -52,12 +52,16 @@ public class ExplorerTreeBean extends ExplorerBean{
      */
     public void onUploadToFile(){
         if (currentItem == null) return;
+        if (versionOS == null){
+            versionOS = "";          
+        }
         Folder folder = (Folder) currentItem;
         String pathZipFile = attacheService.makeFolderZIP(folder, getCurrentUser(), versionOS);
         if (StringUtils.isNoneBlank(pathZipFile)){
-            EscomFileUtils.attacheDownLoad(pathZipFile, folder.getPath()+".zip");
+            String zipName = folder.getPath()+".zip";
+            EscomFileUtils.attacheDownLoad(pathZipFile, zipName);
             File zipFile = new File(pathZipFile);
-            zipFile.delete();
+            zipFile.delete();                       
         } else {
             MsgUtils.errorMsg("FailedGenerateZIP");
         }

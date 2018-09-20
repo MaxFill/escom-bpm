@@ -40,10 +40,10 @@
 
     <!-- специфичные поля таблицы обозревателя -->
     <ui:define name="specDetailColumns">
-        <p:column headerText="#{bundle.Number}" sortBy="#{item.number}" >
+        <p:column headerText="#{bundle.Number}" width="75" sortBy="#{item.number}" >
             <h:outputText value="#{item.regNumber}"/>
         </p:column> 
-        <p:column headerText="#{bundle.Term}" width="80" sortBy="#{item.planExecDate}">
+        <p:column headerText="#{bundle.Term}" width="75" sortBy="#{item.planExecDate}">
             <h:outputLabel value="#{item.planExecDate}">
                 <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
@@ -53,8 +53,7 @@
         </p:column>
     </ui:define>
         
-    <ui:define name="centerFormFooter">
-        <p:outputLabel value="#{''.concat(bundle.ProcessTypeNotSelected).concat('. ').concat(bundle.ForCreateObjectNeedSelectGroup)}"/>    
+    <ui:define name="centerFormFooter">        
     </ui:define>
     
 </ui:composition>

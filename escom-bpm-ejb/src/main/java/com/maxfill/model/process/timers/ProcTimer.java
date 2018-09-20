@@ -57,7 +57,7 @@ public class ProcTimer implements Serializable {
      */
     @Column(name = "StartDate")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate = new Date();
+    private Date startDate;
     
     /**
      * Тип запуска

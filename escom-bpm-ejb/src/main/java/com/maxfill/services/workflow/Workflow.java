@@ -3,6 +3,7 @@ package com.maxfill.services.workflow;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.schemes.elements.*;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.users.User;
@@ -31,9 +32,13 @@ public interface Workflow {
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme);
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
+    
     void run(Process process, WFConnectedElem startElement, User currentUser, Map<String, Object> params, Set<String> errors);
     void stop(Process process, User user, Set<String> errors);
     void start(Process process, User user, Map<String, Object> params, Set<String> errors);
+    
     void executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);
+    void executeTimer(ProcTimer procTimer, Set<String> errors);
+    
     void replaceReportExecutor(Task task, User user);
 }

@@ -238,7 +238,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(orderBuilder(builder, c));
         TypedQuery<T> query = getEntityManager().createQuery(cq);       
-        return query.getResultStream().parallel()      
+        return query.getResultStream()     
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }
@@ -273,7 +273,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         
-        return query.getResultStream().parallel()      
+        return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }
@@ -333,7 +333,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.orderBy(builder.asc(c.get("name")));
         TypedQuery<T> query = getEntityManager().createQuery(cq);
                 
-        return query.getResultStream().parallel()
+        return query.getResultStream()
                 .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     }
 
@@ -352,7 +352,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream().parallel()
+        return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }    
@@ -382,7 +382,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return filtrationTrashResult(query.getResultStream()).parallel()       
+        return filtrationTrashResult(query.getResultStream())       
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());        
     }
@@ -416,7 +416,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream().parallel()
+        return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }                       
@@ -458,7 +458,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);        
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
-        return query.getResultStream().parallel()
+        return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
     }
@@ -582,7 +582,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             cq.orderBy(builder.asc(c.get("name")));                   
             
             TypedQuery<T> query = getEntityManager().createQuery(cq);       
-            return query.getResultStream().parallel()      
+            return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
         } else {
@@ -602,7 +602,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(orderBuilder(builder, c));
         TypedQuery<T> query = getEntityManager().createQuery(cq);
-        return query.getResultStream().parallel()    
+        return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     } 
 
@@ -611,7 +611,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* ПРАВА ДОСТУПА: Установка и проверка прав объекта для пользователя при загрузке объекта */
     protected Boolean preloadCheckRightView(BaseDict item, User user) {
         Rights rights = getRightItem(item, user);
-        settingRightItem(item, rights, user);
+        item.setRightItem(rights);
+        Integer mask = getAccessMask((T)item, rights, user, 18);
+        item.setRightMask(mask);        
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_VIEW);
     }
 
@@ -621,7 +623,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     private void settingRightItem(BaseDict item, Rights newRight, User user) {
         if (item == null || user == null || newRight == null) return;
         item.setRightItem(newRight);
-        Integer mask = getAccessMask((T)item, newRight, user);
+        Integer mask = getAccessMask((T)item, newRight, user, 1016);
         item.setRightMask(mask);
     }
 
@@ -686,8 +688,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return checkMaskAccess(item.getRightMask(), DictRights.RIGHT_EXECUTE);
     }
     
-    /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя  */
-    public Integer getAccessMask(T item, Rights sourcesRight, User user) {
+    /* ПРАВА ДОСТУПА: возвращает маску доступа пользователя к объекту в текущем состоянии  */
+    public Integer getAccessMask(T item, Rights sourcesRight, User user, int maxRight) {
         State currentState = item.getState().getCurrentState();
         Integer userId = user.getId();
         Integer accessMask = 0;        
@@ -714,8 +716,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                         break;
                     }
                 }
-                if (accessMask == 504) {
-                    break; //дальше проверять права не нужно, т.к. установлены максимальные права
+                if (accessMask >= maxRight) {
+                    break; //дальше проверять права не нужно, т.к. установлены максимально требуемые права
                 }
             }
         }

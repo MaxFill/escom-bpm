@@ -121,6 +121,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private ProcTempl selectedTempl;
     private List<ProcTempl> templates;    
     private Scheme scheme;
+    private boolean readOnly;
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();  
     
@@ -635,7 +636,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /* СОЗДАНИЕ КОМПОНЕНТОВ СХЕМЫ ПРОЦЕССА */
 
     /**
-     * Создание элемента "Условие" в модель процесса
+     * Создание элемента "Условие" в модели процесса
      * @param x
      * @param y
      * @param errors
@@ -663,6 +664,11 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return null;
     }
 
+    /**
+     * Создание элемента "Таймер" в модели процесса
+     * @param errors
+     * @return 
+     */
     private TimerElem createTimer(Set<String> errors){        
         TimerElem timer = new TimerElem(null, getX(), getY());
         ProcTimer procTimer  = procTimerFacade.createTimer(process, scheme, timer.getUid());        
@@ -1189,9 +1195,12 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return getLabelFromBundle(key);
     }   
     
-    public boolean isReadOnly(){
-        if (sourceBean == null) return false;
-        return sourceBean.isReadOnly();
+    public boolean isReadOnly(){        
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     private String getX(){

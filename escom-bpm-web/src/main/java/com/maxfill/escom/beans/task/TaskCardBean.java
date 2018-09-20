@@ -94,6 +94,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ProcReport currentReport;
     private boolean isChangeExecutor;
     private List<String> selectedDays;
+    private List<Staff> executors;
     
     private List<SelectItem> daysOfWeek = new ArrayList<>();
     {        
@@ -114,7 +115,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (task.getScheme() != null && (DictStates.STATE_RUNNING == id || DictStates.STATE_COMPLETED == id)){
             readOnly = true;
         }
-        initDateFields(task);        
+        initDateFields(task);     
+        initExecutors(task);
     }
       
     /**
@@ -288,7 +290,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
             if (isChangeExecutor){
                workflow.replaceReportExecutor(task, getCurrentUser());
             }
-            Process process = processFacade.find(task.getScheme().getProcess().getId());            
+            Process process = processFacade.find(task.getScheme().getProcess().getId());
             workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
@@ -414,6 +416,47 @@ public class TaskCardBean extends BaseCardBean<Task>{
             flag = true;
         }
         return flag;
+    }
+    
+    /**
+     * Формирование списка доступных для выбора Исполнителей
+     * @param task 
+     */
+    private void initExecutors(Task task){            
+        //админ может выбрать любого
+        if (userFacade.isAdmin(getCurrentUser())){
+            executors = staffFacade.findActualStaff();
+            return;
+        }                
+        //автор или исполнитель может выбрать себя или кого-то из своих замов
+        if (task.getAuthor().equals(getCurrentUser())) {
+            executors = assistantFacade.findAssistByUser(getCurrentUser());
+            if (getCurrentUser().getStaff() != null){
+                executors.add(getCurrentUser().getStaff());
+            }
+            return;
+        }
+        executors = new ArrayList<>();
+        if (task.getOwner() != null){
+            executors.add(task.getOwner());
+            //исполнитель может выбрать кого-то из своих замов
+            if (task.getOwner().getEmployee().equals(getCurrentUser())) {
+                executors.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
+                return;
+            }
+            //руководитель исполнителя, может выбрать себя или кого-то из замов
+            if (assistantFacade.isChief(getCurrentUser(), task.getOwner().getEmployee())){
+                executors.add(getCurrentUser().getStaff());
+                executors.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
+                return;
+            }
+            //заместитель исполнителя может указать себя
+            if (assistantFacade.isAssistant(task.getOwner().getEmployee(), getCurrentUser())){
+                if (getCurrentUser().getStaff() != null){
+                    executors.add(getCurrentUser().getStaff());
+                }
+            }
+        }
     }
     
     private void initDateFields(Task task){        
@@ -595,7 +638,14 @@ public class TaskCardBean extends BaseCardBean<Task>{
     public void setCurrentReport(ProcReport currentReport) {
         this.currentReport = currentReport;
     }
-        
+
+    public List<Staff> getExecutors() {
+        return executors;
+    }
+    public void setExecutors(List<Staff> executors) {
+        this.executors = executors;
+    }
+            
     @Override
     public boolean isReadOnly() {
         return readOnly;

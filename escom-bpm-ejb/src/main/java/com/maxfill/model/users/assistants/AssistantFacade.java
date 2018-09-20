@@ -1,11 +1,12 @@
 package com.maxfill.model.users.assistants;
 
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.users.User;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -48,5 +49,32 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
                 .filter(assist->Objects.equals(slave, assist.getUser()))
                 .findFirst()
                 .orElse(null) != null;
+    }
+    
+    /**
+     * Определяет, является ли user руководителем для slave
+     * @param user
+     * @param slave
+     * @return 
+     */    
+    public boolean isChief(User user, User slave){
+        return user.getAssistants().stream()
+                .filter(assist->Objects.equals(assist.getUser(), slave))
+                .findFirst()
+                .orElse(null) != null;
+    }
+    
+    /**
+     * Формирует список штатных единиц из заместителей, указанного пользователя
+     * @param chief
+     * @return 
+     */
+    public List<Staff> findAssistByUser(User chief){
+        return chief.getAssistants().stream()
+                .filter(assist-> !assist.getUser().isDeleted() 
+                        && assist.getUser().isActual() 
+                        && assist.getUser().getStaff() != null)
+                .map(assist->assist.getUser().getStaff())
+                .collect(Collectors.toList());
     }
 }

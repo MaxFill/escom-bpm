@@ -83,19 +83,20 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         return prepEditItem(item, getParamsMap());
     }
     public T prepEditItem(T item, Map<String, List<String>> paramsMap){
-        Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getFacade();
+        Set<String> errors = new HashSet<>();        
         T editItem = findItem(item.getId());  //получаем копию объекта для редактирования 
         if (editItem == null){
             MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getClass().getSimpleName(), item.getId()});
             return null;
         }
         
-        facade.makeRightItem(editItem, getCurrentUser());
-        if (!facade.isHaveRightEdit(editItem)){
+        getFacade().makeRightItem(editItem, getCurrentUser());
+        if (!getFacade().isHaveRightEdit(editItem)){
+            /*
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
+            */
             return prepViewItem(item, paramsMap, errors);
         }
         openItemCard(editItem, DictEditMode.EDIT_MODE, paramsMap, errors);

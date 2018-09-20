@@ -40,24 +40,18 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >            
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.Executor}" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
-                <h:panelGroup styleClass="ui-grid-col-12 without-spaces" rendered="#{taskCardBean.editedItem.scheme != null}" >
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{taskCardBean.editedItem.owner}"/>
-                        <ui:param name="_itemLabel" value="nameEndElipse"/>
-                        <ui:param name="_required" value="#{param['isRequired'] == 'true'}" />
-                        <ui:param name="_disabled" value="#{!taskCardBean.canChangeExecutor()}"/>
-                        <ui:param name="_converter" value="staffConvertor" />
-                        <ui:param name="_itemPanel" value="staffPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.Executor}"/>
-                        <ui:param name="_selectorBean" value="#{staffBean}"/>
-                        <ui:param name="_items" value="#{staffBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setOwner"/>
-                        <ui:param name="_actionSelect" value="onExecutorChanged"/>
-                        <ui:param name="_rendered" value="#{true}"/>
-                        <ui:param name="_update" value=""/>
-                    </ui:include>
-                </h:panelGroup>
+                <p:outputLabel value="#{bundle.Executor}:" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
+                <p:selectOneMenu value="#{taskCardBean.editedItem.owner}" filter="true" filterMatchMode="startsWith"
+                                styleClass="ui-grid-col-12"
+                                converter="staffConvertor" placeholder="#{bundle.Select}"
+                                disabled="#{!taskCardBean.canChangeExecutor()}"
+                                rendered="#{taskCardBean.editedItem.scheme != null}"
+                                required="#{param['isRequired'] == 'true'}"
+                                requiredMessage="#{bundle.Field} [#{bundle.Executor}] #{bundle.MustBeFilled}"
+                                valueChangeListener="#{_bean.onExecutorChanged}">
+                    <f:selectItems value="#{taskCardBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
+                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
+                </p:selectOneMenu>                                
 
                 <p:outputLabel value="#{bundle.Task}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{taskCardBean.editedItem.name}"

@@ -277,8 +277,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         String exitResult = (String) event.getObject();
         if (!SysParams.EXIT_NOTHING_TODO.equals(exitResult)) {
             switch (typeEdit){
-                case DictEditMode.EDIT_MODE: {                    
-                    try {                    
+                case DictEditMode.EDIT_MODE: {
+                    try {
                         editItem.setIconTree(currentItem.getIconTree());
                         BeanUtils.copyProperties(currentItem, editItem);
                         //onSetCurrentItem(editItem);
@@ -750,7 +750,16 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         super.refreshLazyData();
         checkedItems.clear();
     }
-         
+      
+    /**
+     * Загрузка данных в таблицу обозревателя
+     * @param first
+     * @param pageSize
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @return 
+     */
     @Override
     public List<BaseDict> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
@@ -1698,6 +1707,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         sb.append(secondName); 
         setJurnalHeader(MessageFormat.format(MsgUtils.getMessageLabel(toolTipKey), new Object[]{sb.toString()}));
         setCurrentPage(0);        
+    }
+    
+    public String makeUploadFileCaption(){        
+        return getLabelFromBundle("SelectFileAndCreateDoc");
     }
     
     /* Отображает диалог перемещения объекта */

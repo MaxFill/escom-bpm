@@ -14,11 +14,9 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.process.types.ProcessType;
-import com.maxfill.model.process.Process;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -239,6 +237,15 @@ public class FolderExplBean extends ExplorerTreeBean{
         Map<String, Object> params = new HashMap<>();
         params.put("documents", docs);
         processBean.createItemAndOpenCard(null, dropItem, params, getParamsMap());
+    }
+    
+    @Override
+    public String makeUploadFileCaption(){
+        if (treeSelectedNode == null) return "";
+        String folderName = ((Folder)treeSelectedNode.getData()).getName();
+        StringBuilder sb = new StringBuilder(getLabelFromBundle("SelectFileAndCreateDoc"));
+        sb.append(" ").append(getLabelFromBundle("InFolder")).append(" ").append(folderName);
+        return sb.toString();
     }
     
     /* GETS & SETS */
