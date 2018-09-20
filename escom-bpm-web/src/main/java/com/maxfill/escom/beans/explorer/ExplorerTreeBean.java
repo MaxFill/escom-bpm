@@ -45,7 +45,7 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_NAVIG_NAME = NAVIG_NAME.length();
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
-    protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();
+    protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();   
     
     /**
      * Выгрузка файлов документов текущей папки в архив
@@ -53,9 +53,9 @@ public class ExplorerTreeBean extends ExplorerBean{
     public void onUploadToFile(){
         if (currentItem == null) return;
         Folder folder = (Folder) currentItem;
-        String pathZipFile = attacheService.makeFolderZIP(folder, getCurrentUser());
+        String pathZipFile = attacheService.makeFolderZIP(folder, getCurrentUser(), versionOS);
         if (StringUtils.isNoneBlank(pathZipFile)){
-            EscomFileUtils.attacheDownLoad(pathZipFile, folder.getPath());
+            EscomFileUtils.attacheDownLoad(pathZipFile, folder.getPath()+".zip");
             File zipFile = new File(pathZipFile);
             zipFile.delete();
         } else {
@@ -325,5 +325,5 @@ public class ExplorerTreeBean extends ExplorerBean{
             tableBean.moveItemToGroup(dropItem, dragItem, treeSelectedNode);
             loadItems.removeAll(checkedItems);
         }
-    }   
+    }
 }

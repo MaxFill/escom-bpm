@@ -22,5 +22,5 @@ public interface AttacheService {
     Attaches findAttacheByDoc(Doc doc);
     Attaches uploadAtache(Map<String, Object> params, InputStream inputStream) throws IOException;
     void doCopy(Attaches sourceAttache, Attaches targetAttache);
-    String makeFolderZIP(Folder folder, User user);
+    String makeFolderZIP(Folder folder, User user, String os);
 }

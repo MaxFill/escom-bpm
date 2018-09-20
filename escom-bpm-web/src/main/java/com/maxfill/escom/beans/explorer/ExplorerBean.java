@@ -47,6 +47,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import javax.faces.context.FacesContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -119,7 +120,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     private Integer rowsInPage = DictExplForm.ROW_IN_PAGE;
     protected Integer currentPage = 0;
-    protected final LayoutOptions layoutOptions = new LayoutOptions();
+    protected String versionOS;   
 
     /* *** СЛУЖЕБНЫЕ ПОЛЯ *** */
     private Integer source = DictDetailSource.ALL_ITEMS_SOURCE;
@@ -148,7 +149,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             if (params.containsKey("itemId")){
                 itemId = Integer.valueOf(params.get("itemId"));
             }
-        }        
+        }
     }
 
     @Override
@@ -1716,8 +1717,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     public boolean isNowShowMix(){
         return Objects.equals(currentType, typeMixed);
-    }  
-       
+    }         
     
     /* Определяет режим отображения: обозреватель или селектор */
     public boolean isSelectorViewMode(){
@@ -1759,6 +1759,14 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public void setCurrentViewModeMixed(){
         currentType = typeMixed;
     }
+    
+    /**
+     * Запись версии операционной системы клиента
+     */
+    public void setVersionOS() {        
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        versionOS = params.get("version");
+    } 
     
     /* GETS & SETS */       
 

@@ -164,10 +164,11 @@ public class AttacheServiceImpl implements AttacheService{
      * Формирование zip архива из файлов папки во временной папке пользователя
      * @param folder
      * @param user
+     * @param os
      * @return 
      */
     @Override
-    public String makeFolderZIP(Folder folder, User user){
+    public String makeFolderZIP(Folder folder, User user, String os){
         String zipFile = new StringBuilder()
                     .append(configuration.getTempFolder())
                     .append(folder.getName())
@@ -178,13 +179,21 @@ public class AttacheServiceImpl implements AttacheService{
         
         File f = new File(zipFile);        
         
-        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f), Charset.forName("Cp866"))) {
+        String charsetName;
+        switch (os){
+            case "Linux":{
+                charsetName = "Cp866";
+                break;
+            }
+            default: charsetName = "UTF-8";
+        }
+        try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(f), Charset.forName(charsetName))) {
             folder.getDetailItems().stream()
                 .filter(doc->doc.getMainAttache() != null)
                 .forEach(doc->{
                         Attaches attache = doc.getMainAttache();                        
                         try (InputStream inputStream = new FileInputStream(configuration.getUploadPath() + attache.getFullName())) {                            
-                            ZipEntry zipEntry = new ZipEntry(new String(attache.getName().getBytes(), "UTF-8"));
+                            ZipEntry zipEntry = new ZipEntry(new String(attache.getName().getBytes("UTF-8"), "UTF-8"));
                             out.putNextEntry(zipEntry);
 
                             int len;
