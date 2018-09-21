@@ -1,6 +1,5 @@
 package com.maxfill.model.process;
 
-import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;

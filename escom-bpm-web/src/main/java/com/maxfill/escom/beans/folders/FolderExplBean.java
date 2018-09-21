@@ -17,6 +17,7 @@ import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -225,7 +226,7 @@ public class FolderExplBean extends ExplorerTreeBean{
      * Создание процесса посредством перетаскивания документа в вид процесса
      */
     public void createProcess(){
-        Set<Doc> docs = new HashSet<>();
+        List<Doc> docs = new ArrayList<>();
         checkedItems.stream().forEach(dragItem -> {
             if (isItemDetailType(dragItem)){
                 docs.add((Doc)dragItem);                
