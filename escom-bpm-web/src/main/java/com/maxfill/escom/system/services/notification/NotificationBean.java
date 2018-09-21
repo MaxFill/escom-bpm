@@ -5,6 +5,7 @@ import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
+import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.notification.NotificationSettings;
 import com.maxfill.services.notification.NotificationTimer;
@@ -41,8 +42,10 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
     }
 
     @Override
-    public void doRunService() {
-        notificationService.makeNotifications();
+    public void doRunService() {        
+        ServicesEvents selectedEvent = notificationTimer.doExecuteTask(service, getSettings());
+        setSelectedEvent(selectedEvent);
+        getServicesFacade().edit(service);  
     }
 
     @Override
@@ -59,7 +62,6 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
      * Проверка работы службы
      */
     public void onCheckServices(){
-        notificationService.makeNotifications();
-        MsgUtils.succesMsg("Successfully");
+        doRunService();
     }
 }

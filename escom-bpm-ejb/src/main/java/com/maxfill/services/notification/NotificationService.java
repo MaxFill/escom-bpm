@@ -8,6 +8,6 @@ import com.maxfill.services.Services;
  */
 public interface NotificationService {
     NotificationSettings createSettings(Services service);
-    void makeNotifications();
+    void makeNotifications(StringBuilder sb);
     void makeNotification(Task task, String msg);
 }

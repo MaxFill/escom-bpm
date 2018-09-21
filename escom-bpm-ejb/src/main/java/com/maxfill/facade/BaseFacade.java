@@ -16,7 +16,7 @@ import javax.validation.ValidatorFactory;
 
 /* Абстрактный фасад  */
 public abstract class BaseFacade<T> {
-    protected final Class<T> entityClass;
+    protected final Class<T> itemClass;
     protected static final Logger LOGGER = Logger.getLogger(BaseFacade.class.getName());
     
     @PersistenceContext(unitName = "com.maxfill.escombpm2PU")
@@ -27,16 +27,20 @@ public abstract class BaseFacade<T> {
      private ManagedExecutorService executorService;
     */    
         
-    public BaseFacade(Class<T> entityClass) {
-        this.entityClass = entityClass;
+    public BaseFacade(Class<T> itemClass) {
+        this.itemClass = itemClass;
     }
 
+    public Class<T> getItemClass(){
+        return itemClass;
+    }
+        
     protected EntityManager getEntityManager(){
         return entityManager;
     }
     
     public T clone(Object id){
-        return getEntityManager().find(entityClass, id);
+        return getEntityManager().find(itemClass, id);
     }
     
     public void create(T entity) {
@@ -65,13 +69,13 @@ public abstract class BaseFacade<T> {
     }
 
     public T find(Object id) {        
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass); 
-        return (T) getEntityManager().find(entityClass, id);       
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass); 
+        return (T) getEntityManager().find(itemClass, id);       
     }    
 
     public List<T> findRange(int[] range) {
         javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-        cq.select(cq.from(entityClass));
+        cq.select(cq.from(itemClass));
         javax.persistence.Query q = getEntityManager().createQuery(cq);
         q.setMaxResults(range[1] - range[0] + 1);
         q.setFirstResult(range[0]);
@@ -80,7 +84,7 @@ public abstract class BaseFacade<T> {
 
     public int count() {
         CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-        Root<T> rt = cq.from(entityClass);
+        Root<T> rt = cq.from(itemClass);
         cq.select(getEntityManager().getCriteriaBuilder().count(rt));
         Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
@@ -88,10 +92,10 @@ public abstract class BaseFacade<T> {
     
     /* Возвращает все дочерние элементы для parent */
     public List<T> findAllChilds(T parent){
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass);
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("parent"), parent);
         cq.select(c).where(builder.and(crit1));
         cq.orderBy(orderBuilder(builder, c));
@@ -117,10 +121,10 @@ public abstract class BaseFacade<T> {
      * @return 
      */
     public List<T> findByName(String name){
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> root = cq.from(entityClass);
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> root = cq.from(itemClass);
         Predicate crit1 = builder.equal(root.get("name"), name);
         cq.select(root).where(builder.and(crit1));        
         Query q = getEntityManager().createQuery(cq);

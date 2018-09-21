@@ -7,7 +7,6 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.Results;
 import com.maxfill.model.WithDatesPlans;
-import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.result.Result;

@@ -104,7 +104,7 @@
         </p:panel>
 
         <p:treeTable id="monitorTable" value="#{monitorBean.root}" var="item" 
-                     selectionMode="single" 
+                     selectionMode="single" selection="#{monitorBean.selectedNode}"
                      emptyMessage="#{bundle.EmptyTable}" 
                      paginator="true" paginatorPosition="bottom"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
@@ -149,6 +149,12 @@
 
         </p:treeTable>
 
+        <p:contextMenu for="monitorTable">
+            <p:menuitem value="#{bundle.Open}" icon="ui-icon-document" 
+                        actionListener="#{monitorBean.onMenuItemOpen()}"
+                        oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>            
+        </p:contextMenu>
+        
         <p:commandButton id="btnOpenItem" style="display: none;"
                          actionListener="#{monitorBean.onOpenItem()}">
             <p:ajax event="dialogReturn" update="monitorTable" listener="#{monitorBean.onAfterItemCloseForm}"/>

@@ -114,21 +114,20 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * Отправка сообщения ролям
      * @param item - документ или процесс
      * @param rolesJson
-     * @param subject
+     * @param keyMsgSubject - ключ ресурса msg
      * @param sb
      * @param currentUser
      */
-    public void sendRoleMessage(T item, String rolesJson, String subject, StringBuilder sb, User currentUser){
-        Gson gson = new Gson();
-        Set<User> addressee = new HashSet<>();
+    public void sendRoleMessage(T item, String rolesJson, String keyMsgSubject, StringBuilder sb, User currentUser){
+        Gson gson = new Gson();        
         List<String> roles = gson.fromJson(rolesJson, List.class);
         roles.forEach(role->{
-            addressee.addAll(actualiseRole(item, role, currentUser));
-        });
-        addressee.forEach(user-> {
-            String itemName = item.getClass().getSimpleName().toLowerCase();
-            sb.append(getItemHREF(item));            
-            messagesFacade.createSystemMessage(user, subject, sb, Collections.singletonMap(itemName, item));
+            actualiseRole(item, role, currentUser)
+                    .forEach(user -> { 
+                        StringBuilder subject = new StringBuilder(ItemUtils.getMessageLabel(keyMsgSubject, userFacade.getUserLocale(user)));
+                        subject.append(": ").append(item.getNameEndElipse());
+                        messagesFacade.createSystemMessage(user, subject.toString(), sb, Collections.singletonList(item));
+                    });
         });
     }
     

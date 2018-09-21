@@ -223,6 +223,7 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     }
     
     public void onNotifyRemark(Remark remark){
+        onSaveRemark(remark);
         Map<String, List<String>> params = getParamsMap();        
         params.put("remarkID", Collections.singletonList(remark.getId().toString()));
         sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);

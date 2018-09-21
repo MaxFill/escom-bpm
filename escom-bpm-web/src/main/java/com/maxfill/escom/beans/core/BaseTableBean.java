@@ -436,6 +436,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }    
     
     /* УДАЛЕНИЕ: удаление объекта вместе с дочерними и подчинёнными  */
+    @Override
     public void deleteItem(T item) {
         deleteChilds(item);
         deleteDetails(item);

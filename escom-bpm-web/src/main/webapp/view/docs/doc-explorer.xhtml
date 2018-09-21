@@ -120,22 +120,7 @@
         </p:commandButton>
         <p:commandButton id="createItemBtn" actionListener="#{_bean.onCreateDetailItem()}" style="display: none;">
            <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
-       </p:commandButton> 
-        
-        <p:confirmDialog widgetVar="CreateProcessDlg" closeOnEscape="true" global="false" severity="info" header="#{bundle.CreateProcess}" message="#{bundle.ConfirmAction}"  showEffect="fade" hideEffect="fade">
-            <p:commandButton value="#{bundle.CreateProcess}" process="@this"
-                             styleClass="ui-confirmdialog-yes" icon="ui-icon-check"
-                             actionListener="#{_bean.createProcess()}"
-                             update="mainFRM #{_updates}"
-                             onclick="PF('CreateProcessDlg').hide();"
-                             oncomplete="initDND()">
-            </p:commandButton>
-            <p:commandButton value="#{bundle.Cancel}" process="@this" 
-                             styleClass="ui-confirmdialog-no" icon="ui-icon-close"
-                             update="mainFRM"
-                             onclick="PF('CreateProcessDlg').hide();"
-                             oncomplete="initDND()"/>
-        </p:confirmDialog>
+       </p:commandButton>         
     </ui:define>
 
     <!-- специфичные поля таблицы обозревателя -->

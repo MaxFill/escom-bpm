@@ -1,5 +1,6 @@
 package com.maxfill.services.common.history;
 
+import com.maxfill.model.Dict;
 import com.maxfill.services.Services;
 import com.maxfill.utils.DateUtils;
 import java.io.Serializable;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name = "services_events")
-public class ServicesEvents implements Serializable {
+public class ServicesEvents implements Serializable, Dict {
     private static final long serialVersionUID = -4436787147305389769L;
     
     @Id
@@ -65,9 +66,11 @@ public class ServicesEvents implements Serializable {
         this.serviceId = serviceId;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.states.State;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.Query;
@@ -10,12 +11,18 @@ import java.util.*;
  * Абстрактный фасад для работы с ленивой загрузки списков данных из таблиц БД
  * @param <T>
  */
-public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
+public abstract class BaseLazyLoadFacade<T extends Dict> extends BaseFacade<T>{
 
     public BaseLazyLoadFacade(Class<T> itemClass){
         super(itemClass);
     }
 
+    @Override
+    public void remove(T entity){
+        entity = getEntityManager().getReference(itemClass, entity.getId());
+        getEntityManager().remove(entity);
+    }
+    
     /**
      * Возвращает число записей журнала в заданном диаппазоне
      * @param filters
@@ -24,7 +31,7 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
     public int countItems(Map<String,Object> filters){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
-        Root<T> root = cq.from(entityClass);
+        Root<T> root = cq.from(itemClass);
         cq.select(builder.count(root)).where(builder.and(makePredicates(builder, root, filters)));
         Query q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
@@ -40,10 +47,10 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      * @return
      */
     public List<T> findItemsByFilters(int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> root = cq.from(entityClass);
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> root = cq.from(itemClass);
         cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
         if (StringUtils.isNotBlank(sortField)){ //если задано по какому полю сортировать
             if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
@@ -67,10 +74,10 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      * @return
      */
     public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> root = cq.from(entityClass);
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> root = cq.from(itemClass);
         cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
         if (StringUtils.isNotBlank(sortField)){ //если задано по какому полю сортировать
             if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
@@ -91,8 +98,8 @@ public abstract class BaseLazyLoadFacade<T> extends BaseFacade<T>{
      */
     public int deleteItems(Map<String,Object> filters) {
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaDelete<T> cd = builder.createCriteriaDelete(entityClass);
-        Root root = cd.from(entityClass);
+        CriteriaDelete<T> cd = builder.createCriteriaDelete(itemClass);
+        Root root = cd.from(itemClass);
         cd.where(makePredicates(builder, root, filters));
         Query query = getEntityManager().createQuery(cd);
         return query.executeUpdate();

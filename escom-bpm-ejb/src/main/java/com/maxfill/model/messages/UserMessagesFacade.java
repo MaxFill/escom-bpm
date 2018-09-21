@@ -16,7 +16,6 @@ import com.maxfill.utils.ItemUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -25,8 +24,6 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang3.LocaleUtils;
-
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
@@ -81,7 +78,7 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param content
      * @param links
      */
-    public void createSystemMessage(User addressee, String subject, StringBuilder content, Map<String, BaseDict> links){        
+    public void createSystemMessage(User addressee, String subject, StringBuilder content, List<BaseDict> links){        
         String senderName = ItemUtils.getBandleLabel("System", userFacade.getUserLocale(addressee));
         String senderEmail = conf.getDefaultSenderEmail();
         createMessage(addressee, senderName, senderEmail, subject, content, links);
@@ -96,16 +93,16 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
      * @param content
      * @param links
      */
-    public void createMessage(User addressee, String senderName, String senderEmail, String subject, StringBuilder content, Map<String, BaseDict> links){
+    public void createMessage(User addressee, String senderName, String senderEmail, String subject, StringBuilder content, List<BaseDict> links){
         UserMessages message = new UserMessages();
         message.setName(subject);
         message.setAddressee(addressee);
         message.setDateSent(new Date());
         Locale locale = userFacade.getUserLocale(addressee);
-        links.entrySet().forEach(row->{
-            switch (row.getKey()){
+        links.forEach(item->{
+            switch (item.getClass().getSimpleName().toLowerCase()){
                 case "doc":{
-                    Doc doc = (Doc)row.getValue();
+                    Doc doc = (Doc)item;
                     message.setDocument(doc);
                     content.append("<br/>")
                             .append(ItemUtils.getBandleLabel("GoToDocument", locale))
@@ -114,7 +111,7 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
                     break;
                 }
                 case "task":{
-                    Task task = (Task)row.getValue();
+                    Task task = (Task)item;
                     message.setTask(task);
                     content.append("<br/>")
                             .append(ItemUtils.getBandleLabel("GoToTask", locale))
@@ -123,7 +120,7 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
                     break;
                 }
                 case "process":{
-                    Process process = (Process)row.getValue();
+                    Process process = (Process)item;
                     message.setProcess(process); 
                     content.append("<br/>")
                             .append(ItemUtils.getBandleLabel("GoToProcess", locale))
@@ -143,20 +140,7 @@ public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
                 mailBoxFacade.createMailBox(subject, emailAdress, senderEmail, content.toString(), senderName);
             }
         }
-    }
-    
-    /**
-     * Отправка сообщения пользователям из списка
-     * @param recipients
-     * @param sender
-     * @param subject
-     * @param content
-     * @param subject
-     * @param links
-     */
-    public void sendMessageUsers(List<User> recipients, User sender, String subject, StringBuilder content, Map<String, BaseDict> links){
-        recipients.forEach(recipient->createMessage(recipient, sender.getName(), sender.getEmail(), subject, content, links));
-    }
+    }    
     
     public Integer getCountUnReadMessage(User addressee){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

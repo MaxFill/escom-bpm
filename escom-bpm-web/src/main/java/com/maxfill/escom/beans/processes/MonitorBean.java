@@ -108,6 +108,10 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
     }
     
+    public void onMenuItemOpen(){
+        currentItem = (BaseDict)selectedNode.getData();
+    }
+    
     private int loadTree(){        
         List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()));
         processes.forEach(proc->{

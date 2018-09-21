@@ -103,11 +103,11 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     @Override
     public String getFullName(){
         StringBuilder sb = new StringBuilder();
-        if (post != null && StringUtils.isNotBlank(post.getName())){
-            sb.append(post.getName()).append(" ");
-        }
         if (employee != null && StringUtils.isNotBlank(employee.getName())){
             sb.append(employee.getShortFIO()).append(" ");
+        }
+        if (post != null && StringUtils.isNotBlank(post.getName())){
+            sb.append(post.getName()).append(" ");
         }
         if (owner != null && StringUtils.isNotBlank(owner.getName())){
             sb.append(owner.getFullName())

@@ -47,7 +47,7 @@
                             </p:menuitem> 
                             <p:separator />
                             <p:menuitem value="#{bundle.Notify}" icon="ui-icon-mail-closed"
-                                        disabled="#{remark.author ne _bean.currentUser}"
+                                        disabled="#{remark.author ne _bean.currentUser or empty(remark.author.email)}"
                                         rendered="#{remark.state.currentState.id == 12}"                                        
                                         actionListener="#{_bean.onNotifyRemark(remark)}">
                             </p:menuitem>

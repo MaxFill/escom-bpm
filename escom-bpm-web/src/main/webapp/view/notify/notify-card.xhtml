@@ -21,10 +21,15 @@
             <p:tab title="#{bundle.Message}" >
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.Message}:" indicateRequired="true"/>
+                    <p:inputText value="#{_bean.message}" styleClass="ui-grid-col-12"                                 
+                                required="#{param['isRequired'] == 'true'}" 
+                                requiredMessage="#{bundle.Field} [#{bundle.Message}] #{bundle.MustBeFilled}">
+                    </p:inputText>
+                    <p:outputLabel value="#{bundle.Remark}:" indicateRequired="true"/>
                     <p:inputTextarea value="#{_bean.content}" styleClass="ui-grid-col-12"
                                      rows="3" autoResize="true"
                                      required="#{param['isRequired'] == 'true'}" 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Message}] #{bundle.MustBeFilled}">
+                                     requiredMessage="#{bundle.Field} [#{bundle.Remark}] #{bundle.MustBeFilled}">
                     </p:inputTextarea>
                     
                     <p:outputLabel value="#{bundle.Recipients}:" indicateRequired="true"/>

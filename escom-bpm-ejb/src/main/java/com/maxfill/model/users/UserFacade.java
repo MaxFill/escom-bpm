@@ -11,7 +11,6 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.model.posts.PostFacade;
 import com.maxfill.model.staffs.StaffFacade;
@@ -414,7 +413,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @param msg
      */
     public void sendSystemMsg(User receiver, String msg) {
-        messagesFacade.createSystemMessage(receiver, msg, new StringBuilder(), new HashMap<>());
+        messagesFacade.createSystemMessage(receiver, msg, new StringBuilder(), new ArrayList<>());
     }
 
     /* Дополнения при выполнении поиска пользователей через форму поиска */

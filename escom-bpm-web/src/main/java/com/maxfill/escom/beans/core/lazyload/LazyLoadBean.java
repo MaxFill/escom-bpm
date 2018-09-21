@@ -127,6 +127,11 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         return getFacade().deleteItems(makeFilters(filters));
     }
 
+    public void deleteItem(T item){
+        getFacade().remove(item);
+        removeItemFromData(item);
+    }
+    
     public List<T> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
         return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));

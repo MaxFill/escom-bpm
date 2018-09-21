@@ -28,7 +28,7 @@ public abstract class BaseTimer<P> {
     protected static final String RESULT_SUCCESSFULLY = "Ok";
     private final Class<P> settingsClass;
     
-    final StringBuilder detailInfo = new StringBuilder("");
+    private final StringBuilder detailInfo = new StringBuilder("");
 
     @EJB
     private ServicesFacade servicesFacade;

@@ -83,7 +83,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
 
     private List<Result> taskResults;
     private DualListModel<Result> results;
-    private String currentResult;
     
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;
@@ -269,17 +268,21 @@ public class TaskCardBean extends BaseCardBean<Task>{
      
     /**
      * Обработка события выполнения задачи
+     * @param resultName
      * @return 
      */
-    public String onExecute(){ 
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();  
-        currentResult = params.get("result");
-        if (StringUtils.isEmpty(currentResult)) return "";
+    public String onExecute(String resultName){ 
+        if (StringUtils.isEmpty(resultName)) return "";
         
         Task task = getEditedItem();
-                
-        List<Result> rs = resultFacade.findByName(currentResult);
+
+        List<Result> rs = resultFacade.findByName(resultName);
         Result result = rs.get(0);
+        
+        if (StringUtils.isBlank(task.getComment())){
+            task.setComment(MsgUtils.getBandleLabel(resultName));
+        }    
+        
         Set<String> errors = new HashSet<>();
                                  
         checkTaskBeforeExecute(task, result, errors);

@@ -2,7 +2,6 @@ package com.maxfill.services.webDav;
 
 import com.maxfill.Configuration;
 import com.maxfill.dictionary.SysParams;
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.messages.UserMessagesFacade;
@@ -11,7 +10,6 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.ItemUtils;
-import com.maxfill.utils.Tuple;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -21,8 +19,6 @@ import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -211,14 +207,14 @@ public class WebDavRemainder {
         if (countRemainingCycles == 0){
             cancelTimer(attache, SysParams.MODE_UNLOCK_CREATE_VERSION);
             String subject = ItemUtils.getMessageLabel("DocumentWasAutoUnlocked", conf.getServerLocale() );            
-            messagesFacade.createSystemMessage(adressee, subject, content, Collections.singletonMap("doc", doc));
+            messagesFacade.createSystemMessage(adressee, subject, content, Collections.singletonList(doc));
         } else {
             String dateUnlock = DateUtils.dateToString(attache.getPlanUnlockDate(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale());
             String msgError = ItemUtils.getFormatMessage("DocumentWilBeAutomaticallyUnlocked", conf.getServerLocale(), new Object[]{dateUnlock});
             
             StringBuilder subject = new StringBuilder();
             subject.append(ItemUtils.getMessageLabel("YouNeedUnlockDocument", conf.getServerLocale())).append(" ").append(msgError);              
-            messagesFacade.createSystemMessage(adressee, subject.toString(), content, Collections.singletonMap("doc", doc));
+            messagesFacade.createSystemMessage(adressee, subject.toString(), content, Collections.singletonList(doc));
             countRemainingCycles--;
             attache.setCountRemainingCycles(countRemainingCycles);
             attacheFacade.edit(attache);

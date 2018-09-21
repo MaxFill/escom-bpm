@@ -54,8 +54,7 @@ import javax.xml.bind.JAXB;
  * @param <L>   //класс таблицы лога
  * @param <S>   //класс таблицы состояний
  */
-public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseLazyLoadFacade<T>{
-    private final Class<T> itemClass; 
+public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseLazyLoadFacade<T>{    
     private final Class<L> logClass; 
     private final Class<S> stateClass;
 
@@ -75,14 +74,9 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     protected UserFacade userFacade;
 
     public BaseDictFacade(Class<T> itemClass, Class<L> logClass, Class<S> stateClass) {
-        super(itemClass);
-        this.itemClass = itemClass;
+        super(itemClass);        
         this.logClass = logClass;
         this.stateClass = stateClass;
-    }
-
-    public Class<T> getItemClass(){
-        return itemClass;
     }
        
     public String getFRM_NAME(){
@@ -163,13 +157,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             LOGGER.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
-    }
-        
-    @Override
-    public void remove(T entity){
-        entity = getEntityManager().getReference(itemClass, entity.getId());
-        getEntityManager().remove(entity);
-    }
+    }        
 
     protected void detectParentOwner(T item, BaseDict parent, BaseDict owner){
         item.setOwner(owner);
@@ -229,10 +217,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return 
      */ 
     public List<T> findAll(User currentUser) {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass);        
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass);        
         Predicate crit1 = builder.equal(c.get("actual"), true);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
@@ -463,11 +451,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                     .collect(Collectors.toList());
     }
     
-    protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> entityClass, Map<String, Object> addParams) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+    protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> itemClass, Map<String, Object> addParams) {
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<EC> criteriaQuery = builder.createQuery(entityClass);
-        Root<EC> root = criteriaQuery.from(entityClass);
+        CriteriaQuery<EC> criteriaQuery = builder.createQuery(itemClass);
+        Root<EC> root = criteriaQuery.from(itemClass);
         
         criteriaQuery.orderBy(builder.asc(root.get("name")));
         
@@ -592,10 +580,10 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
      /* Возвращает только актуальные дочерние элементы для parent */
     public Stream<T> findActualChilds(T parent, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(entityClass);
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery<T> cq = builder.createQuery(entityClass);
-        Root<T> c = cq.from(entityClass);
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("parent"), parent);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         Predicate crit3 = builder.equal(c.get("actual"), true);

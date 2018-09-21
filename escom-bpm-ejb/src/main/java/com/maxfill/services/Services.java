@@ -8,6 +8,7 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
@@ -35,7 +36,6 @@ public class Services implements Serializable {
         
     @Id
     @Basic(optional = false)
-    @NotNull
     @GeneratedValue(strategy=TABLE, generator="ServicesIdGen")
     @Column(name = "Id")
     private Integer id;
@@ -63,7 +63,7 @@ public class Services implements Serializable {
     @Column(name = "TimeHandle")
     private byte[] timeHandle;
         
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId", fetch = FetchType.LAZY, orphanRemoval=true)
     private List<ServicesEvents> servicesEventsList;
         
     public Services() {

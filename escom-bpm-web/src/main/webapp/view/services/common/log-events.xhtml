@@ -5,24 +5,24 @@
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <p:dataTable id="tblLog"
-                 value="#{_bean.service.servicesEventsList}" var="item" 
+                 value="#{_bean.lazyDataModel}" var="item" lazy="true"
                  emptyMessage="#{bundle.EmptyTable}"
                  paginator="true" paginatorPosition="bottom"  
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                  currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                  rows="15" rowsPerPageTemplate="15, 25, 35, 50" 
                  tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                 rowKey="#{item.id}" sortBy="#{item.dateStart}"
+                 sortBy="#{item.dateStart}" sortOrder="descending"
                  selection="#{_bean.selectedEvent}" selectionMode="single">
 
         <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClck}" oncomplete="PF('dlgDetail').show();" update="logFRM"/> 
 
-        <p:column headerText="#{bundle.DateStart}" sortBy="#{item.dateStart}">
+        <p:column headerText="#{bundle.DateStart}" sortBy="#{item.dateStart}" width="90">
             <h:outputLabel value="#{item.dateStart}" >
                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
         </p:column>
-        <p:column headerText="#{bundle.DateFinish}" sortBy="#{item.dateFinish}" priority="3">
+        <p:column headerText="#{bundle.DateFinish}" sortBy="#{item.dateFinish}" width="90" priority="3">
             <h:outputLabel value="#{item.dateFinish}">
                 <f:convertDateTime pattern="dd.MM.yyyy HH:mm:ss" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
             </h:outputLabel>
@@ -33,7 +33,7 @@
         <p:column headerText="#{bundle.Result}" sortBy="#{item.result}" priority="2">
             #{item.result}
         </p:column>
-        <p:column headerText="" >
+        <p:column  >
             <p:commandButton icon="ui-icon-zoomin" title="#{bundle.View}"
                              update="logFRM"
                              actionListener="#{_bean.setSelectedEvent(item)}"

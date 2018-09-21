@@ -30,8 +30,8 @@
                         <p:ajax update="pnDateStart" event="valueChange" process="@this"/>
                     </p:selectOneRadio>
 
-                    <h:panelGrid id="pnDateStart" columns="2" styleClass="without-spaces">
-                        <p:outputLabel value="#{bundle.DateStart}:" indicateRequired="true"/>
+                    <h:panelGrid id="pnDateStart" columns="2" styleClass="without-spaces" >
+                        <p:outputLabel value="#{bundle.DateStart}:" indicateRequired="true" rendered="#{timerCardBean.procTimer.startType eq 'on_date'}" />
                         <p:calendar value="#{timerCardBean.procTimer.startDate}"                
                                     rendered="#{timerCardBean.procTimer.startType eq 'on_date'}"
                                     disabled="#{timerCardBean.procTimer.startType ne 'on_date'}"

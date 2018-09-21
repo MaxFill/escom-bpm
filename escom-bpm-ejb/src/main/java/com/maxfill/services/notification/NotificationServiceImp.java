@@ -1,5 +1,6 @@
 package com.maxfill.services.notification;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.staffs.StaffFacade;
@@ -23,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.commons.collections.CollectionUtils;
@@ -54,19 +56,30 @@ public class NotificationServiceImp implements NotificationService{
     }
 
     @Override
-    public void makeNotifications() {
+    public void makeNotifications(StringBuilder detailInfo) {        
         List<State> states = new ArrayList<>();
         states.add(stateFacade.getRunningState());
+        AtomicInteger countTask = new AtomicInteger(0);
         staffFacade.findActualStaff().stream()
                 .forEach(staff->{
                     taskFacade.findTaskByStaffStates(staff, states)
                             .stream()
                             .filter(task->task.getNextReminder() != null && task.getNextReminder().before(new Date()))
-                            .forEach(task->notification(task));
+                            .forEach(task->{
+                                countTask.incrementAndGet();
+                                notification(task);
+                            });
                 }
         );
+        detailInfo.append("Send task notifications: ").append(countTask).append(SysParams.LINE_SEPARATOR);
+        
         Set<String> errors = new HashSet<>();
-        procTimerFacade.findActualTimers().forEach(timer -> workflow.executeTimer(timer, errors));
+        AtomicInteger countTimers = new AtomicInteger(0);
+        procTimerFacade.findActualTimers().forEach(timer -> {
+                countTimers.incrementAndGet();
+                workflow.executeTimer(timer, errors);
+            });
+        detailInfo.append("Execute timers: ").append(countTimers).append(SysParams.LINE_SEPARATOR);
     }
 
     private void notification(Task task){        
@@ -89,17 +102,16 @@ public class NotificationServiceImp implements NotificationService{
         
         StringBuilder sb = new StringBuilder();
         sb.append(ItemUtils.getMessageLabel(msgKeySubject, locale));
-        sb.append(" <").append(task.getName()).append(">");
-        
-        Map<String, BaseDict> links = new HashMap<>();
-        links.put("task", task);
+        sb.append(" <").append(task.getName()).append(">");        
+        List<BaseDict> links = new ArrayList<>();
+        links.add(task);
         if (task.getScheme() != null && task.getScheme().getProcess() != null){
             Process process = task.getScheme().getProcess();
-            links.put("process", process);
+            links.add(process);
             List<Doc> docs = process.getDocs();
             if (CollectionUtils.isNotEmpty(docs)){
                 Doc doc = docs.stream().findFirst().orElse(null);
-                links.put("doc", doc);
+                links.add(doc);
             }
         }
         messagesFacade.createSystemMessage(task.getOwner().getEmployee(), sb.toString(), new StringBuilder(), links);

@@ -131,6 +131,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     }
     
     /* GETS & SETS */
+    
     public boolean isShowOnlyUnread() {
         return showOnlyUnread;
     }

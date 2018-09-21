@@ -1,6 +1,5 @@
 package com.maxfill.services.workflow;
 
-import com.maxfill.Configuration;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
@@ -38,14 +37,12 @@ import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
-import com.maxfill.utils.ItemUtils;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,8 +82,6 @@ public class WorkflowImpl implements Workflow {
     private NotificationService notificationService;
     @EJB
     private NumeratorService numeratorService;
-    @EJB
-    private Configuration config;
     @EJB
     private ProcTimerFacade procTimerFacade;
     @EJB
@@ -873,8 +868,9 @@ public class WorkflowImpl implements Workflow {
     /* *** УВЕДОМЛЕНИЯ  *** */
     
     private void sendMessage(Process process, MessageElem message, User user){        
-        StringBuilder sb = new StringBuilder();        
-        String subject = message.getContent();
+        StringBuilder sb = new StringBuilder();
+        sb.append(message.getContent());        
+        String subject = "NotifyFromProcess";
         processFacade.sendRoleMessage(process, message.getRecipientsJSON(), subject, sb, user);
     }
     

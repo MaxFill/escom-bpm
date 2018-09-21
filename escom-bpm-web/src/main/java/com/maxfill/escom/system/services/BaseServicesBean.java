@@ -2,12 +2,14 @@ package com.maxfill.escom.system.services;
 
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 
-import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.MsgUtils;
+import com.maxfill.facade.BaseLazyLoadFacade;
 import com.maxfill.services.ServicesFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
 import com.maxfill.services.common.history.ServicesEvents;
+import com.maxfill.services.common.history.ServicesEventsFacade;
 import com.maxfill.services.common.sheduler.Sheduler;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
@@ -21,6 +23,7 @@ import javax.xml.bind.JAXB;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,16 +31,17 @@ import java.util.logging.Logger;
  * Базовый бин для системных служб (сервисов)
  * @param <P> класс параметров службы
  */
-public abstract class BaseServicesBean<P> extends BaseViewBean{    
+public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{    
     private static final long serialVersionUID = -4590499571847393975L;
     protected static final Logger LOG = Logger.getLogger(BaseServicesBean.class.getName());
     
     @EJB
     private ServicesFacade servicesFacade;    
-
+    @EJB
+    private ServicesEventsFacade eventsFacade;
     
     protected Services service;
-    
+
     private P settings;
     private Sheduler scheduler;
     private ServicesEvents selectedEvent;
@@ -51,6 +55,17 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
         service = getServicesFacade().find(getSERVICE_ID()); 
         settings = createSettings(); 
         scheduler = createSheduler();
+    }
+    
+    @Override
+    protected BaseLazyLoadFacade getFacade() {
+        return eventsFacade;
+    }
+    
+    @Override
+    protected Map<String, Object> makeFilters(Map filters) {
+        filters.put("serviceId", service);    
+        return filters;
     }
     
     protected abstract P createSettings();
@@ -159,7 +174,7 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
     /**
      * Очистка журнала событий службы
      */
-    public void clearLogEvents(){
+    public void clearLogEvents(){        
         service.getServicesEventsList().clear();
         servicesFacade.edit(service);
     }
@@ -169,15 +184,17 @@ public abstract class BaseServicesBean<P> extends BaseViewBean{
      * @param logEvent
      */
     public void deleteLogEvent(ServicesEvents logEvent){
-        service.getServicesEventsList().remove(logEvent);
-        servicesFacade.edit(service);
+        deleteItem(logEvent);
+        //service.getServicesEventsList().remove(logEvent);
+        //servicesFacade.edit(service);
     }
 
     /**
      * Обновление журнала событий службы
      */
     public void refreshLogEvents(){
-        service = servicesFacade.find(service.getId());
+        refreshLazyData();
+        //service = servicesFacade.find(service.getId());
     }
     
     /**
