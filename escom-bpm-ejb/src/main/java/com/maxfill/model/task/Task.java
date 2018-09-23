@@ -71,6 +71,9 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @Temporal(TemporalType.TIMESTAMP)
     private Date factExecDate;
     
+    @Column(name="СonsidInProcReport")
+    private Boolean considInProcReport = true;
+    
     @Column(name="DeltaDeadLine")
     private Integer deltaDeadLine = 0;      //срок исполнения в секундах
     
@@ -182,10 +185,18 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         }
     }  
 
+    public Boolean getConsidInProcReport() {
+        return considInProcReport;
+    }
+    public void setConsidInProcReport(Boolean considInProcReport) {
+        this.considInProcReport = considInProcReport;
+    }
+    
     @Override
     public String getRegNumber() {
         return regNumber;
     }
+    @Override
     public void setRegNumber(String regNumber) {
         this.regNumber = regNumber;
     }        

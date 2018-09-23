@@ -196,4 +196,17 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="task_add_СonsidInProcReport" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="tasks" columnName="СonsidInProcReport" />
+            </not>
+        </preConditions>
+        <addColumn tableName="tasks">
+            <column name="СonsidInProcReport" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

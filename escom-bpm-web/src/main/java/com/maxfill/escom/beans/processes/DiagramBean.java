@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.processes;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -1015,11 +1016,13 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (workflow.createConnector(sourceAnchor, targetAnchor, scheme, label, errors) != null){  //если коннектор создался            
             if (StringUtils.isNotBlank(label)){
                 Connection connection = findConnection(sourcePoint, targetPoint);
-                connection.getOverlays().clear();
-                Overlay overlay = new LabelOverlay(MsgUtils.getBandleLabel(label), "flow-label", 0.5);
-                connection.getOverlays().add(overlay);
-                modelRefresh();
+                if (connection != null){
+                    connection.getOverlays().clear();
+                    Overlay overlay = new LabelOverlay(MsgUtils.getBandleLabel(label), "flow-label", 0.5);
+                    connection.getOverlays().add(overlay);                    
+                }    
             }
+            modelRefresh();
         }
 
         if (!errors.isEmpty()){
@@ -1133,18 +1136,19 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             if ((Boolean)result.a){
                 MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
                 return;
-            }
-            processTemplFacade.addLogEvent(selectedTempl, "ObjectCreate", getCurrentUser());
+            }            
             selectedTempl.setElements(scheme.getPackElements());            
             if (templs.isEmpty()){
                 selectedTempl.setIsDefault(Boolean.TRUE);
             }
             templs.add(selectedTempl);
-            processTypesFacade.edit(processType);
+            
+            processTemplFacade.create(selectedTempl);
+            processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CREATE_EVENT, getCurrentUser());
         } else {    //перезаписываем схему в существующий шаблон            
-            selectedTempl.setElements(scheme.getPackElements());
-            processTemplFacade.addLogEvent(selectedTempl, "ObjectModified", getCurrentUser());
-            processTemplFacade.edit(selectedTempl);            
+            selectedTempl.setElements(scheme.getPackElements());            
+            processTemplFacade.edit(selectedTempl);
+            processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CHANGE_EVENT, getCurrentUser());
         }
         templates = null; 
         process.setOwner(processType);

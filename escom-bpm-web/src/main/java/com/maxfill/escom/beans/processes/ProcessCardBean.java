@@ -157,6 +157,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks());
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
         scheme.getTasks().removeAll(forRemoveTasks);     
+        
+        /*
         List<ProcReport> removeRepors = forRemoveTasks.stream()
                 .map(task->process.getReports().stream()
                         .filter(report-> report.getDateCreate() == null 
@@ -164,16 +166,20 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                                 && !Objects.equals(curator, report.getExecutor()))
                         .findFirst().orElse(null))
                 .collect(Collectors.toList());
-                
-        //создаём записи в "листе согласования" для всех участников согласования из модели процесса        
-        Set<ProcReport> newReports = liveTasks.stream()
-                .filter(task->task.getOwner() != null)
-                .map(task -> new ProcReport(getCurrentUser(), task.getOwner(), process))
-                .collect(Collectors.toSet()); //список исполнителей из модели
+        */
         
-        Set<ProcReport> procReports = process.getReports();
-        procReports.removeAll(removeRepors);
-        procReports.addAll(newReports);        
+        //создаём записи в "листе согласования" для участников согласования из модели процесса        
+        Set<ProcReport> newReports = liveTasks.stream()
+                .filter(task->task.getOwner() != null && task.getConsidInProcReport())
+                .map(task -> new ProcReport(getCurrentUser(), task.getOwner(), process))
+                .collect(Collectors.toSet()); 
+
+        Set<ProcReport> procReports = process.getReports();        
+        List<ProcReport> removeRepors = procReports.stream()            
+                .filter(report-> report.getDateCreate() == null && !Objects.equals(curator, report.getExecutor()))                 
+                .collect(Collectors.toList());
+        procReports.removeAll(removeRepors);        
+        procReports.addAll(newReports);   
         
         //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
         List<ProcTimer> liveTimers = getProcTimersFromModel();
@@ -420,20 +426,32 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         List<Object> dataReport = process.getReports().stream()
                 .map(report -> {
                     String data = DateUtils.dateToString(report.getDateCreate(),  DateFormat.SHORT, null, getLocale());
+                    String dateBegin;
+                    if (report.getTask() != null){
+                        dateBegin = DateUtils.dateToString(report.getTask().getBeginDate(),  DateFormat.SHORT, null, getLocale());
+                    } else {
+                        dateBegin = data;
+                    }
                     String result = getLabelFromBundle(report.getStatus());
                     String fio = report.getExecutor().getFullName();
-                return new ConcordersData(fio, result, data);
+                return new ConcordersData(fio, result, data, dateBegin);
              }).collect(Collectors.toList());        
         StringBuilder docName = new StringBuilder();
         StringBuilder docNumber = new StringBuilder();
+        String partnerName = "";
         List<Doc> docs = process.getDocs();
         if (!docs.isEmpty()){
             Doc doc = docs.get(0);            
             docName.append(doc.getFullName());
             docNumber.append(doc.getRegInfo(getLocale()));
-        }
+            partnerName = doc.getPartner().getFullName();
+        }        
         params.put("DOC_NAME", docName.toString());
         params.put("DOC_NUMBER", docNumber.toString());   
+        params.put("PARTNER_NAME", partnerName);  
+        params.put("CURATOR_NAME", process.getCurator().getFullName());  
+        params.put("PROCESS_NUMBER", process.getRegNumber());  
+        params.put("PROCESS_DATE", process.getItemDate());  
         printService.doPrint(dataReport, params, DictPrintTempl.REPORT_CONCORDER_LIST);
         sessionBean.onViewReport(DictPrintTempl.REPORT_CONCORDER_LIST);
     }
@@ -511,11 +529,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         private final String fio;
         private final String result;
         private final String date;
+        private final String dateBegin;
         
-        public ConcordersData(String fio, String result, String date) {
+        public ConcordersData(String fio, String result, String date, String dateBegin) {
             this.fio = fio;
             this.result = result;
             this.date = date;
+            this.dateBegin = dateBegin;
         }
 
         public String getFio() {
@@ -528,6 +548,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
         public String getDate() {
             return date;
+        }
+        
+        public String getDateBegin(){
+            return dateBegin;
         }
     }
 }

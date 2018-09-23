@@ -426,9 +426,13 @@ public class WorkflowImpl implements Workflow {
             //Запись отчёта по задаче
             TaskReport taskReport = new TaskReport(task.getComment(), DictReportStatuses.REPORT_ACTUAL, currentUser, task);
             task.getReports().add(taskReport);
-                        
-            updateReportStatus(process, task.getOwner(), task.getResult(), currentUser);            
-                                
+            
+            //Внесение инф. в отчёт по процессу
+            if (task.getConsidInProcReport()){
+                ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getResult(), currentUser);
+                procReport.setTask(task);
+            }
+
             run(process, startElement, currentUser, params, errors);
             processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
         }
@@ -455,18 +459,18 @@ public class WorkflowImpl implements Workflow {
      * @param status
      * @param currentUser 
      */
-    private void updateReportStatus(Process process, Staff staff, String status, User currentUser){
-        if (staff == null) return;
+    private ProcReport updateReportStatus(Process process, Staff staff, String status, User currentUser){        
         ProcReport procReport = process.getReports().stream()
                     .filter(report-> Objects.equals(staff, report.getExecutor()))
                     .findFirst()
                     .orElse(new ProcReport(currentUser, staff, process));
         procReport.setStatus(status);
-        procReport.setDateCreate(new Date());
+        procReport.setDateCreate(new Date());        
         Doc doc = process.getDocument(); //запись в отчёт версии, за которую проголосовал 
         if (doc != null){
             procReport.setVersion(doc.getMainAttache());
         }
+        return procReport;
     }
     
     /**
@@ -521,7 +525,10 @@ public class WorkflowImpl implements Workflow {
         process.setBeginDate(new Date());
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);
+        
+        //обновление инф в листе согласования по текущему согласующему
         updateReportStatus(process, currentUser.getStaff(), DictResults.RESULT_AGREED, currentUser);
+        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, currentUser);
         run(process, startElement, currentUser, params, errors);
     }
@@ -1026,6 +1033,8 @@ public class WorkflowImpl implements Workflow {
     @Asynchronous
     @Override    
     public void replaceReportExecutor(Task task, User user){
+        if (!task.getConsidInProcReport()) return;
+        
         Scheme scheme = task.getScheme();
         if (scheme == null) return;        
         

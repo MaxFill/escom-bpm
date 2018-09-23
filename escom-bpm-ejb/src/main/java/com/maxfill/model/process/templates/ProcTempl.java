@@ -2,8 +2,6 @@ package com.maxfill.model.process.templates;
 
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.process.types.ProcessType;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -14,7 +12,6 @@ import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;

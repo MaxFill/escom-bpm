@@ -1,9 +1,7 @@
 package com.maxfill.model.process.reports;
 
-import com.maxfill.dictionary.DictResults;
 import com.maxfill.model.Dict;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
@@ -26,7 +24,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Отчёт по исполнению процесса"
@@ -63,11 +60,16 @@ public class ProcReport implements Serializable, Dict{
     @XmlTransient    
     @JoinColumn(name = "Process", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Process process;          
+    private Process process;
+    
+    @XmlTransient    
+    @JoinColumn(name = "Task", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Task task;
     
     @JoinColumn(name = "Version", referencedColumnName = "Id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Attaches version; 
+    private Attaches version;         
         
     @Basic(optional = false)
     @Column(name = "DateCreate")
@@ -142,7 +144,7 @@ public class ProcReport implements Serializable, Dict{
     public void setProcess(Process process) {
         this.process = process;
     }
-
+    
     public Staff getExecutor() {
         return executor;
     }
@@ -155,6 +157,13 @@ public class ProcReport implements Serializable, Dict{
     }
     public void setVersion(Attaches version) {
         this.version = version;
+    }    
+
+    public Task getTask() {
+        return task;
+    }
+    public void setTask(Task task) {
+        this.task = task;
     }    
     
     public Integer getTempId() {

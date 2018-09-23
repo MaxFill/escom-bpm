@@ -140,7 +140,14 @@
                     </p:panelGrid>
                 </p:panelGrid>
                 <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
-
+                                     
+                <p:selectBooleanCheckbox value="#{taskCardBean.editedItem.considInProcReport}" 
+                                         itemLabel="#{bundle.EnterInApprovalSheet}" 
+                                         rendered="#{taskCardBean.editedItem.scheme != null}"
+                                         disabled="#{_bean.isReadOnly()}">
+                    <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                </p:selectBooleanCheckbox>
+        
                 <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" >
                     <p:commandLink  value="#{bundle.GoToProcess}"
                                     rendered="#{taskCardBean.sourceBean == null}"

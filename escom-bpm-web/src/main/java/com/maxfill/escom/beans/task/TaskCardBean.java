@@ -309,6 +309,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     
     private void replaceReportExecutor(Task task, User user){
         if (sourceBean instanceof ProcessCardBean){
+            if (!task.getConsidInProcReport()) return;
             Scheme scheme = task.getScheme();
             if (scheme == null) return;        
 
