@@ -1,5 +1,6 @@
 package com.maxfill.model.attaches;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.EscomUtils;
@@ -29,7 +30,7 @@ import org.apache.commons.lang.StringUtils;
 /* Вложения */
 @Entity
 @Table(name = "attaches")
-public class Attaches implements Serializable {
+public class Attaches implements Serializable, Dict {
     private static final long serialVersionUID = -4633936978772232516L;
 
     @TableGenerator(

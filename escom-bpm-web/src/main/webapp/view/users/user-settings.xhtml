@@ -67,8 +67,7 @@
                     </p:panelGrid>
 
                     <p:separator/>
-                    <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"
-                            update="mainFRM"
+                    <p:commandButton id="btnMake" icon="ui-icon-circle-check" value="#{bundle.ChangePassword}"                            
                             rendered="#{!sessionBean.currentUser.LDAPname.isEmpty()}"
                             actionListener="#{userSettingsBean.onChangePassword()}">
                         <f:param name="isRequired" value="true"/>

@@ -108,10 +108,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Assistant> chiefs = new ArrayList<>();
-     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<UserLog> itemLogs = new ArrayList<>();
-        
+            
     /* Штатная единица */
     @OneToOne(optional = false)
     @JoinColumn(name = "Staff", referencedColumnName = "Id")
@@ -369,16 +366,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     }
     public void setDoubleFactorAuth(boolean doubleFactorAuth) {
         this.doubleFactorAuth = doubleFactorAuth;
-    }
-
-    @Override
-    public List<User> getDetailItems() {
-        return null;
-    }
-    
-    @Override
-    public List<User> getChildItems() {
-        return null;
     }
     
     @Override

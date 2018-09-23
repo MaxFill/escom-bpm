@@ -107,10 +107,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL, orphanRemoval=true)
     private Scheme scheme = new Scheme(this);
-        
-    /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<ProcessLog> itemLogs = new ArrayList<>();
 
     /* Отчёты по исполнению */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, mappedBy = "process")

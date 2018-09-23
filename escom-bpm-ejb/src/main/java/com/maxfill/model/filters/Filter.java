@@ -39,10 +39,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     @GeneratedValue(strategy=TABLE, generator="FiltersIdGen")
     @Column(name = "Id")
     private Integer id;    
-    
-    @OneToMany
-    @JoinColumn(name = "parent")
-    private List<Filter> childItems;
         
     @Column(name = "Icon")
     private String icon;
@@ -50,9 +46,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     @JoinColumn(name = "Metadates", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Metadates metadates;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<FilterLog> itemLogs = new ArrayList<>();
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
@@ -79,15 +72,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     public void setId(Integer id) {
         this.id = id;
     }
-
-    @Override
-    public List<Filter> getChildItems() {
-        return childItems;
-    }
-    @Override
-    public void setChildItems(List<Filter> childItems) {
-        this.childItems = childItems;
-    }
     
     public String getIcon() {
         return icon;
@@ -102,6 +86,8 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     public void setMetadates(Metadates metadates) {
         this.metadates = metadates;
     }
+    
+    /* *** *** */
     
     @Override
     public int hashCode() {

@@ -1,7 +1,7 @@
 package com.maxfill.model.authlog;
 
 import com.maxfill.dictionary.DictLogEvents;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -10,7 +10,7 @@ import java.util.*;
 
 /* Фасад таблицы журнала аутентификации пользователей Authlog */
 @Stateless
-public class AuthLogFacade extends BaseLazyLoadFacade<Authlog>{
+public class AuthLogFacade extends BaseLazyFacade<Authlog>{
     public AuthLogFacade() {
         super(Authlog.class);
     }

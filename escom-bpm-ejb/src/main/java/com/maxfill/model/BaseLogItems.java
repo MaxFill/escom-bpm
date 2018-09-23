@@ -4,6 +4,7 @@ import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
@@ -40,7 +41,7 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable, 
     
     @XmlTransient
     @JoinColumn(name = "Item", referencedColumnName = "ID")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private M item;
         
     @XmlTransient
@@ -50,7 +51,7 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable, 
     
     @XmlTransient
     @JoinColumn(name = "UserId", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User userId;
     
     @Override

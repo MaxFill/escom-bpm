@@ -46,10 +46,7 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     private Integer id;
 
     @Column(name = "BundleName")
-    private String bundleName;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<StatusesDocLog> itemLogs = new ArrayList<>();            
+    private String bundleName;           
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")

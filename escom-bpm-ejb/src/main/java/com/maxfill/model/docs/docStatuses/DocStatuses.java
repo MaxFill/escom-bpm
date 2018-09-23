@@ -1,5 +1,6 @@
 package com.maxfill.model.docs.docStatuses;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.users.User;
@@ -21,7 +22,7 @@ import javax.persistence.TemporalType;
 /* Список статусов со своими значениями в документе. Подчинённая таблица к документам */
 @Entity
 @Table(name = "docsStatus")
-public class DocStatuses implements Serializable {
+public class DocStatuses implements Serializable, Dict {
     private static final long serialVersionUID = -6573535287409441895L;
     
     @TableGenerator(

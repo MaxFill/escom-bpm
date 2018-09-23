@@ -11,12 +11,6 @@ import javax.ejb.Stateless;
 @Stateless
 public class DocStatusFacade extends BaseFacade<DocStatuses>{
     
-    @Override
-    public void remove(DocStatuses entity){
-        entity = getEntityManager().getReference(DocStatuses.class, entity.getId());
-        getEntityManager().remove(entity);
-    }
-    
     public DocStatusFacade() {
         super(DocStatuses.class);
     }

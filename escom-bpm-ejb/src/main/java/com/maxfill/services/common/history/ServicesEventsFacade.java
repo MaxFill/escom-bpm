@@ -1,6 +1,6 @@
 package com.maxfill.services.common.history;
 
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import javax.ejb.Stateless;
 
 /**
@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
  * @author Maxim
  */
 @Stateless
-public class ServicesEventsFacade extends BaseLazyLoadFacade<ServicesEvents> {
+public class ServicesEventsFacade extends BaseLazyFacade<ServicesEvents> {
 
     public ServicesEventsFacade() {
         super(ServicesEvents.class);

@@ -5,8 +5,13 @@ import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.users.groups.UserGroupsBean;
 import com.maxfill.escom.utils.MsgUtils;
+import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.attaches.AttacheFacade;
+import com.maxfill.model.docs.DocFacade;
+import com.maxfill.model.partners.PartnersFacade;
+import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.groups.UserGroups;
 import org.primefaces.PrimeFaces;
@@ -20,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.ejb.EJB;
 
 /* Сервисный бин "Пользователи" */
 @Named
@@ -27,6 +33,15 @@ import java.util.stream.Collectors;
 public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
     private static final long serialVersionUID = -523024840800823503L;
 
+    @EJB
+    private DocFacade docFacade;
+    @EJB
+    private ProcessFacade processFacade;
+    @EJB
+    private PartnersFacade partnersFacade;
+    @EJB
+    private AttacheFacade attacheFacade;
+    
     @Inject
     private UserGroupsBean groupsBean;  
     
@@ -112,7 +127,22 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if (user.getId().equals(0)){
             errors.add("OperationIsNotApplicable");
         }
-        if(!staffFacade.findStaffsByUser(user).isEmpty()) {
+        if (docFacade.findCountUserLinks(user) > 0 || attacheFacade.findCountUserLinks(user) > 0) {
+            Object[] messageParameters = new Object[]{user.getName()};
+            String error = MessageFormat.format(getMessageLabel("UserUsedInDocs"), messageParameters);
+            errors.add(error);
+        }
+        if (processFacade.findCountUserLinks(user) > 0 ) {
+            Object[] messageParameters = new Object[]{user.getName()};
+            String error = MessageFormat.format(getMessageLabel("UserUsedInProcesses"), messageParameters);
+            errors.add(error);
+        }
+        if (partnersFacade.findCountUserLinks(user) > 0 ) {
+            Object[] messageParameters = new Object[]{user.getName()};
+            String error = MessageFormat.format(getMessageLabel("UserUsedInPartneres"), messageParameters);
+            errors.add(error);
+        }        
+        if(!staffFacade.findStaffsByUser(user).isEmpty() || staffFacade.findCountUserLinks(user) > 0 ) {
             Object[] messageParameters = new Object[]{user.getShortFIO()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("UserUsedInStaffs"), messageParameters);
             errors.add(error);

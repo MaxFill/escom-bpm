@@ -6,7 +6,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.authlog.AuthLogFacade;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.authlog.Authlog;
 import com.maxfill.utils.DateUtils;
 import javax.ejb.EJB;
@@ -48,7 +48,7 @@ public class AuthLogBean extends LazyLoadBean{
     }
 
     @Override
-    protected BaseLazyLoadFacade getLazyFacade() {
+    protected BaseLazyFacade getLazyFacade() {
         return authLogFacade;
     }
 

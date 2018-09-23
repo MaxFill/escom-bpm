@@ -12,6 +12,7 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.users.User;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -153,4 +154,5 @@ public class PartnersFacade extends BaseDictFacade<Partner, PartnerGroups, Partn
         Query query = getEntityManager().createQuery(update);
         return query.executeUpdate();
     }
+
 }

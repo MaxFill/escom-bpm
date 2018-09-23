@@ -1,30 +1,25 @@
 package com.maxfill.services;
 
-import com.maxfill.services.common.history.ServicesEvents;
+import com.maxfill.model.Dict;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /*  Сущность "Системная служба (сервис)" */
 @Entity
 @Table(name = "services")
-public class Services implements Serializable {
+public class Services implements Serializable, Dict {
     private static final long serialVersionUID = -4878024303594842658L;
     
     @TableGenerator(

@@ -1,6 +1,7 @@
 
 package com.maxfill.model.favorites;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
@@ -23,7 +24,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "favoriteObj")
 
-public class FavoriteObj implements Serializable {
+public class FavoriteObj implements Serializable, Dict {
     private static final long serialVersionUID = -1429047840316849297L;
 
     @TableGenerator(

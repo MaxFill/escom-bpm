@@ -1,5 +1,6 @@
 package com.maxfill.model.states;
 
+import com.maxfill.model.Dict;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -16,7 +17,7 @@ import javax.xml.bind.annotation.*;
 @Table(name = "states")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public class State implements Serializable{    
+public class State implements Serializable, Dict{    
     private static final long serialVersionUID = 311429207470166273L;       
 
     @TableGenerator(
@@ -52,9 +53,11 @@ public class State implements Serializable{
     public State() {
     }    
 
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

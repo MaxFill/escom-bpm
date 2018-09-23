@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
  * Фасад для сущности "Состояния обектов"
  */
 @Stateless
-public class StateFacade extends BaseFacade{
+public class StateFacade extends BaseFacade<State>{
 
     public StateFacade() {
         super(State.class);

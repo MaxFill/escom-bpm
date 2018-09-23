@@ -4,7 +4,7 @@ import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.services.ServicesFacade;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.Services;
@@ -58,7 +58,7 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
     }
     
     @Override
-    protected BaseLazyLoadFacade getLazyFacade() {
+    protected BaseLazyFacade getLazyFacade() {
         return eventsFacade;
     }
     

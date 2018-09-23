@@ -1,5 +1,6 @@
 package com.maxfill.facade;
 
+import com.maxfill.model.Dict;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +16,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 /* Абстрактный фасад  */
-public abstract class BaseFacade<T> {
+public abstract class BaseFacade<T extends Dict> {
     protected final Class<T> itemClass;
     protected static final Logger LOGGER = Logger.getLogger(BaseFacade.class.getName());
     
@@ -65,6 +66,7 @@ public abstract class BaseFacade<T> {
     }
 
     public void remove(T entity) {
+        entity = getEntityManager().getReference(itemClass, entity.getId());
         getEntityManager().remove(entity);
     }
 

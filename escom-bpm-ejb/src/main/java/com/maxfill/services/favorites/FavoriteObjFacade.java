@@ -20,13 +20,7 @@ public class FavoriteObjFacade extends BaseFacade<FavoriteObj>{
 
     public FavoriteObjFacade() {
         super(FavoriteObj.class);
-    }
-    
-    @Override
-    public void remove(FavoriteObj entity){
-        entity = getEntityManager().getReference(FavoriteObj.class, entity.getId());
-        getEntityManager().remove(entity);
-    }
+    }    
     
     public List<FavoriteObj> findFavoriteObj(Integer itemId, Metadates metadatesObj, User user){
         getEntityManager().getEntityManagerFactory().getCache().evict(FavoriteObj.class);

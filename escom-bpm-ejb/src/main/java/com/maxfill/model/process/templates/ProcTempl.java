@@ -56,10 +56,6 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private ProcTemplStates state;
-    
-    /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<ProcTemplLog> itemLogs = new ArrayList<>();
 
     public ProcTempl() {
     }

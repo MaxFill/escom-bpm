@@ -15,6 +15,7 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
+import org.primefaces.PrimeFaces;
 
 /* Персональные настройки пользователя  */
 @Named

@@ -58,9 +58,6 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     @JoinColumn(name = "owner")
     private List<Staff> detailItems = new ArrayList<>();
         
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<DepartamentLog> itemLogs = new ArrayList<>();
-        
     @Basic(optional = false)
     @Size(max=50)
     @Column(name = "Code")
@@ -123,6 +120,7 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
         this.owner = owner;
     }
 
+    @Override
     public String getCode() {
         return code;
     }

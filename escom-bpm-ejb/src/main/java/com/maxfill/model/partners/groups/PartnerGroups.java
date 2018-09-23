@@ -54,9 +54,6 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
         
     @ManyToMany(mappedBy = "partnersGroupsList", fetch = FetchType.EAGER)
     private List<Partner> partnersList = new ArrayList<>();
-        
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<PartnerGroupsLog> itemLogs = new ArrayList<>();
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")

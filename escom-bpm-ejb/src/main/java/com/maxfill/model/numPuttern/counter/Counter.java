@@ -1,5 +1,6 @@
 package com.maxfill.model.numPuttern.counter;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.docsTypes.DocType;
 import java.io.Serializable;
@@ -18,7 +19,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "numerator")
-public class Counter implements Serializable {
+public class Counter implements Serializable, Dict {
     private static final long serialVersionUID = -8832941995816832839L;
 
     @TableGenerator(
@@ -92,10 +93,11 @@ public class Counter implements Serializable {
         this.number = number;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
-
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

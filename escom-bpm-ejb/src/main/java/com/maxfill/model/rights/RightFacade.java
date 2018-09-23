@@ -1,12 +1,8 @@
 package com.maxfill.model.rights;
 
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.Right;
-import com.maxfill.model.rights.Rights;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,12 +15,6 @@ import java.util.List;
 public class RightFacade extends BaseFacade<Right>{
     public RightFacade() {
         super(Right.class);
-    }
-    
-    @Override
-    public void remove(Right entity){
-        entity = getEntityManager().getReference(Right.class, entity.getId());
-        getEntityManager().remove(entity);
     }
     
     /* Отбирает из базы дефолтные права объекта */

@@ -69,9 +69,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @Column(name = "Guide")
     private String guide;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<DocTypeLog> itemLogs = new ArrayList<>();
-    
     @JoinTable(name = "docsTypesStatuses", joinColumns = {
         @JoinColumn(name = "DocType", referencedColumnName = "Id")}, inverseJoinColumns = {
         @JoinColumn(name = "DocStatus", referencedColumnName = "ID")})
@@ -142,17 +139,7 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-    
-    @Override
-    public List<DocType> getDetailItems() {
-        return null;
-    }
-    
-    @Override
-    public List<DocType> getChildItems() {
-        return null;
-    }
+    }    
     
     /* *** *** */
     @Override

@@ -41,10 +41,6 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     @GeneratedValue(strategy = TABLE, generator = "IdResultGen")
     @Column(name = "Id")
     private Integer id;    
-      
-    @XmlTransient
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<ResultLog> itemLogs = new ArrayList<>();
         
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")

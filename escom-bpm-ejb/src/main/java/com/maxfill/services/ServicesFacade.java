@@ -1,6 +1,5 @@
 package com.maxfill.services;
 
-import com.maxfill.services.Services;
 import com.maxfill.facade.BaseFacade;
 import javax.ejb.Stateless;
 

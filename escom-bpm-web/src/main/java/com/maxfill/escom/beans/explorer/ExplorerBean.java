@@ -22,7 +22,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.docs.attaches.AttacheBean;
 import com.maxfill.escom.utils.EscomFileUtils;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.metadates.Metadates;
 import com.maxfill.services.searche.SearcheService;
 import java.io.IOException;
@@ -1990,7 +1990,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
 
     @Override
-    protected BaseLazyLoadFacade getLazyFacade() {
+    protected BaseLazyFacade getLazyFacade() {
         return getItemBean(currentItem).getLazyFacade();
     }
 }

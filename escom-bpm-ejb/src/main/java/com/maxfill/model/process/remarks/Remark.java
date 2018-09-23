@@ -60,9 +60,6 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private RemarkStates state;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<RemarkLog> itemLogs = new ArrayList<>(); 
-    
     @Basic(optional = false)
     @Column(name = "Checked")
     private boolean checked;

@@ -43,9 +43,6 @@ public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTy
     @Size(max = 256)
     private String fullName;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<PartnerTypesLog> itemLogs = new ArrayList<>();
-    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)

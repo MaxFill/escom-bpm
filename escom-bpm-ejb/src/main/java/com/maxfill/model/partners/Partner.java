@@ -82,9 +82,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "partner")
     private List<PartnersContacts> partnersContactsList = new ArrayList<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<PartnersLog> itemLogs = new ArrayList<>();
-    
     @Transient
     @XmlTransient
     private Integer templRegNumber; //номер регистрационный, сохраняется только на время регистрации для отката
@@ -206,16 +203,8 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     public void setId(Integer id) {
         this.id = id;
     }
-    
-    @Override
-    public List<Partner> getDetailItems() {
-        return null;
-    }
-    
-    @Override
-    public List<Partner> getChildItems() {
-        return null;
-    }
+
+    /* *** *** */
     
     @Override
     public int hashCode() {

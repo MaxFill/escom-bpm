@@ -39,6 +39,7 @@ import javax.ejb.EJB;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
@@ -56,7 +57,7 @@ import org.apache.commons.lang3.StringUtils;
  * @param <L>   //класс таблицы лога
  * @param <S>   //класс таблицы состояний
  */
-public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseLazyLoadFacade<T>{    
+public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L extends BaseLogItems, S extends BaseStateItem> extends BaseLazyFacade<T>{    
     private final Class<L> logClass; 
     private final Class<S> stateClass;
 
@@ -81,6 +82,12 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         this.stateClass = stateClass;
     }        
     
+    @Override
+    public void remove(T entity){
+        removeItemLogs(entity);
+        super.remove(entity);
+    }
+        
     public String getFRM_NAME(){
         return itemClass.getSimpleName().toLowerCase();
     }
@@ -485,6 +492,21 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         
     }          
 
+    /**
+     * Очистка журнала объекта
+     * @param filters
+     * @return 
+     */
+    private int removeItemLogs(T entity){        
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaDelete cd = builder.createCriteriaDelete(logClass);
+        Root<L> root = cd.from(logClass);
+        Predicate crit1 = builder.equal(root.get("item"), entity);
+        cd.where(builder.and(crit1));
+        Query query = getEntityManager().createQuery(cd);
+        return query.executeUpdate();    
+    }
+            
     /* ПОИСК из формы поиска */
 
     public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
@@ -953,5 +975,25 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      */
     protected boolean checkUserInRole(T item, Integer groupId, User user){
         return false;
+    }
+    
+    /**
+     * Возвращает колво записей, в котороых пользователь является автором
+     * @param user
+     * @return 
+     */
+    public Long findCountUserLinks(User user){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root root = cq.from(itemClass);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("author"), user));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
     }
 }

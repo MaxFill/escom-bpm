@@ -454,8 +454,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         cq.select(builder.count(root)).where(builder.and(predicates));
         Query query = getEntityManager().createQuery(cq);  
         return (Long) query.getSingleResult();
-    }
-    
+    }    
+        
     @Override
     protected Integer getMetadatesObjId() {
         return DictMetadatesIds.OBJ_DOCS; 

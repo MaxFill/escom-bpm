@@ -101,11 +101,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     
     /* Версии файлов  */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "doc", fetch = FetchType.LAZY)
-    private List<Attaches> attachesList = new ArrayList<>();
-    
-    /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
-    private List<DocLog> itemLogs = new ArrayList<>();     
+    private List<Attaches> attachesList = new ArrayList<>();  
     
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -190,11 +186,6 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     @Override
     public void setDetailItems(List<Remark> detailItems) {
         this.detailItems = detailItems;
-    }
-    
-    @Override
-    public List<Doc> getChildItems() {
-        return null;
     }
         
     @Override

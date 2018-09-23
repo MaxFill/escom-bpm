@@ -3,7 +3,7 @@ package com.maxfill.escom.beans.core.lazyload;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.BaseDict;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,7 +41,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     protected Date dateEnd;
     protected Map<String,Object> filters = new HashMap <>();
 
-    protected abstract BaseLazyLoadFacade getLazyFacade();    
+    protected abstract BaseLazyFacade getLazyFacade();    
     
     protected final Map<String, Function<BaseDict, ?>> extractors = new HashMap<>();          
 

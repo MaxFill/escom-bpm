@@ -127,10 +127,6 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private TaskStates state;
 
-    /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<TaskLog> itemLogs = new ArrayList<>();
-
     @Transient
     @XmlTransient
     private final Integer tempId;

@@ -4,6 +4,8 @@ import com.maxfill.facade.BaseFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.attaches.Attaches_;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.users.User;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -14,20 +16,14 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/* Вложения */
+/* Фасад для сущности "Вложения" */
 @Stateless
-public class AttacheFacade extends BaseFacade<Attaches>{
-    
-    @Override
-    public void remove(Attaches entity){
-        entity = getEntityManager().getReference(Attaches.class, entity.getId());
-        getEntityManager().remove(entity);
-    }
+public class AttacheFacade extends BaseFacade<Attaches>{    
     
     public AttacheFacade() {
         super(Attaches.class);
     }
- 
+    
     /* Находит текущую версию вложения для документа */
     public Attaches findCurrentAttacheByDoc(Doc doc){
         getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
@@ -86,5 +82,25 @@ public class AttacheFacade extends BaseFacade<Attaches>{
                 .filter(attacheVersion -> attacheVersion.getCurrent())
                 .forEach(attacheVersion -> attacheVersion.setCurrent(false));
         doc.getAttachesList().add(attache);                
+    }
+    
+    /**
+     * Возвращает колво записей, в котороых пользователь является автором
+     * @param user
+     * @return 
+     */
+    public Long findCountUserLinks(User user){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root root = cq.from(itemClass);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("author"), user));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
     }
 }

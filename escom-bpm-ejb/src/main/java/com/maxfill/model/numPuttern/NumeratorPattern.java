@@ -78,9 +78,6 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
     @OneToMany(mappedBy = "numerator")
     private List<DocType> docTypeList;    
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<NumeratorPatternLog> itemLogs = new ArrayList<>();
-    
     public NumeratorPattern() {
     }
 

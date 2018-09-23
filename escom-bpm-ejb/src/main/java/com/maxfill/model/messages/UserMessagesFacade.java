@@ -2,7 +2,7 @@ package com.maxfill.model.messages;
 
 import com.maxfill.Configuration;
 import com.maxfill.services.mail.MailBoxFacade;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.docs.Doc;
@@ -27,7 +27,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 
 @Stateless
-public class UserMessagesFacade extends BaseLazyLoadFacade<UserMessages>{
+public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
 
     @EJB
     private Configuration conf;

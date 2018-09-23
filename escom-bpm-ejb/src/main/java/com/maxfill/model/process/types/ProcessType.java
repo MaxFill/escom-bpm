@@ -57,10 +57,6 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private ProcessTypeStates state;
 
-    /* Лог */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<ProcessTypeLog> itemLogs = new ArrayList<>();
-
     public ProcessType() {
     }
     

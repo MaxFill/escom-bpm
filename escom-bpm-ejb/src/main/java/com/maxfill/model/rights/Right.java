@@ -1,5 +1,6 @@
 package com.maxfill.model.rights;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.states.State;
 import com.maxfill.model.metadates.Metadates;
 import java.io.Serializable;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "access")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public class Right implements Serializable{
+public class Right implements Serializable, Dict{
     private static final long serialVersionUID = -6841901267921264389L;
       
     @Id
@@ -142,9 +143,11 @@ public class Right implements Serializable{
         this.icon = icon;
     }
         
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

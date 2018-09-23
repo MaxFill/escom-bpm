@@ -1,5 +1,6 @@
 package com.maxfill.model.process.procedures;
 
+import com.maxfill.model.Dict;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -16,7 +17,7 @@ import javax.persistence.TableGenerator;
  */
 @Entity
 @Table(name = "procedures")
-public class Procedure implements Serializable{    
+public class Procedure implements Serializable, Dict{    
     private static final long serialVersionUID = -2268453924468245579L;
     
      @TableGenerator(

@@ -1,5 +1,6 @@
 package com.maxfill.model.core.forms;
 
+import com.maxfill.model.Dict;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -19,7 +20,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "formsSettings",
         indexes = {@Index(name="FormsDefSettings_INDEX", columnList = "Name", unique = true)})
-public class FormsSettings implements Serializable{    
+public class FormsSettings implements Serializable, Dict{    
     private static final long serialVersionUID = -3746491857350793872L;
     
     @Id

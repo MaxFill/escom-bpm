@@ -1,5 +1,6 @@
 package com.maxfill.model.process.timers;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.Scheme;
 import java.io.Serializable;
@@ -25,7 +26,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "processTimers")
-public class ProcTimer implements Serializable {
+public class ProcTimer implements Serializable, Dict {
     private static final long serialVersionUID = -1228064449198654818L;
     
     @TableGenerator(

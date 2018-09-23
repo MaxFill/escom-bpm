@@ -48,9 +48,6 @@ private static final long serialVersionUID = -2116686297842684933L;
     @JoinColumn(name = "owner")
     private List<DocType> detailItems = new ArrayList<>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<DocTypeGroupsLog> itemLogs = new ArrayList<>();
-    
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)

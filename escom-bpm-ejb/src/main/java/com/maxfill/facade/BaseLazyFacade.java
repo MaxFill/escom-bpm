@@ -11,16 +11,10 @@ import java.util.*;
  * Абстрактный фасад для работы с ленивой загрузки списков данных из таблиц БД
  * @param <T>
  */
-public abstract class BaseLazyLoadFacade<T extends Dict> extends BaseFacade<T>{
+public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
 
-    public BaseLazyLoadFacade(Class<T> itemClass){
+    public BaseLazyFacade(Class<T> itemClass){
         super(itemClass);
-    }
-
-    @Override
-    public void remove(T entity){
-        entity = getEntityManager().getReference(itemClass, entity.getId());
-        getEntityManager().remove(entity);
     }
     
     /**
@@ -144,5 +138,4 @@ public abstract class BaseLazyLoadFacade<T extends Dict> extends BaseFacade<T>{
         predicates = criteries.toArray(predicates);
         return predicates;
     }
-
 }

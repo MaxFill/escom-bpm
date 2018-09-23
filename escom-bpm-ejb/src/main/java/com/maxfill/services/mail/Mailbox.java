@@ -1,5 +1,6 @@
 package com.maxfill.services.mail;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.users.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -28,7 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "mailbox")
 @NamedQueries({
     @NamedQuery(name = "Mailbox.findAll", query = "SELECT m FROM Mailbox m")})
-public class Mailbox implements Serializable {
+public class Mailbox implements Serializable, Dict {
     private static final long serialVersionUID = 7057744852693399572L;
 
     @TableGenerator(
@@ -86,9 +87,11 @@ public class Mailbox implements Serializable {
     public Mailbox() {
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

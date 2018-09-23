@@ -1,8 +1,6 @@
 package com.maxfill.services.mail;
 
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.users.User;
-import com.maxfill.services.mail.Mailbox;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.util.Date;
@@ -31,12 +29,6 @@ public class MailBoxFacade extends BaseFacade<Mailbox>{
         cq.select(c).where(builder.and(crit1));
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList(); 
-    }
-
-    @Override
-    public void remove(Mailbox message) {
-        message = getEntityManager().getReference(Mailbox.class, message.getId());
-        getEntityManager().remove(message);
     }
     
     public void createMailBox(String subject, String adresses, String sender, String content, String authorName){

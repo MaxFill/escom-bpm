@@ -45,9 +45,4 @@ public class CounterFacade extends BaseFacade<Counter>{
         return q.getResultList(); 
     }
     
-    @Override
-    public void remove(Counter entity){
-        entity = getEntityManager().getReference(entity.getClass(), entity.getId());
-        getEntityManager().remove(entity);
-    }
 }

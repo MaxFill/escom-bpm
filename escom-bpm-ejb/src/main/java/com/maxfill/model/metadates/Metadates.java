@@ -1,5 +1,6 @@
 package com.maxfill.model.metadates;
 
+import com.maxfill.model.Dict;
 import com.maxfill.model.filters.Filter;
 import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Right;
@@ -32,7 +33,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "metadates")
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public class Metadates implements Serializable{
+public class Metadates implements Serializable, Dict{
     private static final long serialVersionUID = -3191404107074233285L;
 
     @Id

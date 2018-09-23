@@ -50,9 +50,6 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     @OneToMany
     @JoinColumn(name = "parent")
     private List<UserGroups> childItems;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<UserGroupsLog> itemLogs = new ArrayList<>();
     
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")

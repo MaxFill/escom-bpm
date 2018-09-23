@@ -58,10 +58,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @JoinColumn(name = "Employee", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private User employee;
-    
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<StaffLog> itemLogs = new ArrayList<>();    
+    private User employee; 
 
     @Basic(optional = false)
     @Column(name = "InheritsWorkTime")
@@ -219,16 +216,6 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public List<Staff> getDetailItems() {
-        return null;
-    }
-    
-    @Override
-    public List<Staff> getChildItems() {
-        return null;
     }
 
     public boolean isInheritsWorkTime() {

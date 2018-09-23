@@ -1,10 +1,6 @@
 package com.maxfill.model.metadates;
 
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.metadates.Metadates_;
-import com.maxfill.model.states.State;
-
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -27,12 +23,6 @@ public class MetadatesFacade extends BaseFacade<Metadates>{
         CriteriaQuery<Metadates> cq = builder.createQuery(Metadates.class);
         Query q = getEntityManager().createQuery(cq);       
         return q.getResultList();
-    }
-
-    @Override
-    public void remove(Metadates entity){
-        entity = getEntityManager().getReference(entity.getClass(), entity.getId());
-        getEntityManager().remove(entity);
     }
 
     /**

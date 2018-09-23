@@ -50,9 +50,6 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     private CompanyStates state;
-           
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<CompanyLog> itemLogs = new ArrayList<>();
     
     @OneToMany
     @JoinColumn(name = "owner")
@@ -99,6 +96,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
         return "home";
     }    
 
+    @Override
     public String getCode() {
         return code;
     }

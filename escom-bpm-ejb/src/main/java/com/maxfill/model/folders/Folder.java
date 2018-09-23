@@ -110,9 +110,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     @Basic(optional = false)
     @Column(name = "IsInheritPartner")
     private boolean inheritPartner = true;
-        
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", fetch = FetchType.LAZY)
-    private List<FolderLog> itemLogs = new ArrayList<>();
 
     public Folder(){}
 

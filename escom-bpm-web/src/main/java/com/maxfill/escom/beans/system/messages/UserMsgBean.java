@@ -6,7 +6,7 @@ import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.messages.UserMessagesFacade;
-import com.maxfill.facade.BaseLazyLoadFacade;
+import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.messages.UserMessages;
 import com.maxfill.model.task.Task;
@@ -47,7 +47,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     }
 
     @Override
-    protected BaseLazyLoadFacade getLazyFacade() {
+    protected BaseLazyFacade getLazyFacade() {
         return messagesFacade;
     }
     

@@ -1,5 +1,6 @@
 package com.maxfill.model.process.conditions;
 
+import com.maxfill.model.Dict;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Basic;
@@ -16,7 +17,7 @@ import javax.persistence.TableGenerator;
  */
 @Entity
 @Table(name = "conditions")
-public class Condition implements Serializable{    
+public class Condition implements Serializable, Dict{    
     private static final long serialVersionUID = -2944098706754694073L;
     
     @TableGenerator(
@@ -40,9 +41,11 @@ public class Condition implements Serializable{
     
     /* gets & sets */
     
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

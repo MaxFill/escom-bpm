@@ -218,4 +218,5 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Query query = getEntityManager().createQuery(cq);  
         return (Long) query.getSingleResult();
     }
+    
 }

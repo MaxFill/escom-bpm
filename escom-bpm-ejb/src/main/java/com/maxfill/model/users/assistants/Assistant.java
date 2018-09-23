@@ -65,9 +65,6 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     @Column(name = "EndDate")
     @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<AssistantLog> itemLogs = new ArrayList<>();
     
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)

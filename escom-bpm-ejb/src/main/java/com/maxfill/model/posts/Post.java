@@ -40,9 +40,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
     @Column(name = "Id")
     private Integer id;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<PostLog> itemLogs = new ArrayList<>();
-
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false, cascade = CascadeType.ALL)
@@ -67,11 +64,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
 
     @Override
     public List<Post> getDetailItems() {
-        return null;
-    }
-    
-    @Override
-    public List<Post> getChildItems() {
         return null;
     }
     

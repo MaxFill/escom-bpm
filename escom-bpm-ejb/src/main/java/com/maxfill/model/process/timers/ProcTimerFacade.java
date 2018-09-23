@@ -6,7 +6,6 @@ import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.Scheme;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Stream;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
