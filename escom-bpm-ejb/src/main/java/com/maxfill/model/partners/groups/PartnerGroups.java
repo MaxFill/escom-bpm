@@ -105,6 +105,7 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
         this.partnersList = partnersList;
     }
 
+    @Override
     public String getCode() {
         return code;
     }
@@ -115,15 +116,6 @@ public class PartnerGroups extends BaseDict<PartnerGroups, PartnerGroups, Partne
     @Override
     public String getIconName() {        
         return "folder_open";
-    }
-    
-    @Override
-    public List<PartnerGroupsLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<PartnerGroupsLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
     
     @Override

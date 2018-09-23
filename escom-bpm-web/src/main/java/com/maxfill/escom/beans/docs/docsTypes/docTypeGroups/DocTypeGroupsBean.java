@@ -33,7 +33,7 @@ public class DocTypeGroupsBean extends BaseTreeBean<DocTypeGroups, DocTypeGroups
     private DocTypeFacade docTypeFacade;        
     
     @Override
-    public DocTypeGroupsFacade getFacade() {
+    public DocTypeGroupsFacade getLazyFacade() {
         return itemsFacade;
     }
     

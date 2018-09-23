@@ -33,7 +33,7 @@ public class ProcessTypesTemplBean extends BaseTreeBean<ProcessType, ProcessType
     }
 
     @Override
-    public ProcessTypesFacade getFacade() {
+    public ProcessTypesFacade getLazyFacade() {
         return processTypesFacade;
     }
 

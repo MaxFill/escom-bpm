@@ -113,16 +113,7 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     @Override
     public void setState(ProcTemplStates state) {
         this.state = state;
-    }
-
-    @Override
-    public List<ProcTemplLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<ProcTemplLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }    
+    }  
     
     /* *** *** */
 

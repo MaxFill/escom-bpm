@@ -45,7 +45,7 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
         if(!group.getUsersList().contains((User)user)) {
             group.getUsersList().add((User)user);
             //((User) user).getUsersGroupsList().add(group);
-            getFacade().edit(group);
+            getLazyFacade().edit(group);
         }
     }
 
@@ -61,15 +61,15 @@ public class UserGroupsBean extends BaseTreeBean<UserGroups, UserGroups> {
     }
 
     public List<UserGroups> findOnlyGroups(){
-        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP, getCurrentUser());
+        return getLazyFacade().findGroupsByType(DictRights.ACTUALISE_IN_GROUP, getCurrentUser());
     }
     
     public List<UserGroups> findOnlyRoles(){
-        return getFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD, getCurrentUser());
+        return getLazyFacade().findGroupsByType(DictRights.ACTUALISE_IN_CARD, getCurrentUser());
     }
         
     @Override
-    public UserGroupsFacade getFacade() {
+    public UserGroupsFacade getLazyFacade() {
         return itemFacade;
     }
 

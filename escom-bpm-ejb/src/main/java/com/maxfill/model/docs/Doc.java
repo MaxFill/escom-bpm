@@ -293,15 +293,6 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
         return "doc16";
     }
 
-    @Override
-    public List<DocLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<DocLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-
     public DocType getDocType() {
         return docType;
     }

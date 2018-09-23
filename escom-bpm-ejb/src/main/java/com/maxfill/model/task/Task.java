@@ -247,15 +247,6 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public void setState(TaskStates state) {
         this.state = state;
     }
-
-    @Override
-    public List <TaskLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List <TaskLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
     
     public String getResult() {
         return result;

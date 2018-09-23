@@ -129,15 +129,6 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
         this.state = state;
     }    
 
-    @Override
-    public List<RemarkLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<RemarkLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-
     public boolean isChecked() {
         return checked;
     }

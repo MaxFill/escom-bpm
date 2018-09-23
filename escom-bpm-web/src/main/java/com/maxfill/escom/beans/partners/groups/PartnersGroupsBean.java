@@ -40,7 +40,7 @@ public class PartnersGroupsBean extends BaseTreeBean<PartnerGroups, PartnerGroup
     }
 
     @Override
-    public PartnersGroupsFacade getFacade() {
+    public PartnersGroupsFacade getLazyFacade() {
         return itemsFacade;
     }
 

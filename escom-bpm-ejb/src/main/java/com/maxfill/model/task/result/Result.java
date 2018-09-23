@@ -70,15 +70,6 @@ public class Result extends BaseDict<Result, Result, Result, ResultLog, ResultSt
     public void setState(ResultStates state) {
         this.state = state;
     }
-
-    @Override
-    public List<ResultLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<ResultLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
          
     /* *** *** */
 

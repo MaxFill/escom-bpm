@@ -28,7 +28,7 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
     }
 
     @Override
-    public ServicesEvents doExecuteTask(Services service, MailSettings settings) {       
+    public void doExecuteTask(Services service, MailSettings settings) {       
         ServicesEvents selectedEvent = startAction(service);
         
         Session session = null;
@@ -81,8 +81,6 @@ public class MailReaderTimer extends BaseTimer<MailSettings>{
                 }
             }
             finalAction(selectedEvent);
-            service.getServicesEventsList().add(selectedEvent);
-            return selectedEvent;
         }
     }
 

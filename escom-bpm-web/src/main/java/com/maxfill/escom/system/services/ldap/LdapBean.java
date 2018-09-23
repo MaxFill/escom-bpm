@@ -99,9 +99,7 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
      */
     @Override
     public void doRunService(){        
-        ServicesEvents selectedEvent = ldapTimer.doExecuteTask(service, getSettings());
-        setSelectedEvent(selectedEvent);
-        getServicesFacade().edit(service);        
+        ldapTimer.doExecuteTask(service, getSettings());       
     }
 
     @Override

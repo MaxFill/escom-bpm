@@ -15,14 +15,14 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
     /* Обработка перед добавлением объекта в группу  */
     @Override
     public boolean checkRightBeforeAddItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {        
-        getGroupBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        if (!getFacade().isHaveRightAddChild(dropItem)) {
+        getGroupBean().getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)) {
+        getLazyFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -47,7 +47,7 @@ public abstract class BaseExplBeanGroups<T extends BaseDict, O extends BaseDict>
                 return null;
             }
             changeNamePasteItem(sourceItem, pasteItem);
-            getFacade().create(pasteItem);
+            getLazyFacade().create(pasteItem);
             doPasteMakeSpecActions(sourceItem, pasteItem);
             return pasteItem;
         }

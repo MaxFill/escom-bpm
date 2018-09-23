@@ -45,7 +45,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     private ProcessFacade processFacade;
     
     @Override
-    public CompanyFacade getFacade() {
+    public CompanyFacade getLazyFacade() {
         return itemsFacade;
     }
 
@@ -78,11 +78,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Удаление подчинённых объектов из корзины */
     @Override
     protected void deleteDetails(Company company) {
-        List<Department> departments = getFacade().findDepartmentByCompany(company);
+        List<Department> departments = getLazyFacade().findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.deleteItem(child));
         }
-        List<Staff> staffs = getFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.deleteItem(staff)));
         }
@@ -91,11 +91,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Перемещение в корзину подчинённых объектов  */
     @Override
     protected void moveDetailItemsToTrash(Company company, Set<String> errors) {
-        List<Department> departments = getFacade().findDepartmentByCompany(company);
+        List<Department> departments = getLazyFacade().findDepartmentByCompany(company);
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.moveToTrash(child, errors));
         }
-        List<Staff> staffs = getFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.moveToTrash(staff, errors)));
         }
@@ -104,11 +104,11 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
     /* Восстановление подчинённых объектов из корзины */
     @Override
     protected void restoreDetails(Company company) {
-        List<Department> departments = getFacade().findDepartmentByCompany(company);
+        List<Department> departments = getLazyFacade().findDepartmentByCompany(company);
         if (departments != null){
             departments.stream().forEach(item -> departmentBean.doRestoreItemFromTrash(item));
         }
-        List<Staff> staffs = getFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.doRestoreItemFromTrash(staff)));
         }

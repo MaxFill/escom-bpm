@@ -51,7 +51,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
         if (Boolean.FALSE.equals(inherit)) { // если галочка снята, значит права не наследуются и нужно скопировать права 
             try {
                 Rights childRights = new Rights();
-                Rights childDef = getTreeBean().getFacade().getRightForChild(getEditedItem());
+                Rights childDef = getTreeBean().getLazyFacade().getRightForChild(getEditedItem());
                 for(Right rightDef : childDef.getRights()){
                     Right right = new Right();
                     BeanUtils.copyProperties(right, rightDef); 
@@ -135,7 +135,7 @@ public abstract class BaseCardTree<T extends BaseDict> extends BaseCardBean<T>{
     @Override
     protected void prepareRightsForView(T item){
         super.prepareRightsForView(item);
-        getTreeBean().getFacade().makeRightForChilds(item);
+        getTreeBean().getLazyFacade().makeRightForChilds(item);
         rightsBean.prepareRightsForView(item.getRightForChild().getRights());
     }
     

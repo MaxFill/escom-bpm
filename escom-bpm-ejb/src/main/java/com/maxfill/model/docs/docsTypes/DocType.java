@@ -97,15 +97,6 @@ public class DocType extends BaseDict<DocTypeGroups, DocType, DocType, DocTypeLo
     public String getIconName() {
         return "doc16"; 
     }
-    
-    @Override
-    public List<DocTypeLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<DocTypeLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     public NumeratorPattern getNumerator() {
         return numerator;

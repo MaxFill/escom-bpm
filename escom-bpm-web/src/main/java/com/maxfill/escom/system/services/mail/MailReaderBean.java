@@ -7,7 +7,6 @@ import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
-
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
@@ -76,9 +75,7 @@ public class MailReaderBean extends BaseServicesBean<MailSettings>{
     
     @Override
     public void doRunService(){        
-        ServicesEvents selectedEvent = mailReaderTimer.doExecuteTask(service, getSettings());
-        setSelectedEvent(selectedEvent);
-        getServicesFacade().edit(service);        
+        mailReaderTimer.doExecuteTask(service, getSettings());       
     }
 
     @Override

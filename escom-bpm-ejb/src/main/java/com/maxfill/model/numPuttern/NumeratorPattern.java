@@ -93,15 +93,6 @@ public class NumeratorPattern extends BaseDict<NumeratorPattern, NumeratorPatter
         this.state = state;
     }
     
-    @Override
-    public List<NumeratorPatternLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<NumeratorPatternLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-    
     public String getPattern() {
         return pattern;
     }

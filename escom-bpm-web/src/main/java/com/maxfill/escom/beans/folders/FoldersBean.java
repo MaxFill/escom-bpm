@@ -38,9 +38,9 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     public List<BaseDict> makeGroupContent(BaseDict folder, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder) {
         if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE) && tableBean == this){
-            return getFacade().findActualChilds((Folder) folder, getCurrentUser()).collect(Collectors.toList());
+            return getLazyFacade().findActualChilds((Folder) folder, getCurrentUser()).collect(Collectors.toList());
         } else {
-            return getDetailBean().getFacade().findActualDetailItems(folder, first, pageSize, sortField, sortOrder, getCurrentUser());
+            return getDetailBean().getLazyFacade().findActualDetailItems(folder, first, pageSize, sortField, sortOrder, getCurrentUser());
         }
     }
 
@@ -109,7 +109,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     /* GETS & SETS */
 
     @Override
-    public FoldersFacade getFacade() {
+    public FoldersFacade getLazyFacade() {
         return foldersFacade;
     }
     

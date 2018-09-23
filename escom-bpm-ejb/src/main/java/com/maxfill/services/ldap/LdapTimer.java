@@ -28,7 +28,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
     }
     
     @Override
-    public ServicesEvents doExecuteTask(Services service, LdapSettings settings){   
+    public void doExecuteTask(Services service, LdapSettings settings){   
         StringBuilder detailInfo = new StringBuilder();     
         ServicesEvents selectedEvent = startAction(service);        
         try {
@@ -41,13 +41,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
             doUpdateUser(ldapUsers, detailInfo, settings); 
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
-            Date finishDate = new Date();
-            detailInfoAddRow("The service finished in " + DateUtils.dateToString(finishDate, DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale() ));
-            selectedEvent.setDetails(detailInfo.toString());
-            selectedEvent.setDateFinish(finishDate);
-            servicesEventsFacade.create(selectedEvent);
-            service.getServicesEventsList().add(selectedEvent); 
-            return selectedEvent;           
+            finalAction(selectedEvent);         
         }        
     }
     

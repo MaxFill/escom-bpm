@@ -67,10 +67,10 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
 
     protected void initBean(){};
 
-    @Override
     public SessionBean getSessionBean() {
         return sessionBean;
     }
+    
     public Locale getLocale(){
         return sessionBean.getLocale();
     }

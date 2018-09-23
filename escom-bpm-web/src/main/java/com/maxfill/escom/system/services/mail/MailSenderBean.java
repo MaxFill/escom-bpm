@@ -64,9 +64,7 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     
     @Override
     public void doRunService(){        
-        ServicesEvents selectedEvent = mailSenderTimer.doExecuteTask(service, getSettings());
-        setSelectedEvent(selectedEvent);
-        getServicesFacade().edit(service);        
+        mailSenderTimer.doExecuteTask(service, getSettings());
     }
     
     public void onOpenMailBox(){

@@ -47,7 +47,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     }
 
     @Override
-    protected BaseLazyLoadFacade getFacade() {
+    protected BaseLazyLoadFacade getLazyFacade() {
         return messagesFacade;
     }
     

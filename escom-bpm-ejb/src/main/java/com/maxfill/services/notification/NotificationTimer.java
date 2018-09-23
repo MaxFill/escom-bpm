@@ -20,16 +20,14 @@ public class NotificationTimer extends BaseTimer<NotificationSettings> {
     }
     
     @Override
-    public ServicesEvents doExecuteTask(Services service, NotificationSettings settings) {         
+    public void doExecuteTask(Services service, NotificationSettings settings) {         
         ServicesEvents selectedEvent = startAction(service);
         try { 
             notificationService.makeNotifications(getDetailInfo());       
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
-            finalAction(selectedEvent);
-            service.getServicesEventsList().add(selectedEvent);                        
-        }         
-        return selectedEvent;
+            finalAction(selectedEvent);                       
+        }
     }
     
 }

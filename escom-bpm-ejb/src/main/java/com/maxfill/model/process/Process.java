@@ -269,15 +269,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         return roles;
     }
 
-    @Override
-    public List<ProcessLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<ProcessLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-
     public Set<ProcReport> getReports() {
         return reports;
     }
@@ -289,6 +280,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public String getRegNumber() {
         return regNumber;
     }
+    @Override
     public void setRegNumber(String regNumber) {
         this.regNumber = regNumber;
     }

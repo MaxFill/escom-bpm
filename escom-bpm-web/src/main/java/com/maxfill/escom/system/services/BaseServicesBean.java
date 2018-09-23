@@ -58,7 +58,7 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
     }
     
     @Override
-    protected BaseLazyLoadFacade getFacade() {
+    protected BaseLazyLoadFacade getLazyFacade() {
         return eventsFacade;
     }
     
@@ -175,8 +175,8 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
      * Очистка журнала событий службы
      */
     public void clearLogEvents(){        
-        service.getServicesEventsList().clear();
-        servicesFacade.edit(service);
+        deleteItems(); //будут удалены записи, согласно makeFilters
+        refreshLazyData();
     }
 
     /**

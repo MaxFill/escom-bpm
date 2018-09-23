@@ -1,11 +1,13 @@
 package com.maxfill.escom.beans.core;
 
 import com.maxfill.dictionary.*;
+import com.maxfill.escom.beans.core.lazyload.LazyLogModel;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.users.UserFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
+import com.maxfill.model.BaseLogItems;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.states.State;
@@ -31,11 +33,13 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.SortOrder;
 
 /**
  * Базовый бин для работы с единичными объектами
  * Реализует бызовые функции создания, редактирования, валидации и сохранения объектов на карточках
  * @param <T>
+ * @param <L>
  */
 public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = 6864719383155087328L;
@@ -50,7 +54,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     protected AttacheService attacheService;
     @EJB
     protected UserFacade userFacade;
-
+    
     private Metadates metadatesObj;             //объект метаданных
     private Boolean isItemRegisted;             //признак того что была выполнена регистрация (для отката при отказе)     
     private String itemOpenKey;
@@ -64,7 +68,12 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     protected User selUser;
     protected UserGroups selUsGroup;
     protected UserGroups selUserRole;
+
     protected abstract BaseDictFacade getFacade();    
+    
+    private final LazyLogModel<BaseLogItems> itemLogs = new LazyLogModel<>(null, this);                
+    
+    /* *** ОТКРЫТИЕ КАРТОЧКИ *** */
     
     /**
      * Общий метод для всех бинов карточек, вызываемый автоматически перед открытием карточки
@@ -107,15 +116,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 item.setDateCreate(new Date());
                 if (!errors.isEmpty()) {
                    MsgUtils.showErrors(errors);
-                }
-                getFacade().addLogEvent(item, DictLogEvents.CREATE_EVENT, getCurrentUser());
+                }                
             }
 
             prepareRightsForView(item);
-
-            if (getEditedItem().getItemLogs() != null) {
-                getEditedItem().getItemLogs().size();
-            }
             doPrepareOpen(item);
         }
     }    
@@ -151,7 +155,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
     
     public boolean doSaveItem(){
-        if (!getTypeEdit().equals(DictEditMode.VIEW_MODE)) {
+        if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange) {
             T item = getEditedItem();
             onBeforeSaveItem(item);
             Set<String> errors = new LinkedHashSet<>();
@@ -166,19 +170,20 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
             owner = item.getAuthor();
             switch (getTypeEdit()){
                 case DictEditMode.EDIT_MODE: {                    
-                    getFacade().addLogEvent(item, DictLogEvents.SAVE_EVENT, getCurrentUser());
+                    getFacade().addLogEvent(item, DictLogEvents.CHANGE_EVENT, getCurrentUser());
                     getFacade().edit(item);
                     break;
                 }
                 case DictEditMode.INSERT_MODE:{
                     getFacade().create(item); 
+                    getFacade().addLogEvent(item, DictLogEvents.CREATE_EVENT, getCurrentUser());
                     setTypeEdit(DictEditMode.EDIT_MODE);
                     break;
                 }
                 case DictEditMode.CHILD_MODE:{
                     try { 
                         BaseDict sourceItem = sourceBean.getSourceItem();                        
-                        BeanUtils.copyProperties(sourceItem, getEditedItem());
+                        BeanUtils.copyProperties(sourceItem, item);                        
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         errors.add("InternalErrorSavingTask");
                         LOGGER.log(Level.SEVERE, null, ex);
@@ -557,6 +562,26 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         boolean flag = sessionBean.getUserSettings().isSimpleCard();
         return flag;
     }
+    
+    /* *** ЛОГИРОВАНИЕ *** */
+    
+    public List<BaseLogItems> loadItemLogs(int first, int pageSize, String sortField, SortOrder sortOrder){        
+        return getFacade().getItemLogs(getEditedItem(), first, pageSize, sortField, sortOrder.name());
+    }
+    
+    public int getCountItemLogs(){        
+        return getFacade().getCountItemLogs(getEditedItem());
+    }
+
+    protected Map<String,Object> makeFilters(Map<String, Object> filters){
+        filters.put("item", getEditedItem());
+        return filters;
+    }
+
+    public LazyLogModel<BaseLogItems> getItemLogs() {
+        return itemLogs;
+    }
+               
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ */
 

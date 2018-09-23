@@ -48,7 +48,7 @@ public class AuthLogBean extends LazyLoadBean{
     }
 
     @Override
-    protected BaseLazyLoadFacade getFacade() {
+    protected BaseLazyLoadFacade getLazyFacade() {
         return authLogFacade;
     }
 

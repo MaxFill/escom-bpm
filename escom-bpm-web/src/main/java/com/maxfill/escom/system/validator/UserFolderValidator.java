@@ -28,7 +28,7 @@ public class UserFolderValidator extends AbstractValidator{
         if (folder == null) return;
         FoldersBean foldersBean = EscomBeanUtils.findBean("foldersBean", context);
         User currentUser = foldersBean.getCurrentUser();
-        FoldersFacade folderFacade = foldersBean.getFacade();
+        FoldersFacade folderFacade = foldersBean.getLazyFacade();
         if(!folderFacade.checkRightAddDetail(folder, currentUser)) {
             String errMsg = MsgUtils.getMessageLabel("SelectedFolderCantNotAddDocs");
             String checkError = MsgUtils.getValidateLabel("CHECK_ERROR");

@@ -28,7 +28,7 @@ public class TaskBean extends BaseTableBean<Task>{
     }
 
     @Override
-    public BaseDictFacade getFacade() {
+    public BaseDictFacade getLazyFacade() {
         return taskFacade;
     }
     

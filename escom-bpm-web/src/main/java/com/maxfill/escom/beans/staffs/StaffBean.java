@@ -56,10 +56,10 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     protected void prepCreate(Staff newItem, BaseDict parent, Set <String> errors) {
         if (newItem.getOwner() == null && newItem.getCompany() != null) {
             Company company = newItem.getCompany();
-            companyBean.getFacade().actualizeRightItem(company, getCurrentUser());
-            Boolean isAllowedAddDetail = companyBean.getFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
+            companyBean.getLazyFacade().actualizeRightItem(company, getCurrentUser());
+            Boolean isAllowedAddDetail = companyBean.getLazyFacade().isHaveRightAddDetail(company); //можно ли создавать штатные единицы
             if (!isAllowedAddDetail){
-                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{company.getName(), MsgUtils.getBandleLabel(getLazyFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
@@ -77,7 +77,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
     
     @Override
-    public StaffFacade getFacade() {
+    public StaffFacade getLazyFacade() {
         return itemsFacade;
     }
     
@@ -103,15 +103,15 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
 
     public void moveItemToGroup(BaseDict group, Staff staff){
         itemsFacade.detectParentOwner(staff,group, group);
-        getFacade().edit(staff);
+        getLazyFacade().edit(staff);
     }
       
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Department){
-            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            getOwnerBean().getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         } else {
-            companyBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            companyBean.getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
     
@@ -123,7 +123,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
             dragItem.setOwner(null);
             dragItem.setCompany((Company)dropItem);
         }                
-        getFacade().edit(dragItem);
+        getLazyFacade().edit(dragItem);
     }
 
     /**

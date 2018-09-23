@@ -37,7 +37,7 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     }
 
     @Override
-    public ProcessFacade getFacade() {
+    public ProcessFacade getLazyFacade() {
         return processFacade;
     }
 

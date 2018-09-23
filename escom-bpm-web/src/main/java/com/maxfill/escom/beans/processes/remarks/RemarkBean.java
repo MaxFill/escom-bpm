@@ -23,7 +23,7 @@ public class RemarkBean extends BaseTableBean<Remark>{
     private RemarkFacade itemFacade;   
         
     @Override
-    public RemarkFacade getFacade() {
+    public RemarkFacade getLazyFacade() {
         return itemFacade;
     }            
 

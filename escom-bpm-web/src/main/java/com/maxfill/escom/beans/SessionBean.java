@@ -221,7 +221,7 @@ public class SessionBean implements Serializable{
      * Создание процесса из прикреплённого файла(ов)
      */
     public void onCreateProc(){        
-        ProcessType procType = processTypeBean.getFacade().find(ProcessTypesDict.CONCORDED_ID);
+        ProcessType procType = processTypeBean.getLazyFacade().find(ProcessTypesDict.CONCORDED_ID);
         if (procType == null){
             MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{ProcessType.class.getSimpleName(), ProcessTypesDict.CONCORDED_ID});
             return;

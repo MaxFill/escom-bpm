@@ -104,11 +104,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     @XmlTransient
     @JoinColumn(name = "State", referencedColumnName = "Id")
     @OneToOne(optional = false)
-    private T state;   
-    
-    /* Журнал истории объекта  */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
-    private List<L> itemLogs = new ArrayList<>();
+    private T state;
       
     /* Дочерние child объекты, полученные по ссылке на parent */
     @XmlTransient
@@ -292,16 +288,6 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
     public void setChildItems(List<P> childItems) {
         this.childItems = childItems;
-    }
-
-    public List<L> getItemLogs() {
-        if (itemLogs == null){
-            itemLogs = new ArrayList<>();
-        }
-        return itemLogs;
-    }
-    public void setItemLogs(List<L> itemsLogs) {
-        this.itemLogs = itemsLogs;
     }
 
     public String getRoleJson() {

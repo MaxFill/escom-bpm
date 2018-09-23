@@ -1,4 +1,3 @@
-
 package com.maxfill.model.partners.types;
 
 import com.maxfill.model.BaseDict;
@@ -62,15 +61,6 @@ public class PartnerTypes extends BaseDict<PartnerTypes, PartnerTypes, PartnerTy
     @Override
     public void setState(PartnerTypesStates state) {
         this.state = state;
-    }
-
-    @Override
-    public List<PartnerTypesLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<PartnerTypesLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
 
     @Override

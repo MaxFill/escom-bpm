@@ -45,13 +45,13 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if(!user.getUsersGroupsList().contains(targetGroup)) {
             user.getUsersGroupsList().add((UserGroups) targetGroup);
             //group.getUsersList().add(user);
-            getFacade().edit(user);
+            getLazyFacade().edit(user);
         }
         return true;
     }
 
     @Override
-    public UserFacade getFacade() {
+    public UserFacade getLazyFacade() {
         return userFacade;
     }
 
@@ -64,7 +64,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
             sourceGroup.getUsersList().remove(user);
         }
         user.getUsersGroupsList().add((UserGroups) targetGroup);
-        getFacade().edit(user);
+        getLazyFacade().edit(user);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
 
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
-        groupsBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
+        groupsBean.getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
     }
     
     /* Формирует число ссылок на user в связанных объектах */

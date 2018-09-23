@@ -48,7 +48,7 @@ public class DocTypeBean extends BaseExplBeanGroups<DocType, DocTypeGroups>{
     }
 
     @Override
-    public DocTypeFacade getFacade() {
+    public DocTypeFacade getLazyFacade() {
         return itemsFacade;
     }   
 

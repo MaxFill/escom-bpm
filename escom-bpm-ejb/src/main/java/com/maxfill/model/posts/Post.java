@@ -59,15 +59,6 @@ public class Post extends BaseDict<Post, Post, Post, PostLog, PostStates> {
     public void setState(PostStates state) {
         this.state = state;
     }
-    
-    @Override
-    public List<PostLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<PostLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     @Override
     public String getIconName() {

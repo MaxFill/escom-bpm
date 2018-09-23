@@ -258,15 +258,6 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public void setDetailItems(List<Doc> detailItems) {
         this.detailItems = detailItems;
     }
-    
-    @Override
-    public List<FolderLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<FolderLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     public String getFolderNumber() {
         return folderNumber;

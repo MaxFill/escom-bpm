@@ -36,22 +36,22 @@ public class DepartmentBean extends BaseTreeBean<Department, Company>{
     private DepartmentFacade itemFacade;
     
     @Override
-    public DepartmentFacade getFacade() {
+    public DepartmentFacade getLazyFacade() {
         return itemFacade;
     }
     
     @Override
     public void moveGroupToGroup(BaseDict dropItem, Department dragItem) {
         itemFacade.detectParentOwner(dragItem, dropItem, dropItem);
-        getFacade().edit(dragItem);
+        getLazyFacade().edit(dragItem);
     }
     
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (dropItem instanceof Company){
-            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            getOwnerBean().getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         } else {
-            getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
     

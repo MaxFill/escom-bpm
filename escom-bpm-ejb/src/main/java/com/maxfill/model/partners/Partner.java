@@ -121,15 +121,6 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     }
     
     @Override
-    public List<PartnersLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<PartnersLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-    
-    @Override
     public String getNameEndElipse(){
         StringBuilder builder = new StringBuilder();        
         builder.append(StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE));

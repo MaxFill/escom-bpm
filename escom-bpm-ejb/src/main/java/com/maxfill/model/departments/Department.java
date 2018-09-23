@@ -95,15 +95,6 @@ public class Department extends BaseDict<Company, Department, Staff, Departament
     public void setState(DepartmentStates state) {
         this.state = state;
     }
-    
-    @Override
-    public List<DepartamentLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<DepartamentLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
            
     @Override
     public Integer getId() {

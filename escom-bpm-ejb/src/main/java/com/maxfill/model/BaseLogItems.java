@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @MappedSuperclass
 @XmlRootElement
 @XmlAccessorType (XmlAccessType.FIELD)
-public abstract class BaseLogItems<M extends BaseDict> implements Serializable{
+public abstract class BaseLogItems<M extends BaseDict> implements Serializable, Dict{
     private static final long serialVersionUID = -3128180500478351775L;
 
     @Transient
@@ -53,9 +53,11 @@ public abstract class BaseLogItems<M extends BaseDict> implements Serializable{
     @ManyToOne(optional = false)
     private User userId;
     
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

@@ -135,15 +135,6 @@ public class Assistant extends BaseDict<User, Assistant, Assistant, AssistantLog
     }
 
     @Override
-    public List<AssistantLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<AssistantLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
-
-    @Override
     public AssistantStates getState() {
         return state;
     }

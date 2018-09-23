@@ -86,7 +86,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         super.doPasteMakeSpecActions(sourceItem, pasteItem);
         copyMainAttacheFromDoc(pasteItem, sourceItem);
         copyDocStatuses(pasteItem, sourceItem);
-        getFacade().edit(pasteItem);
+        getLazyFacade().edit(pasteItem);
     }
 
     private void copyMainAttacheFromDoc(Doc pasteItem, Doc sourceItem){
@@ -170,7 +170,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     }
 
     @Override
-    public DocFacade getFacade() {
+    public DocFacade getLazyFacade() {
         return docsFacade;
     }
 
@@ -197,7 +197,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     @Override
     protected void checkLockItem(Doc item, Set<String> errors){
         if (item.getState().getId().equals(DictStates.STATE_EDITED)){
-            Object[] messageParameters = new Object[]{item.getName(), getFacade().getActorName(item, "editor")};
+            Object[] messageParameters = new Object[]{item.getName(), getLazyFacade().getActorName(item, "editor")};
             String error = MessageFormat.format(getMessageLabel("ObjectIsLockUser"), messageParameters);
             errors.add(error);
             return;
@@ -236,8 +236,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         Attaches attache = doc.getMainAttache();
         if (attache != null) {
             Set<String> errors = new HashSet<>();
-            getFacade().makeRightItem(doc, getCurrentUser());
-            if (!getFacade().isHaveRightEdit(doc)){
+            getLazyFacade().makeRightItem(doc, getCurrentUser());
+            if (!getLazyFacade().isHaveRightEdit(doc)){
                 String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
                 String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
                 errors.add(error);
@@ -256,8 +256,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     public void openAttacheAddForm(Doc doc){
         if (doc == null) return;
         Set<String> errors = new HashSet<>();
-        getFacade().makeRightItem(doc, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(doc)){
+        getLazyFacade().makeRightItem(doc, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(doc)){
             String objName = getBandleLabel(getMetadatesObj().getBundleName()) + ": " + doc.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
             errors.add(error);
@@ -281,8 +281,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (documentId == null) return;            
         Doc doc = docsFacade.find(documentId);
         if (doc == null) return;
-        getFacade().actualizeRightItem(doc, getCurrentUser());
-        if (getFacade().isHaveRightView(doc)) {
+        getLazyFacade().actualizeRightItem(doc, getCurrentUser());
+        if (getLazyFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 attacheDownLoadPDF(attache);
@@ -306,8 +306,8 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     /* Просмотр файла вложения основной версии документа как PDF */
     public void doViewMainAttache(Doc doc, Map<String, List<String>> params) {
         if (doc == null) return;
-        getFacade().actualizeRightItem(doc, getCurrentUser());
-        if (getFacade().isHaveRightView(doc)) {
+        getLazyFacade().actualizeRightItem(doc, getCurrentUser());
+        if (getLazyFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();
             if (attache != null) {
                 doViewAttache(attache, params);

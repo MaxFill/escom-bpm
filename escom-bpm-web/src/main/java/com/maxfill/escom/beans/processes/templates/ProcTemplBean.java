@@ -46,7 +46,7 @@ public class ProcTemplBean extends BaseDetailsBean<ProcTempl, ProcessType>{
     }
 
     @Override
-    public ProcessTemplFacade getFacade() {
+    public ProcessTemplFacade getLazyFacade() {
         return procTemplFacade;
     }    
 }

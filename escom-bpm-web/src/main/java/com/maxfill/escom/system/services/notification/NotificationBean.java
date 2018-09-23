@@ -3,7 +3,6 @@ package com.maxfill.escom.system.services.notification;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.notification.NotificationService;
@@ -43,9 +42,7 @@ public class NotificationBean extends BaseServicesBean<NotificationSettings>{
 
     @Override
     public void doRunService() {        
-        ServicesEvents selectedEvent = notificationTimer.doExecuteTask(service, getSettings());
-        setSelectedEvent(selectedEvent);
-        getServicesFacade().edit(service);  
+        notificationTimer.doExecuteTask(service, getSettings());
     }
 
     @Override

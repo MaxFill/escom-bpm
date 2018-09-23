@@ -1,4 +1,3 @@
-
 package com.maxfill.model.filters;
 
 import com.maxfill.model.BaseDict;
@@ -19,7 +18,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 
 /* Фильтры журнала объектов  */
@@ -71,15 +69,6 @@ public class Filter extends BaseDict<Filter,Filter,Filter,FilterLog, FiltersStat
     @Override
     public void setState(FiltersStates state) {
         this.state = state;
-    }
-    
-    @Override
-    public List<FilterLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<FilterLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
     
     @Override

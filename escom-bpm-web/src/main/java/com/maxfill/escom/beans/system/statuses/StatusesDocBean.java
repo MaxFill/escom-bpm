@@ -19,7 +19,7 @@ public class StatusesDocBean extends BaseTableBean<StatusesDoc>{
     private StatusesDocFacade itemFacade;     
             
     @Override
-    public StatusesDocFacade getFacade() {
+    public StatusesDocFacade getLazyFacade() {
         return itemFacade;
     }
 

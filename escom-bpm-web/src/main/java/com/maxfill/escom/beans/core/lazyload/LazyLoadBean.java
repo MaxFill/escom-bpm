@@ -41,7 +41,7 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     protected Date dateEnd;
     protected Map<String,Object> filters = new HashMap <>();
 
-    protected abstract BaseLazyLoadFacade getFacade();    
+    protected abstract BaseLazyLoadFacade getLazyFacade();    
     
     protected final Map<String, Function<BaseDict, ?>> extractors = new HashMap<>();          
 
@@ -120,21 +120,21 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     }
     
     public int countItems(){
-        return getFacade().countItems(makeFilters(filters));
+        return getLazyFacade().countItemsByFilters(makeFilters(filters));
     }
 
     public int deleteItems(){
-        return getFacade().deleteItems(makeFilters(filters));
+        return getLazyFacade().deleteItems(makeFilters(filters));
     }
 
     public void deleteItem(T item){
-        getFacade().remove(item);
+        getLazyFacade().remove(item);
         removeItemFromData(item);
     }
     
     public List<T> onLoadItems(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
         this.filters = filters;
-        return getFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
+        return getLazyFacade().findItemsByFilters(first, pageSize, sortField, sortOrder.name(), makeFilters(filters));
     }
     
     public void refreshLazyData(){

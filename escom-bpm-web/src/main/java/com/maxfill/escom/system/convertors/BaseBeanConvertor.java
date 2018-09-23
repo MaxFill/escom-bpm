@@ -17,7 +17,7 @@ public abstract class BaseBeanConvertor<T extends BaseDict> implements Converter
         if (value != null && value.trim().length() > 0) {
             try {
                 BaseTableBean bean = EscomBeanUtils.findBean(getBeanName(), fc);
-                Object searcheObj = bean.getFacade().find(Integer.parseInt(value));
+                Object searcheObj = bean.getLazyFacade().find(Integer.parseInt(value));
                 return searcheObj;
             } catch (NumberFormatException e) {
                 throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not valid"));

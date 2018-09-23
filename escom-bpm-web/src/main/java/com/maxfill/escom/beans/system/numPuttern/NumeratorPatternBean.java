@@ -43,7 +43,7 @@ public class NumeratorPatternBean extends BaseTableBean<NumeratorPattern>{
     }     
         
     @Override
-    public NumeratorPatternFacade getFacade() {
+    public NumeratorPatternFacade getLazyFacade() {
         return numeratorFacade;
     }
 

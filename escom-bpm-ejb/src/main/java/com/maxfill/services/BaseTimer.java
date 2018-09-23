@@ -5,14 +5,11 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.common.history.ServicesEventsFacade;
 import com.maxfill.services.common.sheduler.Sheduler;
-import com.maxfill.services.ldap.LdapSettings;
-import com.maxfill.services.ldap.LdapTimer;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.IOException;
 import java.io.StringReader;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Resource;
 import javax.ejb.*;
 import java.text.DateFormat;
@@ -87,7 +84,7 @@ public abstract class BaseTimer<P> {
         LOG.log(Level.INFO, "Finish timer for service: {0}", service.getName());
     }
 
-    protected abstract ServicesEvents doExecuteTask(Services service, P settings); 
+    protected abstract void doExecuteTask(Services service, P settings); 
     protected P restoreSettings(Services service){
         P settings = null;
         try {

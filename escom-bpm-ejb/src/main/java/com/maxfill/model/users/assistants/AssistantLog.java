@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- *
+ * Лог сущности Заместитель
  * @author maksim
  */
 @Entity
@@ -73,5 +73,4 @@ public class AssistantLog extends BaseLogItems<Assistant>{
         return "AssistantLog{" + "id=" + id + '}';
     }
         
-    
 }

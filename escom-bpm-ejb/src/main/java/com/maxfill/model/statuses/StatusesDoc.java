@@ -81,15 +81,6 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     public void setBundleName(String bundleName) {
         this.bundleName = bundleName;
     }
-    
-    @Override
-    public List<StatusesDocLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<StatusesDocLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     /* *** *** */
     

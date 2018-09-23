@@ -6,7 +6,6 @@ import com.maxfill.model.Results;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.templates.ProcTempl;
 import com.maxfill.model.task.result.Result;
-
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
@@ -106,15 +105,6 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Override
     public void setState(ProcessTypeStates state) {
         this.state = state;
-    }
-    
-    @Override
-    public List <ProcessTypeLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List <ProcessTypeLog> itemLogs) {
-        this.itemLogs = itemLogs;
     }
 
     @Override

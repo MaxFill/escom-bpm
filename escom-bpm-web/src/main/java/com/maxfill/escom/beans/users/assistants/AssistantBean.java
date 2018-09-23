@@ -47,7 +47,7 @@ public class AssistantBean extends BaseDetailsBean<Assistant, User>{
     }
 
     @Override
-    public BaseDictFacade getFacade() {
+    public BaseDictFacade getLazyFacade() {
         return assistantFacade;
     }
     

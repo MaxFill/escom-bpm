@@ -33,7 +33,7 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
     }
 
     @Override
-    public ServicesEvents doExecuteTask(Services service, MailSettings settings){        
+    public void doExecuteTask(Services service, MailSettings settings){        
         ServicesEvents selectedEvent = startAction(service);        
         try {
             List<Mailbox> messages = mailBoxFacade.findAll();
@@ -69,8 +69,6 @@ public class MailSenderTimer extends BaseTimer<MailSettings>{
             detailInfoAddRow(e.getMessage());
         } finally{
             finalAction(selectedEvent);
-            service.getServicesEventsList().add(selectedEvent);             
-            return selectedEvent;
         }     
     }
 

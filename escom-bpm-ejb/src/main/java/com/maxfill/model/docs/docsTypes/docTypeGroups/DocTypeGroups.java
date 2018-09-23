@@ -67,15 +67,6 @@ private static final long serialVersionUID = -2116686297842684933L;
     public void setState(DocTypeGroupsStates state) {
         this.state = state;
     }
-    
-    @Override
-    public List<DocTypeGroupsLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<DocTypeGroupsLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
         
     @Override
     public List<DocType> getDetailItems() {

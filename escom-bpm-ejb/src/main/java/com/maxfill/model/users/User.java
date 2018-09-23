@@ -209,15 +209,6 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     public void setTempId(Integer tempId) {
         this.tempId = tempId;
     }
-    
-    @Override
-    public List<UserLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<UserLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     @Override
     public String getIconName() {

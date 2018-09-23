@@ -316,7 +316,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     /* TODO Нашёл что вызов данного метода есть в обозревателе документов (doc-explorer) Возможно что просто устаревший...*/
     public void onUpdateAfterChangeItem(SelectEvent event){
-        editItem = (BaseDict) getItemBean(currentItem).getFacade().find(currentItem.getId());
+        editItem = (BaseDict) getItemBean(currentItem).getLazyFacade().find(currentItem.getId());
         try {                    
             BeanUtils.copyProperties(currentItem, editItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -1330,7 +1330,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         }
                 
         if (model.isFullTextSearche() && name.length() >= 3 &&
-                Objects.equals("Doc", tableBean.getFacade().getItemClass().getSimpleName())){ //если поиск выполняется в документах
+                Objects.equals("Doc", tableBean.getLazyFacade().getItemClass().getSimpleName())){ //если поиск выполняется в документах
             Set<Integer> docIds = searcheService.fullSearche(name);
             if (docIds.isEmpty()){
               docIds.add(0);
@@ -1479,7 +1479,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     /* СЕЛЕКТОР: определяет, является ли объект доступным для выбора в селекторе  */
     public boolean isCanSelectedItem(BaseDict item){
-        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getFacade().getItemClass().getSimpleName());
+        return Objects.equals(item.getClass().getSimpleName(), searcheBean.getLazyFacade().getItemClass().getSimpleName());
     }
         
     /* CЕЛЕКТОР: выбор объекта по двойному клику  */
@@ -1523,7 +1523,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         if (currentItem == null) return;
         Doc doc = (Doc) currentItem;
         docBean.addAttacheFromScan(doc, event);
-        docBean.getFacade().edit(doc);
+        docBean.getLazyFacade().edit(doc);
     }
         
     public boolean isItemHaveAttache(BaseDict item){
@@ -1796,7 +1796,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
     public void setRootBean(BaseTreeBean rootBean) {
         this.rootBean = rootBean;
-        this.typeRoot = rootBean.getFacade().getItemClass().getSimpleName();
+        this.typeRoot = rootBean.getLazyFacade().getItemClass().getSimpleName();
         rootBean.setBeanId(rootBean.toString());
     }
     public BaseTreeBean getRootBean() {
@@ -1808,13 +1808,13 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     public void setTreeBean(BaseTreeBean treeBean) {
         this.treeBean = treeBean;
-        this.typeTree = treeBean.getFacade().getItemClass().getSimpleName();
+        this.typeTree = treeBean.getLazyFacade().getItemClass().getSimpleName();
         treeBean.setBeanId(treeBean.toString());
     }
     
     public void setTableBean(BaseTableBean tableBean) {
         this.tableBean = tableBean; 
-        this.typeDetail = tableBean.getFacade().getItemClass().getSimpleName();
+        this.typeDetail = tableBean.getLazyFacade().getItemClass().getSimpleName();
         tableBean.setBeanId(tableBean.toString());
     }
     public BaseTableBean getTableBean() {
@@ -1990,7 +1990,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
 
     @Override
-    protected BaseLazyLoadFacade getFacade() {
-        return getItemBean(currentItem).getFacade();
+    protected BaseLazyLoadFacade getLazyFacade() {
+        return getItemBean(currentItem).getLazyFacade();
     }
 }

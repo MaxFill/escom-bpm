@@ -1,6 +1,5 @@
 package com.maxfill.facade;
 
-import com.maxfill.model.BaseDict;
 import com.maxfill.model.states.State;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;

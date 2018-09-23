@@ -92,16 +92,7 @@ public class Company extends BaseDict<Company, Company, Department, CompanyLog, 
     @Override
     public void setState(CompanyStates state) {
         this.state = state;
-    }  
-    
-    @Override
-    public List<CompanyLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<CompanyLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }   
+    }    
     
     @Override
     public String getIconName(){

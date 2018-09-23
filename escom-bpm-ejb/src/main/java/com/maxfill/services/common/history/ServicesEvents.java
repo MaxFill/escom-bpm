@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,7 +52,7 @@ public class ServicesEvents implements Serializable, Dict {
     private String details;
     
     @JoinColumn(name = "ServiceId", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Services serviceId;
 
     @XmlTransient

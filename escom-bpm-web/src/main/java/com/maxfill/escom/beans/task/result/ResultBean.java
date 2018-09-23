@@ -30,7 +30,7 @@ public class ResultBean extends BaseTableBean<Result> {
     }
 
     @Override
-    public BaseDictFacade getFacade() {
+    public BaseDictFacade getLazyFacade() {
         return resultFacade;
     }
 

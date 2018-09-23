@@ -105,8 +105,8 @@ public class AttacheBean extends BaseViewBean<BaseView>{
             Integer docId = Integer.valueOf(params.get("itemId"));
             doc = docFacade.find(docId);
             if (doc == null) return;
-            docBean.getFacade().actualizeRightItem(doc, getCurrentUser());
-            if (docBean.getFacade().isHaveRightView(doc)) {
+            docBean.getLazyFacade().actualizeRightItem(doc, getCurrentUser());
+            if (docBean.getLazyFacade().isHaveRightView(doc)) {
                 Attaches attache = doc.getMainAttache();
                 if (attache == null) return;
                 path = conf.getUploadPath() + attache.getFullNamePDF();

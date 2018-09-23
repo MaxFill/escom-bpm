@@ -2,6 +2,7 @@ package com.maxfill.facade;
 
 import com.maxfill.Configuration;
 import com.maxfill.RightsDef;
+import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.metadates.MetadatesFacade;
@@ -45,6 +46,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.xml.bind.JAXB;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Абстрактный фасад для справочников
@@ -77,8 +79,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         super(itemClass);        
         this.logClass = logClass;
         this.stateClass = stateClass;
-    }
-       
+    }        
+    
     public String getFRM_NAME(){
         return itemClass.getSimpleName().toLowerCase();
     }
@@ -414,8 +416,54 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return null;
     }
         
-    /* ЛОГИРОВАНИЕ ИЗМЕНЕНИЙ */
+    /* ЛОГИРОВАНИЕ  */
 
+    /**
+     * Возвращает лог объекта
+     * @param item
+     * @param firstPosition
+     * @param numberOfRecords
+     * @param sortField
+     * @param sortOrder
+     * @return 
+     */
+    public List<L> getItemLogs(T item, int firstPosition, int numberOfRecords, String sortField, String sortOrder){
+        getEntityManager().getEntityManagerFactory().getCache().evict(logClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<L> cq = builder.createQuery(logClass);
+        Root<L> root = cq.from(logClass);
+        Predicate crit1 = builder.equal(root.get("item"), item);
+        cq.select(root).where(builder.and(crit1));                
+        if (StringUtils.isNotBlank(sortField)){ 
+            if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+                cq.orderBy(builder.asc(root.get(sortField)));
+            } else {
+                cq.orderBy(builder.desc(root.get(sortField)));
+            }
+        }
+        TypedQuery query = getEntityManager().createQuery(cq);
+        query.setFirstResult(firstPosition);
+        query.setMaxResults(numberOfRecords);
+        return query.getResultList();
+    }
+    
+    /**
+     * Возвращает число записей лога объекта
+     * @param item
+     * @return
+     */
+    public int getCountItemLogs(T item){
+        getEntityManager().getEntityManagerFactory().getCache().evict(logClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery();
+        Root root = cq.from(logClass);
+        Predicate crit1 = builder.equal(root.get("item"), item);
+        cq.select(builder.count(root))
+            .where(builder.and(crit1));
+        TypedQuery q = getEntityManager().createQuery(cq);
+        return ((Long) q.getSingleResult()).intValue();
+    }
+    
     /* Добавление события в журнал событий */
     public void addLogEvent(T item, String msgKey, User user) {
         addLogEvent(item, msgKey, "", user);
@@ -429,8 +477,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             logEvent.setParams(parameter);
             logEvent.setDateEvent(new Date());
             logEvent.setUserId(user);
-            logEvent.setItem(item);
-            item.getItemLogs().add(logEvent);
+            logEvent.setItem(item);            
+            getEntityManager().persist(logEvent);
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }

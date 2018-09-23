@@ -26,7 +26,7 @@ public class PostBean extends BaseTableBean<Post>{
     private StaffFacade staffFacade;    
         
     @Override
-    public PostFacade getFacade() {
+    public PostFacade getLazyFacade() {
         return itemFacade;
     }
     

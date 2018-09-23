@@ -102,15 +102,6 @@ public class UserGroups extends BaseDict<UserGroups, UserGroups, User, UserGroup
     public void setState(UserGroupsStates state) {
         this.state = state;
     }
-    
-    @Override
-    public List<UserGroupsLog> getItemLogs() {
-        return itemLogs;
-    }
-    @Override
-    public void setItemLogs(List<UserGroupsLog> itemLogs) {
-        this.itemLogs = itemLogs;
-    }
 
     public List<User> getUsersList() {
         return usersList;

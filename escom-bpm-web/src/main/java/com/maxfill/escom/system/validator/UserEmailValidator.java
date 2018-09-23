@@ -30,7 +30,7 @@ public class UserEmailValidator extends AbstractValidator{
 
         String email = (String) value;
         UserBean userBean = EscomBeanUtils.findBean("userBean", context);
-        UserFacade userFacade = userBean.getFacade();
+        UserFacade userFacade = userBean.getLazyFacade();
 
         Integer userId = (Integer)component.getAttributes().get("userId");
         if (userFacade.checkEmailDuplicate(userId, email)) {

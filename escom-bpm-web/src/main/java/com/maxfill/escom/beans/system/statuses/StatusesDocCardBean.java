@@ -41,7 +41,7 @@ public class StatusesDocCardBean extends BaseCardBean<StatusesDoc>{
         docTypes.stream().forEach(docType -> {
             if (!docType.getStatusDocList().contains(getEditedItem())){
                 docType.getStatusDocList().add(getEditedItem());            
-                docTypeBean.getFacade().edit(docType);
+                docTypeBean.getLazyFacade().edit(docType);
             }
         });
         MsgUtils.succesMsg("AddStatusInSelectedDocumentTypes");

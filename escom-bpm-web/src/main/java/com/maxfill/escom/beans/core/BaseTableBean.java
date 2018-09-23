@@ -55,20 +55,20 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     private Metadates metadatesObj;                     //объект метаданных
 
     @Override
-    public abstract BaseDictFacade getFacade();
+    public abstract BaseDictFacade getLazyFacade();
     public abstract BaseDetailsBean getOwnerBean();     //возвращает бин владельца объекта           
     
     /* РЕДАКТИРОВАНИЕ/ПРОСМОТР ОБЪЕКТА */     
 
     /* Подготовка к просмотру объекта на карточке */
     public T prepViewItem(T item, Map<String, List<String>> paramsMap, Set<String> errors){
-        BaseDictFacade facade = getFacade();
+        BaseDictFacade facade = getLazyFacade();
         T editItem = findItem(item.getId());   //получаем копию объекта для просмотра 
         if (editItem == null){
             MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{item.getClass().getSimpleName() , item.getId()});
             return null;
         }
-        getFacade().makeRightItem(editItem, getCurrentUser());
+        getLazyFacade().makeRightItem(editItem, getCurrentUser());
         if (!facade.isHaveRightView(editItem)){
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightViewNo"), new Object[]{objName});
@@ -90,8 +90,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             return null;
         }
         
-        getFacade().makeRightItem(editItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(editItem)){
+        getLazyFacade().makeRightItem(editItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(editItem)){
             /*
             String objName = getBandleLabel(facade.getMetadatesObj().getBundleName()) + ": " + item.getName();
             String error = MessageFormat.format(getMessageLabel("RightEditNo"), new Object[]{objName});
@@ -111,7 +111,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      */
     public T prepEditChildItem(T item, Map<String, List<String>> paramsMap){        
         Set<String> errors = new HashSet<>();
-        BaseDictFacade facade = getFacade();
+        BaseDictFacade facade = getLazyFacade();
         try {            
             T editItem =  createItem(item.getParent(), item.getOwner(), getCurrentUser(), new HashMap<>()); //создаём копию объекта
             BeanUtils.copyProperties(editItem, item);
@@ -154,7 +154,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     /* СОЗДАНИЕ: Cоздание объекта */
     public T createItem(BaseDict parent, BaseDict owner, User author, Map<String, Object> params) {
-        return (T) getFacade().createItem(author, parent, owner, params);
+        return (T) getLazyFacade().createItem(author, parent, owner, params);
     }
 
     /**
@@ -224,11 +224,11 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Действия перед созданием объекта. Сюда попадаем только если создание идёт через графический интерфейс пользователя */
     protected void prepCreate(T newItem, BaseDict parent, Set<String> errors){
-        getFacade().makeRightItem(newItem, getCurrentUser());
-        if (getFacade().isHaveRightCreate(newItem)) {
+        getLazyFacade().makeRightItem(newItem, getCurrentUser());
+        if (getLazyFacade().isHaveRightCreate(newItem)) {
             setSpecAtrForNewItem(newItem);
         } else {
-            String objName = MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName());
+            String objName = MsgUtils.getBandleLabel(getLazyFacade().getMetadatesObj().getBundleName());
             String error = MessageFormat.format(MsgUtils.getMessageLabel("RightCreateNo"), new Object[]{objName});
             errors.add(error);
         }
@@ -254,7 +254,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             return null;
         }
         changeNamePasteItem(sourceItem, pasteItem);
-        getFacade().create(pasteItem);
+        getLazyFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
     }
@@ -268,9 +268,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         pasteItem.setDetailItems(null);
         pasteItem.setState(null);
         pasteItem.setId(null);                    //нужно сбросить скопированный id!
-        pasteItem.setItemLogs(new ArrayList<>()); //нужно сбросить скопированный log !
         pasteItem.doSetSingleRole(DictRoles.ROLE_OWNER, getCurrentUser().getId());
-        getFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
+        getLazyFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
     };  
     
     /**
@@ -286,12 +285,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Возвращает объект по его Id */
     public T findItem(Integer id){
-        return (T) getFacade().find(id);
+        return (T) getLazyFacade().find(id);
     }
     
     /* Возвращает список актуальных объектов, доступных для просмотра текущему пользователю */
     public List<T> findAll(){        
-        return getFacade().findAll(getCurrentUser());
+        return getLazyFacade().findAll(getCurrentUser());
     }
     
     /**
@@ -304,7 +303,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @return 
      */
     public List<T> findDetailItems(BaseDict owner, int first, int pageSize, String sortField, String sortOrder){
-        return getFacade().findActualDetailItems(owner, first, pageSize, sortField, sortOrder, getCurrentUser());
+        return getLazyFacade().findActualDetailItems(owner, first, pageSize, sortField, sortOrder, getCurrentUser());
     }
     
     /* Копирование объекта */
@@ -348,13 +347,13 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }
 
     protected void actualizeRightForDropItem(BaseDict dropItem){
-        getFacade().actualizeRightItem(dropItem, getCurrentUser());
+        getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
     }
 
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в корзину  */
     public boolean prepareDropItemToTrash(T dragItem, Set<String> errors) {
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightDelete(dragItem)) {
+        getLazyFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightDelete(dragItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("RightDeleteNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -364,8 +363,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* РЕДАКТИРОВАНИЕ: Проверка перед перемещением объекта в не актуальные  */
     public boolean prepareDropItemToNotActual(T dragItem, Set<String> errors){
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)) {
+        getLazyFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("RightEditNo"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -376,13 +375,13 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* Обработка перемещения объекта в не актульные  */
     public void moveItemToNotActual(T item){
         item.setActual(false);
-        getFacade().edit(item);
+        getLazyFacade().edit(item);
     }            
     
     /* Перед перемещением объекта в группу  */
     public boolean prepareMoveItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)){
+        getLazyFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(dragItem)){
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -390,7 +389,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         
         actualizeRightForDropItem(dropItem);
 
-        if (!getFacade().isHaveRightAddChild(dropItem)){
+        if (!getLazyFacade().isHaveRightAddChild(dropItem)){
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedAddChilds"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
@@ -400,14 +399,14 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* Проверка прав перед добавлением объекта в группу  */
     public boolean checkRightBeforeAddItemToGroup(BaseDict dropItem, T dragItem, Set<String> errors) {        
-        getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
-        if (!getFacade().isHaveRightAddChild(dropItem)) {
+        getOwnerBean().getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightAddChild(dropItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dropItem.getName()});
             errors.add(error);
             return false;
         }
-        getFacade().actualizeRightItem(dragItem, getCurrentUser());
-        if (!getFacade().isHaveRightEdit(dragItem)) {
+        getLazyFacade().actualizeRightItem(dragItem, getCurrentUser());
+        if (!getLazyFacade().isHaveRightEdit(dragItem)) {
             String error = MessageFormat.format(MsgUtils.getMessageLabel("AccessDeniedEdit"), new Object[]{dragItem.getName()});
             errors.add(error);
             return false;
@@ -420,7 +419,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         BaseDict ownerDragItem = dragItem.getOwner();    
         if (ownerDragItem != null) { //только если owner был, то его можно поменять на новый!             
             dragItem.setOwner(dropItem);
-            getFacade().edit(dragItem);
+            getLazyFacade().edit(dragItem);
         }
     }
     
@@ -442,12 +441,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         deleteDetails(item);
         preDeleteItem(item);
         numeratorService.doRollBackRegistred(item);
-        getFacade().remove(item);
+        getLazyFacade().remove(item);
     }
 
     /* УДАЛЕНИЕ: удаление дочерних child объектов */
     private void deleteChilds(T parent) {
-        getFacade().findAllChilds(parent).stream().forEach(child -> deleteItem((T) child));
+        getLazyFacade().findAllChilds(parent).stream().forEach(child -> deleteItem((T) child));
     }
 
     /* Удаление подчинённых (связанных) объектов */
@@ -465,7 +464,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         restoreDetails(item);
         restoreChilds(item);
         item.setDeleted(Boolean.FALSE);
-        getFacade().edit(item);
+        getLazyFacade().edit(item);
     }
 
     /* Восстановление подчинённых detail объектов из корзины */
@@ -474,12 +473,12 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     /* КОРЗИНА: восстановление дочерних childs объектов из корзины */
     private void restoreChilds(T parentItem) {
-        getFacade().findAllChilds(parentItem).stream().forEach(item -> doRestoreItemFromTrash((T) item));
+        getLazyFacade().findAllChilds(parentItem).stream().forEach(item -> doRestoreItemFromTrash((T) item));
     }
     
     /* КОРЗНА: перемещение дочерних элементов в корзину */
     private void moveChildItemToTrash(BaseDict parent, Set<String> errors) {
-        getFacade().findAllChilds(parent).stream().forEach(child -> moveToTrash((T) child, errors));
+        getLazyFacade().findAllChilds(parent).stream().forEach(child -> moveToTrash((T) child, errors));
     }
 
     /* КОРЗИНА: перемещение в корзину подчинённых объектов Владельца (ownerItem) */
@@ -488,8 +487,8 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     /* КОРЗИНА: перемещение объекта в корзину */
     public void moveToTrash(T item, Set<String> errors) {
-        getFacade().actualizeRightItem(item, getCurrentUser());
-        if (getFacade().isHaveRightDelete(item)) {
+        getLazyFacade().actualizeRightItem(item, getCurrentUser());
+        if (getLazyFacade().isHaveRightDelete(item)) {
             checkAllowedDeleteItem(item, errors);
             checkLockItem(item, errors);
             if (errors.isEmpty()) {
@@ -499,7 +498,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 moveChildItemToTrash(item, errChild);
                 if (errChild.isEmpty() && errDetail.isEmpty()) {
                     item.setDeleted(Boolean.TRUE);
-                    getFacade().edit(item);
+                    getLazyFacade().edit(item);
                 } else {
                     errors.addAll(errDetail);
                     errors.addAll(errChild);
@@ -529,7 +528,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     private void openItemSelector(Integer selectMode, Map<String, List<String>> paramsMap) {                
         List<String> paramList = Collections.singletonList(selectMode.toString());
         paramsMap.put("selectMode", paramList);                
-        String frmName = getFacade().getFRM_NAME() + "-explorer";        
+        String frmName = getLazyFacade().getFRM_NAME() + "-explorer";        
         sessionBean.openCloseableDialog(frmName, paramsMap);
     }        
     
@@ -541,7 +540,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 .filter(item -> (item.getMetadateObj().getId().equals(getMetadatesObj().getId())))
                 .map(item->item.getObjId())
                 .collect(Collectors.toList());
-        return getFacade().findByIds(favorIds, currentUser);
+        return getLazyFacade().findByIds(favorIds, currentUser);
     }   
 
     /* ИЗБРАННОЕ: удаление объекта из избранного   */
@@ -564,7 +563,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         List<T> result = new ArrayList<>();
         switch (filter.getId()) {
             case DictFilters.TRASH_ID: {
-                result = getFacade().loadFromTrash(first, pageSize, sortField, sortOrder, getCurrentUser());
+                result = getLazyFacade().loadFromTrash(first, pageSize, sortField, sortOrder, getCurrentUser());
                 break;
             }           
             case DictFilters.FAVORITE_ID: {
@@ -572,19 +571,19 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
                 break;
             }            
             case DictFilters.USER_CREATED_ID: {
-                result = getFacade().findItemsCreatedByUser(getCurrentUser(), first, pageSize);
+                result = getLazyFacade().findItemsCreatedByUser(getCurrentUser(), first, pageSize);
                 break;
             }
             case DictFilters.LAST_CHANGE_ID: {
-                result = getFacade().findLastChangedItemsByUser(getCurrentUser(), first, pageSize);
+                result = getLazyFacade().findLastChangedItemsByUser(getCurrentUser(), first, pageSize);
                 break;
             }
             case DictFilters.NOTACTUAL_ID: {
-                result = getFacade().loadNotActualItems(first, pageSize, getCurrentUser());
+                result = getLazyFacade().loadNotActualItems(first, pageSize, getCurrentUser());
                 break;
             }
             case DictFilters.ON_MY_EDIT: {
-                result = getFacade().loadLockDocuments(getCurrentUser());
+                result = getLazyFacade().loadLockDocuments(getCurrentUser());
                 break;
             }
         }
@@ -598,7 +597,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     
     /* ПОИСК: Выполняет поиск объектов */
     public List<T> doSearche(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize){
-       return getFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
+       return getLazyFacade().getByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, addParams, first, pageSize, getCurrentUser());        
     }
     
     /* СЛУЖЕБНЫЕ МЕТОДЫ  */
@@ -620,7 +619,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
      * @return 
      */
     public int replaceItem(BaseDict oldItem, BaseDict newItem){
-        return getFacade().replaceItem(oldItem, newItem);
+        return getLazyFacade().replaceItem(oldItem, newItem);
     }        
    
     /* АДМИНИСТРИРОВАНИЕ ОБЪЕКТОВ: вычисление числа ссылок на объект. */
@@ -630,7 +629,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
 
     @Override
     public String getFormName() {
-        return getFacade().getFRM_NAME();
+        return getLazyFacade().getFRM_NAME();
     }
 
     @Override
@@ -641,7 +640,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     /* Получение ссылки на объект метаданных  */
     public Metadates getMetadatesObj() {
         if (metadatesObj == null) {
-            metadatesObj = getFacade().getMetadatesObj();
+            metadatesObj = getLazyFacade().getMetadatesObj();
         }
         return metadatesObj;
     }    

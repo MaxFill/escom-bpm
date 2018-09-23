@@ -1,20 +1,20 @@
 package com.maxfill.escom.beans.core.lazyload;
 
-import com.maxfill.model.Dict;
+import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.model.BaseLogItems;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
+public class LazyLogModel<T extends BaseLogItems> extends LazyDataModel<T>{
     private static final long serialVersionUID = 7191520294306205834L;
 
     private List<T> datasource;
-    private final LazyLoadBean bean;
+    private final BaseCardBean bean;
 
-    public LazyLoadModel(List <T> datasource, LazyLoadBean bean) {
+    public LazyLogModel(List <T> datasource, BaseCardBean bean) {
         this.datasource = datasource;
         this.bean = bean;
     }
@@ -30,19 +30,11 @@ public class LazyLoadModel<T extends Dict> extends LazyDataModel<T>{
         return item.getId();
     }
 
-    public boolean isDataEmpty(){
-        return datasource == null || datasource.isEmpty();
-    }
-
-    public void removeItem(T item){
-        this.datasource.remove(item);
-    }
-
     @Override
     public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,Object> filters) {
-        datasource = bean.onLoadItems(first, pageSize, sortField, sortOrder, filters);
+        datasource = bean.loadItemLogs(first, pageSize, sortField, sortOrder);
 
-        int dataSize = bean.countItems();
+        int dataSize = bean.getCountItemLogs();
         this.setRowCount(dataSize);
 
         return datasource;

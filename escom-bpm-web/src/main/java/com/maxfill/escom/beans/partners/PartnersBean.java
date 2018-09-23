@@ -41,7 +41,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     }
     
     @Override
-    public PartnersFacade getFacade() {
+    public PartnersFacade getLazyFacade() {
         return itemsFacade;
     }
 
@@ -78,7 +78,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
         if (!partner.getPartnersGroupsList().contains(group)){
             partner.getPartnersGroupsList().add(group);          
             group.getPartnersList().add(partner);
-            getFacade().edit(partner);
+            getLazyFacade().edit(partner);
             return true;
         }
         return false;
@@ -106,7 +106,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
     
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
-        groupsBean.getFacade().actualizeRightItem(dropItem, getCurrentUser());
+        groupsBean.getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
     }
     
     @Override
@@ -117,7 +117,7 @@ public class PartnersBean extends BaseExplBeanGroups<Partner, PartnerGroups>{
             sourceGroup.getPartnersList().remove(partner);
         }                             
         partner.getPartnersGroupsList().add((PartnerGroups)targetGroup);
-        getFacade().edit(partner);
+        getLazyFacade().edit(partner);
     }
 
     @Override

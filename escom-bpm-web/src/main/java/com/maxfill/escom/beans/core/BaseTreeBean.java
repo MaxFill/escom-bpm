@@ -16,19 +16,19 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     @Override
     public void setSpecAtrForNewItem(T item) {
         item.setInheritsAccessChilds(true);
-        getFacade().makeRightForChilds(item);
+        getLazyFacade().makeRightForChilds(item);
     }
     
     /* Базовый метод формирования детального списка для группы  */
     public List<BaseDict> makeGroupContent(BaseDict group, BaseTableBean tableBean, Integer viewMode, int first, int pageSize, String sortField, String sortOrder){        
-        return getDetailBean().getFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder, getCurrentUser());        
+        return getDetailBean().getLazyFacade().findActualDetailItems(group, first, pageSize, sortField,  sortOrder, getCurrentUser());        
     }
     
     public void loadChilds(BaseDict item, TreeNode node){
         if ("ui-icon-folder-collapsed".equals(item.getIconTree())){
             node.setExpanded(true);
             node.getChildren().clear();
-            getFacade().findActualChilds(item, getCurrentUser()).forEach(itemChild -> addItemInTree(node, (BaseDict)itemChild, "tree"));
+            getLazyFacade().findActualChilds(item, getCurrentUser()).forEach(itemChild -> addItemInTree(node, (BaseDict)itemChild, "tree"));
             item.setIconTree("ui-icon-folder-open");
         }
     }         
@@ -37,7 +37,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     public TreeNode makeTree() {
         TreeNode tree = new DefaultTreeNode("Root", null);
         tree.setExpanded(true);
-        getFacade().findRootItems(getCurrentUser()).forEach(treeItem -> addItemInTree(tree, (BaseDict)treeItem, "tree"));
+        getLazyFacade().findRootItems(getCurrentUser()).forEach(treeItem -> addItemInTree(tree, (BaseDict)treeItem, "tree"));
         return tree;
     }
 
@@ -49,7 +49,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Удаление подчинённых (связанных) объектов */
     @Override
     protected void deleteDetails(T item) {
-        List<BaseDict> details = getFacade().findAllDetailItems(item);
+        List<BaseDict> details = getLazyFacade().findAllDetailItems(item);
         if (details != null) {
             details.stream().forEach(child -> getDetailBean().deleteItem((T) child));
         }
@@ -58,7 +58,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Восстановление подчинённых detail объектов из корзины */
     @Override
     protected void restoreDetails(T ownerItem) {
-        List<BaseDict> details = getFacade().findAllDetailItems(ownerItem);
+        List<BaseDict> details = getLazyFacade().findAllDetailItems(ownerItem);
         if (details != null){
             details.stream().forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item));
         }
@@ -67,7 +67,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Перемещение в корзину подчинённых объектов Владельца */
     @Override
     protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {        
-        List<BaseDict> details = getFacade().findAllDetailItems(ownerItem);
+        List<BaseDict> details = getLazyFacade().findAllDetailItems(ownerItem);
         if (details != null){
             details.stream().forEach(detail -> getDetailBean().moveToTrash((T) detail, errors));
         }
@@ -82,7 +82,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
      */
     @Override
     protected void checkAllowedDeleteItem(T item, Set<String> errors) {
-        Long count = getFacade().getCountDetails(item);
+        Long count = getLazyFacade().getCountDetails(item);
         if (count > 0) {
             Object[] messageParameters = new Object[]{item.getName()};
             String error = MessageFormat.format(getMessageLabel("DeleteObjectHaveChildItems"), messageParameters);

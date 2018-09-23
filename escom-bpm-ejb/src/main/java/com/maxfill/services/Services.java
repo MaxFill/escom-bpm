@@ -61,10 +61,7 @@ public class Services implements Serializable {
       
     @Lob
     @Column(name = "TimeHandle")
-    private byte[] timeHandle;
-        
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId", fetch = FetchType.LAZY, orphanRemoval=true)
-    private List<ServicesEvents> servicesEventsList;
+    private byte[] timeHandle;        
         
     public Services() {
     }
@@ -81,14 +78,7 @@ public class Services implements Serializable {
     }
     public void setName(String name) {
         this.name = name;
-    }    
-    
-    public List<ServicesEvents> getServicesEventsList() {
-        return servicesEventsList;
-    }
-    public void setServicesEventsList(List<ServicesEvents> servicesEventsList) {
-        this.servicesEventsList = servicesEventsList;
-    }
+    }        
 
     public Boolean getStarted() {
         return started;

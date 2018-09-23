@@ -28,7 +28,7 @@ public abstract class BaseLazyLoadFacade<T extends Dict> extends BaseFacade<T>{
      * @param filters
      * @return
      */
-    public int countItems(Map<String,Object> filters){
+    public int countItemsByFilters(Map<String,Object> filters){
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root<T> root = cq.from(itemClass);
@@ -61,9 +61,8 @@ public abstract class BaseLazyLoadFacade<T extends Dict> extends BaseFacade<T>{
         }
         Query query = getEntityManager().createQuery(cq);
         query.setFirstResult(firstPosition);
-        query.setMaxResults(numberOfRecords);
-        List<T> result = query.getResultList();
-        return result;
+        query.setMaxResults(numberOfRecords);        
+        return query.getResultList();
     }
     
     /**

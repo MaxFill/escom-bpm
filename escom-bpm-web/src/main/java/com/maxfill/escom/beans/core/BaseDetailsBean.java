@@ -37,18 +37,18 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
         boolean isAllowedEditParent = true;
         BaseDict owner = newItem.getOwner();
         if (owner != null) {
-            getOwnerBean().getFacade().actualizeRightItem(owner, getCurrentUser());
-            isAllowedEditOwner = getFacade().isHaveRightAddDetail(owner); //можно ли создавать подчинённые объекты?
+            getOwnerBean().getLazyFacade().actualizeRightItem(owner, getCurrentUser());
+            isAllowedEditOwner = getLazyFacade().isHaveRightAddDetail(owner); //можно ли создавать подчинённые объекты?
             if (!isAllowedEditOwner){
-                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddDetailsNo"), new Object[]{owner.getName(), MsgUtils.getBandleLabel(getLazyFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
         if (parent != null){
-            getFacade().actualizeRightItem(parent, getCurrentUser());
-            isAllowedEditParent = getFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
+            getLazyFacade().actualizeRightItem(parent, getCurrentUser());
+            isAllowedEditParent = getLazyFacade().isHaveRightAddChild(parent); //можно ли создавать дочерние объекты?
             if (!isAllowedEditParent){
-                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName())});
+                String error = MessageFormat.format(MsgUtils.getMessageLabel("RightAddChildsNo"), new Object[]{parent.getName(), MsgUtils.getBandleLabel(getLazyFacade().getMetadatesObj().getBundleName())});
                 errors.add(error);
             }
         }
@@ -75,7 +75,7 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
             return null;
         }
         changeNamePasteItem(sourceItem, pasteItem);
-        getFacade().create(pasteItem);
+        getLazyFacade().create(pasteItem);
         doPasteMakeSpecActions(sourceItem, pasteItem);
         return pasteItem;
     }
@@ -114,16 +114,16 @@ public abstract class BaseDetailsBean<T extends BaseDict, O extends BaseDict> ex
     @Override
     protected void actualizeRightForDropItem(BaseDict dropItem){
         if (getOwnerBean() != null){
-            getOwnerBean().getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            getOwnerBean().getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         } else {
-            getFacade().actualizeRightItem(dropItem, getCurrentUser());
+            getLazyFacade().actualizeRightItem(dropItem, getCurrentUser());
         }
     }
     
     /* Обработка события перемещения в дереве группы в группу  */
     public void moveGroupToGroup(BaseDict dropItem, T dragItem) {
         dragItem.setParent(dropItem);
-        getFacade().edit(dragItem);
+        getLazyFacade().edit(dragItem);
     }    
 
     /**

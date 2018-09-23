@@ -26,7 +26,7 @@ public class PartnerTypesBean extends BaseTableBean<PartnerTypes>{
     private PartnersFacade partnersFacade;
 
     @Override
-    public PartnerTypesFacade getFacade() {
+    public PartnerTypesFacade getLazyFacade() {
         return partnerTypesFacade;
     }
     
