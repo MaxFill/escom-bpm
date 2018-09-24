@@ -3,10 +3,10 @@
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<style name="Title" fontName="Arial" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
-	<style name="SubTitle" forecolor="#736343" fontName="Arial" fontSize="18"/>
-	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
-	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<style name="Title" fontName="SansSerif" fontSize="50" isBold="true" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#736343" fontName="SansSerif" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="SansSerif" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="SansSerif" fontSize="12"/>
 	<style name="Row" mode="Transparent">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
@@ -31,33 +31,33 @@
 			<textField>
 				<reportElement x="0" y="0" width="555" height="54" backcolor="#FFB000" uuid="06ae06ee-09c1-405b-a0d4-df1fcf5e44c9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Arial" size="20" isBold="true"/>
+					<font fontName="SansSerif" size="20" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="54" width="92" height="47" uuid="84b6f93d-c5f0-4b44-943e-f8e9e40f04bc"/>
+				<reportElement x="0" y="54" width="92" height="28" uuid="84b6f93d-c5f0-4b44-943e-f8e9e40f04bc"/>
 				<textElement verticalAlignment="Middle">
-					<font fontName="Arial" size="14" isBold="false" />
+					<font fontName="SansSerif" size="14" isBold="false"/>
 				</textElement>
 				<text><![CDATA[За период с:]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy">
-				<reportElement x="92" y="54" width="106" height="47" uuid="5456b27a-0f0b-4e74-840d-910774ed3658"/>
+				<reportElement x="92" y="53" width="118" height="29" uuid="5456b27a-0f0b-4e74-840d-910774ed3658"/>
 				<textElement verticalAlignment="Middle">
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{DATE_START}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="198" y="54" width="22" height="47" uuid="95edc642-4b7a-4820-beb2-fad16a3ba7a9"/>
+				<reportElement x="210" y="54" width="22" height="28" uuid="95edc642-4b7a-4820-beb2-fad16a3ba7a9"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14"/>
 				</textElement>
 				<text><![CDATA[по:]]></text>
 			</staticText>
 			<textField pattern="dd.MM.yyyy">
-				<reportElement x="220" y="54" width="106" height="47" uuid="e659c201-b11a-4447-9c2d-99afae8e6ae3"/>
+				<reportElement x="232" y="53" width="114" height="29" uuid="e659c201-b11a-4447-9c2d-99afae8e6ae3"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14"/>
 				</textElement>

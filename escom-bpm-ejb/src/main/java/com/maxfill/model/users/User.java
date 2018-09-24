@@ -182,7 +182,29 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
     }
 
     /** 
-     * Формирует сокращённое ФИО сотрудника
+     * Формирует сокращённое ФИО сотрудника в формате И.О. Фамилия
+     * @return 
+     */ 
+    @XmlTransient
+    public String getOfficialFIO(){       
+        String f = "";
+        String l = "";
+        String s = "";
+        if (!lastName.isEmpty()){
+            l = lastName.substring(0, 1);
+        }
+        if (!secondName.isEmpty()){
+            f = secondName;
+        }
+        if (!firstName.isEmpty()){
+            s = firstName.substring(0, 1);
+        }
+        
+        return String.format("%s %s.%s.", f,s,l); 
+    }
+    
+    /** 
+     * Формирует полное ФИО сотрудника
      * @return 
      */ 
     @XmlTransient

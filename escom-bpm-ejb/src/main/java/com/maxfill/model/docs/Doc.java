@@ -230,11 +230,14 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public String getFullName(){        
         StringBuilder builder = new StringBuilder();
         if (docType != null && StringUtils.isNotBlank(docType.getName())){
-            builder.append(docType.getName()).append(" '");
-        }    
-        builder.append(getNameEndElipse()).append("' ");
+            builder.append(docType.getName()).append(" ");
+        } 
+        if (StringUtils.isNotBlank(regNumber)){
+            builder.append("№").append(regNumber).append(" ");
+        }
+        builder.append(getName());
         return builder.toString();
-    }    
+    }
     
     public String getRegInfo(Locale locale){
         StringBuilder sb = new StringBuilder();

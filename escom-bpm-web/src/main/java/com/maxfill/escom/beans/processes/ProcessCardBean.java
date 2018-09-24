@@ -436,20 +436,20 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                     String fio = report.getExecutor().getFullName();
                 return new ConcordersData(fio, result, data, dateBegin);
              }).collect(Collectors.toList());        
-        StringBuilder docName = new StringBuilder();
-        StringBuilder docNumber = new StringBuilder();
+        StringBuilder docName = new StringBuilder();        
         String partnerName = "";
-        List<Doc> docs = process.getDocs();
-        if (!docs.isEmpty()){
-            Doc doc = docs.get(0);            
+        Doc doc = process.getDocument();
+        if (doc != null){            
             docName.append(doc.getFullName());
-            docNumber.append(doc.getRegInfo(getLocale()));
             partnerName = doc.getPartner().getFullName();
-        }        
-        params.put("DOC_NAME", docName.toString());
-        params.put("DOC_NUMBER", docNumber.toString());   
-        params.put("PARTNER_NAME", partnerName);  
-        params.put("CURATOR_NAME", process.getCurator().getFullName());  
+        } 
+        StringBuilder curator = new StringBuilder();
+        if (process.getCurator() != null){
+            curator.append(process.getCurator().getFullName()).append(", ").append(process.getCurator().getPhone());
+        }
+        params.put("CURATOR_NAME", curator.toString());
+        params.put("DOC_NAME", docName.toString());  
+        params.put("PARTNER_NAME", partnerName);
         params.put("PROCESS_NUMBER", process.getRegNumber());  
         params.put("PROCESS_DATE", process.getItemDate());  
         printService.doPrint(dataReport, params, DictPrintTempl.REPORT_CONCORDER_LIST);

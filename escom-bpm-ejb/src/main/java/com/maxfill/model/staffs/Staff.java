@@ -133,15 +133,15 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return orgUnit.toString();
     }
 
-    /* Формирует краткое наименование штатной единицы  */
+    /* Формирует краткое наименование штатной единицы в формате Должность И.О. Фамилия */
     public String getStaffFIO() {
-        StringBuilder sb = new StringBuilder();     
+        StringBuilder sb = new StringBuilder();  
+         if (post != null & StringUtils.isNotBlank(post.getName())){
+            sb.append(post.getName()).append(" ");
+        }
         if (employee != null && StringUtils.isNotBlank(employee.getName())){
-            sb.append(employee.getShortFIO()).append(" ");
-        }
-        if (post != null & StringUtils.isNotBlank(post.getName())){
-            sb.append(post.getName());
-        }
+            sb.append(employee.getOfficialFIO());
+        } 
         return  sb.toString() ;
     }
 
@@ -165,6 +165,11 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
         return post != null ? post.getName() : "";
     }
 
+    public String getPhone(){
+        if (employee == null) return "";
+        return employee.getPhone();
+    }
+    
     /* GETS & SETS */
     
     @Override
