@@ -12,7 +12,6 @@ import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.staffs.Staff_;
 import com.maxfill.model.users.User;
-import com.maxfill.model.users.groups.UserGroups;
 import com.maxfill.services.numerators.department.DepartmentNumeratorService;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +43,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     }
 
     @Override
-    public List<BaseDict> findAllDetailItems(Department owner){
+    public List<BaseDict> findDetailItems(Department owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);

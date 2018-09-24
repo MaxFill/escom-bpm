@@ -32,7 +32,7 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     @Override
-    public List<BaseDict> findAllDetailItems(Company owner){
+    public List<BaseDict> findDetailItems(Company owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);

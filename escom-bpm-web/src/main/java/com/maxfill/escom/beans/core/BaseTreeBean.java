@@ -49,7 +49,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Удаление подчинённых (связанных) объектов */
     @Override
     protected void deleteDetails(T item) {
-        List<BaseDict> details = getLazyFacade().findAllDetailItems(item);
+        List<BaseDict> details = getLazyFacade().findDetailItems(item);
         if (details != null) {
             details.stream().forEach(child -> getDetailBean().deleteItem((T) child));
         }
@@ -58,7 +58,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Восстановление подчинённых detail объектов из корзины */
     @Override
     protected void restoreDetails(T ownerItem) {
-        List<BaseDict> details = getLazyFacade().findAllDetailItems(ownerItem);
+        List<BaseDict> details = getLazyFacade().findDetailItems(ownerItem);
         if (details != null){
             details.stream().forEach(item -> getDetailBean().doRestoreItemFromTrash((T) item));
         }
@@ -67,7 +67,7 @@ public abstract class BaseTreeBean<T extends BaseDict, O extends BaseDict> exten
     /* Перемещение в корзину подчинённых объектов Владельца */
     @Override
     protected void moveDetailItemsToTrash(T ownerItem, Set<String> errors) {        
-        List<BaseDict> details = getLazyFacade().findAllDetailItems(ownerItem);
+        List<BaseDict> details = getLazyFacade().findDetailItems(ownerItem);
         if (details != null){
             details.stream().forEach(detail -> getDetailBean().moveToTrash((T) detail, errors));
         }

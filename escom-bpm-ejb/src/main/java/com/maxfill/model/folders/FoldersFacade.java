@@ -44,7 +44,7 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * @return
      */
     @Override
-    public List<BaseDict> findAllDetailItems(Folder owner){        
+    public List<BaseDict> findDetailItems(Folder owner){        
         getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);

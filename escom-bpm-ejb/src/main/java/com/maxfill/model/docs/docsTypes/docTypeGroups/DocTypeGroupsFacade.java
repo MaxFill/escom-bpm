@@ -60,7 +60,7 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
     }
 
     @Override
-    public List<BaseDict> findAllDetailItems(DocTypeGroups owner){
+    public List<BaseDict> findDetailItems(DocTypeGroups owner){
         getEntityManager().getEntityManagerFactory().getCache().evict(DocType.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<DocType> cq = builder.createQuery(DocType.class);
