@@ -108,7 +108,7 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
     @Override
     protected void doPreViewItemCard(ArrayList<Object> dataReport, Map<String, Object> parameters, String reportName){
         super.doPreViewItemCard(dataReport, parameters, DictPrintTempl.REPORT_PARTNER_CARD);
-    }
+    }    
     
     @Override
     public List<PartnerGroups> getGroups(Partner partner) {

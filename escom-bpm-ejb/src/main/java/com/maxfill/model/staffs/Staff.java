@@ -1,5 +1,6 @@
 package com.maxfill.model.staffs;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.BaseDict;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.departments.Department;
@@ -147,8 +148,16 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
 
     @Override
     public String getEmployeeFIO(){
-        return employee != null ? employee.getShortFIO() : "";
+        return employee != null ? employee.getShortFIO() : "vacancy";
     }
+
+    @Override
+    public String getNameEndElipse() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getEmployeeFIO()).append(" ");
+        sb.append(getPostName());
+        return StringUtils.abbreviate(sb.toString(), SysParams.LENGHT_NAME_ELIPSE); 
+    }        
         
     /* Возвращает email штатной единицы (из user)  */
     @Override

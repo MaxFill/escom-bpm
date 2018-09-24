@@ -1,6 +1,5 @@
 package com.maxfill.model.docs;
 
-import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.folders.FoldersFacade;

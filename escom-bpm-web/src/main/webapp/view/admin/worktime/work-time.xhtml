@@ -21,6 +21,7 @@
             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">            
                 <p:outputLabel value="#{bundle.Date}:"/>
                 <p:outputLabel value="#{workTimeCardBean.editedItem.date}">                    
+                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
                 </p:outputLabel>
             </p:panelGrid>
             <p:separator styleClass="ui-grid-col-12"/>

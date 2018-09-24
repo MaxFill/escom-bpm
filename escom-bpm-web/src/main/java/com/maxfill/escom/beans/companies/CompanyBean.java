@@ -82,7 +82,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.deleteItem(child));
         }
-        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findAllStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.deleteItem(staff)));
         }
@@ -95,7 +95,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         if (!departments.isEmpty()) {
             departments.stream().forEach(child -> departmentBean.moveToTrash(child, errors));
         }
-        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findAllStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.moveToTrash(staff, errors)));
         }
@@ -108,7 +108,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         if (departments != null){
             departments.stream().forEach(item -> departmentBean.doRestoreItemFromTrash(item));
         }
-        List<Staff> staffs = getLazyFacade().findStaffByCompany(company);
+        List<Staff> staffs = getLazyFacade().findAllStaffByCompany(company);
         if (!staffs.isEmpty()){
             staffs.stream().forEach((staff -> staffBean.doRestoreItemFromTrash(staff)));
         }
@@ -122,7 +122,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         if (!departments.isEmpty()) {
             dependency.add(departments); //копируются все подразделения, кроме удалённых в корзину
         }
-        List<Staff> staffs = staffFacade.findStaffByCompany(company, null, getCurrentUser()); //копируются все штединицы, кроме удалённых в корзину
+        List<Staff> staffs = staffFacade.findStaffInOnlyCompany(company, getCurrentUser()); //копируются все штединицы, кроме удалённых в корзину
         if (!staffs.isEmpty()) {
             dependency.add(staffs);
         }
@@ -136,7 +136,7 @@ public class CompanyBean extends BaseTreeBean<Company, Company> {
         if (Objects.equals(viewMode, DictExplForm.SELECTOR_MODE) && tableBean == this) {
             cnt.addAll(departmentFacade.findActualDetailItems((Company) company, first, pageSize, sortField, sortOrder, getCurrentUser()));
         } else {
-            cnt.addAll(staffFacade.findStaffByCompany((Company) company, null, getCurrentUser()));
+            cnt.addAll(staffFacade.findStaffInOnlyCompany((Company) company, getCurrentUser()));
         }
         return cnt;
     }       

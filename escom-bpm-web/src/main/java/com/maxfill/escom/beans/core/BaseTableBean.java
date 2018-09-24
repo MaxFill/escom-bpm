@@ -289,9 +289,9 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
     }
     
     /* Возвращает список актуальных объектов, доступных для просмотра текущему пользователю */
-    public List<T> findAll(){        
+    public List<T> findAll(){
         return getLazyFacade().findAll(getCurrentUser());
-    }
+    }    
     
     /**
      * Формирует список дочерних объектов, доступных текущему пользователю

@@ -209,4 +209,18 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="partners_add_Phone" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="partners" columnName="Phone" />
+            </not>
+        </preConditions>
+        <addColumn tableName="partners">
+            <column name="Phone" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>    
+    
 </databaseChangeLog> 

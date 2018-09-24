@@ -82,17 +82,17 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
     }
 
     /**
-     * Отбор всех штатных единиц, принадлежащих напрямую указанной компании, c учётом не актуальных и удалённых в корзину
+     * Отбор всех штатных единиц, принадлежащих напрямую указанной компании, в том числе не актуальных и удалённых в корзину
      * @param company
      * @return
      */
-    public List<Staff> findStaffByCompany(Company company){
+    public List<Staff> findAllStaffByCompany(Company company){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);
         Predicate crit1 = builder.equal(c.get(Staff_.company), company);
-        Predicate crit2 = builder.isNull(c.get(Staff_.owner));
+        Predicate crit2 = builder.isNull(c.get(Staff_.owner)); //подразделение должно быть null!
         cq.select(c).where(builder.and(crit1, crit2));
         Query q = getEntityManager().createQuery(cq);
         return q.getResultList();

@@ -200,7 +200,7 @@ public class User extends BaseDict<UserGroups, User, User, UserLog, UserStates>{
             s = firstName.substring(0, 1);
         }
         
-        return String.format("%s %s.%s.", f,s,l); 
+        return String.format("%s.%s.%s", s,l,f); 
     }
     
     /** 

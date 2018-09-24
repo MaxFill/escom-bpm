@@ -5,8 +5,8 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.companies.CompanyFacade;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.services.worktime.WorkTimeCalendar;
-import com.maxfill.services.worktime.WorkTimeFacade;
 import com.maxfill.services.worktime.WorkTimeService;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,9 +28,7 @@ import org.primefaces.model.ScheduleModel;
 @ViewScoped
 public class CalendarBean extends BaseViewBean {
     private static final long serialVersionUID = -2515586022679502172L;
-
-    @EJB
-    private WorkTimeFacade workTimeFacade; 
+ 
     @EJB
     private WorkTimeService workTimeService;
     @EJB
@@ -40,6 +38,7 @@ public class CalendarBean extends BaseViewBean {
     
     private CalendarDay calendarDay;
     private Company company;
+    private Staff selectedStaff;
     
     private final Calendar current = Calendar.getInstance();
     
@@ -56,6 +55,9 @@ public class CalendarBean extends BaseViewBean {
         makeStartEndDates();
     }
   
+    /**
+     * Загрузка событий для календаря
+     */
     private void prepareEvents(){
         int days = current.getActualMaximum(Calendar.DAY_OF_MONTH);
         Calendar calendar = (Calendar)current.clone();
@@ -63,7 +65,7 @@ public class CalendarBean extends BaseViewBean {
         while(days > 0){            
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), days, 0, 0, 0);
             Date date = calendar.getTime();
-            selected = workTimeService.getWorkTimeDate(date, null, company, locale);            
+            selected = workTimeService.getWorkTimeDate(date, selectedStaff, company, locale);            
             eventModel.addEvent(new CalendarDay(selected, timeZone.toZoneId(), locale));
             days--;
         }
@@ -132,6 +134,10 @@ public class CalendarBean extends BaseViewBean {
         PrimeFaces.current().executeScript("document.getElementById('mainFRM:btnOpen').click();");
     }     
     
+    public void onRefresh(){
+        modelRefresh();
+    }
+    
     public void modelRefresh(){
         eventModel = null;
         makeStartEndDates();
@@ -178,5 +184,12 @@ public class CalendarBean extends BaseViewBean {
     public void setSelected(WorkTimeCalendar selected) {
         this.selected = selected;
     }
-       
+
+    public Staff getSelectedStaff() {
+        return selectedStaff;
+    }
+    public void setSelectedStaff(Staff selectedStaff) {
+        this.selectedStaff = selectedStaff;
+    }
+           
 }

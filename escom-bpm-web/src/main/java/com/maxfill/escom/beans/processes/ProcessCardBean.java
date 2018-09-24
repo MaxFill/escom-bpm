@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.dictionary.DictRoles;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.task.TaskBean;
@@ -13,6 +14,7 @@ import com.maxfill.model.states.StateFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.timers.ProcTimer;
@@ -56,6 +58,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private ProcessFacade processFacade;
     @EJB
     private Workflow workflow;
+    @EJB
+    private RemarkFacade remarkFacade;
+    
     @EJB
     private StateFacade stateFacade;
 
@@ -422,7 +427,16 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void onPreViewListConcorder(){
         Map<String, Object> params = prepareReportParams();
         params.put("REPORT_TITLE", MsgUtils.getBandleLabel("ConcorderList"));                
-        Process process = getEditedItem();           
+        Process process = getEditedItem();
+        StringBuilder docName = new StringBuilder();        
+        String partnerName = "";
+        Doc doc = process.getDocument();
+        if (doc != null){            
+            docName.append(doc.getFullName());
+            if (doc.getPartner() != null){
+                partnerName = doc.getPartner().getFullName();
+            }
+        } 
         List<Object> dataReport = process.getReports().stream()
                 .map(report -> {
                     String data = DateUtils.dateToString(report.getDateCreate(),  DateFormat.SHORT, null, getLocale());
@@ -433,19 +447,19 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                         dateBegin = data;
                     }
                     String result = getLabelFromBundle(report.getStatus());
-                    String fio = report.getExecutor().getFullName();
-                return new ConcordersData(fio, result, data, dateBegin);
-             }).collect(Collectors.toList());        
-        StringBuilder docName = new StringBuilder();        
-        String partnerName = "";
-        Doc doc = process.getDocument();
-        if (doc != null){            
-            docName.append(doc.getFullName());
-            partnerName = doc.getPartner().getFullName();
-        } 
+                    String fio = report.getExecutor().getStaffFIO();
+                    StringBuilder remarkBuilder = new StringBuilder();
+                    remarkFacade.findActualDetailItems(doc, 0, 0, null, null, getCurrentUser())
+                            .stream()
+                            .filter(remark->Objects.equals(DictStates.STATE_ISSUED, remark.getState().getCurrentState().getId()) //только не снятые замечания 
+                                    && remark.getAuthor().equals(report.getExecutor().getEmployee()))
+                            .forEach(remark->remarkBuilder.append(remark.getContent()).append(SysParams.LINE_SEPARATOR));                            
+                return new ConcordersData(fio, result, data, dateBegin, remarkBuilder.toString());
+             }).collect(Collectors.toList());
+        
         StringBuilder curator = new StringBuilder();
         if (process.getCurator() != null){
-            curator.append(process.getCurator().getFullName()).append(", ").append(process.getCurator().getPhone());
+            curator.append(process.getCurator().getStaffFIO()).append(", ").append(process.getCurator().getPhone());
         }
         params.put("CURATOR_NAME", curator.toString());
         params.put("DOC_NAME", docName.toString());  
@@ -530,12 +544,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         private final String result;
         private final String date;
         private final String dateBegin;
+        private final String remark;
         
-        public ConcordersData(String fio, String result, String date, String dateBegin) {
+        public ConcordersData(String fio, String result, String date, String dateBegin, String remark) {
             this.fio = fio;
             this.result = result;
             this.date = date;
             this.dateBegin = dateBegin;
+            this.remark = remark;
         }
 
         public String getFio() {
@@ -552,6 +568,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         
         public String getDateBegin(){
             return dateBegin;
+        }
+        
+        public String getRemark(){
+            return remark;
         }
     }
 }

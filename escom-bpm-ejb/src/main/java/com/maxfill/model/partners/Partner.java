@@ -70,6 +70,10 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     @Size(max = 256)
     private String email;    
     
+    @Column(name = "Phone")
+    @Size(max = 256)
+    private String phone;
+    
     @JoinTable(name = "partnersInGroup", joinColumns = {
         @JoinColumn(name = "PartnerId", referencedColumnName = "ID")}, inverseJoinColumns = {
         @JoinColumn(name = "GroupId", referencedColumnName = "Id")})
@@ -116,7 +120,14 @@ public class Partner extends BaseDict<PartnerGroups, Partner, Partner, PartnersL
     public void setState(PartnerStates state) {
         this.state = state;
     }
-    
+
+    public String getPhone() {
+        return phone;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+        
     @Override
     public String getNameEndElipse(){
         StringBuilder builder = new StringBuilder();        

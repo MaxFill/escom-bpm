@@ -118,6 +118,7 @@
                         <p:tab id="tabDocs" title="#{bundle.Documents}" >
                             <ui:include src="/view/docs/doc-list.xhtml" >
                                 <ui:param name="_docs" value="#{processCardBean.editedItem.docs}" />
+                                <ui:param name="_btnOpenDoc" value="mainFRM:mainTabView:accordDocs:openDocBtn"/>
                             </ui:include>
                             <p:commandButton value="#{bundle.AddDocument}" title="#{bundle.AddExistingDocument}"                                         
                                              rendered="#{!_bean.isReadOnly()}"
@@ -144,7 +145,7 @@
                                          rowKey="#{report.tempId}" selectionMode="single" 
                                          paginator="true" paginatorPosition="bottom" 
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30, 35" rows="10"
+                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30" rows="5"
                                          currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                                          tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces">                                         
 
@@ -181,7 +182,7 @@
                                          rowKey="#{item.tempId}" selectionMode="single" 
                                          paginator="true" paginatorPosition="bottom" 
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                                                                  
-                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30, 35" rows="10"
+                                         rowsPerPageTemplate="5, 10, 15, 20, 25, 30" rows="5"
                                          currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                                          tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 without-spaces"> 
 

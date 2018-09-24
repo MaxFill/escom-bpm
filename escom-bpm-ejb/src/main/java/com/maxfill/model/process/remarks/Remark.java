@@ -62,7 +62,7 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
     
     @Basic(optional = false)
     @Column(name = "Checked")
-    private boolean checked;
+    private boolean checked;    //проверено
     
     @Basic(optional = false)
     @Column(name = "Content", length = 1024)
@@ -166,12 +166,10 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
         }
         return true;
     }
-
     
     @Override
     public String toString() {
         return "Remark{" + "id=" + id + '}';
-    }
-    
+    }    
     
 }

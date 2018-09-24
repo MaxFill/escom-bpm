@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -123,7 +122,7 @@ public class WorkTimeCalendar implements Serializable, Dict{
         return DateUtils.convertStrToDate(dateCalendar, "MM/dd/yy");
     }
     @Transient
-    public void setDate(Date date){
+    public void setDate(Date date){        
         DateFormat df = new SimpleDateFormat("MM/dd/yy");
         this.dateCalendar = df.format(date);        
     }

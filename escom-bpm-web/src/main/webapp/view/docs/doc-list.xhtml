@@ -46,7 +46,7 @@
         <p:column headerText="#{bundle.Commands}" > 
             <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
                             actionListener="#{_bean.setSelectedDoc(doc)}"
-                            oncomplete="document.getElementById('mainFRM:mainTabView:openDocBtn').click();">
+                            oncomplete="document.getElementById('#{_btnOpenDoc}').click();">
                 <p:menuitem icon="ui-icon-zoomin" value="#{bundle.View}" title="#{bundle.View}"
                             disabled="#{doc.mainAttache == null}"
                             actionListener="#{docBean.onViewMainAttache(doc)}"/>

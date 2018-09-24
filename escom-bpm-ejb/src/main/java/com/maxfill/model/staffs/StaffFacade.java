@@ -10,7 +10,6 @@ import com.maxfill.model.posts.Post;
 import com.maxfill.model.users.User;
 import com.maxfill.model.users.User_;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.model.BaseDict;
 import java.util.HashMap;
 import java.util.List;
@@ -103,10 +102,26 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         params.put("name", name);
         Staff staff = createItem(userFacade.getAdmin(), null, department, params);
         staff.setPost(post);
-        staff.setEmployee(user);        
+        staff.setEmployee(user);         
         create(staff);
         return staff; 
     }
+
+    @Override
+    public void create(Staff staff) {
+        if (staff.getCompany() == null && staff.getOwner() != null){
+            staff.setCompany(staff.getOwner().getCompany());
+        }
+        super.create(staff); 
+    }
+
+    @Override
+    public void edit(Staff staff) {
+        if (staff.getCompany() == null && staff.getOwner() != null){
+            staff.setCompany(staff.getOwner().getCompany());
+        }
+        super.edit(staff);
+    }    
     
     @Override
     public void detectParentOwner(Staff staff, BaseDict parent, BaseDict target){
@@ -191,24 +206,39 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
     }
     
     /**
-     * Отбор штатных единиц (кроме удалённых в корзину), принадлежащих компании и опционально входящих в указанное подразделение
+     * Отбор актуальных штатных единиц, входящих в компанию
      * @param company
-     * @param department
      * @param currentUser
      * @return
      */
-    public List<Staff> findStaffByCompany(Company company, Department department, User currentUser){
+    public List<Staff> findActualStaffByCompany(Company company, User currentUser){
         getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("company"), company);
-        Predicate crit2;
-        if (department == null){
-            crit2 = builder.isNull(c.get("owner"));   
-        } else {
-            crit2 = builder.equal(c.get("owner"), department);
-        }
+        Predicate crit2 = builder.equal(c.get("actual"), true);
+        Predicate crit3 = builder.equal(c.get("deleted"), false);
+        cq.select(c).where(builder.and(crit1, crit2, crit3));
+        TypedQuery<Staff> query = getEntityManager().createQuery(cq);       
+        return query.getResultStream()      
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
+    }
+    
+    /**
+     * Отбор штатных единиц (кроме удалённых в корзину), не входящих в подразделения, а напрямую принадлежащих компании 
+     * @param company
+     * @param currentUser
+     * @return
+     */
+    public List<Staff> findStaffInOnlyCompany(Company company, User currentUser){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
+        Root<Staff> c = cq.from(Staff.class);        
+        Predicate crit1 = builder.equal(c.get("company"), company);
+        Predicate crit2 = builder.isNull(c.get("owner"));   
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         TypedQuery<Staff> query = getEntityManager().createQuery(cq);       

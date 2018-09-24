@@ -17,6 +17,7 @@ import com.maxfill.model.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.docs.Doc;
+import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.Process;
 import com.maxfill.model.process.remarks.Remark;
@@ -73,6 +74,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ProcessFacade processFacade;
     @EJB
     private AssistantFacade assistantFacade;
+    @EJB
+    private DocFacade docFacade;
     
     @Inject
     private ProcessBean processBean;
@@ -239,6 +242,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private boolean isHaveActualRemarks(Task task, Set<String> errors){
         Process process = task.getScheme().getProcess();
         Doc doc = process.getDocument();
+        if (doc == null) return false;
+        doc = docFacade.find(doc.getId());
         if (doc == null) return false;
         Remark remark = doc.getDetailItems().stream()
                 .filter(r -> Objects.equals(r.getAuthor(), getCurrentUser()))

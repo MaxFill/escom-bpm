@@ -9,70 +9,82 @@
 
     <ui:define name="page_body">
         <p:tab title="#{bundle.Explorer}"> 
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
-
-                <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
-                <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
-                             disabled="#{_bean.isReadOnly()}"
-                             onkeypress="checkEsc();"
-                             required="#{param['isRequired'] == 'true'}" 
-                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
-                             styleClass="ui-grid-col-12"
-                             onchange="return itemChange = 1;">
-                </p:inputText>
-                                
-                <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
-                <p:inputText value="#{_bean.editedItem.code}" id="code"
-                             disabled="#{_bean.isReadOnly()}"
-                             required="#{param['isRequired'] == 'true'}" 
-                             maxlength="50"
-                             onkeypress="checkEsc();"
-                             requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
-                             onchange="return itemChange = 1;"/>
-                <p:message for="code" display="tooltip"/>
-
-                <p:outputLabel value="#{bundle.Type}:" />
-                <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
+                    <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
                                  disabled="#{_bean.isReadOnly()}"
-                                 styleClass="ui-grid-col-12" 
-                                 filter="true" 
-                                 onchange="return itemChange = 1;"                                 
-                                 requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
-                    <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
-                    <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
-                </p:selectOneMenu>
-                <p:message for="type" display="tooltip"/>
+                                 onkeypress="checkEsc();"
+                                 required="#{param['isRequired'] == 'true'}" 
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"
+                                 styleClass="ui-grid-col-12"
+                                 onchange="return itemChange = 1;">
+                    </p:inputText>
 
-                <p:outputLabel value="#{bundle.FullName}:" />
-                
-                <h:panelGroup styleClass="ui-grid-col-12">
-                    <div class="ui-inputgroup">
-                        <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         onkeypress="checkEsc();"
-                                         rows="1" autoResize="true"
-                                         styleClass="ui-grid-col-12"                                      
-                                         onchange="return itemChange = 1;">
-                        </p:inputTextarea>
-                        <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}"
-                                         disabled="#{_bean.isReadOnly()}"
-                                         update="fullName"
-                                         actionListener="#{partnersCardBean.makeFullName()}"/>
-                    </div>
-                </h:panelGroup>
-                
-                <p:outputLabel value="#{bundle.EMail}:" />
-                <p:inputText id="email" value="#{_bean.editedItem.email}" 
-                             onkeypress="checkEsc();"
-                             maxlength="256" 
-                             styleClass="ui-grid-col-12" 
-                             disabled="#{_bean.isReadOnly()}"
-                             validatorMessage="#{bundle.EMail}: #{validator.INVALID_EMAIL}"
-                             onchange="return itemChange = 1;">
-                    <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
-                    <f:validator validatorId="escom.emailValidator" />
-                </p:inputText>
+                    <p:outputLabel value="#{bundle.Code}:" indicateRequired="true"/>            
+                    <p:inputText value="#{_bean.editedItem.code}" id="code"
+                                 disabled="#{_bean.isReadOnly()}"
+                                 required="#{param['isRequired'] == 'true'}" 
+                                 maxlength="50"
+                                 onkeypress="checkEsc();"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
+                                 onchange="return itemChange = 1;"/>
+                    <p:message for="code" display="tooltip"/>
 
+                    <p:outputLabel value="#{bundle.Type}:" />
+                    <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     styleClass="ui-grid-col-12" 
+                                     filter="true" 
+                                     onchange="return itemChange = 1;"                                 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
+                    </p:selectOneMenu>
+                    <p:message for="type" display="tooltip"/>
+
+                    <p:outputLabel value="#{bundle.FullName}:" />                
+                    <h:panelGroup styleClass="ui-grid-col-12">
+                        <div class="ui-inputgroup">
+                            <p:inputTextarea value="#{_bean.editedItem.fullName}" id="fullName"
+                                             disabled="#{_bean.isReadOnly()}"
+                                             onkeypress="checkEsc();"
+                                             rows="1" autoResize="true"
+                                             styleClass="ui-grid-col-12"                                      
+                                             onchange="return itemChange = 1;">
+                            </p:inputTextarea>
+                            <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}"
+                                             disabled="#{_bean.isReadOnly()}"
+                                             update="fullName"
+                                             actionListener="#{partnersCardBean.makeFullName()}"/>
+                        </div>
+                    </h:panelGroup>
+                </p:panelGrid>
+                
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6 col-padding, ui-grid-col-6 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.EMail}:" />
+                        <p:inputText id="email" value="#{_bean.editedItem.email}" 
+                                     onkeypress="checkEsc();"
+                                     maxlength="256" 
+                                     styleClass="ui-grid-col-12" 
+                                     disabled="#{_bean.isReadOnly()}"
+                                     validatorMessage="#{bundle.EMail}: #{validator.INVALID_EMAIL}"
+                                     onchange="return itemChange = 1;">
+                            <p:keyFilter regEx="/[a-zA-Zа-яА-Я_0-9\.\-@]/i" preventPaste="false"/>
+                            <f:validator validatorId="escom.emailValidator" />
+                        </p:inputText>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.Phone}:" />
+                        <p:inputMask id="phone" value="#{_bean.editedItem.phone}"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     mask="+9 (999) 999-9999" styleClass="ui-grid-col-12"                                 
+                                     onkeypress="checkEsc();"
+                                     onchange="return itemChange = 1;"/>
+                    </p:panelGrid>
+                </p:panelGrid>
             </p:panelGrid>
         </p:tab> 
         
@@ -80,6 +92,7 @@
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12">
                 <ui:include src="/view/docs/doc-list.xhtml" >
                     <ui:param name="_docs" value="#{_bean.editedItem.docsList}" />
+                    <ui:param name="_btnOpenDoc" value="mainFRM:mainTabView:openDocBtn"/>
                 </ui:include>
             </p:panelGrid>
         </p:tab>

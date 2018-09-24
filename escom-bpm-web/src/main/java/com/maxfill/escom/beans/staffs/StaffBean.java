@@ -40,12 +40,19 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     @Inject
     private CompanyBean companyBean;
     @EJB
-    private StaffFacade itemsFacade;
-    @EJB
     private ProcessFacade processFacade;
     @EJB
     private TaskFacade taskFacade;
     
+    /**
+     * Возвращает все штатные единицы, входящие в компанию, доступные для просмотра текущему пользователю
+     * @param company
+     * @return 
+     */
+    public List<Staff> findStaffsByCompany(Company company){
+        return staffFacade.findActualStaffByCompany(company, getCurrentUser());
+    }
+            
     /**
      * Проверка перед созданием штатной единицы
      * @param newItem
@@ -78,7 +85,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     
     @Override
     public StaffFacade getLazyFacade() {
-        return itemsFacade;
+        return staffFacade;
     }
     
     @Override
@@ -91,7 +98,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
                 target = sourceItem.getOwner();
             }
         }
-        itemsFacade.detectParentOwner(pasteItem, target, target);
+        staffFacade.detectParentOwner(pasteItem, target, target);
     }
     
     @Override
@@ -102,7 +109,7 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     public void moveItemToGroup(BaseDict group, Staff staff){
-        itemsFacade.detectParentOwner(staff,group, group);
+        staffFacade.detectParentOwner(staff,group, group);
         getLazyFacade().edit(staff);
     }
       
