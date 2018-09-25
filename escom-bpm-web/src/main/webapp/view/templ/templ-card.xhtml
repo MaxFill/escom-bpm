@@ -63,7 +63,7 @@
                                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
                             </span>
                             <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
-                                             disabled="#{_bean.isReadOnly()}"
+                                             disabled="#{_bean.isDisableSave()}"
                                              icon="ui-icon-disk"
                                              update="mainFRM"
                                              actionListener="#{_bean.prepSaveItemAndClose()}" 

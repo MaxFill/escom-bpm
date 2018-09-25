@@ -1,10 +1,10 @@
 package com.maxfill.model.task;
 
-import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.facade.BaseDictWithRolesFacade;
+import com.maxfill.model.process.Process;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
@@ -41,15 +41,35 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         super(Task.class, TaskLog.class, TaskStates.class);
     }
 
-    public Task createTask(String taskName, Staff owner, User author, Date planDate){
-        return createTask(taskName, owner, author, planDate, null, null);
-    }   
-    public Task createTask(String taskName, Staff owner, User author, Date planDate, Scheme scheme, String taskLinkUID){
-        Task task = createItem(author, null, owner, new HashMap<>());        
+    public Task createTask(String taskName, Staff owner, User author, Date planDate){        
+        Task task = createItem(author, null, owner, new HashMap<>());
         task.setName(taskName);
-        task.setDeadLineType("data");
+        task.setDeadLineType("data");        
+        task.setPlanExecDate(planDate);        
+        task.setAvaibleResultsJSON("[1]");
+        return task;
+    } 
+    
+    /**
+     * Создание задачи из процесса
+     * @param owner
+     * @param author
+     * @param process
+     * @param scheme
+     * @param taskLinkUID
+     * @return 
+     */
+    public Task createTaskInProc(Staff owner, User author, Process process, Scheme scheme, String taskLinkUID){
+        Task task = createItem(author, null, owner, new HashMap<>());        
+        task.setName(process.getOwner().getDefaultTaskName());  
         task.setTaskLinkUID(taskLinkUID);
-        task.setPlanExecDate(planDate);
+        if (process.getOwner().getDefaultDeltaDeadLine() > 0){
+            task.setDeltaDeadLine(process.getOwner().getDefaultDeltaDeadLine());
+            task.setDeadLineType("delta");
+        } else {
+            task.setDeadLineType("data");
+            task.setPlanExecDate(process.getPlanExecDate());
+        }
         if (scheme != null){
             task.setScheme(scheme);
             task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());   

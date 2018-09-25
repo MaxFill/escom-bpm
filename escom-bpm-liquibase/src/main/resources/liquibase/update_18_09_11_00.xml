@@ -223,4 +223,49 @@
         </addColumn>
     </changeSet>    
     
+    <changeSet id="processReports_add_Task" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processReports" columnName="Task" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processReports">
+            <column name="Task" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="Task"
+                                  baseTableName="processReports"
+                                  constraintName="FK_task"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="tasks"/>         
+    </changeSet>
+    
+    <changeSet id="processTypes_add_DeltaDeadLine" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processesTypes" columnName="DeltaDeadLine" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processesTypes">
+            <column name="DeltaDeadLine" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>  
+    
+    <changeSet id="process_add_ProcessDate" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processes" columnName="ProcessDate" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processes">
+            <column name="ProcessDate" type="DATETIME" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

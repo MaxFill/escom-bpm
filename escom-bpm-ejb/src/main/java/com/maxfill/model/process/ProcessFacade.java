@@ -11,9 +11,11 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.messages.UserMessagesFacade;
 import com.maxfill.model.process.remarks.RemarkFacade;
+import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     private UserMessagesFacade messagesFacade;
     @EJB
     private RemarkFacade remarkFacade;
+    @EJB
+    private TaskFacade taskFacade;
     
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
@@ -72,7 +76,11 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         if (params.containsKey("author")) {
             User user = (User)params.get("author");
             if (user.getStaff() != null){
-                process.setCurator(user.getStaff());
+                Staff curator = user.getStaff();
+                if (curator != null){
+                    process.setCurator(curator);                    
+                    process.getReports().add(new ProcReport(user, curator, process));
+                }
             }
         }
         /*
@@ -164,8 +172,11 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public void remove(Process process){
         messagesFacade.removeMessageByProcess(process);
-        process.getScheme().getTasks().forEach(task->messagesFacade.removeMessageByTask(task));
-        remarkFacade.removeRemarksByProcess(process);
+        process.getScheme().getTasks().forEach(task->{
+                taskFacade.removeItemLogs(task);
+                messagesFacade.removeMessageByTask(task);
+            });
+        remarkFacade.removeRemarksByProcess(process);        
         super.remove(process);
     } 
     

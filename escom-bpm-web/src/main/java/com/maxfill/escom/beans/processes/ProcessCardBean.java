@@ -7,6 +7,7 @@ import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
+import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
@@ -53,6 +54,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private ProcessBean processBean;
     @Inject
     private TaskBean taskBean;  
+    @Inject
+    private DocBean docBean;
     
     @EJB
     private ProcessFacade processFacade;
@@ -123,7 +126,23 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             context.validationFailed();
         }
     }
-        
+     
+    /**
+     * Обработка события просмотра документа
+     */
+    public void onViewDocument(){
+        Process process = getEditedItem();                
+        Doc doc = process.getDocument();
+        if (doc == null){
+            MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
+            return;
+        }  
+        Map<String, List<String>> params = getParamsMap();
+        params.put("processID", Collections.singletonList(process.getId().toString()));
+        params.put("taskID", Collections.singletonList(getEditedItem().getId().toString()));
+        docBean.doViewMainAttache(doc, params);
+    }
+    
     /**
      * Переопределение метода закрытия формы. Передаём параметр закрытия, 
      * который устанавливается в зависимости от того, был ли запущен/остановлен процесс
@@ -185,6 +204,13 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 .collect(Collectors.toList());
         procReports.removeAll(removeRepors);        
         procReports.addAll(newReports);   
+        
+        //в оставшихся отчётах нужно сбросить ссылку на удалённые task
+        forRemoveTasks.forEach(task->
+                procReports.stream()
+                .filter(report->Objects.equals(task, report.getTask()))
+                .forEach(report->report.setTask(null))
+        );
         
         //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
         List<ProcTimer> liveTimers = getProcTimersFromModel();
@@ -256,7 +282,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (doSaveItem()){
             Map<String, Object> params = new HashMap<>();
             params.put(option, true);
-            workflow.start(getEditedItem(), getCurrentUser(), params, errors);
+            Process process = processFacade.find(getEditedItem().getId());
+            workflow.start(process, getCurrentUser(), params, errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
             } else {
@@ -337,11 +364,15 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
     
     @Override
-    public boolean isReadOnly(){
-        if (getEditedItem() == null) return false;
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning() ;
+    public boolean isReadOnly(){        
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning();
     }    
     
+    @Override
+    public boolean isDisableSave(){
+        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) && !getEditedItem().isRunning();
+    }
+        
     public void onOpenExeReport(ProcReport report){
         currentReport = report;
     }     
@@ -465,7 +496,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         params.put("DOC_NAME", docName.toString());  
         params.put("PARTNER_NAME", partnerName);
         params.put("PROCESS_NUMBER", process.getRegNumber());  
-        params.put("PROCESS_DATE", process.getItemDate());  
+        params.put("PROCESS_DATE", DateUtils.dateToString(process.getItemDate(),  DateFormat.SHORT, null, getLocale()));  
         printService.doPrint(dataReport, params, DictPrintTempl.REPORT_CONCORDER_LIST);
         sessionBean.onViewReport(DictPrintTempl.REPORT_CONCORDER_LIST);
     }

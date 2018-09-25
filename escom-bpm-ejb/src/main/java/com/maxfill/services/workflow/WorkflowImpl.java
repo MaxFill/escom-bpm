@@ -888,11 +888,15 @@ public class WorkflowImpl implements Workflow {
         if (procedure == null) return;
         switch (procedure .getMethod()) {
             case "regProcess": {
-                callNumerator(scheme.getProcess(), processFacade);
+                Process process = scheme.getProcess();
+                callNumerator(process, processFacade);
                 break;
             }
             case "regDoc": {
-                callNumerator(scheme.getProcess().getDocument(), docFacade);
+                Doc doc = scheme.getProcess().getDocument();
+                if (doc != null){
+                    callNumerator(doc, docFacade);                    
+                }
                 break;
             }
         }
@@ -906,8 +910,10 @@ public class WorkflowImpl implements Workflow {
         if (item == null) return;
         if (StringUtils.isBlank(item.getRegNumber())){
             NumeratorPattern numeratorPattern = facade.getMetadatesObj().getNumPattern();
-            String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, new Date());
+            Date regDate = new Date();
+            String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, regDate);
             item.setRegNumber(number);
+            item.setItemDate(regDate);
         }
     }
 

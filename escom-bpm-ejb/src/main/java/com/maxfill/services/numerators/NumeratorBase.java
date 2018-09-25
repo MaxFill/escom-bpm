@@ -11,12 +11,17 @@ import java.util.Map;
 import javax.ejb.EJB;
 import org.apache.commons.lang.StringUtils;
 
-public abstract class NumeratorBase {
+/**
+ * Базовая функциональность нумератора
+ * @author maksim
+ */
+public abstract class NumeratorBase implements NumeratorService{
 
     @EJB
     private CounterFacade counterFacade;
     
     /* Откат регистрационного номера */    
+    @Override
     public void doRollBackRegistred(BaseDict item) {
         Counter counter = doGetCounter(item);
         Integer templNumber = item.getNumber();
@@ -54,10 +59,11 @@ public abstract class NumeratorBase {
     }
    
     /* Формирование регистрационного номера объекта по заданной маске  */
+    @Override
     public String doRegistrNumber(BaseDict item, NumeratorPattern numPattern, Map<String, Object> params, Date dateReg) {
         Counter counter = doGetCounter(item);
         Integer number = doGetNextRegNumber(counter);
-        item.setNumber(number);
+        item.setNumber(number);        
         int leadingZeros = numPattern.getLeadingZeros();
         String regNumber = Integer.toString(number);
         regNumber = StringUtils.leftPad(regNumber, leadingZeros, '0');

@@ -3,6 +3,10 @@ package com.maxfill.services.numerators;
 import com.maxfill.model.BaseDict;
 import javax.ejb.Stateless;
 
+/**
+ * Стандартная реализация нумератора
+ * @author maksim
+ */
 @Stateless
 public class NumeratorServiceImpl extends NumeratorBase implements NumeratorService{                      
      

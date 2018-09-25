@@ -152,6 +152,7 @@ public class Doc extends BaseDict<Folder, Doc, Remark, DocLog, DocStates> {
     public Date getItemDate() {
         return itemDate;
     }
+    @Override
     public void setItemDate(Date itemDate) {
         this.itemDate = itemDate;
     }

@@ -186,7 +186,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public Date getItemDate(){
         return null;
     }
-    
+    public void setItemDate(Date regDate){        
+    }
     public String getStateName(){
         return getState() != null ? getState().getCurrentState().getName() : "";
     }

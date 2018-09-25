@@ -2,7 +2,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 template="/view/templ/templ-card.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:param name="_bean" value="#{processTypesCardBean}"/>
     
@@ -30,7 +31,7 @@
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Settings}">
+        <p:tab title="#{bundle.Settings}" rendered="#{_bean.editedItem.id != 0}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.DefaultTaskName}:" indicateRequired="true"/>
                 <p:inputText value="#{_bean.editedItem.defaultTaskName}"
@@ -40,6 +41,23 @@
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.DefaultTaskName}] #{bundle.MustBeFilled}"/>
+                
+                <p:outputLabel value="#{bundle.DefaultDeadline}:"/>
+                <h:panelGroup>
+                    <div class="ui-inputgroup">
+                    <p:spinner id="deltaDay" value="#{processTypesCardBean.deadLineDeltaDay}" min="0" max="999" 
+                               suffix="#{bundle.DayShort}" size="3"                                                
+                               onchange="return itemChange = 1;"                                               
+                               disabled="#{_bean.isReadOnly()}">                                        
+                    </p:spinner>
+                    <p:spacer width="1"/>
+                    <p:spinner id="deltaHour" value="#{processTypesCardBean.deadLineDeltaHour}" min="0" max="99" 
+                               suffix="#{bundle.HourShort}" size="2"
+                               onchange="return itemChange = 1;"
+                               disabled="#{_bean.isReadOnly()}">
+                    </p:spinner>
+                    </div>
+                </h:panelGroup>
                 
                 <p:outputLabel value="#{bundle.ListResults}:" indicateRequired="true"/>
                 <p:separator style="margin-top: 0em;"/>

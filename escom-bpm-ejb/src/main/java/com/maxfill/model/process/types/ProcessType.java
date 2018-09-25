@@ -42,6 +42,9 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Column(name = "DefaultTaskName")
     private String defaultTaskName;
     
+    @Column(name="DeltaDeadLine")
+    private Integer defaultDeltaDeadLine = 0;      //срок исполнения задач в секундах
+        
     /* Список шаблонов */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<ProcTempl> templates = new ArrayList<>();
@@ -62,6 +65,13 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     
     /* GETS & SETS */
 
+    public Integer getDefaultDeltaDeadLine() {
+        return defaultDeltaDeadLine;
+    }
+    public void setDefaultDeltaDeadLine(Integer defaultDeltaDeadLine) {
+        this.defaultDeltaDeadLine = defaultDeltaDeadLine;
+    }
+    
     public String getDefaultTaskName() {
         return defaultTaskName;
     }

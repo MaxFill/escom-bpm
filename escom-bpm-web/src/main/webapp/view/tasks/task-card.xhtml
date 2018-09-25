@@ -65,8 +65,7 @@
                             <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                         </p:calendar>                      
 
-                        <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/> 
-                        
+                        <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>                         
                         <h:panelGrid columns="2" cellpadding="3" >
                             <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" disabled="#{taskCardBean.readOnly}" layout="grid" columns="1" >
                                 <f:selectItem itemLabel="" itemValue="delta"/>

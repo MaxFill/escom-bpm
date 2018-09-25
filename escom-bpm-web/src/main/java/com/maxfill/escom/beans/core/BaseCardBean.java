@@ -543,6 +543,10 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
     }
 
+    public boolean isDisableSave(){
+        return  isReadOnly();
+    }
+    
     /* Возвращает название для заголовка для вкладки "Права доступа к объекту" */
     public String getRightsForObjectTitle(){
         return MsgUtils.getBandleLabel("Rights");

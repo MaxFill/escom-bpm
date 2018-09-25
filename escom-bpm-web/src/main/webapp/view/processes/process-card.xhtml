@@ -58,7 +58,28 @@
 
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:outputLabel value="#{bundle.DocumentForConcorded}:" indicateRequired="true" />
+                    <ui:include src="/view/common/item-select-btn.xhtml" >
+                        <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
+                        <ui:param name="_itemLabel" value="fullName"/>
+                        <ui:param name="_required" value="true" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
+                        <ui:param name="_itemPanel" value="documentPanel"/>
+                        <ui:param name="_titleItem" value="#{bundle.DocumentForConcorded}"/>
+                        <ui:param name="_selectorBean" value="#{docBean}"/>
+                        <ui:param name="_items" value="#{docBean.findAll()}"/>
+                        <ui:param name="_actionClear" value="setDocument"/>
+                        <ui:param name="_actionSelect" value="onDocSelected"/>
+                        <ui:param name="_validateAction" value="checkDocument"/>
+                        <ui:param name="_update" value="viewDocLink"/>
+                    </ui:include> 
+                    <h:panelGroup id="viewDocLink">
+                        <p:commandLink value="#{bundle.ViewDoc}" rendered="#{_bean.editedItem.document != null}"
+                                       actionListener="#{processCardBean.onViewDocument()}">
+                        </p:commandLink>
+                    </h:panelGroup>
+                     
                     <p:outputLabel value="#{bundle.ProcessCaption}:" indicateRequired="true" />
                     <p:inputText id="nameItem" value="#{processCardBean.editedItem.name}"
                                  styleClass="ui-grid-col-12" 
@@ -96,22 +117,6 @@
                                 requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">                    
                         <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
                     </p:calendar>
-
-                    <p:outputLabel value="#{bundle.DocumentForConcorded}:" indicateRequired="true" />                
-                    <ui:include src="/view/common/item-select-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
-                        <ui:param name="_itemLabel" value="fullName"/>
-                        <ui:param name="_required" value="true" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_itemPanel" value="documentPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.DocumentForConcorded}"/>
-                        <ui:param name="_selectorBean" value="#{docBean}"/>
-                        <ui:param name="_items" value="#{docBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setDocument"/>
-                        <ui:param name="_actionSelect" value="onDocSelected"/>
-                        <ui:param name="_validateAction" value="checkDocument"/>                    
-                        <ui:param name="_update" value=""/>
-                    </ui:include>                         
 
                     <p:accordionPanel id="accordDocs" activeIndex="#{_bean.accordDocsTab}">
                         <p:ajax event="tabChange" listener="#{_bean.onAccordDocsTabChange}"/>

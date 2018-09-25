@@ -234,6 +234,7 @@ public class Folder extends BaseDict<Folder, Folder, Doc, FolderLog, FolderState
     public Date getItemDate() {
         return itemDate;
     }    
+    @Override
     public void setItemDate(Date itemDate) {
         this.itemDate = itemDate;
     }

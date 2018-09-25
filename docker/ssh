@@ -10,6 +10,9 @@ default_time_zone='+03:00'
 Обновление EAR
 - Копируем ear файл командой:
 sudo scp /opt/wildfly/standalone/deployments/escom-bpm-ear-1.0-SNAPSHOT.ear root@62.173.140.9:/home/docker/escom-bpm/datastore
+- Копируем файлы отчётов:
+sudo scp /opt/wildfly/standalone/jasper_reports/* root@62.173.140.9:/home/docker/escom-bpm/datastore/jasper_reports
+
 
 /* sudo scp /opt/wildfly/standalone/deployments/EscomServices-1.0.war root@62.173.140.9:/home/docker/escom-info/datastore
 /* docker cp /home/docker/escom-info/datastore/EscomServices-1.0.war escom-info-wildfly:/opt/wildfly/standalone/deployments/
@@ -32,10 +35,12 @@ docker-compose stop
 - копируем файл в контейнер командой:
 docker cp /home/docker/escom-bpm/datastore/escom-bpm-ear-1.0-SNAPSHOT.ear wildfly8443:/opt/wildfly/standalone/deployments/
 
-если нужно, то копируем и конфигурационные файлы:
+если нужно, то копируем конфигурационные файлы:
 docker cp /home/docker/escom-bpm/datastore/configuration/escom.properties wildfly8443:/opt/wildfly/standalone/configuration/
 docker cp /home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml storage8443:/opt/wildfly/standalone/configuration
 docker cp /home/docker/escom-bpm/wildfly/bin/standalone.conf storage8443:/opt/wildfly/standalone/configuration
+и бланки:
+docker cp /home/docker/escom-bpm/datastore/jasper_reports/* storage8443:/opt/wildfly/standalone/jasper_reports
 
 - Запускаем контейнер командой
 docker-compose start

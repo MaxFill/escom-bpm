@@ -529,8 +529,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
             errors.add("DeadlineIncorrect");            
         }
-        if (task.getBeginDate() == null){
-            errors.add("DateBeginNoSet");            
+        if (task.getBeginDate() == null && task.getScheme() == null){
+            errors.add("DateBeginNoSet");
         }
         if (task.getOwner() == null){
             errors.add("ExecutorNotSet");
@@ -538,6 +538,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
+        }
+        if (task.getBeginDate() == null){
+            task.setBeginDate(new Date());
         }
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;

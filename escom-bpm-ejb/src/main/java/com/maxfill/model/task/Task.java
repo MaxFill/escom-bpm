@@ -72,7 +72,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     private Date factExecDate;
     
     @Column(name="СonsidInProcReport")
-    private Boolean considInProcReport = true;
+    private Boolean considInProcReport = true; //включать в лист согласования
     
     @Column(name="DeltaDeadLine")
     private Integer deltaDeadLine = 0;      //срок исполнения в секундах

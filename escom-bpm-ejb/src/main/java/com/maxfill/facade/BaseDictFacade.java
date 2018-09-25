@@ -497,7 +497,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @param filters
      * @return 
      */
-    private int removeItemLogs(T entity){        
+    public int removeItemLogs(T entity){        
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaDelete cd = builder.createCriteriaDelete(logClass);
         Root<L> root = cd.from(logClass);

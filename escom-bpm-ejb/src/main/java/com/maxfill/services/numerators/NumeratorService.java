@@ -5,6 +5,10 @@ import com.maxfill.model.BaseDict;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * Интерфейс нумератора
+ * @author maksim
+ */
 public interface NumeratorService {
     String doRegistrNumber(BaseDict item, NumeratorPattern numPattern, Map<String, Object> params, Date dateReg);
     void doRollBackRegistred(BaseDict item);

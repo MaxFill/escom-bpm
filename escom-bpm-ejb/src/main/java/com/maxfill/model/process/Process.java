@@ -10,7 +10,6 @@ import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.users.User;
 import org.apache.commons.lang.StringUtils;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -65,6 +64,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Column(name = "RegNumber")
     private String regNumber;
 
+    @Column(name = "ProcessDate")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date itemDate;
+        
     @Column(name = "RoleJson", length = 2048)
     private String roleJson;
      
@@ -127,6 +130,16 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         return "process";
     }
 
+    
+    @Override
+    public Date getItemDate() {
+        return itemDate;
+    }
+    @Override
+    public void setItemDate(Date itemDate) {
+        this.itemDate = itemDate;
+    }
+    
     @Override
     public Integer getId() {
         return id;

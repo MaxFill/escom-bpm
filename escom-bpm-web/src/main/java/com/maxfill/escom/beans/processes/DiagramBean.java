@@ -205,13 +205,20 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 if (taskEl.getStaffId() != null){
                     staff = staffFacade.find(taskEl.getStaffId());
                 }
-                Task task = taskFacade.createTask(MsgUtils.getBandleLabel("Task"), staff, getCurrentUser(), process.getPlanExecDate(), scheme, taskEl.getUid());
+                Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, scheme, taskEl.getUid());
                 taskEl.setTask(task);
                 scheme.getTasks().add(task);
             }
             elementMap.put(k, createElement(taskEl));
         });
-        scheme.getElements().getTimers().forEach((k, v)->elementMap.put(k, createElement(v)));
+        scheme.getElements().getTimers().forEach((k, timerEl)->{
+                if (timerEl.getProcTimer() == null){
+                    ProcTimer procTimer = procTimerFacade.createTimer(process, scheme, timerEl.getUid());
+                    timerEl.setProcTimer(procTimer);
+                    scheme.getTimers().add(procTimer);
+                }
+                elementMap.put(k, createElement(timerEl));
+            });
         scheme.getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
         scheme.getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
@@ -817,10 +824,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param x
      * @param y
      */
-    private TaskElem createTask(Staff executor, Set<String> errors){
-        String taskName = process.getOwner().getDefaultTaskName();
-        TaskElem taskElem = new TaskElem(taskName, getX(), getY());
-        Task task = taskFacade.createTask(taskName, executor, getCurrentUser(), process.getPlanExecDate(), scheme, taskElem.getUid());
+    private TaskElem createTask(Staff executor, Set<String> errors){        
+        TaskElem taskElem = new TaskElem("", getX(), getY());
+        Task task = taskFacade.createTaskInProc(executor, getCurrentUser(), process, scheme, taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
