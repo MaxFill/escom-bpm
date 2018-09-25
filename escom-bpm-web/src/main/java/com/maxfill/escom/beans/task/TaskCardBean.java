@@ -110,12 +110,16 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     @Override
-    public void doPrepareOpen(Task task){              
-        TaskStates taskStates = task.getState();
-        State state = taskStates.getCurrentState();
-        int id = state.getId();
-        if (task.getScheme() != null && (DictStates.STATE_RUNNING == id || DictStates.STATE_COMPLETED == id)){
-            readOnly = true;
+    public void doPrepareOpen(Task task){        
+        if (task.getScheme() == null){
+            readOnly = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
+        } else {
+            int id = task.getState().getCurrentState().getId();
+            if ((DictStates.STATE_RUNNING == id || DictStates.STATE_COMPLETED == id)){
+                readOnly = true;
+            } else {
+                readOnly = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
+            }
         }
         initDateFields(task);     
         initExecutors(task);
@@ -665,6 +669,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return readOnly;
     }
 
+    public boolean isRemaindDisable(){
+        return !Objects.equals(getEditedItem().getOwner(), getCurrentStaff());
+    }
+    
     public DualListModel<Result> getResults() {
         if (results == null){
             List<Result> allResults = resultFacade.findAll(getCurrentUser());

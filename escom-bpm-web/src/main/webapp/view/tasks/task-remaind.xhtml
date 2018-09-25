@@ -11,7 +11,7 @@
         </p:selectBooleanCheckbox>      
         
         <h:panelGrid columns="2" styleClass="without-spaces">
-            <p:selectOneRadio id="ReminderType" value="#{taskCardBean.editedItem.reminderType}" layout="grid" columns="1" >
+            <p:selectOneRadio id="ReminderType" disabled="#{taskCardBean.isRemaindDisable()}" value="#{taskCardBean.editedItem.reminderType}" layout="grid" columns="1" >
                 <f:selectItem itemLabel="#{bundle.No}" itemValue="no" />
                 <f:selectItem itemLabel="#{bundle.Single}" itemValue="singl" />
                 <f:selectItem itemLabel="#{bundle.Repeat}" itemValue="repeat" /> 
@@ -25,17 +25,17 @@
                      <p:spinner id="remDeltaDay" value="#{taskCardBean.reminderDeltaDay}" min="0" max="999" 
                                 suffix="#{bundle.DayShort}" size="3" 
                                 onchange="return itemChange = 1;"
-                                disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                                disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'singl'}">
                      </p:spinner>
                      <p:spinner id="remDeltaHour" value="#{taskCardBean.reminderDeltaHour}" min="0" max="99" 
                                 suffix="#{bundle.HourShort}" size="2"
                                 onchange="return itemChange = 1;"
-                                disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                                disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'singl'}">
                      </p:spinner>
                      <p:spinner id="remDeltaMinute" value="#{taskCardBean.reminderDeltaMinute}" min="0" max="99" 
                                 suffix="#{bundle.Minute}" size="2"
                                 onchange="return itemChange = 1;"
-                                disabled="#{taskCardBean.editedItem.reminderType ne 'singl'}">
+                                disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'singl'}">
                      </p:spinner>
                 </h:panelGroup>
                 <p:outputLabel value="#{bundle.BeforeDeadline}"/>
@@ -44,7 +44,8 @@
         
         <h:panelGrid id="pnRemainderRepeatType" columns="3" styleClass="without-spaces">
             <p:spacer width="5" />
-            <p:selectOneRadio id="reminderRepeatType" value="#{taskCardBean.editedItem.reminderRepeatType}" layout="grid" columns="1" disabled="#{taskCardBean.editedItem.reminderType ne 'repeat'}" >
+            <p:selectOneRadio id="reminderRepeatType" value="#{taskCardBean.editedItem.reminderRepeatType}" layout="grid" columns="1" 
+                              disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'repeat'}" >
                 <f:selectItem itemLabel="" itemValue="everyday" />
                 <f:selectItem itemLabel="" itemValue="everyweek" />  
                 <p:ajax update="reminderDayTime pnRemainderRepeatValues" event="valueChange" process="@this" onstart="itemChange = 1;"/>
@@ -52,7 +53,7 @@
             <h:panelGrid columns="2" styleClass="without-spaces">
                 <p:outputLabel value="#{''.concat(bundle.EveryDay).concat(' ').concat(bundle.AtTime)}:"/>
                 <p:calendar id="reminderDayTime" label="#{bundle.Time}" value="#{taskCardBean.editedItem.reminderTime}"
-                             disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyday'}"
+                             disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyday'}"
                              pattern="HH:mm" timeOnly="true" >
                     <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                 </p:calendar>
@@ -65,14 +66,14 @@
             <h:panelGrid columns="2" styleClass="ui-grid-col-12 without-spaces">              
                 <p:selectManyMenu value="#{taskCardBean.selectedDays}" showCheckbox="true" styleClass="ui-grid-col-12"
                                   onchange="return itemChange = 1;"
-                                  disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
+                                  disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
                     <f:selectItems value="#{taskCardBean.daysOfWeek}" var="day" itemValue="#{day.label}" itemLabel="#{day.label}"/>
                 </p:selectManyMenu>
 
                 <h:panelGrid columns="1">
                     <p:outputLabel value="#{bundle.Time}:"/>
                     <p:calendar value="#{taskCardBean.getEditedItem().reminderTime}" pattern="HH:mm" timeOnly="true" styleClass="ui-grid-col-12"
-                                disabled="#{taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
+                                disabled="#{_bean.isRemaindDisable() or taskCardBean.editedItem.reminderType ne 'repeat' or taskCardBean.editedItem.reminderRepeatType ne 'everyweek'}">
                         <p:ajax event="dateSelect" onstart="itemChange = 1;" />
                     </p:calendar>
                 </h:panelGrid>
@@ -82,6 +83,7 @@
         <p:separator rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
         <p:outputLabel value="#{''.concat(bundle.NextReminder).concat(' ').concat(bundle.AtTime)}" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
         <p:calendar value="#{taskCardBean.editedItem.nextReminder}" disabledWeekends="true" 
+                    disabled="#{_bean.isRemaindDisable()}"
                     rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"
                     styleClass="without-spaces" 
                     timeZone="#{TimeZone.getDefault()}"

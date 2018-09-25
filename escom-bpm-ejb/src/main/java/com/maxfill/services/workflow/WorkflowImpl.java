@@ -3,6 +3,7 @@ package com.maxfill.services.workflow;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.ProcessParams;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.BaseDict;
@@ -43,6 +44,7 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,7 +65,8 @@ import org.apache.commons.lang.StringUtils;
 @Stateless
 public class WorkflowImpl implements Workflow {
     protected static final Logger LOGGER = Logger.getLogger(WorkflowImpl.class.getName());
-
+    private final String EXECUTED_TASKS = "executedTasks";
+    
     @EJB
     private DocFacade docFacade;
     @EJB
@@ -414,6 +417,10 @@ public class WorkflowImpl implements Workflow {
      */
     @Override
     public void executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<String> errors){
+        if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()){
+            errors.add("TaskCannotCompletedBecauseProcessStopped");
+            return;
+        }
         Scheme scheme = process.getScheme();
         unpackScheme(scheme);
         if (errors.isEmpty()){
@@ -432,7 +439,11 @@ public class WorkflowImpl implements Workflow {
                 ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getResult(), currentUser);
                 procReport.setTask(task);
             }
-
+            
+            List<Integer> executedTasks = startElement.getTasksExec();
+            executedTasks.add(task.getId());
+            params.put(EXECUTED_TASKS, executedTasks);
+            
             run(process, startElement, currentUser, params, errors);
             processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
         }
@@ -516,11 +527,14 @@ public class WorkflowImpl implements Workflow {
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return;
         
-        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов                
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов
+        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
+        scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
         scheme.getTasks().forEach(task->{
                 task.setFactExecDate(null); //сброс даты выполнения
                 task.setResult(null);       //сброс предудущего результата
             });
+        
         process.getState().setCurrentState(stateFacade.getRunningState());
         process.setBeginDate(new Date());
         WFConnectedElem startElement = scheme.getElements().getStartElem();
@@ -650,14 +664,19 @@ public class WorkflowImpl implements Workflow {
                         connectors.stream()
                             .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
                             .filter(element->Objects.nonNull(element))
-                            .forEach(taskElem-> exeTasks.add(taskElem.getTask()));
+                            .forEach(taskElem-> {
+                                if (params.containsKey(EXECUTED_TASKS)){
+                                    taskElem.getTasksExec().addAll((List<Integer>)params.get(EXECUTED_TASKS));
+                                }
+                                exeTasks.add(taskElem.getTask());
+                            });
 
                         //обрабатываем условия
                         Set<ConditionElem> targetConditions = findTargetConditions(connectors, scheme.getElements().getConditions());
                         targetConditions.stream()
                                 .forEach(condition->{
                                     condition.setDone(true);
-                                    if (checkCondition(condition, scheme, errors)){
+                                    if (checkCondition(condition, scheme, params, errors)){
                                         doRun(condition.getSecussAnchors(), process, exeTasks, currentUser, params, errors);
                                     } else {
                                         doRun(condition.getFailAnchors(), process, exeTasks, currentUser, params, errors);
@@ -678,9 +697,10 @@ public class WorkflowImpl implements Workflow {
                         //обрабатываем логические элементы
                         Set<LogicElem> targetLogics = findTargetLogics(connectors, scheme.getElements().getLogics());
                         targetLogics.stream()
-                                .filter(logic-> canExeLogic(logic, scheme))
+                                .filter(logic-> canExeLogic(logic, scheme, params))
                                 .forEach(logic-> {
                                     logic.setDone(true);
+                                    params.put(EXECUTED_TASKS, logic.getTasksExec());
                                     doRun(logic.getAnchors(), process, exeTasks, currentUser, params, errors);
                                 });
 
@@ -924,7 +944,10 @@ public class WorkflowImpl implements Workflow {
      * @param logic
      * @return 
      */
-    private boolean canExeLogic(LogicElem logic, Scheme scheme){
+    private boolean canExeLogic(LogicElem logic, Scheme scheme, Map<String, Object> params){
+        if (params.containsKey(EXECUTED_TASKS)){
+            logic.getTasksExec().addAll((List<Integer>)params.get(EXECUTED_TASKS));
+        }
         if ("OR".equals(logic.getCaption().toUpperCase())) return true;
         
         List<AnchorElem> anchors = logic.getAnchors().stream()
@@ -949,7 +972,7 @@ public class WorkflowImpl implements Workflow {
      * @param condition
      * @return 
      */
-    private boolean checkCondition(ConditionElem conditionEl, Scheme scheme, Set<String> errors){
+    private boolean checkCondition(ConditionElem conditionEl, Scheme scheme, Map<String, Object> params, Set<String> errors){
         Boolean result = false;
         Condition condition = (Condition)conditionFacade.find(conditionEl.getConditonId());
         if (condition == null){
@@ -958,15 +981,15 @@ public class WorkflowImpl implements Workflow {
         }
         switch (condition.getMethod()){
             case "everyoneApproved":{
-                result = everyoneApproved(scheme);
+                result = everyoneApproved(scheme, params);
                 break;
             }
             case "allFinished":{
-                result = allFinished(scheme);
+                result = allFinished(scheme, params);
                 break;
             }
             case "allRemarksChecked":{
-                result = allRemarksChecked(scheme);
+                result = allRemarksChecked(scheme, params);
                 break;
             }
         }
@@ -978,16 +1001,13 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    private boolean everyoneApproved(Scheme scheme){
-        Boolean result = true;
-        for (Task task : scheme.getTasks()){
-            String taskResult = task.getResult();
-            if (DictResults.RESULT_REFUSED.equals(taskResult)){
-                result = false;
-                break;
-            }
-        }
-        return result;
+    private boolean everyoneApproved(Scheme scheme, Map<String, Object> params){        
+        if (!params.containsKey(EXECUTED_TASKS)) return false;
+        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);
+        return scheme.getTasks().stream()
+                .filter(task->taskIds.contains(task.getId()) 
+                        && Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
+                .findFirst().orElse(null) == null;
     }
     
     /**
@@ -995,15 +1015,13 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    private boolean allFinished(Scheme scheme){
-        boolean result = true;
-        for(Task task : scheme.getTasks()){
-            if (task.getFactExecDate() == null){
-                result = false;
-                break;
-            }
-        }
-        return result;
+    private boolean allFinished(Scheme scheme, Map<String, Object> params){
+        if (!params.containsKey(EXECUTED_TASKS)) return false;
+        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);
+        return scheme.getTasks().stream()
+                .filter(task->taskIds.contains(task.getId()) 
+                        && task.getFactExecDate() == null)
+                .findFirst().orElse(null) == null;         
     }
     
     /**
@@ -1011,7 +1029,7 @@ public class WorkflowImpl implements Workflow {
      * @param scheme
      * @return 
      */
-    private boolean allRemarksChecked(Scheme scheme){
+    private boolean allRemarksChecked(Scheme scheme, Map<String, Object> params){
         boolean result = true;
         Process process = processFacade.find(scheme.getProcess());
         List<Doc> docs = process.getDocs();

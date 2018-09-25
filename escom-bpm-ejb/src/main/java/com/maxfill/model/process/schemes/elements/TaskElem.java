@@ -4,9 +4,12 @@ import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.model.task.Task;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.utils.EscomUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -21,6 +24,9 @@ public class TaskElem extends WFConnectedElem{
     @XmlTransient
     private Task task;
     
+    @XmlElement(name = "tasks")
+    private List<Integer> tasksExec = new ArrayList<>(); //список id выполненных задач, пришедших в эту задачу
+        
     private Integer staffId;
     
     public TaskElem() {
@@ -79,6 +85,13 @@ public class TaskElem extends WFConnectedElem{
         return sb.toString();
     }
 
+    public List<Integer> getTasksExec() {
+        return tasksExec;
+    }
+    public void setTasksExec(List<Integer> tasksExec) {
+        this.tasksExec = tasksExec;
+    }
+    
     public Task getTask() {
         return task;
     }

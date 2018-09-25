@@ -165,9 +165,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Перерисовка модели на странице формы
      */
     public void modelRefresh(){        
-        model.clear();
         restoreModel();
-        onItemChange();        
+        onItemChange();
         PrimeFaces.current().ajax().update("southFRM:diagramm");
         if (!isReadOnly()){
             addElementContextMenu();
@@ -189,15 +188,16 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param scheme
      */
     public void loadModel(Scheme scheme){       
-        workflow.unpackScheme(scheme);
-        model.clear();
+        workflow.unpackScheme(scheme);        
         restoreModel();
     } 
     
     /**
      * Формирует графическую схему из данных модели процесса
      */
-    private void restoreModel(){                
+    private void restoreModel(){
+        model.clear();
+        model.getConnections().clear();
         Map<String, Element> elementMap = new HashMap <>();
         scheme.getElements().getTasks().forEach((k, taskEl)->{             
             if (taskEl.getTask() == null){
@@ -745,8 +745,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
-        createTargetEndPoint(endPoints, EndPointAnchor.LEFT); 
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);         
         logic.setAnchors(makeAnchorElems(logic, endPoints));
         workflow.addLogic(logic, scheme, errors);
         if (errors.isEmpty()) {
@@ -1004,6 +1004,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         WFConnectedElem wfTarget = (WFConnectedElem) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
+        connect(wfSource, wfTarget, sourcePoint, targetPoint);                
+    }
+
+    private void connect(WFConnectedElem wfSource, WFConnectedElem wfTarget, EndPoint sourcePoint, EndPoint targetPoint){
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
         AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
         Set<String> errors = new HashSet <>();
@@ -1038,7 +1042,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             MsgUtils.showErrors(errors);
         }
     }
-
+    
     /**
      * Обработка события разрыва соединения на схеме процесса
      * @param event
@@ -1048,16 +1052,31 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         WFConnectedElem wfTarget = (WFConnectedElem) event.getTargetElement().getData();
         EndPoint sourcePoint = event.getSourceEndPoint();
         EndPoint targetPoint = event.getTargetEndPoint();
+        disconnect(wfSource, wfTarget, sourcePoint, targetPoint);
+    }
+
+    public void onConnectionChange(ConnectionChangeEvent event) {
+        WFConnectedElem wfSource = (WFConnectedElem) event.getOriginalSourceElement().getData();
+        WFConnectedElem wfTarget = (WFConnectedElem) event.getOriginalTargetElement().getData();
+        EndPoint sourcePoint = event.getOriginalSourceEndPoint();
+        EndPoint targetPoint = event.getOriginalTargetEndPoint();
+        disconnect(wfSource, wfTarget, sourcePoint, targetPoint);
+        
+        wfSource = (WFConnectedElem) event.getNewSourceElement().getData();
+        wfTarget = (WFConnectedElem) event.getNewTargetElement().getData();
+        sourcePoint = event.getNewSourceEndPoint();
+        targetPoint = event.getNewTargetEndPoint();
+        connect(wfSource, wfTarget, sourcePoint, targetPoint);
+    }
+
+    private void disconnect(WFConnectedElem wfSource, WFConnectedElem wfTarget, EndPoint sourcePoint, EndPoint targetPoint){
         Set<String> errors = new HashSet <>();
         AnchorElem sourceAnchor = wfSource.getAnchorsById(sourcePoint.getId());
         AnchorElem targetAnchor = wfTarget.getAnchorsById(targetPoint.getId());
         workflow.removeConnector(sourceAnchor, targetAnchor, scheme, errors);
         onItemChange();
     }
-
-    public void onConnectionChange(ConnectionChangeEvent event) {
-    }
-
+    
     /**
      * Возвращает Connection по двум точкам
      * @param source

@@ -2,6 +2,9 @@ package com.maxfill.model.process.schemes.elements;
 
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Сущность "Элемент схемы процесса "Логическое ветвление"
@@ -19,6 +22,9 @@ public class LogicElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    @XmlElement(name = "tasks")
+    private List<Integer> tasksExec = new ArrayList<>(); //список id выполненных задач, пришедших в этот элемент логики
+     
     @Override
     public String getImage() {
         return null;
@@ -37,7 +43,14 @@ public class LogicElem extends WFConnectedElem{
     public String getBundleKey() {
         return "Logic";
     }
-    
+
+    public List<Integer> getTasksExec() {
+        return tasksExec;
+    }
+    public void setTasksExec(List<Integer> tasksExec) {
+        this.tasksExec = tasksExec;
+    }
+        
     /* *** *** */
     
     @Override
