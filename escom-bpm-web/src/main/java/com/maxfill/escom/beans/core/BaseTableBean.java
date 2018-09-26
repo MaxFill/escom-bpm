@@ -269,7 +269,7 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
         pasteItem.setState(null);
         pasteItem.setId(null);                    //нужно сбросить скопированный id!
         pasteItem.doSetSingleRole(DictRoles.ROLE_OWNER, getCurrentUser().getId());
-        getLazyFacade().doSetState(pasteItem, getMetadatesObj().getStateForNewObj());
+        getLazyFacade().setFirstState(pasteItem);
     };  
     
     /**

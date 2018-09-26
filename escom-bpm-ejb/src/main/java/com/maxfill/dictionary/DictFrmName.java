@@ -49,6 +49,7 @@ public final class DictFrmName {
     public static final String FRM_AUTH_LOG = "authlog";
 
     public static final String FRM_SCHEDULER = "scheduler";
+    public static final String FRM_MY_TASKS = "tasks";
     public static final String FRM_WORKTIME = "work-time";
     public static final String FRM_CALENDAR = "calendar";
     

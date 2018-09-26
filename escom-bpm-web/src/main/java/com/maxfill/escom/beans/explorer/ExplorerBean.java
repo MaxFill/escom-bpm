@@ -737,6 +737,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА */
     
     /* ОБОЗРЕВАТЕЛь ТАБЛИЦА: установка текущего объекта по двойному клику в таблице обозревателя   */
+    @Override
     public void onRowDblClckOpen(SelectEvent event){
         BaseDict item = (BaseDict) event.getObject();
         onSetCurrentItem(item);        

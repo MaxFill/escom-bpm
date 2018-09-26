@@ -113,18 +113,21 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                 String filterProperty = it.next();
                 Object filterValue = filters.get(filterProperty);
                 if (filterValue instanceof Map){
-                    Map <String, Date> dateFilters = (Map) filterValue;
+                    Map <String, Date> dateFilters = (Map) filterValue;                    
                     if (dateFilters.containsKey("startDate")){
                         criteries.add(builder.greaterThanOrEqualTo(root.get(filterProperty), dateFilters.get("startDate")));
-                    } else 
-                        if (dateFilters.containsKey("endDate")){
-                            criteries.add(builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate")));
-                        }
+                    }
+                    if (dateFilters.containsKey("endDate")){
+                        criteries.add(builder.lessThanOrEqualTo(root.get(filterProperty), dateFilters.get("endDate")));
+                    }
                 } else {                    
                     if(filterValue != null) {
                         if ("states".equals(filterProperty)){
-                            Predicate predicate = root.get("state").get("currentState").in((List<State>) filterValue);
-                            criteries.add(predicate);
+                            List<State> states = (List<State>)filterValue;
+                            if (!states.isEmpty()){
+                                Predicate predicate = root.get("state").get("currentState").in(states);
+                                criteries.add(predicate);
+                            }
                         } else {
                             criteries.add(builder.equal(root.get(filterProperty), filterValue));
                         }

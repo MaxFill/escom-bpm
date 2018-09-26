@@ -546,8 +546,8 @@ public class SessionBean implements Serializable{
         Map<String, List<String>> paramMap = getParamsMap();
         paramMap.put("docId", docsList);
         openDialogFrm(DictFrmName.FRM_ADD_ATTACHE, paramMap); 
-    }
-    
+    }    
+
     /* Открытие формы настроек пользователя */
     public void openSettingsForm(){
         openDialogFrm(DictFrmName.FRM_USER_SETTINGS, getParamsMap());

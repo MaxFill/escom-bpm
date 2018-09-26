@@ -79,8 +79,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @Inject
     private DocBean docBean;
 
-    private boolean readOnly;
-
     private List<Result> taskResults;
     private DualListModel<Result> results;
     
@@ -614,7 +612,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @return 
      */
     public boolean isTaskReadOnly(){
-        if (readOnly) return true;
+        if (isReadOnly()) return true;
         if (userFacade.isAdmin(getCurrentUser())) return true;        
         Task task = getEditedItem();        
         return DictStates.STATE_RUNNING == task.getState().getCurrentState().getId();                

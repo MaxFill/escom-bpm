@@ -137,26 +137,19 @@
         </p:tab>
         
         <p:tab title="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">
+            <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="without-spaces ui-grid-col-12">                
                 <ui:include src="/view/processes/process-list.xhtml"> 
                     <ui:param name="_processes" value="#{docCardBean.editedItem.processList}"/>
                 </ui:include>
             </p:panelGrid>
-        </p:tab>
-        
-        <h:panelGroup rendered="#{applicationBean.isCanUsesProcess()}">
-            <ui:include src="/view/docs/doc-links.xhtml"/>                
-            <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
-        </h:panelGroup>
-        
+        </p:tab>                
         <ui:include src="/view/docs/attaches/attaches.xhtml"/>
         <ui:include src="/view/docs/doc-places.xhtml"/>
-
+        <ui:include src="/view/docs/docStatus/docstatus-list.xhtml"/>
+        <ui:include src="/view/docs/doc-links.xhtml"/>        
     </ui:define>
 
-    <ui:define name="specActionMenu">
-        <p:menuitem icon="ui-icon-extlink" value="#{bundle.SaveAndPublish}"     
-                    oncomplete="document.getElementById('mainFRM:mainTabView:btnSaveCloseAndPublic').click();"/>                
+    <ui:define name="specActionMenu">              
     </ui:define>
     
     <ui:define name="specSubMenu"> 
@@ -191,33 +184,15 @@
             <p:menuitem icon="ui-icon-mail-open" value="#{bundle.SendToEmailAsAttache}"
                         rendered="#{_bean.editedItem.id != null}"
                         actionListener="#{docCardBean.prepareSendMailDoc('asAttache')}"/>
-        </p:menuButton>
-        <p:menuButton value="#{bundle.Processes}" icon="ui-icon-extlink" styleClass="submenu"
-                      disabled="#{_item.id == null}"
-                      rendered="#{applicationBean.isCanUsesProcess()}">
-            <p:menuitem icon="ui-icon-extlink" value="#{bundle.ConcordedDoc}" 
-                        oncomplete="document.getElementById('mainFRM:btnConcordedDoc').click();">                
-            </p:menuitem>
-        </p:menuButton>
+        </p:menuButton>        
     </ui:define>
 
     <ui:define name="specMenuButtons">
-        <p:commandButton id="btnSaveCloseAndPublic" value="#{bundle.SaveAndPublish}" 
-                    rendered="#{!_bean.isReadOnly() and _bean.editedItem.state.currentState.id == 5}"
-                    icon="ui-icon-extlink"
-                    update="mainFRM"
-                    action="#{_bean.prepSaveItemAndPublic()}" ajax="false"
-                    onclick="if (itemChange == 1) {onChangeItem();} sendFormSize('#{_bean.getFormName()}');">
-            <f:param name="isRequired" value="true"/>
-        </p:commandButton>
     </ui:define>
     
     <ui:define name="form_scripts">
         <p:commandButton id="setLockBtn" actionListener="#{docCardBean.onLockSelectedAttache()}" style="display: none;">
             <p:ajax event="dialogReturn" listener="#{docCardBean.onUpdateSelectedAttache()}" update="mainFRM:mainTabView:versionsTBL"/>
-        </p:commandButton>
-         <p:commandButton id="btnConcordedDoc" actionListener="#{docCardBean.onConcordedDoc()}" style="display: none;">
-             <p:ajax event="dialogReturn" listener="#{docCardBean.afterCloseProcess}"/>
         </p:commandButton>
     </ui:define>
     

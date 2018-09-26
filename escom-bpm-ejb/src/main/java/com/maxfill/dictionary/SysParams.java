@@ -7,7 +7,7 @@ public final class SysParams {
       
     public static final String ALL = "*";
     public static final String CODE_SEPARATOR = "_";
-    public static final int LENGHT_NAME_ELIPSE = 50;  
+    public static final int LENGHT_NAME_ELIPSE = 60;  
         
     public static final String LINE_SEPARATOR = System.lineSeparator();           
 

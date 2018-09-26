@@ -197,8 +197,13 @@
                                         rendered="#{applicationBean.isCanUsesTasks()}"
                                         value="#{bundle.Scheduler}" target="_blank" />
 
+                                <p:graphicImage value="/resources/icon/tasks-32.png"/>  
+                                <p:commandLink value="#{bundle.MyTasks}" 
+                                               actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                                               
+                                
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>  
-                                <p:commandLink value="#{bundle.PersonalSettings}" title="#{bundle.PersonalSettingsInfo}" ignoreAutoUpdate="true" immediate="true" partialSubmit="true"
+                                <p:commandLink value="#{bundle.PersonalSettings}" 
                                                actionListener="#{sessionBean.openSettingsForm()}"/>
                             </p:panelGrid> 
 

@@ -14,19 +14,14 @@ import com.maxfill.model.statuses.StatusesDoc;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.dictionary.DictPrintTempl;
-import com.maxfill.dictionary.DictStates;
-import com.maxfill.dictionary.ProcessTypesDict;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.interfaces.WithDetails;
-import com.maxfill.escom.beans.processes.ProcessBean;
 import com.maxfill.escom.beans.processes.remarks.RemarkBean;
-import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.docStatuses.DocStatusFacade;
 import com.maxfill.model.companies.Company;
 import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
-import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.process.types.ProcessTypesFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import org.apache.commons.lang3.StringUtils;
@@ -50,7 +45,6 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-import org.primefaces.PrimeFaces;
 
 /* Карточка документа */
 
@@ -71,8 +65,6 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     
     @Inject
     private DocBean docBean;
-    @Inject
-    private ProcessBean processBean;
     @Inject
     private RemarkBean remarkBean;
         
@@ -392,14 +384,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     /* Возвращает true если у документа есть заблокированные вложения */
     public boolean getDocIsLock(){
         return docBean.docIsLock(getEditedItem());
-    }
-    
-    @Override
-    public String prepSaveItemAndPublic(){
-        getFacade().doSetStateById(getEditedItem(), DictStates.STATE_VALID);
-        onItemChange();
-        return super.prepSaveItemAndClose(); 
-    }
+    }    
     
     /* Печать карточки документа */
     @Override
@@ -484,42 +469,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
        if (doc == null) return false;
        
        return StringUtils.isBlank(doc.getRegNumber()) && doc.getDocType() != null && doc.getDocType().getNumerator() != null;
-    }
-    
-    /* ПРОЦЕССЫ */        
-    
-    /**
-     * Создание и открытие процесса согласования и прикрепление к нему документа
-     */
-    public void onConcordedDoc(){
-        if (doSaveItem()){
-            ProcessType procType = processTypesFacade.find(ProcessTypesDict.CONCORDED_ID);
-            if (procType == null){
-                MsgUtils.errorFormatMsg("ObjectWithIDNotFound", new Object[]{ProcessType.class.getSimpleName(), ProcessTypesDict.CONCORDED_ID});
-                return;
-            }
-            List<Doc> docs = new ArrayList<>();
-            docs.add(getEditedItem());
-            Map<String, Object> params = new HashMap<>();
-            params.put("documents", docs);
-            processBean.createItemAndOpenCard(null, procType, params, getParamsMap());
-        }
-    }
-    
-    /**
-     * Обработка события закрытия карточки процесса
-     * Закрываем документ, если процесс запустился
-     * @param event 
-     */
-    public void afterCloseProcess(SelectEvent event){
-        String exitResult = (String) event.getObject();
-        if (SysParams.EXIT_EXECUTE.equals(exitResult)) {
-            closeItemForm(SysParams.EXIT_NEED_UPDATE);
-        } else {
-            setTabActiveIndex(1);
-            PrimeFaces.current().ajax().update("mainFRM:mainTabView");
-        }
-    }
+    }    
  
     /* ЗАМЕЧАНИЯ */
     

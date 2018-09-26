@@ -88,6 +88,11 @@
                                             onstart="PF('statusDialog').show()"
                                             oncomplete="PF('statusDialog').hide();"
                                             actionListener="#{sessionBean.onViewHelp()}"/>
+                                <p:separator />
+                                <p:menuitem value="#{bundle.Close}" icon="ui-icon-closethick" 
+                                            immediate="true"
+                                            rendered="#{!_bean.isFullPageMode() and _canClose == null ? true : _canClose}"
+                                            onclick="document.getElementById('mainFRM:btnClose').click();"/>
                             </p:menuButton>
                         </f:facet>
                     </p:toolbar> 

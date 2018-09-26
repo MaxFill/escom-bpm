@@ -212,7 +212,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      */
     public void taskDone(Task task, Result result, User user){
         task.setResult(result.getName());
-        task.setIconName(result.getIconName());
+        //task.setIconName("");
         task.setFactExecDate(new Date());        
         task.getState().setCurrentState(stateFacade.getCompletedState());
         addLogEvent(task, DictLogEvents.TASK_FINISHED, user);

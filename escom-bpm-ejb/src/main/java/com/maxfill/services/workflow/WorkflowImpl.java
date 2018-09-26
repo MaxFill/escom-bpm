@@ -527,6 +527,7 @@ public class WorkflowImpl implements Workflow {
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return;
         
+        //очистки если запуск повторный
         scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов
         scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
         scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
@@ -534,6 +535,12 @@ public class WorkflowImpl implements Workflow {
                 task.setFactExecDate(null); //сброс даты выполнения
                 task.setResult(null);       //сброс предудущего результата
             });
+        
+        Doc doc = process.getDocument();
+        if (doc != null){
+            doc = docFacade.find(doc.getId());            
+            docFacade.changeState(doc, DictStates.STATE_VALID);
+        }
         
         process.getState().setCurrentState(stateFacade.getRunningState());
         process.setBeginDate(new Date());
@@ -558,9 +565,17 @@ public class WorkflowImpl implements Workflow {
     @Override
     public void stop(Process process, User currentUser, Set<String> errors) {
         State stateCancel = stateFacade.getCanceledState();
+        
+        Doc doc = process.getDocument();
+        if (doc != null){
+            doc = docFacade.find(doc.getId());            
+            docFacade.returnToPrevState(doc);
+        }
+        
         //отмена всех запущенных задач
         stopTasks(process, stateCancel, "TaskCancelled", currentUser);
         stopTimers(process);
+        
         process.getState().setCurrentState(stateCancel);        
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, currentUser);
         processFacade.edit(process);        

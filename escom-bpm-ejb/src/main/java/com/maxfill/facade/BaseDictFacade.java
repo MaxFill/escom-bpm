@@ -179,8 +179,20 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         }
     }
     
+    /* *** СОСТОЯНИЯ *** */
+    
+    /**
+     * Изменение состояния объекта с сохранением
+     * @param item
+     * @param stateId
+     */
+    public void changeState(T item, int stateId){
+        doSetState(item, stateFacade.find(stateId));
+        edit(item);
+    }
+    
     /* установка состояния объекта */     
-    public void doSetState(T item, State currentState){
+    private void doSetState(T item, State currentState){
         try {
             BaseStateItem stateItem = item.getState();
             State previousState = null;
@@ -195,12 +207,20 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-    }
+    }        
     
-    public void doSetStateById(T item, Integer stateId){
-        doSetState(item, stateFacade.find(stateId)); 
+    /**
+     * Установка начального состояния объекта
+     * @param item 
+     */
+    public void setFirstState(T item){
+        doSetState(item, getMetadatesObj().getStateForNewObj());
     }
-    
+            
+    /**
+     * Возврат в предыдущее состояние
+     * @param item 
+     */
     public void returnToPrevState(T item){
         BaseStateItem stateItem = item.getState();
         State previousState = stateItem.getPreviousState();
@@ -208,8 +228,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             stateItem.setCurrentState(previousState);
             item.setState(stateItem);
         }
+        edit(item);
     }
 
+    /* ***  ЗАМЕНА *** */
+    
     /**
      * Замена объекта на другой
      * @param oldItem
@@ -494,6 +517,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Очистка журнала объекта
+     * @param entity
      * @param filters
      * @return 
      */

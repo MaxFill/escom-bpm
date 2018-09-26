@@ -37,7 +37,7 @@
 
         <ui:define name="centerFormContent">
             <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{userMsgBean.showOnlyUnread}" toggleSpeed="500" widgetVar="panel">
-                <p:panelGrid layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                <h:panelGrid columns="1" styleClass=" without-spaces">
                     <p:selectBooleanCheckbox value="#{userMsgBean.showOnlyUnread}"
                                              itemLabel="#{bundle.ShowOnlyUnReadMessage}">
                         <p:ajax update="mainFRM" listener="#{userMsgBean.onChangeChBoxShowMsgType()}"/>
@@ -72,7 +72,7 @@
                             <f:param name="isRequired" value="true"/>
                         </p:commandButton>
                     </p:panelGrid>
-                </p:panelGrid>
+                </h:panelGrid>
             </p:panel>
 
             <p:dataTable id="messageTBL" value="#{userMsgBean.lazyDataModel}" lazy="true"

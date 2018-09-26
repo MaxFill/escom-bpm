@@ -187,17 +187,15 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     }    
         
     /* Установка состояния редактирования документа */
-    public void doSetEditState(Doc doc, User user){
-        doSetStateById(doc, DictStates.STATE_EDITED);
+    public void doSetEditState(Doc doc, User user){        
         doc.doSetSingleRole(DictRoles.ROLE_EDITOR, user.getId());
-        edit(doc);
+        changeState(doc, DictStates.STATE_EDITED);        
     }
     
     /* Снятие состояния редактирования документа */
-    public void doRemoveEditState(Doc doc){
-        returnToPrevState(doc);        
+    public void doRemoveEditState(Doc doc){        
         doc.doSetSingleRole(DictRoles.ROLE_EDITOR, null);
-        edit(doc);
+        returnToPrevState(doc);
     }
 
     /**

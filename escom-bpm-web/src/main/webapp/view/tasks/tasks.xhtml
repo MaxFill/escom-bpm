@@ -1,0 +1,118 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html"
+                 template="/view/templ/templ-dlg.xhtml"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core">    
+
+    <ui:param name="_bean" value="#{taskListBean}"/>
+
+    <ui:define name="toolbarComponents" >
+        <p:commandButton id="btnCreateTask" style="display: none;" actionListener="#{taskListBean.onCreateTask()}">
+            <p:ajax event="dialogReturn" listener="#{_bean.onTaskDlgClose}"/>
+        </p:commandButton>
+        <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{taskListBean.onOpenTask()}">
+            <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
+        </p:commandButton>
+    </ui:define>
+
+    <ui:define name="centerFormContent">
+        <p:panel toggleable="true" header="#{bundle.Filter}" collapsed="#{taskListBean.showOnlyExecute}" toggleSpeed="500" widgetVar="panel">
+            <h:panelGrid columns="1"> 
+                <p:selectBooleanCheckbox value="#{taskListBean.showOnlyExecute}"
+                                         itemLabel="#{bundle.ShowOnlyExecute}">
+                    <p:ajax update="mainFRM" listener="#{taskListBean.onChangeChBoxType()}"/>
+                </p:selectBooleanCheckbox>
+            </h:panelGrid>
+            <h:panelGrid columns="3" styleClass=" without-spaces"> 
+                <h:panelGrid columns="1" styleClass=" without-spaces"> 
+                    <p:outputLabel value="#{bundle.PlanEndDate}:" />
+                    <h:panelGrid columns="2" styleClass="without-spaces">
+                        #{bundle.With}
+                        <p:calendar value="#{taskListBean.dateStart}" id="dateStart"
+                                    widgetVar="dateCreateStartSearche"
+                                    showHour="true" showMinute="true" pages="2"
+                                    navigator="true" yearRange="c-12:c+20"
+                                    disabled="#{taskListBean.showOnlyExecute}"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss">
+                        </p:calendar>
+                        #{bundle.At}
+                        <p:calendar value="#{taskListBean.dateEnd}" id="dateEnd"
+                                    widgetVar="dateCreateEndSearche"
+                                    navigator="true" yearRange="c-12:c+20" pages="2"
+                                    showHour="true" showMinute="true"
+                                    disabled="#{taskListBean.showOnlyExecute}"
+                                    locale="#{sessionBean.locale}"
+                                    pattern="dd.MM.yyyy HH:mm:ss">
+                        </p:calendar>
+                    </h:panelGrid>
+                </h:panelGrid>
+                
+                <h:panelGrid columns="1" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.States}:" />
+                    <p:selectManyMenu value="#{taskListBean.states}" disabled="#{taskListBean.showOnlyExecute}" converter="stateConvertor" var="st" showCheckbox="true">
+                        <f:selectItems value="#{taskBean.metadatesObj.statesList}" var="state" itemLabel="#{state.name}" itemValue="#{state}" />
+                        <p:column>
+                            <h:outputText value="#{taskListBean.getLabelFromBundle(st.name)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+                </h:panelGrid>
+                    
+                <p:commandButton value="#{bundle.Find}" id="btnSearche" actionListener="#{taskListBean.onRefresh()}">
+                    <f:param name="isRequired" value="true"/>
+                </p:commandButton>                
+            </h:panelGrid>
+        </p:panel>
+
+        <p:dataTable id="tasksTBL" value="#{taskListBean.lazyDataModel}" lazy="true"
+                     emptyMessage="#{bundle.EmptyTable}" 
+                     paginator="true" paginatorPosition="bottom"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     rowsPerPageTemplate="5, 10, 25, 50" rows="10" 
+                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
+                     tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                     sortBy="#{item.planExecDate}" var="item" selectionMode="single"                    
+                     selection="#{taskListBean.selected}">
+            
+            <p:ajax event="rowSelect" listener="#{_bean.onRowSelect}" />
+            <p:ajax event="rowDblselect" listener="#{_bean.onRowDblClckOpen}" oncomplete="document.getElementById('mainFRM:btnOpenTask').click();"/>
+                    
+            <p:column width="16" sortBy="#{item.iconName}" >                
+                <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
+            </p:column>
+
+            <p:column headerText="#{bundle.Task}" >
+                <p:commandLink value="#{item.nameEndElipse}" 
+                               actionListener="#{taskListBean.setSelected(item)}"
+                               oncomplete="document.getElementById('mainFRM:btnOpenTask').click();"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.Process}" >
+                <p:commandLink value="#{taskListBean.getProcessName(item)}" 
+                               actionListener="#{taskListBean.onOpenProcess(item)}"/>
+            </p:column>
+            
+            <p:column headerText="#{bundle.Term}" sortBy="#{item.planExecDate}">
+                <h:outputLabel value="#{item.planExecDate}">
+                    <f:convertDateTime type="both" dateStyle="short" timeStyle="short" locale="#{sessionBean.locale}" timeZone="#{TimeZone.getDefault()}"/>
+                </h:outputLabel>
+            </p:column>
+            
+            <p:column width="16">
+                <h:graphicImage id="iconDone" value="#{item.state.currentState.icon}" title="#{stateBean.getBundleName(item.state.currentState)}"/>            
+            </p:column>
+            
+            <p:column headerText="#{bundle.Status}">        
+                <h:outputLabel value="#{sessionBean.getItemStatus(item)}"/>
+            </p:column>
+
+            <p:column headerText="#{bundle.Result}">
+                <h:outputLabel value="#{taskListBean.getLabelFromBundle(item.getResult())}"/>
+            </p:column>
+
+        </p:dataTable>
+
+    </ui:define>
+
+</ui:composition>

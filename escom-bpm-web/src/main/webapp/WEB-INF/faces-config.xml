@@ -194,6 +194,10 @@
             <to-view-id>/view/tasks/scheduler.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
+            <from-outcome>tasks</from-outcome>
+            <to-view-id>/view/tasks/tasks.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
             <from-outcome>monitor</from-outcome>
             <to-view-id>/view/processes/monitor.xhtml</to-view-id>
         </navigation-case>

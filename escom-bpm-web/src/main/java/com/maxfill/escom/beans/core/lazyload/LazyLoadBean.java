@@ -3,6 +3,7 @@ package com.maxfill.escom.beans.core.lazyload;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.BaseLazyFacade;
 import com.maxfill.model.BaseDict;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
+import org.primefaces.behavior.confirm.ConfirmBehavior;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
@@ -119,8 +121,16 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
         selected = (T) event.getObject();
     }
     
+    public void onRowDblClckOpen(SelectEvent event){
+        selected = (T) event.getObject();
+    }
+    
     public int countItems(){
-        return getLazyFacade().countItemsByFilters(makeFilters(filters));
+        int count = getLazyFacade().countItemsByFilters(makeFilters(filters));
+        if (count == 0){
+            MsgUtils.warnMsg("NO_SEARCHE_FIND");
+        }
+        return count;
     }
 
     public int deleteItems(){

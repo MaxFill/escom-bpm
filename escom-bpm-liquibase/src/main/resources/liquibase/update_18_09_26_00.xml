@@ -5,5 +5,9 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">         
 
-   
+    <changeSet id="doc_change_right_role_owner_state_valid" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            UPDATE `access` SET `IsCreate`=0, `IsDelete`=0, `IsUpdate`=0 where ObjLink = 1 and State = 7 and ObjId = 16;
+        </sql>
+    </changeSet>
 </databaseChangeLog> 
