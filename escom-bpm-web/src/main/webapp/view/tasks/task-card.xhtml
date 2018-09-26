@@ -20,13 +20,13 @@
                 <p:selectOneMenu value="#{taskCardBean.editedItem.owner}" filter="true" filterMatchMode="startsWith"
                                 styleClass="ui-grid-col-12"
                                 converter="staffConvertor" placeholder="#{bundle.Select}"
-                                disabled="#{!taskCardBean.canChangeExecutor()}"
+                                disabled="#{taskCardBean.readOnly}"
                                 rendered="#{taskCardBean.editedItem.scheme != null}"
                                 required="#{param['isRequired'] == 'true'}"
-                                requiredMessage="#{bundle.Field} [#{bundle.Executor}] #{bundle.MustBeFilled}"
-                                valueChangeListener="#{_bean.onExecutorChanged}">
+                                requiredMessage="#{bundle.Field} [#{bundle.Executor}] #{bundle.MustBeFilled}">
                     <f:selectItems value="#{taskCardBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
-                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
+                    <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
+                    <p:ajax event="change" listener="#{_bean.onExecutorChanged()}" oncomplete="itemChange = 1;"/>
                 </p:selectOneMenu>                                
 
                 <p:outputLabel value="#{bundle.Task}:" indicateRequired="true" />
@@ -34,7 +34,7 @@
                              styleClass="ui-grid-col-12"
                              onkeypress="checkEsc();"                             
                              placeholder="#{bundle.InputTaskContent}"
-                             disabled="#{taskCardBean.readOnly}"
+                             disabled="#{taskCardBean.isTaskReadOnly()}"
                              onchange="return itemChange = 1;"
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Task}] #{bundle.MustBeFilled}"/>
@@ -67,7 +67,7 @@
 
                         <p:outputLabel value="#{bundle.PlanEndDate}:" indicateRequired="true"/>                         
                         <h:panelGrid columns="2" cellpadding="3" >
-                            <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" disabled="#{taskCardBean.readOnly}" layout="grid" columns="1" >
+                            <p:selectOneRadio id="typeDatePlan" value="#{taskCardBean.editedItem.deadLineType}" disabled="#{taskCardBean.isTaskReadOnly()}" layout="grid" columns="1" >
                                 <f:selectItem itemLabel="" itemValue="delta"/>
                                 <f:selectItem itemLabel="" itemValue="data" />
                                 <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
@@ -79,16 +79,16 @@
                                     <p:spinner id="deltaDay" value="#{taskCardBean.deadLineDeltaDay}" min="0" max="999" 
                                                suffix="#{bundle.DayShort}" size="3"                                                
                                                onchange="return itemChange = 1;"                                               
-                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">                                        
+                                               disabled="#{taskCardBean.isTaskReadOnly() or taskCardBean.editedItem.deadLineType eq 'data'}">                                        
                                     </p:spinner>
                                     <p:spacer width="1"/>
                                     <p:spinner id="deltaHour" value="#{taskCardBean.deadLineDeltaHour}" min="0" max="99" 
                                                suffix="#{bundle.HourShort}" size="2"
                                                onchange="return itemChange = 1;"
-                                               disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'data'}">
+                                               disabled="#{taskCardBean.isTaskReadOnly() or taskCardBean.editedItem.deadLineType eq 'data'}">
                                     </p:spinner>                                    
                                     <p:commandButton id="btnCalcPlan" icon="ui-icon-calculator" title="#{bundle.CalculateDeadline}" 
-                                         disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
+                                         disabled="#{_bean.isTaskReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
                                          update="planEndDate"
                                          actionListener="#{taskCardBean.calculateDeadline()}"/>
                                     </div>
@@ -98,7 +98,7 @@
                                             styleClass="without-spaces" pages="2"
                                             timeZone="#{TimeZone.getDefault()}"
                                             showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                            disabled="#{taskCardBean.readOnly or taskCardBean.editedItem.deadLineType eq 'delta'}"
+                                            disabled="#{taskCardBean.isTaskReadOnly() or taskCardBean.editedItem.deadLineType eq 'delta'}"
                                             locale="#{sessionBean.locale}"
                                             navigator="true" yearRange="c-1:c+20" timeInput="true" 
                                             valueChangeListener="#{taskCardBean.onPlanExecDateChange}"
@@ -143,8 +143,8 @@
                 <p:selectBooleanCheckbox value="#{taskCardBean.editedItem.considInProcReport}" 
                                          itemLabel="#{bundle.EnterInApprovalSheet}" 
                                          rendered="#{taskCardBean.editedItem.scheme != null}"
-                                         disabled="#{_bean.isReadOnly()}">
-                    <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                                         disabled="#{_bean.isTaskReadOnly()}">
+                    <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>
         
                 <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" >
@@ -168,7 +168,7 @@
             </p:panelGrid>
         </p:tab>
 
-        <p:tab title="#{bundle.Settings}" rendered="#{!taskCardBean.isReadOnly()}">
+        <p:tab title="#{bundle.Settings}" rendered="#{!taskCardBean.isTaskReadOnly()}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.ListResults}" indicateRequired="true"/>
                 <p:separator style="margin-top: 0em;"/>
@@ -185,6 +185,7 @@
 
         <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
+                <h:panelGroup id="btnTaskExe">
                 <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.isShowBtnResults()}" >
                     <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
                                      update="mainFRM"
@@ -194,6 +195,7 @@
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </ui:repeat>
+                </h:panelGroup>
                 
                 <p:outputLabel value="#{bundle.ReportExe}:" indicateRequired="true"/>                
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 

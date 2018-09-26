@@ -540,8 +540,10 @@ public class WorkflowImpl implements Workflow {
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);
         
-        //обновление инф в листе согласования по текущему согласующему
-        updateReportStatus(process, currentUser.getStaff(), DictResults.RESULT_AGREED, currentUser);
+        //если действие выполняется куратором, то внести инф в лист согласования 
+        if (Objects.equals(process.getCurator().getEmployee(), currentUser)){
+            updateReportStatus(process, process.getCurator(), DictResults.RESULT_AGREED, currentUser);
+        }
         
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, currentUser);
         run(process, startElement, currentUser, params, errors);
@@ -1050,45 +1052,36 @@ public class WorkflowImpl implements Workflow {
     /* *** ПРОЧЕЕ *** */
     
     /**
-     * Замена исполнителя в отчёте по процессу (листе согласования)      
-     * @param task
-     * @param user 
+     * Формирование листа согласования
+     * @param p
+     * @param user - автор изменений
      */
-    @Asynchronous
-    @Override    
-    public void replaceReportExecutor(Task task, User user){
-        if (!task.getConsidInProcReport()) return;
+    @Override 
+    public void makeProcessReport(Process p, User user){
+        final Process process = processFacade.find(p.getId());
+        if (process == null) return;
         
-        Scheme scheme = task.getScheme();
-        if (scheme == null) return;        
-        
-        Process process = processFacade.find(scheme.getProcess().getId());        
         Set<ProcReport> procReports = process.getReports();
         
-        Staff newExecutor = task.getOwner();
-        Staff oldExecutor = scheme.getTasks().stream()
-                .filter(t->t.getId().equals(task.getId()))
-                .findFirst()
-                .map(t-> t.getOwner())
-                .orElse(null);
-        if (oldExecutor != null){
-            List<Staff> oldExecutors = scheme.getTasks().stream() //список всех таких, т.к. их может быть в модели больше чем один!
-                    .filter(t->t.getOwner().equals(oldExecutor) && !t.getId().equals(task.getId()))
-                    .map(t-> t.getOwner())
-                    .collect(Collectors.toList());
-            if (oldExecutors.isEmpty()){
-                ProcReport oldExecutorReport = procReports.stream()
-                        .filter(report-> report.getDateCreate() == null && Objects.equals(report.getExecutor(), oldExecutor))
-                        .findFirst().orElse(null);
-                if (oldExecutorReport != null){
-                    procReports.remove(oldExecutorReport);
-                }
-            }
-        }        
+        //удаляем из листа все записи, кроме тех, которые уже согласовали
+        List<ProcReport> removeRepors = procReports.stream()            
+                .filter(report-> report.getDateCreate() == null )
+                .collect(Collectors.toList());
+        procReports.removeAll(removeRepors); 
+                
+        //формируем список из задач процесса, кроме тех, которые не должны там быть
+        Set<ProcReport> newReports = process.getScheme().getTasks().stream()
+                .filter(task->task.getOwner() != null && task.getConsidInProcReport())
+                .map(task -> new ProcReport(user, task.getOwner(), process))
+                .collect(Collectors.toSet()); 
+        //добавляем отчёт для куратора
+        newReports.add(new ProcReport(user, process.getCurator(), process));
+                        
+        //добавляем в лист согласования записи, если таких там нет
+        newReports.removeAll(procReports);        
+        procReports.addAll(newReports);
         
-        //добавить в лист согласования нового исполнителя, если его там нет
-        ProcReport procReport = new ProcReport(user, newExecutor, process);
-        procReports.add(procReport);
         processFacade.edit(process);
     }
+        
 }

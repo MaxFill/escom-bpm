@@ -155,7 +155,7 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
     }
     
     public boolean doSaveItem(){
-        if (!getTypeEdit().equals(DictEditMode.VIEW_MODE) && isItemChange) {
+        if (isItemChange) {
             T item = getEditedItem();
             onBeforeSaveItem(item);
             Set<String> errors = new LinkedHashSet<>();
@@ -539,12 +539,20 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return msg;
     }
 
+    /**
+     * Определяет дефолтный доступ ко всем полям карточки объекта
+     * @return 
+     */
     public boolean isReadOnly(){
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
     }
-
-    public boolean isDisableSave(){
-        return  isReadOnly();
+    
+    /**
+     * Определяет доступ к полям на вкладке "Информация"
+     * @return 
+     */
+    public boolean isInfoReadOnly(){
+        return isReadOnly();
     }
     
     /* Возвращает название для заголовка для вкладки "Права доступа к объекту" */

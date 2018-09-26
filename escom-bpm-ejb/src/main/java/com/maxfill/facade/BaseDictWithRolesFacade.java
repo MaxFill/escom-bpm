@@ -59,19 +59,40 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         item.setRoleJson(attacheJson);
     }
 
-    /* Проверка вхождения пользователя в роль документа */
+    /**
+     * Проверка вхождения пользователя в роль c учётом заместителей
+     * @param item
+     * @param groupId
+     * @param user
+     * @return 
+     */
     @Override
     public boolean checkUserInRole(T item, Integer groupId, User user){
+        //получаем актуальную роль
         UserGroups group = roleFacade.find(groupId);
-        if (group == null) return false;
+        if (group == null) return false; //если не нашли
+        
+        //получаем имя роли
         String roleName = group.getRoleFieldName();
         if (StringUtils.isBlank(roleName)) return false;
         roleName = roleName.toUpperCase();
+        
+        //получаем роли объекта
         Map<String, Set<Integer>> roles = item.getRoles();
-        if (roles.isEmpty() || !roles.containsKey(roleName)) return false;
-        Set<Integer> usersIds = (HashSet<Integer>)roles.get(roleName);
-        if (usersIds.isEmpty()) return false;
-        return usersIds.contains(user.getId());
+        if (roles.isEmpty() || !roles.containsKey(roleName)) return false; //если роль не найдена среди ролей объекта
+        
+        //получаем роли состав роли
+        Set<Integer> usersIds = (Set<Integer>)roles.get(roleName);
+        if (usersIds.isEmpty()) return false; //если состав пустой 
+        
+        //проверяем состав роли
+        if (usersIds.contains(user.getId())) return true; //если пользователь явно указан в роли
+        
+        //проверяем, не является ли пользователь замом когото из состава роли
+        return usersIds.stream()
+                .filter(id->userFacade.checkAssistant(id, user))
+                .findFirst()
+                .orElse(null) != null;
     }
 
     /**

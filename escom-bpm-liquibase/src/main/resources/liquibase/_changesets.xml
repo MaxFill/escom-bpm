@@ -9,5 +9,5 @@
     <include file="update_18_03_01_00.xml" relativeToChangelogFile="true"/>
     <include file="update_18_09_02_00.xml" relativeToChangelogFile="true"/>
     <include file="update_18_09_11_00.xml" relativeToChangelogFile="true"/>
-
+    <include file="update_18_09_26_00.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

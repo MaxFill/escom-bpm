@@ -953,7 +953,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     /* *** РОЛИ *** */
     
     /**
-     * Проверяет вхождение текущего пользователя в роль
+     * Проверяет вхождение текущего пользователя в роль, с учётом заместителей
      * @param item
      * @param groupId
      * @param user

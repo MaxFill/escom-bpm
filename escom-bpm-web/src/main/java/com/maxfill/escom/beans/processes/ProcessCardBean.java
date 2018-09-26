@@ -8,7 +8,6 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.states.StateFacade;
@@ -51,9 +50,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     @Inject
     private DiagramBean diagramBean;
     @Inject
-    private ProcessBean processBean;
-    @Inject
-    private TaskBean taskBean;  
+    private ProcessBean processBean; 
     @Inject
     private DocBean docBean;
     
@@ -69,7 +66,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
-    private Task currentTask;
     private Doc selectedDoc;    
     private String accordDocsTab = null;
     
@@ -178,6 +174,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Scheme scheme = process.getScheme();
         Staff curator = process.getCurator();
         List<Task> liveTasks = getTasksFromModel();
+        
         List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks());
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
         scheme.getTasks().removeAll(forRemoveTasks);     
@@ -308,37 +305,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             exitParam = SysParams.EXIT_EXECUTE;
             MsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
-    }           
-    
-    /* *** ЗАДАЧИ *** */
-    
-    public void onAfterTaskClose(SelectEvent event){
-        String action = (String) event.getObject();
-        switch (action){
-            case SysParams.EXIT_EXECUTE:{
-                doAfterTaskChange();
-                break;
-            }
-            case SysParams.EXIT_NEED_UPDATE:{
-                doAfterTaskChange();
-                break;
-            }
-            case SysParams.EXIT_NOTHING_TODO:{
-                break;
-            }
-        }
-    }
-    
-    private void doAfterTaskChange(){
-        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
-        onItemChange();
-    }
-    
-    public void onOpenTask(){
-        if (currentTask == null) return;
-        setSourceItem(currentTask);
-        taskBean.prepEditChildItem(currentTask, getParamsMap());
-    }        
+    }      
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
     
@@ -366,11 +333,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     @Override
     public boolean isReadOnly(){        
         return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || getEditedItem().isRunning();
-    }    
-    
-    @Override
-    public boolean isDisableSave(){
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) && !getEditedItem().isRunning();
     }
         
     public void onOpenExeReport(ProcReport report){
@@ -508,13 +470,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
     public void setSelectedDoc(Doc selectedDoc) {
         this.selectedDoc = selectedDoc;
-    }    
-
-    public Task getCurrentTask() {
-        return currentTask;
-    }
-    public void setCurrentTask(Task currentTask) {
-        this.currentTask = currentTask;
     }
 
     public String getAccordDocsTab() {
@@ -545,10 +500,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 .collect(Collectors.toList());
         }
         return result;
-    }    
-    
-    public List<Task> getTasks(){
-        return getScheme().getTasks();
     }
     
     /**

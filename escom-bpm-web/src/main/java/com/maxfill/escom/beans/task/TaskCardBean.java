@@ -8,7 +8,6 @@ import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
-import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import static com.maxfill.escom.utils.MsgUtils.getBandleLabel;
 import com.maxfill.model.process.ProcessFacade;
@@ -26,8 +25,6 @@ import com.maxfill.model.task.Task;
 import com.maxfill.model.task.result.Result;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.State;
-import com.maxfill.model.task.TaskStates;
-import com.maxfill.model.users.User;
 import com.maxfill.model.users.assistants.AssistantFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
@@ -47,13 +44,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -94,9 +91,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private int reminderDeltaMinute = 0;
       
     private ProcReport currentReport;
-    private boolean isChangeExecutor;
+    private boolean isNeedUpdateProcessReports; 
     private List<String> selectedDays;
-    private List<Staff> executors;
+    private Set<Staff> executors;
     
     private List<SelectItem> daysOfWeek = new ArrayList<>();
     {        
@@ -110,17 +107,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     }
     
     @Override
-    public void doPrepareOpen(Task task){        
-        if (task.getScheme() == null){
-            readOnly = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
-        } else {
-            int id = task.getState().getCurrentState().getId();
-            if ((DictStates.STATE_RUNNING == id || DictStates.STATE_COMPLETED == id)){
-                readOnly = true;
-            } else {
-                readOnly = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
-            }
-        }
+    public void doPrepareOpen(Task task){
         initDateFields(task);     
         initExecutors(task);
     }
@@ -259,21 +246,23 @@ public class TaskCardBean extends BaseCardBean<Task>{
     @Override
     protected void onBeforeSaveItem(Task task){
         saveDateFields(task);
+        /*
         if (isChangeExecutor){
             replaceReportExecutor(task, getCurrentUser());
         }
+        */
         super.onBeforeSaveItem(task);
     }
     
     @Override
     protected void onAfterSaveItem(Task task){
         //изменение в листе согласования процесса, если изменили задачу        
-        if (task.getScheme() == null) return;   //задача не связана с процессом                 
+        if (task.getScheme() == null) return;   //задача не связана с процессом 
         if (getTypeEdit() == DictEditMode.CHILD_MODE) return;
-        if (isChangeExecutor){
-            workflow.replaceReportExecutor(task, getCurrentUser());
+        if (isNeedUpdateProcessReports){
+            workflow.makeProcessReport(task.getScheme().getProcess(), getCurrentUser());
         }
-    } 
+    }
      
     /**
      * Обработка события выполнения задачи
@@ -290,7 +279,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         
         if (StringUtils.isBlank(task.getComment())){
             task.setComment(MsgUtils.getBandleLabel(resultName));
-        }    
+        }
         
         Set<String> errors = new HashSet<>();
                                  
@@ -301,9 +290,6 @@ public class TaskCardBean extends BaseCardBean<Task>{
         }
         doSaveItem();
         if (task.getScheme() != null){
-            if (isChangeExecutor){
-               workflow.replaceReportExecutor(task, getCurrentUser());
-            }
             Process process = processFacade.find(task.getScheme().getProcess().getId());
             workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
             if (!errors.isEmpty()){
@@ -314,44 +300,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
             taskFacade.taskDone(task, result, getCurrentUser());
         }
         return closeItemForm(SysParams.EXIT_EXECUTE);
-    }
+    }    
     
-    private void replaceReportExecutor(Task task, User user){
-        if (sourceBean instanceof ProcessCardBean){
-            if (!task.getConsidInProcReport()) return;
-            Scheme scheme = task.getScheme();
-            if (scheme == null) return;        
-
-            Process process = scheme.getProcess();
-            Set<ProcReport> procReports = process.getReports();
-
-            Staff newExecutor = task.getOwner();
-            Staff oldExecutor = scheme.getTasks().stream()
-                    .filter(t->t.getId().equals(task.getId()))
-                    .findFirst()
-                    .map(t-> t.getOwner())
-                    .orElse(null);
-            if (oldExecutor != null){
-                List<Staff> oldExecutors = scheme.getTasks().stream() //список всех таких, т.к. их может быть в модели больше чем один!
-                        .filter(t->t.getOwner().equals(oldExecutor) && !t.getId().equals(task.getId()))
-                        .map(t-> t.getOwner())
-                        .collect(Collectors.toList());
-                if (oldExecutors.isEmpty()){
-                    ProcReport oldExecutorReport = procReports.stream()
-                            .filter(report-> report.getDateCreate() == null && Objects.equals(report.getExecutor(), oldExecutor))
-                            .findFirst().orElse(null);
-                    if (oldExecutorReport != null){
-                        procReports.remove(oldExecutorReport);
-                    }
-                }
-            }
-
-            //добавить в лист согласования нового исполнителя, если его там нет
-            ProcReport procReport = new ProcReport(user, newExecutor, process);
-            procReports.add(procReport);
-        }
-    }
-     
     /**
      * Обработка события открытия карточки процесса 
      */
@@ -416,13 +366,24 @@ public class TaskCardBean extends BaseCardBean<Task>{
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()) return;
         getEditedItem().setOwner(items.get(0));
-        isChangeExecutor = true;
+        isNeedUpdateProcessReports = true;
         onItemChange();
     }
     public void onExecutorChanged(ValueChangeEvent event){
         getEditedItem().setOwner((Staff) event.getNewValue());
-        isChangeExecutor = true;
+        isNeedUpdateProcessReports = true;
         onItemChange();
+    }
+    public void onExecutorChanged(){        
+        isNeedUpdateProcessReports = true;
+        onItemChange(); 
+        if (isShowBtnResults()){
+            PrimeFaces.current().ajax().update("mainFRM:mainTabView:btnTaskExe");
+        }
+    }
+    
+    public void onConsidInProcReportChange(){
+        isNeedUpdateProcessReports = true;
     }
     
     public Boolean isShowExtTaskAtr(){
@@ -440,18 +401,18 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private void initExecutors(Task task){            
         //админ может выбрать любого
         if (userFacade.isAdmin(getCurrentUser())){
-            executors = staffFacade.findActualStaff();
+            executors = new HashSet<>(staffFacade.findActualStaff());
             return;
         }                
         //автор или исполнитель может выбрать себя или кого-то из своих замов
         if (task.getAuthor().equals(getCurrentUser())) {
-            executors = assistantFacade.findAssistByUser(getCurrentUser());
+            executors = new HashSet<>(assistantFacade.findAssistByUser(getCurrentUser()));
             if (getCurrentUser().getStaff() != null){
                 executors.add(getCurrentUser().getStaff());
             }
             return;
         }
-        executors = new ArrayList<>();
+        executors = new HashSet<>();
         if (task.getOwner() != null){
             executors.add(task.getOwner());
             //исполнитель может выбрать кого-то из своих замов
@@ -589,24 +550,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         State currentState = task.getState().getCurrentState();
         return DictStates.STATE_RUNNING == currentState.getId() 
                 && taskFacade.checkUserInRole(task, DictRoles.ROLE_EXECUTOR_ID, getCurrentUser());
-    }
-    
-    /**
-     * Определяет, можно ли редактировать Исполнителя
-     * @return 
-     */
-    public boolean canChangeExecutor(){
-        Task task = getEditedItem();
-        State currentState = task.getState().getCurrentState();
-        if (DictStates.STATE_DRAFT == currentState.getId()) return true;
-        if (task.getScheme() == null){
-            return isReadOnly();
-        }
-        User executor = task.getOwner().getEmployee();
-        return DictStates.STATE_RUNNING == currentState.getId() 
-                && (taskFacade.checkUserInRole(task, DictRoles.ROLE_EXECUTOR_ID, getCurrentUser())
-                || assistantFacade.isAssistant(executor, getCurrentUser()));
-    }
+    }    
     
     /* GETS & SETS */
     
@@ -657,20 +601,43 @@ public class TaskCardBean extends BaseCardBean<Task>{
         this.currentReport = currentReport;
     }
 
-    public List<Staff> getExecutors() {
+    public Set<Staff> getExecutors() {
         return executors;
     }
-    public void setExecutors(List<Staff> executors) {
+    public void setExecutors(Set<Staff> executors) {
         this.executors = executors;
     }
-            
-    @Override
-    public boolean isReadOnly() {
-        return readOnly;
-    }
 
-    public boolean isRemaindDisable(){
-        return !Objects.equals(getEditedItem().getOwner(), getCurrentStaff());
+    /**
+     * Расширенные ограничения к некоторым полям задачи
+     * если задача в статусе RUNNING, то поле на форме нельзя редактировать
+     * @return 
+     */
+    public boolean isTaskReadOnly(){
+        if (readOnly) return true;
+        if (userFacade.isAdmin(getCurrentUser())) return true;        
+        Task task = getEditedItem();        
+        return DictStates.STATE_RUNNING == task.getState().getCurrentState().getId();                
+    }        
+    
+    /**
+     * Определяет доступ к полям на вкладке "Информация"
+     * @return 
+     */
+    @Override
+    public boolean isInfoReadOnly(){
+        return isTaskReadOnly();
+    }
+    
+    /**
+     * Проверяет наличие права на выполнение задачи
+     * @return 
+     */
+    @Override
+    public boolean isHaveRightExec() {
+        Task task = getEditedItem();
+        boolean result = getFacade().isHaveRightEdit(task) && Objects.equals(getCurrentStaff(), task.getOwner());
+        return result;
     }
     
     public DualListModel<Result> getResults() {

@@ -40,5 +40,5 @@ public interface Workflow {
     void executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);
     void executeTimer(ProcTimer procTimer, Set<String> errors);
     
-    void replaceReportExecutor(Task task, User user);
+    void makeProcessReport(Process process, User user);
 }

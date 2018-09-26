@@ -7,7 +7,7 @@
         <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >        
             <p:outputLabel value="#{bundle.State}:"/>
             <p:selectOneMenu value="#{_bean.editedItem.state.currentState}" converter="stateConvertor"                           
-                             disabled="#{_bean.isReadOnly()}"
+                             disabled="#{_bean.isInfoReadOnly()}"
                              required="#{param['isRequired'] == 'true'}" 
                              requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
                 <f:selectItems value="#{_bean.getAvailableStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
@@ -51,7 +51,7 @@
             <p:selectBooleanCheckbox value="#{_bean.editedItem.actual}" id="cbActual"                                         
                                      title="#{_bean.getActualInfo()}"
                                      itemLabel="#{bundle.Actual}"
-                                     disabled="#{_bean.isReadOnly()}">
+                                     disabled="#{_bean.isInfoReadOnly()}">
                 <p:ajax process="@this" 
                         update="cbActual" 
                         oncomplete="itemChange = 1;"/>

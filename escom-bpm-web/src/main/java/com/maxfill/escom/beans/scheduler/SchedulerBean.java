@@ -122,7 +122,7 @@ public class SchedulerBean extends BaseViewBean {
     }
     
     private void updateProcess(Task task){
-        workflow.replaceReportExecutor(task, getCurrentUser()); 
+        workflow.makeProcessReport(task.getScheme().getProcess(), getCurrentUser()); 
     }
     
     /* ОБРАБОТКА СОБЫТИЙ ПЛАНИРОВЩИКА */
