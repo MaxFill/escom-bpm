@@ -36,12 +36,14 @@
             <p:menuButton icon="ui-icon-play" title="#{bundle.StartProcess}" disabled="#{processCardBean.isReadOnly()}">
                 <p:menuitem value="#{bundle.NewEditionSendToAll}" icon="ui-icon-play" update="mainFRM"
                             actionListener="#{processCardBean.onRun('send_all')}"
-                            oncomplete="return itemChange = 0;">
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); return itemChange = 0;">
                     <f:param name="isRequired" value="true"/>
                 </p:menuitem>
                 <p:menuitem value="#{bundle.SendJustDoNotAgree}" icon="ui-icon-play" update="mainFRM"
                             actionListener="#{processCardBean.onRun('send_notagree')}"
-                            oncomplete="return itemChange = 0;">
+                            onstart="PF('statusDialog').show()"
+                            oncomplete="PF('statusDialog').hide(); return itemChange = 0;">
                     <f:param name="isRequired" value="true"/>
                 </p:menuitem>
             </p:menuButton> 

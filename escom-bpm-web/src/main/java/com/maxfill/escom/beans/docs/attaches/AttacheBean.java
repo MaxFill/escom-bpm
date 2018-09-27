@@ -1,6 +1,7 @@
 package com.maxfill.escom.beans.docs.attaches;
 
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
@@ -13,6 +14,7 @@ import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
+import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.states.StateFacade;
 import com.maxfill.model.states.State;
 import com.maxfill.model.task.Task;
@@ -237,9 +239,23 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     public boolean isCanModifyRemark() {
         if (task == null)return false;
         State stateRun = stateFacade.getRunningState();
-        return Objects.equals(stateRun, task.getState().getCurrentState());        
-    }            
-                    
+        return Objects.equals(stateRun, task.getState().getCurrentState());
+    }
+    
+    /**
+     * Возможность отмечать замечание, как снятое
+     * @return 
+     */
+    public boolean isCanCheckRemark(){
+        if (task == null || task.getScheme() == null) return false;        
+        Staff curator = task.getScheme().getProcess().getCurator();
+        if (Objects.equals(getCurrentStaff(), curator)){
+            Integer processState = task.getScheme().getProcess().getState().getCurrentState().getId();
+            return processState.equals(DictStates.STATE_DRAFT) || processState.equals(DictStates.STATE_CANCELLED);
+        }
+        return false;
+    }
+    
     /* GETS & SETS  */
 
     public String getCurrentTab() {

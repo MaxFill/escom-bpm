@@ -56,7 +56,6 @@ public class RightsDef{
     /**
      * Перезагружает дефолтные права объекта метаданных
      * @param metadatesObj
-     * @param metadateId
      */
     public void reloadDefaultRight(Metadates metadatesObj){
         Rights freshRights = rightFacade.getObjectDefaultRights(metadatesObj);

@@ -11,9 +11,6 @@
         <p:commandButton id="btnCreateTask" style="display: none;" actionListener="#{taskListBean.onCreateTask()}">
             <p:ajax event="dialogReturn" listener="#{_bean.onTaskDlgClose}"/>
         </p:commandButton>
-        <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{taskListBean.onOpenTask()}">
-            <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
-        </p:commandButton>
     </ui:define>
 
     <ui:define name="centerFormContent">
@@ -83,9 +80,7 @@
             </p:column>
 
             <p:column headerText="#{bundle.Task}" >
-                <p:commandLink value="#{item.nameEndElipse}" 
-                               actionListener="#{taskListBean.setSelected(item)}"
-                               oncomplete="document.getElementById('mainFRM:btnOpenTask').click();"/>
+                <h:outputLabel value="#{item.nameEndElipse}"/>
             </p:column>
 
             <p:column headerText="#{bundle.Process}" >
@@ -111,6 +106,11 @@
                 <h:outputLabel value="#{taskListBean.getLabelFromBundle(item.getResult())}"/>
             </p:column>
 
+            <p:column width="80">
+                <p:commandButton id="btnOpenTask" value="#{bundle.OpenTask}" actionListener="#{taskListBean.onOpenTask(item)}">
+                    <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
+                </p:commandButton>
+            </p:column>
         </p:dataTable>
 
     </ui:define>

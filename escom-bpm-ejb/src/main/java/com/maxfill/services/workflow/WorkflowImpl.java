@@ -407,6 +407,21 @@ public class WorkflowImpl implements Workflow {
     }
 
     /**
+     * Сброс настроек схемы
+     * @param scheme 
+     */
+    @Override
+    public void clearScheme(Scheme scheme){
+        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  
+        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
+        scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
+        scheme.getTasks().forEach(task->{
+                task.setFactExecDate(null); //сброс даты выполнения
+                task.setResult(null);       //сброс предудущего результата
+            });
+    }
+    
+    /**
      * Выполнение задачи
      * @param process
      * @param task
@@ -441,7 +456,9 @@ public class WorkflowImpl implements Workflow {
             }
             
             List<Integer> executedTasks = startElement.getTasksExec();
-            executedTasks.add(task.getId());
+            if (task.getConsidInProcReport()){
+                executedTasks.add(task.getId());
+            }
             params.put(EXECUTED_TASKS, executedTasks);
             
             run(process, startElement, currentUser, params, errors);
@@ -528,13 +545,7 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;
         
         //очистки если запуск повторный
-        scheme.getElements().getConnectors().forEach(c->c.setDone(false));  //сброс признака выполнения у всех коннекторов
-        scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
-        scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
-        scheme.getTasks().forEach(task->{
-                task.setFactExecDate(null); //сброс даты выполнения
-                task.setResult(null);       //сброс предудущего результата
-            });
+        clearScheme(scheme);                        
         
         Doc doc = process.getDocument();
         if (doc != null){
@@ -590,7 +601,6 @@ public class WorkflowImpl implements Workflow {
      */
     private void stopTasks(Process process, State state, String keyMessage, User currentUser){        
         process.getScheme().getTasks().stream()                
-                .filter(task->task.getState().getCurrentState().equals(stateFacade.getRunningState()))
                 .forEach(task->{
                         task.getState().setCurrentState(state);
                         notificationService.makeNotification(task, keyMessage); //уведомление об аннулировании задачи

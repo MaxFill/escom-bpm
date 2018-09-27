@@ -1129,14 +1129,15 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             Date planExecDate = DateUtils.addHour(new Date(), termHours);
             process.setPlanExecDate(planExecDate);
         }        
-        scheme = new Scheme(process);        
-        scheme.setPackElements(selectedTempl.getElements());               
-        process.setScheme(scheme);        
+        scheme = new Scheme(process);
+        scheme.setPackElements(selectedTempl.getElements()); 
+        process.setScheme(scheme);
         loadModel(scheme);
+        workflow.clearScheme(scheme);
         PrimeFaces.current().ajax().update("southFRM:diagramm");
         addElementContextMenu();
         onItemChange();
-    }      
+    }
     
     /**
      * Сохранение модели процесса в шаблон

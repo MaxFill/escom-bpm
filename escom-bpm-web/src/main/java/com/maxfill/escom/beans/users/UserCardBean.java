@@ -365,7 +365,10 @@ public class UserCardBean extends BaseCardBeanGroups<User, UserGroups> implement
     
     @Override
     public void onCreateDetail(){
-        selectedDetail = assistantFacade.createItem(getCurrentUser(), null, getEditedItem(), new HashMap<>());        
+        selectedDetail = assistantFacade.createItem(getCurrentUser(), null, getEditedItem(), new HashMap<>());  
+        StringBuilder sb = new StringBuilder(getLabelFromBundle("ForChief"));
+        sb.append(": ").append(getEditedItem().getShortFIO());
+        selectedDetail.setName(sb.toString());
         onOpenDetail(selectedDetail);
     }
     

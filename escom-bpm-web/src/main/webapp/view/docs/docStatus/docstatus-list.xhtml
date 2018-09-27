@@ -45,7 +45,7 @@
                 </p:column>
 
                 <p:column headerText="#{bundle.Value}" width="60">
-                    <p:inputSwitch value="#{item.value}" offLabel="#{bundle.No}" onLabel="#{bundle.Yes}" onchange="itemChange = 1;" >
+                    <p:inputSwitch value="#{item.value}" disabled="#{_bean.isReadOnly()}" offLabel="#{bundle.No}" onLabel="#{bundle.Yes}" onchange="itemChange = 1;" >
                         <p:ajax update="docStatusTbl" oncomplete="itemChange = 1;" listener="#{_bean.onChangeDocStatus(item)}"/>
                     </p:inputSwitch>
                 </p:column>

@@ -99,7 +99,8 @@ sudo scp root@62.173.140.9:/home/opencart/fix_https.ocmod.xml /home/maksim/За�
 sudo scp root@62.173.140.9:/home/opencart/logo.png /home/maksim/Загрузки/
 sudo scp root@62.173.140.9:/home/opencart/opencart-htaccess.conf /home/maksim/Загрузки/
 sudo scp root@62.173.140.9:/home/docker/escom-bpm/datastore/configuration/standalone-modeshape.xml /home/maksim/Загрузки/
-sudo scp -r root@62.173.140.9:/home/docker/escom-bpm/datastore/escom-bpm* /home/maksim/Загрузки/
+
+sudo scp -r root@62.173.140.9:/home/* /home/maksim/Загрузки/
 
 Stop
 Linux: $ ./jboss-cli.sh --connect command=:shutdown

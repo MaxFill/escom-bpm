@@ -29,7 +29,6 @@ import java.io.IOException;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.Tab;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.*;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -44,16 +43,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
-import org.primefaces.extensions.model.layout.LayoutOptions;
 import org.primefaces.model.UploadedFile;
-import org.primefaces.model.Visibility;
 
 /* Контролер формы обозревателя */
 @Named
@@ -221,11 +217,12 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }
     
     /* КАРТОЧКИ: создание объекта в дереве с открытием карточки */
-    public void onCreateTreeItem() {
-        BaseDict selected = (BaseDict) treeSelectedNode.getData();
-        if (selected == null){
+    public void onCreateTreeItem() {        
+        if (treeSelectedNode == null){
+            MsgUtils.errorMsg("ParentNoSet");
             return;
         }
+        BaseDict selected = (BaseDict) treeSelectedNode.getData();
         BaseDict owner = null;
         BaseDict parent = null;
         if (isItemTreeType(selected)){ 
@@ -248,6 +245,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     
     /* КАРТОЧКИ: создание объекта в таблице с открытием его карточки  */
     public void onCreateDetailItem(){
+        if (Objects.equals(tableBean, treeBean)){
+            onCreateTreeItem();
+            return;
+        }
         typeEdit = DictEditMode.INSERT_MODE;
         BaseDict parent = null;
         BaseDict owner = null;

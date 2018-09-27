@@ -57,11 +57,11 @@ public class TaskListBean extends LazyLoadBean<Task>{
         Date datePlan = DateUtils.addDays(new Date(), 1);
         Task task = taskFacade.createTask("", getCurrentStaff(), getCurrentUser(), datePlan);
         task.setBeginDate(dateBegin);
-        onOpenTask();
+        onOpenTask(task);
     }
     
-    public void onOpenTask() {               
-        if (selected == null) return;
+    public void onOpenTask(Task task) {               
+        selected = task;
         taskBean.prepEditItem(selected, getParamsMap());
     }
     

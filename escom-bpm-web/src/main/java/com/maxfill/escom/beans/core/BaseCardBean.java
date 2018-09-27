@@ -513,6 +513,11 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
                 sb.append(". <").append(MsgUtils.getBandleLabel("ReadOnly").toUpperCase()).append(">");
                 break;
             }
+            case DictEditMode.CHILD_MODE:{
+                sb.append(getEditedItem().getCaption().toUpperCase());
+                sb.append(". <").append(MsgUtils.getBandleLabel("Correction").toUpperCase()).append(">");
+                break;
+            }
             case DictEditMode.EDIT_MODE:{
                 sb.append(getEditedItem().getCaption().toUpperCase());
                 sb.append(". <").append(MsgUtils.getBandleLabel("Correction").toUpperCase()).append(">");
@@ -544,7 +549,8 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
      * @return 
      */
     public boolean isReadOnly(){
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
+        boolean result = Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit());
+        return result;
     }
     
     /**

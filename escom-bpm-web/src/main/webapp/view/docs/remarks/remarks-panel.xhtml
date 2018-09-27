@@ -25,6 +25,7 @@
                     <f:facet name="options">
                         <p:menu>
                             <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
+                                        disabled="#{!_bean.isCanCheckRemark()}"
                                         rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
                                         actionListener="#{_bean.onRemarkCheck(remark)}" update="eastFRM:accord:dgMyRemarks">                                
                             </p:menuitem>
@@ -82,6 +83,7 @@
                 <p:panel header="#{_bean.getRemarkHeader(remark)}" menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
                     <f:facet name="actions"> 
                         <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                       disabled="#{!_bean.isCanCheckRemark()}"
                                        rendered="#{remark.state.currentState.id == 12}"   
                                        update="eastFRM:accord:dgMyRemarks eastFRM:accord:dgAllRemarks"
                                        actionListener="#{_bean.onRemarkCheck(remark)}">                             

@@ -304,6 +304,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
      * @return
      */
     public String getCaption(){
+        if (getNameEndElipse() == null) return "";
         return getNameEndElipse();
     }
 

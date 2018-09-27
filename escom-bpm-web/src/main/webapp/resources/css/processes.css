@@ -8,16 +8,28 @@
 .noExecutor {
     border: 0.1em solid #C33730 !important;              
 }
-.draft {
+.draft {    
 }
 .running {
     border:0.1em solid #020202 !important;
 }            
 .finished {
+    background-color: #C7C6C4;
     border:0.1em solid #020202 !important;                
 }
 .cancelled{
-    border:0.1em dotted #020202 !important;                
+    border:0.1em dotted #020202 !important;
+    color: #C33730 !important;
+    border-color: #C33730;
+}
+
+.notInList{
+    color: #000000 !important;
+    background-color: yellow !important;
+}
+
+.finishAndNotInList {
+    color: yellow !important;
 }
 
 .ui-diagram-element:hover {

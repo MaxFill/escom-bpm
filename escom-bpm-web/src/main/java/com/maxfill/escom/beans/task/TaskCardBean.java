@@ -402,9 +402,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
             executors = new HashSet<>(staffFacade.findActualStaff());
             return;
         }                
-        //автор или исполнитель может выбрать себя или кого-то из своих замов
+        //владелец может выбрать себя или кого-то из своих замов
         if (task.getAuthor().equals(getCurrentUser())) {
             executors = new HashSet<>(assistantFacade.findAssistByUser(getCurrentUser()));
+            executors.add(task.getOwner());
             if (getCurrentUser().getStaff() != null){
                 executors.add(getCurrentUser().getStaff());
             }
@@ -613,10 +614,11 @@ public class TaskCardBean extends BaseCardBean<Task>{
      */
     public boolean isTaskReadOnly(){
         if (isReadOnly()) return true;
-        if (userFacade.isAdmin(getCurrentUser())) return true;        
-        Task task = getEditedItem();        
-        return DictStates.STATE_RUNNING == task.getState().getCurrentState().getId();                
-    }        
+        if (userFacade.isAdmin(getCurrentUser())) return Boolean.FALSE;        
+        Task task = getEditedItem();
+        boolean flag = DictStates.STATE_RUNNING == task.getState().getCurrentState().getId();
+        return flag;
+    }
     
     /**
      * Определяет доступ к полям на вкладке "Информация"

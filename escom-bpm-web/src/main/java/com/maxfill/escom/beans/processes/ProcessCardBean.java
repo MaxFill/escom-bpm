@@ -14,6 +14,7 @@ import com.maxfill.model.states.StateFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
+import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.schemes.Scheme;
@@ -270,7 +271,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     public void onRun(String option){
         Set<String> errors = new HashSet<>();
-        validatePlanDate(getEditedItem().getPlanExecDate(), errors);
+        Process process = processFacade.find(getEditedItem().getId());
+        validatePlanDate(process.getPlanExecDate(), errors);
+        validateRemarks(process, errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
@@ -278,8 +281,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         onItemChange();
         if (doSaveItem()){
             Map<String, Object> params = new HashMap<>();
-            params.put(option, true);
-            Process process = processFacade.find(getEditedItem().getId());
+            params.put(option, true);            
             workflow.start(process, getCurrentUser(), params, errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
@@ -325,9 +327,30 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
     }    
 
-    public boolean isDisableBtnStop(){
-        if (getEditedItem() == null) return false;
-        return Objects.equals(DictEditMode.VIEW_MODE, getTypeEdit()) || !getEditedItem().isRunning();
+    /**
+     * Проверка снятых замечаний
+     */
+    private void validateRemarks(Process process,  Set<String> errors){
+        Doc doc = process.getDocument();
+        if (doc == null) return;
+        Remark remark = doc.getDetailItems().stream().filter(r->!r.isChecked()).findFirst().orElse(null);
+        if (remark != null){
+            errors.add("CannotStartProcessUnprocessedRemarks");
+        }
+    }
+    
+    /**
+     * Признак доступности кнопки прерывания процесса
+     * @return 
+     */
+    public boolean isDisableBtnStop(){        
+        if (!getEditedItem().isRunning()) return true;
+        if (userFacade.isAdmin(getCurrentUser())) return false;
+        
+        User curator = getEditedItem().getCurator().getEmployee();
+        User owner = getEditedItem().getAuthor();
+        
+        return !(getCurrentUser().equals(owner) || getCurrentUser().equals(curator));
     }
     
     @Override

@@ -144,6 +144,9 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         switch (state.getCurrentState().getId()){
             case DictStates.STATE_RUNNING : {
                 style = "running";
+                if (!considInProcReport){
+                    style = style + " notInList"; 
+                }
                 break;
             }
             case DictStates.STATE_DRAFT : {
@@ -152,10 +155,16 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
                 } else {
                     style = "draft";
                 }
+                if (!considInProcReport){
+                    style = style + " notInList"; 
+                }
                 break;
             }
             case DictStates.STATE_COMPLETED : {
                 style = "finished";
+                if (!considInProcReport){
+                    style = style + " finishAndNotInList"; 
+                }
                 break;
             }
             case DictStates.STATE_CANCELLED : {

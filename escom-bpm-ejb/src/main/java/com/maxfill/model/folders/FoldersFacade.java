@@ -15,6 +15,7 @@ import com.maxfill.model.users.User_;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -31,7 +32,13 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
     public FoldersFacade() {
         super(Folder.class, FolderLog.class, FolderStates.class);
     }    
-       
+      
+    @Override
+    protected void detectParentOwner(Folder item, BaseDict parent, BaseDict owner){
+        item.setOwner(null);
+        item.setParent((Folder)parent);
+    } 
+     
     @Override
     public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
         folder.setModerator(folder.getAuthor());

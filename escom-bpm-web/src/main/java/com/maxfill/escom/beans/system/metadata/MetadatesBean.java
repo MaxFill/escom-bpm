@@ -75,6 +75,7 @@ public class MetadatesBean extends BaseViewBean{
     public void onRightChange(RowEditEvent event){
         Right right = (Right) event.getObject();
         rightFacade.edit(right);
+        MsgUtils.succesMsg("SaveСhangesForChangesTakeEffect");
     }
 
     /**

@@ -7,7 +7,7 @@
 
     <p:importConstants type="com.maxfill.dictionary.DictRights" var="DictRights" />
 
-    <p:panelGrid id="mainGrid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
+    <p:panelGrid id="mainGrid" layout="grid" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 col-padding" style="font-size: 90%;">
         <h3 style="margin-top: 0">#{bundle.SettigsObject}: #{metadatesBean.selectedObject == null ? bundle.EmptySelData : metadatesBean.getBundleName(metadatesBean.selectedObject)}</h3>
 
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" dynamic="true" cache="true" rendered="#{metadatesBean.selectedObject != null}">
@@ -26,12 +26,6 @@
                     <p:selectOneMenu id="objectStates" value="#{metadatesBean.startState}" converter="stateConvertor"  >
                         <f:selectItems value="#{metadatesBean.objectStates}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />
                     </p:selectOneMenu>
-
-                    <p:commandButton value="#{bundle.SaveChange}"
-                                     update="mainFRM:mainGrid"
-                                     actionListener="#{metadatesBean.onSaveChange()}">
-                    </p:commandButton>
-
                 </p:panelGrid>
             </p:tab>
             <p:tab title="#{bundle.Rights}">
@@ -147,5 +141,10 @@
                 </p:dataTable>
             </p:tab>
         </p:tabView>
+    
+        <p:commandButton value="#{bundle.SaveChange}"
+                        update="mainFRM:mainGrid"
+                        actionListener="#{metadatesBean.onSaveChange()}">
+        </p:commandButton>
     </p:panelGrid>
 </ui:composition>
