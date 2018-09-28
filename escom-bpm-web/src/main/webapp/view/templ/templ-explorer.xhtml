@@ -103,7 +103,7 @@
                                 <p:commandButton icon="ui-icon-circle-plus" title="#{_CreateItemLabel}" 
                                                  disabled="#{_bean.canCreateItem}"
                                                  rendered="#{_treeBean == null or _bean.isShowTree()}" 
-                                                 onstart="PF('statusDialog').show()"
+                                                 onstart="PF('statusDialog').show();"
                                                  oncomplete="PF('statusDialog').hide();"
                                                  actionListener="#{_bean.onCreateDetailItem()}">
                                     <p:ajax event="dialogReturn" update="mainFRM" listener="#{_bean.onUpdateAfterCloseForm}" oncomplete="initDND();"/>
@@ -170,11 +170,7 @@
                                                 oncomplete="PF('statusDialog').hide(); initDND();"
                                                 actionListener="#{sessionBean.onViewHelp()}"/>
                                 </p:menuButton>
-                                                                
-                                <p:commandButton icon="ico_exit" value="#{bundle.CloseSession}" title="#{bundle.ExitProgramm}"
-                                                rendered="#{!_bean.selectorViewMode}"
-                                                onstart="return isClose = 1;"                                     
-                                                actionListener="#{sessionBean.onSessionExit()}"/>
+                                
                             </f:facet>
                         </p:toolbar>  
 

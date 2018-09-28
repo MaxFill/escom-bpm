@@ -85,6 +85,8 @@
 
             <p:column headerText="#{bundle.Process}" >
                 <p:commandLink value="#{taskListBean.getProcessName(item)}" 
+                               onstart="PF('statusDialog').show()"
+                               oncomplete="PF('statusDialog').hide();"
                                actionListener="#{taskListBean.onOpenProcess(item)}"/>
             </p:column>
             
@@ -107,7 +109,10 @@
             </p:column>
 
             <p:column width="80">
-                <p:commandButton id="btnOpenTask" value="#{bundle.OpenTask}" actionListener="#{taskListBean.onOpenTask(item)}">
+                <p:commandButton id="btnOpenTask" value="#{bundle.OpenTask}" 
+                                 onstart="PF('statusDialog').show();"
+                                 oncomplete="PF('statusDialog').hide();"
+                                 actionListener="#{taskListBean.onOpenTask(item)}">
                     <p:ajax event="dialogReturn" listener="#{taskListBean.onTaskDlgClose}"/>
                 </p:commandButton>
             </p:column>

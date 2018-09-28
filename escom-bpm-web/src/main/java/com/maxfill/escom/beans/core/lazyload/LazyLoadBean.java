@@ -127,9 +127,6 @@ public abstract class LazyLoadBean<T extends Dict> extends BaseViewBean<BaseView
     
     public int countItems(){
         int count = getLazyFacade().countItemsByFilters(makeFilters(filters));
-        if (count == 0){
-            MsgUtils.warnMsg("NO_SEARCHE_FIND");
-        }
         return count;
     }
 

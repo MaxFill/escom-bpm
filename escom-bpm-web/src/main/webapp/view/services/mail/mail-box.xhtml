@@ -11,24 +11,43 @@
         <p:menuitem value="#{bundle.Refresh}"
                     icon="ui-icon-refresh"
                     onclick="document.getElementById('mainFRM:btnRefresh').click();"/>
+        <p:menuitem icon="ui-icon-trash" value="#{bundle.Clear}"
+                    onclick="document.getElementById('mainFRM:btnClear').click();">
+        </p:menuitem>
     </ui:define>
 
     <ui:define name="toolbarComponents" >
-        <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
-                         update="mainFRM:tblDetail"
-                         actionListener="#{mailBoxBean.refreshMessages()}"/>
-    </ui:define>
+        <p:confirmDialog global="true" severity="info" showEffect="fade" hideEffect="fade"  >
+            <p:commandButton value="#{bundle.Yes}" type="button" styleClass="ui-confirmdialog-yes"  />
+            <p:commandButton value="#{bundle.Cancel}" type="button" styleClass="ui-confirmdialog-no" />
+        </p:confirmDialog>
 
+        <p:commandButton id="btnRefresh" value="#{bundle.Refresh}" icon="ui-icon-refresh"
+                         update="mainFRM:tblDetail">
+            <f:param name="isRequired" value="true"/>
+        </p:commandButton>
+            
+        <p:commandButton value="#{bundle.Clear}" id="btnClear" icon="ui-icon-trash"
+                         actionListener="#{mailBoxBean.onClearData()}"
+                         update="mainFRM">
+            <p:confirm header="#{bundle.ConfirmAction}" message="#{mailBoxBean.clearEventsConfirmMsg()}" icon="ui-icon-alert" />
+        </p:commandButton>
+
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define>
+    
     <ui:define name="centerFormContent">
         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-            <p:dataTable id="tblDetail" value="#{mailBoxBean.messages}" var="item" 
+            <p:dataTable id="tblDetail" value="#{mailBoxBean.lazyDataModel}" var="item" lazy="true"
                          emptyMessage="#{bundle.EmptyTable}"
                          paginator="true" paginatorPosition="bottom"  
                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                          currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
-                         rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.dateCreate}"
+                         rowsPerPageTemplate="10, 25, 50,100" rows="10" sortBy="#{item.dateCreate}"
                          tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
-                         rowKey="#{item.id}" selectionMode="single">
+                         selectionMode="single">
 
                 <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}">
                     #{item.sender}
@@ -50,7 +69,7 @@
                 <p:column headerText="#{bundle.Commands}" style="text-align: center;" > 
                     <p:commandButton icon="ui-icon-trash" title="#{bundle.Delete}" 
                                      update="tblDetail"
-                                     actionListener="#{mailBoxBean.deleteMessage(item)}"/>
+                                     actionListener="#{mailBoxBean.deleteItem(item)}"/>
                 </p:column> 
             </p:dataTable>
         </p:panelGrid>

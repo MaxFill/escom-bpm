@@ -156,6 +156,8 @@
         </p:contextMenu>
         
         <p:commandButton id="btnOpenItem" style="display: none;"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
                          actionListener="#{monitorBean.onOpenItem()}">
             <p:ajax event="dialogReturn" update="monitorTable" listener="#{monitorBean.onAfterItemCloseForm}"/>
         </p:commandButton>

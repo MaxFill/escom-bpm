@@ -372,93 +372,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     private void openElementCard(String formName){
         sessionBean.openDialogFrm(formName, getParamsMap());
-    }
-    
-    /**
-     * Обработка события копирования эемента
-     */
-    public void onElementCopy(){ 
-        if (baseElement instanceof TaskElem){
-            doCopyElement(new TaskElem());
-        } else 
-            if (baseElement instanceof ConditionElem){
-                doCopyElement(new ConditionElem());
-            } else 
-                if (baseElement instanceof StatusElem){
-                    doCopyElement(new StatusElem());
-                } else 
-                    if (baseElement instanceof MessageElem){
-                        doCopyElement(new MessageElem());
-                    } else
-                        if (baseElement instanceof TimerElem){
-                            doCopyElement(new TimerElem());
-                        } else
-                            if (baseElement instanceof ProcedureElem){
-                                doCopyElement(new ProcedureElem());
-                            } else {
-                                MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
-                            }                                 
-    }
-    
-    private void doCopyElement(WFConnectedElem elem){
-        try { 
-            copiedElement = elem;
-            BeanUtils.copyProperties(copiedElement, baseElement);
-            PrimeFaces.current().executeScript("refreshContextMenu('southFRM:diagramm');");
-            MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);        
-        }  
-    }
-    
-    /**
-     * Обработка события вставки скопированного элемента
-     */
-    public void onElementPaste(){
-        onItemChange();
-        try {
-            if (copiedElement instanceof TaskElem){           
-                TaskElem newTaskElem = createTask(null, new HashSet<>());                
-                Task newTask = newTaskElem.getTask();
-                TaskElem sourceTaskElem = (TaskElem) copiedElement;
-                Task sourceTask = sourceTaskElem.getTask();
-                BeanUtils.copyProperties(newTask, sourceTask); 
-                newTask.setTaskLinkUID(newTaskElem.getUid()); 
-                StringBuilder sb = new StringBuilder();
-                sb.append(MsgUtils.getBandleLabel("Copy")).append(" ").append(sourceTask.getName());                
-                newTask.setName(sb.toString());
-                finalAddElement();
-            } else 
-                if (copiedElement instanceof ConditionElem){
-                    ConditionElem sourceElem = (ConditionElem) copiedElement;
-                    Condition condition = conditionFacade.find(sourceElem.getConditonId());
-                    createCondition(condition, new HashSet<>());
-                    finalAddElement();
-                } else
-                    if (copiedElement instanceof ProcedureElem){
-                        ProcedureElem sourceElem = (ProcedureElem) copiedElement;
-                        Procedure procedure = procedureFacade.find(sourceElem.getProcedureId());
-                        createProcedure(procedure, new HashSet<>());
-                        finalAddElement();
-                    } else
-                        if (copiedElement instanceof StatusElem){
-                            StatusElem sourceElem = (StatusElem) copiedElement;
-                            StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
-                            createState(docStatus, sourceElem.getStyleType(), new HashSet<>());
-                            finalAddElement();
-                        } else
-                            if (copiedElement instanceof TimerElem){
-                                createTimer(new HashSet<>());
-                                finalAddElement();
-                            } else
-                                if (copiedElement instanceof MessageElem){ 
-                                    createMessage(new HashSet<>());
-                                    finalAddElement();
-                                }
-        } catch (IllegalAccessException | InvocationTargetException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-        }
-    }
+    }            
     
     /**
      * Открытие карточки задачи
@@ -1061,12 +975,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         EndPoint sourcePoint = event.getOriginalSourceEndPoint();
         EndPoint targetPoint = event.getOriginalTargetEndPoint();
         disconnect(wfSource, wfTarget, sourcePoint, targetPoint);
-        
-        wfSource = (WFConnectedElem) event.getNewSourceElement().getData();
-        wfTarget = (WFConnectedElem) event.getNewTargetElement().getData();
-        sourcePoint = event.getNewSourceEndPoint();
-        targetPoint = event.getNewTargetEndPoint();
-        connect(wfSource, wfTarget, sourcePoint, targetPoint);
     }
 
     private void disconnect(WFConnectedElem wfSource, WFConnectedElem wfTarget, EndPoint sourcePoint, EndPoint targetPoint){
@@ -1096,7 +1004,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Добавление контекстного меню к элементам схемы процесса
      */
     private void addElementContextMenu(){
-        PrimeFaces.current().executeScript("addContextMenu('southFRM:diagramm')");
+        //PrimeFaces.current().executeScript("addContextMenu('southFRM:diagramm')");
         StringBuilder sb = new StringBuilder("addElementMenu([");
         model.getElements().stream()
                 .filter(element-> !element.getStyleClass().equals(DictWorkflowElem.STYLE_START))
@@ -1180,6 +1088,94 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         process.setOwner(processType);
         PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
         MsgUtils.succesMsg("TemplateSaved");
+    }
+    
+    /* *** КОПИРОВАНИЕ ВСТАВКА *** /
+    
+    /**
+     * Обработка события копирования эемента
+     */
+    public void onElementCopy(){ 
+        if (baseElement instanceof TaskElem){
+            doCopyElement(new TaskElem());
+        } else 
+            if (baseElement instanceof ConditionElem){
+                doCopyElement(new ConditionElem());
+            } else 
+                if (baseElement instanceof StatusElem){
+                    doCopyElement(new StatusElem());
+                } else 
+                    if (baseElement instanceof MessageElem){
+                        doCopyElement(new MessageElem());
+                    } else
+                        if (baseElement instanceof TimerElem){
+                            doCopyElement(new TimerElem());
+                        } else
+                            if (baseElement instanceof ProcedureElem){
+                                doCopyElement(new ProcedureElem());
+                            } else {
+                                MsgUtils.warnMsg("CopyingObjectsTypeNotProvided");
+                            }                                 
+    }
+    
+    private void doCopyElement(WFConnectedElem elem){
+        try { 
+            copiedElement = elem;
+            BeanUtils.copyProperties(copiedElement, baseElement);
+            PrimeFaces.current().executeScript("refreshContextMenu('southFRM:diagramm');");
+            MsgUtils.succesFormatMsg("ObjectIsCopied", new Object[]{copiedElement.getCaption()}); 
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);        
+        }  
+    }
+    
+    /**
+     * Обработка события вставки скопированного элемента
+     */
+    public void onElementPaste(){
+        onItemChange();
+        try {
+            if (copiedElement instanceof TaskElem){           
+                TaskElem newTaskElem = createTask(null, new HashSet<>());                
+                Task newTask = newTaskElem.getTask();
+                TaskElem sourceTaskElem = (TaskElem) copiedElement;
+                Task sourceTask = sourceTaskElem.getTask();
+                BeanUtils.copyProperties(newTask, sourceTask); 
+                newTask.setTaskLinkUID(newTaskElem.getUid()); 
+                StringBuilder sb = new StringBuilder();
+                sb.append(MsgUtils.getBandleLabel("Copy")).append(" ").append(sourceTask.getName());                
+                newTask.setName(sb.toString());
+                finalAddElement();
+            } else 
+                if (copiedElement instanceof ConditionElem){
+                    ConditionElem sourceElem = (ConditionElem) copiedElement;
+                    Condition condition = conditionFacade.find(sourceElem.getConditonId());
+                    createCondition(condition, new HashSet<>());
+                    finalAddElement();
+                } else
+                    if (copiedElement instanceof ProcedureElem){
+                        ProcedureElem sourceElem = (ProcedureElem) copiedElement;
+                        Procedure procedure = procedureFacade.find(sourceElem.getProcedureId());
+                        createProcedure(procedure, new HashSet<>());
+                        finalAddElement();
+                    } else
+                        if (copiedElement instanceof StatusElem){
+                            StatusElem sourceElem = (StatusElem) copiedElement;
+                            StatusesDoc docStatus = statusesDocFacade.find(sourceElem.getDocStatusId());
+                            createState(docStatus, sourceElem.getStyleType(), new HashSet<>());
+                            finalAddElement();
+                        } else
+                            if (copiedElement instanceof TimerElem){
+                                createTimer(new HashSet<>());
+                                finalAddElement();
+                            } else
+                                if (copiedElement instanceof MessageElem){ 
+                                    createMessage(new HashSet<>());
+                                    finalAddElement();
+                                }
+        } catch (IllegalAccessException | InvocationTargetException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+        }
     }
     
     /* ПРОЧИЕ МЕТОДЫ */

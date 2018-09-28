@@ -78,6 +78,7 @@
                     </ui:include> 
                     <h:panelGroup id="viewDocLink">
                         <p:commandLink value="#{bundle.ViewDoc}" rendered="#{_bean.editedItem.document != null}"
+                                       style="float: right;"
                                        actionListener="#{processCardBean.onViewDocument()}">
                         </p:commandLink>
                     </h:panelGroup>
