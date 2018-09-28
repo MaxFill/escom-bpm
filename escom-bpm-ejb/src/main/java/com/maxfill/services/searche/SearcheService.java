@@ -10,7 +10,6 @@ public interface SearcheService {
 
     Set<Integer> fullSearche(String keyword);
     void deleteFullTextIndex(Doc doc);
-    void addFullTextIndex(Doc doc);
     void updateFullTextIndex(Doc doc);
     Connection getFullTextSearcheConnection() throws SQLException;
 }

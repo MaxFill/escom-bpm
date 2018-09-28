@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,44 +74,45 @@ public class SearcheServiceImpl implements SearcheService {
             LOGGER.log(Level.SEVERE, null, ex);
         }
     }
-    
-    @Asynchronous
-    @Override
-    public void addFullTextIndex(Doc doc){        
-        if (doc == null){
-            LOGGER.log(Level.SEVERE, null, "ERROR: AddFullTextIndex doc is NULL!");
-            return;
-        }
-        System.out.println("ADD FULL TEXT INDEX for [" + doc.getName() + "]");
-        
-        String sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
-        executeChangeIndex(doc, sql);
-    }
-    
+            
     @Asynchronous
     @Override
     public void updateFullTextIndex(Doc doc){
-        String sql = "REPLACE INTO escom_docs_index VALUES (?, ?, ?, ?)";
-        executeChangeIndex(doc, sql);
-    }
-
-    /* Изменение потнотекстового индекса */
-    private void executeChangeIndex(Doc doc, String sql){
-        Attaches attache = doc.getMainAttache();        
-            
-        try (Connection connection = getFullTextSearcheConnection()) {            
+        try (Connection connection = getFullTextSearcheConnection()) {
             if(connection != null) {
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {                    
-                    preparedStatement.setInt(1, doc.getId());
-                    preparedStatement.setString(2, doc.getName());
-                    preparedStatement.setString(3, loadAttacheContent(attache));
-                    preparedStatement.setInt(4, doc.getId());
-                    preparedStatement.execute();
+                String sql;
+                if (checkExistIndex(doc, connection)){
+                    sql = "REPLACE INTO escom_docs_index VALUES (?, ?, ?, ?)";                    
+                } else {
+                    sql = "INSERT INTO escom_docs_index VALUES (?, ?, ?, ?)";
                 }
+                executeChangeIndex(doc, sql, connection);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+    }
+
+    /**
+     * Проверка наличия полнотекстового индекса для указанного документа
+     * @param doc
+     * @return 
+     */
+    private boolean checkExistIndex(Doc doc, Connection connection) throws SQLException{
+        String sql = "SELECT id FROM escom_docs_index WHERE id = " + doc.getId();                
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        return preparedStatement.executeQuery().next();        
+    }
+            
+    /* Изменение потнотекстового индекса */
+    private void executeChangeIndex(Doc doc, String sql, Connection connection) throws SQLException{
+        Attaches attache = doc.getMainAttache();                                    
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setInt(1, doc.getId());
+        preparedStatement.setString(2, doc.getName());
+        preparedStatement.setString(3, loadAttacheContent(attache));
+        preparedStatement.setInt(4, doc.getId());
+        preparedStatement.execute();
     }
 
     public String loadAttacheContent(Attaches attache){

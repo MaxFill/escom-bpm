@@ -121,23 +121,28 @@ public class FileUploadServlet extends HttpServlet {
     
     /* создание документа и загрузка файла */
     private int processMakeDocument(FileItem item, String fileName, Folder folder, User author) throws IOException{       
-        if (!folderFacade.checkRightAddDetail(folder, author)) return HttpServletResponse.SC_NO_CONTENT;
-        if (folder.getDetailItems().stream().filter(doc->Objects.equals(doc.getName(), fileName)).findFirst().orElse(null) == null){
-            Map<String, Object> params = new HashMap<>();
-            params.put("contentType", item.getContentType());
-            params.put("fileName", fileName);
-            params.put("size", item.getSize());
-            params.put("author", author);
-            Attaches attache = attacheService.uploadAtache(params, item.getInputStream());
-            Doc doc = docFacade.createDocInUserFolder(fileName, author, folder, attache);
-            if (doc == null){
-                return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            } else {
-                return HttpServletResponse.SC_OK;
-            }
-        } else {
-            return HttpServletResponse.SC_CONFLICT;
+        //проверка на наличие прав доступа
+        if (!folderFacade.checkRightAddDetail(folder, author)){
+            return HttpServletResponse.SC_NO_CONTENT;
         }
+        
+        //проверка на наличие дубликата документа в папке
+        if (folder.getDetailItems().stream().filter(doc->Objects.equals(doc.getName(), fileName)).findFirst().orElse(null) != null){
+            return HttpServletResponse.SC_CONFLICT;
+        }        
+        
+        Doc doc = docFacade.createDocInUserFolder(fileName, author, folder);        
+        if (doc == null){ //если документ не создался
+            return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        }        
+        Map<String, Object> params = new HashMap<>();
+        params.put("contentType", item.getContentType());
+        params.put("fileName", fileName);
+        params.put("size", item.getSize());
+        params.put("author", author);
+        params.put("doc", doc);
+        attacheService.uploadAtache(params, item.getInputStream());
+        return HttpServletResponse.SC_OK;
     }
     
     /**

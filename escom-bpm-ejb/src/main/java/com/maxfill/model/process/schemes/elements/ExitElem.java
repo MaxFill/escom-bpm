@@ -1,8 +1,8 @@
 package com.maxfill.model.process.schemes.elements;
 
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -19,6 +19,9 @@ public class ExitElem extends WFConnectedElem{
     
     @XmlElement(name = "finalize")
     private Boolean finalize = true;
+    
+    @XmlElement(name = "stateId")
+    private Integer finishStateId = DictStates.STATE_COMPLETED;
     
     public ExitElem() {
     }
@@ -52,6 +55,13 @@ public class ExitElem extends WFConnectedElem{
     public String getBundleKey() {
         return "Exit";
     }
+
+    public Integer getFinishStateId() {
+        return finishStateId;
+    }
+    public void setFinishStateId(Integer finishStateId) {
+        this.finishStateId = finishStateId;
+    }    
     
     /* *** *** */
     @Override

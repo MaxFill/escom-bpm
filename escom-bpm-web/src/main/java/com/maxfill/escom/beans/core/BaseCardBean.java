@@ -611,14 +611,14 @@ public abstract class BaseCardBean<T extends BaseDict> extends BaseViewBean<Base
         return 6;
     }
 
-    /* Возвращает список состояний объекта, в которые можно перейти из его текущего состояния */
-    public Set<State> getAvailableStates(){        
-        Metadates metaObj = getMetadatesObj();
-        List<MetadatesStates> metadatesStates = metaObj.getMetadatesStates();
-        Set<State> result = metadatesStates.stream()
-                .filter(metadatesState -> Objects.equals(itemCurrentState, metadatesState.getStateSource()))
-                //ToDo нужно добавить учёт на возможность ручного изменения состояния!
-                .map(metadatesState -> metadatesState.getStateTarget())
+    /**
+     * Возвращает список доступных состояний объекта
+     * @return 
+     */
+    public Set<State> getAvailableStates(){         
+        List<MetadatesStates> metadatesStates = getMetadatesObj().getMetadatesStates();
+        Set<State> result = metadatesStates.stream()               
+                .map(state -> state.getStateSource())
                 .collect(Collectors.toSet());
         if (!result.contains(itemCurrentState)){
             result.add(itemCurrentState);

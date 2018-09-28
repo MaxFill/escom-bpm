@@ -20,10 +20,16 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
             <p:tab title="#{bundle.Properties}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.CompletePprocess}" />
-                    <p:selectBooleanCheckbox value="#{_bean.editedItem.finalize}" title="#{bundle.CompletePprocess}">                
-                    </p:selectBooleanCheckbox>                    
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >                    
+                    <p:selectBooleanCheckbox itemLabel="#{bundle.CompletePprocess}" value="#{_bean.editedItem.finalize}" title="#{bundle.CompletePprocess}">                
+                    </p:selectBooleanCheckbox>
+                
+                    <p:outputLabel value="#{bundle.State}:" indicateRequired="true"/>
+                    <p:selectOneMenu value="#{exitCardBean.seletedState}" converter="stateConvertor"                             
+                             required="#{param['isRequired'] == 'true'}" 
+                             requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{exitCardBean.getProcessStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
+                    </p:selectOneMenu>
                 </p:panelGrid>
             </p:tab>
             

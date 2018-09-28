@@ -24,7 +24,7 @@
         <p:defaultCommand target="mainFRM:btnSearche" />
                 
         <p:panel toggleable="true" header="#{bundle.Filter}" toggleSpeed="500" >
-            <h:panelGrid columns="4" styleClass="without-spaces">
+            <h:panelGrid columns="5" styleClass="without-spaces">
                 <p:panelGrid columns="1" styleClass="without-spaces">
                     <p:outputLabel value="#{bundle.Initiator}:" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
@@ -96,6 +96,16 @@
                     </p:selectManyMenu>
                 </h:panelGrid>
 
+                <h:panelGrid columns="1" rendered="#{!empty(monitorBean.allResults)}" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.Result}:" />
+                    <p:selectManyMenu value="#{monitorBean.results}" var="item" showCheckbox="true">
+                        <f:selectItems value="#{monitorBean.allResults}" var="result" itemLabel="#{result}" itemValue="#{result}" />
+                        <p:column>
+                            <h:outputText value="#{monitorBean.getLabelFromBundle(item)}" />
+                        </p:column>
+                    </p:selectManyMenu>
+                </h:panelGrid>
+                
                 <p:commandButton icon="ui-icon-search" value="#{bundle.Find}"
                          actionListener="#{monitorBean.onRefreshData()}">
                 </p:commandButton>

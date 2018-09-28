@@ -118,7 +118,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @Column(name = "RegNumber")
     private String regNumber;
         
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "task", orphanRemoval = true)
     private List<TaskReport> reports = new ArrayList<>();
         
     /* Категории */
@@ -139,7 +139,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     }
 
     public String getStyle(){
-        if (state == null) return "";
+        if (state == null || state.getCurrentState() == null) return "";
         String style;
         switch (state.getCurrentState().getId()){
             case DictStates.STATE_RUNNING : {

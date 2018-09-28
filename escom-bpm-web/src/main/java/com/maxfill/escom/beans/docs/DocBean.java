@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -324,7 +325,10 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
         if (doc.getId() != null){
             params.put("itemId", Collections.singletonList(String.valueOf(doc.getId())));
         }
-        sessionBean.onViewAttache(attache, params);
+        String path = conf.getUploadPath() + attache.getFullName();        
+        List<String> pathList = Collections.singletonList(FilenameUtils.removeExtension(path) + ".pdf");        
+        params.put("path", pathList);
+        sessionBean.openDialogFrm(DictFrmName.FRM_DOC_VIEWER, params);        
     }
         
     /* Скачивание файла вложения основной версии документа как PDF */

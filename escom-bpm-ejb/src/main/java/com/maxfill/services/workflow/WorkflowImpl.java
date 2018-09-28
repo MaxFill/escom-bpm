@@ -418,6 +418,7 @@ public class WorkflowImpl implements Workflow {
         scheme.getTasks().forEach(task->{
                 task.setFactExecDate(null); //сброс даты выполнения
                 task.setResult(null);       //сброс предудущего результата
+                task.getState().setCurrentState(stateFacade.getDraftState());
             });
     }
     
@@ -555,6 +556,8 @@ public class WorkflowImpl implements Workflow {
         
         process.getState().setCurrentState(stateFacade.getRunningState());
         process.setBeginDate(new Date());
+        process.setResult(null);
+        
         WFConnectedElem startElement = scheme.getElements().getStartElem();
         startElement.setDone(true);
         
@@ -587,9 +590,10 @@ public class WorkflowImpl implements Workflow {
         stopTasks(process, stateCancel, "TaskCancelled", currentUser);
         stopTimers(process);
         
-        process.getState().setCurrentState(stateCancel);        
+        process.getState().setCurrentState(stateCancel);
+        process.setResult("ProcessСanceled");
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, currentUser);
-        processFacade.edit(process);        
+        processFacade.edit(process);
     }
     
     /**
@@ -624,9 +628,9 @@ public class WorkflowImpl implements Workflow {
      */
     private void finish(Process process, ExitElem exitElem, User currentUser, Set<String> errors) {
         if (exitElem.getFinalize()){
-            State state = stateFacade.getCompletedState();
-            process.getState().setCurrentState(state);        
-            //отмена всех запущенных задач
+            State state = stateFacade.find(exitElem.getFinishStateId());
+            process.getState().setCurrentState(state);
+            //отмена всех запущенных и не завершённых задач
             stopTasks(process, state, "TaskIsFinishedBecauseProcessComplete", currentUser);
             stopTimers(process);
         }

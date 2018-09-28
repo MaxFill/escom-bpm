@@ -2,11 +2,14 @@ package com.maxfill.services.files;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.docs.Doc;
+import com.maxfill.services.searche.SearcheService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.EJB;
@@ -22,11 +25,13 @@ public class FileServiceImpl implements FileService{
     
     @EJB
     protected Configuration conf;    
-    
+    @EJB
+    private SearcheService searcheService;
+        
     @Override
-    //@Asynchronous
-    // отключил, потому что при загрузке файлов из почтового сообщения почтовый ящик может закрыться раньше чем отработает upload!
-    public void doUpload(Attaches attache, InputStream inputStream) {
+    @Asynchronous
+    //TODO есть проблема при загрузке файлов из почтового сообщения почтовый ящик может закрыться раньше чем отработает upload!
+    public synchronized void doUpload(Attaches attache, InputStream inputStream) {
         try {                                    
             String fileExt = attache.getExtension();
             String guid = attache.getGuid();
@@ -39,14 +44,16 @@ public class FileServiceImpl implements FileService{
             Files.createDirectories(Paths.get(sb.toString()));       
             sb.append(File.separator).append(guid).append(".").append(fileExt);
             Files.copy(inputStream, Paths.get(sb.toString()));                                  
-        
-            //File pdf = new File(basePath + attache.getFullNamePDF());
+                    
             if (!"PDF".equals(fileExt.toUpperCase())){
                 String convPDF = conf.getConvertorPDF();
                 if (StringUtils.isNotBlank(convPDF)){
                     makeCopyToPDF(conf.getUploadPath() + attache.getFullName(), convPDF);
                 }
-            }        
+            } 
+            if (attache.getDoc() != null){
+               searcheService.updateFullTextIndex(attache.getDoc());
+            }
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
         } finally {

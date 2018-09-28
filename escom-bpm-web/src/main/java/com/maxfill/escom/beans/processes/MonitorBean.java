@@ -50,7 +50,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private User initiator;
     private Staff curator;
     private List<State> states = new ArrayList<>();
-            
+    private List<String> results = new ArrayList<>();
+    private List<String> allResults;
+    
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -59,7 +61,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     @Inject
     private ProcessBean processBean;
     @Inject
-    private TaskBean taskBean;
+    private TaskBean taskBean;    
     
     private Integer taskId;
     
@@ -136,7 +138,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * @param filters
      * @return 
      */
-    protected Map<String, Object> makeFilters(Map filters) {      
+    protected Map<String, Object> makeFilters(Map filters) {        
+        filters.put("actual", true);
+        filters.put("deleted", false);
         if(dateStart != null || dateEnd != null) {
             Map <String, Date> dateFilters = new HashMap <>();
             dateFilters.put("startDate", dateStart);        //дата начала периода отбора
@@ -151,6 +155,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         }
         if (!states.isEmpty()){
             filters.put("states", states);
+        }
+        if (!results.isEmpty()){            
+            filters.put("procResults", results);
         }
         return filters;
     }         
@@ -250,11 +257,25 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         return root;
     }   
 
+    public List<String> getAllResults() {
+        if (allResults == null){
+            allResults = processFacade.findProcessResults();
+        }
+        return allResults;
+    }
+    
     @Override
     public String getFormName() {
         return DictFrmName.FRM_MONITOR;
     }
-    
+
+    public List<String> getResults() {
+        return results;
+    }
+    public void setResults(List<String> results) {
+        this.results = results;
+    }
+        
     public Date getDateStart() {
         return dateStart;
     }

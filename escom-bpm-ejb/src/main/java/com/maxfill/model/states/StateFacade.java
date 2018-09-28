@@ -56,6 +56,7 @@ public class StateFacade extends BaseFacade<State>{
     public State getValidState(){
         return find (DictStates.STATE_VALID);
     }
+    
     public State getCanceledState(){
         return find(DictStates.STATE_CANCELLED);
     }
@@ -63,6 +64,7 @@ public class StateFacade extends BaseFacade<State>{
     public State getConfirmedState(){
         return find(DictStates.STATE_CONFIRMED);
     }
+    
     public State getIssuedState(){
         return find(DictStates.STATE_ISSUED);
     }

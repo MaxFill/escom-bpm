@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.BaseDict;
 import com.maxfill.model.Results;
+import com.maxfill.model.users.User;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -52,5 +55,23 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
         TypedQuery<Result> q = getEntityManager().createQuery(cq);
         return q.getResultList();
     }
-        
+    
+    /**
+     * Отбирает все записи, кроме удалённых в корзину и не актуальных 
+     * @param currentUser
+     * @return 
+     */ 
+    @Override
+    public List<Result> findAll(User currentUser) {                        
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(itemClass);
+        Root c = cq.from(itemClass);        
+        Predicate crit1 = builder.equal(c.get("actual"), true);
+        Predicate crit2 = builder.equal(c.get("deleted"), false);
+        cq.select(c).where(builder.and(crit1, crit2));
+        cq.orderBy(orderBuilder(builder, c));
+        TypedQuery query = getEntityManager().createQuery(cq);       
+        return query.getResultList();
+    }
 }

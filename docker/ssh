@@ -84,6 +84,7 @@ sudo scp -r /home/maksim/escom-bpm/docker/datastore/Dockerfile root@62.173.140.9
 
 SPHINX
 sudo scp -r /home/maksim/escom-bpm/docker/datastore/sphinx root@62.173.140.9:/home/docker/datastore/sphinx
+mysql -uescom -p -hlocalhost -P9306
 
 /* загрузки на сайт */
 sudo scp -r /home/maksim/Загрузки/22.01.2018.tar.gz root@62.173.140.9:/home/opencart

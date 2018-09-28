@@ -28,6 +28,7 @@ import com.maxfill.model.process.schemes.elements.StatusElem;
 import com.maxfill.model.process.schemes.elements.TaskElem;
 import com.maxfill.model.process.schemes.elements.TimerElem;
 import com.maxfill.model.process.schemes.elements.WFConnectedElem;
+import com.maxfill.model.process.schemes.elements.WorkflowElements;
 import com.maxfill.model.process.templates.ProcTempl;
 import com.maxfill.model.process.templates.ProcessTemplFacade;
 import com.maxfill.model.process.timers.ProcTimer;
@@ -177,11 +178,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * Очистка визуальной схемы процесса
      */
     public void onClearModel(){        
-        scheme = new Scheme(process);
-        process.setScheme(scheme);
-        model.clear();
+        scheme.setElements(new WorkflowElements());        
         modelRefresh();
-    }        
+    }
     
     /**
      * Загрузка визуальной схемы процесса
@@ -659,7 +658,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.BOTTOM);
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
-        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.TOP);
         createTargetEndPoint(endPoints, EndPointAnchor.LEFT);         
         logic.setAnchors(makeAnchorElems(logic, endPoints));
         workflow.addLogic(logic, scheme, errors);
@@ -1036,12 +1035,11 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (termHours != null){
             Date planExecDate = DateUtils.addHour(new Date(), termHours);
             process.setPlanExecDate(planExecDate);
-        }        
-        scheme = new Scheme(process);
-        scheme.setPackElements(selectedTempl.getElements()); 
-        process.setScheme(scheme);
-        loadModel(scheme);
+        }                
+        scheme.setPackElements(selectedTempl.getElements());        
+        workflow.unpackScheme(scheme);        
         workflow.clearScheme(scheme);
+        restoreModel();
         PrimeFaces.current().ajax().update("southFRM:diagramm");
         addElementContextMenu();
         onItemChange();

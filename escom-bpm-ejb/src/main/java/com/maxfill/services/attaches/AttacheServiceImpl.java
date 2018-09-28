@@ -8,6 +8,7 @@ import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.folders.Folder;
 import com.maxfill.model.users.User;
 import com.maxfill.services.files.FileService;
+import com.maxfill.services.searche.SearcheService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,6 +68,10 @@ public class AttacheServiceImpl implements AttacheService{
             fileExt = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
         }
 
+        Doc doc = null;
+        if (params.containsKey("doc")){
+            doc = (Doc)params.get("doc");
+        }
         Attaches attache = new Attaches();
         attache.setName(fileName);
         attache.setExtension(fileExt);
@@ -74,8 +79,8 @@ public class AttacheServiceImpl implements AttacheService{
         attache.setSize(size);
         attache.setAuthor(author);
         attache.setDateCreate(new Date());
-
-        fileService.doUpload(attache, inputStream);
+        attache.setDoc(doc);
+        fileService.doUpload(attache, inputStream);      
         return attache;
     }
     

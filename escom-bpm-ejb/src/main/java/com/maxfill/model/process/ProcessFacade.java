@@ -15,6 +15,7 @@ import com.maxfill.model.process.reports.ProcReport;
 import com.maxfill.model.process.types.ProcessType;
 import com.maxfill.model.rights.Rights;
 import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.task.Task;
 import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.utils.Tuple;
@@ -25,10 +26,12 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -179,7 +182,25 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         remarkFacade.removeRemarksByProcess(process);        
         super.remove(process);
     } 
-    
+
+    @Override
+    public void edit(Process process) {
+        List<Task> liveTasks = process.getScheme().getTasks();
+        Process oldProcess = find(process.getId());        
+        List<Task> forRemoveTasks = new ArrayList<>(oldProcess.getScheme().getTasks());
+        forRemoveTasks.removeAll(liveTasks);
+        
+        Set<ProcReport> procReports = process.getReports();
+        forRemoveTasks.forEach(task->{
+                taskFacade.removeItemLogs(task);
+                messagesFacade.removeMessageByTask(task);
+                procReports.stream()
+                    .filter(report->Objects.equals(task, report.getTask()))
+                    .forEach(report->report.setTask(null));
+            });
+        super.edit(process); //To change body of generated methods, choose Tools | Templates.
+    }        
+            
     @Override
     protected String getItemFormPath(){
         return "/processes/process-explorer.xhtml";
@@ -230,4 +251,22 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         return (Long) query.getSingleResult();
     }
     
+    /**
+     * Формирует список результатов процессов
+     * @return 
+     */
+    public List<String> findProcessResults(){        
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq= builder.createQuery();
+        Root root = cq.from(itemClass);
+        Expression<String> resultName = root.get(Process_.result);
+        cq.multiselect(resultName);
+        cq.groupBy(root.get(Process_.result));
+        Predicate crit1 = builder.equal(root.get("deleted"), false);
+        Predicate crit2 = builder.isNotNull(root.get(Process_.result));
+        cq.where(builder.and(crit1, crit2));
+        cq.orderBy(builder.asc(root.get(Process_.result)));
+        Query query = getEntityManager().createQuery(cq);
+        return query.getResultList();        
+    }
 }

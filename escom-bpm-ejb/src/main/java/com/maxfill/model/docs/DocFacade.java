@@ -229,7 +229,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     @Override
     public void create(Doc doc) {
         super.create(doc);        
-        searcheService.addFullTextIndex(doc);
+        searcheService.updateFullTextIndex(doc);
     }
 
     @Override

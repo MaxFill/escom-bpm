@@ -14,7 +14,7 @@
     </ui:define>
 
     <ui:define name="customJavaScript">      
-        <h:outputScript library="contextMenu" name="contextMenu.js" />        
+        <h:outputScript library="contextMenu" name="contextMenu.js" />         
         <script type="text/javascript">
             function addContextMenu(componentId) {
                 var menu = [{
@@ -177,16 +177,17 @@
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
 
-        <p:commandButton title="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                         disabled="#{_bean.isReadOnly()}"                                         
-                         onclick="PF('LoadFromTemplDLG').show();"
-                         update="LoadFromTemplFRM">                           
-        </p:commandButton>
-        <p:commandButton title="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
-                         disabled="#{_bean.isReadOnly()}"
-                         update="SaveAsTemplFRM"
-                         onclick="PF('SaveAsTemplDLG').show();">
-        </p:commandButton>
+        <p:menuButton value="#{bundle.Template}">
+            <p:menuitem value="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
+                        disabled="#{_bean.isReadOnly()}"                                         
+                        onclick="PF('LoadFromTemplDLG').show();"
+                        update="LoadFromTemplFRM"/>            
+            <p:menuitem value="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
+                        disabled="#{_bean.isReadOnly()}"
+                        update="SaveAsTemplFRM"
+                        onclick="PF('SaveAsTemplDLG').show();"/>            
+        </p:menuButton>
+            
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>

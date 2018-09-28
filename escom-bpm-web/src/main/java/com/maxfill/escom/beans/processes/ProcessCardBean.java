@@ -21,6 +21,7 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
+import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
@@ -61,7 +62,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private Workflow workflow;
     @EJB
     private RemarkFacade remarkFacade;
-    
+    @EJB
+    private TaskFacade taskFacade;
     @EJB
     private StateFacade stateFacade;
 
@@ -106,7 +108,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }    
     
     public void checkDocument(){
-        checkDocument(getEditedItem().getDocument(), new HashSet<>());
+        if (getEditedItem().getDocument() == null) return;
+        Doc doc = docBean.getLazyFacade().find(getEditedItem().getDocument().getId());
+        getEditedItem().setDocument(doc);
+        checkDocument(doc, new HashSet<>());
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:documentPanel");
     }
     public void checkDocument(Doc doc, Set<String> errors){
@@ -133,11 +138,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (doc == null){
             MsgUtils.errorFormatMsg("ProcessNotContainDoc", new Object[]{process.getName()});
             return;
-        }  
-        Map<String, List<String>> params = getParamsMap();
-        params.put("processID", Collections.singletonList(process.getId().toString()));
-        params.put("taskID", Collections.singletonList(getEditedItem().getId().toString()));
-        docBean.doViewMainAttache(doc, params);
+        }
+        setSourceItem(process);
+        docBean.doViewMainAttache(doc, getParamsMap());
     }
     
     /**
@@ -176,7 +179,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Staff curator = process.getCurator();
         List<Task> liveTasks = getTasksFromModel();
         
-        List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks());
+        List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks()); //старые задачи?
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
         scheme.getTasks().removeAll(forRemoveTasks);     
         
@@ -197,18 +200,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 .collect(Collectors.toSet()); 
 
         Set<ProcReport> procReports = process.getReports();        
-        List<ProcReport> removeRepors = procReports.stream()            
-                .filter(report-> report.getDateCreate() == null && !Objects.equals(curator, report.getExecutor()))                 
+        List<ProcReport> removeRepors = procReports.stream()
+                .filter(report-> report.getDateCreate() == null && !Objects.equals(curator, report.getExecutor()))                
                 .collect(Collectors.toList());
-        procReports.removeAll(removeRepors);        
-        procReports.addAll(newReports);   
-        
-        //в оставшихся отчётах нужно сбросить ссылку на удалённые task
-        forRemoveTasks.forEach(task->
-                procReports.stream()
-                .filter(report->Objects.equals(task, report.getTask()))
-                .forEach(report->report.setTask(null))
-        );
+        procReports.removeAll(removeRepors);
+        procReports.addAll(newReports);
         
         //сохраняем только оставшиеся на схеме таймеры, а старые удаляем
         List<ProcTimer> liveTimers = getProcTimersFromModel();
@@ -271,9 +267,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     public void onRun(String option){
         Set<String> errors = new HashSet<>();
-        Process process = processFacade.find(getEditedItem().getId());
+        Process process = getEditedItem();
         validatePlanDate(process.getPlanExecDate(), errors);
-        validateRemarks(process, errors);
+        validateRemarks(process.getDocument(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
@@ -281,16 +277,18 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         onItemChange();
         if (doSaveItem()){
             Map<String, Object> params = new HashMap<>();
-            params.put(option, true);            
+            params.put(option, true);
+            process = processFacade.find(getEditedItem().getId());
             workflow.start(process, getCurrentUser(), params, errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
             } else {
-                getEditedItem().getState().setCurrentState(stateFacade.getRunningState());                
+                getEditedItem().getState().setCurrentState(process.getState().getCurrentState());
+                getEditedItem().setScheme(process.getScheme());
                 setItemCurrentState(getEditedItem().getState().getCurrentState());
                 MsgUtils.succesMsg("ProcessSuccessfullyLaunched");
             }
-            exitParam = SysParams.EXIT_EXECUTE;
+            exitParam = SysParams.EXIT_EXECUTE;            
             PrimeFaces.current().ajax().update("mainFRM");
         }
     }
@@ -330,9 +328,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Проверка снятых замечаний
      */
-    private void validateRemarks(Process process,  Set<String> errors){
-        Doc doc = process.getDocument();
+    private void validateRemarks(Doc doc,  Set<String> errors){
         if (doc == null) return;
+        doc = docBean.getLazyFacade().find(doc.getId());        
         Remark remark = doc.getDetailItems().stream().filter(r->!r.isChecked()).findFirst().orElse(null);
         if (remark != null){
             errors.add("CannotStartProcessUnprocessedRemarks");

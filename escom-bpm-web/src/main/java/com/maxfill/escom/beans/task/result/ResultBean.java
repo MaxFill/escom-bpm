@@ -1,6 +1,5 @@
 package com.maxfill.escom.beans.task.result;
 
-import com.maxfill.dictionary.DictResults;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.model.task.result.ResultFacade;

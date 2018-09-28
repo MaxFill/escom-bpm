@@ -233,7 +233,7 @@ public class SessionBean implements Serializable{
             MsgUtils.showErrorsMsg(errors);            
             return;
         }
-        processBean.openItemCard(process, DictEditMode.INSERT_MODE, new HashMap<>(), errors);        
+        processBean.openItemCard(process, DictEditMode.INSERT_MODE, processBean.getParamsMap(), errors);        
     }
     
     /**
@@ -253,7 +253,7 @@ public class SessionBean implements Serializable{
         Doc doc = docFacade.createItem(author, null, folder, params);        
         docFacade.makeRightItem(doc, author);        
         Set<String> errors = new HashSet<>();
-        docBean.openItemCard(doc, DictEditMode.INSERT_MODE, new HashMap<>(), errors);
+        docBean.openItemCard(doc, DictEditMode.INSERT_MODE, docBean.getParamsMap(), errors);
         if (!errors.isEmpty()){
             attacheService.deleteAttaches(attaches);
             MsgUtils.showErrorsMsg(errors);
@@ -394,14 +394,6 @@ public class SessionBean implements Serializable{
     /* Колво непрочитанных сообщений у текущего пользователя */
     public Integer getCountUnreadMessage(){
         return messagesFacade.getCountUnReadMessage(currentUser);        
-    }
-
-    /* Просмотр вложения  */
-    public void onViewAttache(Attaches attache, Map<String, List<String>> paramMap) {
-        String path = configuration.getUploadPath() + attache.getFullName();        
-        List<String> pathList = Collections.singletonList(FilenameUtils.removeExtension(path) + ".pdf");        
-        paramMap.put("path", pathList);
-        openDialogFrm(DictFrmName.FRM_DOC_VIEWER, paramMap);
     }
 
     /* Скачивание вложения  */

@@ -185,9 +185,11 @@ public class Metadates implements Serializable, Dict{
         this.favoriteObjList = favoriteObjList;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

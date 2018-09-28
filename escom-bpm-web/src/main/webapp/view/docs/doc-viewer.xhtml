@@ -46,9 +46,10 @@
                         <f:facet name="actions">
                             <p:commandLink id="btnClose" type="button" title="#{bundle.Close}" immediate="true" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                            actionListener="#{_bean.onCancelItemSave()}"  
-                                           onclick="sendFormSize('#{_bean.getFormName()}'); if (itemChange == 1) {
-                                                   onChangeItem();
-                                               }">
+                                           onclick="sendFormSize('#{_bean.getFormName()}');
+                                                   if (itemChange == 1) {
+                                                       onChangeItem();
+                                                   }">
                                 <h:outputText styleClass="ui-icon ui-icon-closethick" />
                             </p:commandLink>
                         </f:facet>                    
@@ -70,7 +71,7 @@
                             </p:panel>
                         </p:panelGrid>
                     </p:panel>
-                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />                     
+                    <p:remoteCommand name="formSize" immediate="true" actionListener="#{sessionBean.onFormSize()}" />
                 </h:form>
             </pe:layoutPane>
         </pe:layout>

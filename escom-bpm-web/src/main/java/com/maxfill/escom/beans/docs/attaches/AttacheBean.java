@@ -5,13 +5,13 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.model.process.Process;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.docs.DocFacade;
 import com.maxfill.model.attaches.Attaches;
 import com.maxfill.model.docs.Doc;
-import com.maxfill.model.process.ProcessFacade;
 import com.maxfill.model.process.remarks.Remark;
 import com.maxfill.model.process.remarks.RemarkFacade;
 import com.maxfill.model.staffs.Staff;
@@ -61,8 +61,6 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     private RemarkFacade remarkFacade;    
     @EJB    
     private StateFacade stateFacade;
-    @EJB    
-    private ProcessFacade processFacade;
     @EJB    
     private TaskFacade taskFacade;
     
@@ -123,13 +121,15 @@ public class AttacheBean extends BaseViewBean<BaseView>{
             LOGGER.log(Level.SEVERE, null, "ESCOM_BPM ERROR: file path is null!");
             return;            
         } 
-        if (params.containsKey("processID")){
-            Integer processId = Integer.valueOf(params.get("processID"));
-            process = processFacade.find(processId);
+        if (sourceBean instanceof ProcessCardBean){            
+            process = (Process)sourceBean.getSourceItem();            
         }
         if (params.containsKey("taskID")){
             Integer taskId = Integer.valueOf(params.get("taskID"));
             task = taskFacade.find(taskId);
+            if (process == null){
+                process = task.getScheme().getProcess();
+            }
         }
         
         if (appBean.isCanUsesProcess() && doc != null && process != null){            
@@ -247,10 +247,10 @@ public class AttacheBean extends BaseViewBean<BaseView>{
      * @return 
      */
     public boolean isCanCheckRemark(){
-        if (task == null || task.getScheme() == null) return false;        
-        Staff curator = task.getScheme().getProcess().getCurator();
+        if (process == null) return false;        
+        Staff curator = process.getCurator();
         if (Objects.equals(getCurrentStaff(), curator)){
-            Integer processState = task.getScheme().getProcess().getState().getCurrentState().getId();
+            Integer processState = process.getState().getCurrentState().getId();
             return processState.equals(DictStates.STATE_DRAFT) || processState.equals(DictStates.STATE_CANCELLED);
         }
         return false;
