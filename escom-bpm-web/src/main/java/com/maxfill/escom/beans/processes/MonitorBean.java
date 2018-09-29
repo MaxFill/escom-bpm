@@ -114,8 +114,8 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         currentItem = (BaseDict)selectedNode.getData();
     }
     
-    private int loadTree(){        
-        List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()));
+    private int loadTree(){
+        List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()), getCurrentUser());
         processes.forEach(proc->{
             TreeNode processNode = new DefaultTreeNode(proc, root);
             proc.getScheme().getTasks().forEach(task->{

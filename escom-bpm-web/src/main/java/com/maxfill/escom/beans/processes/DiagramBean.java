@@ -205,6 +205,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                     staff = staffFacade.find(taskEl.getStaffId());
                 }
                 Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, scheme, taskEl.getUid());
+                task.setConsidInProcReport(taskEl.getConsidInProc());
                 taskEl.setTask(task);
                 scheme.getTasks().add(task);
             }
@@ -214,6 +215,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 if (timerEl.getProcTimer() == null){
                     ProcTimer procTimer = procTimerFacade.createTimer(process, scheme, timerEl.getUid());
                     timerEl.setProcTimer(procTimer);
+                    procTimer.setRepeatType(timerEl.getRepeatType());
+                    procTimer.setStartType(timerEl.getStartType());
                     scheme.getTimers().add(procTimer);
                 }
                 elementMap.put(k, createElement(timerEl));
@@ -390,17 +393,18 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (baseElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem)baseElement;
             currentTask = taskElem.getTask();
+            taskElem.setConsidInProc(currentTask.getConsidInProcReport());
             onAfterTaskClose(event);
             return;
-        }
-        if (baseElement instanceof ExitElem){
-            Element exit = model.findElement(baseElement.getUid());
-            exit.setStyleClass(baseElement.getStyle());                     
         } else 
-            if (baseElement instanceof StatusElem){
-                Element status = model.findElement(baseElement.getUid());
-                status.setStyleClass(baseElement.getStyle());
-            }        
+            if (baseElement instanceof ExitElem){
+                Element exit = model.findElement(baseElement.getUid());
+                exit.setStyleClass(baseElement.getStyle());                     
+            } else 
+                if (baseElement instanceof StatusElem){
+                    Element status = model.findElement(baseElement.getUid());
+                    status.setStyleClass(baseElement.getStyle());
+                }                     
         modelRefresh();
     }
     

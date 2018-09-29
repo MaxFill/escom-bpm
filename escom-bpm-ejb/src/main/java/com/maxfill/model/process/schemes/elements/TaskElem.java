@@ -6,7 +6,6 @@ import com.maxfill.model.staffs.Staff;
 import com.maxfill.utils.EscomUtils;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,6 +26,10 @@ public class TaskElem extends WFConnectedElem{
     @XmlElement(name = "tasks")
     private List<Integer> tasksExec = new ArrayList<>(); //список id выполненных задач, пришедших в эту задачу
         
+    @XmlElement(name = "consid")
+    private Boolean considInProc = true;
+    
+    @XmlElement(name = "staffId")
     private Integer staffId;
     
     public TaskElem() {
@@ -53,7 +56,14 @@ public class TaskElem extends WFConnectedElem{
     public void setStaffId(Integer staffId) {
         this.staffId = staffId;
     }
-        
+
+    public Boolean getConsidInProc() {
+        return considInProc;
+    }
+    public void setConsidInProc(Boolean considInProc) {
+        this.considInProc = considInProc;
+    }
+         
     @Override
     public String getCaption() {
         if (task != null){

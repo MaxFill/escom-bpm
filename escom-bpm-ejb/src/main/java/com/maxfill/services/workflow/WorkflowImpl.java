@@ -562,10 +562,11 @@ public class WorkflowImpl implements Workflow {
         startElement.setDone(true);
         
         //если действие выполняется куратором, то внести инф в лист согласования 
+        /*
         if (Objects.equals(process.getCurator().getEmployee(), currentUser)){
             updateReportStatus(process, process.getCurator(), DictResults.RESULT_AGREED, currentUser);
         }
-        
+        */
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, currentUser);
         run(process, startElement, currentUser, params, errors);
     }

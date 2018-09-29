@@ -64,7 +64,7 @@
                     <p:outputLabel value="#{bundle.DocumentForConcorded}:" indicateRequired="true" />
                     <ui:include src="/view/common/item-select-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.document}"/>
-                        <ui:param name="_itemLabel" value="fullName"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="true" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                         <ui:param name="_itemPanel" value="documentPanel"/>

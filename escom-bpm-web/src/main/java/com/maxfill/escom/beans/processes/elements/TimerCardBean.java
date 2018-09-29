@@ -81,7 +81,9 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
         }
         saveFields(procTimer);
         try {
-            editedItem.setTimerId(procTimer.getId());            
+            editedItem.setTimerId(procTimer.getId()); 
+            editedItem.setRepeatType(procTimer.getRepeatType());
+            editedItem.setStartType(procTimer.getStartType());
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);

@@ -96,8 +96,11 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
     public void createMessage(User addressee, String senderName, String senderEmail, String subject, StringBuilder content, List<BaseDict> links){
         UserMessages message = new UserMessages();
         message.setName(subject);
+        message.setContent(content.toString());
         message.setAddressee(addressee);
         message.setDateSent(new Date());
+        message.setSender(senderName);
+        message.setImportance(1);
         Locale locale = userFacade.getUserLocale(addressee);
         links.forEach(item->{
             switch (item.getClass().getSimpleName().toLowerCase()){
@@ -131,8 +134,6 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
             }
         });
         
-        message.setSender(senderName);
-        message.setImportance(1);
         create(message);
         if (addressee.isDuplicateMessagesEmail()){
             String emailAdress = addressee.getEmail();

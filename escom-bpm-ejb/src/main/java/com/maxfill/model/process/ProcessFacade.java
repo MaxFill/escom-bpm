@@ -82,7 +82,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 Staff curator = user.getStaff();
                 if (curator != null){
                     process.setCurator(curator);                    
-                    process.getReports().add(new ProcReport(user, curator, process));
                 }
             }
         }

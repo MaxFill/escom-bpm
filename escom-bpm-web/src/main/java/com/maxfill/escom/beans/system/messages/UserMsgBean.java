@@ -63,7 +63,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     
     /* установка отметки о прочтении на выделенных сообщениях */
     public void markAsRead(){         
-        List<UserMessages> msgs = messagesFacade.findItemsByFilters("", "", makeFilters(new HashMap<>()));
+        List<UserMessages> msgs = messagesFacade.findItemsByFilters("", "", makeFilters(new HashMap<>()), getCurrentUser());
         msgs.stream()
                 .filter(message->message.getDateReading() == null)
                 .forEach(message->markAsRead((UserMessages)message)); 

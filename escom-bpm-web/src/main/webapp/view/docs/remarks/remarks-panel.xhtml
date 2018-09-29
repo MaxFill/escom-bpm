@@ -23,7 +23,7 @@
                     </f:facet>
 
                     <f:facet name="options">
-                        <p:menu>
+                        <p:menu>                        
                             <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
                                         disabled="#{!_bean.isCanCheckRemark()}"
                                         rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
@@ -80,16 +80,26 @@
                         rowsPerPageTemplate="5,10,15" rows="5" 
                         styleClass="ui-grid-col-12 without-spaces">
 
-                <p:panel header="#{_bean.getRemarkHeader(remark)}" menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
-                    <f:facet name="actions"> 
-                        <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
-                                       disabled="#{!_bean.isCanCheckRemark()}"
-                                       rendered="#{remark.state.currentState.id == 12}"   
-                                       update="eastFRM:accord:dgMyRemarks eastFRM:accord:dgAllRemarks"
-                                       actionListener="#{_bean.onRemarkCheck(remark)}">                             
-                            <h:outputText styleClass="ui-icon ui-icon-check" />
-                        </p:commandLink>                            
+                <p:panel menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
+                    <f:facet name="header">
+                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState.name)}"/>
+                        <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
+                        <p:outputLabel value="#{_bean.getRemarkHeader(remark)}" title="#{bundle.Author}"/>
                     </f:facet>
+                    <f:facet name="options">
+                        <p:menu>                        
+                            <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
+                                        disabled="#{!_bean.isCanCheckRemark()}"
+                                        rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
+                                        actionListener="#{_bean.onRemarkCheck(remark)}" update="eastFRM:accord:dgAllRemarks">                                
+                            </p:menuitem>
+                            <p:menuitem value="#{bundle.RemarkNotTakenAccount}" icon="ui-icon-notice"
+                                        disabled="#{!_bean.isCanCheckRemark()}"
+                                        rendered="#{remark.state.currentState.id == 12 and remark.checked}"
+                                        actionListener="#{_bean.onRemarkUnCheck(remark)}" update="eastFRM:accord:dgAllRemarks">                                
+                            </p:menuitem>
+                        </p:menu>
+                    </f:facet>                    
 
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:inputTextarea value="#{remark.content}" 

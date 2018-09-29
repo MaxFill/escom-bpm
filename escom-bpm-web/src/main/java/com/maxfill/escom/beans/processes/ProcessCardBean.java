@@ -10,7 +10,6 @@ import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.process.ProcessFacade;
-import com.maxfill.model.states.StateFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.docs.Doc;
 import com.maxfill.model.process.Process;
@@ -21,7 +20,6 @@ import com.maxfill.model.process.schemes.Scheme;
 import com.maxfill.model.process.timers.ProcTimer;
 import com.maxfill.model.staffs.Staff;
 import com.maxfill.model.task.Task;
-import com.maxfill.model.task.TaskFacade;
 import com.maxfill.model.users.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
@@ -62,10 +60,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private Workflow workflow;
     @EJB
     private RemarkFacade remarkFacade;
-    @EJB
-    private TaskFacade taskFacade;
-    @EJB
-    private StateFacade stateFacade;
 
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
@@ -175,23 +169,12 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         String result = (String) event.getObject();
         if (result.equals(SysParams.EXIT_NOTHING_TODO)) return;                
         Process process = getEditedItem();
-        Scheme scheme = process.getScheme();
-        Staff curator = process.getCurator();
+        Scheme scheme = process.getScheme();        
         List<Task> liveTasks = getTasksFromModel();
         
         List<Task> forRemoveTasks = new ArrayList<>(scheme.getTasks()); //старые задачи?
         forRemoveTasks.removeAll(liveTasks); //в списке остались только задачи, которые нужно удалить
         scheme.getTasks().removeAll(forRemoveTasks);     
-        
-        /*
-        List<ProcReport> removeRepors = forRemoveTasks.stream()
-                .map(task->process.getReports().stream()
-                        .filter(report-> report.getDateCreate() == null 
-                                && Objects.equals(task.getOwner(), report.getExecutor()) 
-                                && !Objects.equals(curator, report.getExecutor()))
-                        .findFirst().orElse(null))
-                .collect(Collectors.toList());
-        */
         
         //создаём записи в "листе согласования" для участников согласования из модели процесса        
         Set<ProcReport> newReports = liveTasks.stream()
@@ -201,7 +184,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
 
         Set<ProcReport> procReports = process.getReports();        
         List<ProcReport> removeRepors = procReports.stream()
-                .filter(report-> report.getDateCreate() == null && !Objects.equals(curator, report.getExecutor()))                
+                .filter(report-> report.getDateCreate() == null)   //кроме тех кто уже согласовал/отклонил             
                 .collect(Collectors.toList());
         procReports.removeAll(removeRepors);
         procReports.addAll(newReports);
@@ -224,14 +207,17 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (event.getObject() instanceof String) return;
         List<Staff> items = (List<Staff>) event.getObject();
         if (items.isEmpty()){return;}
-        Staff item = items.get(0);
-        doCangeCurator(item);
+        Staff staff = items.get(0);
+        getEditedItem().setCurator(staff);
+        //doCangeCurator(item);
     }
     public void onChangeCurator(ValueChangeEvent event){
-        Staff user = (Staff) event.getNewValue();        
-        doCangeCurator(user);
+        Staff staff = (Staff) event.getNewValue();
+        getEditedItem().setCurator(staff);
+        //doCangeCurator(user);
     }
 
+    /*
     private void doCangeCurator(Staff newCurator){
         Process process = getEditedItem();
         Set<ProcReport> procReports = process.getReports();
@@ -258,6 +244,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
     }
+    */
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     

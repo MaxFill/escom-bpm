@@ -685,11 +685,39 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit3 = builder.equal(c.get("actual"), true);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(orderBuilder(builder, c));
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        TypedQuery query = getEntityManager().createQuery(cq);
         return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     } 
 
+     /**
+     * Отбор записей объектов по критериям с сортировкой
+     * @param sortField
+     * @param sortOrder
+     * @param filters
+     * @param currentUser
+     * @return
+     */
+    @Override
+    public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters, User currentUser) {
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<T> cq = builder.createQuery(itemClass);
+        Root<T> root = cq.from(itemClass);
+        cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
+        if (StringUtils.isNotBlank(sortField)){ //если задано по какому полю сортировать
+            if (StringUtils.isBlank(sortOrder) || !sortOrder.equals("DESCENDING")) {
+                cq.orderBy(builder.asc(root.get(sortField)));
+            } else {
+                cq.orderBy(builder.desc(root.get(sortField)));
+            }
+        }
+        TypedQuery<T> query = getEntityManager().createQuery(cq);        
+        return query.getResultStream()
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
+    }
+    
     /* *** ПРАВА ДОСТУПА *** */
 
     /* ПРАВА ДОСТУПА: Установка и проверка прав объекта для пользователя при загрузке объекта */

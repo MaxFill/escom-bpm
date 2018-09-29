@@ -209,6 +209,11 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         remarkFacade.edit(remark);
     }
     
+    public void onRemarkUnCheck(Remark remark){
+        remark.setChecked(false);
+        remarkFacade.edit(remark);
+    }
+    
     public void onTabChange(TabChangeEvent event) {
         Tab tab = event.getTab();
         String tabId = tab.getId();

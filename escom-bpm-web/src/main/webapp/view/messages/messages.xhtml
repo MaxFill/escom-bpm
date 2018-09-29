@@ -102,8 +102,12 @@
                     </h:outputLabel>
                 </p:column>
 
-                <p:column headerText="#{bundle.Name}" sortBy="#{item.name}" priority="1">
+                <p:column headerText="#{bundle.Name}" priority="2">
                     <h:outputLabel value="#{item.name}"/>
+                </p:column>
+                
+                <p:column headerText="#{bundle.Content}" priority="1">
+                    <h:outputLabel value="#{item.content}"/>
                 </p:column>
 
                 <p:column headerText="#{bundle.Sender}" sortBy="#{item.sender}" priority="3">

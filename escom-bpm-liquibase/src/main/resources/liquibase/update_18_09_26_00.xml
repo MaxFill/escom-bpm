@@ -10,4 +10,18 @@
             UPDATE `access` SET `IsCreate`=0, `IsDelete`=0, `IsUpdate`=0 where ObjLink = 1 and State = 7 and ObjId = 16;
         </sql>
     </changeSet>
+    
+    <changeSet id="messages_add_Content" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="userMessages" columnName="Content" />
+            </not>
+        </preConditions>
+        <addColumn tableName="userMessages">
+            <column name="Content" type="varchar(2500)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 

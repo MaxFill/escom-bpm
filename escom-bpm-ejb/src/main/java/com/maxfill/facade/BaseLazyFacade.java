@@ -2,6 +2,7 @@ package com.maxfill.facade;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.states.State;
+import com.maxfill.model.users.User;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
@@ -66,7 +67,7 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @param filters
      * @return
      */
-    public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters) {
+    public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters, User currentUser) {
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
@@ -105,7 +106,7 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @param filters
      * @return
      */
-    private Predicate[] makePredicates(CriteriaBuilder builder, Root root, Map<String,Object> filters) {
+    protected Predicate[] makePredicates(CriteriaBuilder builder, Root root, Map<String,Object> filters) {
         List<Predicate> criteries = new ArrayList<>();
 
         if(filters != null) {

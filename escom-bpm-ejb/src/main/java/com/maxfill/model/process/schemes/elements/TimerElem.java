@@ -23,6 +23,12 @@ public class TimerElem extends WFConnectedElem {
     @XmlElement(name = "timerId")
     private Integer timerId;
     
+    @XmlElement(name = "repeat")
+    private String repeatType = "no";
+    
+    @XmlElement(name = "init")
+    private String startType = "on_init";
+    
     public TimerElem() {
         this.uid = EscomUtils.generateGUID();
     }
@@ -42,7 +48,21 @@ public class TimerElem extends WFConnectedElem {
     public void setProcTimer(ProcTimer procTimer) {
         this.procTimer = procTimer;
     }
-        
+
+    public String getStartType() {
+        return startType;
+    }
+    public void setStartType(String startType) {
+        this.startType = startType;
+    }
+    
+    public String getRepeatType() {
+        return repeatType;
+    }
+    public void setRepeatType(String repeatType) {
+        this.repeatType = repeatType;
+    }
+            
     public Integer getTimerId() {
         return timerId;
     }       

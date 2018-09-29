@@ -41,10 +41,13 @@ public class UserMessages implements Serializable, Dict{
     private Integer id;
 
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1024)
     @Column(name = "Name")
     private String name;
+            
+    @Basic(optional = false)
+    @Size(min = 1, max = 2256)        
+    @Column(name = "Content")
+    private String content;
     
     @Size(max = 255)
     @Column(name = "Sender")
@@ -154,6 +157,13 @@ public class UserMessages implements Serializable, Dict{
     public void setProcess(Process process) {
         this.process = process;
     }       
+
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }    
     
     @Override
     public int hashCode() {
