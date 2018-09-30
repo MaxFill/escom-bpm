@@ -143,6 +143,7 @@
         </p:tabView>
     
         <p:commandButton value="#{bundle.SaveChange}"
+                        rendered="#{metadatesBean.selectedObject != null}"
                         update="mainFRM:mainGrid"
                         actionListener="#{metadatesBean.onSaveChange()}">
         </p:commandButton>

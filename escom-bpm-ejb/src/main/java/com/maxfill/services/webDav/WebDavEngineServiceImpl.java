@@ -111,6 +111,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
     
     private Session getSession(){
         Session session = null;
+        /*
         try {            
             Repository repository = conf.getRepository();
             Credentials credentals = new SimpleCredentials("WebDavAdmin", "admin".toCharArray());        
@@ -118,6 +119,7 @@ public class WebDavEngineServiceImpl implements WebDavService{
         } catch (RepositoryException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+        */
         return session;
     }
     

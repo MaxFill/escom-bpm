@@ -215,36 +215,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Staff staff = (Staff) event.getNewValue();
         getEditedItem().setCurator(staff);
         //doCangeCurator(user);
-    }
-
-    /*
-    private void doCangeCurator(Staff newCurator){
-        Process process = getEditedItem();
-        Set<ProcReport> procReports = process.getReports();
-        
-        //удалить запись о старом кураторе в листе согласования
-        Staff oldCurator = process.getCurator();
-        if (oldCurator != null){
-            ProcReport oldCuratorRep = procReports.stream()
-                    .filter(rep -> rep.getDateCreate() == null && Objects.equals(rep.getExecutor(), oldCurator))
-                    .findFirst()
-                    .orElse(null);
-            if (oldCuratorRep != null){
-                procReports.remove(oldCuratorRep);
-            }
-        }        
-        process.setCurator(newCurator);
-        onItemChange();
-        //если куратор указан и его нет в листе согласования, то добавим его
-        if (newCurator != null){
-            ProcReport curatorReport = procReports.stream()
-                    .filter(report-> Objects.equals(report.getExecutor(), newCurator))
-                    .findFirst().orElse(new ProcReport(getCurrentUser(), newCurator, process));
-            procReports.add(curatorReport);
-        }
-        PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
-    }
-    */
+    }    
     
     /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
     

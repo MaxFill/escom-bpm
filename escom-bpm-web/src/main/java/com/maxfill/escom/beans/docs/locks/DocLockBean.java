@@ -118,9 +118,9 @@ public class DocLockBean extends BaseViewBean<BaseView>{
             //HttpServletRequest request = (HttpServletRequest) ectx.getRequest();
             //String serverURL = new URL(request.getScheme(), request.getServerName(), request.getServerPort(), "").toString();
             String serverURL = conf.getServerURL();
-            String repoName = conf.getRepositoryName();
+            //String repoName = conf.getRepositoryName();
             folder.append(serverURL)
-                .append(repoName)
+                //.append(repoName)
                 .append(attache.getGuid())
                 .append("/");
         return folder.toString();

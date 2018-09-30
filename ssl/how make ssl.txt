@@ -42,7 +42,7 @@ openssl req -new -key server.key -config openssl-csr.cnf -reqexts req_ext -out s
 -Подписать ключ (выполняется на стороне СА):
 НУЖНО ИЗМЕНИТЬ СЕРИЙНЫЙ НОМЕР!
 
-openssl x509 -req -days 365  -CA ca.crt -CAkey ca.key -set_serial 003 -extfile openssl-csr.cnf -extensions req_ext -in server.csr -out server.crt
+openssl x509 -req -days 365 -CA ca.crt -CAkey ca.key -set_serial 004 -extfile openssl-csr.cnf -extensions req_ext -in server.csr -out server.crt
 
 
 

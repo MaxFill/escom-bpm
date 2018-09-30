@@ -45,7 +45,7 @@ public class UserMessages implements Serializable, Dict{
     private String name;
             
     @Basic(optional = false)
-    @Size(min = 1, max = 2256)        
+    @Size(min = 0, max = 2256)        
     @Column(name = "Content")
     private String content;
     

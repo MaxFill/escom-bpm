@@ -6,7 +6,6 @@ import com.maxfill.model.numPuttern.NumeratorPattern;
 import com.maxfill.model.rights.Right;
 import com.maxfill.model.states.State;
 import com.maxfill.model.favorites.FavoriteObj;
-import com.maxfill.utils.ItemUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class Metadates implements Serializable, Dict{
     @Column(name = "ObjectName")
     private String objectName;
     
-    @Basic(optional = false)
+    @Basic(optional = false)        
     @NotNull
     @Column(name = "IsDetailLogging")
     private boolean isDetailLogging;
@@ -114,7 +113,7 @@ public class Metadates implements Serializable, Dict{
     public void setMetadatesStates(List<MetadatesStates> metadatesStates) {
         this.metadatesStates = metadatesStates;
     }    
-    
+
     public String getObjectName() {
         return objectName;
     }    

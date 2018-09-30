@@ -57,9 +57,9 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         if(user == null || targetGroup == null) return false;
 
         //UserGroups group = (UserGroups) targetGroup;
-        if(!user.getUsersGroupsList().contains(targetGroup)) {
+        if(!user.getUsersGroupsList().contains((UserGroups)targetGroup)) {
             user.getUsersGroupsList().add((UserGroups) targetGroup);
-            //group.getUsersList().add(user);
+            //group.getUsersList().add---(user);
             getLazyFacade().edit(user);
         }
         return true;
@@ -70,6 +70,14 @@ public class UserBean extends BaseExplBeanGroups<User, UserGroups>{
         return userFacade;
     }
 
+    /**
+     * Возвращает список пользователей, для которых не назначена штатная единица
+     * @return 
+     */
+    public List<User> findVacantUsers(){
+        return userFacade.findFreeStaffUsers(getCurrentUser());
+    }
+    
     /* Перемещение пользователя из одной группы в другую  */
     @Override
     public void moveItemToGroup(BaseDict targetGroup, User user, TreeNode sourceNode) {

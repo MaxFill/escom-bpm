@@ -133,13 +133,13 @@ public class MetadatesBean extends BaseViewBean{
         try {
             if (Objects.equals(state, startState)){
                 errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
-            }
-            if (commonFacade.countItemsByState(Class.forName(selectedObject.getObjectName()), state) > 0){
+            }            
+            if (commonFacade.countItemsByState(Class.forName(selectedObject.getClass().getName()), state) > 0){
                 String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
                 errors.add(message);
             }
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MetadatesBean.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, null, ex);
             MsgUtils.errorMsg("Error");
         }
     }
@@ -165,9 +165,10 @@ public class MetadatesBean extends BaseViewBean{
      * Сохранение изменений в объекте
      */
     public void onSaveChange(){
-        List<State> oldStates = selectedObject.getStatesList();
-        List<State> newStates = states.getTarget();
+        List<State> oldStates = new ArrayList<>(selectedObject.getStatesList());
+        List<State> newStates = states.getTarget();        
         oldStates.removeAll(newStates);     //определяем, какие состояния нужно удалить
+        
         Set<String> errors = new HashSet<>();
         if (!newStates.contains(startState)){
             String message = MessageFormat.format(MsgUtils.getMessageLabel("StartStateNotPresentinListsStates"), new Object[]{startState.getName()});
@@ -183,7 +184,7 @@ public class MetadatesBean extends BaseViewBean{
             return;
         }
         oldStates.stream().forEach(state->deleteStateRigts(state));
-        selectedObject.setStatesList(states.getTarget());
+        selectedObject.setStatesList(newStates);        
         metadatesFacade.edit(selectedObject);
         rightsDef.reloadDefaultRight(selectedObject);
         rights = null;
@@ -198,11 +199,13 @@ public class MetadatesBean extends BaseViewBean{
      */
     public void onSelectedItem(SelectEvent event){
         if (event.getObject() == null) return;        
-        selectedObject = ((Metadates) event.getObject());
-        states = null;
+        selectedObject = ((Metadates) event.getObject());         
         rights = null;
         objectStates =  selectedObject.getStatesList();
-        startState = selectedObject.getStateForNewObj();
+        startState = selectedObject.getStateForNewObj();        
+        List<State> allStates = stateFacade.findAll();        
+        allStates.removeAll(selectedObject.getStatesList());
+        states = new DualListModel<>(allStates, objectStates);
     } 
       
     public String getBundleName(Metadates metadate){
@@ -235,12 +238,6 @@ public class MetadatesBean extends BaseViewBean{
     }
 
     public DualListModel<State> getStates() {
-        if (selectedObject != null && states == null){
-            List<State> allStates = stateFacade.findAll();
-            List<State> objectStates = selectedObject.getStatesList();
-            allStates.removeAll(objectStates);
-            states = new DualListModel<>(allStates, objectStates);
-        }
         return states;
     }
     public void setStates(DualListModel <State> states) {

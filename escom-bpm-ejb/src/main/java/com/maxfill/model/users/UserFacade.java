@@ -205,7 +205,29 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         UserGroups freshGroup = userGroupsFacade.find(group.getId());
         return freshGroup.getDetailItems().stream().filter(user -> !user.isDeleted()).count();        
     }
-     
+    
+    
+    /**
+     * Отбирает пользователей, у которых не назначена штатная единица 
+     * @param currentUser
+     * @return 
+     */ 
+    public List<User> findFreeStaffUsers(User currentUser) {                        
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(itemClass);
+        Root c = cq.from(itemClass);
+        Predicate crit1 = builder.equal(c.get("actual"), true);
+        Predicate crit2 = builder.equal(c.get("deleted"), false);
+        Predicate crit3 = builder.isNull(c.get(User_.staff));        
+        cq.select(c).where(builder.and(crit1, crit2, crit3));
+        cq.orderBy(orderBuilder(builder, c));
+        TypedQuery<User> query = getEntityManager().createQuery(cq);       
+        return query.getResultStream()     
+                    .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
+                    .collect(Collectors.toList());
+    }
+    
     /* Ищет пользователя по login исключая ID указанного пользователя  */
     public List<User> findByLoginExcludeId(String login, Integer userId){
         getEntityManager().getEntityManagerFactory().getCache().evict(User.class);

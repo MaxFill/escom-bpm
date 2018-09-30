@@ -3,7 +3,6 @@ package com.maxfill;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.jcr.Repository;
@@ -22,13 +21,14 @@ import java.util.logging.Logger;
 @LocalBean
 public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
-    private static final String REPO_NAME = "artifacts";
-    private static final String REPO_FULL_NAME = "modeshape-webdav/" + REPO_NAME + "/other/";
+    //private static final String REPO_NAME = "artifacts";
+    //private static final String REPO_FULL_NAME = "modeshape-webdav/" + REPO_NAME + "/other/";
     private static AtomicInteger smsMaxCount;
 
+/*
     @Resource(mappedName="java:/jcr/"+REPO_NAME)
     private javax.jcr.Repository repository;
-
+*/
     private String serverAppURL;
     private String serverOS;
     private Locale serverLocale;
@@ -171,9 +171,11 @@ public class Configuration {
     public String getDefaultSmtpPort() {
         return defaultSmtpPort;
     }
+    /*
     public String getRepositoryName(){
         return REPO_FULL_NAME;
     }
+*/
     public Key getSignKey() {
         return signKey;
     }
@@ -218,11 +220,11 @@ public class Configuration {
     public Integer getSmsMaxCount() {
         return smsMaxCount.get();
     }
-
+/*
     public Repository getRepository() {
         return repository;
     }
- 
+*/ 
     private void initServerLocale(String nameLocale){
         serverLocale = new Locale(nameLocale);
     }

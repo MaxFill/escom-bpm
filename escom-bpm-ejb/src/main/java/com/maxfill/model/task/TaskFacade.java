@@ -63,7 +63,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         Task task = createItem(author, null, owner, new HashMap<>());        
         task.setName(process.getOwner().getDefaultTaskName());  
         task.setTaskLinkUID(taskLinkUID);
-        if (process.getOwner().getDefaultDeltaDeadLine() > 0){
+        if (process.getOwner().getDefaultDeltaDeadLine() != null && process.getOwner().getDefaultDeltaDeadLine() > 0){
             task.setDeltaDeadLine(process.getOwner().getDefaultDeltaDeadLine());
             task.setDeadLineType("delta");
         } else {
