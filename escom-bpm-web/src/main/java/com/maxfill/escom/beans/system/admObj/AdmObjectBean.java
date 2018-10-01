@@ -5,7 +5,7 @@ import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 

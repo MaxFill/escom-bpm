@@ -2,7 +2,7 @@ package com.maxfill.escom.beans.users.sessions;
 
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.model.users.sessions.UsersSessions;
+import com.maxfill.model.core.sessions.UsersSessions;
 
 import java.util.ArrayList;
 import java.util.List;

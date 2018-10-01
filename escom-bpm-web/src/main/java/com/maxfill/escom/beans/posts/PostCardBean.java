@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.posts;
 
-import com.maxfill.model.posts.PostFacade;
-import com.maxfill.model.posts.Post;
+import com.maxfill.model.basedict.post.PostFacade;
+import com.maxfill.model.basedict.post.Post;
 import com.maxfill.escom.beans.core.BaseCardBean;
 
 import javax.ejb.EJB;

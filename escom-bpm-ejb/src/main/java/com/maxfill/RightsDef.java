@@ -1,9 +1,9 @@
 package com.maxfill;
 
-import com.maxfill.model.metadates.MetadatesFacade;
-import com.maxfill.model.rights.RightFacade;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Rights;
+import com.maxfill.model.core.metadates.MetadatesFacade;
+import com.maxfill.model.core.rights.RightFacade;
+import com.maxfill.model.core.metadates.Metadates;
+import com.maxfill.model.core.rights.Rights;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;

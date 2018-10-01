@@ -1,6 +1,7 @@
 package com.maxfill.model;
 
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.user.User;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;

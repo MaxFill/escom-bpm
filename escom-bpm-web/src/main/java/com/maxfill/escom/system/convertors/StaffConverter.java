@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.basedict.staff.Staff;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("staffConvertor")

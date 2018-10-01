@@ -5,7 +5,7 @@ import com.maxfill.model.Dict;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.facade.BaseLazyFacade;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.util.ArrayList;
 import java.util.Comparator;
 import static java.util.Comparator.naturalOrder;

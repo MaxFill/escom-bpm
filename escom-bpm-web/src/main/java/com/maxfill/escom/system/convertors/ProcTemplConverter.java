@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.process.templates.ProcTempl;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
 import javax.faces.convert.FacesConverter;
 
 /**

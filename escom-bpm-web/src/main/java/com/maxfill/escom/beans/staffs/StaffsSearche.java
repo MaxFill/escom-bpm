@@ -6,7 +6,7 @@
 package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

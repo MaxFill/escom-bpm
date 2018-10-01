@@ -1,12 +1,12 @@
 package com.maxfill.escom.beans.departaments;
 
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.DepartmentFacade;
+import com.maxfill.model.basedict.department.Department;
+import com.maxfill.model.basedict.department.DepartmentFacade;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
-import com.maxfill.model.companies.Company;
+import com.maxfill.model.basedict.company.Company;
 import com.maxfill.escom.beans.staffs.StaffBean;
-import com.maxfill.model.states.State;
+import com.maxfill.model.core.states.State;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;

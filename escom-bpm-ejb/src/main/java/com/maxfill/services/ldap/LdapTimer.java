@@ -1,7 +1,7 @@
 package com.maxfill.services.ldap;
 
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.UserFacade;
+import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.*;
 import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.utils.DateUtils;

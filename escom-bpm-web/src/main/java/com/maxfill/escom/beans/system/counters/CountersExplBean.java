@@ -2,8 +2,8 @@ package com.maxfill.escom.beans.system.counters;
 
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
-import com.maxfill.model.numPuttern.counter.CounterFacade;
-import com.maxfill.model.numPuttern.counter.Counter;
+import com.maxfill.model.basedict.numeratorPattern.counter.CounterFacade;
+import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
 import java.util.List;
 import java.util.Objects;
 import javax.ejb.EJB;

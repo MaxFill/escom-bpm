@@ -1,8 +1,8 @@
 package com.maxfill.escom.utils;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.folders.FolderNavigation;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.folder.FolderNavigation;
+import com.maxfill.model.basedict.user.User;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Deque;

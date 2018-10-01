@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.docs.docsTypes;
 
-import com.maxfill.model.docs.docsTypes.DocTypeFacade;
-import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.basedict.docType.DocTypeFacade;
+import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang.StringUtils;

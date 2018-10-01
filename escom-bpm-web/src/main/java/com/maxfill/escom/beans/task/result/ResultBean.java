@@ -2,9 +2,9 @@ package com.maxfill.escom.beans.task.result;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.model.task.result.ResultFacade;
+import com.maxfill.model.basedict.result.ResultFacade;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.task.result.Result;
+import com.maxfill.model.basedict.result.Result;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

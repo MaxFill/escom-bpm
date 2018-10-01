@@ -1,7 +1,7 @@
 package com.maxfill.services.numerators;
 
-import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
+import com.maxfill.model.basedict.BaseDict;
 import java.util.Date;
 import java.util.Map;
 

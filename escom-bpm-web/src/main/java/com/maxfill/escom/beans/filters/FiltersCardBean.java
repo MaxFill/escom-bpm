@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.filters;
 
-import com.maxfill.model.filters.Filter;
-import com.maxfill.model.filters.FiltersFacade;
+import com.maxfill.model.basedict.filter.Filter;
+import com.maxfill.model.basedict.filter.FiltersFacade;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;

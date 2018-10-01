@@ -7,7 +7,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.attaches.AttacheFacade;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.webDav.WebDavRemainder;
 import com.maxfill.utils.DateUtils;
 import org.primefaces.event.SelectEvent;

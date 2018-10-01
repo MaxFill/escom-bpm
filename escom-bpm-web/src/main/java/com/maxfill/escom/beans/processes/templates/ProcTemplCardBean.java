@@ -2,8 +2,8 @@ package com.maxfill.escom.beans.processes.templates;
 
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.process.templates.ProcTempl;
-import com.maxfill.model.process.templates.ProcessTemplFacade;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
+import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;

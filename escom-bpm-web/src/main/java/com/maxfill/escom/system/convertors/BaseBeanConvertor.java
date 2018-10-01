@@ -2,7 +2,7 @@ package com.maxfill.escom.system.convertors;
 
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;

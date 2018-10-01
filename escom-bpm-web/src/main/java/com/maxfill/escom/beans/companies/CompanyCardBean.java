@@ -1,11 +1,11 @@
 package com.maxfill.escom.beans.companies;
 
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.companies.CompanyFacade;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.company.CompanyFacade;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.departaments.DepartmentBean;
-import com.maxfill.model.states.State;
+import com.maxfill.model.core.states.State;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;

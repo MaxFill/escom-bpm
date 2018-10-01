@@ -6,9 +6,9 @@
 package com.maxfill.escom.beans.partners;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.partners.Partner;
-import com.maxfill.model.partners.groups.PartnerGroups;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.partner.Partner;
+import com.maxfill.model.basedict.partnerGroups.PartnerGroups;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

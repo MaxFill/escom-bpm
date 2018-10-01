@@ -1,6 +1,6 @@
 package com.maxfill.services.licenses;
 
-import com.maxfill.model.licence.Licence;
+import com.maxfill.model.core.licence.Licence;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.HWDiskStore;

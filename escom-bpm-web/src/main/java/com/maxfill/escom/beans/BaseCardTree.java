@@ -4,10 +4,10 @@ import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.rights.Right;
-import com.maxfill.model.rights.Rights;
-import com.maxfill.model.states.State;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.core.rights.Right;
+import com.maxfill.model.core.rights.Rights;
+import com.maxfill.model.core.states.State;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;

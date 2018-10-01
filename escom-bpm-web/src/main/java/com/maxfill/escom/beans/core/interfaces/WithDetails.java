@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.core.interfaces;
 
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.util.List;
 import org.primefaces.event.SelectEvent;
 

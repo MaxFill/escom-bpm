@@ -1,6 +1,6 @@
 package com.maxfill.services.notification;
 
-import com.maxfill.model.task.Task;
+import com.maxfill.model.basedict.task.Task;
 import com.maxfill.services.Services;
 
 /**

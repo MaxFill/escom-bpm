@@ -1,7 +1,7 @@
 package com.maxfill.services.worktime;
 
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.staff.Staff;
 import java.util.Date;
 import java.util.Locale;
 

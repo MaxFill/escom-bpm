@@ -2,10 +2,10 @@
 package com.maxfill.escom.beans.docs;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.partners.Partner;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.docType.DocType;
+import com.maxfill.model.basedict.partner.Partner;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

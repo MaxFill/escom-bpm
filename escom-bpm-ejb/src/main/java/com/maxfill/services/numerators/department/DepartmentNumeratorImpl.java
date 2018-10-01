@@ -1,9 +1,9 @@
 package com.maxfill.services.numerators.department;
 
-import com.maxfill.model.departments.DepartmentFacade;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.departments.Department;
+import com.maxfill.model.basedict.department.DepartmentFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.department.Department;
 import com.maxfill.services.numerators.NumeratorBase;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;

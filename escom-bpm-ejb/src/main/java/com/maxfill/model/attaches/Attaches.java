@@ -1,8 +1,8 @@
 package com.maxfill.model.attaches;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.doc.Doc;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.EscomUtils;
 import java.io.File;
 import java.io.Serializable;

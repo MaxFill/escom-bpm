@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.basedict.docType.DocType;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("docsTypesConvertor")

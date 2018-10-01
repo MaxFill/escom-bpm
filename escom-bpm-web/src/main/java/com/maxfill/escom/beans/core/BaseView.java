@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.core;
 
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.util.Map;
 
 /**

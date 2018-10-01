@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans;
 
 import com.maxfill.escom.beans.core.BaseCardBean;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import org.primefaces.event.SelectEvent;
 
 import java.util.ArrayList;

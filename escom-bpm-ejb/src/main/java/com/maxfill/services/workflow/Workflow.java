@@ -1,12 +1,24 @@
 package com.maxfill.services.workflow;
 
-import com.maxfill.model.process.schemes.Scheme;
-import com.maxfill.model.process.schemes.elements.*;
-import com.maxfill.model.process.Process;
-import com.maxfill.model.process.timers.ProcTimer;
-import com.maxfill.model.task.Task;
-import com.maxfill.model.task.result.Result;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
+import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
+import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
+import com.maxfill.model.basedict.process.schemes.elements.ConditionElem;
+import com.maxfill.model.basedict.process.schemes.elements.ConnectorElem;
+import com.maxfill.model.basedict.process.schemes.elements.LogicElem;
+import com.maxfill.model.basedict.process.schemes.elements.TimerElem;
+import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
+import com.maxfill.model.basedict.process.schemes.elements.ProcedureElem;
+import com.maxfill.model.basedict.process.schemes.elements.StatusElem;
+import com.maxfill.model.basedict.process.schemes.elements.MessageElem;
+import com.maxfill.model.basedict.process.schemes.elements.EnterElem;
+import com.maxfill.model.basedict.process.schemes.elements.StartElem;
+import com.maxfill.model.basedict.process.schemes.Scheme;
+import com.maxfill.model.basedict.process.Process;
+import com.maxfill.model.basedict.process.timers.ProcTimer;
+import com.maxfill.model.basedict.task.Task;
+import com.maxfill.model.basedict.result.Result;
+import com.maxfill.model.basedict.user.User;
 import java.util.Map;
 
 import javax.ejb.Local;

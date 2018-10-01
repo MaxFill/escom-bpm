@@ -2,7 +2,7 @@ package com.maxfill.escom.system.convertors;
 
 import com.maxfill.escom.beans.processes.elements.ProcedureBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.process.procedures.Procedure;
+import com.maxfill.model.basedict.process.procedures.Procedure;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

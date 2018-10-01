@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.companies.Company;
+import com.maxfill.model.basedict.company.Company;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("companyConvertor")

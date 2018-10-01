@@ -1,6 +1,6 @@
 package com.maxfill.model;
 
-import com.maxfill.model.task.result.Result;
+import com.maxfill.model.basedict.result.Result;
 import java.util.List;
 
 /**

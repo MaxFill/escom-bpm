@@ -3,7 +3,7 @@ package com.maxfill.escom.system.validator;
 import com.maxfill.escom.beans.users.UserBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.users.UserFacade;
+import com.maxfill.model.basedict.user.UserFacade;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.faces.application.FacesMessage;

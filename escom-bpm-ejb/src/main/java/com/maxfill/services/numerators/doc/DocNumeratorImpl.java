@@ -1,11 +1,11 @@
 package com.maxfill.services.numerators.doc;
 
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.docs.docsTypes.DocTypeFacade;
-import com.maxfill.model.numPuttern.NumeratorPattern;
-import com.maxfill.model.numPuttern.counter.Counter;
+import com.maxfill.model.basedict.doc.Doc;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.docType.DocType;
+import com.maxfill.model.basedict.docType.DocTypeFacade;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
+import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
 import com.maxfill.services.numerators.NumeratorBase;
 import com.maxfill.utils.EscomUtils;
 import java.util.Date;

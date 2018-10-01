@@ -2,12 +2,12 @@ package com.maxfill.escom.beans.staffs;
 
 import com.maxfill.dictionary.DictPrintTempl;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.staffs.StaffFacade;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.posts.Post;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.staff.StaffFacade;
+import com.maxfill.model.basedict.department.Department;
+import com.maxfill.model.basedict.post.Post;
+import com.maxfill.model.basedict.staff.Staff;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.DateUtils;
 import org.primefaces.event.SelectEvent;
 

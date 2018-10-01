@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("statusesDocConvertor")

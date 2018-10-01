@@ -2,9 +2,9 @@ package com.maxfill.escom.beans.users.assistants;
 
 import com.maxfill.escom.beans.BaseCardBeanGroups;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.assistants.Assistant;
-import com.maxfill.model.users.assistants.AssistantFacade;
+import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.assistant.Assistant;
+import com.maxfill.model.basedict.assistant.AssistantFacade;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;

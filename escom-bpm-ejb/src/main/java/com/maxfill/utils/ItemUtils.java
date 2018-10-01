@@ -1,7 +1,7 @@
 package com.maxfill.utils;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.folders.Folder;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.folder.Folder;
 import org.apache.commons.lang3.StringUtils;
 import java.text.MessageFormat;
 import java.util.*;

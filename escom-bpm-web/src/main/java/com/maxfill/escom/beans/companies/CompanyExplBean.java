@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.companies;
 
 import com.maxfill.escom.beans.explorer.ExplorerTreeBean;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import org.primefaces.model.TreeNode;
 
 import org.omnifaces.cdi.ViewScoped;

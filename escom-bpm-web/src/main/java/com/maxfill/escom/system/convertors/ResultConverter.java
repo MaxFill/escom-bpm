@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.task.result.Result;
+import com.maxfill.model.basedict.result.Result;
 import javax.faces.convert.FacesConverter;
 
 /**

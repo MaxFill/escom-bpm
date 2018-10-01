@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.processes.elements;
 
-import com.maxfill.model.process.conditions.ConditionFacade;
-import com.maxfill.model.process.conditions.Condition;
+import com.maxfill.model.basedict.process.conditions.ConditionFacade;
+import com.maxfill.model.basedict.process.conditions.Condition;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;

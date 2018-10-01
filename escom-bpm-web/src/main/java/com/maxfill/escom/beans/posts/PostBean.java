@@ -3,9 +3,9 @@ package com.maxfill.escom.beans.posts;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.posts.PostFacade;
-import com.maxfill.model.staffs.StaffFacade;
-import com.maxfill.model.posts.Post;
+import com.maxfill.model.basedict.post.PostFacade;
+import com.maxfill.model.basedict.staff.StaffFacade;
+import com.maxfill.model.basedict.post.Post;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

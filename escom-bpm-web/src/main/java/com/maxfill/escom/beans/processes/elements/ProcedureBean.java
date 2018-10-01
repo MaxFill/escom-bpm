@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.processes.elements;
 
-import com.maxfill.model.process.procedures.Procedure;
-import com.maxfill.model.process.procedures.ProcedureFacade;
+import com.maxfill.model.basedict.process.procedures.Procedure;
+import com.maxfill.model.basedict.process.procedures.ProcedureFacade;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;

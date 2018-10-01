@@ -2,7 +2,7 @@ package com.maxfill.escom.system.convertors;
 
 import com.maxfill.escom.beans.system.states.StateBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.states.State;
+import com.maxfill.model.core.states.State;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

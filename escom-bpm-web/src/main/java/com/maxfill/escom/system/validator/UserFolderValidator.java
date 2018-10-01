@@ -3,9 +3,9 @@ package com.maxfill.escom.system.validator;
 import com.maxfill.escom.beans.folders.FoldersBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.folders.FoldersFacade;
-import com.maxfill.model.folders.Folder;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.folder.FoldersFacade;
+import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.user.User;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;

@@ -2,14 +2,14 @@ package com.maxfill.escom.beans.departaments;
 
 import com.maxfill.dictionary.DictExplForm;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.model.departments.Department;
-import com.maxfill.model.departments.DepartmentFacade;
+import com.maxfill.model.basedict.department.Department;
+import com.maxfill.model.basedict.department.DepartmentFacade;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.companies.CompanyBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.staffs.StaffBean;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.companies.Company;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.company.Company;
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
 import java.text.MessageFormat;
 import javax.inject.Named;
@@ -17,7 +17,7 @@ import java.util.*;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.basedict.staff.Staff;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 

@@ -4,8 +4,8 @@ package com.maxfill.escom.beans.system.numPuttern;
 import com.maxfill.dictionary.DictNumerator;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.numPuttern.NumeratorPatternFacade;
-import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPatternFacade;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 
 import java.util.ArrayList;

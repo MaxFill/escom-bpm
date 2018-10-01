@@ -1,7 +1,7 @@
 package com.maxfill.escom.system;
 
 import com.google.gson.Gson;
-import com.maxfill.model.users.UserFacade;
+import com.maxfill.model.basedict.user.UserFacade;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;

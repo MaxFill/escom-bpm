@@ -1,8 +1,8 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
+import com.maxfill.model.core.states.State;
+import com.maxfill.model.basedict.user.User;
 import org.apache.commons.lang3.StringUtils;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;

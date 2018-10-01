@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("usersConvertor")

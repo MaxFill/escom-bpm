@@ -1,7 +1,7 @@
 package com.maxfill.services.worktime;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import java.io.Serializable;

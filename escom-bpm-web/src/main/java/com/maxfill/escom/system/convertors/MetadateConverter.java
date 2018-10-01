@@ -2,7 +2,7 @@ package com.maxfill.escom.system.convertors;
 
 import com.maxfill.escom.beans.system.metadata.MetadatesBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
-import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.core.metadates.Metadates;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

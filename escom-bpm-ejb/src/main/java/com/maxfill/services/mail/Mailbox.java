@@ -1,7 +1,7 @@
 package com.maxfill.services.mail;
 
 import com.maxfill.model.Dict;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;

@@ -1,9 +1,9 @@
 package com.maxfill.services.attaches;
 
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.folders.Folder;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.doc.Doc;
+import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.user.User;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

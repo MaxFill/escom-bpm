@@ -1,13 +1,13 @@
 package com.maxfill.escom.beans.docs.docsTypes.docTypeGroups;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroupsFacade;
-import com.maxfill.model.docs.docsTypes.docTypeGroups.DocTypeGroups;
+import com.maxfill.model.basedict.docTypeGroups.DocTypeGroupsFacade;
+import com.maxfill.model.basedict.docTypeGroups.DocTypeGroups;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.docs.docsTypes.DocTypeFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.docType.DocType;
+import com.maxfill.model.basedict.docType.DocTypeFacade;
 import java.util.ArrayList;
 
 import javax.ejb.EJB;

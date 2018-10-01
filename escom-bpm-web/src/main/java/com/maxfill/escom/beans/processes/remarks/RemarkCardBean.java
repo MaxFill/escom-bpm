@@ -1,8 +1,8 @@
 package com.maxfill.escom.beans.processes.remarks;
 
 import com.maxfill.escom.beans.core.BaseCardBean;
-import com.maxfill.model.process.remarks.Remark;
-import com.maxfill.model.process.remarks.RemarkFacade;
+import com.maxfill.model.basedict.remark.Remark;
+import com.maxfill.model.basedict.remark.RemarkFacade;
 
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;

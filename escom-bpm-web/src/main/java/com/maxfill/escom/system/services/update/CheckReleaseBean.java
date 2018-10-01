@@ -4,7 +4,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.core.Release;
-import com.maxfill.model.licence.Licence;
+import com.maxfill.model.core.licence.Licence;
 import com.maxfill.services.update.UpdateInfo;
 import com.maxfill.utils.DateUtils;
 import java.io.IOException;

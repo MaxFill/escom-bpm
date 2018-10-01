@@ -1,9 +1,9 @@
 package com.maxfill.services.numerators;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.numPuttern.counter.Counter;
-import com.maxfill.model.numPuttern.counter.CounterFacade;
-import com.maxfill.model.numPuttern.NumeratorPattern;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.numeratorPattern.counter.Counter;
+import com.maxfill.model.basedict.numeratorPattern.counter.CounterFacade;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.utils.EscomUtils;
 import java.util.Date;
 import java.util.List;

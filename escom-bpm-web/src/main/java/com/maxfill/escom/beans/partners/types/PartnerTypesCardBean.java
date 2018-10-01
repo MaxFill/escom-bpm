@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.partners.types;
 
-import com.maxfill.model.partners.types.PartnerTypesFacade;
-import com.maxfill.model.partners.types.PartnerTypes;
+import com.maxfill.model.basedict.partnerTypes.PartnerTypesFacade;
+import com.maxfill.model.basedict.partnerTypes.PartnerTypes;
 import com.maxfill.escom.beans.core.BaseCardBean;
 
 import javax.ejb.EJB;

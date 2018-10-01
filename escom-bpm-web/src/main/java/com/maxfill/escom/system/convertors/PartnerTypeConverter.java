@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.partners.types.PartnerTypes;
+import com.maxfill.model.basedict.partnerTypes.PartnerTypes;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("partnerTypesConvertor")

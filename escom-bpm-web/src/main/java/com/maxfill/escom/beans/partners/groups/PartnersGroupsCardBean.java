@@ -1,10 +1,10 @@
 package com.maxfill.escom.beans.partners.groups;
 
 import com.maxfill.dictionary.DictFrmName;
-import com.maxfill.model.partners.groups.PartnersGroupsFacade;
-import com.maxfill.model.partners.groups.PartnerGroups;
+import com.maxfill.model.basedict.partnerGroups.PartnersGroupsFacade;
+import com.maxfill.model.basedict.partnerGroups.PartnerGroups;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.model.partners.Partner;
+import com.maxfill.model.basedict.partner.Partner;
 import java.util.List;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;

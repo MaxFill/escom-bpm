@@ -2,8 +2,8 @@ package com.maxfill.escom.beans.system.statuses;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
-import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
-import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
+import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;

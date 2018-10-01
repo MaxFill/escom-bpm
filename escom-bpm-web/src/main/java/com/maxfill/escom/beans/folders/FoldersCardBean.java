@@ -1,14 +1,14 @@
 package com.maxfill.escom.beans.folders;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.folders.FoldersFacade;
-import com.maxfill.model.folders.Folder;
+import com.maxfill.model.basedict.folder.FoldersFacade;
+import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.docs.DocBean;
-import com.maxfill.model.docs.docsTypes.DocType;
-import com.maxfill.model.partners.Partner;
-import com.maxfill.model.states.State;
+import com.maxfill.model.basedict.docType.DocType;
+import com.maxfill.model.basedict.partner.Partner;
+import com.maxfill.model.core.states.State;
 import org.primefaces.event.SelectEvent;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;

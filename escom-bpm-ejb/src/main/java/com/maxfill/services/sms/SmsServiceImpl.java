@@ -1,7 +1,7 @@
 package com.maxfill.services.sms;
 
 import com.maxfill.Configuration;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.EscomUtils;
 import org.apache.commons.lang3.StringUtils;
 

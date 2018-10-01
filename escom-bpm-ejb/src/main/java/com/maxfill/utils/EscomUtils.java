@@ -1,7 +1,7 @@
 package com.maxfill.utils;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.metadates.Metadates;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.core.metadates.Metadates;
 import com.maxfill.services.update.ReleaseInfo;
 import com.maxfill.services.update.ReleaseInfo_Service;
 import org.apache.commons.lang.StringUtils;

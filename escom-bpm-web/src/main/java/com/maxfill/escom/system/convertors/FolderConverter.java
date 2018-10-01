@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.folders.Folder;
+import com.maxfill.model.basedict.folder.Folder;
 import javax.faces.convert.FacesConverter;
 
 @FacesConverter("folderConvertor")

@@ -1,6 +1,6 @@
 package com.maxfill.services.searche;
 
-import com.maxfill.model.docs.Doc;
+import com.maxfill.model.basedict.doc.Doc;
 
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -2,12 +2,12 @@ package com.maxfill.escom.system.servlets;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.DocFacade;
-import com.maxfill.model.folders.FoldersFacade;
-import com.maxfill.model.users.UserFacade;
-import com.maxfill.model.docs.Doc;
-import com.maxfill.model.folders.Folder;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.doc.DocFacade;
+import com.maxfill.model.basedict.folder.FoldersFacade;
+import com.maxfill.model.basedict.user.UserFacade;
+import com.maxfill.model.basedict.doc.Doc;
+import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.attaches.AttacheService;
 import java.io.File;
 import java.io.IOException;

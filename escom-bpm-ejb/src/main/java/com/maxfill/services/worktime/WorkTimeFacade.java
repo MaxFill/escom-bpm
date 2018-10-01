@@ -1,7 +1,7 @@
 package com.maxfill.services.worktime;
 
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.staffs.Staff;
+import com.maxfill.model.basedict.staff.Staff;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;

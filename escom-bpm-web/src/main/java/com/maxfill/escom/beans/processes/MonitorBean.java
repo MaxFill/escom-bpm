@@ -1,6 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
-import com.maxfill.model.process.Process;
+import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
@@ -8,13 +8,13 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.process.ProcessFacade;
-import com.maxfill.model.states.StateFacade;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.states.State;
-import com.maxfill.model.task.Task;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.process.ProcessFacade;
+import com.maxfill.model.core.states.StateFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.staff.Staff;
+import com.maxfill.model.core.states.State;
+import com.maxfill.model.basedict.task.Task;
+import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;

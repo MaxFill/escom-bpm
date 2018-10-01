@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.core;
 
 import static com.maxfill.escom.utils.MsgUtils.getMessageLabel;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.text.MessageFormat;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;

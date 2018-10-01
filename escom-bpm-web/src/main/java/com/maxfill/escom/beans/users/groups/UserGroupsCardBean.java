@@ -1,9 +1,9 @@
 package com.maxfill.escom.beans.users.groups;
 
-import com.maxfill.model.users.groups.UserGroups;
-import com.maxfill.model.users.groups.UserGroupsFacade;
+import com.maxfill.model.basedict.userGroups.UserGroups;
+import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.escom.beans.BaseCardBeanGroups;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 import java.util.List;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;

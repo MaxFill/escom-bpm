@@ -2,7 +2,7 @@ package com.maxfill.services.searche;
 
 import com.maxfill.Configuration;
 import com.maxfill.model.attaches.Attaches;
-import com.maxfill.model.docs.Doc;
+import com.maxfill.model.basedict.doc.Doc;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;

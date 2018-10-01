@@ -1,6 +1,6 @@
 package com.maxfill.escom.system.convertors;
 
-import com.maxfill.model.posts.Post;
+import com.maxfill.model.basedict.post.Post;
 
 import javax.faces.convert.FacesConverter;
 

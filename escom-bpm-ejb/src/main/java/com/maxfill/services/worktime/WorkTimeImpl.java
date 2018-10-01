@@ -1,8 +1,8 @@
 package com.maxfill.services.worktime;
 
-import com.maxfill.model.companies.Company;
-import com.maxfill.model.staffs.Staff;
-import com.maxfill.model.staffs.StaffFacade;
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.staff.Staff;
+import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

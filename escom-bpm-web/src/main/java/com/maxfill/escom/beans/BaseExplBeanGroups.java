@@ -2,7 +2,7 @@ package com.maxfill.escom.beans;
 
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import java.text.MessageFormat;
 import java.util.Set;
 

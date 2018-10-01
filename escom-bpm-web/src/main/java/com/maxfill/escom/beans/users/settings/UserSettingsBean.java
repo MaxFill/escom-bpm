@@ -3,8 +3,8 @@ package com.maxfill.escom.beans.users.settings;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.users.UserFacade;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.UserFacade;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.utils.EscomUtils;
 
 import java.security.NoSuchAlgorithmException;

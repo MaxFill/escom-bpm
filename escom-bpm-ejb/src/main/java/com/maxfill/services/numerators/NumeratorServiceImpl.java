@@ -1,6 +1,6 @@
 package com.maxfill.services.numerators;
 
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import javax.ejb.Stateless;
 
 /**

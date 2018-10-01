@@ -1,12 +1,12 @@
 package com.maxfill.facade;
 
 import com.google.gson.Gson;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.BaseLogItems;
-import com.maxfill.model.messages.UserMessagesFacade;
-import com.maxfill.model.states.BaseStateItem;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.groups.UserGroups;
+import com.maxfill.model.core.messages.UserMessagesFacade;
+import com.maxfill.model.core.states.BaseStateItem;
+import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
 import java.util.Collections;

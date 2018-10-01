@@ -1,6 +1,6 @@
 package com.maxfill.services.sms;
 
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.user.User;
 
 public interface SmsService{
     String generatePinCode();

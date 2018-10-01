@@ -2,14 +2,14 @@ package com.maxfill.escom.beans.system.rights;
 
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.rights.RightFacade;
-import com.maxfill.model.users.UserFacade;
-import com.maxfill.model.users.groups.UserGroupsFacade;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Right;
-import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.groups.UserGroups;
+import com.maxfill.model.core.rights.RightFacade;
+import com.maxfill.model.basedict.user.UserFacade;
+import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
+import com.maxfill.model.core.metadates.Metadates;
+import com.maxfill.model.core.rights.Right;
+import com.maxfill.model.core.states.State;
+import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;

@@ -3,19 +3,19 @@ package com.maxfill.escom.beans.system.metadata;
 import com.maxfill.RightsDef;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.metadates.MetadatesFacade;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.rights.Right;
-import com.maxfill.model.rights.RightFacade;
-import com.maxfill.model.states.State;
+import com.maxfill.model.core.metadates.MetadatesFacade;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.core.metadates.Metadates;
+import com.maxfill.model.core.rights.Right;
+import com.maxfill.model.core.rights.RightFacade;
+import com.maxfill.model.core.states.State;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.system.rights.RightsBean;
 import com.maxfill.facade.CommonFacade;
-import com.maxfill.model.states.StateFacade;
-import com.maxfill.model.users.User;
-import com.maxfill.model.users.groups.UserGroups;
+import com.maxfill.model.core.states.StateFacade;
+import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TransferEvent;
@@ -29,6 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.primefaces.model.DualListModel;
 
 /* Контроллер формы обозревателя настройки объектов */
@@ -77,7 +78,7 @@ public class MetadatesBean extends BaseViewBean{
         rightFacade.edit(right);
         MsgUtils.succesMsg("SaveСhangesForChangesTakeEffect");
     }
-
+    
     /**
      * Добавление права доступа
      * @param state
@@ -129,18 +130,13 @@ public class MetadatesBean extends BaseViewBean{
      * Проверка возможности удалить состояние у объекта
      * @param state
      */
-    private void checkStateBeforeDelete(State state,  Set<String> errors){
-        try {
-            if (Objects.equals(state, startState)){
-                errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
-            }            
-            if (commonFacade.countItemsByState(Class.forName(selectedObject.getClass().getName()), state) > 0){
-                String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
-                errors.add(message);
-            }
-        } catch (ClassNotFoundException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            MsgUtils.errorMsg("Error");
+    private void checkStateBeforeDelete(State state,  Set<String> errors){        
+        if (Objects.equals(state, startState)){
+            errors.add(MsgUtils.getMessageLabel("CantDeleteStartState"));
+        }
+        if (commonFacade.countItemsByState(selectedObject, state) > 0){
+            String message = MessageFormat.format(MsgUtils.getMessageLabel("CantRemoveUsedState"), new Object[]{state.getName()});
+            errors.add(message);
         }
     }
 
@@ -201,6 +197,11 @@ public class MetadatesBean extends BaseViewBean{
         if (event.getObject() == null) return;        
         selectedObject = ((Metadates) event.getObject());         
         rights = null;
+        try {            
+            Class.forName("com.maxfill.model.basedict." + WordUtils.uncapitalize(selectedObject.getObjectName()) + "." + selectedObject.getObjectName());
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MetadatesBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
         objectStates =  selectedObject.getStatesList();
         startState = selectedObject.getStateForNewObj();        
         List<State> allStates = stateFacade.findAll();        

@@ -1,8 +1,8 @@
 package com.maxfill.escom.beans.explorer;
 
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.states.State;
-import com.maxfill.model.users.User;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.core.states.State;
+import com.maxfill.model.basedict.user.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

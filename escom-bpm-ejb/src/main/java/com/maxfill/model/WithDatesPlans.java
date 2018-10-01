@@ -1,7 +1,7 @@
 package com.maxfill.model;
 
 import com.maxfill.dictionary.DictStates;
-import com.maxfill.model.states.BaseStateItem;
+import com.maxfill.model.core.states.BaseStateItem;
 import java.util.Date;
 
 /**

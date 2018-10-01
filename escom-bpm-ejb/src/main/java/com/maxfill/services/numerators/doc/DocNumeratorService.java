@@ -1,6 +1,6 @@
 package com.maxfill.services.numerators.doc;
 
-import com.maxfill.model.docs.Doc;
+import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.services.numerators.NumeratorService;
 import java.util.Set;
 

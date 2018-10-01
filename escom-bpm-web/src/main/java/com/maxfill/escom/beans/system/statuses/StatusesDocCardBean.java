@@ -1,11 +1,11 @@
 package com.maxfill.escom.beans.system.statuses;
 
 import com.maxfill.escom.utils.MsgUtils;
-import com.maxfill.model.docs.docStatuses.StatusesDocFacade;
-import com.maxfill.model.statuses.StatusesDoc;
+import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
+import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.docsTypes.DocTypeBean;
-import com.maxfill.model.docs.docsTypes.DocType;
+import com.maxfill.model.basedict.docType.DocType;
 import java.util.List;
 
 import javax.ejb.EJB;

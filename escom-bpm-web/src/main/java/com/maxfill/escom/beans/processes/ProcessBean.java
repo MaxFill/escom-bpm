@@ -3,10 +3,10 @@ package com.maxfill.escom.beans.processes;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.explorer.SearcheModel;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
-import com.maxfill.model.BaseDict;
-import com.maxfill.model.process.Process;
-import com.maxfill.model.process.ProcessFacade;
-import com.maxfill.model.process.types.ProcessType;
+import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.process.Process;
+import com.maxfill.model.basedict.process.ProcessFacade;
+import com.maxfill.model.basedict.processType.ProcessType;
 import org.primefaces.model.TreeNode;
 
 import javax.ejb.EJB;

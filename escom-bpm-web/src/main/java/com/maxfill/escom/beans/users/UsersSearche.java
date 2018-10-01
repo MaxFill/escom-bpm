@@ -1,7 +1,7 @@
 package com.maxfill.escom.beans.users;
 
 import com.maxfill.escom.beans.explorer.SearcheModel;
-import com.maxfill.model.BaseDict;
+import com.maxfill.model.basedict.BaseDict;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;

@@ -1,9 +1,9 @@
 package com.maxfill.services.favorites;
 
-import com.maxfill.model.favorites.FavoriteObj;
+import com.maxfill.model.core.favorites.FavoriteObj;
 import com.maxfill.facade.BaseFacade;
-import com.maxfill.model.metadates.Metadates;
-import com.maxfill.model.users.User;
+import com.maxfill.model.core.metadates.Metadates;
+import com.maxfill.model.basedict.user.User;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
