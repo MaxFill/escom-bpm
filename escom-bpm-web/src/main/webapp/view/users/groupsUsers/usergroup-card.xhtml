@@ -7,10 +7,14 @@
 
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateSubGroup}">
-            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true"/>
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="true">
+                <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
         </p:column>
         <p:column headerText="#{bundle.CreatePartners}">
-            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true"/>
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="true">
+                <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
         </p:column>
     </ui:define>
 

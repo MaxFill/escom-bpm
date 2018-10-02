@@ -39,8 +39,11 @@ public class Condition implements Serializable, Dict{
     @Column(name = "Method")
     private String method;
     
-    /* gets & sets */
+    @Column(name = "Params")
+    private String paramJson;
     
+    /* gets & sets */
+        
     @Override
     public Integer getId() {
         return id;
@@ -50,6 +53,13 @@ public class Condition implements Serializable, Dict{
         this.id = id;
     }
 
+    public String getParamJson() {
+        return paramJson;
+    }
+    public void setParamJson(String paramJson) {
+        this.paramJson = paramJson;
+    }
+    
     public String getName() {
         return name;
     }

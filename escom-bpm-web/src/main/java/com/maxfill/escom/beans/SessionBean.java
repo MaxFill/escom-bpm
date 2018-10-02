@@ -819,6 +819,14 @@ public class SessionBean implements Serializable{
         return notifMessages;
     }
 
+    /**
+     * Возвращает папку текущего пользователя
+     * @return 
+     */
+    public Folder getUserFolder(){
+        return getCurrentUser().getInbox();
+    }
+    
     public User getCurrentUser() {
         return currentUser;
     }

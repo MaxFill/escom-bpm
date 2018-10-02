@@ -24,4 +24,22 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="conditions_add_Params" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="conditions" columnName="Params" />
+            </not>
+        </preConditions>
+        <addColumn tableName="conditions">
+            <column name="Params" type="varchar(1024)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="doc_change_right_role_owner_state_valid" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT conditions(Id, Name, Method) VALUES (4, N'AgreedUponEmployee', N'agreedUponEmployee');
+        </sql>
+    </changeSet>
 </databaseChangeLog> 

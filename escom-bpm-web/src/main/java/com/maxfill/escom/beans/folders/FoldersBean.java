@@ -67,6 +67,7 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
     @Override
     protected void checkAllowedDeleteItem(Folder folder, Set<String> errors){
         super.checkAllowedDeleteItem(folder, errors);
+        checkSystemFolder(folder, errors);
         if (!userFacade.findUsersByInbox(folder).isEmpty()){
             Object[] messageParameters = new Object[]{folder.getName()};
             String error = MessageFormat.format(MsgUtils.getMessageLabel("FolderUsedInUsers"), messageParameters);
@@ -74,6 +75,27 @@ public class FoldersBean extends BaseTreeBean<Folder, Folder> {
         }
     }
 
+    /**
+     * Проверка возможности переноса объекта
+     * @param folder
+     * @param errors
+     * @return 
+     */
+    @Override
+    protected boolean checkCanMoveItem(Folder folder, Set<String> errors){
+        return checkSystemFolder(folder, errors);
+    }
+    
+    public boolean checkSystemFolder(Folder folder, Set<String> errors){
+        if (foldersFacade.isSystemFolder(folder)){
+            Object[] messageParameters = new Object[]{folder.getName()};
+            String error = MessageFormat.format(MsgUtils.getMessageLabel("SystemFolderCannotBeChanged"), messageParameters);
+            errors.add(error);
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Возвращает списки зависимых объектов, необходимых для копирования папки
      * @param folder

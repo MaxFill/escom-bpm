@@ -248,8 +248,14 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer')}" value="#{bundle.DocsExplorer}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/favourites-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer').concat('?filterId=').concat(DictFilters.FAVORITE_ID)}" value="#{bundle.Favorites}" target="_blank" />                                    
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer').concat('?filterId=').concat(DictFilters.FAVORITE_ID)}" value="#{bundle.Favorites}" target="_blank" />
 
+                                <p:graphicImage value="/resources/icon/user_folder-32.png"
+                                                rendered="#{sessionBean.getUserFolder() != null}"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/docs/doc-explorer').concat('?folderId=').concat(sessionBean.getUserFolder().getId())}" 
+                                        rendered="#{sessionBean.getUserFolder() != null}"
+                                        value="#{bundle.MyFolder}" target="_blank" />
+                                
                                 <p:graphicImage id="imgDocTypes" value="/resources/icon/book-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/docs/docTypes/doctype-explorer')}" value="#{bundle.DocsTypes}" target="_blank" />
                             </p:panelGrid>

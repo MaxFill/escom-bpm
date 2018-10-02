@@ -122,8 +122,12 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     private Integer source = DictDetailSource.ALL_ITEMS_SOURCE;
     protected Integer viewMode;         //режим отображения формы
     private Integer selectMode;         //режим выбора для селектора
+    
+    //параметры открытия обозревателя
     private Integer selectedDocId;      //при открытии обозревателя в это поле заносится id документа для открытия
-    private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать    
+    private Integer filterId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать 
+    private Integer folderId = null;    //при открытии обозревателя в это поле заносится id фильтра что бы его показать
+    
     private Integer itemId;
                
     private SortOrder defSortOrder = SortOrder.ASCENDING;
@@ -140,6 +144,9 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 viewMode = DictExplForm.EXPLORER_MODE;
                 if (params.containsKey("filterId")) {
                     filterId = Integer.valueOf(params.get("filterId"));
+                }
+                if (params.containsKey("folderId")) {
+                    folderId = Integer.valueOf(params.get("folderId"));
                 }
             }
             if (params.containsKey("itemId")){
@@ -526,6 +533,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         } else {
             removeNodeFromTree(treeSelectedNode);
             refreshLazyData();
+            PrimeFaces.current().ajax().update("westFRM:accord:tree mainFRM");
+            PrimeFaces.current().ajax().update("mainFRM");
         }
     }
     
@@ -640,8 +649,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         TreeNode rootNode = getFilterTree();
         TreeNode node = EscomBeanUtils.findTreeNode(rootNode, filter);
         doFilterTreeNodeSelect(node);
+        PrimeFaces.current().ajax().update("westFRM");
+        PrimeFaces.current().ajax().update("mainFRM");
     }
-
+    
     /* ФИЛЬТР: обработка события щелчка по фильтру на форме */
     public void onFilterTreeNodeSelect(NodeSelectEvent event) {
         filterSelectedNode = event.getTreeNode();
@@ -958,8 +969,8 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             journalName = currentItem.getName();
         }        
         makeJurnalHeader(rootItem.getName(), journalName, "DisplaysObjectsRelatedTo");
-    }
-    
+    }        
+        
     /* ДЕРЕВО: установка текущего элемента в ДЕРЕВЕ по заданному объекту item */
     public void makeSelectedGroup(BaseDict item){      
         if (item == null) return;
@@ -1543,31 +1554,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
             Attaches attache = attacheBean.uploadAtache(uploadFile);
             createParams.put("attache", attache);
         }
-    }    
-        
-    /* Показать документ в папке */
-    public void onShowDocInFolder(Doc doc){
-        if (doc == null) return;
-        
-        Folder owner = (Folder) doc.getOwner();
-        onExpandTree();        
-        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), owner); 
-        if (node == null){
-            MsgUtils.errorMsg("FolderCouldNotBeFound");
-            return;
-        }
-        if (getTreeSelectedNode() != null) {
-            getTreeSelectedNode().setSelected(false);
-        }
-        node.setSelected(true); 
-        setTreeSelectedNode(node);
-        setSelectedDocId(null);
-        expandUp(node);
-        checkedItems.add(doc);
-        if (!DictExplForm.TAB_TREE.equals(currentTab)){
-            PrimeFaces.current().executeScript("PF('accordion').select(0);");            
-        }
-    }
+    }            
     
     /* Подготовка вложений документов для отправки на e-mail  */
     public void prepareSendMailDocs(String mode){
@@ -1861,6 +1848,10 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
 
     public Integer getFilterId() {
         return filterId;
+    }
+
+    public Integer getFolderId() {
+        return folderId;
     }
     
     public Integer getRowsInPage() {

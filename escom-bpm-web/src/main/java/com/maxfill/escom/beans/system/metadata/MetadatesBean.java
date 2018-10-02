@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -314,7 +315,7 @@ public class MetadatesBean extends BaseViewBean{
         
     public List<Metadates> getAllItems() {
         if (allItems == null){
-            allItems = getItemFacade().findAll();
+            allItems = getItemFacade().findAll().stream().filter(item->item.getId() != 15).collect(Collectors.toList());
         }
         return allItems;
     }

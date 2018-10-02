@@ -12,12 +12,14 @@ import com.maxfill.model.basedict.post.Post;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRights;
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.post.PostFacade;
 import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.assistant.Assistant;
+import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.services.ldap.LdapUsers;
 import com.maxfill.services.ldap.LdapUtils;
 import com.maxfill.utils.DateUtils;
@@ -68,15 +70,20 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     private UserGroupsFacade userGroupsFacade;
     @EJB
     private UserMessagesFacade messagesFacade;
-
+    @EJB
+    private FoldersFacade folderFacade;
+    
     public UserFacade() {
         super(User.class, UserLog.class, UserStates.class);
     }
 
     @Override
     public void create(User user) {
-        updateUserInfoInRealm(user);
-        super.create(user);
+        //updateUserInfoInRealm(user);
+        if (user.getInbox() == null){
+            createUserFolder(user);
+        }
+        super.create(user);        
         String welcomMsg = ItemUtils.getMessageLabel("Welcom", configuration.getServerLocale());
         sendSystemMsg(user, welcomMsg);
     }
@@ -95,6 +102,16 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         if (!user.getUsersGroupsList().contains((UserGroups)owner)){
             user.getUsersGroupsList().add((UserGroups)owner);            
         } 
+    }
+    
+    public Folder createUserFolder(User user){
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", user.getShortFIO());
+        Folder parent = folderFacade.find(SysParams.FOLDER_USERS_ID);
+        Folder folder = folderFacade.createItem(user, parent, null, params);
+        folderFacade.create(folder);
+        user.setInbox(folder);
+        return folder;
     }
     
     private void updateUserInfoInRealm(User user){

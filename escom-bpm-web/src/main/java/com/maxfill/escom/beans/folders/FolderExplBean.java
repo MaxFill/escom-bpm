@@ -13,6 +13,7 @@ import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.filter.Filter;
 import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;
@@ -53,7 +54,8 @@ public class FolderExplBean extends ExplorerTreeBean{
     private DocFacade docFacade;
     @EJB
     private ProcessFacade processFacade;
-    
+    @EJB
+    private FoldersFacade foldersFacade;
     private TreeNode procTree;
     
     /* Расширение для поиска в дереве папок по индексу дела */
@@ -72,9 +74,49 @@ public class FolderExplBean extends ExplorerTreeBean{
             if (filter != null) {
                 makeSelectedFilter(filter);
             }
-        }
+        } else 
+            if (getFolderId() !=null){
+                Folder folder = foldersFacade.find(getFolderId());
+                if (folder != null){
+                    makeSelectedFolder(folder);
+                }
+            }
         super.onAfterFormLoad();
     }     
+    
+    /**
+     * Находит и выделяет папку в дереве
+     * @param folder 
+     */
+    public void makeSelectedFolder(Folder folder){
+        if (folder == null) return;
+        doSelectFolder(folder);                
+        PrimeFaces.current().ajax().update("westFRM");
+        PrimeFaces.current().ajax().update("mainFRM");
+    }
+        
+    private void doSelectFolder(Folder folder){
+        Folder parent = folder.getParent();
+        if (parent != null){
+            doSelectFolder(parent);
+        }
+        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), folder);
+        onSelectInTree(node);
+    }
+     
+    /**
+     * Находит папку документа и отображает документ в ней
+     * @param doc 
+     */
+    public void onShowDocInFolder(Doc doc){
+        if (doc == null) return;
+        checkedItems.add(doc);
+        if (!DictExplForm.TAB_TREE.equals(currentTab)){
+            PrimeFaces.current().executeScript("PF('accordion').select(0);");            
+        }
+        Folder folder = (Folder) doc.getOwner();
+        makeSelectedFolder(folder);                                
+    }
     
     /* ДЕРЕВО: обработка события установки текущего элемента в дереве */
     public void onProcNodeSelect(NodeSelectEvent event) {

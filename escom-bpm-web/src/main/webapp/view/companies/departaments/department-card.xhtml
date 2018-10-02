@@ -9,10 +9,14 @@
 
     <ui:define name="extColumnsRights">
         <p:column headerText="#{bundle.CreateDepartaments}" styleClass="colRight">
-            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}"/>
+            <p:selectBooleanCheckbox value="#{right.addChild}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}">
+                <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
         </p:column>
         <p:column headerText="#{bundle.CreateStaffs}" styleClass="colRight">
-            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}"/>
+            <p:selectBooleanCheckbox value="#{right.addDetail}" disabled="#{departmentCardBean.editedItem.inherits or departmentCardBean.isReadOnly()}">
+                <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+            </p:selectBooleanCheckbox>
         </p:column>
     </ui:define>
 

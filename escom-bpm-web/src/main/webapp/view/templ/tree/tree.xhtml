@@ -92,7 +92,7 @@
                     <p:menuitem value="#{bundle.MoveToTrash}" icon="ui-icon-trash"
                                 onstart="PF('statusDialog').show()"
                                 oncomplete="PF('statusDialog').hide();"
-                                update="westFRM:accord:tree mainFRM #{_updates}"
+                                update="#{_updates}"
                                 actionListener="#{_bean.onMoveTreeItemToTrash()}">
                         <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ui-icon-alert" />
                     </p:menuitem>

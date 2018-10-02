@@ -49,22 +49,19 @@ public final class EscomBeanUtils {
 
     /* Поиск позиции в дереве по значению объекта */
     public static TreeNode findTreeNode(TreeNode root, Object item) {
-        TreeNode result = null;
-        if (item == null) {
-            result = root;
-        } else {
-            for (TreeNode child : root.getChildren()) {
-                Object data = child.getData();
-                if (Objects.equals(item, data)) {
-                    result = child;
-                    break;
-                }
-                result = findTreeNode(child, item);
-                if (result != null) {
-                    break;
-                }
+        if (item == null) return root;
+        TreeNode result = null;        
+        for (TreeNode child : root.getChildren()) {
+            Object data = child.getData();
+            if (Objects.equals(item, data)) {
+                result = child;
+                break;
             }
-        }
+            result = findTreeNode(child, item);
+            if (result != null) {
+                break;
+            }
+        }        
         return result;
     }
 

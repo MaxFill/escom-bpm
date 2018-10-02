@@ -394,6 +394,17 @@ public abstract class BaseTableBean<T extends BaseDict> extends LazyLoadBean<T>{
             errors.add(error);
             return false;
         }
+        
+        return checkCanMoveItem(dragItem, errors);
+    }
+    
+    /**
+     * Проверка возможности переноса объекта
+     * @param dragItem
+     * @param errors
+     * @return 
+     */
+    protected boolean checkCanMoveItem(T dragItem, Set<String> errors){
         return true;
     }
     

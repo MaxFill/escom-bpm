@@ -1,7 +1,6 @@
 package com.maxfill.model.basedict.processType;
 
 import com.maxfill.model.basedict.process.ProcessFacade;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.core.rights.Rights;

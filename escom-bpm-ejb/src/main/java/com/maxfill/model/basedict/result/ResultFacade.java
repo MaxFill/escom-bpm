@@ -2,14 +2,11 @@ package com.maxfill.model.basedict.result;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictMetadatesIds;
-import com.maxfill.dictionary.DictObjectName;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.Results;
 import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;

@@ -1,5 +1,6 @@
 package com.maxfill.services.workflow;
 
+import com.google.gson.Gson;
 import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
 import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
 import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
@@ -45,6 +46,7 @@ import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskReport;
 import com.maxfill.model.basedict.result.Result;
+import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.notification.NotificationService;
@@ -100,6 +102,8 @@ public class WorkflowImpl implements Workflow {
     private ProcTimerFacade procTimerFacade;
     @EJB
     private UserFacade userFacade;
+    @EJB
+    private StaffFacade staffFacade;
     
     /**
      * Добавление поручения в схему процесса
@@ -467,10 +471,9 @@ public class WorkflowImpl implements Workflow {
                 procReport.setTask(task);
             }
             
-            List<Integer> executedTasks = startElement.getTasksExec();
-            if (task.getConsidInProcReport()){
-                executedTasks.add(task.getId());
-            }
+            List<Integer> executedTasks = startElement.getTasksExec();            
+            executedTasks.add(task.getId());
+            
             params.put(EXECUTED_TASKS, executedTasks);
             
             run(process, startElement, currentUser, params, errors);
@@ -1035,6 +1038,15 @@ public class WorkflowImpl implements Workflow {
                 result = allRemarksChecked(scheme, params);
                 break;
             }
+            case "agreedUponEmployee":{
+                Map<String, Object> paramMap = new HashMap<>();                
+                Gson gson = new Gson();
+                Integer staffId = gson.fromJson(condition.getParamJson(), Integer.class);
+                Staff staff = staffFacade.find(staffId);
+                paramMap.put("staff", staff);
+                result = agreedUponEmployee(scheme, paramMap);
+                break;
+            }
         }
         return result;
     }
@@ -1088,6 +1100,23 @@ public class WorkflowImpl implements Workflow {
             }
         }
         return result;
+    }
+    
+    /**
+     * Условие: указанный сотрудник согласовал?
+     * @param scheme
+     * @param params
+     * @return 
+     */
+    private boolean agreedUponEmployee(Scheme scheme, Map<String, Object> params){
+        if (!params.containsKey("staff")) return false;
+        Staff staff = (Staff)params.get("staff");
+        return scheme.getTasks().stream()
+                .filter(task->Objects.equals(staff, task.getOwner()) 
+                        && Objects.equals(DictStates.STATE_COMPLETED, task.getState().getCurrentState().getId())
+                        && StringUtils.isNotBlank(task.getResult())                        
+                        && !Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
+                .findFirst().orElse(null) != null;
     }
     
     /* *** ПРОЧЕЕ *** */

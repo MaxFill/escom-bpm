@@ -34,16 +34,24 @@
                     </p:panelGrid>
                 </p:column>
                 <p:column headerText="#{bundle.Read}" styleClass="colRight">
-                    <p:selectBooleanCheckbox value="#{right.read}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+                    <p:selectBooleanCheckbox value="#{right.read}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}">
+                        <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                    </p:selectBooleanCheckbox>
                 </p:column>
                 <p:column headerText="#{bundle.Change}" styleClass="colRight" >
-                    <p:selectBooleanCheckbox value="#{right.update}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+                    <p:selectBooleanCheckbox value="#{right.update}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}">
+                        <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                    </p:selectBooleanCheckbox>
                 </p:column>
                 <p:column headerText="#{bundle.Remove}" styleClass="colRight" >
-                    <p:selectBooleanCheckbox value="#{right.delete}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+                    <p:selectBooleanCheckbox value="#{right.delete}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}">
+                        <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                    </p:selectBooleanCheckbox>
                 </p:column>
                 <p:column headerText="#{bundle.ChangeRight}" styleClass="colRight" >
-                    <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}"/>
+                    <p:selectBooleanCheckbox value="#{right.changeRight}" disabled="#{_bean.editedItem.inherits or _bean.isReadOnly()}">
+                        <p:ajax process="@this" oncomplete="itemChange = 1;"/>
+                    </p:selectBooleanCheckbox>
                 </p:column>
 
                 <ui:insert name="extColumnsRights"/>

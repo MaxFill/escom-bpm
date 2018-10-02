@@ -38,10 +38,26 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
         item.setParent((Folder)parent);
     } 
      
+    public boolean isSystemFolder(Folder folder){
+        boolean flag = false;
+        switch (folder.getId()){
+            case 0:{
+                flag = true;
+                break;
+            }
+            case SysParams.FOLDER_USERS_ID:{
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+    
     @Override
     public void setSpecAtrForNewItem(Folder folder, Map<String, Object> params) {
         folder.setModerator(folder.getAuthor());
         folder.setDocTypeDefault(docTypeFacade.find(SysParams.DEFAULT_DOC_TYPE_ID));
+        super.setSpecAtrForNewItem(folder, params);
     }
 
     /**
