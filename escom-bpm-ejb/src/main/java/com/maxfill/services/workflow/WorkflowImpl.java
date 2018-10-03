@@ -382,7 +382,7 @@ public class WorkflowImpl implements Workflow {
         if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
                 if (StringUtils.isBlank(task.getName())){
-                    errors.add("");
+                    errors.add("TaskNoHaveName");
                 }
                 switch (task.getDeadLineType()){
                     case "data":{
@@ -1039,12 +1039,15 @@ public class WorkflowImpl implements Workflow {
                 break;
             }
             case "agreedUponEmployee":{
-                Map<String, Object> paramMap = new HashMap<>();                
+                String json = condition.getParamJson();                
+                if (StringUtils.isBlank(json)) return false;
                 Gson gson = new Gson();
-                Integer staffId = gson.fromJson(condition.getParamJson(), Integer.class);
+                Map<String, Object> paramMap = gson.fromJson(json, Map.class);
+                if (!paramMap.containsKey("staff")) return false;
+                Integer staffId = (Integer)paramMap.get("staff");
+                if (staffId == null) return false;
                 Staff staff = staffFacade.find(staffId);
-                paramMap.put("staff", staff);
-                result = agreedUponEmployee(scheme, paramMap);
+                result = agreedUponEmployee(scheme, staff);
                 break;
             }
         }
@@ -1105,12 +1108,10 @@ public class WorkflowImpl implements Workflow {
     /**
      * Условие: указанный сотрудник согласовал?
      * @param scheme
-     * @param params
+     * @param staff
      * @return 
      */
-    private boolean agreedUponEmployee(Scheme scheme, Map<String, Object> params){
-        if (!params.containsKey("staff")) return false;
-        Staff staff = (Staff)params.get("staff");
+    private boolean agreedUponEmployee(Scheme scheme, Staff staff){        
         return scheme.getTasks().stream()
                 .filter(task->Objects.equals(staff, task.getOwner()) 
                         && Objects.equals(DictStates.STATE_COMPLETED, task.getState().getCurrentState().getId())

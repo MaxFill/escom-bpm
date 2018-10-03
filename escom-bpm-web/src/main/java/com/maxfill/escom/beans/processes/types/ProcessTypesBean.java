@@ -3,7 +3,6 @@ package com.maxfill.escom.beans.processes.types;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
-import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import javax.ejb.EJB;
@@ -11,8 +10,6 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
-import org.primefaces.model.DefaultTreeNode;
-import org.primefaces.model.TreeNode;
 
 /**
  * Сервисный бин для работы с сущностью "Виды Процессов" 

@@ -12,6 +12,7 @@ import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.utils.ItemUtils;
 import java.io.File;
+import java.net.HttpURLConnection;
 import org.primefaces.model.TreeNode;
 import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;
@@ -46,6 +47,37 @@ public class ExplorerTreeBean extends ExplorerBean{
     protected static final Integer LEH_TREE_ITEMS  = TREE_ITEMS_NAME.length();
     protected static final Integer LEH_TREE_FILTERS = TREE_FILTERS_NAME.length();
     protected static final Integer LEH_TABLE_NAME = TABLE_NAME.length();   
+    
+    @Override
+    public void onAfterFormLoad(){
+        if (getFolderId() !=null){            
+            BaseDict folder = treeBean.getLazyFacade().find(getFolderId());
+            if (folder != null){
+                makeSelectedFolder(folder);
+                setFolderId(null);
+            }
+        }
+    }
+    
+    /**
+     * Находит и выделяет папку в дереве
+     * @param folder 
+     */
+    public void makeSelectedFolder(BaseDict folder){
+        if (folder == null) return;
+        doSelectFolder(folder);                
+        PrimeFaces.current().ajax().update("westFRM");
+        PrimeFaces.current().ajax().update("mainFRM");
+    }
+        
+    private void doSelectFolder(BaseDict folder){
+        BaseDict parent = folder.getParent();
+        if (parent != null){
+            doSelectFolder(parent);
+        }
+        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), folder);
+        onSelectInTree(node);
+    }
     
     /**
      * Выгрузка файлов документов текущей папки в архив

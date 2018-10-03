@@ -52,9 +52,8 @@ public class MessageCardBean extends BaseViewBean<DiagramBean>{
             }
         }
     }
-    
-    @Override
-    public String onCloseCard(Object param){
+        
+    public String onSaveAndCloseCard(Object param){
         try {
             liveRoles = roles.getTarget();
             saveRoleToJson();
@@ -62,7 +61,7 @@ public class MessageCardBean extends BaseViewBean<DiagramBean>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return onCloseCard(param);
     }
     
     /**

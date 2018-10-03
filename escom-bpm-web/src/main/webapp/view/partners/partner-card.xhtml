@@ -11,8 +11,19 @@
         <p:tab title="#{bundle.Explorer}"> 
             <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12">
+                    <p:outputLabel value="#{bundle.Type}:" />
+                    <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
+                                     disabled="#{_bean.isReadOnly()}"                                     
+                                     filter="true" 
+                                     onchange="return itemChange = 1;"                                 
+                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
+                        <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
+                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
+                    </p:selectOneMenu>
+                    
                     <p:outputLabel value="#{bundle.Name}:" indicateRequired="true"/>
                     <p:inputText value="#{_bean.editedItem.name}" id="nameItem"
+                                 placeholder="#{bundle.EnterPartnerWithoutQuotation}"
                                  disabled="#{_bean.isReadOnly()}"
                                  onkeypress="checkEsc();"
                                  required="#{param['isRequired'] == 'true'}" 
@@ -28,20 +39,7 @@
                                  maxlength="50"
                                  onkeypress="checkEsc();"
                                  requiredMessage="#{bundle.Field} [#{bundle.Code}] #{bundle.MustBeFilled}"                                 
-                                 onchange="return itemChange = 1;"/>
-                    <p:message for="code" display="tooltip"/>
-
-                    <p:outputLabel value="#{bundle.Type}:" />
-                    <p:selectOneMenu value="#{_bean.editedItem.type}" id="type" converter="partnerTypesConvertor"
-                                     disabled="#{_bean.isReadOnly()}"
-                                     styleClass="ui-grid-col-12" 
-                                     filter="true" 
-                                     onchange="return itemChange = 1;"                                 
-                                     requiredMessage="#{bundle.Field} [#{bundle.Type}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{partnerTypesBean.findAll()}" var="types" itemLabel="#{types.name}" itemValue="#{types}" />
-                        <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}"/>                         
-                    </p:selectOneMenu>
-                    <p:message for="type" display="tooltip"/>
+                                 onchange="return itemChange = 1;"/>                                        
 
                     <p:outputLabel value="#{bundle.FullName}:" />                
                     <h:panelGroup styleClass="ui-grid-col-12">

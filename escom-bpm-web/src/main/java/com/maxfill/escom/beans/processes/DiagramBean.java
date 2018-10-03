@@ -59,6 +59,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
@@ -87,8 +88,7 @@ import org.primefaces.model.diagram.overlay.Overlay;
 public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private static final long serialVersionUID = -4403976059082444626L;
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.00"); 
-    @Inject
-    private ProcTemplBean procTemplBean;        
+             
     @Inject
     private TaskBean taskBean;
     
@@ -118,10 +118,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private WFConnectedElem copiedElement;
     
     private Task currentTask;
-    
-    private String nameTemplate;
+        
     private ProcTempl selectedTempl;
-    private List<ProcTempl> templates;    
+      
     private Scheme scheme;
     private boolean readOnly;
     
@@ -1021,29 +1020,44 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /* ШАБЛОНЫ ПРОЦЕССА */    
 
     /**
-     * Обработка события выбора шаблона из выпадающего списка
+     * Обработка события выбора шаблона для загрузки модели
      * @param event 
      */
-    public void onTemplSelector(ValueChangeEvent event){
-        selectedTempl = (ProcTempl) event.getNewValue();
-        if (selectedTempl != null){
-            nameTemplate = selectedTempl.getName();
-        } 
+    public void onTemplSelectorLoad(SelectEvent event){
+        List<ProcTempl> procTempls = (List<ProcTempl>) event.getObject();
+        if (CollectionUtils.isEmpty(procTempls)) return;
+        selectedTempl = procTempls.get(0);
+        onLoadModelFromTempl();
+        MsgUtils.succesMsg("TemplateLoad");
     }
+    
+    /**
+     * Обработка события выбора шаблона для сохранения модели
+     * @param event 
+     */
+    public void onTemplSelectorSave(SelectEvent event){
+        List<ProcTempl> procTempls = (List<ProcTempl>) event.getObject();
+        if (CollectionUtils.isEmpty(procTempls)) return;
+        selectedTempl = procTempls.get(0);
+        onSaveModelAsTempl();
+        MsgUtils.succesMsg("TemplateSaved");
+    }    
     
     /**
      * Загрузка визуальной схемы процесса из шаблона
      */
-    public void onLoadModelFromTempl(){
+    private void onLoadModelFromTempl(){
         Integer termHours = selectedTempl.getTermHours();
         if (termHours != null){
             Date planExecDate = DateUtils.addHour(new Date(), termHours);
             process.setPlanExecDate(planExecDate);
-        }                
+        }
+        scheme.setElements(new WorkflowElements());  
         scheme.setPackElements(selectedTempl.getElements());        
         workflow.unpackScheme(scheme);        
         workflow.clearScheme(scheme);
         restoreModel();
+        PrimeFaces.current().ajax().update("mainFRM");        
         PrimeFaces.current().ajax().update("southFRM:diagramm");
         addElementContextMenu();
         onItemChange();
@@ -1052,7 +1066,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /**
      * Сохранение модели процесса в шаблон
      */
-    public void onSaveModelAsTempl(){
+    private void onSaveModelAsTempl(){
         Set<String> errors = new HashSet<>();
         workflow.validateScheme(scheme, false, errors);
         if (!errors.isEmpty()){
@@ -1060,37 +1074,12 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             return;
         }
         workflow.packScheme(scheme);
-
-        ProcessType processType = processTypesFacade.find(process.getOwner().getId());
-        List<ProcTempl> templs = processType.getTemplates();        
-        
-        if (selectedTempl == null) {        //то создаём новый шаблон       
-            Map<String, Object> params = new HashMap<>();
-            params.put("name", nameTemplate);        
-            selectedTempl = processTemplFacade.createItem(getCurrentUser(), null, processType, params);                        
-            Tuple result = processTemplFacade.findDublicateExcludeItem(selectedTempl);
-            if ((Boolean)result.a){
-                MsgUtils.errorFormatMsg("ObjectIsExsist", new Object[]{nameTemplate, result.b});
-                return;
-            }            
-            selectedTempl.setElements(scheme.getPackElements());            
-            if (templs.isEmpty()){
-                selectedTempl.setIsDefault(Boolean.TRUE);
-            }
-            templs.add(selectedTempl);
-            
-            processTemplFacade.create(selectedTempl);
-            processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CREATE_EVENT, getCurrentUser());
-        } else {    //перезаписываем схему в существующий шаблон            
-            selectedTempl.setElements(scheme.getPackElements());            
-            processTemplFacade.edit(selectedTempl);
-            processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CHANGE_EVENT, getCurrentUser());
-        }
-        templates = null; 
+        ProcessType processType = processTypesFacade.find(process.getOwner().getId());        
+        selectedTempl.setElements(scheme.getPackElements());
+        processTemplFacade.edit(selectedTempl);
+        processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CHANGE_EVENT, getCurrentUser());
         process.setOwner(processType);
-        PrimeFaces.current().executeScript("PF('SaveAsTemplDLG').hide();");
-        MsgUtils.succesMsg("TemplateSaved");
-    }
+    }    
     
     /* *** КОПИРОВАНИЕ ВСТАВКА *** /
     
@@ -1194,11 +1183,15 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (wfElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem) wfElement;
             return taskElem.getCaption();
-        }
-        if (wfElement instanceof ProcedureElem){
-            ProcedureElem elem = (ProcedureElem) wfElement;
-            return elem.getCaption();
-        }
+        } else 
+            if (wfElement instanceof ProcedureElem){
+                ProcedureElem elem = (ProcedureElem) wfElement;
+                return elem.getCaption();            
+            } else 
+                if (wfElement instanceof ConditionElem){
+                    ConditionElem elem = (ConditionElem) wfElement;
+                    return elem.getCaption();
+                }
         return MsgUtils.getBandleLabel(bundleName);
     } 
             
@@ -1238,7 +1231,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private String getY(){
         return (DECIMAL_FORMAT.format(defY)).replace(",", ".");
     }
-    
+       
     /* GETS & SETS */     
     
     public WFConnectedElem getBaseElement() {
@@ -1250,31 +1243,14 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     
     public DiagramModel getModel() {
         return model;
-    }
-        
-    public List<ProcTempl> getTemplates() {
-        if (templates == null && process != null){            
-            templates = procTemplBean.findDetailItems(process.getOwner(), 0, 0, "name", "ASCENDING");            
-        }
-        return templates;
-    }
-    public void setTemplates(List<ProcTempl> templates) {
-        this.templates = templates;
-    }
+    }        
         
     public ProcTempl getSelectedTempl() {
         return selectedTempl;
     }
     public void setSelectedTempl(ProcTempl selectedTempl) {
         this.selectedTempl = selectedTempl;
-    }
-    
-    public String getNameTemplate() {
-        return nameTemplate;
-    }
-    public void setNameTemplate(String nameTemplate) {
-        this.nameTemplate = nameTemplate;
-    }
+    }    
     
     public Task getCurrentTask() {
         return currentTask;
@@ -1294,7 +1270,12 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
 
     @Override
     public String getFormHeader() {
-        return getLabelFromBundle("Scheme");
+        StringBuilder sb = new StringBuilder(getLabelFromBundle("Scheme"));
+        sb.append(": ");
+        if (selectedTempl != null){
+            sb.append(selectedTempl.getNameEndElipse());
+        }
+        return sb.toString();
     }
 
     @Override

@@ -9,7 +9,7 @@
 
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
-                         actionListener="#{_bean.onCloseCard('save')}"
+                         actionListener="#{_bean.onSaveAndCloseCard('save')}"
                          onclick="sendFormSize('#{_bean.getFormName()}');">
             <f:param name="isRequired" value="true"/>
         </p:commandButton>

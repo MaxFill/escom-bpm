@@ -179,18 +179,26 @@
 
         <p:menuButton value="#{bundle.Template}">
             <p:menuitem value="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                        disabled="#{_bean.isReadOnly()}"                                         
-                        onclick="PF('LoadFromTemplDLG').show();"
-                        update="LoadFromTemplFRM"/>            
-            <p:menuitem value="#{bundle.SaveAsTemlate}" icon="ui-icon-disk"
                         disabled="#{_bean.isReadOnly()}"
-                        update="SaveAsTemplFRM"
-                        onclick="PF('SaveAsTemplDLG').show();"/>            
+                        onclick="document.getElementById('southFRM:btnOpenTempl').click();">                             
+            </p:menuitem>
+            <p:separator/>
+            <p:menuitem value="#{bundle.SaveTemlate}" icon="ui-icon-disk"
+                        disabled="#{_bean.isReadOnly() or _bean.selectedTempl == null}"
+                        actionListener="#{_bean.onSaveModelAsTempl()}">
+                <p:confirm header="#{msg.TemplateWillBeOverwritten}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+            </p:menuitem>
+            <p:menuitem value="#{bundle.SaveSchemaToTemplate}" icon="ui-icon-disk"
+                        disabled="#{_bean.isReadOnly()}"
+                        onclick="document.getElementById('southFRM:btnOpenNewTempl').click();">
+                <p:confirm header="#{msg.ProcessDiagramWillBeSavedinSelecTempl}" message="#{bundle.Confirm}" icon="ui-icon-alert"/>
+            </p:menuitem>
         </p:menuButton>
             
         <span class="ui-separator">
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
+
         <p:commandButton title="Clear" icon="ui-icon-closethick"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onClearModel()}"
@@ -204,6 +212,9 @@
     </ui:define>
 
     <ui:define name="southFormContent">  
+        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+            <p:autoUpdate />
+        </p:messages>
         <p:diagram id="diagramm" value="#{_bean.model}" style="height:2400px; width: 2400px;" styleClass="ui-widget-content" var="el" widgetVar="DiagrammWG" >
             <f:facet name="element" >
                 <h:outputLabel value="#{_bean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
@@ -212,8 +223,7 @@
             <p:ajax event="connect"    disabled="#{_bean.isReadOnly()}" listener="#{_bean.onConnect}" />
             <p:ajax event="disconnect" disabled="#{_bean.isReadOnly()}" listener="#{_bean.onDisconnect}" />
             <p:ajax event="connectionChange" disabled="#{_bean.isReadOnly()}" listener="#{_bean.onConnectionChange}" />
-        </p:diagram>            
-        
+        </p:diagram>                    
         
         <p:remoteCommand name="elementClicked" actionListener="#{_bean.onElementClicked}"/>
         <p:remoteCommand name="elementOpen" actionListener="#{_bean.onElementOpenClick()}"/>
@@ -227,11 +237,13 @@
         <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{_bean.onOpenTask()}">
             <p:ajax event="dialogReturn" listener="#{_bean.onAfterTaskClose}"/>
         </p:commandButton>
-    </ui:define>
-
-    <ui:define name="dialogs">
-        <ui:include src="/view/processes/templ/save-as-dlg.xhtml"/>
-        <ui:include src="/view/processes/templ/load-from-templ-dlg.xhtml"/>
+        <p:commandButton style="display: none;" id="btnOpenTempl" actionListener="#{procTemplBean.onOneSelectItem()}">
+            <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorLoad}" />
+        </p:commandButton>
+        <p:commandButton style="display: none;" id="btnOpenNewTempl" actionListener="#{procTemplBean.onOneSelectItem()}">
+            <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorSave}" />
+        </p:commandButton>
+        
     </ui:define>
 
 </ui:composition>

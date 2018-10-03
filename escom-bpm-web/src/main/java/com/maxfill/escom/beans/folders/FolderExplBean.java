@@ -54,8 +54,7 @@ public class FolderExplBean extends ExplorerTreeBean{
     private DocFacade docFacade;
     @EJB
     private ProcessFacade processFacade;
-    @EJB
-    private FoldersFacade foldersFacade;
+    
     private TreeNode procTree;
     
     /* Расширение для поиска в дереве папок по индексу дела */
@@ -73,36 +72,11 @@ public class FolderExplBean extends ExplorerTreeBean{
             Filter filter = filtersFacade.find(getFilterId());
             if (filter != null) {
                 makeSelectedFilter(filter);
+                setFilterId(null);
             }
-        } else 
-            if (getFolderId() !=null){
-                Folder folder = foldersFacade.find(getFolderId());
-                if (folder != null){
-                    makeSelectedFolder(folder);
-                }
-            }
+        }            
         super.onAfterFormLoad();
-    }     
-    
-    /**
-     * Находит и выделяет папку в дереве
-     * @param folder 
-     */
-    public void makeSelectedFolder(Folder folder){
-        if (folder == null) return;
-        doSelectFolder(folder);                
-        PrimeFaces.current().ajax().update("westFRM");
-        PrimeFaces.current().ajax().update("mainFRM");
-    }
-        
-    private void doSelectFolder(Folder folder){
-        Folder parent = folder.getParent();
-        if (parent != null){
-            doSelectFolder(parent);
-        }
-        TreeNode node = EscomBeanUtils.findTreeNode(getTree(), folder);
-        onSelectInTree(node);
-    }
+    }         
      
     /**
      * Находит папку документа и отображает документ в ней

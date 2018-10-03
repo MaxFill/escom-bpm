@@ -307,6 +307,7 @@ public class DocBean extends BaseExplBeanGroups<Doc, Folder> {
     /* Просмотр файла вложения основной версии документа как PDF */
     public void doViewMainAttache(Doc doc, Map<String, List<String>> params) {
         if (doc == null) return;
+        doc = docsFacade.find(doc.getId());
         getLazyFacade().actualizeRightItem(doc, getCurrentUser());
         if (getLazyFacade().isHaveRightView(doc)) {
             Attaches attache = doc.getMainAttache();

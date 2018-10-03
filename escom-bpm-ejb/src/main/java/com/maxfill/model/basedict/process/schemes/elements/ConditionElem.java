@@ -2,6 +2,8 @@ package com.maxfill.model.basedict.process.schemes.elements;
 
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -20,6 +22,9 @@ public class ConditionElem extends WFConnectedElem{
     @XmlElement(name = "conditon")
     private Integer conditonId;
     
+    @XmlElement(name = "params")
+    private Map<String, Object> params = new HashMap<>(); ;
+    
     public ConditionElem() {
         this.uid = EscomUtils.generateGUID();
     }
@@ -30,8 +35,8 @@ public class ConditionElem extends WFConnectedElem{
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
-    }        
-    
+    }       
+        
     @Override
     public String getStyle() {
         StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_CONDITION);
@@ -52,7 +57,14 @@ public class ConditionElem extends WFConnectedElem{
     public void setConditonId(Integer conditonId) {
         this.conditonId = conditonId;
     }  
-    
+
+    public Map<String, Object> getParams() {
+        return params;
+    }
+    public void setParams(Map<String, Object> params) {
+        this.params = params;
+    }
+        
     public Set<AnchorElem> getSecussAnchors(){
         return getAnchors().stream()
                 .filter(a->DictWorkflowElem.STYLE_YES.equals(a.getStyle()))

@@ -157,12 +157,18 @@
 
                     <p:panel id="processes" header="#{bundle.Processes}" rendered="#{applicationBean.isCanUsesProcess()}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
-                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" value="#{bundle.ProcessExplorer}" target="_blank" />
-
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
                                 <p:graphicImage value="/resources/icon/control-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/monitor')}" value="#{bundle.ProcessExecutionControl}" target="_blank" />
+                                
+                                <p:graphicImage value="/resources/icon/check-doc-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer').concat('?folderId=').concat('1')}" 
+                                        value="#{bundle.Concorded}" target="_blank" />
+                            </p:panelGrid>
+                            <p:separator/>                            
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
+                                <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
+                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" value="#{bundle.ProcessExplorer}" target="_blank" />                                
                                 
                                 <p:graphicImage id="imgProcessTemplates" value="/resources/icon/template-32.png" rendered="#{sessionBean.userAdmin}"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" rendered="#{sessionBean.userAdmin}" value="#{bundle.ProcessTemplates}" target="_blank" />

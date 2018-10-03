@@ -37,9 +37,9 @@
         </addColumn>
     </changeSet>
     
-    <changeSet id="doc_change_right_role_owner_state_valid" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="conditions_add_condition_agreedUponEmployee" author="filatov" context="initdata" runOnChange="true">
         <sql>
-            INSERT conditions(Id, Name, Method) VALUES (4, N'AgreedUponEmployee', N'agreedUponEmployee');
+            INSERT conditions(Id, Name, Method, Params) VALUES (4, N'AgreedUponEmployee', N'agreedUponEmployee', N'{\"staff\":null}');
         </sql>
     </changeSet>
 </databaseChangeLog> 

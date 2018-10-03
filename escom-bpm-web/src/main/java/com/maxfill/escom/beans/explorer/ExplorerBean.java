@@ -164,6 +164,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
                 itemId = null;
             }
         }
+        super.onAfterFormLoad();
     }
     
     /* КАРТОЧКИ ОБЪЕКТОВ */
@@ -1849,9 +1850,15 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     public Integer getFilterId() {
         return filterId;
     }
+    public void setFilterId(Integer filterId) {
+        this.filterId = filterId;
+    }
 
     public Integer getFolderId() {
         return folderId;
+    }
+    public void setFolderId(Integer folderId) {
+        this.folderId = folderId;
     }
     
     public Integer getRowsInPage() {

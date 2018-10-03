@@ -58,9 +58,8 @@ public class ProcedureCardBean extends BaseViewBean<BaseView>{
             }
         }
     }
-    
-    @Override
-    public String onCloseCard(Object param){
+        
+    public String onSaveAndCloseCard(Object param){
         try {
             if (selected != null){
                 editedItem.setProcedureId(selected.getId());
@@ -70,7 +69,7 @@ public class ProcedureCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return onCloseCard(param);
     }
     
     public void onActionChange(){        

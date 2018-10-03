@@ -11,7 +11,7 @@
 
     <ui:define name="specToolButtons" >
         <p:commandButton icon="ui-icon-disk" title="#{bundle.SaveAndClose}" update="mainFRM"
-                         actionListener="#{_bean.onCloseCard('save')}"
+                         actionListener="#{_bean.onSaveAndCloseCard('save')}"
                          onclick="sendFormSize('#{_bean.getFormName()}');">
             <f:param name="isRequired" value="true"/>
        </p:commandButton>
@@ -23,15 +23,31 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{conditionCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Condition}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Condition}:" indicateRequired="true"/>
-                    <p:selectOneMenu value="#{conditionCardBean.selected}" converter="conditionConvertor"
-                                   styleClass="ui-grid-col-12"
-                                   required="#{param['isRequired'] == 'true'}" 
-                                   requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
-                        <f:selectItems value="#{conditionBean.findAll()}" var="item" itemLabel="#{conditionCardBean.getLabelFromBundle(item.getName())}" itemValue="#{item}"/>
-                        <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
-                    </p:selectOneMenu>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.Condition}:" indicateRequired="true"/>
+                        <p:selectOneMenu value="#{conditionCardBean.selected}" converter="conditionConvertor"
+                                       styleClass="ui-grid-col-12"
+                                       required="#{param['isRequired'] == 'true'}" 
+                                       requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{conditionBean.findAll()}" var="item" itemLabel="#{conditionCardBean.getLabelFromBundle(item.getName())}" itemValue="#{item}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                            <p:ajax event="change" listener="#{conditionCardBean.onConditionSelect()}" update="staffSelect"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid id="staffSelect" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.Concorder}:" indicateRequired="true" rendered="#{conditionCardBean.isCanStaffSelect()}" />
+                        <p:selectOneMenu value="#{conditionCardBean.selectedStaff}" filter="true" filterMatchMode="startsWith"
+                                        styleClass="ui-grid-col-12"
+                                        converter="staffConvertor" placeholder="#{bundle.Select}"                                    
+                                        rendered="#{conditionCardBean.isCanStaffSelect()}"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        requiredMessage="#{bundle.Field} [#{bundle.Concorder}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{conditionCardBean.concorders}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

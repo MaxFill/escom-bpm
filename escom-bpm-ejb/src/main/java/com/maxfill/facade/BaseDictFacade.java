@@ -2,7 +2,6 @@ package com.maxfill.facade;
 
 import com.maxfill.Configuration;
 import com.maxfill.RightsDef;
-import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictRights;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.core.metadates.MetadatesFacade;
@@ -31,7 +30,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -534,6 +532,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
             
     /* ПОИСК из формы поиска */
+    
+    @Override
+    public T find(Object id) { 
+        return super.find(id);
+    }
 
     public List<T> getByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Map<String, Object> addParams, int first, int pageSize, User currentUser) {
         first = 0;

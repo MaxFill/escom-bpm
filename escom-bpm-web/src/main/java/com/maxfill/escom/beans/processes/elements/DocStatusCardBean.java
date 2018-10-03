@@ -59,8 +59,7 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         }
     }     
 
-    @Override
-    public String onCloseCard(Object param){
+    public String onSaveAndCloseCard(Object param){
         try {
             if (selected != null){
                 editedItem.setDocStatusId(selected.getId());
@@ -74,7 +73,7 @@ public class DocStatusCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return onCloseCard(param);
     }
     
     /* GETS & SETS */

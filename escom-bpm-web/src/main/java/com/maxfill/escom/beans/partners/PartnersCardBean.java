@@ -88,9 +88,10 @@ public class PartnersCardBean extends BaseCardBeanGroups<Partner, PartnerGroups>
         StringBuilder partnerName = new StringBuilder();
         
         if (partner.getType() != null){
-            partnerName.append(partner.getType().getName()).append(" ");
+            partnerName.append(partner.getType().getName()).append(" \"");
         }
         partnerName.append(partner.getName());
+        partnerName.append("\"");
 
         getEditedItem().setFullName(partnerName.toString());
         onItemChange();

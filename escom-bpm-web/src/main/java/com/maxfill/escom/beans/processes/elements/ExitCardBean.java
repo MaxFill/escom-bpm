@@ -55,9 +55,8 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
             }
         }
     }
-    
-    @Override
-    public String onCloseCard(Object param){
+        
+    public String onSaveAndCloseCard(Object param){
         try {
             if (seletedState != null){
                 editedItem.setFinishStateId(seletedState.getId());
@@ -66,7 +65,7 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return onCloseCard(param);
     }
     
     @Override

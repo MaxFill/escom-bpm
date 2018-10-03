@@ -70,9 +70,8 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
             procTimer.setStartDate(null);
         }
     }
-        
-    @Override
-    public String onCloseCard(Object param){
+            
+    public String onSaveAndCloseCard(Object param){
         Set<String> errors = new HashSet<>();
         checkTimer(errors);
         if (!errors.isEmpty()){
@@ -88,7 +87,7 @@ public class TimerCardBean extends BaseViewBean<BaseView>{
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-        return super.onCloseCard(param);
+        return onCloseCard(param);
     }
     
     private void restoreFields(ProcTimer timer){
