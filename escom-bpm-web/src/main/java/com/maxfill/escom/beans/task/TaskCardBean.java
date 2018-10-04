@@ -235,7 +235,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         doc = docFacade.find(doc.getId());
         if (doc == null) return false;
         Remark remark = doc.getDetailItems().stream()
-                .filter(r -> Objects.equals(r.getAuthor(), getCurrentUser()))
+                .filter(r -> Objects.equals(r.getAuthor(), getCurrentUser()) 
+                    && DictStates.STATE_ISSUED == r.getState().getCurrentState().getId())
                 .findFirst()
                 .orElse(null);
         return remark != null;

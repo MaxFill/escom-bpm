@@ -43,16 +43,16 @@
             <p:commandButton style="display: none;" id="createProcBtn" actionListener="#{sessionBean.onCreateProc()}"/>
             <p:commandButton style="display: none;" id="createDocBtn"  actionListener="#{sessionBean.onCreateDoc()}"/>
             <p:commandButton id="btnMsgInfo" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('newMsg')}">
-                <p:ajax event="dialogReturn" update="mainFRM:messages"/>
+                <p:ajax event="dialogReturn" update="mainFRM:messages mainFRM:tasks"/>
             </p:commandButton>
             <p:commandButton id="btnMessages" style="display: none;" actionListener="#{sessionBean.openUserMessagesForm('allMsg')}">
-                <p:ajax event="dialogReturn" update="mainFRM:messages"/>
+                <p:ajax event="dialogReturn" update="mainFRM:messages mainFRM:tasks"/>
             </p:commandButton>
             <p:commandButton id="btnLicense" style="display: none;" actionListener="#{sessionBean.openLicenseForm()}">
-                <p:ajax event="dialogReturn" update="mainFRM:messages" listener="#{sessionBean.onAfterCloseLicenseDlg}" />
+                <p:ajax event="dialogReturn" update="mainFRM:messages mainFRM:tasks" listener="#{sessionBean.onAfterCloseLicenseDlg}" />
             </p:commandButton>
             <p:commandButton id="btnOpenForm" style="display: none;" actionListener="#{sessionBean.onOpenForm()}">
-                <p:ajax event="dialogReturn" update="mainFRM:messages"/>
+                <p:ajax event="dialogReturn" update="mainFRM:messages mainFRM:tasks"/>
             </p:commandButton>
 
             <p:toolbar >
@@ -195,7 +195,7 @@
                         </p:panelGrid>
                     </p:panel>
 
-                    <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
+                    <p:panel id="tasks" header="#{bundle.Tasks}" toggleable="true" styleClass="dash-panel">
                         <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
                             <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/timer-32.png" rendered="#{applicationBean.isCanUsesTasks()}"/>                                 
@@ -204,18 +204,20 @@
                                         value="#{bundle.Scheduler}" target="_blank" />
 
                                 <p:graphicImage value="/resources/icon/tasks-32.png"/>  
-                                <p:commandLink value="#{bundle.MyTasks}" 
+                                <p:commandLink value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
-                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                                               
-                                
+                                               oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                             
+                            </p:panelGrid>                             
+                        </p:panelGrid>
+                    </p:panel>
+                    
+                    <p:panel id="userParams" header="#{bundle.User}" toggleable="true" styleClass="dash-panel">
+                        <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="without-spaces" >
+                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >                                
                                 <p:graphicImage value="/resources/icon/settings-32.png"/>  
                                 <p:commandLink value="#{bundle.PersonalSettings}" 
                                                actionListener="#{sessionBean.openSettingsForm()}"/>
-                            </p:panelGrid> 
 
-                            <p:separator />
-
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage value="/resources/icon/theme_change-32.png"/>  
                                 <h:outputLabel value="#{bundle.ChooseTheme}"/>
                             </p:panelGrid>

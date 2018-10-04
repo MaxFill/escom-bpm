@@ -65,6 +65,7 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @param sortField
      * @param sortOrder
      * @param filters
+     * @param currentUser
      * @return
      */
     public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters, User currentUser) {

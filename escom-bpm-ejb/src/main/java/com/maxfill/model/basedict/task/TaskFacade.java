@@ -3,6 +3,7 @@ package com.maxfill.model.basedict.task;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.dictionary.DictRoles;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.schemes.Scheme;
@@ -10,6 +11,7 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.core.states.State_;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -216,6 +218,28 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         task.setFactExecDate(new Date());        
         task.getState().setCurrentState(stateFacade.getCompletedState());
         addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
+    }
+    
+    /**
+     * Вычисляет число задач указанного пользователя, находящихся у него на исполнении
+     * @param staff
+     * @return 
+     */
+    public Long getCountExecTasksByUser(Staff staff){
+        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root root = cq.from(Task.class);
+        List<Predicate> crit = new ArrayList<>();
+        crit.add(builder.equal(root.get("deleted"), false));
+        crit.add(builder.equal(root.get("actual"), true));
+        crit.add(builder.equal(root.get(Task_.owner), staff));
+        crit.add(builder.equal(root.get("state").get("currentState").get("id"), DictStates.STATE_RUNNING));
+        Predicate[] predicates = new Predicate[crit.size()];
+        predicates = crit.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
     }
     
     /* *** ПРОЧЕЕ *** */  

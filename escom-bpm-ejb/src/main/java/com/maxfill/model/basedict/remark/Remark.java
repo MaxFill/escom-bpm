@@ -82,7 +82,7 @@ public class Remark extends BaseDict<Doc, Remark, Remark, RemarkLog, RemarkState
         if (checked){
             return "/resources/icon/doc_check20.png";
         } else 
-            return "";        
+            return "/resources/icon/importante.png";
     }        
     
     public Integer getTempId() {

@@ -32,6 +32,7 @@ import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.services.favorites.FavoriteService;
 import com.maxfill.services.files.FileService;
@@ -124,7 +125,9 @@ public class SessionBean implements Serializable{
     protected AttacheService attacheService;
     @EJB
     private FormsSettingsFacade formsSettingsFacade;
-            
+    @EJB
+    private TaskFacade taskFacade;
+    
     @Inject
     private AttacheBean attacheBean;   
     @Inject
@@ -157,6 +160,7 @@ public class SessionBean implements Serializable{
         column2.addWidget("processes");
          
         column1.addWidget("userParams");
+        column1.addWidget("tasks");
         column1.addWidget("messages");
  
         dashboardModel.addColumn(column1);
@@ -807,6 +811,19 @@ public class SessionBean implements Serializable{
         }
     }
 
+    /**
+     * Формирует сообщение о количестве новых задач у текущего пользователя
+     * @return
+     */
+    public String getTasksInfo(){
+        Long count = taskFacade.getCountExecTasksByUser(getCurrentUser().getStaff());
+        if (count > 0){
+            return count.toString();
+        } else {
+            return MsgUtils.getBandleLabel("No");
+        }
+    }
+    
     public DashboardModel getDashboardModel() {
         return dashboardModel;
     }

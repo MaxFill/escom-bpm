@@ -237,11 +237,24 @@ public class AttacheBean extends BaseViewBean<BaseView>{
     }
     
     /**
+     * Возможность изменять замечания доступна автору замечания и когда находится в работе
+     * Если есть задача и она находится в работе
+     * @param remark
+     * @return 
+     */
+    public boolean isCanModifyRemark(Remark remark) {
+        if (task == null)return false;
+        if (!remark.getAuthor().equals(getCurrentUser())) return false;
+        State stateRun = stateFacade.getRunningState();
+        return Objects.equals(stateRun, task.getState().getCurrentState());
+    }
+    
+    /**
      * Возможность создавать замечания
      * Если есть задача и она находится в работе
      * @return 
      */
-    public boolean isCanModifyRemark() {
+    public boolean isCanCreateRemark(){
         if (task == null)return false;
         State stateRun = stateFacade.getRunningState();
         return Objects.equals(stateRun, task.getState().getCurrentState());

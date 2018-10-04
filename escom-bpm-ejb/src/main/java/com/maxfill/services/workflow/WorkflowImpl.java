@@ -1054,10 +1054,7 @@ public class WorkflowImpl implements Workflow {
                 break;
             }
             case "agreedUponEmployee":{
-                String json = condition.getParamJson();                
-                if (StringUtils.isBlank(json)) return false;
-                Gson gson = new Gson();
-                Map<String, Object> paramMap = gson.fromJson(json, Map.class);
+                Map<String, Object> paramMap = conditionEl.getParams();
                 if (!paramMap.containsKey("staff")) return false;
                 Integer staffId = (Integer)paramMap.get("staff");
                 if (staffId == null) return false;

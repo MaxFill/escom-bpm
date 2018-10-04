@@ -55,4 +55,11 @@
             </column>
         </addColumn>
     </changeSet>
+    
+    <changeSet id="states_change_name_confirm_Eliminated" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            UPDATE `states` SET `Name`='Eliminated' where Id = 13;
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog> 

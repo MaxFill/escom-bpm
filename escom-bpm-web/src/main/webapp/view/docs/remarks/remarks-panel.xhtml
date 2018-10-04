@@ -17,9 +17,9 @@
 
                 <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">
                     <f:facet name="header">
-                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState)}"/>
-                        <h:graphicImage value="#{remark.iconName}"/>
-                        <p:outputLabel value="#{_bean.getRemarkHeader(remark)}" />
+                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
+                        <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
+                        <p:outputLabel value="#{remark.author.shortFIO}" title="#{bundle.Author}"/>
                     </f:facet>
 
                     <f:facet name="options">
@@ -27,23 +27,23 @@
                             <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
                                         disabled="#{!_bean.isCanCheckRemark()}"
                                         rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
-                                        actionListener="#{_bean.onRemarkCheck(remark)}" update="eastFRM:accord:dgMyRemarks">                                
+                                        actionListener="#{_bean.onRemarkCheck(remark)}" update="eastFRM:accord:dgMyRemarks">                      
                             </p:menuitem>
                             <p:separator />
-                            <p:menuitem value="#{bundle.Confirmed}" icon="ui-icon-circle-check"
+                            <p:menuitem value="#{bundle.RemarkConfirmed}" icon="ui-icon-circle-check"
                                         rendered="#{remark.state.currentState.id == 12}"
-                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
-                                        actionListener="#{_bean.onChangeStateRemark(remark, 13)}" update="eastFRM:accord:dgMyRemarks">                                
+                                        disabled="#{!_bean.isCanModifyRemark(remark)}"
+                                        actionListener="#{_bean.onChangeStateRemark(remark, 13)}" update="eastFRM:accord:dgMyRemarks">
                             </p:menuitem>
                             <p:menuitem value="#{bundle.RemarkIssued}" icon="ui-icon-notice"
-                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
+                                        disabled="#{!_bean.isCanModifyRemark(remark)}"
                                         rendered="#{remark.state.currentState.id == 13}"
                                         actionListener="#{_bean.onChangeStateRemark(remark, 12)}" update="eastFRM:accord:dgMyRemarks">
-                            </p:menuitem>                        
+                            </p:menuitem>
                             <p:menuitem value="#{bundle.Delete}" icon="ui-icon-trash"
-                                        disabled="#{!_bean.isCanModifyRemark() and (remark.author ne _bean.currentUser)}"
+                                        disabled="#{!_bean.isCanModifyRemark(remark)}"
                                         update="eastFRM:accord:dgMyRemarks"
-                                        actionListener="#{_bean.onDeleteRemark(remark)}">                                                              
+                                        actionListener="#{_bean.onDeleteRemark(remark)}">
                                 <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
                             </p:menuitem> 
                             <p:separator />
@@ -82,9 +82,9 @@
 
                 <p:panel menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
                     <f:facet name="header">
-                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(task.state.currentState.name)}"/>
+                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
                         <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
-                        <p:outputLabel value="#{_bean.getRemarkHeader(remark)}" title="#{bundle.Author}"/>
+                        <p:outputLabel value="#{remark.author.shortFIO}" title="#{bundle.Author}"/>
                     </f:facet>
                     <f:facet name="options">
                         <p:menu>                        
@@ -113,7 +113,7 @@
 
     <p:contextMenu for="eastFRM:accord:tabMyRemarks">
         <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" 
-                    disabled="#{!_bean.isCanModifyRemark()}"
+                    disabled="#{!_bean.isCanCreateRemark()}"
                     actionListener="#{_bean.onCreateRemark()}" update="eastFRM:accord:dgMyRemarks">
         </p:menuitem>
     </p:contextMenu>    
