@@ -3,6 +3,7 @@ package com.maxfill.model.basedict.procTempl;
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
+import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -48,5 +49,8 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
         return DictMetadatesIds.OBJ_PROC_TEMPL;
     }
 
-    
+    @Override
+    public void setSpecAtrForNewItem(ProcTempl procTempl, Map<String, Object> params) {
+        procTempl.setName(procTempl.getPath());
+    }
 }

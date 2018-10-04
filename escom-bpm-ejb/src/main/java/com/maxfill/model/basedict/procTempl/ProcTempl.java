@@ -1,5 +1,6 @@
 package com.maxfill.model.basedict.procTempl;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.processType.ProcessType;
 import java.util.Objects;
@@ -16,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.xml.bind.annotation.XmlTransient;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Шаблон процесса" 
@@ -64,8 +66,12 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
         } else {
             return "blank-20";
         }
-    }
+    }      
     
+    @Override
+    public String getPath(){        
+        return getOwner().getPath();
+    }
     
     /* GETS & SETS */
     

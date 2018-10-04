@@ -111,63 +111,89 @@
         </script>
     </ui:define>
 
+    <ui:define name="menuActions">
+        <p:menuitem value="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
+                    disabled="#{_bean.isReadOnly()}"
+                    onclick="document.getElementById('southFRM:btnOpenTempl').click();">                             
+        </p:menuitem>
+        <p:separator/>
+        <p:menuitem value="#{bundle.SaveSchemaToTemplate}" icon="ui-icon-disk"
+                    disabled="#{_bean.isReadOnly() or _bean.selectedTempl == null}"
+                    actionListener="#{_bean.onSaveModelAsTempl()}">
+            <p:confirm header="#{msg.TemplateWillBeOverwritten}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+        </p:menuitem>
+        <p:menuitem value="#{bundle.SelectTemplateAndSaveScheme}" icon="ui-icon-disk"
+                    disabled="#{_bean.isReadOnly()}"
+                    onclick="document.getElementById('southFRM:btnOpenNewTempl').click();">
+            <p:confirm header="#{msg.ProcessDiagramWillBeSavedinSelecTempl}" message="#{bundle.Confirm}" icon="ui-icon-alert"/>
+        </p:menuitem>
+        <p:separator/>    
+        <p:menuitem value="#{bundle.Clear}" icon="ui-icon-closethick"
+                    disabled="#{_bean.isReadOnly()}"
+                    actionListener="#{_bean.onClearModel()}"
+                    update="southFRM:diagramm">
+            <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+        </p:menuitem>
+    </ui:define>
+    
     <ui:define name="toolbarComponents" > 
-        <p:commandButton value="Tasks" title="#{bundle.AddTasks}"
+        <p:commandButton value="#{bundle.Tasks}" title="#{bundle.AddTasks}"
                          disabled="#{_bean.isReadOnly()}"
                          onstart="PF('statusDialog').show()"
                          oncomplete="PF('statusDialog').hide();"
                          actionListener="#{staffBean.onManySelectItem()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onStaffsSelected}" />
         </p:commandButton>
-        <p:commandButton  value="And" title="#{bundle.AddLogicElement}"
+        <p:commandButton  value="#{bundle.And}" title="#{bundle.AddLogicElement}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddLogicElement('And')}" >
         </p:commandButton>
-        <p:commandButton  value="Or" title="#{bundle.AddLogicElement}"
+        <p:commandButton  value="#{bundle.Or}" title="#{bundle.AddLogicElement}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddLogicElement('Or')}" >
         </p:commandButton>
-        <p:commandButton  value="If" title="#{bundle.AddCondition}"
+        
+        <p:commandButton  value="#{bundle.Condition}" title="#{bundle.AddCondition}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddConditionElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton  value="Timer" title="#{bundle.AddTimer}"
+        <p:commandButton  value="#{bundle.Timer}" title="#{bundle.AddTimer}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddTimerElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton  value="State" title="#{bundle.AddState}"
+        <p:commandButton  value="#{bundle.State}" title="#{bundle.AddState}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddStateElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton value="Message" title="#{bundle.AddMessageElement}"
+        <p:commandButton value="#{bundle.Message}" title="#{bundle.AddMessageElement}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddMessageElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton value="Procedure" title="#{bundle.AddProcedureElement}"
+        <p:commandButton value="#{bundle.Procedure}" title="#{bundle.AddProcedureElement}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddProcElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton value="Start" title="#{bundle.AddStart}"
+        <p:commandButton value="#{bundle.Start}" title="#{bundle.AddStart}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddStartElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
-        <p:commandButton value="Enter" title="#{bundle.AddEnter}"
+        <p:commandButton value="#{bundle.enter}" title="#{bundle.AddEnter}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddEnterElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
-        <p:commandButton value="Exit" title="#{bundle.AddExit}"
+        <p:commandButton value="#{bundle.Exit}" title="#{bundle.AddExit}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddExitElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
@@ -177,38 +203,6 @@
             <span class="ui-icon ui-icon-grip-dotted-vertical" />
         </span>
 
-        <p:menuButton value="#{bundle.Template}">
-            <p:menuitem value="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
-                        disabled="#{_bean.isReadOnly()}"
-                        onclick="document.getElementById('southFRM:btnOpenTempl').click();">                             
-            </p:menuitem>
-            <p:separator/>
-            <p:menuitem value="#{bundle.SaveTemlate}" icon="ui-icon-disk"
-                        disabled="#{_bean.isReadOnly() or _bean.selectedTempl == null}"
-                        actionListener="#{_bean.onSaveModelAsTempl()}">
-                <p:confirm header="#{msg.TemplateWillBeOverwritten}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
-            </p:menuitem>
-            <p:menuitem value="#{bundle.SaveSchemaToTemplate}" icon="ui-icon-disk"
-                        disabled="#{_bean.isReadOnly()}"
-                        onclick="document.getElementById('southFRM:btnOpenNewTempl').click();">
-                <p:confirm header="#{msg.ProcessDiagramWillBeSavedinSelecTempl}" message="#{bundle.Confirm}" icon="ui-icon-alert"/>
-            </p:menuitem>
-        </p:menuButton>
-            
-        <span class="ui-separator">
-            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-        </span>
-
-        <p:commandButton title="Clear" icon="ui-icon-closethick"
-                         disabled="#{_bean.isReadOnly()}"
-                         actionListener="#{_bean.onClearModel()}"
-                         update="southFRM:diagramm">
-            <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
-        </p:commandButton>
-        <span class="ui-separator">
-            <span class="ui-icon ui-icon-grip-dotted-vertical" />
-        </span>                          
-        <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
     </ui:define>
 
     <ui:define name="southFormContent">  

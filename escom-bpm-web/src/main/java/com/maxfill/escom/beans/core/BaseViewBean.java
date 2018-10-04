@@ -200,7 +200,19 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
         return isItemChange;
     }
     
-    /* GETS & SETS */
+    /* *** ПЕЧАТЬ *** */
+    
+    /**
+     * Подготовка параметров отчёта
+     * @return 
+     */
+    protected Map<String, Object> prepareReportParams(){
+        Map<String, Object> parameters = new HashMap<>();                
+        parameters.put("USER_LOGIN", getCurrentUser().getLogin());        
+        return parameters;
+    }
+    
+    /* *** GETS & SETS *** */
    
     public String getBeanId() {
         return beanId;

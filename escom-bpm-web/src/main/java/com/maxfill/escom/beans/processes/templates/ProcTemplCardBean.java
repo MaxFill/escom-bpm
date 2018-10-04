@@ -58,4 +58,9 @@ public class ProcTemplCardBean extends BaseCardBean<ProcTempl>{
         super.checkItemBeforeSave(procTempl, context, errors);
     } 
     
+    public void makeFullName(){        
+        String path = getEditedItem().getPath();
+        getEditedItem().setName(path);
+        onItemChange();
+    }
 }

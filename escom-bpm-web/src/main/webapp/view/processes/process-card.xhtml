@@ -16,6 +16,10 @@
                         disabled="#{_bean.editedItem.id == null}"
                         actionListener="#{processCardBean.onPreViewListConcorder()}">
             </p:menuitem>
+            <p:menuitem value="#{bundle.Remarks}" icon="ui-icon-comment"
+                        disabled="#{_bean.editedItem.id == null}"
+                        actionListener="#{processCardBean.onPreViewRemarks()}">
+            </p:menuitem>
         </ui:define>
 
         <ui:define name="specActionMenu">

@@ -29,6 +29,9 @@ public class Scheme implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Process process;
 
+    @Column(name = "Name")
+    private String name;
+    
     @Lob
     @Column(name = "Elements", length = 8192)
     private byte[] packElements;
@@ -52,7 +55,14 @@ public class Scheme implements Serializable, Dict{
     }
 
     /* GETS & SETS */
-    
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+        
     public WorkflowElements getElements() {
         return elements;
     }

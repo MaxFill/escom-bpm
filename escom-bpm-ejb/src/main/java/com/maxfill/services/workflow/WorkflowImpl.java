@@ -602,7 +602,7 @@ public class WorkflowImpl implements Workflow {
         }
         
         //отмена всех запущенных задач
-        stopTasks(process, stateCancel, "TaskCancelled", currentUser);
+        cancelTasks(process, currentUser);
         stopTimers(process);
         
         process.getState().setCurrentState(stateCancel);
@@ -612,18 +612,34 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Остановка всех запущенных задач с установкой признака причины остановки
-     * @param process
-     * @param state
-     * @param keyMessage
+     * Отмена выполненных и остановка всех запущенных задач с установкой признака причины остановки
+     * @param process          
      * @param currentUser 
      */
-    private void stopTasks(Process process, State state, String keyMessage, User currentUser){        
-        process.getScheme().getTasks().stream()                
+    private void cancelTasks(Process process, User currentUser){ 
+        State stateCancel = stateFacade.getCanceledState();
+        process.getScheme().getTasks().stream()
+                .filter(task->DictStates.STATE_DRAFT != task.getState().getCurrentState().getId()) //отмна всех задач, кроме черновиков
                 .forEach(task->{
-                        task.getState().setCurrentState(state);
-                        notificationService.makeNotification(task, keyMessage); //уведомление об аннулировании задачи
+                        task.getState().setCurrentState(stateCancel);
+                        notificationService.makeNotification(task, "TaskCancelled"); //уведомление об аннулировании задачи
                         taskFacade.addLogEvent(task, DictLogEvents.TASK_CANCELLED, currentUser);
+                    });
+    }
+    
+    /**
+     * Остановка всех запущенных задач с установкой признака причины остановки
+     * @param process
+     * @param currentUser 
+     */
+    private void stopTasks(Process process, User currentUser){ 
+        State stateFinish = stateFacade.getCompletedState();
+        process.getScheme().getTasks().stream()
+                .filter(task->Objects.equals(task.getState().getCurrentState().getId(), DictStates.STATE_RUNNING))
+                .forEach(task->{
+                        task.getState().setCurrentState(stateFinish);
+                        notificationService.makeNotification(task, "TaskIsFinishedBecauseProcessComplete"); //уведомление об аннулировании задачи
+                        taskFacade.addLogEvent(task, DictLogEvents.TASK_FINISHED, currentUser);
                     });
     }
     
@@ -644,9 +660,8 @@ public class WorkflowImpl implements Workflow {
     private void finish(Process process, ExitElem exitElem, User currentUser, Set<String> errors) {
         if (exitElem.getFinalize()){
             State state = stateFacade.find(exitElem.getFinishStateId());
-            process.getState().setCurrentState(state);
-            //отмена всех запущенных и не завершённых задач
-            stopTasks(process, state, "TaskIsFinishedBecauseProcessComplete", currentUser);
+            process.getState().setCurrentState(state);            
+            stopTasks(process, currentUser); //отмена всех запущенных и не завершённых задач
             stopTimers(process);
         }
         process.setFactExecDate(new Date());

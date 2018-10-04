@@ -539,6 +539,15 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
        this.selectedDetail = selectedDetail;
     }
     
+    /* *** ПЕЧАТЬ *** */
+    
+    /**
+     * Распечатка списка замечаний
+     */
+    public void onPreViewRemarks(){        
+        remarkBean.onPreViewRemarks(getEditedItem());        
+    }
+    
     /* GETS & SETS */
 
     @Override

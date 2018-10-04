@@ -42,4 +42,17 @@
             INSERT conditions(Id, Name, Method, Params) VALUES (4, N'AgreedUponEmployee', N'agreedUponEmployee', N'{\"staff\":null}');
         </sql>
     </changeSet>
+    
+    <changeSet id="scheme_add_name" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="schemes" columnName="Name" />
+            </not>
+        </preConditions>
+        <addColumn tableName="schemes">
+            <column name="Name" type="varchar(250)" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

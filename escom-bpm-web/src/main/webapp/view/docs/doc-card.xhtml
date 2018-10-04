@@ -152,6 +152,14 @@
     <ui:define name="specActionMenu">              
     </ui:define>
     
+    <ui:define name="menuExtReports"> 
+        <p:separator />    
+        <p:menuitem value="#{bundle.Remarks}" icon="ui-icon-comment"
+                    disabled="#{_bean.editedItem.id == null}"
+                    actionListener="#{_bean.onPreViewRemarks()}">
+        </p:menuitem>
+    </ui:define>
+    
     <ui:define name="specSubMenu"> 
         <p:menuButton value="#{bundle.Document}" icon="ui-icon-document" styleClass="submenu">
             <p:menuitem icon="ui-icon-clipboard" value="#{bundle.AddVersionFromScan}" rendered="false"    

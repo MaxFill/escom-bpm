@@ -1027,6 +1027,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         List<ProcTempl> procTempls = (List<ProcTempl>) event.getObject();
         if (CollectionUtils.isEmpty(procTempls)) return;
         selectedTempl = procTempls.get(0);
+        changeSchemeName(selectedTempl);
         onLoadModelFromTempl();
         MsgUtils.succesMsg("TemplateLoad");
     }
@@ -1039,9 +1040,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         List<ProcTempl> procTempls = (List<ProcTempl>) event.getObject();
         if (CollectionUtils.isEmpty(procTempls)) return;
         selectedTempl = procTempls.get(0);
+        changeSchemeName(selectedTempl);
         onSaveModelAsTempl();
         MsgUtils.succesMsg("TemplateSaved");
-    }    
+    }
     
     /**
      * Загрузка визуальной схемы процесса из шаблона
@@ -1066,7 +1068,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /**
      * Сохранение модели процесса в шаблон
      */
-    private void onSaveModelAsTempl(){
+    public void onSaveModelAsTempl(){
         Set<String> errors = new HashSet<>();
         workflow.validateScheme(scheme, false, errors);
         if (!errors.isEmpty()){
@@ -1231,7 +1233,11 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private String getY(){
         return (DECIMAL_FORMAT.format(defY)).replace(",", ".");
     }
-       
+    
+    private void changeSchemeName(ProcTempl procTempl){
+        scheme.setName(procTempl.getNameEndElipse());
+    }
+    
     /* GETS & SETS */     
     
     public WFConnectedElem getBaseElement() {
@@ -1270,12 +1276,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
 
     @Override
     public String getFormHeader() {
-        StringBuilder sb = new StringBuilder(getLabelFromBundle("Scheme"));
-        sb.append(": ");
-        if (selectedTempl != null){
-            sb.append(selectedTempl.getNameEndElipse());
-        }
-        return sb.toString();
+        return scheme.getName();
     }
 
     @Override

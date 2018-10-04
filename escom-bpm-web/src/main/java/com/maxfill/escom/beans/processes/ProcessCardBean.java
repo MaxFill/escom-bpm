@@ -8,6 +8,7 @@ import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseCardBean;
 import com.maxfill.escom.beans.docs.DocBean;
+import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
@@ -53,6 +54,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private ProcessBean processBean; 
     @Inject
     private DocBean docBean;
+    @Inject
+    private RemarkBean remarkBean;
     
     @EJB
     private ProcessFacade processFacade;
@@ -440,6 +443,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         params.put("PROCESS_DATE", DateUtils.dateToString(process.getItemDate(),  DateFormat.SHORT, null, getLocale()));  
         printService.doPrint(dataReport, params, DictPrintTempl.REPORT_CONCORDER_LIST);
         sessionBean.onViewReport(DictPrintTempl.REPORT_CONCORDER_LIST);
+    }
+    
+    /**
+     * Распечатка списка замечаний
+     */
+    public void onPreViewRemarks(){                
+        Process process = getEditedItem();
+        remarkBean.onPreViewRemarks(process.getDocument());        
     }
     
     /* GETS & SETS */
