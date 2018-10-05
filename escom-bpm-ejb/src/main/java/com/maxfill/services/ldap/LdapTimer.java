@@ -28,8 +28,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
     }
     
     @Override
-    public void doExecuteTask(Services service, LdapSettings settings){   
-        StringBuilder detailInfo = new StringBuilder();     
+    public void doExecuteTask(Services service, LdapSettings settings){                
         ServicesEvents selectedEvent = startAction(service);        
         try {
             if (settings.getUpdateUsers()){
@@ -37,12 +36,12 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
             } else {
                 detailInfoAddRow( "The mode is set to: ONLY_ADD_NEW_USERS");
             }
-            List<LdapUsers> ldapUsers = doLoadUsers(detailInfo, Boolean.FALSE, settings);
-            doUpdateUser(ldapUsers, detailInfo, settings); 
+            List<LdapUsers> ldapUsers = doLoadUsers(Boolean.FALSE, settings);
+            doUpdateUser(ldapUsers, settings); 
             selectedEvent.setResult(RESULT_SUCCESSFULLY);
         } finally{
             finalAction(selectedEvent);         
-        }        
+        }
     }
     
     /**
@@ -52,7 +51,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
      * @param settings
      * @return 
      */
-    public List<LdapUsers> doLoadUsers(StringBuilder detailInfo, Boolean isManualStart, LdapSettings settings){
+    public List<LdapUsers> doLoadUsers(Boolean isManualStart, LdapSettings settings){
         List<LdapUsers> ldapUsers = new ArrayList<>();
         try {
             LdapContext ctx = LdapUtils.initLDAP(settings.getLdapUsername(), settings.getLdapPassword(), settings.getLdapAdServer());
@@ -61,7 +60,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
                 return null;
             }
             detailInfoAddRow("Connect LDAP is completed!");
-            List<SearchResult> srLdapUsers = LdapUtils.findAccounts(ctx, settings.getLdapSearchBase(), settings.getLdapSearcheGroup());
+            List<SearchResult> srLdapUsers = LdapUtils.findAccounts(getDetailInfo(), ctx, settings.getLdapSearchBase(), settings.getLdapSearcheGroup());
             detailInfoAddRow("Load users from LDAP is completed!");
             for (SearchResult result : srLdapUsers){
                 String sAMAccountName = (String) result.getAttributes().get("sAMAccountName").get();
@@ -106,11 +105,15 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
                 if (result.getAttributes().get("title") != null){
                     post = (String) result.getAttributes().get("title").get();
                 }
+                LOG.log(Level.INFO, "GetPrimaryGroupSID...", "");
                 String primaryGroupSID = LdapUtils.getPrimaryGroupSID(result);
+                LOG.log(Level.INFO, "FindGroupBySID...", "");
                 String primaryGroupName = LdapUtils.findGroupBySID(ctx, settings.getLdapSearchBase(), primaryGroupSID);
+                
                 if (name.trim().isEmpty()){
                     name = login;
                 }
+                LOG.log(Level.INFO, "Create ldapUser '{0}'", name);
                 LdapUsers ldapUser = new LdapUsers();
                 ldapUser.setLogin(login);
                 ldapUser.setName(name);
@@ -136,7 +139,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
      * Обновление пользователей, полученными данными из LDAP
      * @param detailInfo 
      */    
-    private void doUpdateUser(List<LdapUsers> ldapUsers, StringBuilder detailInfo, LdapSettings settings){
+    private void doUpdateUser(List<LdapUsers> ldapUsers, LdapSettings settings){
         List<User> users = userFacade.findAll(userFacade.getAdmin());        
         for(LdapUsers ldapUser : ldapUsers){
             User user = isNewUser(ldapUser, users);

@@ -9,7 +9,7 @@
 
     <ui:define name="serviceParams">
         <p:outputLabel value="#{bundle.LdapAdServer}"/>
-        <p:inputText id="ldapAdServer" style="width: 100%;"
+        <p:inputText id="ldapAdServer" styleClass="ui-grid-col-12"
                      title="#{bundle.LdapAdServer}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.LdapAdServer}] #{bundle.MustBeFilled}"
@@ -17,7 +17,7 @@
         <p:message for="ldapAdServer" display="tooltip"/>
 
         <p:outputLabel value="#{bundle.User}"/>
-        <p:inputText id="ldapUsername" style="width: 100%;"
+        <p:inputText id="ldapUsername" styleClass="ui-grid-col-12"
                      title="#{bundle.LdapUsername}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
@@ -25,7 +25,7 @@
         <p:message for="ldapUsername" display="tooltip"/>
 
         <p:outputLabel value="#{bundle.password}"/>
-        <p:inputText id="ldapPassword" style="width: 100%;"
+        <p:inputText id="ldapPassword" styleClass="ui-grid-col-12"
                      title="#{bundle.LdapPassword}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
@@ -56,14 +56,14 @@
         </p:selectOneRadio>
 
         <p:outputLabel value="#{bundle.LdapSearchBase}"/>            
-        <p:inputTextarea id="ldapSearchBase" style="width: 100%;"
+        <p:inputTextarea id="ldapSearchBase" styleClass="ui-grid-col-12"
                          cols="2"
                          title="#{bundle.LdapSearchBase}"
                          required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.LdapSearchBase}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapSearchBase}"/>
         <p:message for="ldapSearchBase" display="tooltip"/>
-        <p:inputText id="ldapSearchGroup" style="width: 100%;"
+        <p:inputText id="ldapSearchGroup" styleClass="ui-grid-col-12"
                      title="#{bundle.LdapSearchGroup}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.LdapSearchGroup}] #{bundle.MustBeFilled}"

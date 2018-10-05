@@ -25,7 +25,7 @@ public abstract class BaseTimer<P> {
     protected static final String RESULT_SUCCESSFULLY = "Ok";
     private final Class<P> settingsClass;
     
-    private final StringBuilder detailInfo = new StringBuilder("");
+    private final StringBuilder detailInfo = new StringBuilder();
 
     @EJB
     private ServicesFacade servicesFacade;
@@ -122,7 +122,8 @@ public abstract class BaseTimer<P> {
         return null;
     }
 
-    protected ServicesEvents startAction(Services service){        
+    protected ServicesEvents startAction(Services service){ 
+        detailInfo.setLength(0);
         detailInfoAddRow("The service started in " + DateUtils.dateToString(new Date(), DateFormat.SHORT, DateFormat.MEDIUM, conf.getServerLocale()));
         ServicesEvents selectedEvent = new ServicesEvents();
         selectedEvent.setDateStart(new Date());

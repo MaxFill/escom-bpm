@@ -39,9 +39,8 @@ public class LdapBean extends BaseServicesBean<LdapSettings>{
     /**
      * Тест получения пользователей из LDAP
      */
-    public void onTestLoadUsers(){
-        StringBuilder detailInfo = new StringBuilder();        
-        ldapUsers = ldapTimer.doLoadUsers(detailInfo, Boolean.TRUE, getSettings());
+    public void onTestLoadUsers(){        
+        ldapUsers = ldapTimer.doLoadUsers(Boolean.TRUE, getSettings());
         if (ldapUsers == null){
             MsgUtils.errorMsg("ConnectFailed");
         }

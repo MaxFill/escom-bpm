@@ -1,5 +1,6 @@
 package com.maxfill.services.ldap;
 
+import com.maxfill.dictionary.SysParams;
 import com.maxfill.utils.EscomUtils;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -69,36 +70,35 @@ public final class LdapUtils {
         return null;
     }
         
-    public static List<SearchResult> findAccounts(DirContext ctx, String ldapSearchBase, String groupFilter) throws NamingException {
+    public static List<SearchResult> findAccounts(StringBuilder detailInfo, DirContext ctx, String ldapSearchBase, String groupFilter) throws NamingException {
         List<SearchResult> searchResults = new ArrayList<>();
-        
-        String searchFilter = "(&(objectClass=user)(memberOf="+groupFilter+","+ldapSearchBase+"))";
-        LOG.log(Level.INFO, "AD filter = {0}", searchFilter);
-        
+        String searchFilter = "(&(objectCategory=person)(objectClass=user)(" + groupFilter + "))";
+        detailInfo.append("base=").append(ldapSearchBase).append(SysParams.LINE_SEPARATOR);
+        detailInfo.append("filter=").append(searchFilter).append(SysParams.LINE_SEPARATOR);
+                
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
         NamingEnumeration<SearchResult> results = ctx.search(ldapSearchBase, searchFilter, searchControls);
 
-        SearchResult searchResult = null;
+        SearchResult searchResult;
+        detailInfo.append("searche...").append(SysParams.LINE_SEPARATOR);
         if(results.hasMoreElements()) {
             searchResult = (SearchResult) results.nextElement();
-            addSearchResults(searchResult, results, searchResults);
-        }
-        
+            addSearchResults(detailInfo, searchResult, results, searchResults);
+        }        
         return searchResults;
     }
     
-    private static void addSearchResults(SearchResult searchResult, NamingEnumeration<SearchResult> results, List<SearchResult> searchResults){
+    private static void addSearchResults(StringBuilder detailInfo, SearchResult searchResult, NamingEnumeration<SearchResult> results, List<SearchResult> searchResults){
         searchResults.add(searchResult);
         if(results.hasMoreElements()) {
             searchResult = (SearchResult) results.nextElement();
-            addSearchResults(searchResult, results, searchResults);  
+            addSearchResults(detailInfo, searchResult, results, searchResults);  
         }
     }
     
     public static String decodeSID(byte[] sid) {
-        
         final StringBuilder strSid = new StringBuilder("S-");
 
         // get version
@@ -131,21 +131,22 @@ public final class LdapUtils {
             
             offset += size;
         }
-        
         return strSid.toString();    
     }
     
     public static String getPrimaryGroupSID(SearchResult srLdapUser) throws NamingException {
-        byte[] objectSID = (byte[])srLdapUser.getAttributes().get("objectSid").get();
-        String strPrimaryGroupID = (String)srLdapUser.getAttributes().get("primaryGroupID").get();
-        
-        String strObjectSid = decodeSID(objectSID);
-        
-        return strObjectSid.substring(0, strObjectSid.lastIndexOf('-') + 1) + strPrimaryGroupID;
+        try {
+            byte[] objectSID = (byte[])srLdapUser.getAttributes().get("objectSid").get();
+            String strPrimaryGroupID = (String)srLdapUser.getAttributes().get("primaryGroupID").get();
+            String strObjectSid = decodeSID(objectSID);
+            return strObjectSid.substring(0, strObjectSid.lastIndexOf('-') + 1) + strPrimaryGroupID;
+        }catch(StringIndexOutOfBoundsException ex){
+            LOG.log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
     
     public static String findGroupBySID(DirContext ctx, String ldapSearchBase, String sid) throws NamingException {
-        
         String searchFilter = "(&(objectClass=group)(objectSid=" + sid + "))";
 
         SearchControls searchControls = new SearchControls();
@@ -174,12 +175,16 @@ public final class LdapUtils {
      */
     public static List<String> makeUserGroups(String memberOf){
         List<String> groups = new ArrayList<>();
-        List<String> strlist = EscomUtils.SplitString(memberOf, " ");
-        for (String str : strlist){
-            Integer beginIndex = str.indexOf("=") + 1 ;
-            Integer endIndex = str.indexOf(",");
-            String group = str.substring(beginIndex, endIndex);
-            groups.add(group);
+        try{        
+            List<String> strlist = EscomUtils.SplitString(memberOf, " ");
+            for (String str : strlist){
+                Integer beginIndex = str.indexOf("=") + 1 ;
+                Integer endIndex = str.indexOf(",");
+                String group = str.substring(beginIndex, endIndex);
+                groups.add(group);
+            }        
+        } catch(StringIndexOutOfBoundsException ex){
+            LOG.log(Level.SEVERE, null, ex);
         }
         return groups;
     }
