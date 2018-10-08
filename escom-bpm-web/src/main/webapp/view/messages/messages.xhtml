@@ -96,6 +96,10 @@
                     <p:graphicImage value="#{item.dateReading == null ? '/resources/icon/UnReadMsg.png' : '/resources/icon/ReadMsg.png'}" /> 
                 </p:column>
 
+                <p:column headerText="#{bundle.Recipient}" rendered="#{userMsgBean.isShowRecipient()}" >
+                    <h:outputLabel value="#{item.addressee.getShortFIO()}"/>
+                </p:column>
+                
                 <p:column headerText="#{bundle.DateSend}" sortBy="#{item.dateSent}" priority="2">
                     <h:outputLabel value="#{item.dateSent}">
                         <f:convertDateTime pattern="dd.MM.yy : HH.mm"/>
@@ -103,7 +107,7 @@
                 </p:column>
 
                 <p:column headerText="#{bundle.Name}" priority="2">
-                    <h:outputLabel value="#{item.name}"/>
+                    <h:outputLabel value="#{item.name}" />
                 </p:column>
                 
                 <p:column headerText="#{bundle.Content}" priority="1">
@@ -120,7 +124,7 @@
                     </h:outputLabel>
                 </p:column>
 
-                <p:column priority="1">
+                <p:column >
                     <p:commandLink  value="#{bundle.GoToProcess}"
                                     rendered="#{item.process != null}"
                                     actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
@@ -136,10 +140,10 @@
                                     actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
                                     oncomplete="document.getElementById('mainFRM:openDocBtn').click();"/>
                 </p:column>
-                <p:column>
+                <p:column width="16">
                     <p:commandButton icon="ui-icon-check" title="#{bundle.MarkAsRead}"
                                      update="messageTBL"
-                                     rendered="#{item.dateReading == null}"
+                                     rendered="#{userMsgBean.isCanMarkRead(item)}"
                                      actionListener="#{userMsgBean.markAsRead(item)}">
                     </p:commandButton>
                 </p:column>

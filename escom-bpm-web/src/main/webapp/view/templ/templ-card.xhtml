@@ -46,7 +46,7 @@
 
                     <p:toolbar id="explToolBar">
                         <f:facet name="left">
-                            <p:menuButton value="#{bundle.Print}" icon="ui-icon-print" >
+                            <p:menuButton value="#{bundle.Print}" icon="ico_printer-16" >
                                 <p:menuitem icon="ui-icon-print" value="#{bundle.PrintCardItem}"
                                             disabled="#{_bean.editedItem.id == null}"
                                             actionListener="#{_bean.onPreViewItemCard()}"/>
@@ -64,7 +64,7 @@
                             </span>
                             <p:commandButton id="btnSaveClose" title="#{bundle.SaveClose}"
                                              disabled="#{_bean.isReadOnly()}"
-                                             icon="ui-icon-disk"
+                                             icon="ico_save-16"
                                              update="mainFRM"
                                              actionListener="#{_bean.prepSaveItemAndClose()}" 
                                              onclick="sendFormSize('#{_bean.getFormName()}');
@@ -77,7 +77,7 @@
                                 <span class="ui-icon ui-icon-grip-dotted-vertical" />
                             </span>
                             <p:spacer width="10"/>
-                            <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                            <p:menuButton value="#{bundle.Actions}" icon="ico_service-16">
                                 <ui:insert name="specActionMenu" />
                                 <p:separator />        
                                 <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}"

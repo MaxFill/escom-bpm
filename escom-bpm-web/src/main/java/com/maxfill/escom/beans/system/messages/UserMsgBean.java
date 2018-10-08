@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.docs.DocBean;
 import com.maxfill.escom.beans.core.lazyload.LazyLoadBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.facade.BaseLazyFacade;
@@ -26,10 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
 @Named
 public class UserMsgBean extends LazyLoadBean<UserMessages> {
     private static final long serialVersionUID = -7376087892834532742L;
-
-    private boolean showOnlyUnread;
-    private UserMessages selectedMessages;
-
+    
     @Inject
     private DocBean docBean;
     @Inject
@@ -40,6 +38,10 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     @EJB
     private UserMessagesFacade messagesFacade;
 
+    private boolean showOnlyUnread = true;
+    private UserMessages selectedMessages;
+    private Process process;
+    
     @Override
     protected void initBean() {
         dateEnd = DateUtils.clearDate(DateUtils.addDays(new Date(), 1));
@@ -53,7 +55,12 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     
     @Override
     public void doBeforeOpenCard(Map params){
-        showOnlyUnread = params.get("typeMsg").equals("newMsg");
+        if (params.containsKey("typeMsg")){
+            showOnlyUnread = "newMsg".equals(params.get("typeMsg"));
+        }
+        if (sourceBean != null && sourceBean instanceof ProcessCardBean){
+            process = ((ProcessCardBean) sourceBean).getEditedItem();
+        }
     }
 
     @Override
@@ -61,11 +68,22 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
         return DictFrmName.FRM_USER_MESSAGES;
     }
     
-    /* установка отметки о прочтении на выделенных сообщениях */
+    public boolean isShowRecipient(){
+        return process != null;
+    }
+    
+    public boolean isCanMarkRead(UserMessages msg){
+        return msg.getDateReading() == null && getCurrentUser().equals(msg.getAddressee());
+    }
+    
+    /**
+     * Установка отметки о прочтении на выделенных сообщениях
+     */ 
     public void markAsRead(){         
         List<UserMessages> msgs = messagesFacade.findItemsByFilters("", "", makeFilters(new HashMap<>()), getCurrentUser());
         msgs.stream()
-                .filter(message->message.getDateReading() == null)
+                .filter(message->message.getDateReading() == null 
+                        && getCurrentUser().equals(message.getAddressee()))
                 .forEach(message->markAsRead((UserMessages)message)); 
     }
 
@@ -84,7 +102,8 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     public void markSelectedAsRead(){
         if (CollectionUtils.isEmpty(checkedItems)) return;
         checkedItems.stream()
-                .filter(message->message.getDateReading() == null)
+                .filter(message->message.getDateReading() == null
+                    && getCurrentUser().equals(message.getAddressee()))
                 .forEach(message->markAsRead((UserMessages)message)); 
     }
     
@@ -114,8 +133,12 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     }
     
     @Override
-    protected Map<String, Object> makeFilters(Map filters) {
-        filters.put("addressee", sessionBean.getCurrentUser());
+    protected Map<String, Object> makeFilters(Map filters) {        
+        if (process != null){
+            filters.put("process", process);
+        } else {
+            filters.put("addressee", sessionBean.getCurrentUser());
+        }
         if (showOnlyUnread){
             filters.put("dateReading", null);
             filters.remove("dateSent");

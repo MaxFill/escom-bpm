@@ -1966,11 +1966,11 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
     }    
     
     @Override
-    public Boolean isEastShow(){
+    public boolean isEastShow(){
         return true;
     }
     @Override
-    public Boolean isWestShow(){
+    public boolean isWestShow(){
         return true;
     }
     

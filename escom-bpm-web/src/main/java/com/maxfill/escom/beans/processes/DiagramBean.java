@@ -6,7 +6,6 @@ import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.basedict.process.Process;
-import com.maxfill.escom.beans.processes.templates.ProcTemplBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
@@ -41,7 +40,6 @@ import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
-import com.maxfill.utils.Tuple;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -55,7 +53,6 @@ import java.util.logging.Level;
 import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
@@ -1285,7 +1282,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     }
     
     @Override
-    public Boolean isSouthShow(){
+    public boolean isSouthShow(){
         return true;
     }
 }

@@ -26,6 +26,15 @@
         </ui:define>
 
         <ui:define name="specSubMenu">
+            <p:menuButton value="#{bundle.Messages}" icon="ico_message-16" >
+                <p:menuitem icon="ui-icon-mail-closed" value="#{bundle.CreateMessage}"
+                            disabled="#{_bean.editedItem.id == null}"
+                            actionListener="#{_bean.onCreateMessage()}"/>
+                <p:menuitem icon="ui-icon-folder-open" value="#{bundle.Messages}"
+                            disabled="#{_bean.editedItem.id == null}"
+                            actionListener="#{_bean.onShowMessages()}"/>                
+            </p:menuButton>
+            
             <p:commandButton value="#{bundle.Scheme}" icon="ico_process"
                              actionListener="#{processCardBean.onOpenScheme()}" >
                 <p:ajax event="dialogReturn" listener="#{_bean.onSchemeClose}" />
@@ -37,7 +46,7 @@
             <p:outputLabel value="#{processCardBean.getLabelFromBundle(_bean.editedItem.state.currentState.name)}"/>
             <p:spacer width="15"/>
 
-            <p:menuButton icon="ui-icon-play" title="#{bundle.StartProcess}" disabled="#{processCardBean.isReadOnly()}">
+            <p:menuButton icon="ico-play-16" title="#{bundle.StartProcess}" disabled="#{_bean.isDisableRunBtn()}">
                 <p:menuitem value="#{bundle.NewEditionSendToAll}" icon="ui-icon-play" update="mainFRM"
                             actionListener="#{processCardBean.onRun('send_all')}"
                             onstart="PF('statusDialog').show()"
@@ -53,7 +62,7 @@
             </p:menuButton> 
 
             <p:spacer width="2"/>
-            <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ui-icon-stop"
+            <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ico-stop-16"
                              disabled="#{processCardBean.isDisableBtnStop()}"
                              update="mainFRM" 
                              actionListener="#{processCardBean.onStop()}"

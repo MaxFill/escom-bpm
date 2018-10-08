@@ -27,9 +27,16 @@
                     <ui:insert name="southFormContent"/>
                     <ui:include src="/view/common/confirm-dlg.xhtml"/>
                 </h:form>
+            </p:layoutUnit>                        
+                
+            <p:layoutUnit position="east" rendered="#{_bean.isEastShow()}" resizable="true" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
+                <h:form id="eastFRM" style="font-size: 80%; height: 100%;" styleClass="ui-grid-col-12" > 
+                    <ui:insert name="eastFormContent"/>
+                    <ui:include src="/view/common/confirm-dlg.xhtml"/>
+                </h:form>
             </p:layoutUnit>
-            
-            <p:layoutUnit position="center" styleClass="ui-grid-col-12 without-spaces" style="border: none;">
+                
+            <p:layoutUnit position="center" styleClass="ui-grid-col-12 without-spaces" resizable="true" style="border: none;">
                 <h:form id="mainFRM" style="font-size: 90%; height: 100%;" styleClass="ui-grid-col-12" > 
                     <p:panel rendered="#{_bean != null}" styleClass="ui-grid-col-12 without-spaces" style="height: 100%;" >
                         <f:facet name="header">
@@ -53,7 +60,7 @@
                                 </f:facet>
                                 <f:facet name="right">
                                     <ui:insert name="specToolButtons"/>
-                                    <p:menuButton value="#{bundle.Actions}" icon="ui-icon-gear">
+                                    <p:menuButton value="#{bundle.Actions}" icon="ico_service-16">
                                         <ui:insert name="menuActions" />  
                                         <p:separator />
                                         <p:menuitem value="#{bundle.ManualBook}" icon="ui-icon-help" rendered="#{_isShowHelp}" 

@@ -216,7 +216,7 @@ public class MetadatesBean extends BaseViewBean{
     }
 
     @Override
-    public Boolean isWestShow() {
+    public boolean isWestShow() {
         return true;
     }
     

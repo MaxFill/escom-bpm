@@ -141,13 +141,13 @@ public abstract class BaseViewBean<T extends BaseView> implements Serializable, 
 
     public abstract String getFormName();
     
-    public Boolean isWestShow(){
+    public boolean isWestShow(){
         return false;
     }
-    public Boolean isEastShow(){
+    public boolean isEastShow(){
         return false;
     }    
-    public Boolean isSouthShow(){
+    public boolean isSouthShow(){
         return false;
     }
     public abstract String getFormHeader();

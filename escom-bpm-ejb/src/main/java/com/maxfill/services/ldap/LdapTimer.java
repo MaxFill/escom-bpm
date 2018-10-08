@@ -37,8 +37,12 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
                 detailInfoAddRow( "The mode is set to: ONLY_ADD_NEW_USERS");
             }
             List<LdapUsers> ldapUsers = doLoadUsers(Boolean.FALSE, settings);
-            doUpdateUser(ldapUsers, settings); 
-            selectedEvent.setResult(RESULT_SUCCESSFULLY);
+            if (ldapUsers.isEmpty()){
+                selectedEvent.setResult(RESULT_NO_DATA);
+            } else {
+                doUpdateUser(ldapUsers, settings); 
+                selectedEvent.setResult(RESULT_SUCCESSFULLY);
+            }
         } finally{
             finalAction(selectedEvent);         
         }

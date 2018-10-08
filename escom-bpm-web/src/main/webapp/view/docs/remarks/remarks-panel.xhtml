@@ -15,7 +15,7 @@
                         rowsPerPageTemplate="5,10,15" rows="5"
                         styleClass="ui-grid-col-12 without-spaces">
 
-                <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">
+                <p:panel menuTitle="#{bundle.Menu}" collapsed="#{remark.state.currentState.id == 13}" toggleable="true" toggleSpeed="100" styleClass="ui-grid-col-12 without-spaces">
                     <f:facet name="header">
                         <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
                         <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
@@ -80,7 +80,7 @@
                         rowsPerPageTemplate="5,10,15" rows="5" 
                         styleClass="ui-grid-col-12 without-spaces">
 
-                <p:panel menuTitle="#{bundle.Menu}" toggleable="true" styleClass="ui-grid-col-12 without-spaces">                    
+                <p:panel menuTitle="#{bundle.Menu}" toggleable="true" toggleSpeed="100" styleClass="ui-grid-col-12 without-spaces">                    
                     <f:facet name="header">
                         <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
                         <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>

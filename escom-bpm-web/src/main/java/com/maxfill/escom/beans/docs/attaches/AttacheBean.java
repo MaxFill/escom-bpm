@@ -274,6 +274,11 @@ public class AttacheBean extends BaseViewBean<BaseView>{
         return false;
     }
     
+    @Override
+    public boolean isEastShow(){
+       return isRemarkTabShow(); 
+    }
+    
     /* GETS & SETS  */
 
     public String getCurrentTab() {

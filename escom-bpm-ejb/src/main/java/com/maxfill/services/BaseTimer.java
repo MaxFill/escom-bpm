@@ -23,6 +23,8 @@ public abstract class BaseTimer<P> {
     protected static final Logger LOG = Logger.getLogger(BaseTimer.class.getName());
     protected static final String RESULT_FAIL = "Error";
     protected static final String RESULT_SUCCESSFULLY = "Ok";
+    protected static final String RESULT_NO_DATA = "No data found";
+    
     private final Class<P> settingsClass;
     
     private final StringBuilder detailInfo = new StringBuilder();

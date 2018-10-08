@@ -206,11 +206,11 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
     }    
     
     @Override
-    public Boolean isWestShow(){
+    public boolean isWestShow(){
         return true;
     }
     @Override
-    public Boolean isEastShow(){
+    public boolean isEastShow(){
         return true;
     }
     

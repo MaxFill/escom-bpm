@@ -1,6 +1,5 @@
 package com.maxfill.services.workflow;
 
-import com.google.gson.Gson;
 import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
 import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
 import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
@@ -368,8 +367,8 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getExits().isEmpty()){
             errors.add("DiagramNotHaveExit");
         }
-        StartElem startElem = scheme.getElements().getStartElem();
-        if (startElem == null){
+        StartElem startElem = scheme.getElements().getStartElem();        
+        if (startElem == null && scheme.getElements().getEnters().isEmpty()){
             errors.add("DiagramNotHaveStart");
         }
         if (scheme.getElements().getConnectors().isEmpty()){
@@ -958,8 +957,7 @@ public class WorkflowImpl implements Workflow {
     private void sendMessage(Process process, MessageElem message, User user){        
         StringBuilder sb = new StringBuilder();
         sb.append(message.getContent());        
-        String subject = "NotifyFromProcess";
-        processFacade.sendRoleMessage(process, message.getRecipientsJSON(), subject, sb, user);
+        processFacade.sendRoleMessage(process, message.getRecipientsJSON(), "NotifyFromProcess", sb, user);
     }
     
     /* *** ПРОЦЕДУРЫ *** */

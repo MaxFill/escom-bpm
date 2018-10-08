@@ -85,9 +85,9 @@
                 </f:facet>
             </p:toolbar>
 
-            <p:growl id="growl" showDetail="true" >
+            <p:messages showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
                 <p:autoUpdate />
-            </p:growl>
+            </p:messages>
 
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-panelgrid-blank ui-grid-col-12"> 
                 <p:dashboard id="board" model="#{sessionBean.dashboardModel}" >
@@ -207,7 +207,7 @@
                                 <p:commandLink value="#{''.concat(bundle.MyTasks).concat(': ').concat(sessionBean.getTasksInfo())}" 
                                                actionListener="#{sessionBean.setOpenFormName(DictFrmName.FRM_MY_TASKS)}"
                                                oncomplete="document.getElementById('mainFRM:btnOpenForm').click();"/>                             
-                            </p:panelGrid>                             
+                            </p:panelGrid>
                         </p:panelGrid>
                     </p:panel>
                     

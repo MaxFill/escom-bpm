@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictRoles;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.escom.beans.core.BaseViewBean;
+import com.maxfill.escom.beans.processes.ProcessCardBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.core.messages.UserMessagesFacade;
@@ -14,14 +15,14 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.utils.ItemUtils;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.inject.Named;
+import org.apache.commons.collections.CollectionUtils;
 import org.omnifaces.cdi.ViewScoped;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -46,23 +47,27 @@ public class NotifyCardBean extends BaseViewBean{
     private String content;
     private String message;
     private Process process;
-    private Remark editedRemark;
+    private Remark remark;
     
     @Override
     public void doBeforeOpenCard(Map params){        
         List<User> source = new ArrayList<>();
         if (params.containsKey("remarkID")){
             Integer remarkID = Integer.valueOf((String)params.get("remarkID"));
-            editedRemark = remarkFacade.find(remarkID);
-            if (editedRemark != null){
-                content = editedRemark.getContent();
-                process = editedRemark.getProcess();
-                if (process != null){
-                    source.addAll(processFacade.actualiseRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));
-                }
+            remark = remarkFacade.find(remarkID);
+            if (remark != null){
+                content = remark.getContent();
+                process = remark.getProcess();                
             }
+            message = MsgUtils.getMessageLabel("PleasePayAttentionMyRemark");
+        } else             
+            if (sourceBean != null && sourceBean instanceof ProcessCardBean){
+                process = ((ProcessCardBean) sourceBean).getEditedItem();
+            }
+        
+        if (process != null){
+            source.addAll(processFacade.actualiseRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));
         }
-        message = MsgUtils.getMessageLabel("PleasePayAttentionMyRemark");
         users = new DualListModel<>(source, new ArrayList<>());
     }
     
@@ -76,7 +81,9 @@ public class NotifyCardBean extends BaseViewBean{
         if (process != null){
             links.add(process);         
         }
-        links.add(editedRemark.getOwner());
+        if (remark != null){
+            links.add(remark.getOwner());   //ссылка на документ
+        }
         StringBuilder cb = new StringBuilder();
         cb.append("<h3>").append(message).append("<h3/>");
         cb.append("<br/>");
@@ -85,7 +92,13 @@ public class NotifyCardBean extends BaseViewBean{
         User sender = getCurrentUser();
         recipients.forEach(recipient -> { 
                     Locale locale = userFacade.getUserLocale(recipient);
-                    StringBuilder subject = new StringBuilder(ItemUtils.getMessageLabel("NotificationNewRemark", locale));
+                    StringBuilder subject = new StringBuilder();
+                    if (remark != null){
+                        ItemUtils.getMessageLabel("NotificationNewRemark", locale);
+                    } else 
+                        if (process != null){
+                            ItemUtils.getMessageLabel("NotifyFromProcess", locale);
+                        }
                     if (process != null){
                         subject.append(": ").append(process.getNameEndElipse());
                     }                    
@@ -102,6 +115,13 @@ public class NotifyCardBean extends BaseViewBean{
     @Override
     public String getFormHeader() {
         return getLabelFromBundle("Notify");
+    }
+    
+    public void onAddRecipients(SelectEvent event){
+        List<User> selectedUsers = (List<User>) event.getObject();
+        if (CollectionUtils.isNotEmpty(selectedUsers)){
+            users.getTarget().addAll(selectedUsers);
+        }
     }
     
     /* GETS & SETS */

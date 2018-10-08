@@ -75,8 +75,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
 
     @Override
-    protected void doPrepareOpen(Process item) {
-    }    
+    protected void doPrepareOpen(Process process) {
+        workflow.unpackScheme(process.getScheme());
+    }
 
     /**
      * Перед сохранением процесса
@@ -201,6 +202,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
         
         PrimeFaces.current().ajax().update("mainFRM:mainTabView:accord");
+        PrimeFaces.current().ajax().update("mainFRM:explToolBar");
         onItemChange();
     }
     
@@ -220,7 +222,17 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         //doCangeCurator(user);
     }    
     
-    /* МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ */
+    /* *** МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ *** */
+    
+    /**
+     * Определает отображение кнопки пуска процесса на форме карточки
+     * @return 
+     */
+    public boolean isDisableRunBtn(){        
+        if (getEditedItem().getScheme() == null || isReadOnly()) return true;
+        Scheme scheme = getEditedItem().getScheme();
+        return scheme.getElements().getStartElem() == null;
+    }
     
     /**
      * Обработка события запуска процесса на исполнение
@@ -325,8 +337,27 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         if (staff == null) return "";
         return staff.equals(getEditedItem().getCurator()) ? "/resources/icon/16_inspector.png" : "/resources/icon/user.png";
     }
+   
+    /* *** СООБЩЕНИЯ *** */
     
-    /* РАБОТА С ДОКУМЕНТАМИ */
+    /**
+     * Создание сообщения с сылкой на процесс
+     */
+    public void onCreateMessage(){
+        Map<String, List<String>> params = getParamsMap();        
+        sessionBean.openDialogFrm(DictFrmName.FRM_NOTIFY, params);
+    }
+    
+    /**
+     * Открытие формы просмотра сообщений, связанных с процессом
+     */
+    public void onShowMessages(){
+        Map<String, List<String>> paramMap = getParamsMap();
+        paramMap.put("typeMsg", Collections.singletonList("allMsg"));
+        sessionBean.openDialogFrm(DictFrmName.FRM_USER_MESSAGES, paramMap); 
+    }
+    
+    /* *** РАБОТА С ДОКУМЕНТАМИ *** */
     
     public void onDocSelected(SelectEvent event){
         if (event.getObject() instanceof String) return;

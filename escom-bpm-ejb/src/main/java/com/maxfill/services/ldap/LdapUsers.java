@@ -39,7 +39,6 @@ public class LdapUsers implements Serializable{
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -47,7 +46,6 @@ public class LdapUsers implements Serializable{
     public String getLogin() {
         return login;
     }
-
     public void setLogin(String login) {
         this.login = login;
     }
@@ -55,7 +53,6 @@ public class LdapUsers implements Serializable{
     public String getDistinguishedName() {
         return distinguishedName;
     }
-
     public void setDistinguishedName(String distinguishedName) {
         this.distinguishedName = distinguishedName;
     }
@@ -63,7 +60,6 @@ public class LdapUsers implements Serializable{
     public String getsAMAccountName() {
         return sAMAccountName;
     }
-
     public void setsAMAccountName(String sAMAccountName) {
         this.sAMAccountName = sAMAccountName;
     }
@@ -71,7 +67,6 @@ public class LdapUsers implements Serializable{
     public String getPost() {
         return post;
     }
-
     public void setPost(String post) {
         this.post = post;
     }
@@ -79,7 +74,6 @@ public class LdapUsers implements Serializable{
     public String getDepartament() {
         return departament;
     }
-
     public void setDepartament(String departament) {
         this.departament = departament;
     }
@@ -87,7 +81,6 @@ public class LdapUsers implements Serializable{
     public String getCompany() {
         return company;
     }
-
     public void setCompany(String company) {
         this.company = company;
     }
@@ -95,7 +88,6 @@ public class LdapUsers implements Serializable{
     public String getUserPrincipalName() {
         return userPrincipalName;
     }
-
     public void setUserPrincipalName(String userPrincipalName) {
         this.userPrincipalName = userPrincipalName;
     }
@@ -103,7 +95,6 @@ public class LdapUsers implements Serializable{
     public String getMail() {
         return mail;
     }
-
     public void setMail(String mail) {
         this.mail = mail;
     }
@@ -111,7 +102,6 @@ public class LdapUsers implements Serializable{
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
@@ -119,7 +109,6 @@ public class LdapUsers implements Serializable{
     public String getPrimaryGroupName() {
         return primaryGroupName;
     }
-
     public void setPrimaryGroupName(String primaryGroupName) {
         this.primaryGroupName = primaryGroupName;
     }
