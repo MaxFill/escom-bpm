@@ -30,6 +30,7 @@ import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
 import com.maxfill.model.basedict.process.schemes.elements.WorkflowElements;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
+import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
@@ -217,6 +218,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 }
                 elementMap.put(k, createElement(timerEl));
             });
+        scheme.getElements().getSubprocesses().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
         scheme.getElements().getExits().forEach((k, v)->elementMap.put(k, createElement(v)));        
@@ -359,6 +361,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         }
         if (baseElement instanceof ProcedureElem){
             openElementCard(DictFrmName.FRM_PROCEDURE); 
+            return;
+        }
+        if (baseElement instanceof SubProcessElem){
+            openElementCard(DictFrmName.FRM_SUB_PROCESS); 
             return;
         }
         modelRefresh();
@@ -540,6 +546,15 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         finalAddElement();
     }
     
+    /**
+     * Обработка события добавления в схему процесс визуального компонента "Подпроцесс"
+     */
+    public void onAddSubProcessElement(){
+        beforeAddElement();
+        baseElement = createSubProcess(null, new HashSet<>());
+        finalAddElement();
+    }
+    
     private void beforeAddElement(){
         defX = defX + 45;
         defY = defY + 45;    
@@ -623,7 +638,42 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         }
         return null;
     }
-     
+    
+     /**
+     * Создание элемента "Подпроцесс"
+     * @param procedure
+     * @param errors
+     * @return 
+     */
+    private SubProcessElem createSubProcess(Process process, Set<String> errors){
+        SubProcessElem subProcElem;
+        String x = getX();
+        String y = getY();
+        if (process != null){
+            subProcElem = new SubProcessElem(process.getName(), process.getId(), x, y);
+        } else {
+            subProcElem = new SubProcessElem("???", null, x, y);
+        }
+        List<EndPoint> endPoints = new ArrayList<>();
+        createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
+        createSourceEndPoint(endPoints, EndPointAnchor.TOP);
+        createTargetEndPoint(endPoints, EndPointAnchor.BOTTOM);
+        createTargetEndPoint(endPoints, EndPointAnchor.LEFT);
+        subProcElem.setAnchors(makeAnchorElems(subProcElem, endPoints));
+        workflow.addSubProcess(subProcElem, scheme, errors);
+        if (errors.isEmpty()) {
+            modelAddElement(subProcElem);
+            return subProcElem;
+        }
+        return null;
+    }
+    
+    /**
+     * Создание элемента "Процедура"
+     * @param procedure
+     * @param errors
+     * @return 
+     */
     private ProcedureElem createProcedure(Procedure procedure, Set<String> errors){
         ProcedureElem procedureElem;
         String x = getX();
@@ -1177,20 +1227,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public String getElementCaption(WFConnectedElem wfElement){
         String bundleName = wfElement.getCaption();
-        if (StringUtils.isEmpty(bundleName)) return "";
-        
-        if (wfElement instanceof TaskElem){
-            TaskElem taskElem = (TaskElem) wfElement;
-            return taskElem.getCaption();
-        } else 
-            if (wfElement instanceof ProcedureElem){
-                ProcedureElem elem = (ProcedureElem) wfElement;
-                return elem.getCaption();            
-            } else 
-                if (wfElement instanceof ConditionElem){
-                    ConditionElem elem = (ConditionElem) wfElement;
-                    return elem.getCaption();
-                }
+        if (StringUtils.isEmpty(bundleName)) return "";               
         return MsgUtils.getBandleLabel(bundleName);
     } 
             

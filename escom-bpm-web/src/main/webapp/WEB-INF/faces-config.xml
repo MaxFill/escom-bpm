@@ -71,8 +71,13 @@
             <redirect />
         </navigation-case>
         <navigation-case>
+            <from-outcome>process-explorer</from-outcome>
+            <to-view-id>/view/processes/process-explorer.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+        <navigation-case>
             <from-outcome>processtype-explorer</from-outcome>
-            <to-view-id>/view/processes/types/process-explorer.xhtml</to-view-id>
+            <to-view-id>/view/processes/types/processtype-explorer.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>
@@ -214,6 +219,10 @@
             <from-outcome>procedure-card</from-outcome>
             <to-view-id>/view/processes/elements/procedure-card.xhtml</to-view-id>
         </navigation-case>
+        <navigation-case>
+            <from-outcome>subprocess-card</from-outcome>
+            <to-view-id>/view/processes/elements/subprocess-card.xhtml</to-view-id>
+        </navigation-case>        
         <navigation-case>
             <from-outcome>message-card</from-outcome>
             <to-view-id>/view/processes/elements/message-card.xhtml</to-view-id>

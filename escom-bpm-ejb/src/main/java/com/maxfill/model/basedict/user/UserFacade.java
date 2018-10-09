@@ -370,8 +370,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
             return user;
         }
         if (StringUtils.isNotBlank(user.getLDAPname()) && checkLdapUser(login, password)){
-            return user;            
-        } 
+            return user;
+        }
         return null;
     }
 

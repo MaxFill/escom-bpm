@@ -137,13 +137,6 @@
     </ui:define>
     
     <ui:define name="toolbarComponents" > 
-        <p:commandButton value="#{bundle.Tasks}" title="#{bundle.AddTasks}"
-                         disabled="#{_bean.isReadOnly()}"
-                         onstart="PF('statusDialog').show()"
-                         oncomplete="PF('statusDialog').hide();"
-                         actionListener="#{staffBean.onManySelectItem()}" >
-            <p:ajax event="dialogReturn" listener="#{_bean.onStaffsSelected}" />
-        </p:commandButton>
         <p:commandButton  value="#{bundle.And}" title="#{bundle.AddLogicElement}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddLogicElement('And')}" >
@@ -153,47 +146,69 @@
                           actionListener="#{_bean.onAddLogicElement('Or')}" >
         </p:commandButton>
         
-        <p:commandButton  value="#{bundle.Condition}" title="#{bundle.AddCondition}"
+        <p:commandButton icon="ico_condition-16" title="#{bundle.AddCondition}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddConditionElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton  value="#{bundle.Timer}" title="#{bundle.AddTimer}"
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+
+        <p:commandButton icon="ico-task-16" title="#{bundle.AddTasks}"
+                         disabled="#{_bean.isReadOnly()}"
+                         onstart="PF('statusDialog').show()"
+                         oncomplete="PF('statusDialog').hide();"
+                         actionListener="#{staffBean.onManySelectItem()}" >
+            <p:ajax event="dialogReturn" listener="#{_bean.onStaffsSelected}" />
+        </p:commandButton>
+            
+        <p:commandButton icon="ico_timer16" title="#{bundle.AddTimer}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddTimerElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton  value="#{bundle.State}" title="#{bundle.AddState}"
+        <p:commandButton icon="ico_state-16" title="#{bundle.AddState}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddStateElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton value="#{bundle.Message}" title="#{bundle.AddMessageElement}"
+        <p:commandButton icon="ico_message-16" title="#{bundle.AddMessageElement}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddMessageElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
 
-        <p:commandButton value="#{bundle.Procedure}" title="#{bundle.AddProcedureElement}"
+        <p:commandButton icon="ico_procedure-16" title="#{bundle.AddProcedureElement}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddProcElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
-
-        <p:commandButton value="#{bundle.Start}" title="#{bundle.AddStart}"
+        
+        <p:commandButton icon="ico_process" title="#{bundle.AddSubProcess}"
+                         disabled="#{_bean.isReadOnly()}"
+                         actionListener="#{_bean.onAddSubProcessElement()}" >
+            <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
+        </p:commandButton>
+            
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+            
+        <p:commandButton icon="ico_start-16" title="#{bundle.AddStart}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddStartElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
-        <p:commandButton value="#{bundle.enter}" title="#{bundle.AddEnter}"
+        <p:commandButton icon="ico_enter16" title="#{bundle.AddEnter}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddEnterElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
-        <p:commandButton value="#{bundle.Exit}" title="#{bundle.AddExit}"
+        <p:commandButton icon="ico_exit16" title="#{bundle.AddExit}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddExitElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />

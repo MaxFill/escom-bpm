@@ -1,0 +1,26 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/view/templ/templ-explorer.xhtml">
+
+    <!-- стандарный обозреватель/селектор -->
+    
+    <ui:param name="_bean"        value="#{explorerTreeBean}" />
+    <ui:param name="_treeBean"    value="#{processTypesBean}" />
+    <ui:param name="_detailBean"  value="#{processTypesBean}"/>
+    <ui:param name="_searcheBean" value="#{processTypesBean}"/>
+    
+    <ui:param name="_selectorHeader" value="#{_bean.getLabelFromBundle('ProcessTypesSelector')}"/>
+    <ui:param name="_explorerHeader" value="#{_bean.getLabelFromBundle('ProcessesTypes')}"/>
+    
+    <ui:param name="_showAuthor"     value="#{true}"/>
+    <ui:param name="_showDateCreate" value="#{true}"/>
+    <ui:param name="_showDateChange" value="#{true}"/>
+     
+    <ui:param name="_CreateGroupLabel" value="#{bundle.Create}" />
+    <ui:param name="_CreateItemLabel" value="#{bundle.Create}" />
+    
+    <!-- специфичные поля таблицы обозревателя -->
+    <ui:define name="specDetailColumns">        
+    </ui:define>
+
+</ui:composition>

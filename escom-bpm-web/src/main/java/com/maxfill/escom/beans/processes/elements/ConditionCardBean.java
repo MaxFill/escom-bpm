@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.processes.elements;
 
 import com.google.gson.Gson;
 import com.maxfill.dictionary.DictFrmName;
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
@@ -12,7 +11,6 @@ import com.maxfill.model.basedict.process.conditions.Condition;
 import com.maxfill.model.basedict.process.schemes.elements.ConditionElem;
 import com.maxfill.model.basedict.staff.Staff;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +109,7 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
         loadParamsFromCondition();        
     }    
        
-    public String makeCaption() {
+    public String makeCaption(){
         StringBuilder sb = new StringBuilder(MsgUtils.getBandleLabel(selected.getName()));
         if (isCanStaffSelect()){
             sb.append(" ").append(selectedStaff.getEmployeeFIO()).append("?");

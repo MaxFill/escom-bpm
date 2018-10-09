@@ -39,7 +39,7 @@ public class ProcedureElem extends WFConnectedElem{
 
     @Override
     public String getStyle() {
-        return  DictWorkflowElem.STYLE_PROCEDURE; 
+        return DictWorkflowElem.STYLE_PROCEDURE; 
     }
 
     @Override

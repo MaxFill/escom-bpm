@@ -37,6 +37,7 @@ import com.maxfill.model.basedict.process.conditions.Condition;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.schemes.Scheme;
+import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
 import com.maxfill.model.basedict.staff.Staff;
@@ -207,6 +208,16 @@ public class WorkflowImpl implements Workflow {
         if (!errors.isEmpty()) return;        
         //ToDo проверки!        
         scheme.getElements().getProcedures().put(elem.getUid(), elem);      
+    }
+    
+    @Override
+    public void addSubProcess(SubProcessElem elem, Scheme scheme, Set<String> errors) {
+        if (elem == null){
+            errors.add("WorkflowIncorrectData");
+        }
+        if (!errors.isEmpty()) return;        
+        //ToDo проверки!        
+        scheme.getElements().getSubprocesses().put(elem.getUid(), elem);
     }
     
     @Override

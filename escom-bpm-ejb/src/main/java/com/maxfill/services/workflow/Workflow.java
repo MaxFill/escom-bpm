@@ -15,6 +15,7 @@ import com.maxfill.model.basedict.process.schemes.elements.EnterElem;
 import com.maxfill.model.basedict.process.schemes.elements.StartElem;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.Process;
+import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.result.Result;
@@ -38,6 +39,7 @@ public interface Workflow {
     void addExit(ExitElem exit, Scheme scheme, Set<String> errors);
     void addMessage(MessageElem exit, Scheme scheme, Set<String> errors);
     void addProcedure(ProcedureElem exit, Scheme scheme, Set<String> errors);
+    void addSubProcess(SubProcessElem subProcessElem, Scheme scheme, Set<String> errors);
     
     void removeElement(WFConnectedElem element, Scheme scheme, Set <String> errors);
     void removeConnector(AnchorElem from, AnchorElem to, Scheme scheme, Set <String> errors);

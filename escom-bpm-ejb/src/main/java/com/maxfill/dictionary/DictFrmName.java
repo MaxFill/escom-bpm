@@ -17,6 +17,7 @@ public final class DictFrmName {
     public static final String FRM_USER_MESSAGES = "messages";
     public static final String FRM_USER_SESSIONS = "sessions";
     public static final String FRM_TASK = "task";
+    
     public static final String FRM_CONDITION = "condition-card";
     public static final String FRM_TIMER = "timer-card";
     public static final String FRM_MESSAGE = "message-card";
@@ -24,6 +25,8 @@ public final class DictFrmName {
     public static final String FRM_STATE = "state-card";
     public static final String FRM_DOC_STATUS = "docstate-card";
     public static final String FRM_EXIT = "exit-card";
+    public static final String FRM_SUB_PROCESS = "subprocess-card";
+    
     public static final String FRM_STAFF_EXPLORER = "staff-explorer";
 
     public static final String FRM_OBJECT_ADMIN = "object-admin";

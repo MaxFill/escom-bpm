@@ -51,6 +51,9 @@ public class WorkflowElements implements Serializable{
     @XmlElement(name = "procedures")
     private Map<String, ProcedureElem> procedures = new HashMap <>();
     
+    @XmlElement(name = "subprocesses")
+    private Map<String, SubProcessElem> subprocesses = new HashMap <>();
+    
     public WorkflowElements() {
     }
     
@@ -70,6 +73,13 @@ public class WorkflowElements implements Serializable{
         this.procedures = procedures;
     }    
 
+    public Map<String, SubProcessElem> getSubprocesses() {
+        return subprocesses;
+    }
+    public void setSubprocesses(Map<String, SubProcessElem> subprocesses) {
+        this.subprocesses = subprocesses;
+    }
+    
     public StartElem getStartElem() {
         return startElem;
     }
