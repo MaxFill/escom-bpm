@@ -8,31 +8,28 @@
     <ui:param name="_bean" value="#{ldapBean}"/>
 
     <ui:define name="serviceParams">
-        <p:outputLabel value="#{bundle.LdapAdServer}"/>
-        <p:inputText id="ldapAdServer" styleClass="ui-grid-col-12"
-                     title="#{bundle.LdapAdServer}"
-                     required="#{param['isRequired'] == 'true'}"
-                     requiredMessage="#{bundle.Field} [#{bundle.LdapAdServer}] #{bundle.MustBeFilled}"
-                     value="#{ldapBean.settings.ldapAdServer}"/>
-        <p:message for="ldapAdServer" display="tooltip"/>
-
-        <p:outputLabel value="#{bundle.User}"/>
-        <p:inputText id="ldapUsername" styleClass="ui-grid-col-12"
-                     title="#{bundle.LdapUsername}"
-                     required="#{param['isRequired'] == 'true'}"
-                     requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
-                     value="#{ldapBean.settings.ldapUsername}"/>
-        <p:message for="ldapUsername" display="tooltip"/>
-
-        <p:outputLabel value="#{bundle.password}"/>
-        <p:inputText id="ldapPassword" styleClass="ui-grid-col-12"
-                     title="#{bundle.LdapPassword}"
-                     required="#{param['isRequired'] == 'true'}"
-                     requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
-                     value="#{ldapBean.settings.ldapPassword}"/> 
-        <p:message for="ldapPassword" display="tooltip"/>
-
         <h:panelGrid columns="2">
+            <p:outputLabel value="#{bundle.LdapAdServer}:"/>
+            <p:inputText id="ldapAdServer" styleClass="ui-grid-col-12"
+                         title="#{bundle.LdapAdServer}"
+                         required="#{param['isRequired'] == 'true'}"
+                         requiredMessage="#{bundle.Field} [#{bundle.LdapAdServer}] #{bundle.MustBeFilled}"
+                         value="#{ldapBean.settings.ldapAdServer}"/>
+
+            <p:outputLabel value="#{bundle.User}:"/>
+            <p:inputText id="ldapUsername" styleClass="ui-grid-col-12"
+                         title="#{bundle.LdapUsername}"
+                         required="#{param['isRequired'] == 'true'}"
+                         requiredMessage="#{bundle.Field} [#{bundle.User}] #{bundle.MustBeFilled}"
+                         value="#{ldapBean.settings.ldapUsername}"/>
+
+            <p:outputLabel value="#{bundle.password}:"/>
+            <p:inputText id="ldapPassword" styleClass="ui-grid-col-12"
+                         title="#{bundle.LdapPassword}"
+                         required="#{param['isRequired'] == 'true'}"
+                         requiredMessage="#{bundle.Field} [#{bundle.password}] #{bundle.MustBeFilled}"
+                         value="#{ldapBean.settings.ldapPassword}"/> 
+
             <p:commandButton icon="ui-icon-check"
                              value="#{bundle.Test}" title="#{bundle.CheckConnect}"
                              actionListener="#{ldapBean.onCheckConnect()}"
@@ -49,37 +46,66 @@
         </h:panelGrid>
         <p:separator />
 
-        <p:outputLabel value="#{bundle.Mode}"/>                  
+        <p:outputLabel value="#{bundle.ModeLoad}:"/>                  
         <p:selectOneRadio id="city" value="#{ldapBean.settings.updateUsers}"  layout="grid" columns="1">
             <f:selectItem itemLabel="#{bundle.OnlyCreateItem}" itemValue="#{false}" />
             <f:selectItem itemLabel="#{bundle.CreateAndUpdate}" itemValue="#{true}" />
         </p:selectOneRadio>
 
-        <p:outputLabel value="#{bundle.LdapSearchBase}"/>            
+        <p:outputLabel value="#{bundle.LdapSearchBase}:"/>            
         <p:inputTextarea id="ldapSearchBase" styleClass="ui-grid-col-12"
                          cols="2"
                          title="#{bundle.LdapSearchBase}"
                          required="#{param['isRequired'] == 'true'}"
                          requiredMessage="#{bundle.Field} [#{bundle.LdapSearchBase}] #{bundle.MustBeFilled}"
                          value="#{ldapBean.settings.ldapSearchBase}"/>
-        <p:message for="ldapSearchBase" display="tooltip"/>
+
+        <p:outputLabel value="#{bundle.Filter}:"/>
         <p:inputText id="ldapSearchGroup" styleClass="ui-grid-col-12"
+                     placeholder="mail=*"
                      title="#{bundle.LdapSearchGroup}"
                      required="#{param['isRequired'] == 'true'}"
                      requiredMessage="#{bundle.Field} [#{bundle.LdapSearchGroup}] #{bundle.MustBeFilled}"
                      value="#{ldapBean.settings.ldapSearcheGroup}"/>
-        <p:message for="ldapSearchBase" display="tooltip"/>
 
+        <p:outputLabel value="#{bundle.DefaultParams}"/>
+        <p:outputLabel value="#{bundle.Company}:"/>
+        <p:selectOneMenu value="#{ldapBean.settings.company}" id="company" converter="companyConvertor"
+                         required="#{param['isRequired'] == 'true'}"
+                        styleClass="ui-grid-col-12"
+                        requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
+            <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+        </p:selectOneMenu>
+
+        <p:outputLabel value="#{bundle.Departament}:"/>
+        <p:selectOneMenu value="#{ldapBean.settings.department}" id="department" converter="departmentConvertor"
+                         required="#{param['isRequired'] == 'true'}"
+                         styleClass="ui-grid-col-12"
+                         requiredMessage="#{bundle.Field} [#{bundle.Departament}] #{bundle.MustBeFilled}">
+            <f:selectItems value="#{departmentBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+        </p:selectOneMenu>  
+
+        <p:outputLabel value="#{bundle.Post}:" indicateRequired="true"/>
+        <p:selectOneMenu value="#{ldapBean.settings.post}" id="post" converter="postConverter"
+                         required="#{param['isRequired'] == 'true'}"
+                         styleClass="ui-grid-col-12"
+                         requiredMessage="#{bundle.Field} [#{bundle.Departament}] #{bundle.MustBeFilled}">
+            <f:selectItems value="#{postBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
+            <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>
+        </p:selectOneMenu> 
     </ui:define>
 
     <ui:define name="dialogsAdd">
-        <p:dialog widgetVar="previewLdapDlg" header="#{bundle.PreView}" modal="true" closeOnEscape="true" resizable="true" maximizable="true">
-            <p:outputPanel id="previewLdapPanel" style="width: 900px; height: 500px;">                             
+        <p:dialog widgetVar="previewLdapDlg" header="#{bundle.PreView}" width="900" height="500" modal="true" closeOnEscape="true" resizable="true" maximizable="true">
+            <p:panelGrid id="previewLdapPanel" layout="grid" columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                          
                 <p:dataTable id="tblDetail"
                              value="#{ldapBean.ldapUsers}" var="item" 
                              emptyMessage="#{bundle.EmptyTable}"
                              paginator="true" paginatorPosition="bottom"  
                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                              rowsPerPageTemplate="25,50,100" rows="25" sortBy="#{item.name}"
                              tableStyle="table-layout: auto;" styleClass="ui-grid-col-12"
                              rowKey="#{item.id}" selectionMode="single">
@@ -109,10 +135,9 @@
                         #{item.company}
                     </p:column> 
                 </p:dataTable>
-            </p:outputPanel>
+            </p:panelGrid>
         </p:dialog>
 
     </ui:define>
 
 </ui:composition>
-

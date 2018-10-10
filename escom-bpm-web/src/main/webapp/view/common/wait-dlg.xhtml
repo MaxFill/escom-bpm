@@ -1,0 +1,12 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:dialog id="waitDialog" header="#{msg.OperationLongTime}" resizable="false" modal="true" closable="false" closeOnEscape="false" widgetVar="waitDialog" height="240px" width="400px">
+        <h:form style="font-size: 100%;">
+            <p:graphicImage name="/images/ajax_loader.gif"/>            
+        </h:form>
+    </p:dialog>    
+    
+</ui:composition>

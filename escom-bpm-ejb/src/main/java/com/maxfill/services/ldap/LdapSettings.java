@@ -1,5 +1,8 @@
 package com.maxfill.services.ldap;
 
+import com.maxfill.model.basedict.company.Company;
+import com.maxfill.model.basedict.department.Department;
+import com.maxfill.model.basedict.post.Post;
 import java.io.Serializable;
 import java.io.StringWriter;
 import javax.xml.bind.JAXB;
@@ -7,6 +10,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Параметры службы интеграции с LDAP
@@ -33,6 +37,15 @@ public class LdapSettings implements Serializable{
 
     @XmlElement(name = "UpdateUsers")
     private Boolean updateUsers = false;
+    
+    @XmlTransient
+    private Company company;
+    
+    @XmlTransient
+    private Department department;
+    
+    @XmlTransient
+    private Post post;
     
     public LdapSettings() {
     }    
@@ -77,6 +90,27 @@ public class LdapSettings implements Serializable{
     }
     public void setUpdateUsers(Boolean updateUsers) {
         this.updateUsers = updateUsers;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+    public void setPost(Post post) {
+        this.post = post;
+    }
+    
+    public Company getCompany() {
+        return company;
+    }
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+    public void setDepartment(Department department) {
+        this.department = department;
     }
     
     //трансформирует данные класса в xml строку

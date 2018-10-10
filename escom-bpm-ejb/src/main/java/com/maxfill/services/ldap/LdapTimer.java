@@ -79,44 +79,69 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
                 }
                 LOG.log(Level.INFO, "Load from AD userPrincipalName = {0}", userPrincipalName);
                 
-                String memberOf = (String) result.getAttributes().get("memberOf").get();
+                String memberOf = "";
+                if (result.getAttributes().get("memberOf") != null){
+                    memberOf = (String) result.getAttributes().get("memberOf").get();
+                }
                 LOG.log(Level.INFO, "Load from AD memberOf = {0}", memberOf);
                 
-                String distinguishedName = (String) result.getAttributes().get("distinguishedName").get();
+                String distinguishedName = "";
+                if (result.getAttributes().get("distinguishedName") != null){
+                    distinguishedName = (String) result.getAttributes().get("distinguishedName").get();
+                }
                 LOG.log(Level.INFO, "Load from AD distinguishedName = {0}", distinguishedName);
                 
                 String name = "";
                 if (result.getAttributes().get("displayName") != null){
                     name = (String) result.getAttributes().get("displayName").get();
-                }    
-                String department = "";
+                }
+                LOG.log(Level.INFO, "Load from AD name = {0}", name);
+                
+                String department;
                 if (result.getAttributes().get("department") != null){
                     department = (String) result.getAttributes().get("department").get();
+                } else {
+                    department = settings.getDepartment().getName();
                 }
-                String company = "";
+                LOG.log(Level.INFO, "Load from AD department = {0}", department);
+                
+                String company;
                 if (result.getAttributes().get("company") != null){
-                    company = (String) result.getAttributes().get("company").get();
+                    company = (String) result.getAttributes().get("company").get();                    
+                } else {
+                    company = settings.getCompany().getName();
                 }
+                LOG.log(Level.INFO, "Load from AD company = {0}", company);
+                
                 String mail = "";
                 if (result.getAttributes().get("mail") != null){
-                    mail = (String) result.getAttributes().get("mail").get();
+                    mail = (String) result.getAttributes().get("mail").get();                   
                 }
+                LOG.log(Level.INFO, "Load from AD mail = {0}", mail);
+                 
                 String phone = "";
                 if (result.getAttributes().get("telephoneNumber") != null){
                     phone = (String) result.getAttributes().get("telephoneNumber").get();
                 }
-                String post = "";
+                LOG.log(Level.INFO, "Load from AD phone = {0}", phone);
+                
+                String post;
                 if (result.getAttributes().get("title") != null){
                     post = (String) result.getAttributes().get("title").get();
+                } else {
+                    post = settings.getPost().getName();
                 }
+                LOG.log(Level.INFO, "Load from AD post = {0}", post);
+                
                 LOG.log(Level.INFO, "GetPrimaryGroupSID...", "");
                 String primaryGroupSID = LdapUtils.getPrimaryGroupSID(result);
-                LOG.log(Level.INFO, "FindGroupBySID...", "");
-                String primaryGroupName = LdapUtils.findGroupBySID(ctx, settings.getLdapSearchBase(), primaryGroupSID);
                 
+                LOG.log(Level.INFO, "FindGroupBySID...", "");
+                String primaryGroupName = LdapUtils.findGroupBySID(ctx, settings.getLdapSearchBase(), primaryGroupSID);                
                 if (name.trim().isEmpty()){
                     name = login;
                 }
+                
                 LOG.log(Level.INFO, "Create ldapUser '{0}'", name);
                 LdapUsers ldapUser = new LdapUsers();
                 ldapUser.setLogin(login);
@@ -132,6 +157,7 @@ public class LdapTimer extends BaseTimer<LdapSettings>{
                 ldapUser.setPost(post);
                 ldapUser.setPrimaryGroupName(primaryGroupName);
                 ldapUsers.add(ldapUser);
+                LOG.log(Level.INFO, "Created ok!", name);
             }
         } catch (NamingException ex) {
             LOG.log(Level.SEVERE, null, ex);

@@ -314,7 +314,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     
     /* Создание пользователя из LDAP  */
     private User doCreateUser(UserGroups mainGroup, String name, String login, String phone, String email, String LDAPname){
-        User user = createItem(getAdmin(), null, null, null);
+        User user = createItem(getAdmin(), null, null, new HashMap<>());
         onUpdateUserFIO(user, name);
         user.setLogin(login);
         user.setPhone(phone);

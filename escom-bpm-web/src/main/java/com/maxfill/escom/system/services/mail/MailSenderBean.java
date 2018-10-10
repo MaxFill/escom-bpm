@@ -16,6 +16,7 @@ import javax.inject.Named;
 import javax.mail.Authenticator;
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import org.primefaces.PrimeFaces;
 
 /**
  * Бин для формы "Служба отправки e-mail сообщений
@@ -31,20 +32,21 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
     private MailService mailService;
 
     public void onCheckConnect(){
-        String subject = "Mail test from escom-bpm.web"; 
-        String content = "<h1>Hello!</h1><br/><h2>This is the test message from escom-bpm.web</h2>";
- 
-        Authenticator auth = new MailAuth(getSettings().getUser(), getSettings().getPassword());
-        
+        Authenticator auth = new MailAuth(getSettings().getUser(), getSettings().getPassword());    
         try {
             String adress = getSettings().getAdressSender();
             Session session = mailService.getSessionSender(getSettings());
-            mailService.sendMultiMessage(session, adress, adress, "", content, subject, conf.getEncoding(), new HashMap<>());
+            mailService.sendMultiMessage(session, adress, adress, "", 
+                    "<h1>Hello!</h1><br/><h2>This is the test message from escom-bpm.web</h2>", 
+                    "Mail test from escom-bpm.web", 
+                    conf.getEncoding(), 
+                    new HashMap<>());
             MsgUtils.succesFormatMsg("MessageSent",  new Object[]{adress});
         } catch (RuntimeException | MessagingException | UnsupportedEncodingException ex) {
-            MsgUtils.errorMessage(ex.getMessage());
+            MsgUtils.errorMsg("ConnectServerFailed");
             LOG.log(Level.SEVERE, null, ex);
         }
+        PrimeFaces.current().executeScript("PF('waitDialog').hide();");
     }
 
     @Override

@@ -56,15 +56,17 @@
         <h:panelGroup >
             <p:commandButton value="#{bundle.Test}" title="#{bundle.CheckSentMessage}"
                         actionListener="#{mailSenderBean.onCheckConnect()}"
-                        update="mainFRM:eastFRM">
+                        onstart="PF('waitDialog').show();"
+                        oncomplete="PF('waitDialog').hide();"
+                        update="mainFRM:centerFRM mainFRM:eastFRM">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
 
-            <p:commandButton value="#{bundle.MessagesBox}"                             
-                             title="#{bundle.PreviewMessagesBox}"                            
+            <p:commandButton value="#{bundle.MessagesBox}"                      
+                             title="#{bundle.PreviewMessagesBox}"
                              actionListener="#{mailSenderBean.onOpenMailBox()}">
             </p:commandButton>
-        </h:panelGroup>                   
+        </h:panelGroup>
 
     </ui:define>
 
