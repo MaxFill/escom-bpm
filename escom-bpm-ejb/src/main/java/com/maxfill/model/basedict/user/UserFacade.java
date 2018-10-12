@@ -278,7 +278,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         Department department = departmentFacade.onGetDepartamentByName(company, ldapUser.getDepartament());        
         UserGroups mainGroup = userGroupsFacade.onGetGroupByName(ldapUser.getPrimaryGroupName(), admin);
         User user = doCreateUser(mainGroup, ldapUser.getName(), ldapUser.getLogin(), ldapUser.getPhone(), ldapUser.getMail(), ldapUser.getDistinguishedName());
-        staffFacade.createStaff(department, post, user);
+        Staff staff = staffFacade.createStaff(department, post, user);
+        user.setStaff(staff);
         
         for (String groupName : ldapUser.getGroups()){
             UserGroups userGroup = userGroupsFacade.onGetGroupByName(groupName, admin);

@@ -59,6 +59,9 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Comparator;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -1054,6 +1058,10 @@ public class WorkflowImpl implements Workflow {
                 result = everyoneApproved(scheme, params);
                 break;
             }
+            case "lastApproved":{
+                result = lastApproved(scheme, params);
+                break;
+            }
             case "allFinished":{
                 result = allFinished(scheme, params);
                 break;
@@ -1076,7 +1084,7 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Условие "Все одобрили?". Проверяет, есть ли кто-то отклонивший документ
+     * Условие "Все одобрили?". Проверяет, есть ли кто-то отклонивший документ в цепочке согласований
      * @param scheme
      * @return 
      */
@@ -1087,6 +1095,22 @@ public class WorkflowImpl implements Workflow {
                 .filter(task->taskIds.contains(task.getId()) 
                         && Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
                 .findFirst().orElse(null) == null;
+    }
+    
+    /**
+     * Условие "Последний согласовал?". Проверяет, согласовал ли документ, последний согласующий в цепочке согласований
+     * @param scheme
+     * @return 
+     */
+    private boolean lastApproved(Scheme scheme, Map<String, Object> params){        
+        if (!params.containsKey(EXECUTED_TASKS)) return false;
+        List<Integer> taskIds = (List<Integer>) params.get(EXECUTED_TASKS);
+        List<Task> tasks = scheme.getTasks().stream()
+                .filter(task->taskIds.contains(task.getId()))
+                .sorted(Comparator.comparing(Task::getFactExecDate, nullsFirst(naturalOrder())).reversed())
+                .collect(Collectors.toList());
+        Task lastTask = tasks.get(0);
+        return !Objects.equals(DictResults.RESULT_REFUSED, lastTask.getResult());        
     }
     
     /**

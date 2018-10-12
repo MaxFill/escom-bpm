@@ -38,6 +38,18 @@ public class LdapSettings implements Serializable{
     @XmlElement(name = "UpdateUsers")
     private Boolean updateUsers = false;
     
+    @XmlElement(name = "companyId")
+    private Integer companyId;
+    
+    @XmlElement(name = "departmentId")
+    private Integer departmentId;
+    
+    @XmlElement(name = "postId")
+    private Integer postId;
+    
+    @XmlElement(name = "detailLog")
+    private boolean createDetailLogFile;
+            
     @XmlTransient
     private Company company;
     
@@ -106,6 +118,34 @@ public class LdapSettings implements Serializable{
         this.company = company;
     }
 
+    public Integer getCompanyId() {
+        return companyId;
+    }
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
+    }
+
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public boolean isCreateDetailLogFile() {
+        return createDetailLogFile;
+    }
+    public void setCreateDetailLogFile(boolean createDetailLogFile) {
+        this.createDetailLogFile = createDetailLogFile;
+    }
+    
+    public Integer getPostId() {
+        return postId;
+    }
+    public void setPostId(Integer postId) {
+        this.postId = postId;
+    }
+    
     public Department getDepartment() {
         return department;
     }

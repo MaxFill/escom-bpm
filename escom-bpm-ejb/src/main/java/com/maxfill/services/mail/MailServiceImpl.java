@@ -70,14 +70,19 @@ public class MailServiceImpl implements MailService{
             if (settings.getUseSSL()) {
                 props.put("mail.smtp.ssl.enable", "true");
                 props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+            } else {
+                props.put("mail.smtp.ssl.enable", "false");
             }
+            return Session.getInstance(props, auth);
+            /*
             session = Session.getInstance(props, auth);
             if (session == null){
                 throw new RuntimeException("Failed to establish connection!");
             }
             session.setDebug(false);
-        } catch(SecurityException e) {
-            LOGGER.log(Level.SEVERE, null, e);
+            */
+        } catch(SecurityException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
         }
         return session;
     }
@@ -155,6 +160,9 @@ public class MailServiceImpl implements MailService{
      * @param recipients
      * @param copyes
      * @param content
+     * @param subject
+     * @param encoding
+     * @param attachments
      */
     @Override
     public void sendMultiMessage(Session session, String sender, String recipients, String copyes, String content, String subject, String encoding, Map<String,String> attachments) throws MessagingException, UnsupportedEncodingException {

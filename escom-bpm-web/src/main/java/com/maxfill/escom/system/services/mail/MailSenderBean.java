@@ -5,7 +5,6 @@ import com.maxfill.dictionary.DictServices;
 import com.maxfill.escom.system.services.BaseServicesBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.services.BaseTimer;
-import com.maxfill.services.common.history.ServicesEvents;
 import com.maxfill.services.mail.*;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -36,6 +35,10 @@ public class MailSenderBean extends BaseServicesBean<MailSettings> {
         try {
             String adress = getSettings().getAdressSender();
             Session session = mailService.getSessionSender(getSettings());
+            if (session == null){
+                MsgUtils.errorMsg("ConnectServerFailed");
+                return;
+            }
             mailService.sendMultiMessage(session, adress, adress, "", 
                     "<h1>Hello!</h1><br/><h2>This is the test message from escom-bpm.web</h2>", 
                     "Mail test from escom-bpm.web", 

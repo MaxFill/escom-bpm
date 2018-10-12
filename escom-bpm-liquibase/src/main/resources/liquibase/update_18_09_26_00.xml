@@ -62,4 +62,9 @@
         </sql>
     </changeSet>
     
+     <changeSet id="conditions_add_condition_lastApproved" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT conditions(Id, Name, Method) VALUES (5, N'LastApproved', N'lastApproved');
+        </sql>
+    </changeSet>
 </databaseChangeLog> 

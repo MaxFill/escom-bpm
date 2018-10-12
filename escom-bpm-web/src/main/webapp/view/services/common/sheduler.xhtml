@@ -67,7 +67,7 @@
             <p:outputLabel value="#{bundle.StartInDate}:" rendered="#{_bean.scheduler.repeatType != 1}" indicateRequired="true"/>
             <p:calendar value="#{_bean.scheduler.startDate}" rendered="#{_bean.scheduler.repeatType != 1}"
                         disabled="#{_bean.service.started}"
-                        showHour="true" showMinute="true"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
                         locale="#{sessionBean.locale}"
                         navigator="true" yearRange="1900:+0" mindate="#{currentDate}"                  
                         required="#{param['isRequired'] == 'true'}"

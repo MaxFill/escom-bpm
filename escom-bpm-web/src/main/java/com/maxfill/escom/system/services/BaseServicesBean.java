@@ -42,7 +42,7 @@ public abstract class BaseServicesBean<P> extends LazyLoadBean<ServicesEvents>{
     
     protected Services service;
 
-    private P settings;
+    protected P settings;
     private Sheduler scheduler;
     private ServicesEvents selectedEvent;
     private List<SelectItem> repeatTypes;

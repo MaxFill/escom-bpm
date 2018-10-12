@@ -33,6 +33,8 @@
             <p:commandButton icon="ui-icon-check"
                              value="#{bundle.Test}" title="#{bundle.CheckConnect}"
                              actionListener="#{ldapBean.onCheckConnect()}"
+                             onstart="PF('waitDialog').show();"
+                             oncomplete="PF('waitDialog').hide();"
                              update="mainFRM:eastFRM">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
@@ -40,12 +42,17 @@
                              value="#{bundle.Get}" title="#{msg.GetRecordsFromLDAP}"
                              actionListener="#{ldapBean.onTestLoadUsers()}"
                              update="previewLdapPanel"
+                             onstart="PF('waitDialog').show();"
+                             oncomplete="PF('waitDialog').hide();"
                              onsuccess="PF('previewLdapDlg').show();">
                 <f:param name="isRequired" value="true"/>
             </p:commandButton>
         </h:panelGrid>
         <p:separator />
 
+        <p:selectBooleanCheckbox value="#{ldapBean.settings.createDetailLogFile}" itemLabel="#{bundle.CreateDetailedLogFile}">            
+        </p:selectBooleanCheckbox>
+        
         <p:outputLabel value="#{bundle.ModeLoad}:"/>                  
         <p:selectOneRadio id="city" value="#{ldapBean.settings.updateUsers}"  layout="grid" columns="1">
             <f:selectItem itemLabel="#{bundle.OnlyCreateItem}" itemValue="#{false}" />
