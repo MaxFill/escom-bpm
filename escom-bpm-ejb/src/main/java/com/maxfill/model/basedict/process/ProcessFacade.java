@@ -81,9 +81,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             if (user.getStaff() != null){
                 Staff curator = user.getStaff();
                 if (curator != null){
-                    process.setCurator(curator);                    
+                    process.setCurator(curator);           
                 }
             }
+        }
+        if (params.containsKey("curator")) {
+            Staff curator = (Staff)params.get("curator");            
+            process.setCurator(curator);            
         }
         /*
         NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
@@ -92,7 +96,6 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         */
         addRole(process, DictRoles.ROLE_CONCORDER);
         addRole(process, DictRoles.ROLE_CURATOR);
-                
     }
 
     /**
@@ -178,7 +181,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 taskFacade.removeItemLogs(task);
                 messagesFacade.removeMessageByTask(task);
             });
-        remarkFacade.removeRemarksByProcess(process);        
+        remarkFacade.removeRemarksByProcess(process);
         super.remove(process);
     } 
 

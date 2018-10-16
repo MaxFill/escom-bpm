@@ -48,36 +48,23 @@ public class TaskElem extends WFConnectedElem{
         return null;
     }
     
-    /* GETS & SETS */
-
-    public Integer getStaffId() {
-        return staffId;
-    }
-    public void setStaffId(Integer staffId) {
-        this.staffId = staffId;
-    }
-
-    public Boolean getConsidInProc() {
-        return considInProc;
-    }
-    public void setConsidInProc(Boolean considInProc) {
-        this.considInProc = considInProc;
-    }
-         
     @Override
     public String getCaption() {
         if (task != null){
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();            
             Staff owner = task.getOwner();
             if (owner != null){
+                /*
                 if (owner.getPost() != null){
                     sb.append(owner.getPost().getName()).append(" ");
                 }
+                */
                 if (owner.getEmployee() != null){
                     sb.append(owner.getEmployee().getShortFIO());
                 }
+                sb.append(": ").append(task.getNameEndElipse());
             } else {
-                sb.append("< ? >");
+                sb.append("???");
             }
             caption = sb.toString();
             return caption;
@@ -94,6 +81,22 @@ public class TaskElem extends WFConnectedElem{
         }
         return sb.toString();
     }
+    
+    /* GETS & SETS */
+
+    public Integer getStaffId() {
+        return staffId;
+    }
+    public void setStaffId(Integer staffId) {
+        this.staffId = staffId;
+    }
+
+    public Boolean getConsidInProc() {
+        return considInProc;
+    }
+    public void setConsidInProc(Boolean considInProc) {
+        this.considInProc = considInProc;
+    }         
 
     public List<Integer> getTasksExec() {
         return tasksExec;

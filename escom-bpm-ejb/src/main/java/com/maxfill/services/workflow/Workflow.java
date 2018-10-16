@@ -1,5 +1,6 @@
 package com.maxfill.services.workflow;
 
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
 import com.maxfill.model.basedict.process.schemes.elements.ExitElem;
 import com.maxfill.model.basedict.process.schemes.elements.TaskElem;
@@ -48,11 +49,11 @@ public interface Workflow {
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
     void clearScheme(Scheme scheme);
     
-    void run(Process process, WFConnectedElem startElement, User currentUser, Map<String, Object> params, Set<String> errors);
+    Set<BaseDict> run(Process process, WFConnectedElem startElement, User currentUser, Map<String, Object> params, Set<String> errors);
     void stop(Process process, User user, Set<String> errors);
-    void start(Process process, User user, Map<String, Object> params, Set<String> errors);
+    Set<BaseDict> start(Process process, User user, Map<String, Object> params, Set<String> errors);
     
-    void executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);
+    Set<BaseDict> executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);
     void executeTimer(ProcTimer procTimer, Set<String> errors);
     
     void makeProcessReport(Process process, User user);

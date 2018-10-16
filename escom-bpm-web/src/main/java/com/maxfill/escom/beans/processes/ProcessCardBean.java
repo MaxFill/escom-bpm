@@ -1,5 +1,6 @@
 package com.maxfill.escom.beans.processes;
 
+import com.google.gson.Gson;
 import com.maxfill.dictionary.DictEditMode;
 import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictPrintTempl;
@@ -14,11 +15,14 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.Process;
+import com.maxfill.model.basedict.process.options.RunOptions;
+import com.maxfill.model.basedict.process.options.RunOptionsFacade;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
+import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
@@ -39,6 +43,8 @@ import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.component.tabview.Tab;
 import org.primefaces.event.TabChangeEvent;
+import org.primefaces.model.menu.DefaultMenuItem;
+import org.primefaces.model.menu.DefaultMenuModel;
 
 /**
  * Контролер формы "Карточка процесса"
@@ -63,11 +69,17 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private Workflow workflow;
     @EJB
     private RemarkFacade remarkFacade;
-
+    @EJB
+    private RunOptionsFacade runOptionsFacade;
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
+     
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
     private Doc selectedDoc;    
     private String accordDocsTab = null;
+    private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
+    private List<RunOptions> runOptions = new ArrayList<>();
     
     @Override
     protected BaseDictFacade getFacade() {
@@ -77,6 +89,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     @Override
     protected void doPrepareOpen(Process process) {
         workflow.unpackScheme(process.getScheme());
+        initRunOptions();
     }
 
     /**
@@ -162,13 +175,19 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /* *** СХЕМА ПРОЦЕССА *** */ 
     
     public void onOpenScheme(){
+        if (processBean.getDiagramBean() != null){
+            MsgUtils.errorMsg("DiagramAlreadyOpenInAnotherWindow");
+            return;
+        }
         processBean.setDiagramBean(diagramBean);
+        processBean.getDiagramBeanMap().put(this.toString(), diagramBean);
         diagramBean.setReadOnly(isReadOnly());
         diagramBean.prepareModel(getEditedItem());        
         sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());
     }
     
     public void onSchemeClose(SelectEvent event){
+        processBean.setDiagramBean(null);
         if (event.getObject() == null) return;
         String result = (String) event.getObject();
         if (result.equals(SysParams.EXIT_NOTHING_TODO)) return;                
@@ -236,8 +255,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /**
      * Обработка события запуска процесса на исполнение
-     * @param option
      */
+    public void onRun(){
+        onRun(runOptions.get(0).getName());
+    }
     public void onRun(String option){
         Set<String> errors = new HashSet<>();
         Process process = getEditedItem();
@@ -282,6 +303,23 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
     
+    private void initRunOptions(){
+        String runOpt = processTypesFacade.getProcTypeForOpt(getEditedItem().getOwner()).getRunOptionsJSON();
+        Gson gson = new Gson(); 
+        runOptions = runOptionsFacade.findByIds(gson.fromJson(runOpt, List.class), getCurrentUser()); 
+        
+        runOptions.forEach(opt-> {                    
+            DefaultMenuItem menuItem = new DefaultMenuItem(getLabelFromBundle(opt.getBundleName()));      
+            menuItem.setIcon(opt.getIconName());
+            menuItem.setCommand("#{processCardBean.onRun('" + opt.getName() + "')}");
+            menuItem.setUpdate("mainFRM");
+            menuItem.setOnstart("PF('statusDialog').show()");
+            menuItem.setOncomplete("PF('statusDialog').hide(); return itemChange = 0;");
+            menuItem.setParam("isRequired", "true");
+            runMenuModel.addElement(menuItem); 
+        });        
+    }
+    
     /**
      * Проверка срока исполнения
      * @param planDate 
@@ -304,7 +342,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private void validateRemarks(Doc doc,  Set<String> errors){
         if (doc == null) return;
         doc = docBean.getLazyFacade().find(doc.getId());        
-        Remark remark = doc.getDetailItems().stream().filter(r->!r.isChecked()).findFirst().orElse(null);
+        Remark remark = doc.getDetailItems().stream()
+                .filter(r->Objects.equals(DictStates.STATE_ISSUED, r.getState().getCurrentState().getId()) && !r.isChecked())
+                .findFirst()
+                .orElse(null);
         if (remark != null){
             errors.add("CannotStartProcessUnprocessedRemarks");
         }
@@ -486,6 +527,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /* GETS & SETS */
 
+    public DefaultMenuModel getRunMenuModel() {
+        return runMenuModel;
+    }
+    
     public Doc getSelectedDoc() {
         return selectedDoc;
     }
@@ -506,7 +551,14 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void setCurrentReport(ProcReport currentReport) {
         this.currentReport = currentReport;
     }
-        
+
+    public List<RunOptions> getRunOptions() {
+        return runOptions;
+    }
+    public void setRunOptions(List<RunOptions> runOptions) {
+        this.runOptions = runOptions;
+    }
+          
     /**
      * Получение из схемы списка задач процесса
      * @return 
@@ -577,4 +629,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             return remark;
         }
     }
+
+    public DiagramBean getDiagramBean() {
+        return diagramBean;
+    }
+        
 }

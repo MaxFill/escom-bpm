@@ -54,6 +54,15 @@ public class ProcessTypesBean extends BaseTreeBean<ProcessType, ProcessType> {
         return null;
     }
 
+     @Override
+    public void preparePasteItem(ProcessType pasteItem, ProcessType sourceItem, BaseDict target){
+        super.preparePasteItem(pasteItem, sourceItem, target);
+        if (target == null){
+            target = sourceItem.getParent();
+        }
+        pasteItem.setParent((ProcessType)target);
+    } 
+    
     @Override
     public BaseDetailsBean getOwnerBean() {
         return null;

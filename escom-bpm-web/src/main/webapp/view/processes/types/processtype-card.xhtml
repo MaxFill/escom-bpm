@@ -21,63 +21,108 @@
     </ui:define>
 
     <ui:define name="page_body">
-        <p:tab id="cardTab" title="#{bundle.ProcessType}:">
-            <p:panelGrid columns="1"  styleClass="ui-panelgrid-blank ui-grid-col-12"
-                         columnClasses="ui-grid-col-12">
-                <p:outputLabel value="#{bundle.Name}"/>
-                <p:inputText id="nameItem" value="#{processTypesCardBean.editedItem.name}"
+        <p:tab id="cardTab" title="#{bundle.ProcessType}">
+            <p:panelGrid columns="1" layout="grid"  columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{bundle.Name}:"/>
+                <p:inputText id="nameItem" value="#{_bean.editedItem.name}"
                              styleClass="ui-grid-col-12"
-                             onkeypress="checkEsc();"
                              onchange="return itemChange = 1;"
                              disabled="#{_bean.isReadOnly()}"
                              required="#{param['isRequired'] == 'true'}"
-                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                             requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                             
+                
+                <p:selectBooleanCheckbox itemLabel="#{bundle.ShowReportsTable}" 
+                                         disabled="#{_bean.isReadOnly()}"
+                                         value="#{_bean.editedItem.showReports}" >                
+                </p:selectBooleanCheckbox>
+                
+                <p:panelGrid columns="1" layout="grid" rendered="#{_bean.editedItem.id != 0 and applicationBean.canUsesProcess}" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <h:panelGrid columns="2" columnClasses="col-padding" styleClass="without-spaces">
+                        <p:outputLabel value="#{bundle.ProcessOptions}:"/>
+                        <p:inputSwitch value="#{_bean.editedItem.inheritRunOptions}" 
+                                       rendered="#{applicationBean.canUsesProcess}"
+                                       showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                                <p:ajax oncomplete="itemChange = 1;" update="procOptionsGroup"/>
+                        </p:inputSwitch>
+                    </h:panelGrid>
+                    <h:panelGroup id="procOptionsGroup" >
+                        <p:panelGrid columns="1" layout="grid" rendered="#{!_bean.editedItem.inheritRunOptions}" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                            <p:outputLabel value="#{bundle.StandardTermConcorded}:" indicateRequired="true" />
+                            <p:spinner value="#{_bean.editedItem.termHours}" min="0" max="999" size="3"                                    
+                                       onchange="return itemChange = 1;"
+                                       required="#{param['isRequired'] == 'true'}"
+                                       requiredMessage="#{bundle.Field} [#{bundle.StandardTermConcorded}] #{bundle.MustBeFilled}"
+                                       suffix="#{bundle.Hour}">
+                            </p:spinner>
+                            <p:outputLabel value="#{bundle.RunOptions}:" indicateRequired="true"/>
+                            <p:pickList value="#{_bean.runOptions}" var="item" converter="runOptionsConverter"
+                                        disabled="#{_bean.isReadOnly()}"
+                                        showCheckbox="true"
+                                        onTransfer="itemChange = 1;"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        requiredMessage="#{bundle.Field} [#{bundle.RunOptions}] #{bundle.MustBeFilled}"                                
+                                        itemLabel="#{_bean.getLabelFromBundle(item.getBundleName())}" itemValue="#{item}">
+                                    <f:facet name="sourceCaption">#{bundle.Available}</f:facet>
+                                    <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
+                            </p:pickList> 
+                        </p:panelGrid>
+                    </h:panelGroup>
+                </p:panelGrid>
             </p:panelGrid>
         </p:tab>
         
-        <p:tab title="#{bundle.Settings}" rendered="#{_bean.editedItem.id != 0}">
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.DefaultTaskName}:" indicateRequired="true"/>
-                <p:inputText value="#{_bean.editedItem.defaultTaskName}"
-                             styleClass="ui-grid-col-12"
-                             onkeypress="checkEsc();"
-                             onchange="return itemChange = 1;"
-                             disabled="#{_bean.isReadOnly()}"
-                             required="#{param['isRequired'] == 'true'}"
-                             requiredMessage="#{bundle.Field} [#{bundle.DefaultTaskName}] #{bundle.MustBeFilled}"/>
-                
-                <p:outputLabel value="#{bundle.DefaultDeadline}:"/>
-                <h:panelGroup>
-                    <div class="ui-inputgroup">
-                    <p:spinner id="deltaDay" value="#{processTypesCardBean.deadLineDeltaDay}" min="0" max="999" 
-                               suffix="#{bundle.DayShort}" size="3"                                                
-                               onchange="return itemChange = 1;"                                               
-                               disabled="#{_bean.isReadOnly()}">                                        
-                    </p:spinner>
-                    <p:spacer width="1"/>
-                    <p:spinner id="deltaHour" value="#{processTypesCardBean.deadLineDeltaHour}" min="0" max="99" 
-                               suffix="#{bundle.HourShort}" size="2"
-                               onchange="return itemChange = 1;"
-                               disabled="#{_bean.isReadOnly()}">
-                    </p:spinner>
-                    </div>
+        <p:tab title="#{bundle.Settings}" rendered="#{_bean.editedItem.id != 0 and applicationBean.canUsesProcess}">
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">                
+                <h:panelGrid columns="2" columnClasses="col-padding" styleClass="without-spaces">
+                    <p:outputLabel value="#{bundle.DefaultParams}:" />
+                    <p:inputSwitch value="#{_bean.editedItem.inheritTaskOptions}"                                
+                                   showLabels="true" onLabel="#{bundle.Inherit}" offLabel="#{bundle.Select}" disabled="#{_bean.isReadOnly()}">
+                            <p:ajax oncomplete="itemChange = 1;" update="gridSettings"/>
+                    </p:inputSwitch>
+                </h:panelGrid>
+                <h:panelGroup id="gridSettings" >
+                    <p:panelGrid rendered="#{!_bean.editedItem.inheritTaskOptions}" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                        <p:outputLabel value="#{bundle.DefaultTaskName}:" indicateRequired="true"/>
+                        <p:inputText value="#{_bean.editedItem.defaultTaskName}"
+                                     styleClass="ui-grid-col-12"
+                                     onkeypress="checkEsc();"
+                                     onchange="return itemChange = 1;"
+                                     disabled="#{_bean.isReadOnly()}"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.DefaultTaskName}] #{bundle.MustBeFilled}"/>
+
+                        <p:outputLabel value="#{bundle.DefaultDeadline}:"/>
+                        <h:panelGroup>
+                            <div class="ui-inputgroup">
+                            <p:spinner id="deltaDay" value="#{processTypesCardBean.deadLineDeltaDay}" min="0" max="999" 
+                                       suffix="#{bundle.DayShort}" size="3"                                                
+                                       onchange="return itemChange = 1;"                                               
+                                       disabled="#{_bean.isReadOnly()}">                                        
+                            </p:spinner>
+                            <p:spacer width="1"/>
+                            <p:spinner id="deltaHour" value="#{processTypesCardBean.deadLineDeltaHour}" min="0" max="99" 
+                                       suffix="#{bundle.HourShort}" size="2"
+                                       onchange="return itemChange = 1;"
+                                       disabled="#{_bean.isReadOnly()}">
+                            </p:spinner>
+                            </div>
+                        </h:panelGroup>
+
+                        <p:outputLabel value="#{bundle.AvailableActions}:" indicateRequired="true"/>
+                        <p:pickList id="pickList" value="#{processTypesCardBean.results}" var="result" converter="resultConverter"
+                                    disabled="#{processTypesCardBean.isReadOnly()}"
+                                    showCheckbox="true"
+                                    required="#{param['isRequired'] == 'true'}"
+                                    onTransfer="itemChange = 1;"
+                                    requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"
+                                    itemLabel="#{resultBean.getLabelFromBundle(result.getName())}" itemValue="#{result}">
+                            <f:facet name="sourceCaption">#{bundle.AvailableButton}</f:facet>
+                            <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
+                        </p:pickList>
+                    </p:panelGrid>
                 </h:panelGroup>
-                
-                <p:outputLabel value="#{bundle.ListResults}:" indicateRequired="true"/>
-                <p:separator style="margin-top: 0em;"/>
-                <p:pickList id="pickList" value="#{processTypesCardBean.results}" var="result" converter="resultConverter"
-                            disabled="#{processTypesCardBean.isReadOnly()}"
-                            showCheckbox="true"
-                            required="#{param['isRequired'] == 'true'}"
-                            onTransfer="itemChange = 1;"
-                            requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"                                
-                            itemLabel="#{resultBean.getLabelFromBundle(result.getName())}" itemValue="#{result}">
-                    <f:facet name="sourceCaption">#{bundle.AvailableResults}</f:facet>
-                    <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
-                </p:pickList>               
             </p:panelGrid>
-        </p:tab>                
-        
+        </p:tab>
     </ui:define>
 
     <ui:define name="childs_rights">

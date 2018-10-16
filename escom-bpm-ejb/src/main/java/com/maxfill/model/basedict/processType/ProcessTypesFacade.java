@@ -65,4 +65,28 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
 
         return processFacade.getDefaultRights(); //если иного не найдено, то берём дефолтные права справочника
     }
+    
+    /**
+     * Возвращает корневой ВидПроцесса, который не наследует параметры для задач
+     * @param processType
+     * @return 
+     */
+    public ProcessType getProcTypeForTasks(ProcessType processType){
+        if (processType.isInheritTaskOptions() && processType.getParent() != null){
+            return getProcTypeForTasks(processType.getParent());
+        }
+        return processType;
+    }
+    
+    /**
+     * Возвращает корневой ВидПроцесса, который не наследует параметры процесса
+     * @param processType
+     * @return 
+     */
+    public ProcessType getProcTypeForOpt(ProcessType processType){
+        if (processType.isInheritRunOptions() && processType.getParent() != null){
+            return getProcTypeForOpt(processType.getParent());
+        }
+        return processType;
+    }
 }

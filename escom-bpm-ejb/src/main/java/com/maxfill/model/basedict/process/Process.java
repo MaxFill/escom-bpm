@@ -58,8 +58,8 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @XmlTransient
     @JoinColumn(name = "Document", referencedColumnName = "Id")
     @ManyToOne(optional = false)
-    private Doc document;
-        
+    private Doc document;       
+    
     @Size(max = 50)
     @Column(name = "RegNumber")
     private String regNumber;
@@ -91,7 +91,11 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
      
     @Column(name = "Result")
     private String result; 
-        
+      
+    @OneToMany
+    @JoinColumn(name = "parent")
+    private List<Process> childItems;
+    
     /* Список документов */
     @JoinTable(name = "docsInProcesses", joinColumns = {
         @JoinColumn(name = "ProcessId", referencedColumnName = "Id")}, inverseJoinColumns = {
@@ -129,7 +133,6 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public String getIconName() {
         return "process";
     }
-
     
     @Override
     public Date getItemDate() {
@@ -178,7 +181,16 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     public void setResult(String result) {
         this.result = result;
     }
-        
+
+    @Override
+    public Process getParent() {
+        return super.getParent();
+    }
+    @Override
+    public void setParent(Process parent) {
+        super.setParent(parent); 
+    }
+            
     @Override
     public ProcessStates getState() {
         return state;
@@ -245,7 +257,7 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         
     @Override
     public List<Process> getChildItems() {
-        return null;
+        return childItems;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.maxfill.model.basedict.procTempl;
 
-import com.maxfill.dictionary.SysParams;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.processType.ProcessType;
 import java.util.Objects;
@@ -17,7 +16,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.xml.bind.annotation.XmlTransient;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Сущность "Шаблон процесса" 
@@ -41,10 +39,7 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     private Integer id;
     
     @Column(name="IsDefault")
-    private Boolean isDefault = false;
-      
-    @Column(name = "TermHours")
-    private Integer termHours = 72;  //типовой срок согласования в часах
+    private Boolean isDefault = false;      
         
     @Lob
     @Column(name = "Elements", length = 9024)
@@ -82,13 +77,6 @@ public class ProcTempl extends BaseDict<ProcessType, ProcTempl, ProcTempl, ProcT
     @Override
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getTermHours() {
-        return termHours;
-    }
-    public void setTermHours(Integer termHours) {
-        this.termHours = termHours;
     }
     
     public Boolean getIsDefault() {

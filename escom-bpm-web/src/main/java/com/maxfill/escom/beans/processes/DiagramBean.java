@@ -33,7 +33,6 @@ import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
-import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
@@ -49,6 +48,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.ejb.EJB;
@@ -124,8 +124,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     
     private final DefaultDiagramModel model = new DefaultDiagramModel();  
     
-    private Process process;
-
+    private Process process;    
+    
     @Override
     public String onCloseCard(Object param){
         workflow.packScheme(scheme);
@@ -143,7 +143,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             addElementContextMenu();
         }
     }
-
+    
     public void prepareModel(Process process){
         this.process = process;
         model.setMaxConnections(-1);
@@ -201,7 +201,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 if (taskEl.getStaffId() != null){
                     staff = staffFacade.find(taskEl.getStaffId());
                 }
-                Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, scheme, taskEl.getUid());
+                Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, taskEl.getUid());
                 task.setConsidInProcReport(taskEl.getConsidInProc());
                 taskEl.setTask(task);
                 scheme.getTasks().add(task);
@@ -789,7 +789,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     private TaskElem createTask(Staff executor, Set<String> errors){        
         TaskElem taskElem = new TaskElem("", getX(), getY());
-        Task task = taskFacade.createTaskInProc(executor, getCurrentUser(), process, scheme, taskElem.getUid());
+        Task task = taskFacade.createTaskInProc(executor, getCurrentUser(), process, taskElem.getUid());
         taskElem.setTask(task);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
@@ -1075,8 +1075,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (CollectionUtils.isEmpty(procTempls)) return;
         selectedTempl = procTempls.get(0);
         changeSchemeName(selectedTempl);
-        onLoadModelFromTempl();
-        MsgUtils.succesMsg("TemplateLoad");
+        onLoadModelFromTempl();        
+        MsgUtils.succesFormatMsg("TemplateLoad", new Object[]{selectedTempl.getNameEndElipse()} );
     }
     
     /**
@@ -1088,15 +1088,14 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (CollectionUtils.isEmpty(procTempls)) return;
         selectedTempl = procTempls.get(0);
         changeSchemeName(selectedTempl);
-        onSaveModelAsTempl();
-        MsgUtils.succesMsg("TemplateSaved");
+        onSaveModelAsTempl();        
     }
     
     /**
      * Загрузка визуальной схемы процесса из шаблона
      */
-    private void onLoadModelFromTempl(){
-        Integer termHours = selectedTempl.getTermHours();
+    private void onLoadModelFromTempl(){        
+        Integer termHours = processTypesFacade.getProcTypeForOpt(process.getOwner()).getTermHours();
         if (termHours != null){
             Date planExecDate = DateUtils.addHour(new Date(), termHours);
             process.setPlanExecDate(planExecDate);
@@ -1123,11 +1122,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             return;
         }
         workflow.packScheme(scheme);
-        ProcessType processType = processTypesFacade.find(process.getOwner().getId());        
         selectedTempl.setElements(scheme.getPackElements());
         processTemplFacade.edit(selectedTempl);
         processTemplFacade.addLogEvent(selectedTempl,  DictLogEvents.CHANGE_EVENT, getCurrentUser());
-        process.setOwner(processType);
+        MsgUtils.succesFormatMsg("TemplateSaved", new Object[]{selectedTempl.getNameEndElipse()} );
     }    
     
     /* *** КОПИРОВАНИЕ ВСТАВКА *** /
@@ -1225,10 +1223,13 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param wfElement
      * @return 
      */
-    public String getElementCaption(WFConnectedElem wfElement){
+    public String getElementCaption(WFConnectedElem wfElement){        
         String bundleName = wfElement.getCaption();
         if (StringUtils.isEmpty(bundleName)) return "";               
-        return MsgUtils.getBandleLabel(bundleName);
+        try {
+            return MsgUtils.getBandleLabel(bundleName);
+        } catch(MissingResourceException ex){}
+        return bundleName;
     } 
             
     /**
@@ -1303,6 +1304,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return process;
     }
 
+    public Scheme getScheme() {
+        return scheme;
+    }
+    
     @Override
     public String getFormName() {
         return DictFrmName.FRM_DIAGRAMMA;
@@ -1310,6 +1315,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
 
     @Override
     public String getFormHeader() {
+        if (scheme == null) return "";
         return scheme.getName();
     }
 

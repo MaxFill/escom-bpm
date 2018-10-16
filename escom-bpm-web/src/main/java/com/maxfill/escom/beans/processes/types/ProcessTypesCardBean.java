@@ -1,24 +1,20 @@
 package com.maxfill.escom.beans.processes.types;
 
-import com.maxfill.dictionary.DictStates;
 import com.maxfill.escom.beans.BaseCardTree;
 import com.maxfill.escom.beans.core.BaseTreeBean;
 import com.maxfill.escom.beans.processes.ProcessBean;
+import com.maxfill.model.basedict.process.options.RunOptions;
+import com.maxfill.model.basedict.process.options.RunOptionsFacade;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.result.ResultFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.core.states.State;
-import com.maxfill.model.basedict.task.Task;
-import com.maxfill.model.basedict.task.TaskStates;
 import com.maxfill.model.basedict.result.Result;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -38,9 +34,14 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     private ProcessTypesFacade itemsFacade;
     @EJB
     private ResultFacade resultFacade;
+    @EJB
+    private RunOptionsFacade runOptionsFacade;
     
     private List<Result> taskResults;
+    
     private DualListModel<Result> results;
+    private DualListModel<RunOptions> runOptions;
+    
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;    
 
@@ -107,7 +108,24 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
         this.results = results;
         getEditedItem().setResults(results.getTarget());                
     }  
-    
+
+    public DualListModel<RunOptions> getRunOptions() {
+        if (runOptions == null){
+            List<RunOptions> allOptions = runOptionsFacade.findAll();
+            List<RunOptions> currentOptions = runOptionsFacade.findRunOptionsByProcType(getEditedItem());
+            if (!getEditedItem().isInheritRunOptions() && currentOptions.isEmpty()){
+                currentOptions.addAll(runOptionsFacade.getBaseRunOptions());
+            }
+            allOptions.removeAll(currentOptions);
+            runOptions = new DualListModel<>(allOptions, currentOptions);
+        }
+        return runOptions;
+    }
+    public void setRunOptions(DualListModel<RunOptions> runOptions) {
+        this.runOptions = runOptions;
+        getEditedItem().setRunOptions(runOptions.getTarget());
+    }
+        
     @Override
     public ProcessType getEditedItem() {
         return super.getEditedItem(); 

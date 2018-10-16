@@ -30,13 +30,7 @@
                                 update="groupNameItem"
                                 actionListener="#{_bean.makeFullName()}"/>
                     </div>
-                </h:panelGroup>
-                
-                <p:outputLabel value="#{bundle.StandardTermConcorded}:"/>
-                <p:spinner value="#{_bean.editedItem.termHours}" min="0" max="999" size="3" 
-                           onchange="return itemChange = 1;"
-                           suffix="#{bundle.Hour}">
-                </p:spinner>
+                </h:panelGroup>                                
                 
             </p:panelGrid>
         </p:tab>

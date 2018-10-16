@@ -116,21 +116,33 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     
     private int loadTree(){
         List<Process> processes = processFacade.findItemsByFilters("", "", makeFilters(new HashMap()), getCurrentUser());
-        processes.forEach(proc->{
+        processes.forEach(proc->{            
             TreeNode processNode = new DefaultTreeNode(proc, root);
-            proc.getScheme().getTasks().forEach(task->{
-                    TreeNode taskNode = new DefaultTreeNode(task, processNode);
-                    if (Objects.equals(selectedNode, taskNode)){
-                        taskNode.setSelected(true);
-                        processNode.setExpanded(true);
-                    }
-                });
-            if (Objects.equals(selectedNode, processNode)){
-                processNode.setSelected(true);
-                processNode.setExpanded(selectedNode.isExpanded());               
-            }
+            makeTree(proc, processNode);            
         });
         return processes.size();
+    }
+    
+    private void makeTree(Process process, TreeNode processNode){
+        process.getScheme().getTasks().forEach(task->{
+                TreeNode taskNode = new DefaultTreeNode(task, processNode);
+                if (Objects.equals(selectedNode, taskNode)){
+                    taskNode.setSelected(true);
+                    processNode.setExpanded(true);
+                }
+            });
+        process.getChildItems().forEach(subProc->{
+            TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
+            if (Objects.equals(selectedNode, subProcNode)){
+                    subProcNode.setSelected(true);
+                    processNode.setExpanded(true);
+            }
+            makeTree(subProc, subProcNode);
+        });
+        if (Objects.equals(selectedNode, processNode)){
+            processNode.setSelected(true);
+            processNode.setExpanded(selectedNode.isExpanded());               
+        }        
     }
     
     /**
@@ -141,6 +153,7 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     protected Map<String, Object> makeFilters(Map filters) {        
         filters.put("actual", true);
         filters.put("deleted", false);
+        filters.put("parent", null);
         if(dateStart != null || dateEnd != null) {
             Map <String, Date> dateFilters = new HashMap <>();
             dateFilters.put("startDate", dateStart);        //дата начала периода отбора

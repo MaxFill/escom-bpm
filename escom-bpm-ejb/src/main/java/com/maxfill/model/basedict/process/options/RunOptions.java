@@ -1,4 +1,4 @@
-package com.maxfill.model.basedict.process.procedures;
+package com.maxfill.model.basedict.process.options;
 
 import com.maxfill.model.Dict;
 import java.io.Serializable;
@@ -13,34 +13,45 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 /**
- * Справочник "Процедуры процессов"
+ * Справочник возможных опций запуска процессов
+ * @author maksim
  */
 @Entity
-@Table(name = "procedures")
-public class Procedure implements Serializable, Dict{    
-    private static final long serialVersionUID = -2268453924468245579L;
+@Table(name = "runOptions")
+public class RunOptions implements Serializable, Dict{
     
-     @TableGenerator(
-        name = "ProcedureIdGen",
+    @TableGenerator(
+        name = "runOptionsIdGen",
         table = "SYS_ID_GEN",
         pkColumnName = "GEN_KEY",
         valueColumnName = "GEN_VALUE",
-        pkColumnValue = "Procedure_ID", allocationSize = 1)
+        pkColumnValue = "RunOptions_ID", allocationSize = 1)
 
     @Id
     @Basic(optional = false)
     @Column(name = "Id")
-    @GeneratedValue(strategy = TABLE, generator = "ProcedureIdGen")
+    @GeneratedValue(strategy = TABLE, generator = "runOptionsIdGen")
     private Integer id;
     
     @Column(name = "Name")
     private String name;
     
-    @Column(name = "Method")
-    private String method;
+    @Column(name = "BundleName")
+    private String bundleName;
+
+    @Column(name = "Icon")
+    private String iconName = "ui-icon-play";
     
-    /* gets & sets */
+    public RunOptions() {
+    }
     
+    public RunOptions(String name, String bundleName) {
+        this.name = name;
+        this.bundleName = bundleName;
+    }
+
+    /* GETS & SETS */
+
     @Override
     public Integer getId() {
         return id;
@@ -50,26 +61,33 @@ public class Procedure implements Serializable, Dict{
         this.id = id;
     }
 
+    public String getIconName() {
+        return iconName;
+    }
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
+    }
+    
     public String getName() {
         return name;
     }
     public void setName(String name) {
         this.name = name;
-    }
+    } 
 
-    public String getMethod() {
-        return method;
+    public String getBundleName() {
+        return bundleName;
     }
-    public void setMethod(String method) {
-        this.method = method;
+    public void setBundleName(String bundleName) {
+        this.bundleName = bundleName;
     }
     
     /* *** *** */
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 83 * hash + Objects.hashCode(this.id);
+        int hash = 7;
+        hash = 89 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -84,15 +102,16 @@ public class Procedure implements Serializable, Dict{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Procedure other = (Procedure) obj;
+        final RunOptions other = (RunOptions) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
     }
-
+    
     @Override
     public String toString() {
-        return "Procedure{" + "id=" + id + ", name=" + name + '}';
+        return "RunOptions{" + "id=" + id + ", bundleName=" + bundleName + '}';
     }
+    
 }

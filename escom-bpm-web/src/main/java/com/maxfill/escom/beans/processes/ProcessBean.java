@@ -7,13 +7,14 @@ import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
+import java.util.HashMap;
 import org.primefaces.model.TreeNode;
-
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Сервисный бин для работы с сущностью "Процессы"
@@ -26,6 +27,8 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
 
     private DiagramBean diagramBean;
 
+    private final Map<String, DiagramBean> diagramBeanMap = new HashMap<>();
+    
     @EJB
     private ProcessFacade processFacade;
     @Inject
@@ -73,5 +76,13 @@ public class ProcessBean extends BaseDetailsBean<Process, ProcessType>{
     }
     public void setDiagramBean(DiagramBean diagramBean) {
         this.diagramBean = diagramBean;
+    }
+
+    public Map<String, DiagramBean> getDiagramBeanMap() {
+        return diagramBeanMap;
+    }
+    
+    public  DiagramBean getDiagramBean(String beanId) {
+        return diagramBeanMap.get(beanId);
     }
 }

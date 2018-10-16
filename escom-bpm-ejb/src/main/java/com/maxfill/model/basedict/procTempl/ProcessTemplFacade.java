@@ -2,6 +2,7 @@ package com.maxfill.model.basedict.procTempl;
 
 import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.processType.ProcessType;
 import java.util.Map;
 import javax.ejb.Stateless;
@@ -38,6 +39,12 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
         Query query = getEntityManager().createQuery(update);
         query.executeUpdate();
     }        
+    
+    @Override
+    public void detectParentOwner(ProcTempl procTempl, BaseDict parent, BaseDict target){
+        procTempl.setOwner((ProcessType)target);
+        procTempl.setParent(null);
+    }
     
     @Override
     public int replaceItem(ProcTempl oldItem, ProcTempl newItem) {       

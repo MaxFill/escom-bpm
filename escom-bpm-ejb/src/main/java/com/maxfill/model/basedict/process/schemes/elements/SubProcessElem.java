@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubProcessElem extends WFConnectedElem{
+    private static final long serialVersionUID = 5314328285810719081L;
 
     @XmlElement(name = "process")
     private Integer processId;
@@ -22,6 +23,9 @@ public class SubProcessElem extends WFConnectedElem{
     
     @XmlElement(name = "proctempl")
     private Integer proctemplId;
+    
+    @XmlElement(name = "showcard")
+    private boolean showCard = true;
     
     public SubProcessElem() {
         this.uid = EscomUtils.generateGUID();
@@ -50,6 +54,15 @@ public class SubProcessElem extends WFConnectedElem{
         return "SubProcess";
     }
 
+    /* GETS & SETS */
+
+    public boolean isShowCard() {
+        return showCard;
+    }
+    public void setShowCard(boolean showCard) {
+        this.showCard = showCard;
+    }
+        
     public Integer getProcessId() {
         return processId;
     }
@@ -70,7 +83,7 @@ public class SubProcessElem extends WFConnectedElem{
     public void setProctemplId(Integer proctemplId) {
         this.proctemplId = proctemplId;
     }
-           
+        
     /* *** *** */
     
     @Override

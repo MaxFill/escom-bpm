@@ -6,12 +6,12 @@ import com.maxfill.dictionary.DictRoles;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.basedict.process.Process;
-import com.maxfill.model.basedict.process.schemes.Scheme;
+import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.user.User;
-import com.maxfill.model.core.states.State_;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -38,6 +38,8 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     
     @EJB
     private WorkTimeService workTimeService;
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
     
     public TaskFacade() {
         super(Task.class, TaskLog.class, TaskStates.class);
@@ -57,30 +59,35 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      * @param owner
      * @param author
      * @param process
-     * @param scheme
      * @param taskLinkUID
      * @return 
      */
-    public Task createTaskInProc(Staff owner, User author, Process process, Scheme scheme, String taskLinkUID){
-        Task task = createItem(author, null, owner, new HashMap<>());        
-        task.setName(process.getOwner().getDefaultTaskName());  
+    public Task createTaskInProc(Staff owner, User author, Process process, String taskLinkUID){
+        Task task = createItem(author, null, owner, new HashMap<>());                  
         task.setTaskLinkUID(taskLinkUID);
-        if (process.getOwner().getDefaultDeltaDeadLine() != null && process.getOwner().getDefaultDeltaDeadLine() > 0){
-            task.setDeltaDeadLine(process.getOwner().getDefaultDeltaDeadLine());
-            task.setDeadLineType("delta");
-        } else {
-            task.setDeadLineType("data");
-            task.setPlanExecDate(process.getPlanExecDate());
-        }
-        if (scheme != null){
-            task.setScheme(scheme);
-            task.setAvaibleResultsJSON(scheme.getProcess().getOwner().getAvaibleResultsJSON());   
-        } else {
+        setDefaultTaskParams(task, process);
+        if (StringUtils.isBlank(task.getAvaibleResultsJSON())){            
             task.setAvaibleResultsJSON("[1]");
         }
         return task; 
     }
     
+    private void setDefaultTaskParams(Task task, Process process){
+        ProcessType procType = processTypesFacade.getProcTypeForTasks(process.getOwner());
+        task.setName(procType.getDefaultTaskName());
+        task.setAvaibleResultsJSON(procType.getAvaibleResultsJSON()); 
+        if (procType.getDefaultDeltaDeadLine() != null && procType.getDefaultDeltaDeadLine() > 0){
+            task.setDeltaDeadLine(procType.getDefaultDeltaDeadLine());
+            task.setDeadLineType("delta");
+        } else {
+            task.setDeadLineType("data");
+            task.setPlanExecDate(process.getPlanExecDate());
+        }
+        if (process.getScheme() != null){
+            task.setScheme(process.getScheme());
+        }
+    }    
+            
     public List<Task> findTaskByStaff(Staff staff){
         getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();

@@ -4,7 +4,6 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.processes.DiagramBean;
-import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.basedict.process.Process;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.ejb.EJB;
-import javax.faces.event.ValueChangeEvent;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.omnifaces.cdi.ViewScoped;
@@ -30,7 +28,8 @@ import org.springframework.util.CollectionUtils;
 @Named
 @ViewScoped
 public class SubProcCardBean extends BaseViewBean<BaseView>{
-
+    private static final long serialVersionUID = -846503348131436516L;
+    
     @EJB
     private ProcessTypesFacade procTypesFacade;
     @EJB
@@ -42,18 +41,20 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     private SubProcessElem sourceItem;
     private ProcessType selProcType;
     private ProcTempl selProcTempl;
-    private Process process;
-        
+    private Process selProcess;
+    private List<ProcTempl> templates;
+    
     @Override
     public void doBeforeOpenCard(Map<String, String> params){
         if (sourceItem == null){
             if (sourceBean != null){
                 sourceItem = (SubProcessElem)((DiagramBean)sourceBean).getBaseElement();
                 if (sourceItem.getProcessId() != null){                    
-                    process = procFacade.find(sourceItem.getProcessId());
+                    selProcess = procFacade.find(sourceItem.getProcessId());
                 }
                 if (sourceItem.getProctypeId() != null){
                     selProcType = procTypesFacade.find(sourceItem.getProctypeId());
+                    initTemplates(selProcType);
                 }
                 if (sourceItem.getProctemplId() != null){
                     selProcTempl = procTemplFacade.find(sourceItem.getProctemplId());
@@ -70,11 +71,13 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     }
         
     public String onSaveAndCloseCard(Object param){
-        try {
-            if (selProcType != null){
-                editedItem.setProctypeId(selProcType.getId());
+        try {            
+            editedItem.setProctypeId(selProcType.getId());            
+            if (selProcTempl != null){
+                editedItem.setProctemplId(selProcTempl.getId());
+            } else {
+                editedItem.setProctemplId(null);
             }
-            editedItem.setProctemplId(selProcTempl.getId());
             editedItem.setCaption(makeCaption());
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -84,15 +87,17 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     }
     
     public String makeCaption(){        
-        if (selProcTempl != null){
-            return selProcTempl.getName();
-        } else 
-            if (selProcType != null){
-                return selProcType.getName();
+        StringBuilder sb = new StringBuilder();
+        if (selProcType != null){
+            sb.append(selProcType.getName()).append(" ");        
+            if (selProcTempl != null){
+                sb.append(selProcTempl.getName());            
             }
+            return sb.toString();
+        }
         return "???";
     } 
-        
+    
     @Override
     public String getFormName() {
         return DictFrmName.FRM_SUB_PROCESS;
@@ -102,22 +107,14 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
         List<ProcessType> processTypes = (List<ProcessType>) event.getObject();
         if (CollectionUtils.isEmpty(processTypes)) return;
         selProcType = processTypes.get(0);
+        initTemplates(selProcType);
     }
-    public void onProcTypeSelected(ValueChangeEvent event){
-        selProcType = (ProcessType) event.getNewValue();        
-    } 
         
-    public void onProcTemplSelected(SelectEvent event){
-        List<ProcTempl> procTemplates = (List<ProcTempl>) event.getObject();
-        if (CollectionUtils.isEmpty(procTemplates)) return;
-        selProcTempl = procTemplates.get(0);
-    }
-    public void onProcTemplSelected(ValueChangeEvent event){
-        selProcTempl = (ProcTempl) event.getNewValue();;
+    public void onProcTemplSelected(){        
     }
     
     public boolean isReadOnly(){
-        return false;
+        return editedItem.getProcessId() != null; //если подпроцесс создан, то менять его парамерты на этой карточке нельзя!
     }
     
     @Override
@@ -125,6 +122,20 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
         return getLabelFromBundle("SubProcess");
     }
 
+    private void initTemplates(ProcessType processType){         
+        templates = processType.getTemplates();
+        selProcTempl = templates.stream().filter(templ -> templ.getIsDefault()).findFirst().orElse(null);
+    }
+    
+    /* GETS & SETS */
+
+    public List<ProcTempl> getTemplates() {
+        return templates;
+    }
+    public void setTemplates(List<ProcTempl> templates) {
+        this.templates = templates;
+    }
+        
     public ProcessType getSelProcType() {
         return selProcType;
     }
@@ -142,5 +153,6 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     public SubProcessElem getEditedItem() {
         return editedItem;
     }
-       
+
+         
 }

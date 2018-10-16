@@ -1,8 +1,10 @@
 package com.maxfill.escom.beans.processes.templates;
 
+import com.maxfill.escom.beans.BaseExplBeanGroups;
 import com.maxfill.escom.beans.core.BaseDetailsBean;
 import com.maxfill.escom.beans.core.BaseTableBean;
 import com.maxfill.escom.beans.processes.types.ProcessTypesBean;
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.processType.ProcessType;
@@ -17,7 +19,7 @@ import javax.inject.Named;
  */
 @Named
 @SessionScoped
-public class ProcTemplBean extends BaseDetailsBean<ProcTempl, ProcessType>{    
+public class ProcTemplBean extends BaseExplBeanGroups<ProcTempl, ProcessType>{    
     private static final long serialVersionUID = -6531285763555777301L;
 
     @EJB
@@ -25,6 +27,19 @@ public class ProcTemplBean extends BaseDetailsBean<ProcTempl, ProcessType>{
     @Inject
     private ProcessTypesBean processTypesBean;
     
+        
+    @Override
+    public boolean addItemToGroup(ProcTempl procTempl, BaseDict group){ 
+        //поскольку шаблон может быть только в одном виде процесса, то выполняем перемещение
+        moveItemToGroup(group, procTempl); 
+        return true;
+    }
+    
+    public void moveItemToGroup(BaseDict group, ProcTempl procTempl){
+        procTemplFacade.detectParentOwner(procTempl, group, group);
+        getLazyFacade().edit(procTempl);
+    }
+        
     @Override
     public List<ProcessType> getGroups(ProcTempl item) {
         return null;
@@ -49,4 +64,9 @@ public class ProcTemplBean extends BaseDetailsBean<ProcTempl, ProcessType>{
     public ProcessTemplFacade getLazyFacade() {
         return procTemplFacade;
     }    
+
+    @Override
+    public BaseDetailsBean getGroupBean() {
+        return processTypesBean;
+    }
 }

@@ -5,6 +5,7 @@ import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.Results;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
+import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.result.Result;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -39,9 +40,30 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Column(name = "AvaibleResults")
     private String avaibleResultsJSON;
     
+    @Basic(optional = false)
+    @Column(name = "ShowReports")
+    private boolean showReports = true; 
+    
+    @Column(name = "NameReports")
+    private String nameReports;
+    
+    @Basic(optional = false)
+    @Column(name = "InheritRunOptions")
+    private boolean inheritRunOptions = true; 
+    
+    @Basic(optional = false)
+    @Column(name = "InheritTaskOptions")
+    private boolean inheritTaskOptions = true;
+    
+    @Column(name = "RunOptions")
+    private String runOptionsJSON;
+    
     @Column(name = "DefaultTaskName")
     private String defaultTaskName;
     
+    @Column(name = "TermHours")
+    private Integer termHours = 72;  //типовой срок согласования в часах
+        
     @Column(name="DeltaDeadLine")
     private Integer defaultDeltaDeadLine = 0;      //срок исполнения задач в секундах
         
@@ -63,8 +85,48 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     public ProcessType() {
     }
     
+    @Override
+    public void setResults(List<Result> taskResults) {
+        Gson gson = new Gson();
+        String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
+        avaibleResultsJSON = json;
+    }
+    
+    public void setRunOptions(List<RunOptions> options){
+        Gson gson = new Gson();        
+        setRunOptionsJSON(gson.toJson(options.stream().map(o->o.getId()).collect(Collectors.toList()), List.class));
+    }
+            
     /* GETS & SETS */
 
+    public boolean isShowReports() {
+        return showReports;
+    }
+    public void setShowReports(boolean showReports) {
+        this.showReports = showReports;
+    }
+
+    public String getNameReports() {
+        return nameReports;
+    }
+    public void setNameReports(String nameReports) {
+        this.nameReports = nameReports;
+    }
+    
+    public boolean isInheritRunOptions() {
+        return inheritRunOptions;
+    }
+    public void setInheritRunOptions(boolean inheritRunOptions) {
+        this.inheritRunOptions = inheritRunOptions;
+    }
+
+    public boolean isInheritTaskOptions() {
+        return inheritTaskOptions;
+    }
+    public void setInheritTaskOptions(boolean inheritTaskOptions) {
+        this.inheritTaskOptions = inheritTaskOptions;
+    }
+        
     public Integer getDefaultDeltaDeadLine() {
         return defaultDeltaDeadLine;
     }
@@ -79,12 +141,27 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         this.defaultTaskName = defaultTaskName;
     }
     
+    public Integer getTermHours() {
+        return termHours;
+    }
+    public void setTermHours(Integer termHours) {
+        this.termHours = termHours;
+    }
+    
     public List<ProcTempl> getTemplates() {
         return templates;
     }
     public void setTemplates(List<ProcTempl> templates) {
         this.templates = templates;
     }
+
+    public String getRunOptionsJSON() {
+        return runOptionsJSON;
+    }
+    public void setRunOptionsJSON(String runOptionsJSON) {
+        
+        this.runOptionsJSON = runOptionsJSON;
+    }     
     
     @Override
     public Integer getId() {
@@ -111,13 +188,6 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Override
     public void setState(ProcessTypeStates state) {
         this.state = state;
-    }
-
-    @Override
-    public void setResults(List<Result> taskResults) {
-        Gson gson = new Gson();
-        String json = gson.toJson(taskResults.stream().map(r->r.getId()).collect(Collectors.toList()));
-        avaibleResultsJSON = json;
     }
     
     @Override

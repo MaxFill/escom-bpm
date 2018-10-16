@@ -649,6 +649,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @param currentUser
      * @return 
      */
+    @Override
     public List<T> findByIds(Collection<Integer> ids, User currentUser){
         if (!ids.isEmpty()){
             getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);

@@ -161,12 +161,6 @@
                                 <p:graphicImage value="/resources/icon/control-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/monitor')}" value="#{bundle.ProcessExecutionControl}" target="_blank" />
                                 
-                                <p:graphicImage value="/resources/icon/check-doc-32.png"/>
-                                <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer').concat('?folderId=').concat('1')}" 
-                                        value="#{bundle.Concorded}" target="_blank" />
-                            </p:panelGrid>
-                            <p:separator/>                            
-                            <p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="without-spaces" >
                                 <p:graphicImage id="imgProcesses" value="/resources/icon/process-32.png"/>
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/process-explorer')}" value="#{bundle.ProcessExplorer}" target="_blank" />                                
                                 

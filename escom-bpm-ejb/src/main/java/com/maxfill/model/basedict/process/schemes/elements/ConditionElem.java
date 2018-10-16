@@ -35,8 +35,8 @@ public class ConditionElem extends WFConnectedElem{
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
-    }       
-        
+    }
+    
     @Override
     public String getStyle() {
         StringBuilder sb = new StringBuilder(DictWorkflowElem.STYLE_CONDITION);

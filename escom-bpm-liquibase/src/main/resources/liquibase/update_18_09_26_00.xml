@@ -67,4 +67,70 @@
             INSERT conditions(Id, Name, Method) VALUES (5, N'LastApproved', N'lastApproved');
         </sql>
     </changeSet>
+    
+    <changeSet id="processesTypes_add_RunOptions" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processesTypes" columnName="RunOptions" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processesTypes">
+            <column name="RunOptions" type="varchar(1024)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="InheritRunOptions" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>   
+            <column name="TermHours" type="INT" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="InheritTaskOptions" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+     <changeSet id="RunOptions_add_startOptions" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT runOptions(Id, Name, BundleName, Icon) VALUES (0, N'run', N'Run', N'ui-icon-play');
+            INSERT runOptions(Id, Name, BundleName, Icon) VALUES (1, N'send_all', N'NewEditionSendToAll', N'ui-icon-play');
+            INSERT runOptions(Id, Name, BundleName, Icon) VALUES (2, N'send_notagree', N'SendJustDoNotAgree', N'ui-icon-play');
+        </sql>
+    </changeSet>
+    
+    <changeSet id="processesTypes_set_def_TermHours" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            UPDATE processesTypes SET TermHours=72;
+        </sql>
+    </changeSet>
+    
+    <changeSet id="conditions_add_condition_docIsConcorded" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT conditions(Id, Name, Method, Params) VALUES (6, N'DocIsConcorded', N'docIsConcorded', N'');
+        </sql>
+    </changeSet>
+    
+    <changeSet id="results_add_result_execute" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(6, 7, 5);        
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+                    VALUES (6, N'Execute', N'execute', 6, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>
+    </changeSet>
+        
+    <changeSet id="processesTypes_add_ReportsOptions" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="processesTypes" columnName="ShowReports" />
+            </not>
+        </preConditions>
+        <addColumn tableName="processesTypes">
+            <column name="NameReports" type="varchar(255)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="ShowReports" type="BOOLEAN" >
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

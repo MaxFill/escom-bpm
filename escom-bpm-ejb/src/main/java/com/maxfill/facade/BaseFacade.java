@@ -1,7 +1,9 @@
 package com.maxfill.facade;
 
 import com.maxfill.model.Dict;
+import com.maxfill.model.basedict.user.User;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +72,14 @@ public abstract class BaseFacade<T extends Dict> {
         getEntityManager().remove(entity);
     }
 
+    public int count() {
+        CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        Root<T> rt = cq.from(itemClass);
+        cq.select(getEntityManager().getCriteriaBuilder().count(rt));
+        Query q = getEntityManager().createQuery(cq);
+        return ((Long) q.getSingleResult()).intValue();
+    }    
+    
     public T find(Object id) {        
         getEntityManager().getEntityManagerFactory().getCache().evict(itemClass); 
         return (T) getEntityManager().find(itemClass, id);       
@@ -84,13 +94,22 @@ public abstract class BaseFacade<T extends Dict> {
         return q.getResultList();
     }
 
-    public int count() {
-        CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
-        Root<T> rt = cq.from(itemClass);
-        cq.select(getEntityManager().getCriteriaBuilder().count(rt));
-        Query q = getEntityManager().createQuery(cq);
-        return ((Long) q.getSingleResult()).intValue();
-    }                
+    /**
+     * Отбирает объекты по их идентификаторам
+     * @param ids
+     * @param currentUser
+     * @return 
+     */
+    public List<T> findByIds(Collection<Integer> ids, User currentUser){
+        if (ids.isEmpty()) return new ArrayList<>(); 
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(itemClass);
+        Root root = cq.from(itemClass);
+        cq.select(root).where(builder.and(root.get("id").in(ids)));
+        Query query = getEntityManager().createQuery(cq);       
+        return query.getResultList();
+    }    
     
     /* Возвращает все дочерние элементы для parent */
     public List<T> findAllChilds(T parent){

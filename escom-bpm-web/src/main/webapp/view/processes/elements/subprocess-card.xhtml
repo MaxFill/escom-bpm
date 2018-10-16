@@ -19,41 +19,35 @@
 
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
-            <p:tab title="#{bundle.Process}"  >
+            <p:tab id="tabProcess" title="#{bundle.SubProcess}"  >
                 <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.ProcessType}:" indicateRequired="true" />
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
+                    <ui:include src="/view/common/item-select-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{subProcCardBean.selProcType}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="procTypesConverter" />
+                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>                        
                         <ui:param name="_itemPanel" value="procTypePanel"/>
                         <ui:param name="_titleItem" value="#{bundle.ProcessType}"/>
-                        <ui:param name="_selectorBean" value="#{processTypesBean}"/>
-                        <ui:param name="_items" value="#{processTypesBean.findAll()}"/>
+                        <ui:param name="_selectorBean" value="#{processTypesBean}"/>                        
                         <ui:param name="_actionClear" value="setSelProcType"/>
                         <ui:param name="_actionSelect" value="onProcTypeSelected"/>
-                        <ui:param name="_update" value=""/>
+                        <ui:param name="_update" value="procTempl"/>
                     </ui:include>
-                    
+
                     <p:outputLabel value="#{bundle.ProcessTemplate}:" />
-                    <ui:include src="/view/common/item-select-list-btn.xhtml" >
-                        <ui:param name="_itemValue" value="#{subProcCardBean.selProcTempl}"/>
-                        <ui:param name="_itemLabel" value="nameEndElipse"/>
-                        <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
-                        <ui:param name="_converter" value="procTemplConverter" />
-                        <ui:param name="_itemPanel" value="procTemplPanel"/>
-                        <ui:param name="_titleItem" value="#{bundle.ProcessTemplate}"/>
-                        <ui:param name="_selectorBean" value="#{procTemplBean}"/>
-                        <ui:param name="_items" value="#{procTemplBean.findAll()}"/>
-                        <ui:param name="_actionClear" value="setSelProcTempl"/>
-                        <ui:param name="_actionSelect" value="onProcTemplSelected"/>
-                        <ui:param name="_update" value=""/>
-                    </ui:include>
-                    
-                </p:panelGrid>                
+                    <p:selectOneMenu id="procTempl" value="#{subProcCardBean.selProcTempl}" converter="procTemplConverter"
+                                    styleClass="ui-grid-col-12"
+                                    disabled="#{_bean.isReadOnly()}"
+                                    requiredMessage="#{bundle.Field} [#{bundle.ProcessTemplate}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{subProcCardBean.templates}" var="item" itemLabel="#{item.nameEndElipse}" itemValue="#{item}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
+                            <p:ajax event="change" listener="#{subProcCardBean.onProcTemplSelected()}" />
+                    </p:selectOneMenu>
+                    <p:separator/>
+                    <p:selectBooleanCheckbox itemLabel="#{bundle.ShowSubProcCardInit}" value="#{_bean.editedItem.showCard}" >                
+                    </p:selectBooleanCheckbox>
+                </p:panelGrid>        
             </p:tab>
         </p:tabView>
     </ui:define>

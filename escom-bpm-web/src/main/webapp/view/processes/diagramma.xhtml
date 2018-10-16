@@ -4,16 +4,17 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 template="/view/templ/templ-layout.xhtml"
-                xmlns:f="http://xmlns.jcp.org/jsf/core">
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <ui:param name="_bean" value="#{processBean.diagramBean}"/>
 
-    <ui:define name="customStyleCSS">      
+    <ui:define name="customStyleCSS">
         <h:outputStylesheet library="css" name="processes.css"/>
         <h:outputStylesheet library="contextMenu" name="contextMenu.css"/> 
-    </ui:define>
-
-    <ui:define name="customJavaScript">      
+    </ui:define>    
+    
+    <ui:define name="customJavaScript">   
         <h:outputScript library="contextMenu" name="contextMenu.js" />         
         <script type="text/javascript">
             function addContextMenu(componentId) {
@@ -114,7 +115,7 @@
     <ui:define name="menuActions">
         <p:menuitem value="#{bundle.LoadFromTemlate}" icon="ui-icon-folder-open"
                     disabled="#{_bean.isReadOnly()}"
-                    onclick="document.getElementById('southFRM:btnOpenTempl').click();">                             
+                    onclick="document.getElementById('mainFRM:btnOpenTempl').click();">                             
         </p:menuitem>
         <p:separator/>
         <p:menuitem value="#{bundle.SaveSchemaToTemplate}" icon="ui-icon-disk"
@@ -124,8 +125,7 @@
         </p:menuitem>
         <p:menuitem value="#{bundle.SelectTemplateAndSaveScheme}" icon="ui-icon-disk"
                     disabled="#{_bean.isReadOnly()}"
-                    onclick="document.getElementById('southFRM:btnOpenNewTempl').click();">
-            <p:confirm header="#{msg.ProcessDiagramWillBeSavedinSelecTempl}" message="#{bundle.Confirm}" icon="ui-icon-alert"/>
+                    onclick="document.getElementById('mainFRM:btnOpenNewTempl').click();">           
         </p:menuitem>
         <p:separator/>    
         <p:menuitem value="#{bundle.Clear}" icon="ui-icon-closethick"
@@ -136,6 +136,22 @@
         </p:menuitem>
     </ui:define>
     
+    <ui:define name="specToolButtons">
+        <p:commandButton id="btnOpenTempl" title="#{bundle.LoadFromTemlate}" icon="ico_folder_open-16"
+                    disabled="#{_bean.isReadOnly()}"
+                    actionListener="#{procTemplBean.onOneSelectItem()}"> 
+             <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorLoad}" update="mainFRM"/>
+        </p:commandButton>
+        <p:commandButton id="btnOpenNewTempl" title="#{bundle.SelectTemplateAndSaveScheme}" icon="ico_folder_add-16"
+                    disabled="#{_bean.isReadOnly()}"
+                    actionListener="#{procTemplBean.onOneSelectItem()}"> 
+            <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorSave}" update="mainFRM" />
+        </p:commandButton>
+        <span class="ui-separator">
+            <span class="ui-icon ui-icon-grip-dotted-vertical" />
+        </span>
+    </ui:define>
+        
     <ui:define name="toolbarComponents" > 
         <p:commandButton  value="#{bundle.And}" title="#{bundle.AddLogicElement}"
                           disabled="#{_bean.isReadOnly()}"
@@ -240,12 +256,6 @@
         </p:commandButton>
         <p:commandButton style="display: none;" id="btnOpenTask" actionListener="#{_bean.onOpenTask()}">
             <p:ajax event="dialogReturn" listener="#{_bean.onAfterTaskClose}"/>
-        </p:commandButton>
-        <p:commandButton style="display: none;" id="btnOpenTempl" actionListener="#{procTemplBean.onOneSelectItem()}">
-            <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorLoad}" />
-        </p:commandButton>
-        <p:commandButton style="display: none;" id="btnOpenNewTempl" actionListener="#{procTemplBean.onOneSelectItem()}">
-            <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorSave}" />
         </p:commandButton>
         
     </ui:define>

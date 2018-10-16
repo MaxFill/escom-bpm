@@ -534,7 +534,7 @@ public class ExplorerBean extends LazyLoadBean<BaseDict>{
         } else {
             removeNodeFromTree(treeSelectedNode);
             refreshLazyData();
-            PrimeFaces.current().ajax().update("westFRM:accord:tree mainFRM");
+            PrimeFaces.current().ajax().update("westFRM:accord:tree");
             PrimeFaces.current().ajax().update("mainFRM");
         }
     }

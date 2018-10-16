@@ -14,6 +14,7 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.result.ResultFacade;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
@@ -290,9 +291,17 @@ public class TaskCardBean extends BaseCardBean<Task>{
         doSaveItem();
         if (task.getScheme() != null){
             Process process = processFacade.find(task.getScheme().getProcess().getId());
-            workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
+            Set<BaseDict> forShow = workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
+                return "";
+            }
+            if (!forShow.isEmpty()){
+                forShow.forEach(basedict -> {
+                    if (basedict instanceof Process){                        
+                        processBean.prepEditItem((Process)basedict, getParamsMap());
+                    }
+                });
                 return "";
             }
         } else {

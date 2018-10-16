@@ -59,6 +59,8 @@
 .ico_state-16{background-image: url('../resources/icon/state-16.png') !important;}
 .ico_procedure-16{background-image: url('../resources/icon/procedure-16.png') !important;}
 .ico_start-16{background-image: url('../resources/icon/start-16.png') !important;}
+.ico_folder_open-16{background-image: url('../resources/icon/folder-open-16.png') !important;} 
+.ico_folder_add-16{background-image: url('../resources/icon/folder-add-16.png') !important;} 
 
 .ico-task-20{background-image: url('../resources/icon/task-20.png') !important;}
 .ico_message-20{background-image: url('../resources/icon/msg-20.png') !important;}

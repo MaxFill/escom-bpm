@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.LocaleUtils;
 import org.springframework.util.CollectionUtils;
 
 /**

@@ -1,11 +1,11 @@
 package com.maxfill.model.basedict.process.schemes.elements;
 
-import com.maxfill.utils.EscomUtils;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Абстрактный класс элементов графической модели процесса
@@ -24,7 +24,7 @@ public abstract class WFElement implements Serializable{
     @XmlElement
     private boolean done;
 
-    public String getCaption() {
+    public String getCaption() {        
         return caption;
     }
     public void setCaption(String caption) {
