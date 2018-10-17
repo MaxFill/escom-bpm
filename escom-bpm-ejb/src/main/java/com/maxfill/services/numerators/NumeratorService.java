@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Интерфейс нумератора
+ * Базовый интерфейс нумераторов
  * @author maksim
  */
 public interface NumeratorService {

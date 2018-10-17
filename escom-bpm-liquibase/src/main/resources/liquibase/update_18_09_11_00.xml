@@ -16,13 +16,13 @@
                 <constraints nullable="true"/>
             </column>
         </addColumn>
-         <addForeignKeyConstraint baseColumnNames="Curator"
+        <addForeignKeyConstraint baseColumnNames="Curator"
                                   baseTableName="processes"
                                   constraintName="FK_curator"
                                   referencedColumnNames="Id"
                                   onUpdate="NO ACTION"
                                   onDelete="NO ACTION"
-                                  referencedTableName="staffs"/>         
+                                  referencedTableName="staffs"/>
      </changeSet>
      
     <changeSet id="processReports_add_Executor" author="filatov" context="initdata" runOnChange="true">

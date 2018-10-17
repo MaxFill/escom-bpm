@@ -22,7 +22,6 @@ import com.maxfill.model.basedict.docStatuses.DocStatusFacade;
 import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
-import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
@@ -46,8 +45,10 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
-/* Карточка документа */
-
+/**
+ * Контролер формы "Карточка документа"
+ * @author maksim
+ */
 @Named
 @ViewScoped
 public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark>{
@@ -76,8 +77,6 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
     private DocStatusFacade docStatusFacade;
     @EJB
     private AttacheFacade attacheFacade;
-    @EJB
-    private ProcessTypesFacade processTypesFacade;
     @EJB
     private RemarkFacade remarkFacade;
 
@@ -206,7 +205,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         docURL = sessionBean.doGetItemURL(doc, "/docs/doc-card.xhtml");
     }   
             
-    /* РЕГИСТРАЦИЯ */
+    /* *** РЕГИСТРАЦИЯ *** */
     
     /* Сброс регистрационного номера */
     public void onClearRegNumber(){
@@ -244,7 +243,7 @@ public class DocCardBean extends BaseCardBean<Doc> implements WithDetails<Remark
         }
     }
     
-    /* ВЛОЖЕНИЯ */
+    /* *** ВЛОЖЕНИЯ *** */
     
     /* Подготовка к отправке текущего документа на e-mail  */
     public void prepareSendMailDoc(String mode){

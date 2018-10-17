@@ -17,6 +17,9 @@ import javax.persistence.TableGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ * Счётчик нумератора
+ */
 @Entity
 @Table(name = "numerator")
 public class Counter implements Serializable, Dict {
@@ -36,8 +39,7 @@ public class Counter implements Serializable, Dict {
     private Integer id;
     
     @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
+    @NotNull    
     @Column(name = "Name")
     private String name;
     
@@ -51,36 +53,15 @@ public class Counter implements Serializable, Dict {
     @Column(name = "Year")
     private int year; 
     
-    @JoinColumn(name = "Company", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private Company company;
+    @Basic(optional = false)
+    @Column(name = "Company")    
+    private String companyName;
     
-    @JoinColumn(name = "DocType", referencedColumnName = "Id")
-    @ManyToOne(optional = false)
-    private DocType docType;    
+    @Basic(optional = false)
+    @Column(name = "Type")    
+    private String typeName;
     
     public Counter() {
-    }
-
-    public int getYear() {
-        return year;
-    }
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public DocType getDocType() {
-        return docType;
-    }
-    public void setDocType(DocType docType) {
-        this.docType = docType;
     }
     
     public Counter(Integer id) {
@@ -93,6 +74,29 @@ public class Counter implements Serializable, Dict {
         this.number = number;
     }
 
+    /* GETS & SETS */
+    
+    public int getYear() {
+        return year;
+    }
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+        
     @Override
     public Integer getId() {
         return id;
@@ -105,7 +109,6 @@ public class Counter implements Serializable, Dict {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -113,11 +116,12 @@ public class Counter implements Serializable, Dict {
     public int getNumber() {
         return number;
     }
-
     public void setNumber(int number) {
         this.number = number;
     }
-        
+
+    /* *** *** */
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -140,7 +144,7 @@ public class Counter implements Serializable, Dict {
 
     @Override
     public String toString() {
-        return "com.maxfill.escombpm2.model.system.numerator.Numerator[ id=" + id + " ]";
+        return "Counter{" + "id=" + id + ", name=" + name + '}';
     }
     
 }

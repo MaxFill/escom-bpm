@@ -131,7 +131,10 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
 
     @Override
     public String getIconName() {
-        return "process";
+        if (getParent() == null){
+            return "process";
+        }
+        return "subproc";
     }
     
     @Override

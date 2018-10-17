@@ -40,15 +40,10 @@
         </p:column>                                      
 
         <p:column headerText="#{bundle.Commands}" > 
-            <p:splitButton  value="#{bundle.Open}" title="#{bundle.Open}"                                                   
-                            actionListener="#{_bean.setSelectedProc(doc)}"
-                            oncomplete="document.getElementById('mainFRM:mainTabView:openProcessBtn').click();">                              
-            </p:splitButton>
+            <p:commandButton value="#{bundle.Open}" actionListener="#{processBean.prepEditItem(proc)}" > 
+                <p:ajax event="dialogReturn" update="tblProcess"/>
+            </p:commandButton>
         </p:column>
-    </p:dataTable>
-    
-    <p:commandButton id="openProcessBtn" actionListener="#{processBean.prepEditItem(_bean.selectedProcess)}" style="display: none;"> 
-        <p:ajax event="dialogReturn" listener="#{_bean.onUpdateAfterCloseProcessForm}"/>
-    </p:commandButton>
+    </p:dataTable>        
     
 </ui:composition>

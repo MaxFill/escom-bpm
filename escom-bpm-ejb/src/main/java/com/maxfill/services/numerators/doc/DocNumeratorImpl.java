@@ -2,6 +2,7 @@ package com.maxfill.services.numerators.doc;
 
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.docType.DocType;
 import com.maxfill.model.basedict.docType.DocTypeFacade;
 import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
@@ -22,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorService{    
     @EJB
     private DocTypeFacade docTypeFacade;
+    @EJB
+    private DocFacade docFacade;
     
     @Override
     protected Counter doGetCounter(BaseDict item) {
@@ -32,8 +35,8 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
             Counter counter = new Counter();
             counter.setName(counterName);
             counter.setNumber(0);
-            counter.setCompany(doc.getCompany());
-            counter.setDocType(doc.getDocType());
+            counter.setCompanyName(doc.getCompany().getName());
+            counter.setTypeName(doc.getDocType().getName());
             counter.setYear(Integer.valueOf(EscomUtils.getYearYY(doc.getItemDate())));
             getCounterFacade().create(counter);
             return counter;
@@ -46,14 +49,14 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     protected String doGetCounterName(BaseDict item) {
         Doc doc = (Doc) item;
         DocType docType = doc.getDocType();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(docFacade.getFRM_NAME());
         String counterName = docType.getGuide();
         if (StringUtils.isEmpty(counterName)){
             counterName = EscomUtils.generateGUID();
             docType.setGuide(counterName);            
             docTypeFacade.edit(docType);
         }
-        sb.append(counterName);
+        sb.append("_").append(counterName);
         if (doc.getCompany() != null){
             sb.append("_").append(doc.getCompany().getId());
         }
@@ -69,7 +72,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     public void registratedDoc(Doc doc, Set<String> errors){
         Date dateReg = doc.getItemDate();
         if (dateReg == null){
-            errors.add("DOCDATE_NO_SET");            
+            dateReg = new Date();            
         }
         if (doc.getDocType() == null){
             errors.add("DOCTYPE_NO_SET");
@@ -89,7 +92,8 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
         }
         params.put("O", doc.getCompany().getCode());
         String number = doRegistrNumber(doc, numPattern, params, dateReg);
-        doc.setRegNumber(number);                         
+        doc.setRegNumber(number);
+        doc.setItemDate(dateReg);
     }   
     
 }

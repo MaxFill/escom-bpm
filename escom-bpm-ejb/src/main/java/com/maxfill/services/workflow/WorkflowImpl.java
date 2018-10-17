@@ -54,6 +54,8 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.numerators.NumeratorService;
+import com.maxfill.services.numerators.doc.DocNumeratorService;
+import com.maxfill.services.numerators.process.ProcessNumeratorService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.EscomUtils;
 import javax.ejb.EJB;
@@ -106,7 +108,9 @@ public class WorkflowImpl implements Workflow {
     @EJB
     private NotificationService notificationService;
     @EJB
-    private NumeratorService numeratorService;
+    private DocNumeratorService docNumeratorService;
+    @EJB
+    private ProcessNumeratorService processNumerator;    
     @EJB
     private ProcTimerFacade procTimerFacade;
     @EJB
@@ -1060,37 +1064,30 @@ public class WorkflowImpl implements Workflow {
     
     /* *** ПРОЦЕДУРЫ *** */
 
+    /**
+     * Выполнение процедуры
+     * @param procedureElem
+     * @param scheme
+     * @param errors 
+     */
     private void executeProcedure(ProcedureElem procedureElem, Scheme scheme, Set<String> errors){
         Procedure procedure = procedureFacade.find(procedureElem.getProcedureId());
         if (procedure == null) return;
         switch (procedure .getMethod()) {
             case "regProcess": {
                 Process process = scheme.getProcess();
-                callNumerator(process, processFacade);
+                if (StringUtils.isBlank(process.getRegNumber())){
+                    processNumerator.registrate(process, errors);
+                }
                 break;
             }
             case "regDoc": {
                 Doc doc = scheme.getProcess().getDocument();
-                if (doc != null){
-                    callNumerator(doc, docFacade);                    
+                if (doc != null && StringUtils.isBlank(doc.getRegNumber())){
+                    docNumeratorService.registratedDoc(doc, errors);
                 }
                 break;
             }
-        }
-    }
-
-    /**
-     * Формирование номера по шаблону
-     * @param scheme 
-     */
-    private void callNumerator(BaseDict item, BaseDictFacade facade){
-        if (item == null) return;
-        if (StringUtils.isBlank(item.getRegNumber())){
-            NumeratorPattern numeratorPattern = facade.getMetadatesObj().getNumPattern();
-            Date regDate = new Date();
-            String number = numeratorService.doRegistrNumber(item, numeratorPattern, null, regDate);
-            item.setRegNumber(number);
-            item.setItemDate(regDate);
         }
     }
 

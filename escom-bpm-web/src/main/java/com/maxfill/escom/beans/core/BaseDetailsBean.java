@@ -2,7 +2,6 @@ package com.maxfill.escom.beans.core;
 
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.BaseDict;
-import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.attaches.AttacheService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.primefaces.model.TreeNode;

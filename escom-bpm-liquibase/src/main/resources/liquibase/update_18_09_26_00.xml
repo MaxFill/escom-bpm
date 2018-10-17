@@ -131,6 +131,41 @@
             <column name="ShowReports" type="BOOLEAN" >
                 <constraints nullable="true"/>
             </column>
+            <column name="Numerator" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="Guide" type="varchar(50)" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="Code" type="varchar(10)" >
+                <constraints nullable="true"/>
+            </column>
         </addColumn>
+        <addForeignKeyConstraint baseColumnNames="Numerator"
+                                  baseTableName="processesTypes"
+                                  constraintName="FK_Numerator"
+                                  referencedColumnNames="Id"
+                                  onUpdate="NO ACTION"
+                                  onDelete="NO ACTION"
+                                  referencedTableName="numeratorPattern"/>
     </changeSet>
+    
+    <changeSet id="counters_change_columns" author="filatov" context="initdata" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="numerator" columnName="Type" />
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE numerator
+                DROP FOREIGN KEY `FK_numerator_DocType`,
+                DROP FOREIGN KEY `FK_numerator_Company`;
+            ALTER TABLE numerator
+                CHANGE COLUMN `Company` `Company` VARCHAR(255) NULL DEFAULT NULL ,
+                CHANGE COLUMN `DocType` `Type` VARCHAR(255) NULL DEFAULT NULL ,
+                DROP INDEX `FK_numerator_DocType` ,
+                DROP INDEX `FK_numerator_Company` ;
+        </sql>
+    </changeSet>
+    
 </databaseChangeLog> 

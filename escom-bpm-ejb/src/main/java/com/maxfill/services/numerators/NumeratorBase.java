@@ -37,7 +37,7 @@ public abstract class NumeratorBase implements NumeratorService{
     }
     
     /* Получение счётчика объекта. Возвращается всегда актуальный
-     * (fresh) счётчик, для учёта изменений сделанных в других сессиях */
+     * счётчик, для учёта изменений сделанных в других сессиях */
     protected Counter doGetCounter(BaseDict item) {
         String counterName = doGetCounterName(item);
         List<Counter> counters = getCounterFacade().findCounterByName(counterName);

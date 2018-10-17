@@ -165,6 +165,17 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }
     
     @Override
+    public String makeCardHeader() {
+        StringBuilder sb = new StringBuilder();
+        if (getEditedItem().getParent() == null){
+            sb.append(MsgUtils.getBandleLabel(getFacade().getMetadatesObj().getBundleName()));
+        } else {
+            sb.append(MsgUtils.getBandleLabel("SubProcess"));
+        }
+        return makeHeader(sb);
+    }
+     
+    @Override
     protected String makeHeader(StringBuilder sb){
         if (getEditedItem() != null && StringUtils.isNotEmpty(getEditedItem().getRegNumber())){
             sb.append(" ").append(MsgUtils.getBandleLabel("NumberShort")).append(getEditedItem().getRegNumber()).append(" ");

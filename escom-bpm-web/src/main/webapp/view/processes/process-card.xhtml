@@ -203,7 +203,31 @@
                     </p:accordionPanel>
                 </p:panelGrid>
             </p:tab>               
-
+            <p:tab title="#{bundle.Links}">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1" layout="grid" rendered="" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.MainProcess}:"/>
+                        <ui:include src="/view/common/item-select-btn.xhtml" >
+                                <ui:param name="_itemValue" value="#{_bean.editedItem.parent}"/>
+                                <ui:param name="_itemLabel" value="nameEndElipse"/>
+                                <ui:param name="_required" value="true" />
+                                <ui:param name="_disabled" value="true"/>
+                                <ui:param name="_itemPanel" value="mainProcPanel"/>
+                                <ui:param name="_titleItem" value="#{bundle.MainProcess}"/>
+                                <ui:param name="_selectorBean" value="#{processBean}"/>
+                                <ui:param name="_items" value="#{processBean.findAll()}"/>
+                                <ui:param name="_actionClear" value="setParent"/>
+                                <ui:param name="_actionSelect" value=""/>
+                                <ui:param name="_validateAction" value=""/>
+                                <ui:param name="_update" value=""/>
+                        </ui:include> 
+                    </p:panelGrid>
+                    <p:outputLabel value="#{bundle.SubProcesses}:"/>
+                    <ui:include src="/view/processes/process-list.xhtml" >
+                        <ui:param name="_processes" value="#{_bean.editedItem.childItems}"/>
+                    </ui:include>
+                </p:panelGrid>
+            </p:tab>
         </ui:define>
 
         <ui:define  name="form_scripts">

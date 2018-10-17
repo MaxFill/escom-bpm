@@ -31,6 +31,14 @@
                              required="#{param['isRequired'] == 'true'}"
                              requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>                             
                 
+                <p:outputLabel value="#{bundle.Code}:" />
+                <p:inputText id="typeCode" value="#{_bean.editedItem.code}" 
+                             title="#{bundle.StringArbitrary}"
+                             disabled="#{_bean.isReadOnly() or!_bean.isHaveRightEdit()}"
+                             onchange="return itemChange = 1;">
+                    <f:validateLength for="typeCode" maximum="10"/>
+                </p:inputText>
+                
                 <p:selectBooleanCheckbox itemLabel="#{bundle.ShowReportsTable}" 
                                          disabled="#{_bean.isReadOnly()}"
                                          value="#{_bean.editedItem.showReports}" >                
@@ -46,7 +54,18 @@
                         </p:inputSwitch>
                     </h:panelGrid>
                     <h:panelGroup id="procOptionsGroup" >
-                        <p:panelGrid columns="1" layout="grid" rendered="#{!_bean.editedItem.inheritRunOptions}" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                        <h:panelGrid columns="2" columnClasses="ui-grid-col-2 col-padding, ui-grid-col-10 col-padding" styleClass="ui-grid-col-12 without-spaces" rendered="#{!_bean.editedItem.inheritRunOptions}">
+                            <p:outputLabel value="#{bundle.Numerator}:" indicateRequired="true"/>
+                            <p:selectOneMenu id="numeratorMenu" value="#{_bean.editedItem.numerator}" converter="numPatternConvertor" 
+                                             disabled="#{_bean.isReadOnly()}"
+                                             onchange="return itemChange = 1;"
+                                             styleClass="ui-grid-col-12"
+                                             required="#{param['isRequired'] == 'true'}"
+                                             requiredMessage="#{bundle.Field} [#{bundle.Numerator}] #{bundle.MustBeFilled}">
+                                <f:selectItem value="#{null}" itemLabel="#{bundle.NotSpecified}" itemValue="#{null}" itemDisabled="true"/>
+                                <f:selectItems value="#{numeratorPatternBean.findAll()}" var="num" itemLabel="#{num.name}" itemValue="#{num}" />
+                            </p:selectOneMenu>
+                            
                             <p:outputLabel value="#{bundle.StandardTermConcorded}:" indicateRequired="true" />
                             <p:spinner value="#{_bean.editedItem.termHours}" min="0" max="999" size="3"                                    
                                        onchange="return itemChange = 1;"
@@ -54,18 +73,19 @@
                                        requiredMessage="#{bundle.Field} [#{bundle.StandardTermConcorded}] #{bundle.MustBeFilled}"
                                        suffix="#{bundle.Hour}">
                             </p:spinner>
+                            
                             <p:outputLabel value="#{bundle.RunOptions}:" indicateRequired="true"/>
                             <p:pickList value="#{_bean.runOptions}" var="item" converter="runOptionsConverter"
                                         disabled="#{_bean.isReadOnly()}"
-                                        showCheckbox="true"
+                                        showCheckbox="true" responsive="true"
                                         onTransfer="itemChange = 1;"
                                         required="#{param['isRequired'] == 'true'}"
                                         requiredMessage="#{bundle.Field} [#{bundle.RunOptions}] #{bundle.MustBeFilled}"                                
                                         itemLabel="#{_bean.getLabelFromBundle(item.getBundleName())}" itemValue="#{item}">
                                     <f:facet name="sourceCaption">#{bundle.Available}</f:facet>
                                     <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
-                            </p:pickList> 
-                        </p:panelGrid>
+                            </p:pickList>
+                        </h:panelGrid>
                     </h:panelGroup>
                 </p:panelGrid>
             </p:panelGrid>
@@ -81,7 +101,7 @@
                     </p:inputSwitch>
                 </h:panelGrid>
                 <h:panelGroup id="gridSettings" >
-                    <p:panelGrid rendered="#{!_bean.editedItem.inheritTaskOptions}" columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <h:panelGrid rendered="#{!_bean.editedItem.inheritTaskOptions}" columns="2" columnClasses="ui-grid-col-3 col-padding, ui-grid-col-9 col-padding" styleClass="ui-grid-col-12 without-spaces">
                         <p:outputLabel value="#{bundle.DefaultTaskName}:" indicateRequired="true"/>
                         <p:inputText value="#{_bean.editedItem.defaultTaskName}"
                                      styleClass="ui-grid-col-12"
@@ -111,7 +131,7 @@
                         <p:outputLabel value="#{bundle.AvailableActions}:" indicateRequired="true"/>
                         <p:pickList id="pickList" value="#{processTypesCardBean.results}" var="result" converter="resultConverter"
                                     disabled="#{processTypesCardBean.isReadOnly()}"
-                                    showCheckbox="true"
+                                    showCheckbox="true" responsive="true"
                                     required="#{param['isRequired'] == 'true'}"
                                     onTransfer="itemChange = 1;"
                                     requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"
@@ -119,7 +139,7 @@
                             <f:facet name="sourceCaption">#{bundle.AvailableButton}</f:facet>
                             <f:facet name="targetCaption">#{bundle.Selected}</f:facet>
                         </p:pickList>
-                    </p:panelGrid>
+                    </h:panelGrid>
                 </h:panelGroup>
             </p:panelGrid>
         </p:tab>

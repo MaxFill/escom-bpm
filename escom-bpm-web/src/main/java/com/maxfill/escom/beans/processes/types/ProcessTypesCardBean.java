@@ -10,11 +10,13 @@ import com.maxfill.model.basedict.result.ResultFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
+import com.maxfill.utils.EscomUtils;
 import javax.ejb.EJB;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -52,10 +54,13 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     
     @Override
     protected void onBeforeSaveItem(ProcessType processType){
+        if (StringUtils.isEmpty(processType.getGuide())){            
+            processType.setGuide(EscomUtils.generateGUID());
+        }
         saveDateFields(processType);        
         super.onBeforeSaveItem(processType);
     }
-    
+           
     private void initDateFields(ProcessType processType){
         long hoursInMilli = 3600;
         long daysInMilli = hoursInMilli * 24;

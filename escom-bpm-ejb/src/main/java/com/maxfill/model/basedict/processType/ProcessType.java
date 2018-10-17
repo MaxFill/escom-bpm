@@ -3,6 +3,7 @@ package com.maxfill.model.basedict.processType;
 import com.google.gson.Gson;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.Results;
+import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.options.RunOptions;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static javax.persistence.GenerationType.TABLE;
+import javax.validation.constraints.Size;
 
 /**
  * Сущность "Вид процесса"
@@ -66,7 +68,21 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         
     @Column(name="DeltaDeadLine")
     private Integer defaultDeltaDeadLine = 0;      //срок исполнения задач в секундах
+    
+    @Basic(optional = false)
+    @Size(max=50)
+    @Column(name = "Guide")
+    private String guide;
+     
+    @Basic(optional = false)
+    @Size(max=10)
+    @Column(name = "Code")
+    private String code;
         
+    @JoinColumn(name = "Numerator", referencedColumnName = "Id")
+    @ManyToOne
+    private NumeratorPattern numerator;
+    
     /* Список шаблонов */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "owner")
     private List<ProcTempl> templates = new ArrayList<>();
@@ -99,6 +115,28 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
             
     /* GETS & SETS */
 
+    public NumeratorPattern getNumerator() {
+        return numerator;
+    }
+    public void setNumerator(NumeratorPattern numerator) {
+        this.numerator = numerator;
+    }
+
+    public String getGuide() {
+        return guide;
+    }
+    public void setGuide(String guide) {
+        this.guide = guide;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
+          
     public boolean isShowReports() {
         return showReports;
     }

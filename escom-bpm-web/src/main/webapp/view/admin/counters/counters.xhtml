@@ -16,6 +16,7 @@
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                      rowsPerPageTemplate="10,25,50" rows="10"
                      tableStyle="table-layout: auto;" styleClass="ui-grid-col-12 col-padding"
+                     currentPageReportTemplate="#{bundle.CountRecords}: {totalRecords}, #{bundle.Showing} {startRecord}-{endRecord} "
                      selection="#{countersExplBean.selected}" selectionMode="single"
                      var="item" rowKey="#{item.id}">
 
@@ -25,12 +26,12 @@
                 <h:graphicImage value="/resources/icon/counter.png"/>   
             </p:column>
 
-            <p:column headerText="#{bundle.TypeDoc}" sortBy="#{item.docType.name}">
-                <h:outputLabel value="#{item.docType.name}"/>
+            <p:column headerText="#{bundle.Type}" sortBy="#{item.typeName}">
+                <h:outputLabel value="#{item.typeName}"/>
             </p:column>
 
-            <p:column headerText="#{bundle.Company}" sortBy="#{item.company.name}">
-                <h:outputLabel value="#{item.company.name}"/>
+            <p:column headerText="#{bundle.Company}" sortBy="#{item.companyName}">
+                <h:outputLabel value="#{item.companyName}"/>
             </p:column>   
 
             <p:column headerText="#{bundle.Year}" sortBy="#{item.year}">
