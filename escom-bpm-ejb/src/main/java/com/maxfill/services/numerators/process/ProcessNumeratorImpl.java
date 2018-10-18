@@ -81,12 +81,12 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
      */
     @Override
     public void registrate(Process process, Set<String> errors){
-        if (!errors.isEmpty()){
-            return;
-        }
+        if (!errors.isEmpty()) return;
+        
         Date dateReg = process.getItemDate();
         if (dateReg == null){
             dateReg = new Date();
+            process.setItemDate(dateReg);
         }                
         NumeratorPattern numPattern = processTypesFacade.getProcTypeForOpt(process.getOwner()).getNumerator();
         if (numPattern == null){
@@ -98,12 +98,13 @@ public class ProcessNumeratorImpl extends NumeratorBase implements ProcessNumera
         if (StringUtils.isNoneBlank(typeCode)){
             params.put("T", typeCode);
         }
-        String companyCode = process.getCompany().getCode();
-        if (StringUtils.isNoneBlank(companyCode)){
-            params.put("O", companyCode);
+        if (process.getCompany() != null){
+            String companyCode = process.getCompany().getCode();
+            if (StringUtils.isNoneBlank(companyCode)){
+                params.put("O", companyCode);
+            }
         }
         String number = doRegistrNumber(process, numPattern, params, dateReg);
-        process.setRegNumber(number);
-        process.setItemDate(dateReg);
+        process.setRegNumber(number);        
     }
 }

@@ -5,6 +5,7 @@ import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.utils.EscomUtils;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,6 +32,36 @@ public class TaskElem extends WFConnectedElem{
     
     @XmlElement(name = "staffId")
     private Integer staffId;
+    
+    @XmlElement(name = "roleproc")
+    private Integer roleInProc;
+        
+    @XmlElement(name = "dlType")
+    private String deadLineType = "delta";
+    
+    @XmlElement(name = "name")
+    private String name = "";
+    
+    @XmlElement(name = "deltaDL")
+    private Integer deltaDeadLine = 0;
+    
+    @XmlElement(name = "remType")
+    private String reminderType;
+       
+    @XmlElement(name = "remRType")
+    private String reminderRepeatType = "no";
+    
+    @XmlElement(name = "remDelta")
+    private Integer deltaReminder = 0;
+      
+    @XmlElement(name = "remTime")
+    private Date reminderTime;
+    
+    @XmlElement(name = "remDay")
+    private String reminderDays; 
+    
+    @XmlElement(name = "resultJSON")
+    private String avaibleResultsJSON;
     
     public TaskElem() {
         this.uid = EscomUtils.generateGUID();
@@ -91,6 +122,76 @@ public class TaskElem extends WFConnectedElem{
         this.staffId = staffId;
     }
 
+    public String getAvaibleResultsJSON() {
+        return avaibleResultsJSON;
+    }
+    public void setAvaibleResultsJSON(String avaibleResultsJSON) {
+        this.avaibleResultsJSON = avaibleResultsJSON;
+    }
+    
+    public String getReminderDays() {
+        return reminderDays;
+    }
+    public void setReminderDays(String reminderDays) {
+        this.reminderDays = reminderDays;
+    }
+    
+    public Date getReminderTime() {
+        return reminderTime;
+    }
+    public void setReminderTime(Date reminderTime) {
+        this.reminderTime = reminderTime;
+    }
+    
+    public Integer getDeltaReminder() {
+        return deltaReminder;
+    }
+    public void setDeltaReminder(Integer deltaReminder) {
+        this.deltaReminder = deltaReminder;
+    }
+    
+    public String getReminderRepeatType() {
+        return reminderRepeatType;
+    }
+    public void setReminderRepeatType(String reminderRepeatType) {
+        this.reminderRepeatType = reminderRepeatType;
+    }
+    
+    public Integer getDeltaDeadLine() {
+        return deltaDeadLine;
+    }
+    public void setDeltaDeadLine(Integer deltaDeadLine) {
+        this.deltaDeadLine = deltaDeadLine;
+    }
+
+    public String getReminderType() {
+        return reminderType;
+    }
+    public void setReminderType(String reminderType) {
+        this.reminderType = reminderType;
+    }
+        
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getDeadLineType() {
+        return deadLineType;
+    }
+    public void setDeadLineType(String deadLineType) {
+        this.deadLineType = deadLineType;
+    }
+
+    public Integer getRoleInProc() {
+        return roleInProc;
+    }
+    public void setRoleInProc(Integer roleInProc) {
+        this.roleInProc = roleInProc;
+    }   
+    
     public Boolean getConsidInProc() {
         return considInProc;
     }

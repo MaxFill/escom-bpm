@@ -68,8 +68,14 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
             criteries.add(builder.equal(root.get("docType"), doc.getDocType()));
         }
         super.dublicateCheckAddCriteria(builder, root, criteries, doc);
-    }
-        
+    }        
+    
+    /**
+     * Переопределяет доступ к методу, т.к. основной private
+     * @param item
+     * @param user
+     * @return 
+     */
     @Override
     public Boolean preloadCheckRightView(BaseDict item, User user) {
         return super.preloadCheckRightView(item, user);
@@ -193,8 +199,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     }
     
     /* Снятие состояния редактирования документа */
-    public void doRemoveEditState(Doc doc){        
-        doc.doSetSingleRole(DictRoles.ROLE_EDITOR, null);
+    public void doRemoveEditState(Doc doc){
+        clearRole(doc, DictRoles.ROLE_EDITOR);        
         returnToPrevState(doc);
     }
 

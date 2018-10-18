@@ -168,4 +168,83 @@
         </sql>
     </changeSet>
     
+    <changeSet id="results_add_result_createConcordProcess" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT resultsStates (Id, CurrentState,  PreviousState) VALUES(7, 7, 5);        
+            INSERT results (Id, Name, IconName, State, IsInherits, IsDeleted, IsActual, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange) 
+                    VALUES (7, N'CreateApprovalProcess', N'process', 7, 1, 0, 1, NULL, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime));
+        </sql>
+    </changeSet>
+    
+    <changeSet id="tasks_add_role_in_process" author="filatov" context="initdata" runOnChange="true">
+       <preConditions onFail="MARK_RAN">
+           <not>
+               <columnExists tableName="tasks" columnName="RoleInProc" />
+           </not>
+       </preConditions>
+       <addColumn tableName="tasks">
+           <column name="RoleInProc" type="INT" >
+               <constraints nullable="true"/>
+           </column>
+       </addColumn>
+       <addForeignKeyConstraint baseColumnNames="RoleInProc"
+                                baseTableName="tasks"
+                                constraintName="FK_RoleInProc"
+                                referencedColumnNames="Id"
+                                onUpdate="NO ACTION"
+                                onDelete="NO ACTION"
+                                referencedTableName="usersGroups"/>
+    </changeSet>
+    
+    <changeSet id="processesTypes_add_role_in_process" author="filatov" context="initdata" runOnChange="true">
+       <preConditions onFail="MARK_RAN">
+           <not>
+               <columnExists tableName="processesTypes" columnName="RoleInProc" />
+           </not>
+       </preConditions>
+       <addColumn tableName="processesTypes">
+           <column name="RoleInProc" type="INT" >
+               <constraints nullable="true"/>
+           </column>
+       </addColumn>
+       <addForeignKeyConstraint baseColumnNames="RoleInProc"
+                                baseTableName="processesTypes"
+                                constraintName="FK_DefaultRoleTaskInProc"
+                                referencedColumnNames="Id"
+                                onUpdate="NO ACTION"
+                                onDelete="NO ACTION"
+                                referencedTableName="usersGroups"/>
+    </changeSet>
+    
+    <changeSet id="usersGroups_add_roles_concorder" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(9, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (18, 0, NULL, N'Согласующий', NULL, 1, 1, 0, 9, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Concorder");
+        
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(10, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (19, 0, NULL, N'Контролер', NULL, 1, 1, 0, 10, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Controller");
+    
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(11, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (20, 0, NULL, N'Регистратор', NULL, 1, 1, 0, 11, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Registrator");
+    
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(12, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (21, 0, NULL, N'Куратор', NULL, 1, 1, 0, 12, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Curator");
+            
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(13, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (22, 0, NULL, N'Руководитель', NULL, 1, 1, 0, 13, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Chief");    
+        </sql>
+    </changeSet>
+    
+    <changeSet id="usersGroups_add_roles_concorder" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+        INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(14, 7, 5);
+        INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
+        VALUES (23, 0, NULL, N'Проверяющий', NULL, 1, 1, 0, 14, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Inspector");    
+        </sql>
+    
 </databaseChangeLog> 

@@ -19,8 +19,8 @@ public final class DictRoles {
     public static final int ROLE_EXECUTOR_ID = 17;
     public static final int ROLE_CONCORDER_ID = 18;
     public static final int ROLE_CONTROLLER_ID = 19;
-    public static final int ROLE_REGISTRATOR_ID = 20;
-    public static final int ROLE_CHIEF_ID = 20;
+    public static final int ROLE_REGISTRATOR_ID = 20;    
     public static final int ROLE_CURATOR_ID = 21;
-    
+    public static final int ROLE_CHIEF_ID = 22;  
+    public static final int ROLE_INSPECTOR_ID = 23; 
 }

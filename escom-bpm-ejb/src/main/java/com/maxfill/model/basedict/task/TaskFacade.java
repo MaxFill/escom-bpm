@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -74,15 +73,19 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     
     private void setDefaultTaskParams(Task task, Process process){
         ProcessType procType = processTypesFacade.getProcTypeForTasks(process.getOwner());
+        task.setRoleInProc(procType.getRoleInProc());
         task.setName(procType.getDefaultTaskName());
         task.setAvaibleResultsJSON(procType.getAvaibleResultsJSON()); 
-        if (procType.getDefaultDeltaDeadLine() != null && procType.getDefaultDeltaDeadLine() > 0){
-            task.setDeltaDeadLine(procType.getDefaultDeltaDeadLine());
-            task.setDeadLineType("delta");
-        } else {
+        
+        task.setDeltaDeadLine(0);
+        if ("data".equals(process.getDeadLineType())){
             task.setDeadLineType("data");
-            task.setPlanExecDate(process.getPlanExecDate());
+            task.setPlanExecDate(process.getPlanExecDate());  
+        } else {
+            task.setDeadLineType("delta");
+            task.setDeltaDeadLine(process.getDeltaDeadLine());
         }
+         
         if (process.getScheme() != null){
             task.setScheme(process.getScheme());
         }
@@ -117,13 +120,12 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время
-     * @param task 
-     * @param locale 
+     * @param task      
      */
-    public void makeDatePlan(Task task, Locale locale){
+    public void makeDatePlan(Task task){
         Integer deltasec = task.getDeltaDeadLine();
         Date startDate = task.getBeginDate();
-        Date planExecDate = workTimeService.calcWorkDay(startDate, deltasec, task.getOwner(), locale);
+        Date planExecDate = workTimeService.calcWorkDayByStaff(startDate, deltasec, task.getOwner());
         task.setPlanExecDate(planExecDate);
     }
             

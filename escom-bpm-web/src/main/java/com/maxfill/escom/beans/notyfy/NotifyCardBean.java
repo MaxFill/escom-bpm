@@ -66,7 +66,7 @@ public class NotifyCardBean extends BaseViewBean{
             }
         
         if (process != null){
-            source.addAll(processFacade.actualiseRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));
+            source.addAll(processFacade.getUsersFromRole(process, DictRoles.ROLE_CONCORDER, getCurrentUser()));
         }
         users = new DualListModel<>(source, new ArrayList<>());
     }

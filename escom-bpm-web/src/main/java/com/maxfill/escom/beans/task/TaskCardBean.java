@@ -27,6 +27,8 @@ import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.assistant.AssistantFacade;
+import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
@@ -70,6 +72,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ResultFacade resultFacade;
     @EJB
     private ProcessFacade processFacade;
+    @EJB
+    private ProcessTypesFacade processTypesFacade;
     @EJB
     private AssistantFacade assistantFacade;
     @EJB
@@ -519,7 +523,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         int seconds = deadLineDeltaDay * 86400;
         seconds = seconds + deadLineDeltaHour * 3600;
         task.setDeltaDeadLine(seconds);
-        taskFacade.makeDatePlan(task, getLocale());
+        taskFacade.makeDatePlan(task);
         String strDate = DateUtils.dateToString(task.getPlanExecDate(),  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
         MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
     }
@@ -561,6 +565,28 @@ public class TaskCardBean extends BaseCardBean<Task>{
                 && taskFacade.checkUserInRole(task, DictRoles.ROLE_EXECUTOR_ID, getCurrentUser());
     }    
     
+    /**
+     * Определяет отображение на форме чекбокса "Добавить в лист согласования/исполнения"
+     * @return 
+     */
+    public boolean isShowCheckBoxAdd(){       
+        if (getEditedItem().getScheme() == null) return false;
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(getEditedItem().getScheme().getProcess().getOwner());
+        return processType.isShowReports();
+    }
+    
+    public String getCheckBoxAddCaption(){
+        if (getEditedItem().getScheme() == null) return "";
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(getEditedItem().getScheme().getProcess().getOwner());
+        if ("ApprovalSheet".equals(processType.getNameReports())) {
+            return getLabelFromBundle("EnterInApprovalSheet");
+        } else 
+            if ("ExecutionSheet".equals(processType.getNameReports())){
+                return getLabelFromBundle("EnterInExecutionSheet");
+            }
+        return "";
+    }
+        
     /* GETS & SETS */
     
     @Override

@@ -270,6 +270,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @return 
      */
     public Company findCompanyForStaff(Staff staff){
+        if (staff == null) return null;
         if (staff.getCompany() != null && staff.getOwner() == null){
             return staff.getCompany();
         }

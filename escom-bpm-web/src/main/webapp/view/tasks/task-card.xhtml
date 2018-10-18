@@ -15,20 +15,31 @@
     
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >            
-            <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.Executor}:" indicateRequired="true" rendered="#{taskCardBean.editedItem.scheme != null}" />
+            <h:panelGrid columns="2" rendered="#{taskCardBean.editedItem.scheme != null}" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
+                <p:outputLabel value="#{bundle.Role}:"/>
+                <p:selectOneMenu value="#{_bean.editedItem.roleInProc}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
+                                styleClass="ui-grid-col-12"
+                                disabled="#{taskCardBean.readOnly}" 
+                                onchange="return itemChange = 1;"
+                                converter="groupsUserConvertor" placeholder="#{bundle.Select}">
+                   <f:selectItems value="#{userGroupsBean.findOnlyRoles()}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
+                   <f:selectItem itemValue="#{null}" itemLabel="#{bundle.No}" />                   
+                </p:selectOneMenu>
+                
+                <p:outputLabel value="#{bundle.Executor}:" indicateRequired="true" />
                 <p:selectOneMenu value="#{taskCardBean.editedItem.owner}" filter="true" filterMatchMode="startsWith"
                                 styleClass="ui-grid-col-12"
                                 converter="staffConvertor" placeholder="#{bundle.Select}"
-                                disabled="#{taskCardBean.readOnly}"
-                                rendered="#{taskCardBean.editedItem.scheme != null}"
+                                disabled="#{taskCardBean.readOnly}"                                
                                 required="#{param['isRequired'] == 'true'}"
                                 requiredMessage="#{bundle.Field} [#{bundle.Executor}] #{bundle.MustBeFilled}">
                     <f:selectItems value="#{taskCardBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
                     <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
                     <p:ajax event="change" listener="#{_bean.onExecutorChanged()}" oncomplete="itemChange = 1;"/>
-                </p:selectOneMenu>                                
-
+                </p:selectOneMenu>
+            </h:panelGrid>
+            
+            <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.Task}:" indicateRequired="true" />
                 <p:inputText id="nameItem" value="#{taskCardBean.editedItem.name}"
                              styleClass="ui-grid-col-12"
@@ -141,9 +152,9 @@
                 <p:separator rendered="#{taskCardBean.editedItem.scheme != null}"/>                   
                                      
                 <p:selectBooleanCheckbox value="#{taskCardBean.editedItem.considInProcReport}" 
-                                         itemLabel="#{bundle.EnterInApprovalSheet}" 
-                                         rendered="#{taskCardBean.editedItem.scheme != null}"
-                                         disabled="#{_bean.isTaskReadOnly()}">
+                                         itemLabel="#{taskCardBean.getCheckBoxAddCaption()}" 
+                                         rendered="#{taskCardBean.isShowCheckBoxAdd()}"
+                                         disabled="#{taskCardBean.isTaskReadOnly()}">
                     <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>                
                 
@@ -164,7 +175,6 @@
                                  disabled="#{taskCardBean.readOnly}"
                                  actionListener="#{taskCardBean.onCloseCard('delete')}">                    
                 </p:commandButton>
-
             </p:panelGrid>
         </p:tab>
 
@@ -172,7 +182,7 @@
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel value="#{bundle.AvailableActions}" indicateRequired="true"/>
                 <p:pickList id="pickList" value="#{taskCardBean.results}" var="result" converter="resultConverter"
-                            showCheckbox="true"
+                            showCheckbox="true" responsive="true"
                             onTransfer="itemChange = 1;"
                             required="#{param['isRequired'] == 'true'}"
                             requiredMessage="#{bundle.Field} [#{bundle.ListResults}] #{bundle.MustBeFilled}"                                
@@ -192,6 +202,7 @@
                                      icon="#{'ico_'.concat(result.getIconName())}"
                                      disabled="#{!taskCardBean.haveRightExec}"  
                                      actionListener="#{taskCardBean.onExecute(result.getName())}">
+                        <p:ajax event="dialogReturn" update="mainFRM" />
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </ui:repeat>

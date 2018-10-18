@@ -20,7 +20,6 @@ import com.maxfill.dictionary.DictReportStatuses;
 import com.maxfill.dictionary.DictResults;
 import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.ProcessParams;
-import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.process.conditions.ConditionFacade;
 import com.maxfill.model.basedict.doc.DocFacade;
@@ -32,7 +31,6 @@ import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.docStatuses.DocStatuses;
-import com.maxfill.model.basedict.numeratorPattern.NumeratorPattern;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.conditions.Condition;
 import com.maxfill.model.basedict.remark.Remark;
@@ -53,7 +51,6 @@ import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
 import com.maxfill.services.notification.NotificationService;
-import com.maxfill.services.numerators.NumeratorService;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.numerators.process.ProcessNumeratorService;
 import com.maxfill.utils.DateUtils;
@@ -505,7 +502,7 @@ public class WorkflowImpl implements Workflow {
             
             params.put(EXECUTED_TASKS, executedTasks);
             
-            forShow.addAll(run(process, startElement, currentUser, params, errors));
+            forShow.addAll(run(process, startElement, new HashSet<>(), currentUser, params, errors));
             if (errors.isEmpty()){
                 processFacade.addLogEvent(process, DictLogEvents.TASK_FINISHED, currentUser);
             }
@@ -524,7 +521,7 @@ public class WorkflowImpl implements Workflow {
         Scheme scheme = process.getScheme();
         unpackScheme(scheme);
         TimerElem startElement = scheme.getElements().getTimers().get(procTimer.getTimerLinkUID());
-        run(process, startElement, admin, new HashMap<>(), errors);
+        run(process, startElement, new HashSet<>(), admin, new HashMap<>(), errors);
     }
     
     /**
@@ -594,6 +591,7 @@ public class WorkflowImpl implements Workflow {
                 params.put("author", author);
                 subProcess = processFacade.createItem(author, mainProcess, owner, params);                
                 subProcess.setPlanExecDate(mainProcess.getPlanExecDate());
+                subProcess.setCompany(mainProcess.getCompany());
                 processFacade.create(subProcess);
                 subProcElem.setProcessId(subProcess.getId());
             } else {
@@ -646,7 +644,7 @@ public class WorkflowImpl implements Workflow {
         }
         */
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_START, currentUser);
-        return run(process, startElement, currentUser, params, errors);
+        return run(process, startElement, new HashSet<>(), currentUser, params, errors);
     }
 
     /**
@@ -734,7 +732,7 @@ public class WorkflowImpl implements Workflow {
      * Обработка выхода из процесса
      * @param exitElem 
      */
-    private void finish(Process process, ExitElem exitElem, User currentUser, Set<String> errors) {
+    private void finish(Process process, ExitElem exitElem, Set<SubProcessElem> exeSubProc, User currentUser, Set<String> errors) {
         if (exitElem.getFinalize()){
             State state = stateFacade.find(exitElem.getFinishStateId());
             process.getState().setCurrentState(state);            
@@ -743,6 +741,14 @@ public class WorkflowImpl implements Workflow {
         }
         process.setFactExecDate(new Date());
         processFacade.addLogEvent(process, DictLogEvents.PROCESS_FINISHED, currentUser);
+        //если есть главный процесс, то выполняем переход в него
+        if (process.getParent() != null){ 
+            Process mainProcess = processFacade.find(process.getParent().getId());
+            unpackScheme(mainProcess.getScheme());
+            SubProcessElem subProcessElem = mainProcess.getScheme().getElements().getSubprocesses().values().stream()
+                .filter(subProcEl->Objects.equals(process.getId(), subProcEl.getProcessId())).findFirst().orElse(null);
+            run(mainProcess, subProcessElem, exeSubProc, currentUser, new HashMap<>(), errors);
+        }
     }
 
     /**
@@ -751,16 +757,16 @@ public class WorkflowImpl implements Workflow {
      * и останавливается после запуска всех актуальных задач и/или достижения конца процесса
      * @param process
      * @param startElement
+     * @param exeSubProc
      * @param errors 
      * @param params 
      * @param currentUser 
      * @return - возвращает список объектов, которые должны быть показаны пользователю
      */
     @Override
-    public Set<BaseDict> run(Process process, WFConnectedElem startElement, User currentUser, Map<String, Object> params, Set<String> errors) {   
+    public Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors) {   
         Set<BaseDict> forShow = new HashSet<>();
-        Set<Task> exeTasks = new HashSet<>();
-        Set<SubProcessElem> exeSubProc = new HashSet<>();
+        Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
         if (errors.isEmpty()){
             startTasks(exeTasks, params);            
@@ -850,7 +856,7 @@ public class WorkflowImpl implements Workflow {
                                 });
 
                         //обрабатываем подпроцессы 
-                        findSubProcesses(connectors, scheme.getElements().getSubprocesses())
+                        findSubProcElems(connectors, scheme.getElements().getSubprocesses())
                                 .stream()
                                 .forEach(subproc-> exeSubProc.add(subproc));
                         
@@ -893,17 +899,17 @@ public class WorkflowImpl implements Workflow {
                         findTargetExits(connectors, scheme.getElements().getExits())
                             .forEach(exitElem->{
                                 exitElem.setDone(true);
-                                finish(process, exitElem, currentUser, errors);
+                                finish(process, exitElem, exeSubProc, currentUser, errors);
                             });
                     }
                 });
-    }    
+    }        
     
     /**
      * Находит элементы подпроцессов в модели процесса к которым идут коннекторы
      * @return 
      */    
-    private Set<SubProcessElem> findSubProcesses(List<ConnectorElem> connectors, Map<String, SubProcessElem> elements){
+    private Set<SubProcessElem> findSubProcElems(List<ConnectorElem> connectors, Map<String, SubProcessElem> elements){
         return connectors.stream()
                 .map(connector->elements.get(connector.getTo().getOwnerUID()))
                 .filter(element->Objects.nonNull(element))
@@ -1250,17 +1256,18 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Условие: документ согласован?
+     * Условие: документ согласован? Проверяет последний статус документа
      * @param scheme
      * @param params
      * @return 
      */
     private boolean docIsConcorded(Scheme scheme, Map<String, Object> params){
-        Process process = processFacade.find(scheme.getProcess());
+        Process process = processFacade.find(scheme.getProcess().getId());
         Doc doc = process.getDocument();
         if (doc == null) return false;
         return doc.getDocsStatusList().stream()
                 .filter(st->DictDocStatus.CONCORDED == st.getStatus().getId() && st.getValue())
+                .sorted(Comparator.comparing(DocStatuses::getDateStatus, nullsFirst(naturalOrder())).reversed())
                 .findFirst()
                 .orElse(null) != null;
     }

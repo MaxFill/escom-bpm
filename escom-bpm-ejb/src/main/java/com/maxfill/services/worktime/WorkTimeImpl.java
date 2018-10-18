@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -30,14 +29,44 @@ public class WorkTimeImpl implements WorkTimeService{
      * @param date
      * @param deltasec
      * @param staff
-     * @param locale
      * @return 
      */
     @Override
-    public Date calcWorkDay(Date date, Integer deltasec, Staff staff, Locale locale){        
+    public Date calcWorkDayByStaff(Date date, Integer deltasec, Staff staff){        
         Company company = staffFacade.findCompanyForStaff(staff);
         while(deltasec >= 0){
-            WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company, locale);
+            WorkTimeCalendar wtc = getWorkTimeDate(date, staff, company);
+            if (wtc.isWorkDay()){
+                Integer duration = wtc.getWorkTime() * 3600;
+                if (deltasec <= duration){
+                    date = wtc.getDate();
+                    Integer beginDay = wtc.getBeginTime();                    
+                    date = DateUtils.addMilliseconds(date, beginDay);
+                    date = DateUtils.addSeconds(date, deltasec);
+                    deltasec = -1;
+                } else {
+                    date = DateUtils.addDays(date, 1);
+                    deltasec = deltasec - SECONDS_PER_DAY;
+                }
+            } else {  //если выходной, то пропускаем
+                date = DateUtils.addDays(date, 1);
+            }
+        }
+        return date;
+    }
+    
+    /**
+     * Вычисляет рабочую дату и время, на основании рабочего календаря указанной компании    
+     * Рабочее время вычисляется с укётом рабочего календаря (например, если сокращённый день)
+     * @param date
+     * @param deltasec
+     * @param company
+     * @return 
+     */
+    @Override
+    public Date calcWorkDayByCompany(Date date, Integer deltasec, Company company){                
+        while(deltasec >= 0){
+            WorkTimeCalendar wtc = getWorkTimeDate(date, null, company);
             if (wtc.isWorkDay()){
                 Integer duration = wtc.getWorkTime() * 3600;
                 if (deltasec <= duration){
@@ -58,7 +87,7 @@ public class WorkTimeImpl implements WorkTimeService{
     }
     
     @Override
-    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company, Locale locale){
+    public WorkTimeCalendar getWorkTimeDate(Date date, Staff staff, Company company){
         DateFormat df = new SimpleDateFormat("MM/dd/yy");
         String dts = df.format(date);
         //сначала ищем исключения для конкретной штед

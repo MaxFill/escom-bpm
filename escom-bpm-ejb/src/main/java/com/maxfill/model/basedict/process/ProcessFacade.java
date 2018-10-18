@@ -15,11 +15,15 @@ import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.staff.Staff;
+import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.services.worktime.WorkTimeService;
+import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +55,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     private RemarkFacade remarkFacade;
     @EJB
     private TaskFacade taskFacade;
+    @EJB
+    private StaffFacade staffFacade;
+    @EJB
+    private WorkTimeService workTimeService;
     
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
@@ -66,8 +74,26 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         return 20;
     }
 
+    /**
+     * Установка специальных атрибутов объекта при его создании
+     * @param process
+     * @param params 
+     */
     @Override
-    public void setSpecAtrForNewItem(Process process, Map<String, Object> params) {       
+    public void setSpecAtrForNewItem(Process process, Map<String, Object> params){
+        process.setDeltaDeadLine(0);
+        process.setDeadLineType("data");
+        
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
+        if (processType != null){
+            Integer deltasec = processType.getDefaultDeltaDeadLine(); //срок исполнения в секундах
+            if (deltasec != null){
+                process.setDeltaDeadLine(deltasec);
+                Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
+                process.setPlanExecDate(planDate);
+            }
+        }
+        
         if (params.containsKey("documents")){
             List<Doc> docs = (List<Doc>)params.get("documents");
             if (!docs.isEmpty()){
@@ -86,18 +112,29 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             }
         }
         if (params.containsKey("curator")) {
-            Staff curator = (Staff)params.get("curator");            
-            process.setCurator(curator);            
+            setRoleCurator(process, (Staff)params.get("curator"));            
         }
-        /*
-        NumeratorPattern numeratorPattern = getMetadatesObj().getNumPattern();
-        String number = numeratorService.doRegistrNumber(process, numeratorPattern, null, new Date());
-        process.setRegNumber(number);
-        */
-        addRole(process, DictRoles.ROLE_CONCORDER);
-        addRole(process, DictRoles.ROLE_CURATOR);
+        process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff()));        
     }
 
+    public void setRoleCurator(Process process, Staff curator){
+        process.setCurator(curator);
+        process.doSetSingleRole(DictRoles.ROLE_CURATOR, curator.getEmployee());
+    }
+    
+    /**
+     * Актуализирует роли процесса
+     * @param process 
+     */
+    public void actualizeProcessRoles(Process process){        
+        clearRoles(process);
+        setRoleCurator(process, process.getCurator());
+        setRoleOwner(process, process.getAuthor());
+        process.getScheme().getTasks().stream()
+                .filter(task->task.getOwner() != null)
+                .forEach(task->process.addUserInRole(task.getRoleInProc().getRoleFieldName(), task.getOwner().getEmployee()));                
+    }
+    
     /**
      * Формирование дефолтного наименования для процесса
      * @param process 

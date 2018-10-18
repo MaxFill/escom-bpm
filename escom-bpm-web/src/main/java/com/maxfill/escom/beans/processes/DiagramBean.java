@@ -38,6 +38,8 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
+import com.maxfill.model.basedict.userGroups.UserGroups;
+import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.utils.DateUtils;
 import java.lang.reflect.InvocationTargetException;
@@ -106,6 +108,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private ConditionFacade conditionFacade;
     @EJB
     private StatusesDocFacade statusesDocFacade;
+    @EJB
+    private UserGroupsFacade userGroupsFacade;
             
     private Element selectedElement = null;
 
@@ -203,6 +207,20 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
                 }
                 Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, taskEl.getUid());
                 task.setConsidInProcReport(taskEl.getConsidInProc());
+                UserGroups role = null;
+                if (taskEl.getRoleInProc() != null){
+                    role = userGroupsFacade.find(taskEl.getRoleInProc());
+                }
+                task.setRoleInProc(role);
+                task.setDeadLineType(taskEl.getDeadLineType());
+                task.setName(taskEl.getName());
+                task.setDeltaDeadLine(taskEl.getDeltaDeadLine());
+                task.setReminderType(taskEl.getReminderType());
+                task.setReminderRepeatType(taskEl.getReminderType());
+                task.setDeltaReminder(taskEl.getDeltaReminder());
+                task.setReminderTime(taskEl.getReminderTime());
+                task.setReminderDays(taskEl.getReminderDays());
+                task.setAvaibleResultsJSON(taskEl.getAvaibleResultsJSON());
                 taskEl.setTask(task);
                 scheme.getTasks().add(task);
             }
@@ -396,6 +414,17 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
             TaskElem taskElem = (TaskElem)baseElement;
             currentTask = taskElem.getTask();
             taskElem.setConsidInProc(currentTask.getConsidInProcReport());
+            taskElem.setRoleInProc(currentTask.getRoleInProc().getId());
+            taskElem.setDeadLineType(currentTask.getDeadLineType());
+            taskElem.setStaffId(currentTask.getOwner().getId());
+            taskElem.setName(currentTask.getName());
+            taskElem.setDeltaDeadLine(currentTask.getDeltaDeadLine());
+            taskElem.setReminderType(currentTask.getReminderType());
+            taskElem.setReminderRepeatType(currentTask.getReminderRepeatType());
+            taskElem.setDeltaReminder(currentTask.getDeltaReminder());
+            taskElem.setReminderTime(currentTask.getReminderTime());
+            taskElem.setReminderDays(currentTask.getReminderDays());
+            taskElem.setAvaibleResultsJSON(currentTask.getAvaibleResultsJSON());
             onAfterTaskClose(event);
             return;
         } else 
@@ -1094,12 +1123,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     /**
      * Загрузка визуальной схемы процесса из шаблона
      */
-    private void onLoadModelFromTempl(){        
-        Integer termHours = processTypesFacade.getProcTypeForOpt(process.getOwner()).getTermHours();
-        if (termHours != null){
-            Date planExecDate = DateUtils.addHour(new Date(), termHours);
-            process.setPlanExecDate(planExecDate);
-        }
+    private void onLoadModelFromTempl(){
         scheme.setElements(new WorkflowElements());  
         scheme.setPackElements(selectedTempl.getElements());        
         workflow.unpackScheme(scheme);        
@@ -1217,7 +1241,17 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     }
     
     /* ПРОЧИЕ МЕТОДЫ */
-       
+      
+    /**
+     * Замена в задачах срока исполнения на срок из процесса
+     */
+    public void onChangePlanDate(){
+        scheme.getTasks().forEach(task->{
+            task.setDeadLineType("data");
+            task.setPlanExecDate(process.getPlanExecDate());
+        });
+    }
+    
     /**
      * Формирует заголовок элемента модели
      * @param wfElement

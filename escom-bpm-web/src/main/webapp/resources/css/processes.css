@@ -12,13 +12,13 @@
 
 .ui-diagram-task {
     background-color: #9ed4ef;
-    width: 12em;
+    width: 13em;
     height: 6em;
 }
 
 .ui-diagram-subprocess {
-    width:13em;
-    height:6em;
+    width:14em;
+    height:7em;
     border-radius: 16px !important;
     background-color: wheat;
     color: #000000 !important;

@@ -13,6 +13,7 @@ import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
+import com.maxfill.model.Results;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.options.RunOptions;
@@ -22,6 +23,7 @@ import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
+import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
@@ -98,17 +100,10 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     @Override
     protected void onBeforeSaveItem(Process process){
+        processFacade.actualizeProcessRoles(process);
         if (process.getCurator() != null){
-            User userCurator = process.getCurator().getEmployee();
-            if (!processFacade.checkUserInRole(process, DictRoles.ROLE_CURATOR_ID, userCurator)){                
-                process.doSetSingleRole(DictRoles.ROLE_CURATOR, userCurator.getId());
-            }
-        }        
-        Set<Integer> usersIds = process.getScheme().getTasks().stream()
-                .filter(task->task.getOwner() != null)
-                .map(task->task.getOwner().getEmployee().getId())
-                .collect(Collectors.toSet());
-        process.doSetMultyRole(DictRoles.ROLE_CONCORDER, usersIds);
+            processFacade.setRoleCurator(process, process.getCurator());            
+        }
         super.onBeforeSaveItem(process);
     }
 
@@ -249,7 +244,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void onChangeCurator(ValueChangeEvent event){
         Staff staff = (Staff) event.getNewValue();
         getEditedItem().setCurator(staff);
-        //doCangeCurator(user);
     }    
     
     /* *** МЕТОДЫ РАБОТЫ С ПРОЦЕССОМ *** */
@@ -313,6 +307,23 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     }      
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
+     
+    /**
+     * Формирование заголовка для страницы с листом исполнения/согласования
+     * @return 
+     */
+    public String getHeaderTabReports(){
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(getEditedItem().getOwner());
+        if (StringUtils.isNotBlank(processType.getNameReports())){
+            return getLabelFromBundle(processType.getNameReports());
+        }
+        return "";
+    }
+    
+    public boolean isShowReports(){
+        ProcessType processType = processTypesFacade.getProcTypeForOpt(getEditedItem().getOwner());
+        return processType.isShowReports();
+    }
     
     private void initRunOptions(){
         String runOpt = processTypesFacade.getProcTypeForOpt(getEditedItem().getOwner()).getRunOptionsJSON();

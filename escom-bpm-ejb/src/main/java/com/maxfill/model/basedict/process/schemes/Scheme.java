@@ -33,7 +33,7 @@ public class Scheme implements Serializable, Dict{
     private String name;
     
     @Lob
-    @Column(name = "Elements", length = 8192)
+    @Column(name = "Elements", length = 9192)
     private byte[] packElements;
     
     /* Список поручений */

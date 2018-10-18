@@ -8,6 +8,7 @@ import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
+import com.maxfill.model.Results;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.BaseDict;
@@ -20,12 +21,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -120,29 +121,23 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             TreeNode processNode = new DefaultTreeNode(proc, root);
             makeTree(proc, processNode);            
         });
+        expandTree(selectedNode);                
         return processes.size();
     }
     
+    private void expandTree(TreeNode node){
+        if (node == null) return;
+        node.setExpanded(true);
+        expandTree(node.getParent());
+        node.setSelected(true);
+    }
+    
     private void makeTree(Process process, TreeNode processNode){
-        process.getScheme().getTasks().forEach(task->{
-                TreeNode taskNode = new DefaultTreeNode(task, processNode);
-                if (Objects.equals(selectedNode, taskNode)){
-                    taskNode.setSelected(true);
-                    processNode.setExpanded(true);
-                }
-            });
+        process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
         process.getChildItems().forEach(subProc->{
             TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
-            if (Objects.equals(selectedNode, subProcNode)){
-                    subProcNode.setSelected(true);
-                    processNode.setExpanded(true);
-            }
             makeTree(subProc, subProcNode);
         });
-        if (Objects.equals(selectedNode, processNode)){
-            processNode.setSelected(true);
-            processNode.setExpanded(selectedNode.isExpanded());               
-        }        
     }
     
     /**
@@ -193,6 +188,15 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         return "";
     }        
         
+    public String onGetItemResult(Results item){
+        if (StringUtils.isBlank(item.getResult())) return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append(getLabelFromBundle("Done"));
+        sb.append(": ");
+        sb.append(getLabelFromBundle(item.getResult()));
+        return sb.toString();
+    }
+    
     /**
      * Обработка события изменения инициатора в фильтре на форме
      * @param event 

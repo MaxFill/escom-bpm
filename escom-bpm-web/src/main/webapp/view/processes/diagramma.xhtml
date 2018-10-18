@@ -134,6 +134,12 @@
                     update="southFRM:diagramm">
             <p:confirm header="#{msg.ProcessDiagramWillBeCleared}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
         </p:menuitem>
+        <p:menuitem value="#{msg.ReplaceTaskDatePlanFromProcess}" icon="ui-icon-calculator"
+                    disabled="#{_bean.isReadOnly()}"
+                    actionListener="#{_bean.onChangePlanDate()}"
+                    update="southFRM:diagramm">
+            <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.AreYouSure}" icon="ui-icon-alert"/>
+        </p:menuitem>
     </ui:define>
     
     <ui:define name="specToolButtons">

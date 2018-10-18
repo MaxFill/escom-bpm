@@ -206,8 +206,9 @@ public class SessionBean implements Serializable{
      * @return 
      */
     public String getItemStatus(WithDatesPlans item){
-        if (item == null) return "";
+        if (item == null) return "";       
         if (item.getBeginDate() == null) return MsgUtils.getBandleLabel("NotStarted");
+        if (item.isDraft()) return MsgUtils.getBandleLabel("Draft");
         if (item.isCompleted()) return MsgUtils.getBandleLabel("Сompleted");
         if (item.isCanceled()) return MsgUtils.getBandleLabel("Cancelled");
         return EscomBeanUtils.makeDateDiffStatus(new Date(), item.getPlanExecDate());

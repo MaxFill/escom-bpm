@@ -156,8 +156,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             item.setAuthor(author);
             item.setActual(true);
             item.setDeleted(false);
-            item.setInherits(true);
-            item.doSetSingleRole(DictRoles.ROLE_OWNER, author.getId());
+            item.setInherits(true);            
+            setRoleOwner(item, author);
             doSetState(item, getMetadatesObj().getStateForNewObj());
             detectParentOwner(item, parent, owner);
             setSpecAtrForNewItem(item, params);
@@ -610,6 +610,26 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     protected abstract Integer getMetadatesObjId();   
     
+    /**
+     * Возвращает колво записей, в которых пользователь является автором
+     * @param user
+     * @return 
+     */
+    public Long findCountUserLinks(User user){
+        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(Long.class);
+        Root root = cq.from(itemClass);
+        List<Predicate> criteries = new ArrayList<>();
+        criteries.add(builder.equal(root.get("deleted"), false));
+        criteries.add(builder.equal(root.get("author"), user));                
+        Predicate[] predicates = new Predicate[criteries.size()];
+        predicates = criteries.toArray(predicates);
+        cq.select(builder.count(root)).where(builder.and(predicates));
+        Query query = getEntityManager().createQuery(cq);  
+        return (Long) query.getSingleResult();
+    }
+    
     /* возвращает список изменённых пользователем документов */
     public List<T> findLastChangedItemsByUser(User user, int first, int pageSize){    
         first = 0;
@@ -1033,25 +1053,11 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      */
     protected boolean checkUserInRole(T item, Integer groupId, User user){
         return false;
-    }
+    }    
     
-    /**
-     * Возвращает колво записей, в котороых пользователь является автором
-     * @param user
-     * @return 
-     */
-    public Long findCountUserLinks(User user){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-        CriteriaQuery cq = builder.createQuery(Long.class);
-        Root root = cq.from(itemClass);
-        List<Predicate> criteries = new ArrayList<>();
-        criteries.add(builder.equal(root.get("deleted"), false));
-        criteries.add(builder.equal(root.get("author"), user));                
-        Predicate[] predicates = new Predicate[criteries.size()];
-        predicates = criteries.toArray(predicates);
-        cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
-        return (Long) query.getSingleResult();
+    public void setRoleOwner(T item, User user){
+        item.doSetSingleRole(DictRoles.ROLE_OWNER, user.getId());
     }
+            
+    /* *** *** */
 }

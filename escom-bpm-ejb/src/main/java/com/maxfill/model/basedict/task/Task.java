@@ -10,6 +10,7 @@ import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.result.Result;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import java.io.IOException;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -50,7 +51,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     @JoinColumn(name = "Owner", referencedColumnName = "Id")
     @ManyToOne(optional = false)
     private Staff owner;
-
+    
+    @JoinColumn(name = "RoleInProc", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private UserGroups roleInProc;
+    
     /* Ссылка на схему процесса */
     @JoinColumn(name = "Scheme", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -193,14 +198,23 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
             return "task";
         }
     }  
-
+    
+    /* GETS & SETS */
+    
     public Boolean getConsidInProcReport() {
         return considInProcReport;
     }
     public void setConsidInProcReport(Boolean considInProcReport) {
         this.considInProcReport = considInProcReport;
     }
-    
+
+    public UserGroups getRoleInProc() {
+        return roleInProc;
+    }
+    public void setRoleInProc(UserGroups roleInProc) {
+        this.roleInProc = roleInProc;
+    }
+        
     @Override
     public String getRegNumber() {
         return regNumber;
@@ -224,9 +238,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
             }
         }
         return roles;
-    }
-    
-    /* GETS & SETS */
+    }    
 
     @Override
     public Integer getId() {
@@ -264,9 +276,11 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
         this.state = state;
     }
     
+    @Override
     public String getResult() {
         return result;
     }
+    @Override
     public void setResult(String result) {
         this.result = result;
     }

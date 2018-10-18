@@ -3,8 +3,10 @@ package com.maxfill.model.basedict.processType;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.user.User;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -15,11 +17,18 @@ import javax.ejb.Stateless;
 public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType, ProcessTypeLog, ProcessTypeStates>{
     @EJB
     private ProcessFacade processFacade;
-
+    @EJB
+    private ProcessTemplFacade processTemplFacade;
+            
     public ProcessTypesFacade() {
         super(ProcessType.class, ProcessTypeLog.class, ProcessTypeStates.class);
     }
 
+    @Override
+    public void setSpecAtrForNewItem(ProcessType processType, Map<String, Object> params) {       
+        processType.setNameReports("ApprovalSheet");
+    }
+    
     @Override
     public int replaceItem(ProcessType oldItem, ProcessType newItem) {
         return 0;
@@ -88,5 +97,11 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
             return getProcTypeForOpt(processType.getParent());
         }
         return processType;
+    }
+    
+    @Override
+    public void remove(ProcessType processType){
+        processType.getTemplates().forEach(templ->processTemplFacade.remove(templ));
+        super.remove(processType);
     }
 }

@@ -8,6 +8,7 @@ import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.options.RunOptions;
 import com.maxfill.model.basedict.result.Result;
+import com.maxfill.model.basedict.userGroups.UserGroups;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
@@ -61,13 +62,10 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     private String runOptionsJSON;
     
     @Column(name = "DefaultTaskName")
-    private String defaultTaskName;
-    
-    @Column(name = "TermHours")
-    private Integer termHours = 72;  //типовой срок согласования в часах
+    private String defaultTaskName;        
         
     @Column(name="DeltaDeadLine")
-    private Integer defaultDeltaDeadLine = 0;      //срок исполнения задач в секундах
+    private Integer defaultDeltaDeadLine = 0;      //срок исполнения в секундах
     
     @Basic(optional = false)
     @Size(max=50)
@@ -78,6 +76,10 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     @Size(max=10)
     @Column(name = "Code")
     private String code;
+        
+    @JoinColumn(name = "RoleInProc", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private UserGroups roleInProc;
         
     @JoinColumn(name = "Numerator", referencedColumnName = "Id")
     @ManyToOne
@@ -129,6 +131,13 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         this.guide = guide;
     }
 
+    public UserGroups getRoleInProc() {
+        return roleInProc;
+    }
+    public void setRoleInProc(UserGroups roleInProc) {
+        this.roleInProc = roleInProc;
+    }
+    
     @Override
     public String getCode() {
         return code;
@@ -177,14 +186,7 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
     }
     public void setDefaultTaskName(String defaultTaskName) {
         this.defaultTaskName = defaultTaskName;
-    }
-    
-    public Integer getTermHours() {
-        return termHours;
-    }
-    public void setTermHours(Integer termHours) {
-        this.termHours = termHours;
-    }
+    }   
     
     public List<ProcTempl> getTemplates() {
         return templates;
@@ -200,6 +202,14 @@ public class ProcessType extends BaseDict<ProcessType, ProcessType, Process, Pro
         
         this.runOptionsJSON = runOptionsJSON;
     }     
+
+    @Override
+    public String getResult() {
+        return "";
+    }
+    @Override
+    public void setResult(String result) {        
+    }    
     
     @Override
     public Integer getId() {

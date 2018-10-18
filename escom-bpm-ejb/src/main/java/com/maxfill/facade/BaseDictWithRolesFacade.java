@@ -121,14 +121,14 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
      * @param currentUser
      * @return 
      */
-    public List<User> actualiseRole(T item, String roleName, User currentUser){
+    public List<User> getUsersFromRole(T item, String roleName, User currentUser){
         roleName = roleName.toUpperCase();
         Map<String, Set<Integer>> roles = item.getRoles();
         if (CollectionUtils.isEmpty(roles) || !roles.containsKey(roleName)) return new ArrayList<>();
         Set<Integer> usersIds = roles.get(roleName);
         return userFacade.findByIds(usersIds, currentUser);
-    }
-            
+    }     
+    
     /**
      * Отправка сообщения ролям
      * @param item - документ или процесс
@@ -141,7 +141,7 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         Gson gson = new Gson();        
         List<String> roles = gson.fromJson(rolesJson, List.class);
         roles.forEach(role->{
-            actualiseRole(item, role, currentUser)
+            getUsersFromRole(item, role, currentUser)
                     .forEach(user -> { 
                         StringBuilder subject = new StringBuilder(ItemUtils.getMessageLabel(keyMsgSubject, userFacade.getUserLocale(user)));
                         subject.append(": ").append(item.getNameEndElipse());
@@ -173,4 +173,21 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
         }
     }
     
+    /**
+     * Очистка роли
+     * @param item
+     * @param roleName 
+     */
+    public void clearRole(T item, String roleName){
+        item.clearRole(roleName);
+    }
+    
+    /**
+     * Очистка ролей
+     * @param item 
+     */
+    public void clearRoles(T item){
+        item.setRoles(null);
+        item.setRoleJson(null);
+    }
 }

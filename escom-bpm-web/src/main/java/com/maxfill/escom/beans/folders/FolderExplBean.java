@@ -13,7 +13,6 @@ import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.filter.Filter;
 import com.maxfill.model.basedict.folder.Folder;
-import com.maxfill.model.basedict.folder.FoldersFacade;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.utils.ItemUtils;

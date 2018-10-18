@@ -87,7 +87,7 @@ public class ProcReport implements Serializable, Dict{
     }
 
     public ProcReport(User author, Staff executor, Process process) {
-        this("", "NoAgreementWasMade",  author, executor, process);
+        this("", "",  author, executor, process);
     }
     
     public ProcReport(String content, String status, User author, Staff executor, Process process) {

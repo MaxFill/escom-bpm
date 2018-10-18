@@ -451,7 +451,17 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         this.roles = roles;
     }
 
+    /* *** РОЛИ *** */
+    
+    public void clearRole(String roleName){
+        doSetMultyRole(roleName.toUpperCase(), new HashSet<>());
+    }
+    
     /* установка (перезапись) одиночной роли */
+    public void doSetSingleRole(String roleName, User user){
+        if (user == null) return;
+        doSetSingleRole(roleName, user.getId());
+    }
     public void doSetSingleRole(String roleName, Integer userId){
         if (userId == null) return;
         
@@ -467,6 +477,11 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     }
 
     /* добавление исполнителя в роль */
+    public void addUserInRole(String roleName, User user){
+        if (user == null) return;
+        doAddInRole(roleName, user.getId());
+    }
+    
     public void doAddInRole(String roleName, Integer userId){
         Set<Integer> usersIds;
         roleName = roleName.toUpperCase();
@@ -479,6 +494,8 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
         usersIds.add(userId);
         getRoles().put(roleName, usersIds);
     }
+    
+    /* *** *** */
     
     /* Установка даты создания */  
     @PrePersist  

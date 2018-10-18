@@ -72,9 +72,13 @@ public class DocStatuses implements Serializable, Dict {
         this.value = false;
     }
     
+    /* GETS & SETS */
+    
+    @Override
     public Integer getId() {
         return id;
     }
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -114,6 +118,7 @@ public class DocStatuses implements Serializable, Dict {
         this.author = author;
     }
 
+    /* *** *** */
     @Override
     public int hashCode() {
         int hash = 0;

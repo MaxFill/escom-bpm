@@ -129,12 +129,16 @@
                 <p:graphicImage value="/resources/icon/#{item.iconName}-20.png" /> 
             </p:column>
 
+            <p:column headerText="#{bundle.Number}" sortBy="#{item.regNumber}">
+                <h:outputLabel value="#{item.regNumber}"/>
+            </p:column>
+            
             <p:column headerText="#{''.concat(bundle.Curator).concat(' / ').concat(bundle.Executor)}">
                 <h:outputLabel value="#{monitorBean.onGetItemTitle(item)}"/>
             </p:column>
 
             <p:column headerText="#{bundle.Name}">
-                <p:commandLink value="#{''.concat(item.getRegNumber()).concat(' ').concat(item.nameEndElipse)}" title="#{bundle.Open}"
+                <p:commandLink value="#{item.nameEndElipse}" title="#{bundle.Open}"
                                actionListener="#{monitorBean.setCurrentItem(item)}"
                                oncomplete="document.getElementById('mainFRM:btnOpenItem').click();"/>
             </p:column>
@@ -154,7 +158,7 @@
             </p:column>
 
             <p:column headerText="#{bundle.Result}" width="100">
-                <h:outputLabel value="#{monitorBean.getLabelFromBundle(item.getResult())}"/>
+                <h:outputLabel value="#{monitorBean.onGetItemResult(item)}"/>
             </p:column>
 
         </p:treeTable>

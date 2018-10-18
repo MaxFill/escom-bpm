@@ -56,8 +56,13 @@ public class ProcessTypesCardBean extends BaseCardTree<ProcessType>{
     protected void onBeforeSaveItem(ProcessType processType){
         if (StringUtils.isEmpty(processType.getGuide())){            
             processType.setGuide(EscomUtils.generateGUID());
+        }        
+        if (StringUtils.isBlank(processType.getNameReports())){
+            processType.setShowReports(false);
+        } else {
+            processType.setShowReports(true);
         }
-        saveDateFields(processType);        
+        saveDateFields(processType);
         super.onBeforeSaveItem(processType);
     }
            

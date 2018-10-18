@@ -2,6 +2,7 @@ package com.maxfill.model.basedict.process;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maxfill.model.Results;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.basedict.company.Company;
@@ -9,6 +10,7 @@ import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.processType.ProcessType;
+import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.staff.Staff;
 import org.apache.commons.lang.StringUtils;
 import javax.persistence.*;
@@ -25,7 +27,7 @@ import static javax.persistence.GenerationType.TABLE;
 @Entity
 @Table(name = "processes")
 @DiscriminatorColumn(name = "REF_TYPE")
-public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates> implements WithDatesPlans{
+public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog, ProcessStates> implements WithDatesPlans, Results{
     private static final long serialVersionUID = 8735448948976387594L;
 
     @TableGenerator(
@@ -178,13 +180,27 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.document = document;
     }
 
+    @Override
     public String getResult() {
         return result;
     }
+    @Override
     public void setResult(String result) {
         this.result = result;
     }
 
+    @Override
+    public String getAvaibleResultsJSON() {
+        return "";
+    }
+    @Override
+    public void setAvaibleResultsJSON(String avaibleResultsJSON) {        
+    }
+
+    @Override
+    public void setResults(List<Result> taskResults) {    
+    }
+    
     @Override
     public Process getParent() {
         return super.getParent();

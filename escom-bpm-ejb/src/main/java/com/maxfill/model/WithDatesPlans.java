@@ -32,4 +32,8 @@ public interface WithDatesPlans {
     default boolean isCanceled(){
         return DictStates.STATE_CANCELLED == getState().getCurrentState().getId();
     }
+    
+    default boolean isDraft(){
+        return DictStates.STATE_DRAFT == getState().getCurrentState().getId();
+    }
 }

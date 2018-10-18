@@ -51,6 +51,7 @@ public class StatusesDoc extends BaseDict<StatusesDoc, StatusesDoc, StatusesDoc,
     private StatusesDocStates state;
 
     /* GETS & SETS */
+    
     @Override
     public StatusesDocStates getState() {
         return state;

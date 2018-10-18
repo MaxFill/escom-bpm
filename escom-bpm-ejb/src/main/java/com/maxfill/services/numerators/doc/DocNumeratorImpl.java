@@ -72,7 +72,8 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
     public void registratedDoc(Doc doc, Set<String> errors){
         Date dateReg = doc.getItemDate();
         if (dateReg == null){
-            dateReg = new Date();            
+            dateReg = new Date();
+            doc.setItemDate(dateReg);
         }
         if (doc.getDocType() == null){
             errors.add("DOCTYPE_NO_SET");
@@ -92,8 +93,7 @@ public class DocNumeratorImpl extends NumeratorBase implements DocNumeratorServi
         }
         params.put("O", doc.getCompany().getCode());
         String number = doRegistrNumber(doc, numPattern, params, dateReg);
-        doc.setRegNumber(number);
-        doc.setItemDate(dateReg);
+        doc.setRegNumber(number);        
     }   
     
 }

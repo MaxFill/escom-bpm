@@ -60,13 +60,12 @@ public class CalendarBean extends BaseViewBean {
      */
     private void prepareEvents(){
         int days = current.getActualMaximum(Calendar.DAY_OF_MONTH);
-        Calendar calendar = (Calendar)current.clone();
-        Locale locale = getLocale();
+        Calendar calendar = (Calendar)current.clone();        
         while(days > 0){            
             calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), days, 0, 0, 0);
             Date date = calendar.getTime();
-            selected = workTimeService.getWorkTimeDate(date, selectedStaff, company, locale);            
-            eventModel.addEvent(new CalendarDay(selected, timeZone.toZoneId(), locale));
+            selected = workTimeService.getWorkTimeDate(date, selectedStaff, company);            
+            eventModel.addEvent(new CalendarDay(selected, timeZone.toZoneId(), getLocale()));
             days--;
         }
     }
