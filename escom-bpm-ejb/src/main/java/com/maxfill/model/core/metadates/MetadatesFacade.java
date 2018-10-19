@@ -18,10 +18,10 @@ public class MetadatesFacade extends BaseFacade<Metadates>{
     }
     
     public List<Metadates> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(Metadates.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Metadates.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Metadates> cq = builder.createQuery(Metadates.class);
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
 
@@ -31,12 +31,12 @@ public class MetadatesFacade extends BaseFacade<Metadates>{
      * @return
      */
     public Metadates findByObjectName(String objectName) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Metadates> cq = builder.createQuery(Metadates.class);
         Root<Metadates> root = cq.from(Metadates.class);
         Predicate crit1 = builder.equal(root.get(Metadates_.objectName), objectName);
         cq.select(root).where(builder.and(crit1));
-        TypedQuery<Metadates> query = getEntityManager().createQuery(cq);
+        TypedQuery<Metadates> query = em.createQuery(cq);
         return query.getSingleResult();
     }
 }

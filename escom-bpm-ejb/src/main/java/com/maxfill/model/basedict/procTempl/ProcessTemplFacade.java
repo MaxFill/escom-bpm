@@ -4,10 +4,12 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.processType.ProcessType;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -28,7 +30,7 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
      */
     public void clearDefaultTemplate(ProcTempl procTempl){
         ProcessType owner = procTempl.getOwner();
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<ProcTempl> update = builder.createCriteriaUpdate(ProcTempl.class);
         Root root = update.from(ProcTempl.class);
         update.set(ProcTempl_.isDefault, Boolean.FALSE);
@@ -36,9 +38,9 @@ public class ProcessTemplFacade extends BaseDictFacade<ProcTempl, ProcessType, P
         Predicate crit2 = builder.notEqual(root.get("id"), procTempl.getId());
         Predicate crit3 = builder.equal(root.get(ProcTempl_.isDefault), Boolean.TRUE);
         update.where(builder.and(crit1, crit2, crit3));
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         query.executeUpdate();
-    }        
+    }            
     
     @Override
     public void detectParentOwner(ProcTempl procTempl, BaseDict parent, BaseDict target){

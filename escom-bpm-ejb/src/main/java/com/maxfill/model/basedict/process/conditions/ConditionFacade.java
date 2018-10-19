@@ -20,13 +20,13 @@ public class ConditionFacade extends BaseFacade<Condition>{
     }
     
     public List<Condition> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(Condition.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Condition.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Condition> cq = builder.createQuery(Condition.class);
         Root<Condition> root = cq.from(Condition.class);        
         cq.select(root);
         cq.orderBy(builder.asc(root.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
 }

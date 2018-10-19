@@ -65,7 +65,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     public List<User> findDetails(UserGroups group, int first, int pageSize, String sortField, String sortOrder, User currentUser) {
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class); 
         
@@ -81,7 +81,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
                 .where(predicates)
                 .orderBy(cb.asc(root.get(User_.secondName)));
         
-        TypedQuery<User> query = getEntityManager().createQuery(cq);
+        TypedQuery<User> query = em.createQuery(cq);
         //query.setFirstResult(first);
         //query.setMaxResults(pageSize);
         return query.getResultStream().parallel()
@@ -92,8 +92,8 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
     /* Получение списка групп root уровня нужного типа, например, групп, являющихся ролями */
     @Override
     public Stream<UserGroups> findActualChilds(UserGroups parent, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
         Root<UserGroups> c = cq.from(UserGroups.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -108,14 +108,14 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<UserGroups> query = getEntityManager().createQuery(cq);       
+        TypedQuery<UserGroups> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     }
     
     public List<UserGroups> findGroupsByType(Integer typeActualize, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<UserGroups> cq = builder.createQuery(UserGroups.class);
         Root<UserGroups> c = cq.from(UserGroups.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -129,7 +129,7 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<UserGroups> query = getEntityManager().createQuery(cq);       
+        TypedQuery<UserGroups> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -146,14 +146,14 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         if (CollectionUtils.isNotEmpty(usersGroups.getUsersList())){
             usersGroups.getUsersList().forEach(user->{
                 user.getUsersGroupsList().add(usersGroups);
-                getEntityManager().merge(user);
+                em.merge(user);
             });            
         }
     }
     
     @Override
     public void edit(UserGroups usersGroups) { 
-        UserGroups persistentUsersGroups = getEntityManager().find(UserGroups.class, usersGroups.getId());
+        UserGroups persistentUsersGroups = em.find(UserGroups.class, usersGroups.getId());
                 
         List<User> usersListOld = persistentUsersGroups.getUsersList();
         if (usersListOld == null){
@@ -167,25 +167,25 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
         
         List<User> attachedUsersListNew = new ArrayList<>();
         for (User usersListNewUsersToAttach : usersListNew) {
-            usersListNewUsersToAttach = getEntityManager().getReference(usersListNewUsersToAttach.getClass(), usersListNewUsersToAttach.getId());
+            usersListNewUsersToAttach = em.getReference(usersListNewUsersToAttach.getClass(), usersListNewUsersToAttach.getId());
             attachedUsersListNew.add(usersListNewUsersToAttach);
         }
         usersListNew = attachedUsersListNew;
         usersGroups.setUsersList(usersListNew);
         
-        usersGroups = getEntityManager().merge(usersGroups);
+        usersGroups = em.merge(usersGroups);
         
         if (CollectionUtils.isNotEmpty(usersListOld) ){
             for (User usersListOldUsers : usersListOld) {
                 if (!usersListNew.contains(usersListOldUsers)) {
                     usersListOldUsers.getUsersGroupsList().remove(usersGroups);
-                    getEntityManager().merge(usersListOldUsers);
+                    em.merge(usersListOldUsers);
                 }
             }
             for (User usersListNewUsers : usersListNew) {
                 if (!usersListOld.contains(usersListNewUsers)) {
                     usersListNewUsers.getUsersGroupsList().add(usersGroups);
-                    getEntityManager().merge(usersListNewUsers);
+                    em.merge(usersListNewUsers);
                 }
             }
         }
@@ -233,15 +233,15 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
      * @return
      */
     public int replaceUserGroupInRights(UserGroups oldItem, UserGroups newItem){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Right> update = builder.createCriteriaUpdate(Right.class);
         Root<Right> root = update.from(Right.class);
         update.set(Right_.objId, newItem.getId());
         Predicate crit1 = builder.equal(root.get(Right_.objType), 0);
         Predicate crit2 = builder.equal(root.get(Right_.objId), oldItem.getId());
         update.where(builder.and(crit1, crit2));
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 
@@ -252,14 +252,14 @@ public class UserGroupsFacade extends BaseDictFacade<UserGroups, UserGroups, Use
      * @return
      */
     private int replaceUserGroups(UserGroups oldItem, UserGroups newItem) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(UserGroups.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(UserGroups.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<UserGroups> update = builder.createCriteriaUpdate(UserGroups.class);
         Root root = update.from(UserGroups.class);
         update.set(UserGroups_.parent, newItem);
         Predicate predicate = builder.equal(root.get(UserGroups_.parent), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

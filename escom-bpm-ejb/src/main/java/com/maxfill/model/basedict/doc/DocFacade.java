@@ -84,15 +84,15 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     /* Возвращает документы, заблокированные пользователем */
     @Override
     public List<Doc> loadLockDocuments(User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Attaches.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Attaches.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Attaches> cq = builder.createQuery(Attaches.class);
         Root<Attaches> root = cq.from(Attaches.class);
         Join docJoin = root.join(Attaches_.doc);
         Predicate crit1 = builder.equal(root.get(Attaches_.lockAuthor), currentUser);
         cq.select(docJoin);
         cq.where(builder.and(crit1));
-        Query query = getEntityManager().createQuery(cq);                        
+        Query query = em.createQuery(cq);                        
         return (List<Doc>) query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -100,27 +100,27 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     
     /* Возвращает документы с указанным Контрагентом  */
     public List<Doc> findDocsByPartner(Partner partner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
         Root<Doc> c = cq.from(Doc.class);        
         Predicate crit1 = builder.equal(c.get("partner"), partner);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();   
     }
     
     /* Возвращает документы с указанным Видом документа  */
     public List<Doc> findDocsByDocTyper(DocType docType){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
         Root<Doc> c = cq.from(Doc.class);        
         Predicate crit1 = builder.equal(c.get("docType"), docType);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();   
     }
     
@@ -131,8 +131,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     
     /* Подсчёт кол-ва документов по типам */
     public List<Tuple> countDocByDocTypeGroups(List<DocTypeGroups> docTypeGroups, Date startPeriod, Date endPeriod, List<DocTypeGroups> groups){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery= builder.createTupleQuery();
         Root docs = criteriaQuery.from(Doc.class);
         Expression<Integer> docId = docs.get(Doc_.id);
@@ -145,15 +145,15 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         Predicate crit4 = docs.get(Doc_.docType).get("owner").in(groups);
         criteriaQuery.where(builder.and(crit1, crit2, crit3, crit4));
         criteriaQuery.orderBy(builder.asc(docs.get("docType").get("name")));
-        Query query = getEntityManager().createQuery(criteriaQuery);
+        Query query = em.createQuery(criteriaQuery);
         List<Tuple> result = query.getResultList();        
         return result;
     }
     
     /* Возвращает документы нулевого уровня  */ 
     public List<Doc> findRootDocs(){        
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
         Root<Doc> c = cq.from(Doc.class);        
         Predicate crit1 = builder.isNull(c.get("owner"));
@@ -161,14 +161,14 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         Predicate crit3 = builder.equal(c.get("actual"), true);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }    
     
     /* Ищет документы с указанным номером  */
     public boolean checkRegNumber(String regNumber, Doc excludeDoc){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Doc> criteriaQuery = builder.createQuery(Doc.class);
         Root<Doc> root = criteriaQuery.from(Doc.class);
         
@@ -178,18 +178,18 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         predicates[2] = builder.notEqual(root.get("id"), excludeDoc.getId());
 
         criteriaQuery.select(root).where(builder.and(predicates)); 
-        TypedQuery<Doc> query = getEntityManager().createQuery(criteriaQuery);
+        TypedQuery<Doc> query = em.createQuery(criteriaQuery);
         return query.getResultList().isEmpty();
     }
     
     /* Удаление документов из папки  */ 
     public void deleteDocFromFolder(Folder folder){
         attacheService.deleteAttacheByFolder(folder);
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaDelete<Doc> delete = cb.createCriteriaDelete(Doc.class);
         Root e = delete.from(Doc.class);
         delete.where(cb.equal(e.get("owner"), folder));
-        getEntityManager().createQuery(delete).executeUpdate();
+        em.createQuery(delete).executeUpdate();
     }    
         
     /* Установка состояния редактирования документа */
@@ -445,8 +445,8 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
     }           
 
     public Long findCountCompanyLinks(Company company){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Doc> root = cq.from(Doc.class);
         List<Predicate> criteries = new ArrayList<>();
@@ -455,7 +455,7 @@ public class DocFacade extends BaseDictWithRolesFacade<Doc, Folder, DocLog, DocS
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }    
         

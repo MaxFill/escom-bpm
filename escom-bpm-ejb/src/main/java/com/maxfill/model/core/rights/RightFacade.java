@@ -19,26 +19,26 @@ public class RightFacade extends BaseFacade<Right>{
     
     /* Отбирает из базы дефолтные права объекта */
     public List<Right> findDefaultRight(Metadates objLink){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
         Root<Right> root = cq.from(Right.class);        
         Predicate crit1 = builder.equal(root.get("objLink"), objLink);
         cq.select(root).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }    
     
     /* Отбирает из базы дефолтные права объекта для определённого состояния */
     public List<Right> findDefaultRightState(Metadates objLink, State state ){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
         Root<Right> c = cq.from(Right.class);        
         Predicate crit1 = builder.equal(c.get("objLink"), objLink);
         Predicate crit2 = builder.equal(c.get("state"), state);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     } 
     
@@ -50,27 +50,27 @@ public class RightFacade extends BaseFacade<Right>{
     
     /* Получение прав по id группы пользователей */
     public List<Rights> findRightsByGroupId(Integer groupId){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
         Root<Right> c = cq.from(Right.class);        
         Predicate crit1 = builder.equal(c.get("objType"), 0);
         Predicate crit2 = builder.equal(c.get("objId"), groupId);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
     
     /* Получение прав по id пользователя */
     public List<Rights> findRightsByUserId(Integer userId){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Right.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Right.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Right> cq = builder.createQuery(Right.class);
         Root<Right> c = cq.from(Right.class);        
         Predicate crit1 = builder.equal(c.get("objType"), 1);
         Predicate crit2 = builder.equal(c.get("objId"), userId);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }    
 

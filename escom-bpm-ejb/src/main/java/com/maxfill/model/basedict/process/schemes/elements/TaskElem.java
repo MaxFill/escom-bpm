@@ -82,20 +82,17 @@ public class TaskElem extends WFConnectedElem{
     @Override
     public String getCaption() {
         if (task != null){
-            StringBuilder sb = new StringBuilder();            
+            StringBuilder sb = new StringBuilder();           
+            if (task.getRoleInProc() != null){
+                sb.append(task.getRoleInProc().getName()).append(" ");
+            }
             Staff owner = task.getOwner();
-            if (owner != null){
-                /*
-                if (owner.getPost() != null){
-                    sb.append(owner.getPost().getName()).append(" ");
-                }
-                */
-                if (owner.getEmployee() != null){
-                    sb.append(owner.getEmployee().getShortFIO());
-                }
-                sb.append(": ").append(task.getNameEndElipse());
-            } else {
-                sb.append("???");
+            if (owner != null && owner.getEmployee() != null){
+                sb.append(owner.getEmployee().getShortFIO());
+            }
+            sb.append(": ").append(task.getNameEndElipse());            
+            if (sb.length() == 0){                
+                sb.append("???");                
             }
             caption = sb.toString();
             return caption;
@@ -211,7 +208,6 @@ public class TaskElem extends WFConnectedElem{
     }
     public void setTask(Task task) {
         this.task = task;
-        this.staffId = task.getOwner().getId();
     }
     
     @Override

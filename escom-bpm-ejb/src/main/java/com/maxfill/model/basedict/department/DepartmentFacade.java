@@ -44,14 +44,14 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
     @Override
     public List<BaseDict> findDetailItems(Department owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);
         Predicate crit = builder.equal(c.get(Staff_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query query = getEntityManager().createQuery(cq);
+        Query query = em.createQuery(cq);
         return query.getResultList();
     }
 
@@ -141,8 +141,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @return
      */
     public List<Department> findDepartmentByCompany(Company company){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
         Root<Department> c = cq.from(Department.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -155,7 +155,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<Department> q = getEntityManager().createQuery(cq);       
+        TypedQuery<Department> q = em.createQuery(cq);       
         return q.getResultList();
     }
 
@@ -165,8 +165,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @return
      */
     public List<Department> findChildDepartments(Department department){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
         Root<Department> c = cq.from(Department.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -179,7 +179,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<Department> q = getEntityManager().createQuery(cq);       
+        TypedQuery<Department> q = em.createQuery(cq);       
         return q.getResultList();
     }
 
@@ -197,8 +197,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     public List<Department> findActualDetailItems(Company owner, int first, int pageSize, String sortField, String sortOrder, User currentUser){
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
         Root<Department> root = cq.from(Department.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -214,7 +214,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
         predicates = criteries.toArray(predicates);
 
         cq.select(root).where(builder.and(predicates));        
-        TypedQuery<Department> query = getEntityManager().createQuery(cq);       
+        TypedQuery<Department> query = em.createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultStream()      
@@ -224,8 +224,8 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
     
     @Override
     public Long findCountActualDetails(Company owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Department> root = cq.from(Department.class);   
         List<Predicate> criteries = new ArrayList<>();
@@ -242,7 +242,7 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
 
         cq.select(builder.count(root)).where(builder.and(predicates));               
 
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
@@ -293,13 +293,13 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @return
      */
     private int replaceDepartments(Department oldItem, Department newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Department> update = builder.createCriteriaUpdate(Department.class);
         Root root = update.from(Department.class);
         update.set(Department_.parent, newItem);
         Predicate predicate = builder.equal(root.get(Department_.parent), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 
@@ -310,13 +310,13 @@ public class DepartmentFacade extends BaseDictFacade<Department, Company, Depart
      * @return
      */
     private int replaceDepartamentsInStaffs(Department oldItem, Department newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Staff> update = builder.createCriteriaUpdate(Staff.class);
         Root root = update.from(Staff.class);
         update.set(Staff_.owner, newItem);
         Predicate predicate = builder.equal(root.get(Staff_.owner), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

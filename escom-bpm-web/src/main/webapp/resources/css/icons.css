@@ -42,7 +42,9 @@
 
 .ico_process{background-image: url('../resources/icon/process.png') !important;}
 .ico_task{background-image: url('../resources/icon/newtask.png') !important;}
+.ico_document{background-image: url('../resources/icon/document-16.png') !important;}
 
+.ico_doc-16{background-image: url('../resources/icon/document-16.png') !important;}
 .ico_16_inspector{background-image: url('../resources/icon/inspector.png') !important;}
 .ico_doc16 {background-image: url('../resources/icon/doc16.png') !important;}
 .ico_exit16 {background-image: url('../resources/icon/exit-16.png') !important;}

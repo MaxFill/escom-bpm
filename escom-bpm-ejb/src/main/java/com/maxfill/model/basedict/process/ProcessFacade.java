@@ -32,6 +32,7 @@ import javax.ejb.Stateless;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -65,6 +66,38 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     }
 
     @Override
+    public void remove(Process process){
+        messagesFacade.removeMessageByProcess(process);
+        process.getScheme().getTasks().forEach(task->{
+                taskFacade.removeItemLogs(task);
+                messagesFacade.removeMessageByTask(task);
+            });
+        remarkFacade.removeRemarksByProcess(process);
+        super.remove(process);
+    } 
+
+    @Override
+    public void edit(Process process) { 
+        /*        
+        List<Task> liveTasks = process.getScheme().getTasks();
+        Process oldProcess = find(process.getId());        
+        List<Task> forRemoveTasks = new ArrayList<>(oldProcess.getScheme().getTasks());
+        forRemoveTasks.removeAll(liveTasks);
+        
+        Set<ProcReport> procReports = process.getReports();
+        forRemoveTasks.forEach(task->{
+                taskFacade.removeItemLogs(task);
+                messagesFacade.removeMessageByTask(task);
+                procReports.stream()
+                    .filter(report->Objects.equals(task, report.getTask()))
+                    .forEach(report->report.setTask(null));
+            });
+        */
+        super.edit(process); //To change body of generated methods, choose Tools | Templates.
+    }   
+ 
+    
+    @Override
     public int replaceItem(Process oldItem, Process newItem) {
         return 0;
     }
@@ -83,6 +116,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     public void setSpecAtrForNewItem(Process process, Map<String, Object> params){
         process.setDeltaDeadLine(0);
         process.setDeadLineType("data");
+        process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff()));        
         
         ProcessType processType = processTypesFacade.getProcTypeForOpt(process.getOwner());
         if (processType != null){
@@ -107,16 +141,17 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             if (user.getStaff() != null){
                 Staff curator = user.getStaff();
                 if (curator != null){
-                    process.setCurator(curator);           
+                    setRoleCurator(process, curator);            
                 }
             }
         }
         if (params.containsKey("curator")) {
             setRoleCurator(process, (Staff)params.get("curator"));            
-        }
-        process.setCompany(staffFacade.findCompanyForStaff(process.getAuthor().getStaff()));        
+        }        
     }
 
+    /* *** РОЛИ *** */    
+    
     public void setRoleCurator(Process process, Staff curator){
         process.setCurator(curator);
         process.doSetSingleRole(DictRoles.ROLE_CURATOR, curator.getEmployee());
@@ -130,10 +165,14 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         clearRoles(process);
         setRoleCurator(process, process.getCurator());
         setRoleOwner(process, process.getAuthor());
-        process.getScheme().getTasks().stream()
-                .filter(task->task.getOwner() != null)
-                .forEach(task->process.addUserInRole(task.getRoleInProc().getRoleFieldName(), task.getOwner().getEmployee()));                
+        if (process.getScheme() != null){
+            process.getScheme().getTasks().stream()
+                    .filter(task->task.getOwner() != null)
+                    .forEach(task->process.addUserInRole(task.getRoleInProc().getRoleFieldName(), task.getOwner().getEmployee()));
+        }
     }
+    
+    /* *** *** */
     
     /**
      * Формирование дефолтного наименования для процесса
@@ -209,36 +248,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Process process = createItem(author, null, owner, params);
         makeRightItem(process, author);
         return process;
-    }   
-        
-    @Override
-    public void remove(Process process){
-        messagesFacade.removeMessageByProcess(process);
-        process.getScheme().getTasks().forEach(task->{
-                taskFacade.removeItemLogs(task);
-                messagesFacade.removeMessageByTask(task);
-            });
-        remarkFacade.removeRemarksByProcess(process);
-        super.remove(process);
-    } 
-
-    @Override
-    public void edit(Process process) {
-        List<Task> liveTasks = process.getScheme().getTasks();
-        Process oldProcess = find(process.getId());        
-        List<Task> forRemoveTasks = new ArrayList<>(oldProcess.getScheme().getTasks());
-        forRemoveTasks.removeAll(liveTasks);
-        
-        Set<ProcReport> procReports = process.getReports();
-        forRemoveTasks.forEach(task->{
-                taskFacade.removeItemLogs(task);
-                messagesFacade.removeMessageByTask(task);
-                procReports.stream()
-                    .filter(report->Objects.equals(task, report.getTask()))
-                    .forEach(report->report.setTask(null));
-            });
-        super.edit(process); //To change body of generated methods, choose Tools | Templates.
-    }        
+    }                
             
     @Override
     protected String getItemFormPath(){
@@ -246,8 +256,8 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     }  
     
     public Long findCountDocLinks(Doc doc){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Process> root = cq.from(Process.class);
         List<Predicate> criteries = new ArrayList<>();
@@ -256,13 +266,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
     public Long findCountStaffLinks(Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Process> root = cq.from(Process.class);
         List<Predicate> criteries = new ArrayList<>();
@@ -271,13 +281,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
     public Long findCountCompanyLinks(Company company){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Process.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Process.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Process> root = cq.from(Process.class);
         List<Predicate> criteries = new ArrayList<>();
@@ -286,7 +296,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
@@ -295,7 +305,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * @return 
      */
     public List<String> findProcessResults(){        
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq= builder.createQuery();
         Root root = cq.from(itemClass);
         Expression<String> resultName = root.get(Process_.result);
@@ -305,7 +315,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         Predicate crit2 = builder.isNotNull(root.get(Process_.result));
         cq.where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(root.get(Process_.result)));
-        Query query = getEntityManager().createQuery(cq);
+        Query query = em.createQuery(cq);
         return query.getResultList();        
     }
 }

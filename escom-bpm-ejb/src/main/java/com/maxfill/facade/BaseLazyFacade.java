@@ -24,11 +24,11 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @return
      */
     public int countItemsByFilters(Map<String,Object> filters){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root<T> root = cq.from(itemClass);
         cq.select(builder.count(root)).where(builder.and(makePredicates(builder, root, filters)));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
 
@@ -42,8 +42,8 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @return
      */
     public List<T> findItemsByFilters(int firstPosition, int numberOfRecords, String sortField, String sortOrder, Map<String,Object> filters) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass);
         cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
@@ -54,7 +54,7 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                 cq.orderBy(builder.desc(root.get(sortField)));
             }
         }
-        Query query = getEntityManager().createQuery(cq);
+        Query query = em.createQuery(cq);
         query.setFirstResult(firstPosition);
         query.setMaxResults(numberOfRecords);        
         return query.getResultList();
@@ -69,8 +69,8 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @return
      */
     public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters, User currentUser) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass);
         cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
@@ -81,7 +81,7 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                 cq.orderBy(builder.desc(root.get(sortField)));
             }
         }
-        Query query = getEntityManager().createQuery(cq);
+        Query query = em.createQuery(cq);
         List<T> result = query.getResultList();
         return result;
     }
@@ -92,11 +92,11 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
      * @return 
      */
     public int deleteItems(Map<String,Object> filters) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<T> cd = builder.createCriteriaDelete(itemClass);
         Root root = cd.from(itemClass);
         cd.where(makePredicates(builder, root, filters));
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();
     }
 
@@ -140,8 +140,12 @@ public abstract class BaseLazyFacade<T extends Dict> extends BaseFacade<T>{
                                 }
                                 break;
                             }
+                            case "regNumber":{
+                                predicate = builder.like(root.<String>get(filterProperty),"%"+filterValue+"%");                                
+                                break;
+                            }
                             default:{
-                                predicate = builder.equal(root.get(filterProperty), filterValue);    
+                                predicate = builder.equal(root.get(filterProperty), filterValue);
                             }
                         }                 
                     } else {

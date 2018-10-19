@@ -26,13 +26,13 @@ public class RunOptionsFacade extends BaseFacade<RunOptions>{
     }
     
     public List<RunOptions> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(RunOptions.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(RunOptions.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(RunOptions.class);
         Root root = cq.from(RunOptions.class);        
         cq.select(root);
         cq.orderBy(builder.asc(root.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     
@@ -56,12 +56,12 @@ public class RunOptionsFacade extends BaseFacade<RunOptions>{
         Gson gson = new Gson();
         List<Integer> resultIds = gson.fromJson(json, List.class);
 
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(RunOptions.class);
         Root root = cq.from(RunOptions.class);             
         Predicate crit1 = root.get("id").in(resultIds);
         cq.select(root).where(builder.and(crit1));
-        TypedQuery<RunOptions> q = getEntityManager().createQuery(cq);
+        TypedQuery<RunOptions> q = em.createQuery(cq);
         return q.getResultList();
     }
     

@@ -72,13 +72,13 @@ public class PostFacade extends BaseDictFacade<Post, Post, PostLog, PostStates>{
      * @return 
      */
     private int replacePostInStaffs(Post oldItem, Post newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
+        CriteriaBuilder builder = em.getCriteriaBuilder(); 
         CriteriaUpdate<Staff> update = builder.createCriteriaUpdate(Staff.class);    
         Root root = update.from(Staff.class);  
         update.set(Staff_.post, newItem);
         Predicate predicate = builder.equal(root.get(Staff_.post), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
     

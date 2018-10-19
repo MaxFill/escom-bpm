@@ -23,25 +23,25 @@ public class CounterFacade extends BaseFacade<Counter>{
      * @return 
      */ 
     public List<Counter> findCounterByName(String name){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Counter.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Counter.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Counter> cq = builder.createQuery(Counter.class);
         Root<Counter> c = cq.from(Counter.class);        
         Predicate crit1 = builder.equal(c.get("name"), name);
         cq.select(c).where(builder.and(crit1));
         cq.select(c);
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     
     public List<Counter> findAll() {
-        getEntityManager().getEntityManagerFactory().getCache().evict(Counter.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Counter.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Counter> cq = builder.createQuery(Counter.class);
         Root<Counter> c = cq.from(Counter.class);        
         Predicate crit1 = builder.isNotNull(c.get("docType"));
         cq.select(c).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
     

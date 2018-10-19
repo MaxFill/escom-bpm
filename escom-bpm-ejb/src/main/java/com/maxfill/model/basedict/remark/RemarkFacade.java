@@ -45,12 +45,12 @@ public class RemarkFacade extends BaseDictFacade<Remark, Doc, RemarkLog, RemarkS
      * @return 
      */
     public int removeRemarksByProcess(Process process){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<Remark> cd = builder.createCriteriaDelete(Remark.class);
         Root root = cd.from(Remark.class);
         Predicate crit1 = builder.equal(root.get(Remark_.process), process);
         cd.where(crit1);
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();
     }
 }

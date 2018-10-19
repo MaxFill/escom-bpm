@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.stream.Stream;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -23,6 +24,16 @@ public class ProcTimerFacade extends BaseFacade<ProcTimer>{
 
     public ProcTimerFacade() {
         super(ProcTimer.class);
+    }
+    
+    public ProcTimer findTimerByUID(String uid){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery cq = builder.createQuery(ProcTimer.class);
+        Root<ProcTimer> root = cq.from(ProcTimer.class);
+        Predicate crit1 = builder.equal(root.get(ProcTimer_.timerLinkUID), uid);
+        cq.select(root).where(builder.and(crit1));
+        TypedQuery<ProcTimer> q = em.createQuery(cq);
+        return q.getResultStream().findFirst().orElse(null);
     }
     
     public ProcTimer createTimer(Process process, Scheme scheme, String timerLinkUID){
@@ -102,12 +113,12 @@ public class ProcTimerFacade extends BaseFacade<ProcTimer>{
      * @return 
      */
     public Stream<ProcTimer> findActualTimers(){        
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<ProcTimer> cq = builder.createQuery(ProcTimer.class);
         Root<ProcTimer> root = cq.from(ProcTimer.class);
         Predicate crit1 = builder.greaterThanOrEqualTo(root.get(ProcTimer_.startDate), new Date());
         cq.select(root).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultStream();
     }
 }

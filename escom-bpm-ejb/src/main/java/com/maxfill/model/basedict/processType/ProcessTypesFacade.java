@@ -3,9 +3,11 @@ package com.maxfill.model.basedict.processType;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.BaseDict;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.user.User;
+import java.util.List;
 import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -73,6 +75,19 @@ public class ProcessTypesFacade extends BaseDictFacade<ProcessType, ProcessType,
         }
 
         return processFacade.getDefaultRights(); //если иного не найдено, то берём дефолтные права справочника
+    }
+    
+    /**
+     * Возвращает дефолтный шаблон для вида процесса
+     * @param processType
+     * @param currentUser
+     * @return 
+     */
+    public ProcTempl getDefaultTempl(ProcessType processType, User currentUser){        
+        return processTemplFacade.findActualItemsByOwner(processType, currentUser)
+                .stream()
+                .filter(templ->templ.getIsDefault())
+                .findFirst().orElse(null);
     }
     
     /**

@@ -32,14 +32,14 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
 
     @Override
     public List<BaseDict> findDetailItems(Company owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
         Root<Department> c = cq.from(Department.class);
         Predicate crit = builder.equal(c.get(Department_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query query = getEntityManager().createQuery(cq);        
+        Query query = em.createQuery(cq);        
         return query.getResultList();
     }
 
@@ -86,14 +86,14 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @return
      */
     public List<Staff> findAllStaffByCompany(Company company){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);
         Predicate crit1 = builder.equal(c.get(Staff_.company), company);
         Predicate crit2 = builder.isNull(c.get(Staff_.owner)); //подразделение должно быть null!
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -103,13 +103,13 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @return
      */
     public List<Department> findDepartmentByCompany(Company company){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Department.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Department.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Department> cq = builder.createQuery(Department.class);
         Root<Department> root = cq.from(Department.class);
         Predicate crit1 = builder.equal(root.get("owner"), company);
         cq.select(root).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -134,13 +134,13 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @param newItem
      */
     private int replaceCompanyInStaffs(Company oldItem, Company newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Staff> update = builder.createCriteriaUpdate(Staff.class);
         Root root = update.from(Staff.class);
         update.set(Staff_.company, newItem);
         Predicate predicate = builder.equal(root.get(Staff_.company), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 
@@ -150,13 +150,13 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @param newItem
      */
     private int replaceCompanyInDepartments(Company oldItem, Company newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Department> update = builder.createCriteriaUpdate(Department.class);
         Root root = update.from(Department.class);
         update.set(Department_.owner, newItem);
         Predicate predicate = builder.equal(root.get(Department_.owner), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 
@@ -166,13 +166,13 @@ public class CompanyFacade extends BaseDictFacade<Company, Company, CompanyLog, 
      * @param newItem
      */
     private int replaceCompanyInFolders(Company oldItem, Company newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);
         Root root = update.from(Folder.class);
         update.set(root.get("companyDefault"), newItem);
         Predicate predicate = builder.equal(root.get("companyDefault"), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

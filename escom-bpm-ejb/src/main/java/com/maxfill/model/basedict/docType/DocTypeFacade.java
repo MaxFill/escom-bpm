@@ -67,25 +67,25 @@ public class DocTypeFacade extends BaseDictFacade<DocType, DocTypeGroups, DocTyp
             
     /* Замена вида документа в документах */
     private int replaceDocTypeInDocs(DocType oldItem, DocType newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
+        CriteriaBuilder builder = em.getCriteriaBuilder(); 
         CriteriaUpdate<Doc> update = builder.createCriteriaUpdate(Doc.class);    
         Root root = update.from(Doc.class);  
         update.set(Doc_.docType, newItem);
         Predicate predicate = builder.equal(root.get(Doc_.docType), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
     
     /** Замена вида документа в папках (дефолтное значение для новых документов)  */
     private int replaceDocTypeInFolders(DocType oldItem, DocType newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder(); 
+        CriteriaBuilder builder = em.getCriteriaBuilder(); 
         CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);    
         Root root = update.from(Folder.class);  
         update.set(root.get("docTypeDefault"), newItem);
         Predicate predicate = builder.equal(root.get("docTypeDefault"), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

@@ -91,9 +91,8 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
      * Установка отметки о прочтении сообщения
      * @param message
      */
-    public void markAsRead(UserMessages message){       
-        message.setDateReading(new Date());
-        messagesFacade.edit(message);
+    public void markAsRead(UserMessages message){        
+        messagesFacade.makeAsRead(message); 
         if (showOnlyUnread) {
             removeItemFromData(message);
         }
@@ -116,21 +115,7 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     
     public void onSetSelectedMessage(UserMessages message){
         selectedMessages = message;
-    }
-    
-    public void onGoToDocument(){
-        if (selectedMessages == null) return;
-        Doc doc = selectedMessages.getDocument();
-        if (doc == null) return;                
-        docBean.prepEditItem(doc, getParamsMap());
-    }
-    
-    public void onGoToProcess(){
-        if (selectedMessages == null) return;
-        Process process = selectedMessages.getProcess();
-        if (process == null) return;
-        processBean.prepEditItem(process, getParamsMap());
-    }
+    }    
     
     @Override
     protected Map<String, Object> makeFilters(Map filters) {        
@@ -152,6 +137,21 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
         }
         return filters;
     }
+
+    public void onOpenTask(UserMessages message) {               
+        if (message == null || message.getTask() == null) return;
+        taskBean.prepEditItem(message.getTask(), getParamsMap());
+    }
+    
+    public void onGoToDocument(UserMessages message){
+        if (message == null || message.getDocument() == null) return;             
+        docBean.prepEditItem(message.getDocument(), getParamsMap());
+    }
+    
+    public void onGoToProcess(UserMessages message){
+        if (message == null || message.getProcess() == null) return;        
+        processBean.prepEditItem(message.getProcess(), getParamsMap());
+    }
     
     /* GETS & SETS */
     
@@ -165,10 +165,6 @@ public class UserMsgBean extends LazyLoadBean<UserMessages> {
     @Override
     public Task getSourceItem() {
         return selectedMessages.getTask();
-    }
-
-    public void onOpenTask(String beanId) {               
-        taskBean.prepEditItem(selectedMessages.getTask(), getParamsMap());
     }
     
     @Override

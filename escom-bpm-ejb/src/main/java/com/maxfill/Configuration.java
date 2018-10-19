@@ -5,7 +5,6 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.jcr.Repository;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,8 +20,6 @@ import java.util.logging.Logger;
 @LocalBean
 public class Configuration {
     private static final Logger LOGGER = Logger.getLogger(Configuration.class.getName());
-    //private static final String REPO_NAME = "artifacts";
-    //private static final String REPO_FULL_NAME = "modeshape-webdav/" + REPO_NAME + "/other/";
     private static AtomicInteger smsMaxCount;
 
 /*

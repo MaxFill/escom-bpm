@@ -30,6 +30,7 @@ import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
 import com.maxfill.model.basedict.process.schemes.elements.WorkflowElements;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
+import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
@@ -38,14 +39,13 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.userGroups.UserGroups;
 import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.services.workflow.Workflow;
-import com.maxfill.utils.DateUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,6 +95,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     @EJB
     private Workflow workflow;
     @EJB
+    private ProcessFacade processFacade;
+    @EJB
     private ProcessTypesFacade processTypesFacade;
     @EJB
     private ProcessTemplFacade processTemplFacade;
@@ -119,8 +121,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private WFConnectedElem baseElement;
     private WFConnectedElem copiedElement;
     
-    private Task currentTask;
-        
+    private Task currentTask;        
     private ProcTempl selectedTempl;
       
     private Scheme scheme;
@@ -157,7 +158,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         connector.setHoverPaintStyle("{strokeStyle:'#5C738B'}");
         connector.setCornerRadius(10);
         model.setDefaultConnector(connector);
-        scheme = process.getScheme();
+        scheme = workflow.initScheme(process, getCurrentUser(), new HashSet<>());        
         loadModel(scheme);
     }
 
@@ -188,7 +189,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param scheme
      */
     public void loadModel(Scheme scheme){       
-        workflow.unpackScheme(scheme);        
+        workflow.unpackScheme(scheme, getCurrentUser());        
         restoreModel();
     } 
     
@@ -199,43 +200,8 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         model.clear();
         model.getConnections().clear();
         Map<String, Element> elementMap = new HashMap <>();
-        scheme.getElements().getTasks().forEach((k, taskEl)->{             
-            if (taskEl.getTask() == null){
-                Staff staff = null;
-                if (taskEl.getStaffId() != null){
-                    staff = staffFacade.find(taskEl.getStaffId());
-                }
-                Task task = taskFacade.createTaskInProc(staff, getCurrentUser(), process, taskEl.getUid());
-                task.setConsidInProcReport(taskEl.getConsidInProc());
-                UserGroups role = null;
-                if (taskEl.getRoleInProc() != null){
-                    role = userGroupsFacade.find(taskEl.getRoleInProc());
-                }
-                task.setRoleInProc(role);
-                task.setDeadLineType(taskEl.getDeadLineType());
-                task.setName(taskEl.getName());
-                task.setDeltaDeadLine(taskEl.getDeltaDeadLine());
-                task.setReminderType(taskEl.getReminderType());
-                task.setReminderRepeatType(taskEl.getReminderType());
-                task.setDeltaReminder(taskEl.getDeltaReminder());
-                task.setReminderTime(taskEl.getReminderTime());
-                task.setReminderDays(taskEl.getReminderDays());
-                task.setAvaibleResultsJSON(taskEl.getAvaibleResultsJSON());
-                taskEl.setTask(task);
-                scheme.getTasks().add(task);
-            }
-            elementMap.put(k, createElement(taskEl));
-        });
-        scheme.getElements().getTimers().forEach((k, timerEl)->{
-                if (timerEl.getProcTimer() == null){
-                    ProcTimer procTimer = procTimerFacade.createTimer(process, scheme, timerEl.getUid());
-                    timerEl.setProcTimer(procTimer);
-                    procTimer.setRepeatType(timerEl.getRepeatType());
-                    procTimer.setStartType(timerEl.getStartType());
-                    scheme.getTimers().add(procTimer);
-                }
-                elementMap.put(k, createElement(timerEl));
-            });
+        scheme.getElements().getTasks().forEach((k, taskEl)->elementMap.put(k, createElement(taskEl)));
+        scheme.getElements().getTimers().forEach((k, timerEl)->elementMap.put(k, createElement(timerEl)));
         scheme.getElements().getSubprocesses().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getMessages().forEach((k, v)->elementMap.put(k, createElement(v)));
         scheme.getElements().getProcedures().forEach((k, v)->elementMap.put(k, createElement(v))); 
@@ -413,10 +379,18 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         if (baseElement instanceof TaskElem){
             TaskElem taskElem = (TaskElem)baseElement;
             currentTask = taskElem.getTask();
-            taskElem.setConsidInProc(currentTask.getConsidInProcReport());
-            taskElem.setRoleInProc(currentTask.getRoleInProc().getId());
-            taskElem.setDeadLineType(currentTask.getDeadLineType());
-            taskElem.setStaffId(currentTask.getOwner().getId());
+            if (currentTask.getOwner() != null){
+                taskElem.setStaffId(currentTask.getOwner().getId());
+            } else {
+                taskElem.setStaffId(null);
+            }
+            if (currentTask.getRoleInProc() != null){
+                taskElem.setRoleInProc(currentTask.getRoleInProc().getId());
+            } else {
+                taskElem.setRoleInProc(null);
+            }
+            taskElem.setConsidInProc(currentTask.getConsidInProcReport());            
+            taskElem.setDeadLineType(currentTask.getDeadLineType());            
             taskElem.setName(currentTask.getName());
             taskElem.setDeltaDeadLine(currentTask.getDeltaDeadLine());
             taskElem.setReminderType(currentTask.getReminderType());
@@ -1126,12 +1100,12 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private void onLoadModelFromTempl(){
         scheme.setElements(new WorkflowElements());  
         scheme.setPackElements(selectedTempl.getElements());        
-        workflow.unpackScheme(scheme);        
+        workflow.unpackScheme(scheme, getCurrentUser());
         workflow.clearScheme(scheme);
         restoreModel();
         PrimeFaces.current().ajax().update("mainFRM");        
         PrimeFaces.current().ajax().update("southFRM:diagramm");
-        addElementContextMenu();
+        addElementContextMenu();        
         onItemChange();
     }
     

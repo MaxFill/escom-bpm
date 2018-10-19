@@ -44,12 +44,12 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
         Gson gson = new Gson();
         List<Integer> resultIds = gson.fromJson(json, List.class);
 
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Result> cq = builder.createQuery(Result.class);
         Root<Result> root = cq.from(Result.class);             
         Predicate crit1 = root.get("id").in(resultIds);
         cq.select(root).where(builder.and(crit1));
-        TypedQuery<Result> q = getEntityManager().createQuery(cq);
+        TypedQuery<Result> q = em.createQuery(cq);
         return q.getResultList();
     }
     
@@ -60,15 +60,15 @@ public class ResultFacade extends BaseDictFacade<Result, Result, ResultLog, Resu
      */ 
     @Override
     public List<Result> findAll(User currentUser) {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(itemClass);
         Root c = cq.from(itemClass);        
         Predicate crit1 = builder.equal(c.get("actual"), true);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(orderBuilder(builder, c));
-        TypedQuery query = getEntityManager().createQuery(cq);       
+        TypedQuery query = em.createQuery(cq);       
         return query.getResultList();
     }
 }

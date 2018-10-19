@@ -16,26 +16,27 @@
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >            
             <h:panelGrid columns="2" rendered="#{taskCardBean.editedItem.scheme != null}" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
-                <p:outputLabel value="#{bundle.Role}:"/>
+                <p:outputLabel id="lbRole" value="#{bundle.Role}:" indicateRequired="#{!taskCardBean.isRequiredExecutor()}"/>
                 <p:selectOneMenu value="#{_bean.editedItem.roleInProc}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
                                 styleClass="ui-grid-col-12"
                                 disabled="#{taskCardBean.readOnly}" 
                                 onchange="return itemChange = 1;"
                                 converter="groupsUserConvertor" placeholder="#{bundle.Select}">
                    <f:selectItems value="#{userGroupsBean.findOnlyRoles()}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
-                   <f:selectItem itemValue="#{null}" itemLabel="#{bundle.No}" />                   
+                   <f:selectItem itemValue="#{null}" itemLabel="#{bundle.No}" />
+                   <p:ajax event="change" update="lbExecutor" oncomplete="itemChange = 1;"/>
                 </p:selectOneMenu>
                 
-                <p:outputLabel value="#{bundle.Executor}:" indicateRequired="true" />
-                <p:selectOneMenu value="#{taskCardBean.editedItem.owner}" filter="true" filterMatchMode="startsWith"
+                <p:outputLabel id="lbExecutor" value="#{bundle.Executor}:" indicateRequired="#{taskCardBean.isRequiredExecutor()}" />
+                <p:selectOneMenu id="selExecutor" value="#{taskCardBean.editedItem.owner}" filter="true" filterMatchMode="startsWith"
                                 styleClass="ui-grid-col-12"
                                 converter="staffConvertor" placeholder="#{bundle.Select}"
                                 disabled="#{taskCardBean.readOnly}"                                
-                                required="#{param['isRequired'] == 'true'}"
+                                required="#{taskCardBean.isRequiredExecutor()}"
                                 requiredMessage="#{bundle.Field} [#{bundle.Executor}] #{bundle.MustBeFilled}">
                     <f:selectItems value="#{taskCardBean.executors}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
                     <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
-                    <p:ajax event="change" listener="#{_bean.onExecutorChanged()}" oncomplete="itemChange = 1;"/>
+                    <p:ajax event="change" update="lbRole" listener="#{_bean.onExecutorChanged()}" oncomplete="itemChange = 1;"/>
                 </p:selectOneMenu>
             </h:panelGrid>
             
@@ -202,7 +203,7 @@
                                      icon="#{'ico_'.concat(result.getIconName())}"
                                      disabled="#{!taskCardBean.haveRightExec}"  
                                      actionListener="#{taskCardBean.onExecute(result.getName())}">
-                        <p:ajax event="dialogReturn" update="mainFRM" />
+                        <p:ajax event="dialogReturn" listener="#{taskCardBean.closeTaskForm()}" update="mainFRM" />
                         <f:param name="isRequired" value="true"/>
                     </p:commandButton>
                 </ui:repeat>

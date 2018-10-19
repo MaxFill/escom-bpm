@@ -124,40 +124,35 @@
                     </h:outputLabel>
                 </p:column>
 
-                <p:column >
-                    <p:commandLink  value="#{bundle.GoToProcess}"
-                                    rendered="#{item.process != null}"
-                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                    oncomplete="document.getElementById('mainFRM:openProcessBtn').click();"/>
-                    <p:spacer width="5"/>
-                    <p:commandLink  value="#{bundle.GoToTask}"
-                                    rendered="#{item.task != null}"
-                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                    oncomplete="document.getElementById('mainFRM:openTaskBtn').click();"/>
-                    <p:spacer width="5"/>
-                    <p:commandLink  value="#{bundle.GoToDocument}"
-                                    rendered="#{item.document != null}"
-                                    actionListener="#{userMsgBean.onSetSelectedMessage(item)}"
-                                    oncomplete="document.getElementById('mainFRM:openDocBtn').click();"/>
-                </p:column>
-                <p:column width="16">
-                    <p:commandButton icon="ui-icon-check" title="#{bundle.MarkAsRead}"
+                <p:column headerText="#{bundle.Commands}">
+                    <div class="ui-inputgroup">
+                    <p:commandButton id="openProcessBtn" icon="ico_process" title="#{bundle.GoToProcess}" 
+                                     disabled="#{item.process == null}"
+                                     actionListener="#{userMsgBean.onGoToProcess(item)}">
+                        <p:ajax event="dialogReturn" update="messageTBL"/>
+                    </p:commandButton>                    
+                    <p:commandButton id="openTaskBtn" icon="ico_task" title="#{bundle.GoToTask}"
+                                     disabled="#{item.task == null}"
+                                     actionListener="#{userMsgBean.onOpenTask(item)}">
+                        <p:ajax event="dialogReturn" update="messageTBL"/>
+                    </p:commandButton>                    
+                    <p:commandButton id="openDocBtn" icon="ico_document" title="#{bundle.GoToDocument}"
+                                     disabled="#{item.document == null}"
+                                     actionListener="#{userMsgBean.onGoToDocument(item)}">
+                        <p:ajax event="dialogReturn" update="messageTBL"/>
+                    </p:commandButton>
+                    <span class="ui-separator">
+                        <span class="ui-icon ui-icon-grip-dotted-vertical" />
+                    </span>
+                    <p:commandButton icon="ico_doc_check" title="#{bundle.MarkAsRead}"
                                      update="messageTBL"
                                      rendered="#{userMsgBean.isCanMarkRead(item)}"
                                      actionListener="#{userMsgBean.markAsRead(item)}">
                     </p:commandButton>
+                    </div>
                 </p:column>
             </p:dataTable>
 
-            <p:commandButton id="openDocBtn" style="display: none;" actionListener="#{userMsgBean.onGoToDocument()}">
-                <p:ajax event="dialogReturn" update="messageTBL"/>
-            </p:commandButton>
-            <p:commandButton id="openTaskBtn" style="display: none;" actionListener="#{userMsgBean.onOpenTask(_bean)}">
-                <p:ajax event="dialogReturn" update="messageTBL"/>
-            </p:commandButton>
-            <p:commandButton id="openProcessBtn" style="display: none;" actionListener="#{userMsgBean.onGoToProcess()}">
-                <p:ajax event="dialogReturn" update="messageTBL"/>
-            </p:commandButton>
         </ui:define>
     </ui:composition>
 </html>

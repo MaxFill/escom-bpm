@@ -157,8 +157,8 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
 
     /* Возвращает список занятых (не вакантных) штатных единиц с сотрудниками и должностями */
     public List<Staff> findActualStaff(){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.isNotNull(c.get("employee"));
@@ -166,32 +166,32 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Predicate crit3 = builder.equal(c.get("actual"), true);
         Predicate crit4 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3, crit4));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         List<Staff> result = q.getResultList(); 
         return result;
     }
     
     /* Поиск штатных единиц по должности */
     public List<Staff> findStaffByPost(Post post){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("post"), post);
         cq.select(c).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
     
     /* Поиск штатных единиц по пользователю */
     public List<Staff> findStaffsByUser(User user){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("employee"), user);
         cq.select(c).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
 
@@ -212,15 +212,15 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @return
      */
     public List<Staff> findActualStaffByCompany(Company company, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("company"), company);
         Predicate crit2 = builder.equal(c.get("actual"), true);
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
-        TypedQuery<Staff> query = getEntityManager().createQuery(cq);       
+        TypedQuery<Staff> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -233,15 +233,15 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @return
      */
     public List<Staff> findStaffInOnlyCompany(Company company, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get("company"), company);
         Predicate crit2 = builder.isNull(c.get("owner"));   
         Predicate crit3 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
-        TypedQuery<Staff> query = getEntityManager().createQuery(cq);       
+        TypedQuery<Staff> query = em.createQuery(cq);       
         return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -253,14 +253,14 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
      * @return
      */
     public List<Staff> findStaffByDepartment(Department department){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Staff.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Staff.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Staff> cq = builder.createQuery(Staff.class);
         Root<Staff> c = cq.from(Staff.class);        
         Predicate crit1 = builder.equal(c.get(Staff_.owner), department);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
 

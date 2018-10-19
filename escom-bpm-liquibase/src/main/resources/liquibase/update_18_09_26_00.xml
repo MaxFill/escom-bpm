@@ -240,11 +240,12 @@
         </sql>
     </changeSet>
     
-    <changeSet id="usersGroups_add_roles_concorder" author="filatov" context="initdata" runOnChange="true">
+    <changeSet id="usersGroups_add_role_inspector" author="filatov" context="initdata" runOnChange="true">
         <sql>
         INSERT usersGroupsStates (Id, CurrentState,  PreviousState) VALUES(14, 7, 5);
         INSERT usersGroups (Id, Parent, Owner, Name, Number, IsInherits, IsActual, IsDeleted, State, Access, IsInheritsAccessChilds, AccessChilds, Author, DateCreate, DateChange, TypeActualize, RoleFieldName)
         VALUES (23, 0, NULL, N'Проверяющий', NULL, 1, 1, 0, 14, NULL, 1, NULL, 0, CAST('2016-12-12' AS DateTime), CAST('2016-12-12' AS DateTime), 1, "Inspector");    
         </sql>
+    </changeSet>
     
 </databaseChangeLog> 

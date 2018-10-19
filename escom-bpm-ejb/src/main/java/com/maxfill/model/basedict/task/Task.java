@@ -27,9 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  * Сущность "Элемент схемы процесса "Поручение"
  */
 @Entity
-@Table(name = "tasks"
-    //, indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)}
-)
+@Table(name = "tasks", indexes = {@Index(name="TaskLinkUID_INDEX", columnList = "TaskLinkUID", unique = true)})
 public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> implements Results, WithDatesPlans{
     private static final long serialVersionUID = 2862379210656085637L;
     private static final AtomicInteger COUNT = new AtomicInteger(0);
@@ -142,7 +140,7 @@ public class Task extends BaseDict<Staff, Task, Task, TaskLog, TaskStates> imple
     public Task() {
         tempId = COUNT.incrementAndGet();
     }
-
+    
     public String getStyle(){
         if (state == null || state.getCurrentState() == null) return "";
         String style;

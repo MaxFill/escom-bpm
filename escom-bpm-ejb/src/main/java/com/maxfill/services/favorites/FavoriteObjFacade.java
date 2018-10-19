@@ -23,15 +23,15 @@ public class FavoriteObjFacade extends BaseFacade<FavoriteObj>{
     }    
     
     public List<FavoriteObj> findFavoriteObj(Integer itemId, Metadates metadatesObj, User user){
-        getEntityManager().getEntityManagerFactory().getCache().evict(FavoriteObj.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(FavoriteObj.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<FavoriteObj> cq = builder.createQuery(FavoriteObj.class);
         Root<FavoriteObj> c = cq.from(FavoriteObj.class);        
         Predicate crit1 = builder.equal(c.get("objId"), itemId);
         Predicate crit2 = builder.equal(c.get("metadateObj"), metadatesObj);
         Predicate crit3 = builder.equal(c.get("userId"), user);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
 }

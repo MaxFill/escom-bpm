@@ -130,13 +130,13 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      */
     public List<User> findUserByEmail(String email){
         if (StringUtils.isBlank(email)) return null;
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);
         Predicate crit1 = builder.equal(c.get(User_.email), email);
         cq.select(c).where(builder.and(crit1));
-        TypedQuery<User> q = getEntityManager().createQuery(cq);
+        TypedQuery<User> q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -146,13 +146,13 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      */
     public List<User> findUserByMainStaff(Staff mainStaff){        
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);
         Predicate crit1 = builder.equal(c.get(User_.staff), mainStaff);
         cq.select(c).where(builder.and(crit1));
-        TypedQuery<User> q = getEntityManager().createQuery(cq);
+        TypedQuery<User> q = em.createQuery(cq);
         return q.getResultList();
     }
     
@@ -162,13 +162,13 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      */
     public List<User> findByLogin(String login){
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);        
         Predicate crit1 = builder.equal(c.get("login"), login);
         cq.select(c).where(builder.and(crit1));        
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
 
@@ -178,14 +178,14 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      */
     public List<User> findUsersByInbox(Folder folder){
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> root = cq.from(User.class);        
         Predicate crit1 = builder.equal(root.get(User_.inbox), folder);
         Predicate crit2 = builder.equal(root.get("deleted"), false);
         cq.select(root).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     
@@ -198,14 +198,14 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      */
     public boolean checkEmailDuplicate(Integer exclUserId, String email){
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);
         Predicate crit1 = builder.equal(c.get(User_.email), email);
         Predicate crit2 = builder.notEqual(c.get("id"), exclUserId);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return !q.getResultList().isEmpty();
     }
 
@@ -230,8 +230,8 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
      * @return 
      */ 
     public List<User> findFreeStaffUsers(User currentUser) {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(itemClass);
         Root c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("actual"), true);
@@ -239,7 +239,7 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
         Predicate crit3 = builder.isNull(c.get(User_.staff));        
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(orderBuilder(builder, c));
-        TypedQuery<User> query = getEntityManager().createQuery(cq);       
+        TypedQuery<User> query = em.createQuery(cq);       
         return query.getResultStream()     
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -247,26 +247,26 @@ public class UserFacade extends BaseDictFacade<User, UserGroups, UserLog, UserSt
     
     /* Ищет пользователя по login исключая ID указанного пользователя  */
     public List<User> findByLoginExcludeId(String login, Integer userId){
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);        
         Predicate crit1 = builder.equal(c.get("login"), login);
         Predicate crit2 = builder.notEqual(c.get("id"), userId);
         cq.select(c).where(builder.and(crit1, crit2));        
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     
     /* Ищет пользователей по Staff  */
     public List<User> findUsersByStaff(Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(User.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(User.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<User> cq = builder.createQuery(User.class);
         Root<User> c = cq.from(User.class);        
         Predicate crit1 = builder.equal(c.get("staff"), staff);
         cq.select(c).where(builder.and(crit1));        
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     

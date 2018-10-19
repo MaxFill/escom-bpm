@@ -67,14 +67,14 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      */
     @Override
     public List<BaseDict> findDetailItems(Folder owner){        
-        getEntityManager().getEntityManagerFactory().getCache().evict(Doc.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Doc.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Doc> cq = builder.createQuery(Doc.class);
         Root<Doc> c = cq.from(Doc.class);
         Predicate crit = builder.equal(c.get(Doc_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query query = getEntityManager().createQuery(cq);        
+        Query query = em.createQuery(cq);        
         return query.getResultList();
     }
 
@@ -117,25 +117,25 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
 
     /* Возвращает все папки */
     public List<Folder> findAllFolders(){ 
-        getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Folder.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Folder> cq = builder.createQuery(Folder.class);
         Root<Folder> c = cq.from(Folder.class);
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);      
+        Query q = em.createQuery(cq);      
         return q.getResultList(); 
     }    
 
     /* Поиск папок по виду документа, указанного в дефолтном поле  */
     public List<Folder> findFoldersByDocTyper(DocType docType){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Folder.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Folder.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Folder> cq = builder.createQuery(Folder.class);
         Root<Folder> c = cq.from(Folder.class);        
         Predicate crit1 = builder.equal(c.get("docTypeDefault"), docType);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
 
@@ -187,13 +187,13 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * @return
      */
     private int replaceFolders(Folder oldItem, Folder newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Folder> update = builder.createCriteriaUpdate(Folder.class);
         Root root = update.from(Folder.class);
         update.set(root.get("parent"), newItem);
         Predicate predicate = builder.equal(root.get("parent"), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 
@@ -204,13 +204,13 @@ public class FoldersFacade extends BaseDictFacade<Folder, Folder, FolderLog, Fol
      * @return
      */
     private int replaceFoldersInUsers(Folder oldItem, Folder newItem){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<User> update = builder.createCriteriaUpdate(User.class);
         Root root = update.from(User.class);
         update.set(User_.inbox, newItem);
         Predicate predicate = builder.equal(root.get(User_.inbox), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

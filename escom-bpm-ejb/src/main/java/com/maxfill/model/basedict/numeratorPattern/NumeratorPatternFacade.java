@@ -46,13 +46,13 @@ public class NumeratorPatternFacade extends BaseDictFacade<NumeratorPattern, Num
      * @return
      */
     private int replaceNumeratorPatternInDocTypes(NumeratorPattern oldItem, NumeratorPattern newItem) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<DocType> update = builder.createCriteriaUpdate(DocType.class);
         Root root = update.from(DocType.class);
         update.set(DocType_.numerator, newItem);
         Predicate predicate = builder.equal(root.get(DocType_.numerator), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 

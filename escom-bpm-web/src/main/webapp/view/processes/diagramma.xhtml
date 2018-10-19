@@ -149,8 +149,8 @@
              <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorLoad}" update="mainFRM"/>
         </p:commandButton>
         <p:commandButton id="btnOpenNewTempl" title="#{bundle.SelectTemplateAndSaveScheme}" icon="ico_folder_add-16"
-                    disabled="#{_bean.isReadOnly()}"
-                    actionListener="#{procTemplBean.onOneSelectItem()}"> 
+                         disabled="#{_bean.isReadOnly()}" style="display: none;"
+                         actionListener="#{procTemplBean.onOneSelectItem()}"> 
             <p:ajax event="dialogReturn" listener="#{_bean.onTemplSelectorSave}" update="mainFRM" />
         </p:commandButton>
         <span class="ui-separator">

@@ -32,7 +32,7 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
     }
 
     public List<Filter> findChildsFilters(Filter parent, Metadates metadate){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Filter> cq = builder.createQuery(Filter.class);
         Root<Filter> root = cq.from(Filter.class);
         Predicate crit1 = builder.or(builder.equal(root.get("metadates"), metadate), builder.isNull(root.get("metadates")));
@@ -40,7 +40,7 @@ public class FiltersFacade extends BaseDictFacade<Filter, Filter, FilterLog, Fil
         Predicate crit3 = builder.equal(root.get("parent"), parent);
         cq.select(root).where(builder.and(crit1, crit2, crit3));
         //cq.orderBy(builder.asc(root.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     

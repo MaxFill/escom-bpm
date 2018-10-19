@@ -45,13 +45,13 @@ public class PartnerTypesFacade extends BaseDictFacade<PartnerTypes, PartnerType
      * @return
      */
     private int replacePartnerTypeInPartners(PartnerTypes oldItem, PartnerTypes newItem) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<Partner> update = builder.createCriteriaUpdate(Partner.class);
         Root root = update.from(Partner.class);
         update.set(Partner_.type, newItem);
         Predicate predicate = builder.equal(root.get(Partner_.type), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

@@ -19,13 +19,13 @@ public class ProcedureFacade extends BaseFacade<Procedure>{
     }
     
     public List<Procedure> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(Procedure.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Procedure.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Procedure> cq = builder.createQuery(Procedure.class);
         Root<Procedure> root = cq.from(Procedure.class);        
         cq.select(root);
         cq.orderBy(builder.asc(root.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
 }

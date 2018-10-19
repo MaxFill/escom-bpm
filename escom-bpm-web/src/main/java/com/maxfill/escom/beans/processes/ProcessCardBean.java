@@ -81,16 +81,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private Doc selectedDoc;    
     private String accordDocsTab = null;
     private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
-    private List<RunOptions> runOptions = new ArrayList<>();
-    
-    @Override
-    protected BaseDictFacade getFacade() {
-        return processFacade;
-    }
+    private List<RunOptions> runOptions = new ArrayList<>();    
 
     @Override
     protected void doPrepareOpen(Process process) {
-        workflow.unpackScheme(process.getScheme());
+        workflow.unpackScheme(process.getScheme(), getCurrentUser());
         initRunOptions();
     }
 
@@ -101,9 +96,6 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     @Override
     protected void onBeforeSaveItem(Process process){
         processFacade.actualizeProcessRoles(process);
-        if (process.getCurator() != null){
-            processFacade.setRoleCurator(process, process.getCurator());            
-        }
         super.onBeforeSaveItem(process);
     }
 
@@ -253,9 +245,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * @return 
      */
     public boolean isDisableRunBtn(){        
-        if (getEditedItem().getScheme() == null || isReadOnly()) return true;
-        Scheme scheme = getEditedItem().getScheme();
-        return scheme.getElements().getStartElem() == null;
+        return isReadOnly();
     }
     
     /**
@@ -269,6 +259,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Process process = getEditedItem();
         validatePlanDate(process.getPlanExecDate(), errors);
         validateRemarks(process.getDocument(), errors);
+        workflow.initScheme(process, getCurrentUser(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
             return;
@@ -655,5 +646,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public DiagramBean getDiagramBean() {
         return diagramBean;
     }
-        
+ 
+    @Override
+    protected BaseDictFacade getFacade() {
+        return processFacade;
+    }
 }

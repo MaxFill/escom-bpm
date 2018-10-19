@@ -28,14 +28,14 @@ public class WorkTimeFacade extends BaseFacade<WorkTimeCalendar>{
      * @return 
      */
     public List<WorkTimeCalendar> findDate(String date){
-        getEntityManager().getEntityManagerFactory().getCache().evict(WorkTimeCalendar.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(WorkTimeCalendar.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<WorkTimeCalendar> cq = builder.createQuery(WorkTimeCalendar.class);
         Root<WorkTimeCalendar> root = cq.from(WorkTimeCalendar.class);
         Predicate crit1 = builder.equal(root.get(WorkTimeCalendar_.dateCalendar), date);
         Predicate crit2 = builder.isNull(root.get("staff"));
         cq.select(root).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
     
@@ -46,14 +46,14 @@ public class WorkTimeFacade extends BaseFacade<WorkTimeCalendar>{
      * @return 
      */
     public List<WorkTimeCalendar> findDateByStaff(String date, Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(WorkTimeCalendar.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(WorkTimeCalendar.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<WorkTimeCalendar> cq = builder.createQuery(WorkTimeCalendar.class);
         Root<WorkTimeCalendar> root = cq.from(WorkTimeCalendar.class);
         Predicate crit1 = builder.equal(root.get(WorkTimeCalendar_.dateCalendar), date);
         Predicate crit2 = builder.equal(root.get("staff"), staff);
         cq.select(root).where(builder.and(crit1, crit2));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 }

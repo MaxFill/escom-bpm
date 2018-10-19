@@ -12,6 +12,7 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import com.maxfill.utils.Tuple;
@@ -39,6 +40,8 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     private WorkTimeService workTimeService;
     @EJB
     private ProcessTypesFacade processTypesFacade;
+    @EJB
+    private UserMessagesFacade messagesFacade;
     
     public TaskFacade() {
         super(Task.class, TaskLog.class, TaskStates.class);
@@ -92,19 +95,19 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
     }    
             
     public List<Task> findTaskByStaff(Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Task> cq = builder.createQuery(Task.class);
         Root<Task> c = cq.from(Task.class);        
         Predicate crit1 = builder.equal(c.get(Task_.owner), staff);        
         cq.select(c).where(builder.and(crit1));
-        TypedQuery<Task> q = getEntityManager().createQuery(cq);       
+        TypedQuery<Task> q = em.createQuery(cq);       
         return q.getResultList();
     }
     
     public List<Task> findTaskByStaffStates(Staff staff, List<State> states){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Task> cq = builder.createQuery(Task.class);
         Root<Task> root = cq.from(Task.class); 
         List<Predicate> criteries = new ArrayList<>();
@@ -113,10 +116,21 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(root).where(builder.and(predicates));
-        TypedQuery<Task> q = getEntityManager().createQuery(cq);
+        TypedQuery<Task> q = em.createQuery(cq);
         List<Task> results = q.getResultList();
         return results;
     }           
+    
+    public Task findTaskByUID(String uid){
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
+        Root<Task> c = cq.from(Task.class);        
+        Predicate crit1 = builder.equal(c.get(Task_.taskLinkUID), uid);
+        cq.select(c).where(builder.and(crit1));
+        TypedQuery<Task> q = em.createQuery(cq);       
+        return q.getResultStream().findFirst().orElse(null);
+    }
     
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время
@@ -226,6 +240,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         //task.setIconName("");
         task.setFactExecDate(new Date());        
         task.getState().setCurrentState(stateFacade.getCompletedState());
+        messagesFacade.makeAsReadByTask(task, new Date());
         addLogEvent(task, DictLogEvents.TASK_FINISHED, user);
     }
     
@@ -235,8 +250,8 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
      * @return 
      */
     public Long getCountExecTasksByUser(Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root root = cq.from(Task.class);
         List<Predicate> crit = new ArrayList<>();
@@ -247,15 +262,15 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         Predicate[] predicates = new Predicate[crit.size()];
         predicates = crit.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
     /* *** ПРОЧЕЕ *** */  
     
     public Long findCountStaffLinks(Staff staff){
-        getEntityManager().getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Task.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<Task> root = cq.from(Task.class);
         List<Predicate> criteries = new ArrayList<>();
@@ -264,7 +279,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
 

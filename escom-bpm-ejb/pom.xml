@@ -18,25 +18,8 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
-    <dependencyManagement>
-        <dependencies>
-          <!-- Import the ModeShape BOM for embedded usage. This adds to the "dependenciesManagement" section
-               defaults for all of the modules we might need, but we still have to include in the
-               "dependencies" section the modules we DO need. The benefit is that we don't have to
-               specify the versions of any of those modules.-->
-          <dependency>
-            <groupId>org.modeshape.bom</groupId>
-            <artifactId>modeshape-bom-embedded</artifactId>
-            <version>5.4.1.Final</version>
-            <type>pom</type>
-            <scope>import</scope>
-          </dependency>
-        </dependencies>
-    </dependencyManagement>
    
     <dependencies> 
-           
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>escom-bpm-resource</artifactId>
@@ -55,15 +38,6 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.45</version>
-        </dependency>                
-        
-        <dependency>
-          <groupId>org.modeshape</groupId>
-          <artifactId>modeshape-jcr-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.modeshape</groupId>
-            <artifactId>modeshape-jcr</artifactId>            
         </dependency>
         
         <dependency>

@@ -23,7 +23,7 @@ public abstract class BaseFacade<T extends Dict> {
     protected static final Logger LOGGER = Logger.getLogger(BaseFacade.class.getName());
     
     @PersistenceContext(unitName = "com.maxfill.escombpm2PU")
-    private EntityManager entityManager;
+    protected EntityManager em;
     
     /*
      @Resource (lookup = "java:jboss/ee/concurrency/executor/default")
@@ -36,14 +36,10 @@ public abstract class BaseFacade<T extends Dict> {
 
     public Class<T> getItemClass(){
         return itemClass;
-    }
-        
-    protected EntityManager getEntityManager(){
-        return entityManager;
-    }
+    }        
     
     public T clone(Object id){
-        return getEntityManager().find(itemClass, id);
+        return em.find(itemClass, id);
     }
     
     public void create(T entity) {
@@ -57,38 +53,38 @@ public abstract class BaseFacade<T extends Dict> {
                 System.err.println("PERSIST_VALIDATE_ERR:"+cv.getRootBeanClass().getName()+"."+cv.getPropertyPath() + " " +cv.getMessage());
             }
         } else {
-            getEntityManager().persist(entity);
+            em.persist(entity);
         }
 
-        //getEntityManager().persist(entity);
+        //em.persist(entity);
     }
 
     public void edit(T entity) {
-        getEntityManager().merge(entity);
+        em.merge(entity);
     }
 
     public void remove(T entity) {
-        entity = getEntityManager().getReference(itemClass, entity.getId());
-        getEntityManager().remove(entity);
+        entity = em.getReference(itemClass, entity.getId());
+        em.remove(entity);
     }
 
     public int count() {
-        CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         Root<T> rt = cq.from(itemClass);
-        cq.select(getEntityManager().getCriteriaBuilder().count(rt));
-        Query q = getEntityManager().createQuery(cq);
+        cq.select(em.getCriteriaBuilder().count(rt));
+        Query q = em.createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }    
     
     public T find(Object id) {        
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass); 
-        return (T) getEntityManager().find(itemClass, id);       
+        em.getEntityManagerFactory().getCache().evict(itemClass); 
+        return (T) em.find(itemClass, id);       
     }    
 
     public List<T> findRange(int[] range) {
-        javax.persistence.criteria.CriteriaQuery cq = getEntityManager().getCriteriaBuilder().createQuery();
+        javax.persistence.criteria.CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
         cq.select(cq.from(itemClass));
-        javax.persistence.Query q = getEntityManager().createQuery(cq);
+        javax.persistence.Query q = em.createQuery(cq);
         q.setMaxResults(range[1] - range[0] + 1);
         q.setFirstResult(range[0]);
         return q.getResultList();
@@ -102,25 +98,25 @@ public abstract class BaseFacade<T extends Dict> {
      */
     public List<T> findByIds(Collection<Integer> ids, User currentUser){
         if (ids.isEmpty()) return new ArrayList<>(); 
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(itemClass);
         Root root = cq.from(itemClass);
         cq.select(root).where(builder.and(root.get("id").in(ids)));
-        Query query = getEntityManager().createQuery(cq);       
+        Query query = em.createQuery(cq);       
         return query.getResultList();
     }    
     
     /* Возвращает все дочерние элементы для parent */
     public List<T> findAllChilds(T parent){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("parent"), parent);
         cq.select(c).where(builder.and(crit1));
         cq.orderBy(orderBuilder(builder, c));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -142,13 +138,13 @@ public abstract class BaseFacade<T extends Dict> {
      * @return 
      */
     public List<T> findByName(String name){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass);
         Predicate crit1 = builder.equal(root.get("name"), name);
         cq.select(root).where(builder.and(crit1));        
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 }

@@ -22,18 +22,18 @@ public class StateFacade extends BaseFacade<State>{
     
     @Override
     public State find(Object id){
-        return getEntityManager().find(State.class, id);
+        return em.find(State.class, id);
     }    
 
     public List<State> findAll() {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(State.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(State.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<State> cq = builder.createQuery(State.class);
         Root<State> c = cq.from(State.class);        
         Predicate crit1 = builder.equal(c.get("isActual"), true);
         cq.select(c).where(builder.and(crit1));
         cq.orderBy(builder.asc(c.get("name")));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList();
     }
     

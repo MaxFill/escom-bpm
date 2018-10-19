@@ -36,11 +36,11 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
     public List<Partner> findDetails(PartnerGroups group, int first, int pageSize, String sortField, String sortOrder, User currentUser) {
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Partner> cq = cb.createQuery(Partner.class);
         Root<Partner> root = cq.from(Partner.class);
         cq.select(root).distinct(true).where(root.get(Partner_.partnersGroupsList).in(group)).orderBy(cb.asc(root.get("name")));
-        TypedQuery<Partner> query = getEntityManager().createQuery(cq);
+        TypedQuery<Partner> query = em.createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultStream().parallel()
@@ -54,7 +54,7 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
         if (CollectionUtils.isNotEmpty(group.getPartnersList())){
             group.getPartnersList().forEach(partner-> {
                 partner.getPartnersGroupsList().add(group);
-                getEntityManager().merge(partner);
+                em.merge(partner);
             });
         }
     }
@@ -92,27 +92,27 @@ public class PartnersGroupsFacade extends BaseDictFacade<PartnerGroups, PartnerG
 
     @Override
     public void edit(PartnerGroups partnersGroups) { 
-        PartnerGroups persistentPartnersGroups = getEntityManager().find(PartnerGroups.class, partnersGroups.getId());
+        PartnerGroups persistentPartnersGroups = em.find(PartnerGroups.class, partnersGroups.getId());
         List<Partner> partnersListOld = persistentPartnersGroups.getPartnersList();
         List<Partner> partnersListNew= partnersGroups.getPartnersList();
         List<Partner> attachedItemsListNew = new ArrayList<>();
         for (Partner partnersListNewItemsToAttach : partnersListNew) {
-            partnersListNewItemsToAttach = getEntityManager().getReference(partnersListNewItemsToAttach.getClass(), partnersListNewItemsToAttach.getId());
+            partnersListNewItemsToAttach = em.getReference(partnersListNewItemsToAttach.getClass(), partnersListNewItemsToAttach.getId());
             attachedItemsListNew.add(partnersListNewItemsToAttach);
         }
         partnersListNew= attachedItemsListNew;
         partnersGroups.setPartnersList(partnersListNew);
-        partnersGroups = getEntityManager().merge(partnersGroups);
+        partnersGroups = em.merge(partnersGroups);
         for (Partner partnersListOldItems : partnersListOld) {
             if (!partnersListNew.contains(partnersListOldItems)) {
                 partnersListOldItems.getPartnersGroupsList().remove(partnersGroups);
-                getEntityManager().merge(partnersListOldItems);
+                em.merge(partnersListOldItems);
             }
         }
         for (Partner partnersListNewItems : partnersListNew) {
             if (!partnersListOld.contains(partnersListNewItems)) {
                 partnersListNewItems.getPartnersGroupsList().add(partnersGroups);
-                getEntityManager().merge(partnersListNewItems);
+                em.merge(partnersListNewItems);
             }
         }
     }  

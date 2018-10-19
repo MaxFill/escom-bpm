@@ -129,8 +129,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
         if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
             errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
         }        
-        if (task.getOwner() == null){
-            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:staffPanel_item");
+        if (task.getOwner() == null && task.getRoleInProc() == null){
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:selExecutor");
             input.setValid(false);
             errors.add(MsgUtils.getMessageLabel("ExecutorNotSet"));
         }
@@ -247,6 +247,15 @@ public class TaskCardBean extends BaseCardBean<Task>{
         return remark != null;
     }
     
+    /**
+     * Опредеяет, должно ли быть заполнено поле исполнитель
+     * @return 
+     */
+    public boolean isRequiredExecutor(){
+        if (getEditedItem().getRoleInProc() != null) return false;
+        return getEditedItem().getOwner() == null;
+    }
+    
     @Override
     protected void onBeforeSaveItem(Task task){
         saveDateFields(task);
@@ -311,8 +320,17 @@ public class TaskCardBean extends BaseCardBean<Task>{
         } else {
             taskFacade.taskDone(task, result, getCurrentUser());
         }
-        return closeItemForm(SysParams.EXIT_EXECUTE);
+        return closeTaskForm();
     }    
+    
+    /**
+     * Закрытие карточки задачи после запуска из-неё подпроцесса
+     * @param exits
+     * @return 
+     */    
+    public String closeTaskForm() {        
+        return closeItemForm(SysParams.EXIT_EXECUTE);
+    }
     
     /**
      * Обработка события открытия карточки процесса 

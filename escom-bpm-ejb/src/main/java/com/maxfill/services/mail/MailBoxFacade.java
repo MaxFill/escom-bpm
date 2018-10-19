@@ -21,13 +21,13 @@ public class MailBoxFacade extends BaseLazyFacade<Mailbox>{
     }
 
     public List<Mailbox> findAll() {
-        getEntityManager().getEntityManagerFactory().getCache().evict(Mailbox.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(Mailbox.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Mailbox> cq = builder.createQuery(Mailbox.class);
         Root<Mailbox> c = cq.from(Mailbox.class);        
         Predicate crit1 = builder.equal(c.get("actual"), true);
         cq.select(c).where(builder.and(crit1));
-        Query q = getEntityManager().createQuery(cq);       
+        Query q = em.createQuery(cq);       
         return q.getResultList(); 
     }
     

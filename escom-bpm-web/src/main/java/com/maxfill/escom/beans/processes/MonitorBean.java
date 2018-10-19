@@ -50,6 +50,8 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     private Date dateEnd;
     private User initiator;
     private Staff curator;
+    private String number;
+    
     private List<State> states = new ArrayList<>();
     private List<String> results = new ArrayList<>();
     private List<String> allResults;
@@ -167,6 +169,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
         if (!results.isEmpty()){            
             filters.put("procResults", results);
         }
+        if (StringUtils.isNotBlank(number)){
+            filters.put("regNumber", number);
+        }
         return filters;
     }         
     
@@ -176,16 +181,27 @@ public class MonitorBean extends BaseViewBean<BaseView>{
      * @return 
      */
     public String onGetItemTitle(BaseDict item){
+        StringBuilder sb = new StringBuilder();
         if (item instanceof Task){
-            Staff staff = (Staff)item.getOwner();
-            return staff.getEmployee().getShortFIO();
+            Task task = (Task)item;
+            if (task.getRoleInProc() != null){
+                sb.append(getLabelFromBundle(task.getRoleInProc().getRoleFieldName())).append(": ");
+            }
+            if (task.getOwner() != null && task.getOwner().getEmployee() != null){
+                sb.append(task.getOwner().getEmployee().getShortFIO());
+            } else {
+                sb.append("<").append(getLabelFromBundle("NotAssigned")).append(">");
+            }        
         } else {
             if (item instanceof Process){
                 Process process = (Process) item;
-                return process.getCurator().getEmployee().getShortFIO();
+                sb.append(getLabelFromBundle("Curator")).append(": ");
+                if (process.getCurator() != null && process.getCurator().getEmployee() != null){
+                    sb.append(process.getCurator().getEmployee().getShortFIO());
+                }                
             }
         }
-        return "";
+        return sb.toString();
     }        
         
     public String onGetItemResult(Results item){
@@ -306,5 +322,12 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     public void setDateEnd(Date dateEnd) {
         this.dateEnd = dateEnd;
     }
-    
+
+    public String getNumber() {
+        return number;
+    }
+    public void setNumber(String number) {
+        this.number = number;
+    }
+     
 }

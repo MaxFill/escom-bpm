@@ -31,6 +31,7 @@ import com.maxfill.model.basedict.docStatuses.StatusesDocFacade;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.docStatuses.DocStatuses;
+import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.conditions.Condition;
 import com.maxfill.model.basedict.remark.Remark;
@@ -50,6 +51,8 @@ import com.maxfill.model.basedict.result.Result;
 import com.maxfill.model.basedict.staff.StaffFacade;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.basedict.user.UserFacade;
+import com.maxfill.model.basedict.userGroups.UserGroups;
+import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.services.notification.NotificationService;
 import com.maxfill.services.numerators.doc.DocNumeratorService;
 import com.maxfill.services.numerators.process.ProcessNumeratorService;
@@ -112,6 +115,8 @@ public class WorkflowImpl implements Workflow {
     private ProcTimerFacade procTimerFacade;
     @EJB
     private UserFacade userFacade;
+    @EJB
+    private UserGroupsFacade userGroupsFacade;
     @EJB
     private StaffFacade staffFacade;
     
@@ -339,6 +344,22 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
+    public Scheme initScheme(Process process, User currentUser, Set<String> errors){
+        Scheme scheme = process.getScheme();
+        if (scheme == null){
+            scheme = new Scheme(process);
+            process.setScheme(scheme);
+            ProcTempl procTempl = processTypeFacade.getDefaultTempl(process.getOwner(), currentUser);
+            if (procTempl != null){
+                scheme.setElements(new WorkflowElements());
+                scheme.setPackElements(procTempl.getElements());
+            }
+        } 
+        unpackScheme(scheme, currentUser);
+        return scheme;
+    }
+    
+    @Override
     public void packScheme(Scheme scheme) {
         StringWriter sw = new StringWriter();
         JAXB.marshal(scheme.getElements(), sw);
@@ -352,29 +373,51 @@ public class WorkflowImpl implements Workflow {
     }
     
     @Override
-    public void unpackScheme(Scheme scheme) {
+    public void unpackScheme(Scheme scheme, User currentUser) {
         if (scheme == null || scheme.getPackElements() == null ) return;
         try {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            //перелинковка задач с объектами
+            //линковка c задачами
             elements.getTasks().forEach((key, taskEl)-> {
-                for(Task task : scheme.getTasks()){
-                    if (task.getTaskLinkUID().equals(key)){
-                        taskEl.setTask(task);
-                        break;
+                Task task = scheme.getTasks().stream().filter(t-> t.getTaskLinkUID().equals(key)).findFirst().orElse(null);                
+                if (task == null){ 
+                    UserGroups role = null;
+                    if (taskEl.getRoleInProc() != null){
+                        role = userGroupsFacade.find(taskEl.getRoleInProc());
                     }
+                    Staff staff = null;
+                    if (taskEl.getStaffId() != null){
+                        staff = staffFacade.find(taskEl.getStaffId());
+                    } 
+                    task = taskFacade.createTaskInProc(staff, currentUser, scheme.getProcess(), taskEl.getUid());                
+                    task.setConsidInProcReport(taskEl.getConsidInProc());
+                    task.setRoleInProc(role);
+                    task.setDeadLineType(taskEl.getDeadLineType());
+                    task.setName(taskEl.getName());
+                    task.setDeltaDeadLine(taskEl.getDeltaDeadLine());
+                    task.setReminderType(taskEl.getReminderType());
+                    task.setReminderRepeatType(taskEl.getReminderType());
+                    task.setDeltaReminder(taskEl.getDeltaReminder());
+                    task.setReminderTime(taskEl.getReminderTime());
+                    task.setReminderDays(taskEl.getReminderDays());
+                    task.setAvaibleResultsJSON(taskEl.getAvaibleResultsJSON());                    
+                    scheme.getTasks().add(task);
                 }
-               });
-            //перелинковка timers с объектами
+                taskEl.setTask(task);
+            });
+            
+            //линковка c таймерами
             elements.getTimers().forEach((key, timerEl)-> {
-                for(ProcTimer procTimer : scheme.getTimers()){
-                    if (procTimer.getTimerLinkUID().equals(key)){
-                        timerEl.setProcTimer(procTimer);
-                        break;
-                    }
+                ProcTimer procTimer = scheme.getTimers().stream().filter(timer-> timer.getTimerLinkUID().equals(key)).findFirst().orElse(null);                
+                if (procTimer == null){
+                    procTimer = procTimerFacade.createTimer(scheme.getProcess(), scheme, timerEl.getUid());                    
+                    procTimer.setRepeatType(timerEl.getRepeatType());
+                    procTimer.setStartType(timerEl.getStartType());
+                    scheme.getTimers().add(procTimer);
                 }
+                timerEl.setProcTimer(procTimer);                
                });
             scheme.setElements(elements);
         } catch (IOException ex) {
@@ -385,12 +428,12 @@ public class WorkflowImpl implements Workflow {
 
     @Override
     public void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors) {       
-        if (scheme.getElements().getExits().isEmpty()){
-            errors.add("DiagramNotHaveExit");
-        }
         StartElem startElem = scheme.getElements().getStartElem();        
         if (startElem == null && scheme.getElements().getEnters().isEmpty()){
             errors.add("DiagramNotHaveStart");
+        }
+        if (scheme.getElements().getExits().isEmpty()){
+            errors.add("DiagramNotHaveExit");
         }
         if (scheme.getElements().getConnectors().isEmpty()){
             errors.add("DiagramNotHaveConnectors");
@@ -401,6 +444,9 @@ public class WorkflowImpl implements Workflow {
         Date planEndDate = scheme.getProcess().getPlanExecDate();
         if (checkTasks){            
             for(Task task : scheme.getTasks()){ 
+                if (task.getOwner()==null && task.getRoleInProc()==null){
+                    errors.add("TaskNoHaveExecutor");
+                }
                 if (StringUtils.isBlank(task.getName())){
                     errors.add("TaskNoHaveName");
                 }
@@ -479,7 +525,7 @@ public class WorkflowImpl implements Workflow {
             return forShow;
         }
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme);
+        unpackScheme(scheme, currentUser);
         if (errors.isEmpty()){
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
@@ -499,7 +545,7 @@ public class WorkflowImpl implements Workflow {
             
             List<Integer> executedTasks = startElement.getTasksExec();            
             executedTasks.add(task.getId());
-            
+                        
             params.put(EXECUTED_TASKS, executedTasks);
             
             forShow.addAll(run(process, startElement, new HashSet<>(), currentUser, params, errors));
@@ -519,7 +565,7 @@ public class WorkflowImpl implements Workflow {
             return;
         }
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme);
+        unpackScheme(scheme, userFacade.getAdmin());
         TimerElem startElement = scheme.getElements().getTimers().get(procTimer.getTimerLinkUID());
         run(process, startElement, new HashSet<>(), admin, new HashMap<>(), errors);
     }
@@ -550,7 +596,7 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param scheme 
      */
-    private void startTasks(Set<Task> tasks, Map<String, Object> params){
+    private void startTasks(Process process, Set<Task> tasks, Map<String, Object> params, Set<String> errors){
         if (tasks.isEmpty()) return;
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         tasks.stream()
@@ -561,17 +607,27 @@ public class WorkflowImpl implements Workflow {
                 task.setFactExecDate(null);
                 task.setResult(null);
                 task.setComment(null);
-                if ("delta".equals(task.getDeadLineType())){
-                    task.setPlanExecDate(DateUtils.calculateDate(task.getBeginDate(), task.getDeltaDeadLine()));
-                }                
-                
-                notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
-                
-                taskFacade.makeReminder(task); 
-                taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
-                taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
-                task.getState().setCurrentState(stateFacade.getRunningState());
-            });            
+                if (task.getOwner() == null && task.getRoleInProc() != null){
+                    User actor = processFacade.getActor(process, task.getRoleInProc().getRoleFieldName());
+                    if (actor != null){
+                        task.setOwner(actor.getStaff());
+                    }
+                }
+                if (task.getOwner() != null){
+                    if ("delta".equals(task.getDeadLineType())){
+                        taskFacade.makeDatePlan(task);                    
+                    }                
+
+                    notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
+
+                    taskFacade.makeReminder(task); 
+                    taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
+                    taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
+                    task.getState().setCurrentState(stateFacade.getRunningState());
+                } else {
+                    errors.add("OneTasksFailedSetRole");
+                }
+            });
     }
     
     /**
@@ -589,8 +645,7 @@ public class WorkflowImpl implements Workflow {
                 params.put("documents", Collections.singletonList(mainProcess.getDocument()));
                 params.put("curator", mainProcess.getCurator());
                 params.put("author", author);
-                subProcess = processFacade.createItem(author, mainProcess, owner, params);                
-                subProcess.setPlanExecDate(mainProcess.getPlanExecDate());
+                subProcess = processFacade.createItem(author, mainProcess, owner, params);
                 subProcess.setCompany(mainProcess.getCompany());
                 processFacade.create(subProcess);
                 subProcElem.setProcessId(subProcess.getId());
@@ -617,7 +672,7 @@ public class WorkflowImpl implements Workflow {
     @Override
     public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {        
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme);
+        unpackScheme(scheme, currentUser);
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
         
@@ -744,7 +799,7 @@ public class WorkflowImpl implements Workflow {
         //если есть главный процесс, то выполняем переход в него
         if (process.getParent() != null){ 
             Process mainProcess = processFacade.find(process.getParent().getId());
-            unpackScheme(mainProcess.getScheme());
+            unpackScheme(mainProcess.getScheme(), currentUser);
             SubProcessElem subProcessElem = mainProcess.getScheme().getElements().getSubprocesses().values().stream()
                 .filter(subProcEl->Objects.equals(process.getId(), subProcEl.getProcessId())).findFirst().orElse(null);
             run(mainProcess, subProcessElem, exeSubProc, currentUser, new HashMap<>(), errors);
@@ -769,7 +824,7 @@ public class WorkflowImpl implements Workflow {
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
         if (errors.isEmpty()){
-            startTasks(exeTasks, params);            
+            startTasks(process, exeTasks, params, errors);
             forShow.addAll(initSubProcesses(process, exeSubProc, currentUser, errors));
             if (errors.isEmpty()){
                 packScheme(process.getScheme());

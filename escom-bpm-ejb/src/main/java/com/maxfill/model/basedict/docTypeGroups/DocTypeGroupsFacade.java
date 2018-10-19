@@ -61,14 +61,14 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
 
     @Override
     public List<BaseDict> findDetailItems(DocTypeGroups owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(DocType.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(DocType.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<DocType> cq = builder.createQuery(DocType.class);
         Root<DocType> c = cq.from(DocType.class);
         Predicate crit = builder.equal(c.get(DocType_.owner), owner);
         cq.select(c).where(builder.and(crit));
         cq.orderBy(builder.asc(c.get("name")));
-        Query query = getEntityManager().createQuery(cq);       
+        Query query = em.createQuery(cq);       
         return query.getResultList();
     }
 
@@ -91,13 +91,13 @@ public class DocTypeGroupsFacade extends BaseDictFacade<DocTypeGroups, DocTypeGr
      * @return
      */
     private int replaceDocTypeGroupInDocTypes(DocTypeGroups oldItem, DocTypeGroups newItem) {
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaUpdate<DocType> update = builder.createCriteriaUpdate(DocType.class);
         Root root = update.from(DocType.class);
         update.set(DocType_.owner, newItem);
         Predicate predicate = builder.equal(root.get(DocType_.owner), oldItem);
         update.where(predicate);
-        Query query = getEntityManager().createQuery(update);
+        Query query = em.createQuery(update);
         return query.executeUpdate();
     }
 }

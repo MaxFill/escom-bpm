@@ -22,6 +22,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
@@ -47,27 +48,27 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
     }
 
     public List<UserMessages> findUnReadMessageByUser(User addressee){
-        getEntityManager().getEntityManagerFactory().getCache().evict(UserMessages.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(UserMessages.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<UserMessages> cq = builder.createQuery(UserMessages.class);
         Root<UserMessages> root = cq.from(UserMessages.class);
         Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), addressee);
         Predicate crit2 = builder.isNull(root.get(UserMessages_.dateReading));
         cq.select(root).where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(root.get(UserMessages_.dateSent)));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
     public List<UserMessages> findMessageByUser(User addressee){
-        getEntityManager().getEntityManagerFactory().getCache().evict(UserMessages.class);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(UserMessages.class);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<UserMessages> cq = builder.createQuery(UserMessages.class);
         Root<UserMessages> c = cq.from(UserMessages.class);
         Predicate crit1 = builder.equal(c.get(UserMessages_.addressee), addressee);
         cq.select(c).where(builder.and(crit1));
         cq.orderBy(builder.asc(c.get(UserMessages_.dateSent)));
-        Query q = getEntityManager().createQuery(cq);
+        Query q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -144,14 +145,14 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
     }    
     
     public Integer getCountUnReadMessage(User addressee){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root<UserMessages> root = cq.from(UserMessages.class);        
         Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), addressee);
         Predicate crit2 = builder.isNull(root.get(UserMessages_.dateReading));
         cq.select(builder.count(root));
         cq.where(builder.and(crit1, crit2));        
-        Query query = getEntityManager().createQuery(cq);
+        Query query = em.createQuery(cq);
         return ((Long) query.getSingleResult()).intValue();
     }
 
@@ -161,12 +162,12 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
      * @return 
      */
     public int removeMessageByUser(User user){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
         Root root = cd.from(UserMessages.class);
         Predicate crit1 = builder.equal(root.get(UserMessages_.addressee), user);
         cd.where(crit1);
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();
     }
     
@@ -176,22 +177,37 @@ public class UserMessagesFacade extends BaseLazyFacade<UserMessages>{
      * @return 
      */
     public int removeMessageByProcess(Process process){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
         Root root = cd.from(UserMessages.class);
         Predicate crit1 = builder.equal(root.get(UserMessages_.process), process);
         cd.where(crit1);
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();
     }
     
     public int removeMessageByTask(Task task){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete<UserMessages> cd = builder.createCriteriaDelete(UserMessages.class);
         Root root = cd.from(UserMessages.class);
         Predicate crit1 = builder.equal(root.get(UserMessages_.task), task);
         cd.where(crit1);
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();
+    }
+    
+    public void makeAsRead(UserMessages msg){
+        msg.setDateReading(new Date());
+        edit(msg);        
+    }
+    
+    public int makeAsReadByTask(Task task, Date dateRead){
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaUpdate update = builder.createCriteriaUpdate(UserMessages.class);
+        Root root = update.from(UserMessages.class);
+        update.set(UserMessages_.dateReading, dateRead);
+        Predicate predicate = builder.equal(root.get(UserMessages_.task), task);
+        update.where(predicate);
+        return em.createQuery(update).executeUpdate();        
     }
 }

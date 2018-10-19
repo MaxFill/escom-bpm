@@ -115,6 +115,34 @@ public abstract class BaseDictWithRolesFacade<T extends BaseDict, O extends Base
     }
     
     /**
+     * Возвращает исполнителей указанной роли
+     * @param item
+     * @param roleName
+     * @return 
+     */
+    public List<User> getActors(T item, String roleName){ 
+        roleName = roleName.trim().toUpperCase();
+        Map<String, Set<Integer>> roles = item.getRoles();
+        if (roles.isEmpty() || !roles.containsKey(roleName)) return new ArrayList<>();
+        Set<Integer> usersIds = roles.get(roleName);
+        if (CollectionUtils.isEmpty(usersIds)) return new ArrayList<>();
+        return userFacade.findByIds(usersIds, userFacade.getAdmin());                
+    }
+    
+    /**
+     * Возвращает исполнителя указанной роли
+     * @param item
+     * @param roleName
+     * @return 
+     */
+    public User getActor(T item, String roleName){
+        return getActors(item, roleName).stream()
+                .filter(user->user.getStaff() != null)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    /**
      * Формирует список пользователей, входящих в роль
      * @param item - процесс или документ
      * @param roleName

@@ -85,26 +85,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     public void remove(T entity){
         removeItemLogs(entity);
         super.remove(entity);
-    }
-        
-    public String getFRM_NAME(){
-        return itemClass.getSimpleName().toLowerCase();
-    }
-        
-    public String getItemHREF(T item){
-        String url = ItemUtils.getItemURL(item, getItemFormPath(), configuration.getServerAppURL());
-        StringBuilder links = new StringBuilder();
-        links.append("<a href=").append(url).append(">").append(item.getName()).append("</a>");        
-        return links.toString();
-    }
+    }        
 
     protected String getItemFormPath(){
         return "";
     }
     
     public Tuple findDublicateExcludeItem(T item){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass); 
         List<Predicate> criteries = new ArrayList<>();
@@ -113,7 +102,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(c).where(builder.and(predicates));        
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        TypedQuery<T> query = em.createQuery(cq);
         List<T> rezult = query.getResultList();
         if (rezult.isEmpty()){
             return new Tuple(false, null);
@@ -207,7 +196,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-    }        
+    }
     
     /**
      * Установка начального состояния объекта
@@ -249,18 +238,22 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return 
      */ 
     public List<T> findAll(User currentUser) {                        
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);        
         Predicate crit1 = builder.equal(c.get("actual"), true);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(orderBuilder(builder, c));
-        TypedQuery<T> query = getEntityManager().createQuery(cq);       
+        TypedQuery<T> query = em.createQuery(cq);       
         return query.getResultStream()     
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
+    }
+    
+    public List<T> findActualItemsByOwner(O owner, User currentUser){
+        return findActualDetailItems(owner, 0, 0, "", "", currentUser);
     }
     
     /* Возвращает актуальные подчинённые объекты для владельца  */
@@ -268,8 +261,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         //Внимание! поле sortField может не быть в таблице, поэтому сортировку я отключил!
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass);   
         List<Predicate> criteries = new ArrayList<>();
@@ -289,7 +282,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
         cq.select(root).where(builder.and(predicates));        
 
-        TypedQuery<T> query = getEntityManager().createQuery(cq);       
+        TypedQuery<T> query = em.createQuery(cq);       
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         
@@ -299,8 +292,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
 
     public Long findCountActualDetails(O owner){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root<T> root = cq.from(itemClass);   
         List<Predicate> criteries = new ArrayList<>();
@@ -320,7 +313,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                        
         cq.select(builder.count(root)).where(builder.and(predicates));
 
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
             
@@ -335,8 +328,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     
     /* Возвращает корневые объекты  */
     public Stream<T> findRootItems(User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);   
         List<Predicate> criteries = new ArrayList<>();
@@ -351,7 +344,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
         cq.select(c).where(builder.and(predicates));               
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        TypedQuery<T> query = em.createQuery(cq);
                 
         return query.getResultStream()
                 .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
@@ -361,15 +354,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     public List<T> findItemsCreatedByUser(User currentUser, int first, int pageSize){
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("author"), currentUser);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<T> query = getEntityManager().createQuery(cq); 
+        TypedQuery<T> query = em.createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultStream()
@@ -378,14 +371,14 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }    
     
     public Long getCountDetails(BaseDict owner){
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = builder.createQuery(Long.class);
         Root<T> root = cq.from(itemClass);
         Predicate crit1 = builder.equal(root.get("owner"), owner);
         Predicate crit2 = builder.equal(root.get("deleted"), false);
         Predicate crit3 = builder.equal(root.get("actual"), true);
         cq.select(builder.count(root)).where(builder.and(crit1, crit2, crit3));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }    
     
@@ -393,13 +386,13 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     public List<T> loadFromTrash(int first, int pageSize, String sortField, String sortOrder, User currentUser){
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass); 
         Predicate crit2 = builder.equal(root.get("deleted"), true);
         cq.select(root).where(builder.and(crit2));
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        TypedQuery<T> query = em.createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return filtrationTrashResult(query.getResultStream())       
@@ -425,15 +418,15 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     public List<T> loadNotActualItems(int first, int pageSize, User currentUser){
         first = 0;
         pageSize = configuration.getMaxResultCount();
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);        
         Predicate crit1 = builder.equal(c.get("actual"), false);
         Predicate crit2 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2));
         cq.orderBy(builder.asc(c.get("name")));
-        TypedQuery<T> query = getEntityManager().createQuery(cq); 
+        TypedQuery<T> query = em.createQuery(cq); 
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultStream()
@@ -446,7 +439,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         return null;
     }
         
-    /* ЛОГИРОВАНИЕ  */
+    /* *** ЛОГИРОВАНИЕ  *** */
 
     /**
      * Возвращает лог объекта
@@ -458,8 +451,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return 
      */
     public List<L> getItemLogs(T item, int firstPosition, int numberOfRecords, String sortField, String sortOrder){
-        getEntityManager().getEntityManagerFactory().getCache().evict(logClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(logClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<L> cq = builder.createQuery(logClass);
         Root<L> root = cq.from(logClass);
         Predicate crit1 = builder.equal(root.get("item"), item);
@@ -471,7 +464,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                 cq.orderBy(builder.desc(root.get(sortField)));
             }
         }
-        TypedQuery query = getEntityManager().createQuery(cq);
+        TypedQuery query = em.createQuery(cq);
         query.setFirstResult(firstPosition);
         query.setMaxResults(numberOfRecords);
         return query.getResultList();
@@ -483,14 +476,14 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return
      */
     public int getCountItemLogs(T item){
-        getEntityManager().getEntityManagerFactory().getCache().evict(logClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(logClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery();
         Root root = cq.from(logClass);
         Predicate crit1 = builder.equal(root.get("item"), item);
         cq.select(builder.count(root))
             .where(builder.and(crit1));
-        TypedQuery q = getEntityManager().createQuery(cq);
+        TypedQuery q = em.createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
     }
     
@@ -508,7 +501,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             logEvent.setDateEvent(new Date());
             logEvent.setUserId(user);
             logEvent.setItem(item);            
-            getEntityManager().persist(logEvent);
+            em.persist(logEvent);
         } catch (IllegalAccessException | InstantiationException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
@@ -517,17 +510,16 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     /**
      * Очистка журнала объекта
-     * @param entity
-     * @param filters
+     * @param entity     
      * @return 
      */
     public int removeItemLogs(T entity){        
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaDelete cd = builder.createCriteriaDelete(logClass);
         Root<L> root = cd.from(logClass);
         Predicate crit1 = builder.equal(root.get("item"), entity);
         cd.where(builder.and(crit1));
-        Query query = getEntityManager().createQuery(cd);
+        Query query = em.createQuery(cd);
         return query.executeUpdate();    
     }
             
@@ -542,7 +534,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         first = 0;
         pageSize = configuration.getMaxResultCount();
         CriteriaQuery<T> criteriaQuery = selectQueryByParameters(states, paramEQ, paramLIKE, paramIN, paramDATE, itemClass, addParams);
-        TypedQuery<T> query = getEntityManager().createQuery(criteriaQuery);        
+        TypedQuery<T> query = em.createQuery(criteriaQuery);        
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultStream()
@@ -551,8 +543,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     }
     
     protected <EC> CriteriaQuery<EC> selectQueryByParameters(List<Integer> states, Map<String, Object> paramEQ, Map<String, Object> paramLIKE, Map<String, Object> paramIN, Map<String, Date[]> paramDATE, Class<EC> itemClass, Map<String, Object> addParams) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<EC> criteriaQuery = builder.createQuery(itemClass);
         Root<EC> root = criteriaQuery.from(itemClass);
         
@@ -606,9 +598,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
     public Metadates getMetadatesObj() {
         return metadatesFacade.find(getMetadatesObjId());
-    }    
-    
-    protected abstract Integer getMetadatesObjId();   
+    }       
     
     /**
      * Возвращает колво записей, в которых пользователь является автором
@@ -616,8 +606,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      * @return 
      */
     public Long findCountUserLinks(User user){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery cq = builder.createQuery(Long.class);
         Root root = cq.from(itemClass);
         List<Predicate> criteries = new ArrayList<>();
@@ -626,7 +616,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate[] predicates = new Predicate[criteries.size()];
         predicates = criteries.toArray(predicates);
         cq.select(builder.count(root)).where(builder.and(predicates));
-        Query query = getEntityManager().createQuery(cq);  
+        Query query = em.createQuery(cq);  
         return (Long) query.getSingleResult();
     }
     
@@ -637,7 +627,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         
         Date lastDate = DateUtils.addMounth(new Date(), -1);
 
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> rootItems = cq.from(itemClass);
 
@@ -657,7 +647,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         cq.select(rootItems);
         cq.where(builder.and(rootItems.get("id").in(sq), builder.equal(rootItems.get("deleted"), false))); 
  
-        TypedQuery<T> query = getEntityManager().createQuery(cq);
+        TypedQuery<T> query = em.createQuery(cq);
         query.setFirstResult(first);
         query.setMaxResults(pageSize);
         return query.getResultList();
@@ -672,8 +662,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
     @Override
     public List<T> findByIds(Collection<Integer> ids, User currentUser){
         if (!ids.isEmpty()){
-            getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-            CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+            em.getEntityManagerFactory().getCache().evict(itemClass);
+            CriteriaBuilder builder = em.getCriteriaBuilder();
             CriteriaQuery<T> cq = builder.createQuery(itemClass);
             Root<T> c = cq.from(itemClass);
             
@@ -689,7 +679,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
             cq.select(c).where(builder.and(predicates));               
             cq.orderBy(builder.asc(c.get("name")));                   
             
-            TypedQuery<T> query = getEntityManager().createQuery(cq);       
+            TypedQuery<T> query = em.createQuery(cq);       
             return query.getResultStream()      
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -700,8 +690,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
 
      /* Возвращает только актуальные дочерние элементы для parent */
     public Stream<T> findActualChilds(T parent, User currentUser){
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> c = cq.from(itemClass);
         Predicate crit1 = builder.equal(c.get("parent"), parent);
@@ -709,7 +699,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Predicate crit3 = builder.equal(c.get("actual"), true);
         cq.select(c).where(builder.and(crit1, crit2, crit3));
         cq.orderBy(orderBuilder(builder, c));
-        TypedQuery query = getEntityManager().createQuery(cq);
+        TypedQuery query = em.createQuery(cq);
         return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser));
     } 
@@ -724,8 +714,8 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
      */
     @Override
     public List<T> findItemsByFilters(String sortField, String sortOrder, Map<String,Object> filters, User currentUser) {
-        getEntityManager().getEntityManagerFactory().getCache().evict(itemClass);
-        CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+        em.getEntityManagerFactory().getCache().evict(itemClass);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<T> cq = builder.createQuery(itemClass);
         Root<T> root = cq.from(itemClass);
         cq.select(root).where(builder.and(makePredicates(builder, root, filters)));
@@ -736,7 +726,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
                 cq.orderBy(builder.desc(root.get(sortField)));
             }
         }
-        TypedQuery<T> query = getEntityManager().createQuery(cq);        
+        TypedQuery<T> query = em.createQuery(cq);        
         return query.getResultStream()
                     .filter(item -> preloadCheckRightView((BaseDict) item, currentUser))
                     .collect(Collectors.toList());
@@ -1059,5 +1049,18 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         item.doSetSingleRole(DictRoles.ROLE_OWNER, user.getId());
     }
             
-    /* *** *** */
+    /* *** ПРОЧИЕ *** */
+    
+    protected abstract Integer getMetadatesObjId(); 
+        
+    public String getFRM_NAME(){
+        return itemClass.getSimpleName().toLowerCase();
+    }
+        
+    public String getItemHREF(T item){
+        String url = ItemUtils.getItemURL(item, getItemFormPath(), configuration.getServerAppURL());
+        StringBuilder links = new StringBuilder();
+        links.append("<a href=").append(url).append(">").append(item.getName()).append("</a>");        
+        return links.toString();
+    }
 }
