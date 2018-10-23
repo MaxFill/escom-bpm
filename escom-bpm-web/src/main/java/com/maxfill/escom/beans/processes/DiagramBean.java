@@ -34,14 +34,10 @@ import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
-import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.statusesDoc.StatusesDoc;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
-import com.maxfill.model.basedict.user.User;
-import com.maxfill.model.basedict.userGroups.UserGroups;
-import com.maxfill.model.basedict.userGroups.UserGroupsFacade;
 import com.maxfill.services.workflow.Workflow;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
@@ -97,8 +93,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     @EJB
     private ProcessFacade processFacade;
     @EJB
-    private ProcessTypesFacade processTypesFacade;
-    @EJB
     private ProcessTemplFacade processTemplFacade;
     @EJB
     private ProcTimerFacade procTimerFacade;
@@ -110,8 +104,6 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private ConditionFacade conditionFacade;
     @EJB
     private StatusesDocFacade statusesDocFacade;
-    @EJB
-    private UserGroupsFacade userGroupsFacade;
             
     private Element selectedElement = null;
 
@@ -554,7 +546,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public void onAddSubProcessElement(){
         beforeAddElement();
-        baseElement = createSubProcess(null, new HashSet<>());
+        baseElement = createSubProcess(new HashSet<>());
         finalAddElement();
     }
     
@@ -648,15 +640,10 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      * @param errors
      * @return 
      */
-    private SubProcessElem createSubProcess(Process process, Set<String> errors){
-        SubProcessElem subProcElem;
+    private SubProcessElem createSubProcess(Set<String> errors){        
         String x = getX();
         String y = getY();
-        if (process != null){
-            subProcElem = new SubProcessElem(process.getName(), process.getId(), x, y);
-        } else {
-            subProcElem = new SubProcessElem("???", null, x, y);
-        }
+        SubProcessElem subProcElem = new SubProcessElem("???", x, y);
         List<EndPoint> endPoints = new ArrayList<>();
         createSourceEndPoint(endPoints, EndPointAnchor.RIGHT);
         createSourceEndPoint(endPoints, EndPointAnchor.TOP);

@@ -94,9 +94,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
     @Column(name = "Result")
     private String result; 
       
-    @OneToMany
+    /* Ссылка на визуальный элемент схемы процесса */
+    @Column(name = "LinkUID")
+    private String linkUID;
+    
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "parent")
-    private List<Process> childItems;
+    private final List<Process> childItems = new ArrayList<>();
     
     /* Список документов */
     @JoinTable(name = "docsInProcesses", joinColumns = {
@@ -267,6 +271,13 @@ public class Process extends BaseDict<ProcessType, Process, Process, ProcessLog,
         this.scheme = scheme;
     }    
 
+    public String getLinkUID() {
+        return linkUID;
+    }
+    public void setLinkUID(String linkUID) {
+        this.linkUID = linkUID;
+    }
+    
     public List<Doc> getDocs() {
         return docs;
     }

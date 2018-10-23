@@ -13,7 +13,7 @@ import com.maxfill.escom.beans.processes.remarks.RemarkBean;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.facade.BaseDictFacade;
-import com.maxfill.model.Results;
+import com.maxfill.model.basedict.BaseDict;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.process.options.RunOptions;
@@ -21,6 +21,7 @@ import com.maxfill.model.basedict.process.options.RunOptionsFacade;
 import com.maxfill.model.basedict.remark.Remark;
 import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.model.basedict.process.reports.ProcReport;
+import com.maxfill.model.basedict.process.reports.ProcReportFacade;
 import com.maxfill.model.basedict.process.schemes.Scheme;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.processType.ProcessType;
@@ -29,6 +30,7 @@ import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.workflow.Workflow;
+import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
 import java.text.DateFormat;
 import org.apache.commons.lang.StringUtils;
@@ -75,18 +77,36 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private RunOptionsFacade runOptionsFacade;
     @EJB
     private ProcessTypesFacade processTypesFacade;
-     
+    @EJB
+    private ProcReportFacade procReportFacade;
+    @EJB
+    private WorkTimeService workTimeService;
+    
     private String exitParam = SysParams.EXIT_NOTHING_TODO;
     private ProcReport currentReport;  
     private Doc selectedDoc;    
     private String accordDocsTab = null;
     private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
     private List<RunOptions> runOptions = new ArrayList<>();    
-
+    private int deadLineDeltaDay = 0;
+    private int deadLineDeltaHour = 0;
+    
     @Override
     protected void doPrepareOpen(Process process) {
         workflow.unpackScheme(process.getScheme(), getCurrentUser());
         initRunOptions();
+        long hoursInMilli = 3600;
+        long daysInMilli = hoursInMilli * 24;
+        if (process.getDeltaDeadLine() > 0){
+            long deltaSec = process.getDeltaDeadLine();
+
+            Long elapsedDays = deltaSec / daysInMilli;
+            deadLineDeltaDay = elapsedDays.intValue();
+            deltaSec = deltaSec % daysInMilli;
+
+            Long elapsedHours = deltaSec / hoursInMilli;
+            deadLineDeltaHour = elapsedHours.intValue();        
+        }
     }
 
     /**
@@ -95,6 +115,9 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      */
     @Override
     protected void onBeforeSaveItem(Process process){
+        int seconds = deadLineDeltaDay * 86400;
+        seconds = seconds + deadLineDeltaHour * 3600;
+        process.setDeltaDeadLine(seconds);
         processFacade.actualizeProcessRoles(process);
         super.onBeforeSaveItem(process);
     }
@@ -259,6 +282,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         Process process = getEditedItem();
         validatePlanDate(process.getPlanExecDate(), errors);
         validateRemarks(process.getDocument(), errors);
+        processFacade.validateCanRun(process, getCurrentUser(), errors);
         workflow.initScheme(process, getCurrentUser(), errors);
         if (!errors.isEmpty()){
             MsgUtils.showErrorsMsg(errors);
@@ -269,7 +293,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             Map<String, Object> params = new HashMap<>();
             params.put(option, true);
             process = processFacade.find(getEditedItem().getId());
-            workflow.start(process, getCurrentUser(), params, errors);
+            Set<BaseDict> forShow = workflow.start(process, getCurrentUser(), params, errors);
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
             } else {
@@ -296,6 +320,39 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             MsgUtils.warnMsg("ProcessExecutionInterrupted");
         }
     }      
+    
+    /* *** ВАЛИДАЦИЯ ПРОЦЕССА *** */
+    
+    /**
+     * Проверка срока исполнения
+     * @param planDate 
+     * @param errors 
+     */
+    public void validatePlanDate(Date planDate, Set<String> errors){
+        Date today = new Date();
+        if (today.after(planDate)){
+            FacesContext context = FacesContext.getCurrentInstance();
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:dtPlanExecDate");
+            input.setValid(false);
+            errors.add("DeadlineProcessInPastTime");            
+            context.validationFailed();
+        }
+    }    
+
+    /**
+     * Проверка снятых замечаний
+     */
+    private void validateRemarks(Doc doc,  Set<String> errors){
+        if (doc == null) return;
+        doc = docBean.getLazyFacade().find(doc.getId());        
+        Remark remark = doc.getDetailItems().stream()
+                .filter(r->Objects.equals(DictStates.STATE_ISSUED, r.getState().getCurrentState().getId()) && !r.isChecked())
+                .findFirst()
+                .orElse(null);
+        if (remark != null){
+            errors.add("CannotStartProcessUnprocessedRemarks");
+        }
+    }    
     
     /* *** ПРОЧИЕ МЕТОДЫ *** */
      
@@ -331,38 +388,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             menuItem.setParam("isRequired", "true");
             runMenuModel.addElement(menuItem); 
         });        
-    }
-    
-    /**
-     * Проверка срока исполнения
-     * @param planDate 
-     * @param errors 
-     */
-    public void validatePlanDate(Date planDate, Set<String> errors){
-        Date today = new Date();
-        if (today.after(planDate)){
-            FacesContext context = FacesContext.getCurrentInstance();
-            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:dtPlanExecDate");
-            input.setValid(false);
-            errors.add("DeadlineProcessInPastTime");            
-            context.validationFailed();
-        }
-    }    
-
-    /**
-     * Проверка снятых замечаний
-     */
-    private void validateRemarks(Doc doc,  Set<String> errors){
-        if (doc == null) return;
-        doc = docBean.getLazyFacade().find(doc.getId());        
-        Remark remark = doc.getDetailItems().stream()
-                .filter(r->Objects.equals(DictStates.STATE_ISSUED, r.getState().getCurrentState().getId()) && !r.isChecked())
-                .findFirst()
-                .orElse(null);
-        if (remark != null){
-            errors.add("CannotStartProcessUnprocessedRemarks");
-        }
-    }
+    }   
     
     /**
      * Признак доступности кнопки прерывания процесса
@@ -392,6 +418,31 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         return staff.equals(getEditedItem().getCurator()) ? "/resources/icon/16_inspector.png" : "/resources/icon/user.png";
     }
    
+    /**
+     * Вычисление планового срока исполнения
+     */
+    public void calculateDeadline(){
+        Process process = getEditedItem();
+        Set<String> errors = new HashSet<>();
+        if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
+            errors.add("DeadlineIncorrect");            
+        }
+        if (process.getCompany() == null){
+            errors.add("CompanyNotSet");
+        }
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        int deltasec = deadLineDeltaDay * 86400;
+        deltasec = deltasec + deadLineDeltaHour * 3600;
+        process.setDeltaDeadLine(deltasec);
+        Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
+        process.setPlanExecDate(planDate);
+        String strDate = DateUtils.dateToString(planDate,  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
+        MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
+    }
+    
     /* *** СООБЩЕНИЯ *** */
     
     /**
@@ -497,7 +548,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
                 partnerName = doc.getPartner().getFullName();
             }
         } 
-        List<Object> dataReport = process.getReports().stream()
+        List<Object> dataReport = procReportFacade.findReportByDoc(doc, DictRoles.ROLE_CONCORDER).stream()
                 .map(report -> {
                     String data = DateUtils.dateToString(report.getDateCreate(),  DateFormat.SHORT, null, getLocale());
                     String dateBegin;
@@ -543,6 +594,20 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public DefaultMenuModel getRunMenuModel() {
         return runMenuModel;
     }
+    
+    public int getDeadLineDeltaDay() {
+        return deadLineDeltaDay;
+    }
+    public void setDeadLineDeltaDay(int deadLineDeltaDay) {
+        this.deadLineDeltaDay = deadLineDeltaDay;
+    }
+
+    public int getDeadLineDeltaHour() {
+        return deadLineDeltaHour;
+    }
+    public void setDeadLineDeltaHour(int deadLineDeltaHour) {
+        this.deadLineDeltaHour = deadLineDeltaHour;
+    }  
     
     public Doc getSelectedDoc() {
         return selectedDoc;

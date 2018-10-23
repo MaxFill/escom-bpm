@@ -1,11 +1,13 @@
 package com.maxfill.model.basedict.process.schemes.elements;
 
+import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.utils.EscomUtils;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Сущность "Элемент схемы процесса "Подпроцесс"
@@ -14,9 +16,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SubProcessElem extends WFConnectedElem{
     private static final long serialVersionUID = 5314328285810719081L;
-
-    @XmlElement(name = "process")
-    private Integer processId;
 
     @XmlElement(name = "proctype")
     private Integer proctypeId;
@@ -27,13 +26,15 @@ public class SubProcessElem extends WFConnectedElem{
     @XmlElement(name = "showcard")
     private boolean showCard = true;
     
+    @XmlTransient
+    private Process subProcess;
+    
     public SubProcessElem() {
         this.uid = EscomUtils.generateGUID();
     }
     
-    public SubProcessElem(String caption, Integer processId, String x, String y) {
+    public SubProcessElem(String caption, String x, String y) {
         this.caption = caption;
-        this.processId = processId;
         this.posX = x;
         this.posY = y;
         this.uid = EscomUtils.generateGUID();
@@ -61,14 +62,7 @@ public class SubProcessElem extends WFConnectedElem{
     }
     public void setShowCard(boolean showCard) {
         this.showCard = showCard;
-    }
-        
-    public Integer getProcessId() {
-        return processId;
-    }
-    public void setProcessId(Integer processId) {
-        this.processId = processId;
-    }
+    }        
 
     public Integer getProctypeId() {
         return proctypeId;
@@ -83,7 +77,14 @@ public class SubProcessElem extends WFConnectedElem{
     public void setProctemplId(Integer proctemplId) {
         this.proctemplId = proctemplId;
     }
-        
+
+    public Process getSubProcess() {
+        return subProcess;
+    }
+    public void setSubProcess(Process subProcess) {
+        this.subProcess = subProcess;
+    }
+         
     /* *** *** */
     
     @Override

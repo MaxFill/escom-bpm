@@ -2,6 +2,7 @@ package com.maxfill.model.basedict.process.reports;
 
 import com.maxfill.model.Dict;
 import com.maxfill.model.attaches.Attaches;
+import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
@@ -47,6 +48,10 @@ public class ProcReport implements Serializable, Dict{
     @Column(name = "Status")    
     private String status;
     
+    @Basic(optional = false)    
+    @Column(name = "Role")    
+    private String roleName;
+    
     @XmlTransient
     @JoinColumn(name = "Author", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -62,6 +67,11 @@ public class ProcReport implements Serializable, Dict{
     @ManyToOne(optional = false)
     private Process process;
     
+    @XmlTransient    
+    @JoinColumn(name = "Document", referencedColumnName = "Id")
+    @ManyToOne(optional = false)
+    private Doc doc;
+     
     @XmlTransient    
     @JoinColumn(name = "Task", referencedColumnName = "Id")
     @ManyToOne(optional = false)
@@ -110,6 +120,13 @@ public class ProcReport implements Serializable, Dict{
         this.id = id;
     }
 
+    public Doc getDoc() {
+        return doc;
+    }
+    public void setDoc(Doc doc) {
+        this.doc = doc;
+    }
+    
     public String getContent() {
         return content;
     }
@@ -117,6 +134,13 @@ public class ProcReport implements Serializable, Dict{
         this.content = content;
     }
 
+    public String getRoleName() {
+        return roleName;
+    }
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+    
     public User getAuthor() {
         return author;
     }

@@ -10,6 +10,8 @@ import com.maxfill.model.basedict.process.conditions.ConditionFacade;
 import com.maxfill.model.basedict.process.conditions.Condition;
 import com.maxfill.model.basedict.process.schemes.elements.ConditionElem;
 import com.maxfill.model.basedict.staff.Staff;
+import com.maxfill.model.core.states.State;
+import com.maxfill.model.core.states.StateFacade;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +23,7 @@ import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.PrimeFaces;
 
 /**
  * Контролер формы "Свойства условия процесса"
@@ -32,12 +35,16 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
     
     @EJB
     private ConditionFacade conditionFacade;
+    @EJB
+    private StateFacade stateFacade;
     
     private Condition selected = null;
     private ConditionElem sourceItem = null;
     private ConditionElem editedItem = new ConditionElem();    
     private Staff selectedStaff;
+    private State selectedState;
     private List<Staff> concorders;
+    private String caption;
     
     private Map<String, Object> params = new HashMap<>();;
     
@@ -46,12 +53,13 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
         if (sourceItem == null){             
             if (sourceBean != null){
                 sourceItem = (ConditionElem)((DiagramBean)sourceBean).getBaseElement(); 
+                caption = sourceItem.getCaption();
                 if (sourceItem.getConditonId() != null){
                     selected = conditionFacade.find(sourceItem.getConditonId());
                     loadParams();                    
                 }
             }
-            if (sourceItem != null){                
+            if (sourceItem != null){
                 try {
                     BeanUtils.copyProperties(editedItem, sourceItem);
                 } catch (IllegalAccessException | InvocationTargetException ex) {
@@ -65,9 +73,12 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
         try {
             if (selected != null){
                 editedItem.setConditonId(selected.getId());
-                editedItem.setCaption(makeCaption());
+                editedItem.setCaption(caption);
                 if (isCanStaffSelect()){
                     params.put("staff", selectedStaff.getId());
+                }
+                if (isCanStateSelect()){
+                    params.put("stateId", selectedState.getId());
                 }
                 editedItem.setParams(params);
             }
@@ -76,7 +87,7 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
             LOGGER.log(Level.SEVERE, null, ex);
         }
         return onCloseCard(param);
-    }
+    }       
     
     private void loadParams(){        
         params = sourceItem.getParams();
@@ -89,8 +100,14 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
             if (staffId != null){
                 selectedStaff = staffFacade.find(staffId);
             }
-        } 
-    }          
+        }
+        if (params.containsKey("stateId")){
+            Integer stateId = (Integer) params.get("stateId");
+            if (stateId != null){
+                selectedState = stateFacade.find(stateId);
+            }
+        }
+    }
     
     private void loadParamsFromCondition(){
         params.clear();
@@ -105,16 +122,28 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
         return params.containsKey("staff");            
     }
     
+    public boolean isCanStateSelect(){
+        return params.containsKey("stateId");            
+    }
+    
+    /**
+     * Обработка события выбора условия на карточке
+     */    
     public void onConditionSelect(){                
-        loadParamsFromCondition();        
+        loadParamsFromCondition();
     }    
        
-    public String makeCaption(){
+    public void makeCaption(){
+        if (selected == null) return;
         StringBuilder sb = new StringBuilder(MsgUtils.getBandleLabel(selected.getName()));
-        if (isCanStaffSelect()){
+        if (isCanStaffSelect() && selectedStaff != null){
             sb.append(" ").append(selectedStaff.getEmployeeFIO()).append("?");
         }
-        return sb.toString();
+        if (isCanStateSelect() && selectedState != null){
+            sb.append(" ").append(getLabelFromBundle(selectedState.getName())).append("?");
+        }
+        caption = sb.toString();
+        PrimeFaces.current().ajax().update("mainFRM:mainTabView:name");
     } 
     
     @Override
@@ -123,7 +152,21 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
     }     
 
     /* GETS & SETS */
+
+    public State getSelectedState() {
+        return selectedState;
+    }
+    public void setSelectedState(State selectedState) {
+        this.selectedState = selectedState;
+    }
     
+    public String getCaption() {
+        return caption;
+    }
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+        
     public Condition getSelected() {
         return selected;
     }
@@ -140,7 +183,9 @@ public class ConditionCardBean extends BaseViewBean<BaseView>{
 
     public List<Staff> getConcorders() {
         if (concorders == null){
-            concorders = ((DiagramBean)sourceBean).getProcess().getScheme().getTasks().stream().map(t->t.getOwner()).collect(Collectors.toList());            
+            concorders = ((DiagramBean)sourceBean).getProcess().getScheme().getTasks().stream()
+                    .filter(t->t.getOwner() != null)
+                    .map(t->t.getOwner()).collect(Collectors.toList());            
         }
         return concorders;
     }

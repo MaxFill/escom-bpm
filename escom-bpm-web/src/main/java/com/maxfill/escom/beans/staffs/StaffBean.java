@@ -189,18 +189,18 @@ public class StaffBean extends BaseExplBeanGroups<Staff, Department> {
     }
 
     public void makeName(Staff staff){
+        StringBuilder sb = new StringBuilder();
+        User user = staff.getEmployee();
+        if (user != null && StringUtils.isNotEmpty(user.getShortFIO())) {
+            sb.append(user.getShortFIO()).append(" ");
+        } else {
+            sb.append(MsgUtils.getBandleLabel("Vacant")).append(" ");
+        }
         Post post = staff.getPost();
-        StringBuilder staffName = new StringBuilder();
         if (post != null && StringUtils.isNoneBlank(post.getName())) {
-            staffName.append(post.getName());
-            User user = staff.getEmployee();
-            if (user != null && StringUtils.isNotEmpty(user.getShortFIO())) {
-                staffName.append(" ").append(user.getShortFIO());
-            } else {
-                staffName.append(" (").append(MsgUtils.getBandleLabel("Vacant")).append(")");
-            }
-        } 
-        staff.setName(staffName.toString());
+            sb.append(post.getName());
+        }
+        staff.setName(sb.toString());
     }
 
 }

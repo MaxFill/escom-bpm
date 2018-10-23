@@ -300,7 +300,7 @@ public abstract class BaseDict<O extends BaseDict, P extends BaseDict, D extends
     public String getNameEndElipse(){
         return StringUtils.abbreviate(getName(), SysParams.LENGHT_NAME_ELIPSE);        
     }    
-
+     
     /**
      * Возвращает строку для отображения в заголовке карточки
      * @return

@@ -12,8 +12,8 @@
 
 .ui-diagram-task {
     background-color: #9ed4ef;
-    width: 13em;
-    height: 6em;
+    width: 12em;
+    height: 5em;
 }
 
 .ui-diagram-subprocess {
@@ -124,8 +124,8 @@
 }
 
 .ui-diagram-condition {
-    width:8em;
-    height:7em;
+    width:7em;
+    height:6em;
     background-color: #c306ab;
 }
 

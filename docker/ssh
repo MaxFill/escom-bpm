@@ -1,5 +1,5 @@
-62.173.140.9
-fjuM610zVG1X
+185.31.160.224 
+Y1c4G4k6
 
 sudo scp -r /home/maksim/escom-bpm/docker root@62.173.140.9:/home/docker
 sudo scp -r root@62.173.140.9:/home/file_name.sql /home/maksim/Загрузки/

@@ -76,8 +76,7 @@
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>
-                    <div class="ui-inputgroup">
+                    <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>                    
                     <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
                                      disabled="#{_bean.isReadOnly()}"
@@ -87,8 +86,7 @@
                                      requiredMessage="#{bundle.Field} [#{bundle.Organization}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{companyBean.findAll()}" var="org" itemLabel="#{org.name}" itemValue="#{org}" />
                         <f:selectItem value="#{null}" itemLabel="#{bundle.EmptySelData}" itemValue="#{null}" noSelectionOption="true"/>                        
-                    </p:selectOneMenu>
-                    </div>
+                    </p:selectOneMenu>                    
                     
                     <p:outputLabel value="#{bundle.MainDoc}:" indicateRequired="true" />
                     <ui:include src="/view/common/item-select-btn.xhtml" >
@@ -115,7 +113,7 @@
                     <p:outputLabel value="#{bundle.Curator}:" indicateRequired="true" />
                     <ui:include src="/view/common/item-select-list-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{_bean.editedItem.curator}"/>
-                        <ui:param name="_itemLabel" value="fullName"/>
+                        <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{true}" />
                         <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>
                         <ui:param name="_converter" value="staffConvertor" />
@@ -133,22 +131,50 @@
                                  styleClass="ui-grid-col-12" 
                                  onkeypress="checkEsc();"
                                  onchange="return itemChange = 1;"
-                                 disabled="#{processCardBean.isReadOnly()}"
+                                 disabled="#{_bean.isReadOnly()}"
                                  required="#{param['isRequired'] == 'true'}"
                                  requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                    
 
                     <p:outputLabel value="#{bundle.Term}:" indicateRequired="true"/> 
-                    <p:calendar id="dtPlanExecDate" value="#{processCardBean.editedItem.planExecDate}"  
-                                styleClass="without-spaces" pages="2"
-                                timeZone="#{TimeZone.getDefault()}" disabledWeekends="true"
-                                showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
-                                disabled="#{processCardBean.isReadOnly()}"
-                                locale="#{sessionBean.locale}"
-                                required="#{param['isRequired'] == 'true'}"
-                                navigator="true" yearRange="c-10:c+20"
-                                requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">                    
-                        <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
-                    </p:calendar>
+                    <h:panelGrid columns="2" cellpadding="3" >
+                        <p:selectOneRadio id="typeDatePlan" value="#{_bean.editedItem.deadLineType}" disabled="#{_bean.isReadOnly()}" layout="grid" columns="1" >
+                            <f:selectItem itemLabel="" itemValue="delta"/>
+                            <f:selectItem itemLabel="" itemValue="data" />
+                            <p:ajax update="planEndDate deltaDay deltaHour btnCalcPlan" event="valueChange" onstart="itemChange = 1;"/>
+                        </p:selectOneRadio>  
+                        <h:panelGrid columns="1" cellpadding="3" styleClass="ui-grid-col-12">
+                            <h:panelGroup>
+                                <div class="ui-inputgroup">
+                                <p:spinner id="deltaDay" value="#{_bean.deadLineDeltaDay}" min="0" max="999" 
+                                           suffix="#{bundle.DayShort}" size="3"                                                
+                                           onchange="return itemChange = 1;"                                               
+                                           disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}">                                        
+                                </p:spinner>
+                                <p:spacer width="1"/>
+                                <p:spinner id="deltaHour" value="#{_bean.deadLineDeltaHour}" min="0" max="99" 
+                                           suffix="#{bundle.HourShort}" size="2"
+                                           onchange="return itemChange = 1;"
+                                           disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}">
+                                </p:spinner>                                    
+                                <p:commandButton id="btnCalcPlan" icon="ui-icon-calculator" title="#{bundle.CalculateDeadline}" 
+                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
+                                     update="planEndDate"
+                                     actionListener="#{_bean.calculateDeadline()}"/>
+                                </div>
+                            </h:panelGroup>
+                            <p:calendar id="planEndDate" value="#{_bean.editedItem.planExecDate}"  
+                                        styleClass="without-spaces" pages="2"
+                                        timeZone="#{TimeZone.getDefault()}" disabledWeekends="true"
+                                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"
+                                        disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'delta'}"
+                                        locale="#{sessionBean.locale}"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        navigator="true" yearRange="c-10:c+20"
+                                        requiredMessage="#{bundle.Field} [#{bundle.TermApproval}] #{bundle.MustBeFilled}">                    
+                                <p:ajax event="dateSelect" onstart="itemChange = 1;" />                    
+                            </p:calendar>
+                        </h:panelGrid>
+                    </h:panelGrid>
 
                     <p:accordionPanel id="accordDocs" activeIndex="#{_bean.accordDocsTab}">
                         <p:ajax event="tabChange" listener="#{_bean.onAccordDocsTabChange}"/>
@@ -252,7 +278,6 @@
         
         <ui:define name="dialogs">
             <ui:include src="/view/tasks/report.xhtml"/>
-            <ui:include src="/view/processes/scheme.xhtml"/>
         </ui:define>
     </ui:composition>
 </html>

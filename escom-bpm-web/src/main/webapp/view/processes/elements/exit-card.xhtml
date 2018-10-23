@@ -27,8 +27,8 @@
                     </p:selectBooleanCheckbox>
                     
                     <h:panelGrid id="pnInfo" columns="2">
-                        <p:graphicImage name="/images/escom_logo.jpg"  /> 
-                        <p:outputLabel value="#{msg.InfoProcExit}" rendered="#{_bean.editedItem.finalize}"/>
+                        <p:graphicImage value="/resources/icon/importance-20.png" rendered="#{_bean.editedItem.finalize}" /> 
+                        <h:outputLabel value="#{msg.InfoProcExit}" rendered="#{_bean.editedItem.finalize}"/>
                     </h:panelGrid>
                     
                     <p:outputLabel value="#{bundle.State}:" indicateRequired="true"/>

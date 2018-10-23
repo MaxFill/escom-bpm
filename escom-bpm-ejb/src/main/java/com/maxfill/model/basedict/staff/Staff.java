@@ -7,8 +7,6 @@ import com.maxfill.model.basedict.department.Department;
 import com.maxfill.model.basedict.post.Post;
 import com.maxfill.model.basedict.user.User;
 import org.apache.commons.lang.StringUtils;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,7 +17,6 @@ import static javax.persistence.GenerationType.TABLE;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -149,15 +146,7 @@ public class Staff extends BaseDict<Department, Staff, Staff, StaffLog, StaffSta
     @Override
     public String getEmployeeFIO(){
         return employee != null ? employee.getShortFIO() : "vacancy";
-    }
-
-    @Override
-    public String getNameEndElipse() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getEmployeeFIO()).append(" ");
-        sb.append(getPostName());
-        return StringUtils.abbreviate(sb.toString(), SysParams.LENGHT_NAME_ELIPSE); 
-    }        
+    }       
         
     /* Возвращает email штатной единицы (из user)  */
     @Override

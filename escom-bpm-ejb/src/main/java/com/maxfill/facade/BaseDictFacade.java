@@ -267,7 +267,7 @@ public abstract class BaseDictFacade<T extends BaseDict, O extends BaseDict, L e
         Root<T> root = cq.from(itemClass);   
         List<Predicate> criteries = new ArrayList<>();
 
-        criteries.add(builder.isNull(root.get("parent")));
+        //criteries.add(builder.isNull(root.get("parent")));
         criteries.add(builder.equal(root.get("deleted"), false));
         criteries.add(builder.equal(root.get("actual"), true));
         

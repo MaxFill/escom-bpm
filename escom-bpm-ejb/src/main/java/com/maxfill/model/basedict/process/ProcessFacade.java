@@ -1,6 +1,7 @@
 package com.maxfill.model.basedict.process;
 
 import com.maxfill.dictionary.DictRoles;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import com.maxfill.facade.BaseDictWithRolesFacade;
 import com.maxfill.model.basedict.BaseDict;
@@ -9,18 +10,20 @@ import com.maxfill.model.basedict.company.Company;
 import com.maxfill.model.basedict.doc.Doc;
 import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.Folder;
+import com.maxfill.model.basedict.process.schemes.Scheme;
+import com.maxfill.model.basedict.process.schemes.elements.AnchorElem;
+import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.core.messages.UserMessagesFacade;
 import com.maxfill.model.basedict.remark.RemarkFacade;
-import com.maxfill.model.basedict.process.reports.ProcReport;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.core.rights.Rights;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.staff.StaffFacade;
-import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
 import com.maxfill.model.basedict.user.User;
+import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
-import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.ItemUtils;
 import com.maxfill.utils.Tuple;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,7 +63,9 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     private StaffFacade staffFacade;
     @EJB
     private WorkTimeService workTimeService;
-    
+    @EJB
+    private Workflow workflow;
+            
     public ProcessFacade() {
         super(Process.class, ProcessLog.class, ProcessStates.class);
     }
@@ -96,6 +101,26 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
         super.edit(process); //To change body of generated methods, choose Tools | Templates.
     }   
  
+    /**
+     * Создание подпроцесса
+     * @param owner
+     * @param parent
+     * @param author
+     * @return 
+     */
+    public Process createSubProcess(ProcessType owner, Process parent, User author){
+        StringBuilder sb = new StringBuilder();
+        sb.append(ItemUtils.getBandleLabel("SubProcess", userFacade.getUserLocale(author)));
+        sb.append(": ").append(parent.getName());
+        
+        Process subProcess = createItem(author, parent, owner, new HashMap<>());
+        subProcess.setDocs(parent.getDocs());
+        subProcess.setDocument(parent.getDocument());
+        subProcess.setCompany(parent.getCompany());        
+        subProcess.setName(sb.toString());
+        setRoleCurator(subProcess, parent.getCurator());
+        return subProcess;
+    }    
     
     @Override
     public int replaceItem(Process oldItem, Process newItem) {
@@ -169,6 +194,45 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             process.getScheme().getTasks().stream()
                     .filter(task->task.getOwner() != null)
                     .forEach(task->process.addUserInRole(task.getRoleInProc().getRoleFieldName(), task.getOwner().getEmployee()));
+        }
+    }
+    
+    /* *** ВАЛИДАЦИЯ *** */
+    
+    /**
+     * Проверка возможности ручного запуска процесса
+     * @param process
+     * @param currentUser
+     * @param errors
+     * @return 
+     */
+    public void validateCanRun(Process process, User currentUser,  Set<String> errors){
+        Process parent = process.getParent();
+        if (parent == null) return; //нет ограничений на запуск, т.к. это не подпроцесс
+        if(!Objects.equals(DictStates.STATE_RUNNING, process.getParent().getState().getCurrentState().getId())){
+            errors.add("SubprocessCannotBeStarted");
+            return;
+        }
+        Scheme scheme = parent.getScheme();
+        workflow.unpackScheme(scheme, currentUser);
+        SubProcessElem elem = scheme.getElements().getSubprocesses().entrySet().stream()
+                .filter(entry->Objects.equals(process.getLinkUID(), entry.getKey()))
+                .map(entry->entry.getValue())
+                .findFirst().orElse(null);
+        if (elem != null){
+            Set<AnchorElem> targetAnchors = elem.getAnchors().stream().filter(a->a.isTarget()).collect(Collectors.toSet()); //входы элемента
+            
+            Set<AnchorElem> anchorsDone = scheme.getElements().getConnectors().stream()
+                    .filter(c->c.isDone())
+                    .map(c->c.getTo()).collect(Collectors.toSet()); //все сработавшие входы
+            
+            //хотябы один из входов элемента должен быть среди сработавших входов
+            for (AnchorElem target : targetAnchors){
+                if (anchorsDone.contains(target)){
+                    return;
+                }
+            }
+            errors.add("SubprocessCannotBeStarted");
         }
     }
     

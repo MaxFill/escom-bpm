@@ -119,18 +119,7 @@ public class TaskFacade extends BaseDictWithRolesFacade<Task, Staff, TaskLog, Ta
         TypedQuery<Task> q = em.createQuery(cq);
         List<Task> results = q.getResultList();
         return results;
-    }           
-    
-    public Task findTaskByUID(String uid){
-        em.getEntityManagerFactory().getCache().evict(Task.class);
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Task> cq = builder.createQuery(Task.class);
-        Root<Task> c = cq.from(Task.class);        
-        Predicate crit1 = builder.equal(c.get(Task_.taskLinkUID), uid);
-        cq.select(c).where(builder.and(crit1));
-        TypedQuery<Task> q = em.createQuery(cq);       
-        return q.getResultStream().findFirst().orElse(null);
-    }
+    }               
     
     /**
      * Формирование даты планового срока исполнения. Учитывается рабочее время

@@ -36,6 +36,9 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -96,7 +100,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private ProcReport currentReport;
     private boolean isNeedUpdateProcessReports; 
     private List<String> selectedDays;
-    private Set<Staff> executors;
+    private List<Staff> executors;
     
     private List<SelectItem> daysOfWeek = new ArrayList<>();
     {        
@@ -111,10 +115,12 @@ public class TaskCardBean extends BaseCardBean<Task>{
     
     @Override
     public void doPrepareOpen(Task task){
-        initDateFields(task);     
-        initExecutors(task);
+        initDateFields(task);
+        executors = initExecutors(task).stream()
+                    .sorted(Comparator.comparing(Staff::getName, nullsFirst(naturalOrder())))
+                    .collect(Collectors.toList());
     }
-      
+
     /**
      * Проверка корректности задачи 
      * @param task
@@ -126,7 +132,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
         super.checkItemBeforeSave(task, context, errors);
         
         //проверка наличия результатов
-        if (StringUtils.isEmpty(task.getAvaibleResultsJSON())){
+        if (StringUtils.isBlank(task.getAvaibleResultsJSON())){
             errors.add(MsgUtils.getMessageLabel("TaskNoHaveListResult"));
         }        
         if (task.getOwner() == null && task.getRoleInProc() == null){
@@ -141,7 +147,7 @@ public class TaskCardBean extends BaseCardBean<Task>{
                 if (task.getDeltaDeadLine() == 0){
                    errors.add(MsgUtils.getMessageLabel("DeadlineIncorrect"));
                 }
-                if (task.getBeginDate() == null && task.getScheme() == null){ //если задача тз процесса, то дата начала не нужнаы
+                if (task.getBeginDate() == null && task.getScheme() == null){ //если задача из процесса, то дата начала не нужна
                     errors.add(MsgUtils.getMessageLabel("DateBeginNoSet"));
                 }
                 break;
@@ -428,42 +434,42 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * Формирование списка доступных для выбора Исполнителей
      * @param task 
      */
-    private void initExecutors(Task task){            
+    private Set<Staff> initExecutors(Task task){        
+        Set<Staff> staffs = new HashSet<>();
         //админ может выбрать любого
         if (userFacade.isAdmin(getCurrentUser())){
-            executors = new HashSet<>(staffFacade.findActualStaff());
-            return;
-        }                
+            return new HashSet<>(staffFacade.findActualStaff());            
+        }        
         //владелец может выбрать себя или кого-то из своих замов
         if (task.getAuthor().equals(getCurrentUser())) {
-            executors = new HashSet<>(assistantFacade.findAssistByUser(getCurrentUser()));
-            executors.add(task.getOwner());
+            staffs.addAll(assistantFacade.findAssistByUser(getCurrentUser()));
+            staffs.add(task.getOwner());
             if (getCurrentUser().getStaff() != null){
-                executors.add(getCurrentUser().getStaff());
+                staffs.add(getCurrentUser().getStaff());
             }
-            return;
-        }
-        executors = new HashSet<>();
+            return staffs;
+        }        
         if (task.getOwner() != null){
-            executors.add(task.getOwner());
+            staffs.add(task.getOwner());
             //исполнитель может выбрать кого-то из своих замов
             if (task.getOwner().getEmployee().equals(getCurrentUser())) {
-                executors.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
-                return;
+                staffs.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
+                return staffs;
             }
             //руководитель исполнителя, может выбрать себя или кого-то из замов
             if (assistantFacade.isChief(getCurrentUser(), task.getOwner().getEmployee())){
-                executors.add(getCurrentUser().getStaff());
-                executors.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
-                return;
+                staffs.add(getCurrentUser().getStaff());
+                staffs.addAll(assistantFacade.findAssistByUser(getCurrentUser())); 
+                return staffs;
             }
             //заместитель исполнителя может указать себя
             if (assistantFacade.isAssistant(task.getOwner().getEmployee(), getCurrentUser())){
                 if (getCurrentUser().getStaff() != null){
-                    executors.add(getCurrentUser().getStaff());
+                    staffs.add(getCurrentUser().getStaff());
                 }
             }
         }
+        return staffs;
     }
     
     private void initDateFields(Task task){        
@@ -654,10 +660,10 @@ public class TaskCardBean extends BaseCardBean<Task>{
         this.currentReport = currentReport;
     }
 
-    public Set<Staff> getExecutors() {
+    public List<Staff> getExecutors() {
         return executors;
     }
-    public void setExecutors(Set<Staff> executors) {
+    public void setExecutors(List<Staff> executors) {
         this.executors = executors;
     }
 

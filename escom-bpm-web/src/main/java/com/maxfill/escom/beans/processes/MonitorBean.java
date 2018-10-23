@@ -135,7 +135,9 @@ public class MonitorBean extends BaseViewBean<BaseView>{
     }
     
     private void makeTree(Process process, TreeNode processNode){
-        process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
+        if (process.getScheme() != null){
+            process.getScheme().getTasks().forEach(task->new DefaultTreeNode(task, processNode));
+        }
         process.getChildItems().forEach(subProc->{
             TreeNode subProcNode = new DefaultTreeNode(subProc, processNode);
             makeTree(subProc, subProcNode);

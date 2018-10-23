@@ -27,11 +27,7 @@
     <ui:param name="_CreateRootLabel" value="#{bundle.CreateCompany}"/>
        
     <!-- специфичные колонки таблицы обозревателя для "Штатной единицы"-->
-    <ui:define name="specDetailColumns">       
-        <p:column id="colEmployee" headerText="#{bundle.Employee}" sortBy="#{item.employeeFIO}" 
-                  rendered="#{_bean.isNowShowDetail()}">
-            <h:outputLabel value="#{item.employeeFIO}"/>
-        </p:column>
+    <ui:define name="specDetailColumns">
         <p:column id="colPoast" headerText="#{bundle.Post}" sortBy="#{item.postName}" 
                   rendered="#{_bean.isNowShowDetail()}">
             <h:outputLabel value="#{item.postName}"/>

@@ -4,6 +4,9 @@ import com.maxfill.dictionary.DictMetadatesIds;
 import com.maxfill.facade.BaseDictFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.user.User;
+import java.util.Comparator;
+import static java.util.Comparator.naturalOrder;
+import static java.util.Comparator.nullsFirst;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -74,7 +77,7 @@ public class AssistantFacade extends BaseDictFacade<Assistant, User, AssistantLo
                 .filter(assist-> !assist.getUser().isDeleted() 
                         && assist.getUser().isActual() 
                         && assist.getUser().getStaff() != null)
-                .map(assist->assist.getUser().getStaff())
+                .map(assist->assist.getUser().getStaff())                
                 .collect(Collectors.toList());
     }
 }

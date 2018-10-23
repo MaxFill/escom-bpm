@@ -166,6 +166,7 @@ public class StaffFacade extends BaseDictFacade<Staff, Department, StaffLog, Sta
         Predicate crit3 = builder.equal(c.get("actual"), true);
         Predicate crit4 = builder.equal(c.get("deleted"), false);
         cq.select(c).where(builder.and(crit1, crit2, crit3, crit4));
+        cq.orderBy(builder.asc(c.get("name")));
         Query q = em.createQuery(cq);
         List<Staff> result = q.getResultList(); 
         return result;

@@ -238,10 +238,10 @@
     </ui:define>
 
     <ui:define name="southFormContent">  
-        <p:messages id="messages" showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
+        <p:messages showDetail="false" closable="true" styleClass="ui-grid-col-12 without-spaces">
             <p:autoUpdate />
         </p:messages>
-        <p:diagram id="diagramm" value="#{_bean.model}" style="height:2400px; width: 2400px;" styleClass="ui-widget-content" var="el" widgetVar="DiagrammWG" >
+        <p:diagram id="diagramm" value="#{_bean.model}" style="height:3400px; width: 3400px;" styleClass="ui-widget-content" var="el" widgetVar="DiagrammWG" >
             <f:facet name="element" >
                 <h:outputLabel value="#{_bean.getElementCaption(el)}" styleClass="diagramm-label" style="display:block;margin:0.5em;word-wrap:break-word;"/>
                 <p:graphicImage value="#{_bean.getElementImage(el)}" styleClass="diagramm-image"/>

@@ -64,6 +64,7 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import static java.util.Comparator.naturalOrder;
@@ -79,6 +80,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -353,6 +355,7 @@ public class WorkflowImpl implements Workflow {
             if (procTempl != null){
                 scheme.setElements(new WorkflowElements());
                 scheme.setPackElements(procTempl.getElements());
+                scheme.setName(procTempl.getName());
             }
         } 
         unpackScheme(scheme, currentUser);
@@ -379,7 +382,15 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
-            //линковка c задачами
+            //линковка элементов модели c подпроцессами
+            elements.getSubprocesses().forEach((key, subProcEl)-> {
+                Process subProcess = scheme.getProcess().getChildItems().stream()
+                        .filter(sp-> sp.getLinkUID().equals(key))
+                        .findFirst()
+                        .orElse(null);
+                subProcEl.setSubProcess(subProcess);
+            });
+            //линковка элементов модели c задачами
             elements.getTasks().forEach((key, taskEl)-> {
                 Task task = scheme.getTasks().stream().filter(t-> t.getTaskLinkUID().equals(key)).findFirst().orElse(null);                
                 if (task == null){ 
@@ -408,7 +419,7 @@ public class WorkflowImpl implements Workflow {
                 taskEl.setTask(task);
             });
             
-            //линковка c таймерами
+            //линковка элементов модели c таймерами
             elements.getTimers().forEach((key, timerEl)-> {
                 ProcTimer procTimer = scheme.getTimers().stream().filter(timer-> timer.getTimerLinkUID().equals(key)).findFirst().orElse(null);                
                 if (procTimer == null){
@@ -438,7 +449,8 @@ public class WorkflowImpl implements Workflow {
         if (scheme.getElements().getConnectors().isEmpty()){
             errors.add("DiagramNotHaveConnectors");
         }
-        if (scheme.getElements().getTasks().isEmpty()){
+        
+        if (scheme.getElements().getTasks().isEmpty() && MapUtils.isEmpty(scheme.getElements().getSubprocesses())){
             errors.add("DiagramNotHaveTasks");
         }
         Date planEndDate = scheme.getProcess().getPlanExecDate();
@@ -500,11 +512,13 @@ public class WorkflowImpl implements Workflow {
         scheme.getElements().getConnectors().forEach(c->c.setDone(false));  
         scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
         scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
+        State draftState = stateFacade.getDraftState();
         scheme.getTasks().forEach(task->{
                 task.setFactExecDate(null); //сброс даты выполнения
                 task.setResult(null);       //сброс предудущего результата
-                task.getState().setCurrentState(stateFacade.getDraftState());
+                task.getState().setCurrentState(draftState);
             });
+        scheme.getProcess().getChildItems().forEach(subproc->subproc.getState().setCurrentState(draftState));
     }
     
     /**
@@ -539,7 +553,7 @@ public class WorkflowImpl implements Workflow {
             
             //Внесение инф. в отчёт по процессу
             if (task.getConsidInProcReport()){
-                ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getResult(), currentUser);
+                ProcReport procReport = updateReportStatus(process, task.getOwner(), task.getRoleInProc(), task.getResult(), currentUser);
                 procReport.setTask(task);
             }
             
@@ -571,22 +585,26 @@ public class WorkflowImpl implements Workflow {
     }
     
     /**
-     * Получить отчёт процесса, относящийся к согласующему и обновить его значения
+     * Получить отчёт процесса, относящийся к пользователю и обновить его значения
      * @param process
      * @param staff - согласующее лицо
      * @param status
      * @param currentUser 
      */
-    private ProcReport updateReportStatus(Process process, Staff staff, String status, User currentUser){        
+    private ProcReport updateReportStatus(Process process, Staff staff, UserGroups role, String status, User currentUser){        
         ProcReport procReport = process.getReports().stream()
                     .filter(report-> Objects.equals(staff, report.getExecutor()))
                     .findFirst()
                     .orElse(new ProcReport(currentUser, staff, process));
         procReport.setStatus(status);
-        procReport.setDateCreate(new Date());        
+        procReport.setDateCreate(new Date()); 
         Doc doc = process.getDocument(); //запись в отчёт версии, за которую проголосовал 
+        procReport.setDoc(doc); 
         if (doc != null){
             procReport.setVersion(doc.getMainAttache());
+        }
+        if (role != null){
+            procReport.setRoleName(role.getRoleFieldName());
         }
         return procReport;
     }
@@ -634,28 +652,23 @@ public class WorkflowImpl implements Workflow {
      * Запуск подпроцессов на выполнение
      * @param exeSubProc 
      */
-    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, User author, Set<String> errors){
+    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, Map<String, Object> params, User author, Set<String> errors){
         Set<Process> processesShow = new HashSet<>();
         if (exeSubProc.isEmpty()) return processesShow;
         exeSubProc.forEach(subProcElem->{
-            Process subProcess;
-            if (subProcElem.getProcessId() == null){
+            Process subProcess = subProcElem.getSubProcess();
+            if (subProcess == null){
                 ProcessType owner = processTypeFacade.find(subProcElem.getProctypeId());
-                Map<String, Object> params = new HashMap<>();
-                params.put("documents", Collections.singletonList(mainProcess.getDocument()));
-                params.put("curator", mainProcess.getCurator());
-                params.put("author", author);
-                subProcess = processFacade.createItem(author, mainProcess, owner, params);
-                subProcess.setCompany(mainProcess.getCompany());
+                subProcess = processFacade.createSubProcess(owner, mainProcess, author);                
+                subProcess.setLinkUID(subProcElem.getUid());
                 processFacade.create(subProcess);
-                subProcElem.setProcessId(subProcess.getId());
-            } else {
-                subProcess = processFacade.find(subProcElem.getProcessId());
-            }
+                subProcElem.setSubProcess(subProcess);
+            } 
+            subProcess = processFacade.find(subProcess.getId());            
             if (subProcElem.isShowCard()){
                 processesShow.add(subProcess);
-            } else {
-                start(subProcess, author, new HashMap<>(),  errors);
+            } else {                
+                start(subProcess, author, params,  errors);
             }
         });
         return processesShow;
@@ -672,12 +685,18 @@ public class WorkflowImpl implements Workflow {
     @Override
     public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {        
         Scheme scheme = process.getScheme();
-        unpackScheme(scheme, currentUser);
+        if (process.getScheme() == null){
+            initScheme(process, currentUser, errors);
+        } else {
+            unpackScheme(scheme, currentUser);
+        }
+
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
         
         //очистки если запуск повторный
-        clearScheme(scheme);                        
+        clearScheme(scheme);
+        processFacade.edit(process);    //сохраняем возможные изменения
         
         Doc doc = process.getDocument();
         if (doc != null){
@@ -801,8 +820,10 @@ public class WorkflowImpl implements Workflow {
             Process mainProcess = processFacade.find(process.getParent().getId());
             unpackScheme(mainProcess.getScheme(), currentUser);
             SubProcessElem subProcessElem = mainProcess.getScheme().getElements().getSubprocesses().values().stream()
-                .filter(subProcEl->Objects.equals(process.getId(), subProcEl.getProcessId())).findFirst().orElse(null);
-            run(mainProcess, subProcessElem, exeSubProc, currentUser, new HashMap<>(), errors);
+                .filter(subProcEl->Objects.equals(process.getLinkUID(), subProcEl.getUid())).findFirst().orElse(null);
+            Map<String, Object> params = new HashMap<>();
+            params.put("subprocess", process);
+            run(mainProcess, subProcessElem, exeSubProc, currentUser, params, errors);
         }
     }
 
@@ -825,7 +846,7 @@ public class WorkflowImpl implements Workflow {
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
         if (errors.isEmpty()){
             startTasks(process, exeTasks, params, errors);
-            forShow.addAll(initSubProcesses(process, exeSubProc, currentUser, errors));
+            forShow.addAll(initSubProcesses(process, exeSubProc, params, currentUser, errors));
             if (errors.isEmpty()){
                 packScheme(process.getScheme());
                 processFacade.edit(process);
@@ -1215,13 +1236,17 @@ public class WorkflowImpl implements Workflow {
                 result = docIsConcorded(scheme, params);
                 break;
             }
-            case "agreedUponEmployee":{
-                Map<String, Object> paramMap = conditionEl.getParams();
-                if (!paramMap.containsKey("staff")) return false;
-                Integer staffId = (Integer)paramMap.get("staff");
-                if (staffId == null) return false;
-                Staff staff = staffFacade.find(staffId);
-                result = agreedUponEmployee(scheme, staff);
+            case "agreedUponEmployee":{                
+                result = agreedUponEmployee(scheme, conditionEl.getParams());
+                break;
+            }
+            case "subProcessInState":{
+                if (!params.containsKey("subprocess")) return false;
+                result = processInState((Process) params.get("subprocess"), conditionEl.getParams());
+                break;
+            }
+            case "processInState":{                
+                result = processInState(scheme.getProcess(), conditionEl.getParams());
                 break;
             }
         }
@@ -1255,6 +1280,9 @@ public class WorkflowImpl implements Workflow {
                 .sorted(Comparator.comparing(Task::getFactExecDate, nullsFirst(naturalOrder())).reversed())
                 .collect(Collectors.toList());
         Task lastTask = tasks.get(0);
+        taskIds.clear();
+        taskIds.add(lastTask.getId());
+        params.put(EXECUTED_TASKS, taskIds); //оставляем только последнюю задачу, так как её результат важнее
         return !Objects.equals(DictResults.RESULT_REFUSED, lastTask.getResult());        
     }
     
@@ -1301,7 +1329,11 @@ public class WorkflowImpl implements Workflow {
      * @param staff
      * @return 
      */
-    private boolean agreedUponEmployee(Scheme scheme, Staff staff){        
+    private boolean agreedUponEmployee(Scheme scheme, Map<String, Object> params){                
+        if (!params.containsKey("staff")) return false;
+        Integer staffId = (Integer)params.get("staff");
+        if (staffId == null) return false;
+        Staff staff = staffFacade.find(staffId);
         return scheme.getTasks().stream()
                 .filter(task->Objects.equals(staff, task.getOwner()) 
                         && Objects.equals(DictStates.STATE_COMPLETED, task.getState().getCurrentState().getId())
@@ -1325,6 +1357,18 @@ public class WorkflowImpl implements Workflow {
                 .sorted(Comparator.comparing(DocStatuses::getDateStatus, nullsFirst(naturalOrder())).reversed())
                 .findFirst()
                 .orElse(null) != null;
+    }
+    
+    /**
+     * Условие: процесс находится в заданном состоянии
+     * @param process
+     * @param params
+     * @return 
+     */
+    private boolean processInState(Process process, Map<String, Object> params){
+        if (!params.containsKey("stateId")) return false;
+        Integer stateId = (Integer)params.get("stateId");
+        return Objects.equals(stateId, process.getState().getCurrentState().getId());
     }
     
     /* *** ПРОЧЕЕ *** */
@@ -1352,8 +1396,6 @@ public class WorkflowImpl implements Workflow {
                 .filter(task->task.getOwner() != null && task.getConsidInProcReport())
                 .map(task -> new ProcReport(user, task.getOwner(), process))
                 .collect(Collectors.toSet()); 
-        //добавляем отчёт для куратора
-        newReports.add(new ProcReport(user, process.getCurator(), process));
                         
         //добавляем в лист согласования записи, если таких там нет
         newReports.removeAll(procReports);        

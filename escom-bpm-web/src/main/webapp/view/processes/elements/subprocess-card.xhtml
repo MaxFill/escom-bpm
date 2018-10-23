@@ -2,7 +2,8 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  template="/view/templ/templ-dlg.xhtml"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core">
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:param name="_bean" value="#{subProcCardBean}"/>    
 
@@ -20,13 +21,13 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{_bean.editedItem != null}" >
             <p:tab id="tabProcess" title="#{bundle.SubProcess}"  >
-                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
                     <p:outputLabel value="#{bundle.Type}:" indicateRequired="true" style="margin-bottom: 0px;" />
                     <ui:include src="/view/common/item-select-btn.xhtml" >
                         <ui:param name="_itemValue" value="#{subProcCardBean.selProcType}"/>
                         <ui:param name="_itemLabel" value="nameEndElipse"/>
                         <ui:param name="_required" value="#{true}" />
-                        <ui:param name="_disabled" value="#{_bean.isReadOnly()}"/>                        
+                        <ui:param name="_disabled" value="#{_bean.selProcess != null}"/>                        
                         <ui:param name="_itemPanel" value="procTypePanel"/>
                         <ui:param name="_titleItem" value="#{bundle.ProcessType}"/>
                         <ui:param name="_selectorBean" value="#{processTypesBean}"/>                        
@@ -38,15 +39,43 @@
                     <p:outputLabel value="#{bundle.ProcessTemplate}:" style="margin-bottom: 0px;"/>
                     <p:selectOneMenu id="procTempl" value="#{subProcCardBean.selProcTempl}" converter="procTemplConverter"
                                     styleClass="ui-grid-col-12"
-                                    disabled="#{_bean.isReadOnly()}"
+                                    disabled="#{_bean.selProcess != null}"
                                     requiredMessage="#{bundle.Field} [#{bundle.ProcessTemplate}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{subProcCardBean.templates}" var="item" itemLabel="#{item.nameEndElipse}" itemValue="#{item}"/>
                             <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
                             <p:ajax event="change" listener="#{subProcCardBean.onProcTemplSelected()}" />
                     </p:selectOneMenu>
-                    <p:separator/>
+                    
+                    <p:outputLabel value="#{bundle.Name}:" indicateRequired="true" />
+                    <h:panelGroup id="name" styleClass="ui-grid-col-12">
+                    <div class="ui-inputgroup">
+                        <p:inputText value="#{_bean.caption}"
+                                 styleClass="ui-grid-col-12"
+                                 required="#{param['isRequired'] == 'true'}"
+                                 requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                        <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}"                                          
+                                         actionListener="#{_bean.makeCaption()}"/>
+                    </div>
+                    </h:panelGroup>
+                    
+                    <p:spacer/>
                     <p:selectBooleanCheckbox itemLabel="#{bundle.ShowSubProcCardInit}" value="#{_bean.editedItem.showCard}" >                
                     </p:selectBooleanCheckbox>
+                    
+                    <p:separator/>
+                    
+                    <h:panelGroup id="btnPanel">
+                        <p:commandButton value="#{_bean.selProcess != null ? bundle.Open : bundle.Create}" actionListener="#{subProcCardBean.onProcOpen()}" style="float: right;"> 
+                            <p:ajax event="dialogReturn" listener="#{subProcCardBean.onProcCardClose}" update="mainFRM:mainTabView" />
+                        </p:commandButton>
+                        <p:commandButton value="#{bundle.Delete}" 
+                                         rendered="#{_bean.selProcess != null and _bean.selProcess.id == null}"
+                                         update="mainFRM:mainTabView"
+                                         actionListener="#{subProcCardBean.onProcDelete()}" style="float: right;"> 
+                            <p:confirm header="#{bundle.ConfirmDelete}" message="#{bundle.AreYouSure}" icon="ico_importance-16"/>
+                        </p:commandButton>
+                    </h:panelGroup>
+                    
                 </p:panelGrid>        
             </p:tab>
         </p:tabView>

@@ -248,4 +248,46 @@
         </sql>
     </changeSet>
     
+    <changeSet id="processReports_add_Doc_link" author="filatov" context="initdata" runOnChange="true">
+       <preConditions onFail="MARK_RAN">
+           <not>
+               <columnExists tableName="processReports" columnName="Document" />
+           </not>
+       </preConditions>
+       <addColumn tableName="processReports">
+           <column name="Document" type="INT" >
+               <constraints nullable="true"/>
+           </column>
+           <column name="Role" type="varchar(50)" >
+               <constraints nullable="true"/>
+           </column>
+       </addColumn>
+       <addForeignKeyConstraint baseColumnNames="Document"
+                                baseTableName="processReports"
+                                constraintName="FK_Report_Document_Link"
+                                referencedColumnNames="Id"
+                                onUpdate="NO ACTION"
+                                onDelete="NO ACTION"
+                                referencedTableName="docs"/>
+    </changeSet>
+    
+    <changeSet id="conditions_add_condition_process_in_sate" author="filatov" context="initdata" runOnChange="true">
+        <sql>
+            INSERT conditions(Id, Name, Method, Params) VALUES (7, N'SubProcessInState', N'subProcessInState', N'{\"stateId\":null}');
+            INSERT conditions(Id, Name, Method, Params) VALUES (8, N'ProcessInState', N'processInState', N'{\"stateId\":null}');
+        </sql>
+    </changeSet>
+    
+        <changeSet id="processes_add_linkUID" author="filatov" context="initdata" runOnChange="true">
+       <preConditions onFail="MARK_RAN">
+           <not>
+               <columnExists tableName="processes" columnName="LinkUID" />
+           </not>
+       </preConditions>
+       <addColumn tableName="processes">           
+           <column name="LinkUID" type="varchar(50)" >
+               <constraints nullable="true"/>
+           </column>
+       </addColumn>       
+    </changeSet>
 </databaseChangeLog> 

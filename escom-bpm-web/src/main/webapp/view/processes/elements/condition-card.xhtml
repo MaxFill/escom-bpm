@@ -2,7 +2,8 @@
                  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                  xmlns:p="http://primefaces.org/ui"
                  template="/view/templ/templ-dlg.xhtml"
-                 xmlns:f="http://xmlns.jcp.org/jsf/core">
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <ui:param name="_bean" value="#{conditionCardBean}"/>
     
@@ -23,8 +24,8 @@
     <ui:define name="centerFormContent">       
         <p:tabView orientation="left" id="mainTabView" styleClass="ui-grid-col-12 col-padding" rendered="#{conditionCardBean.editedItem != null}" >
             <p:tab title="#{bundle.Condition}"  >
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
                         <p:outputLabel value="#{bundle.Condition}:" indicateRequired="true"/>
                         <p:selectOneMenu value="#{conditionCardBean.selected}" converter="conditionConvertor"
                                        styleClass="ui-grid-col-12"
@@ -32,21 +33,49 @@
                                        requiredMessage="#{bundle.Field} [#{bundle.Condition}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{conditionBean.findAll()}" var="item" itemLabel="#{conditionCardBean.getLabelFromBundle(item.getName())}" itemValue="#{item}"/>
                             <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}"/>
-                            <p:ajax event="change" listener="#{conditionCardBean.onConditionSelect()}" update="staffSelect"/>
+                            <p:ajax event="change" listener="#{conditionCardBean.onConditionSelect()}" update="name stateSelect staffSelect"/>
                         </p:selectOneMenu>
                     </p:panelGrid>
                     
-                    <p:panelGrid id="staffSelect" columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
-                        <p:outputLabel value="#{bundle.Concorder}:" indicateRequired="true" rendered="#{conditionCardBean.isCanStaffSelect()}" />
-                        <p:selectOneMenu value="#{conditionCardBean.selectedStaff}" filter="true" filterMatchMode="startsWith"
+                    <p:panelGrid id="staffSelect" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.Concorder}:" indicateRequired="true" rendered="#{_bean.isCanStaffSelect()}" />
+                        <p:selectOneMenu value="#{_bean.selectedStaff}" filter="true" filterMatchMode="startsWith"
                                         styleClass="ui-grid-col-12"
                                         converter="staffConvertor" placeholder="#{bundle.Select}"                                    
-                                        rendered="#{conditionCardBean.isCanStaffSelect()}"
+                                        rendered="#{_bean.isCanStaffSelect()}"
                                         required="#{param['isRequired'] == 'true'}"
                                         requiredMessage="#{bundle.Field} [#{bundle.Concorder}] #{bundle.MustBeFilled}">
                             <f:selectItems value="#{conditionCardBean.concorders}" var="staff" itemLabel="#{staff.nameEndElipse}" itemValue="#{staff}"/>
                             <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
                         </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid id="stateSelect" columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >
+                        <p:outputLabel value="#{bundle.State}:" indicateRequired="true" rendered="#{_bean.isCanStateSelect()}" />
+                        <p:selectOneMenu value="#{conditionCardBean.selectedState}" filter="true" filterMatchMode="startsWith"
+                                        styleClass="ui-grid-col-12"
+                                        converter="stateConvertor" placeholder="#{bundle.Select}"                                    
+                                        rendered="#{_bean.isCanStateSelect()}"
+                                        required="#{param['isRequired'] == 'true'}"
+                                        requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
+                            <f:selectItems value="#{stateBean.findAll()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="#{bundle.EmptySelData}" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    
+                    <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces" >                    
+                        <p:outputLabel value="#{bundle.Name}:" indicateRequired="true" />
+                        <h:panelGroup id="name" styleClass="ui-grid-col-12">
+                        <div class="ui-inputgroup">
+                            <p:inputText value="#{_bean.caption}"
+                                     styleClass="ui-grid-col-12"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Name}] #{bundle.MustBeFilled}"/>
+                            <p:commandButton icon="ui-icon-script" title="#{bundle.MakeName}" 
+                                             disabled="#{conditionCardBean.selected == null}"
+                                             actionListener="#{conditionCardBean.makeCaption()}"/>
+                        </div>
+                        </h:panelGroup>
                     </p:panelGrid>
                 </p:panelGrid>
             </p:tab>
