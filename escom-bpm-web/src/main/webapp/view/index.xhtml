@@ -168,6 +168,7 @@
                                 <p:link href="#{sessionBean.onGetExplorerURL('/processes/templ/proctempl-explorer')}" rendered="#{sessionBean.userAdmin}" value="#{bundle.ProcessTemplates}" target="_blank" />
                             </p:panelGrid>
                             <p:fileUpload id="file" style="font-size: small;"
+                                          rendered="false"
                                           styleClass="ui-grid-col-12"
                                           allowTypes="#{applicationBean.ALLOW_FILE_TYPES}"
                                           sizeLimit="#{sessionBean.maxFileSize}"
@@ -184,8 +185,7 @@
                                           onstart="PF('statusDialog').show();"
                                           oncomplete="PF('statusDialog').hide(); document.getElementById('mainFRM:createProcBtn').click();">
                             </p:fileUpload>
-                            <pe:tooltip for="file" value="#{bundle.DragDropFileForNewProcess}" mouseTracking="true" myPosition="top left" adjustX="10" adjustY="10" hideDelay="5"
-                                        styleClass="qtip qtip-rounded qtip-shadow" header="#{bundle.Info}"/>
+
                         </p:panelGrid>
                     </p:panel>
 

@@ -13,6 +13,7 @@ import com.maxfill.model.basedict.remark.RemarkFacade;
 import com.maxfill.model.basedict.staff.Staff;
 import com.maxfill.model.basedict.task.Task;
 import com.maxfill.model.basedict.task.TaskFacade;
+import com.maxfill.model.basedict.user.User;
 import com.maxfill.model.core.states.State;
 import com.maxfill.model.core.states.StateFacade;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
     private Process process;
     private Doc doc;    
     private final List<Remark> remarks = new ArrayList<>();
+    private List<User> authors;
     protected String currentTab = "0";
     private Task task;
     private boolean remarkTabShow = false;
@@ -97,17 +99,21 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
         MsgUtils.succesMessage(getLabelFromBundle("ObjectSaved"));
     }
     
-    public List<Remark> getMyRemarks(){
-        return remarks.stream()
-                .filter(remark -> remark.getAuthor().equals(getCurrentUser()))
-                .collect(Collectors.toList());
+    public List<User> getAuthors(){
+        if (authors == null){
+            authors = new ArrayList<>(remarks.stream().map(remark->remark.getAuthor()).collect(Collectors.toSet()));
+            if (!authors.contains(getCurrentUser())){
+                authors.add(getCurrentUser());
+            }
+        }
+        return authors;
     }
     
-    public List<Remark> getOtherRemarks(){
+    public List<Remark> getAuthorRemarks(User author){
         return remarks.stream()
-                .filter(remark -> !remark.getAuthor().equals(getCurrentUser()))
+                .filter(remark -> remark.getAuthor().equals(author))
                 .collect(Collectors.toList());
-    }
+    }    
         
     public void onChangeStateRemark(Remark remark, Integer stateId){
         State state = stateFacade.find(stateId);
@@ -173,7 +179,7 @@ public class RemarkCardBean extends BaseCardBean<Remark>{
         if (task == null)return false;
         if (!remark.getAuthor().equals(getCurrentUser())) return false;
         State stateRun = stateFacade.getRunningState();
-        return Objects.equals(stateRun, task.getState().getCurrentState());
+        return Objects.equals(stateRun, process.getState().getCurrentState());
     }
     
     /**

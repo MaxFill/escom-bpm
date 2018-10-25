@@ -42,7 +42,10 @@ public class SubProcessElem extends WFConnectedElem{
     
     @Override
     public String getImage() {
-        return "process-20";
+        if (showCard){
+            return "importance-20";
+        }
+        return "";
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.maxfill.model.basedict.doc.DocFacade;
 import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.files.FileService;
-import com.maxfill.services.searche.SearcheService;
+import com.maxfill.utils.EscomUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -177,9 +177,7 @@ public class AttacheServiceImpl implements AttacheService{
     public String makeFolderZIP(Folder folder, User user, String os){
         String zipFile = new StringBuilder()
                     .append(configuration.getTempFolder())
-                    .append(folder.getName())
-                    .append("_")
-                    .append(user.getLogin())
+                    .append(EscomUtils.generateGUID())                    
                     .append(".zip").toString();
         byte[] buf = new byte[1024];
         

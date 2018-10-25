@@ -108,8 +108,8 @@
                 <h:outputLabel value="#{taskListBean.getLabelFromBundle(item.getResult())}"/>
             </p:column>
 
-            <p:column width="80">
-                <p:commandButton id="btnOpenTask" value="#{bundle.OpenTask}" 
+            <p:column width="20">
+                <p:commandButton id="btnOpenTask" icon="ico_look" title="#{bundle.OpenTask}" 
                                  onstart="PF('statusDialog').show();"
                                  oncomplete="PF('statusDialog').hide();"
                                  actionListener="#{taskListBean.onOpenTask(item)}">

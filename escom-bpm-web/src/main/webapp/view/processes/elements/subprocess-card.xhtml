@@ -57,15 +57,21 @@
                                          actionListener="#{_bean.makeCaption()}"/>
                     </div>
                     </h:panelGroup>
-                    
-                    <p:spacer/>
-                    <p:selectBooleanCheckbox itemLabel="#{bundle.ShowSubProcCardInit}" value="#{_bean.editedItem.showCard}" >                
+                                        
+                    <p:selectBooleanCheckbox itemLabel="#{bundle.ShowSubProcCardInit}" value="#{_bean.editedItem.showCard}" >  
+                        <p:ajax process="@this" update="pnInfo" />
                     </p:selectBooleanCheckbox>
+                    
+                    <h:panelGrid id="pnInfo" columns="2">
+                        <p:graphicImage value="/resources/icon/importance-20.png" rendered="#{_bean.editedItem.showCard}" /> 
+                        <h:outputLabel value="#{msg.InfoSubProcShowCard}" rendered="#{_bean.editedItem.showCard}"/>
+                    </h:panelGrid>
                     
                     <p:separator/>
                     
                     <h:panelGroup id="btnPanel">
-                        <p:commandButton value="#{_bean.selProcess != null ? bundle.Open : bundle.Create}" actionListener="#{subProcCardBean.onProcOpen()}" style="float: right;"> 
+                        <p:commandButton value="#{_bean.selProcess != null ? bundle.Open : bundle.Create}" 
+                                         actionListener="#{subProcCardBean.onProcOpen()}" style="float: right;"> 
                             <p:ajax event="dialogReturn" listener="#{subProcCardBean.onProcCardClose}" update="mainFRM:mainTabView" />
                         </p:commandButton>
                         <p:commandButton value="#{bundle.Delete}" 

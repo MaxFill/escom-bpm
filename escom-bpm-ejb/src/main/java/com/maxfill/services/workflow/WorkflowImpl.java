@@ -382,6 +382,7 @@ public class WorkflowImpl implements Workflow {
             String xml = EscomUtils.decompress(scheme.getPackElements());
             StringReader reader = new StringReader(xml);
             WorkflowElements elements = JAXB.unmarshal(reader, WorkflowElements.class);
+            
             //линковка элементов модели c подпроцессами
             elements.getSubprocesses().forEach((key, subProcEl)-> {
                 Process subProcess = scheme.getProcess().getChildItems().stream()
@@ -390,6 +391,7 @@ public class WorkflowImpl implements Workflow {
                         .orElse(null);
                 subProcEl.setSubProcess(subProcess);
             });
+            
             //линковка элементов модели c задачами
             elements.getTasks().forEach((key, taskEl)-> {
                 Task task = scheme.getTasks().stream().filter(t-> t.getTaskLinkUID().equals(key)).findFirst().orElse(null);                
@@ -506,19 +508,29 @@ public class WorkflowImpl implements Workflow {
     /**
      * Сброс настроек схемы
      * @param scheme 
+     * @param params 
      */
     @Override
-    public void clearScheme(Scheme scheme){
+    public void clearScheme(Scheme scheme, Map<String, Object> params){
         scheme.getElements().getConnectors().forEach(c->c.setDone(false));  
         scheme.getElements().getLogics().forEach((k, logicEl)->logicEl.getTasksExec().clear());
         scheme.getElements().getTasks().forEach((k, taskEl)->taskEl.getTasksExec().clear());
+        boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         State draftState = stateFacade.getDraftState();
-        scheme.getTasks().forEach(task->{
-                task.setFactExecDate(null); //сброс даты выполнения
-                task.setResult(null);       //сброс предудущего результата
-                task.getState().setCurrentState(draftState);
+        scheme.getTasks().stream()
+                .filter(task-> !sendNotAgree || Objects.equals(DictResults.RESULT_REFUSED, task.getResult()))
+                .forEach(task->{
+                    task.setFactExecDate(null);
+                    task.setResult(null);
+                    task.getState().setCurrentState(draftState);
             });
-        scheme.getProcess().getChildItems().forEach(subproc->subproc.getState().setCurrentState(draftState));
+        scheme.getProcess().getChildItems().stream()
+                .filter(subProc-> !sendNotAgree || !Objects.equals(DictStates.STATE_COMPLETED, subProc.getState().getCurrentState().getId()))
+                .forEach(subProcess->{
+                    subProcess.setResult(null);
+                    subProcess.setFactExecDate(null);
+                    subProcess.getState().setCurrentState(draftState);            
+        });
     }
     
     /**
@@ -532,14 +544,14 @@ public class WorkflowImpl implements Workflow {
      * @return  
      */
     @Override
-    public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<String> errors){
-        Set<BaseDict> forShow = new HashSet<>();
+    public Set<BaseDict> executeTask(Process process, Task task, Result result, User currentUser, Map<String, Object> params, Set<String> errors){        
         if (DictStates.STATE_RUNNING != process.getState().getCurrentState().getId()){
             errors.add("TaskCannotCompletedBecauseProcessStopped");
-            return forShow;
+            return new HashSet<>();
         }
         Scheme scheme = process.getScheme();
         unpackScheme(scheme, currentUser);
+        Set<BaseDict> forShow = new HashSet<>();
         if (errors.isEmpty()){
             TaskElem startElement = scheme.getElements().getTasks().get(task.getTaskLinkUID());
             startElement.getTask().setResult(result.getName());
@@ -559,7 +571,7 @@ public class WorkflowImpl implements Workflow {
             
             List<Integer> executedTasks = startElement.getTasksExec();            
             executedTasks.add(task.getId());
-                        
+
             params.put(EXECUTED_TASKS, executedTasks);
             
             forShow.addAll(run(process, startElement, new HashSet<>(), currentUser, params, errors));
@@ -614,36 +626,41 @@ public class WorkflowImpl implements Workflow {
      * @param tasks
      * @param scheme 
      */
-    private void startTasks(Process process, Set<Task> tasks, Map<String, Object> params, Set<String> errors){
+    private void startTasks(Process process, Set<Task> tasks, User currentUser, Map<String, Object> params, Set<String> errors){
         if (tasks.isEmpty()) return;
         boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
         tasks.stream()
-            .filter(task-> !task.getState().getCurrentState().equals(stateFacade.getRunningState())
-                    && (sendNotAgree == Boolean.FALSE || !DictResults.RESULT_AGREED.equals(task.getResult())))                    
-            .forEach(task->{                        
-                task.setBeginDate(new Date());
-                task.setFactExecDate(null);
-                task.setResult(null);
-                task.setComment(null);
-                if (task.getOwner() == null && task.getRoleInProc() != null){
-                    User actor = processFacade.getActor(process, task.getRoleInProc().getRoleFieldName());
-                    if (actor != null){
-                        task.setOwner(actor.getStaff());
-                    }
-                }
-                if (task.getOwner() != null){
-                    if ("delta".equals(task.getDeadLineType())){
-                        taskFacade.makeDatePlan(task);                    
-                    }                
-
-                    notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
-
-                    taskFacade.makeReminder(task); 
-                    taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
-                    taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
-                    task.getState().setCurrentState(stateFacade.getRunningState());
+            .filter(task-> !task.getState().getCurrentState().equals(stateFacade.getRunningState()))                    
+            .forEach(task->{
+                //если нужно отправить только не согласовавшим и задача согласована, то обходим задачу
+                if (sendNotAgree && Objects.equals(DictResults.RESULT_AGREED, task.getResult())){
+                    TaskElem taskEl = process.getScheme().getElements().getTasks().get(task.getTaskLinkUID());
+                    run(process, taskEl, new HashSet<>(), currentUser, params, errors);
                 } else {
-                    errors.add("OneTasksFailedSetRole");
+                    task.setBeginDate(new Date());
+                    task.setFactExecDate(null);
+                    task.setResult(null);
+                    task.setComment(null);
+                    if (task.getOwner() == null && task.getRoleInProc() != null){
+                        User actor = processFacade.getActor(process, task.getRoleInProc().getRoleFieldName());
+                        if (actor != null){
+                            task.setOwner(actor.getStaff());
+                        }
+                    }
+                    if (task.getOwner() != null){
+                        if ("delta".equals(task.getDeadLineType())){
+                            taskFacade.makeDatePlan(task);                    
+                        }                
+
+                        notificationService.makeNotification(task, "YouReceivedNewTask"); //уведомление о назначении задачи
+
+                        taskFacade.makeReminder(task); 
+                        taskFacade.inicializeExecutor(task, task.getOwner().getEmployee());
+                        taskFacade.addLogEvent(task, DictLogEvents.TASK_ASSIGNED, task.getAuthor());
+                        task.getState().setCurrentState(stateFacade.getRunningState());
+                    } else {
+                        errors.add("OneTasksFailedSetRole");
+                    }
                 }
             });
     }
@@ -652,26 +669,42 @@ public class WorkflowImpl implements Workflow {
      * Запуск подпроцессов на выполнение
      * @param exeSubProc 
      */
-    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, Map<String, Object> params, User author, Set<String> errors){
-        Set<Process> processesShow = new HashSet<>();
-        if (exeSubProc.isEmpty()) return processesShow;
+    private Set<Process> initSubProcesses(Process mainProcess, Set<SubProcessElem> exeSubProc, Map<String, Object> params, User curUser, Set<String> errors){        
+        if (exeSubProc.isEmpty()) return new HashSet<>();
+        Set<Process> processesForShow = new HashSet<>();
         exeSubProc.forEach(subProcElem->{
             Process subProcess = subProcElem.getSubProcess();
             if (subProcess == null){
                 ProcessType owner = processTypeFacade.find(subProcElem.getProctypeId());
-                subProcess = processFacade.createSubProcess(owner, mainProcess, author);                
+                if (owner == null){
+                    errors.add("WorkflowIncorrectData"); //ToDO надо передаль сообщения на возможность формирования детальной информации ObjectWithIDNotFound
+                    return;
+                }
+                subProcess = processFacade.createSubProcess(owner, mainProcess, curUser, subProcElem.getCaption());                
                 subProcess.setLinkUID(subProcElem.getUid());
                 processFacade.create(subProcess);
                 subProcElem.setSubProcess(subProcess);
             } 
-            subProcess = processFacade.find(subProcess.getId());            
-            if (subProcElem.isShowCard()){
-                processesShow.add(subProcess);
-            } else {                
-                start(subProcess, author, params,  errors);
+            
+            boolean sendNotAgree = params.containsKey(ProcessParams.PARAM_SEND_NOTAGREE);
+            
+            //если отправить только не согласовавшим и подпроцесс согласован, то обходим подпроцесс
+            if (sendNotAgree && Objects.equals(DictStates.STATE_COMPLETED, subProcess.getState().getCurrentState().getId()) ){                
+                run(subProcess, subProcElem, new HashSet<>(), curUser, params, errors);
+            } else {
+                subProcess.setResult(null);
+                subProcess.setFactExecDate(null);
+                processFacade.setRoleOwner(subProcess, curUser);
+                processFacade.edit(subProcess);
+
+                if (subProcElem.isShowCard()){
+                    processesForShow.add(subProcess);
+                } else {                
+                    start(subProcess, curUser, params,  errors);
+                }
             }
         });
-        return processesShow;
+        return processesForShow;
     }
     
     /**
@@ -686,7 +719,7 @@ public class WorkflowImpl implements Workflow {
     public Set<BaseDict> start(Process process, User currentUser, Map<String, Object> params, Set<String> errors) {        
         Scheme scheme = process.getScheme();
         if (process.getScheme() == null){
-            initScheme(process, currentUser, errors);
+            scheme = initScheme(process, currentUser, errors);            
         } else {
             unpackScheme(scheme, currentUser);
         }
@@ -694,8 +727,7 @@ public class WorkflowImpl implements Workflow {
         validateScheme(scheme, true, errors);
         if (!errors.isEmpty()) return new HashSet<>();
         
-        //очистки если запуск повторный
-        clearScheme(scheme);
+        clearScheme(scheme, params);
         processFacade.edit(process);    //сохраняем возможные изменения
         
         Doc doc = process.getDocument();
@@ -728,7 +760,7 @@ public class WorkflowImpl implements Workflow {
      * @param errors 
      */
     @Override
-    public void stop(Process process, User currentUser, Set<String> errors) {
+    public void stop(Process process, User currentUser) {
         State stateCancel = stateFacade.getCanceledState();
         
         Doc doc = process.getDocument();
@@ -737,16 +769,14 @@ public class WorkflowImpl implements Workflow {
             docFacade.returnToPrevState(doc);
         }
         
-        cancelSubProc(process, currentUser, errors);        //отмена всех запущенных подпроцессов
-        if (errors.isEmpty()){
-            cancelTasks(process, currentUser);              //отмена всех запущенных задач
-            stopTimers(process);                            //остановка таймеров        
+        cancelSubProc(process, currentUser);        //отмена всех запущенных подпроцессов        
+        cancelTasks(process, currentUser);          //отмена всех запущенных задач
+        stopTimers(process);                       //остановка таймеров        
 
-            process.getState().setCurrentState(stateCancel);
-            process.setResult("ProcessСanceled");
-            processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, currentUser);
-            processFacade.edit(process);
-        }
+        process.getState().setCurrentState(stateCancel);
+        process.setResult("ProcessСanceled");
+        processFacade.addLogEvent(process, DictLogEvents.PROCESS_CANCELED, currentUser);
+        processFacade.edit(process);
     }
     
     /**
@@ -754,10 +784,10 @@ public class WorkflowImpl implements Workflow {
      * @param process          
      * @param currentUser 
      */
-    private void cancelSubProc(Process process, User currentUser, Set<String> errors){         
+    private void cancelSubProc(Process process, User currentUser){         
         process.getChildItems().stream()
                 .filter(subProc->DictStates.STATE_DRAFT != subProc.getState().getCurrentState().getId()) //отмена всех, кроме черновиков
-                .forEach(subProc->stop(subProc, currentUser, errors));
+                .forEach(subProc->stop(subProc, currentUser));
     }
     
     /**
@@ -845,7 +875,7 @@ public class WorkflowImpl implements Workflow {
         Set<Task> exeTasks = new HashSet<>();        
         doRun(startElement.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
         if (errors.isEmpty()){
-            startTasks(process, exeTasks, params, errors);
+            startTasks(process, exeTasks, currentUser, params, errors);
             forShow.addAll(initSubProcesses(process, exeSubProc, params, currentUser, errors));
             if (errors.isEmpty()){
                 packScheme(process.getScheme());
@@ -884,6 +914,7 @@ public class WorkflowImpl implements Workflow {
                         findProcedures(connectors, scheme.getElements().getProcedures())
                             .forEach(procedureElem->{
                                 executeProcedure(procedureElem, scheme, errors);
+                                procedureElem.setEnter(true);
                                 doRun(procedureElem.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
                             });
 
@@ -892,16 +923,23 @@ public class WorkflowImpl implements Workflow {
                             .map(connector->scheme.getElements().getTasks().get(connector.getTo().getOwnerUID()))
                             .filter(element->Objects.nonNull(element))
                             .forEach(taskElem-> {
+                                taskElem.setEnter(true);
                                 if (params.containsKey(EXECUTED_TASKS)){
                                     taskElem.getTasksExec().addAll((List<Integer>)params.get(EXECUTED_TASKS));
                                 }
-                                exeTasks.add(taskElem.getTask());
+                                scheme.getTasks().stream()
+                                        .filter(task->Objects.equals(taskElem.getUid(), task.getTaskLinkUID()))
+                                        .forEach(task->{
+                                            taskElem.setTask(task);
+                                            exeTasks.add(task);
+                                        });
                             });
 
                         //обрабатываем условия
                         findTargetConditions(connectors, scheme.getElements().getConditions())
                             .stream()
                                 .forEach(condition->{
+                                    condition.setEnter(true);
                                     condition.setDone(true);
                                     if (checkCondition(condition, scheme, params, errors)){
                                         doRun(condition.getSecussAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
@@ -913,6 +951,7 @@ public class WorkflowImpl implements Workflow {
                         //изменяем изменения статусы документа
                         findTargetStates(connectors, scheme.getElements().getStates())
                             .forEach(stateElem->{
+                                    stateElem.setEnter(true);
                                     stateElem.setDone(true);
                                     StatusesDoc status = changingDoc(stateElem, scheme, errors);
                                     if (status != null && stateElem.getIsSaveInProc()){
@@ -926,6 +965,7 @@ public class WorkflowImpl implements Workflow {
                             .stream()
                                 .filter(logic-> canExeLogic(logic, scheme, params))
                                 .forEach(logic-> {
+                                    logic.setEnter(true);
                                     logic.setDone(true);
                                     params.put(EXECUTED_TASKS, logic.getTasksExec());
                                     doRun(logic.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
@@ -934,12 +974,16 @@ public class WorkflowImpl implements Workflow {
                         //обрабатываем подпроцессы 
                         findSubProcElems(connectors, scheme.getElements().getSubprocesses())
                                 .stream()
-                                .forEach(subproc-> exeSubProc.add(subproc));
+                                .forEach(subprocEl-> {
+                                    subprocEl.setEnter(true);
+                                    exeSubProc.add(subprocEl);
+                                });
                         
                         //обрабатываем таймеры
                         findTimers(connectors, scheme.getElements().getTimers())
                             .stream()
                                 .forEach(timerEl-> {
+                                    timerEl.setEnter(true);
                                     ProcTimer procTimer = timerEl.getProcTimer();
                                     switch (procTimer.getStartType()){
                                         case "on_init":{                                    
@@ -966,14 +1010,17 @@ public class WorkflowImpl implements Workflow {
                         //обрабатываем сообщения
                         findMessages(connectors, scheme.getElements().getMessages())
                             .stream()
-                            .forEach(message->{
-                                sendMessage(process, message, currentUser);
-                                doRun(message.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
+                            .forEach(messageEl->{
+                                messageEl.setEnter(true);
+                                messageEl.setDone(true);
+                                sendMessage(process, messageEl, currentUser);
+                                doRun(messageEl.getAnchors(), process, exeTasks, exeSubProc, currentUser, params, errors);
                             });
                                 
                         //обработка выходов из процесса -> переход в связанный(е) процесс(ы)
                         findTargetExits(connectors, scheme.getElements().getExits())
                             .forEach(exitElem->{
+                                exitElem.setEnter(true);
                                 exitElem.setDone(true);
                                 finish(process, exitElem, exeSubProc, currentUser, errors);
                             });

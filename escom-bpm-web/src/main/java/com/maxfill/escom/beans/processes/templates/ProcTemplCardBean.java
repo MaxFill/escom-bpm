@@ -52,8 +52,13 @@ public class ProcTemplCardBean extends BaseCardBean<ProcTempl>{
     
     @Override
     protected void checkItemBeforeSave(ProcTempl procTempl, FacesContext context, Set<String> errors){                
-        if (procTempl.getIsDefault() == false && procTempl.getOwner().getTemplates().size() < 2){
-            errors.add(MsgUtils.getMessageLabel("OneTemplateShouldBeMain"));
+        if (procTempl.getIsDefault() == false){
+            ProcTempl defaultTempl = procTempl.getOwner().getTemplates().stream()
+                    .filter(templ->templ.getIsDefault())
+                    .findFirst().orElse(null);
+            if (defaultTempl == null){
+                errors.add(MsgUtils.getMessageLabel("OneTemplateShouldBeMain"));
+            }
         }
         super.checkItemBeforeSave(procTempl, context, errors);
     } 

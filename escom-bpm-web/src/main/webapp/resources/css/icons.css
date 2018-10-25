@@ -15,7 +15,6 @@
 .ico_exit{background-image: url('../resources/icon/door-open20.png') !important;}
 .ico_sign {background-image: url('../resources/icon/sign.png') !important;}
 .ico_outdoc{background-image: url('../resources/icon/outdoc.png') !important;}
-.ico_look{background-image: url('../resources/icon/look.png') !important;}
 .ico_importante{background-image: url('../resources/icon/importante.png') !important;}
 .ico_done {background-image: url('../resources/icon/done.png') !important;}
 .ico_flag_green{background-image: url('../resources/icon/flag_green.png') !important;}
@@ -43,7 +42,10 @@
 .ico_process{background-image: url('../resources/icon/process.png') !important;}
 .ico_task{background-image: url('../resources/icon/newtask.png') !important;}
 .ico_document{background-image: url('../resources/icon/document-16.png') !important;}
+.ico_subproc{background-image: url('../resources/icon/subproc-16.png') !important;}
+.ico_look{background-image: url('../resources/icon/look.png') !important;}
 
+.ico-open-16{background-image: url('../resources/icon/open-16.png') !important;}
 .ico_doc-16{background-image: url('../resources/icon/document-16.png') !important;}
 .ico_16_inspector{background-image: url('../resources/icon/inspector.png') !important;}
 .ico_importance-16{background-image: url('../resources/icon/importance-16.png')!important;}
@@ -65,6 +67,7 @@
 .ico_folder_open-16{background-image: url('../resources/icon/folder-open-16.png') !important;} 
 .ico_folder_add-16{background-image: url('../resources/icon/folder-add-16.png') !important;} 
 
+.ico-open-20{background-image: url('../resources/icon/open-20.png') !important;}
 .ico-task-20{background-image: url('../resources/icon/task-20.png') !important;}
 .ico_message-20{background-image: url('../resources/icon/msg-20.png') !important;}
 .ico_printer-20{background-image: url('../resources/icon/printer-20.png') !important;}

@@ -32,6 +32,7 @@ import com.maxfill.model.basedict.user.User;
 import com.maxfill.services.workflow.Workflow;
 import com.maxfill.services.worktime.WorkTimeService;
 import com.maxfill.utils.DateUtils;
+import com.maxfill.utils.EscomUtils;
 import java.text.DateFormat;
 import org.apache.commons.lang.StringUtils;
 import org.primefaces.PrimeFaces;
@@ -57,16 +58,14 @@ import org.primefaces.model.menu.DefaultMenuModel;
 @ViewScoped
 public class ProcessCardBean extends BaseCardBean<Process>{
     private static final long serialVersionUID = -5558740260204665618L;    
-       
-    @Inject
-    private DiagramBean diagramBean;
-    @Inject
-    private ProcessBean processBean; 
+        
     @Inject
     private DocBean docBean;
     @Inject
     private RemarkBean remarkBean;
-    
+    @Inject
+    private ProcessBean processBean;
+       
     @EJB
     private ProcessFacade processFacade;
     @EJB
@@ -88,8 +87,12 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     private String accordDocsTab = null;
     private final DefaultMenuModel runMenuModel = new DefaultMenuModel();
     private List<RunOptions> runOptions = new ArrayList<>();    
+    private List<BaseDict> forShow;
+    
     private int deadLineDeltaDay = 0;
     private int deadLineDeltaHour = 0;
+    
+    private final String uid = EscomUtils.generateGUID();
     
     @Override
     protected void doPrepareOpen(Process process) {
@@ -195,20 +198,11 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     
     /* *** СХЕМА ПРОЦЕССА *** */ 
     
-    public void onOpenScheme(){
-        if (processBean.getDiagramBean() != null){
-            MsgUtils.errorMsg("DiagramAlreadyOpenInAnotherWindow");
-            return;
-        }
-        processBean.setDiagramBean(diagramBean);
-        processBean.getDiagramBeanMap().put(this.toString(), diagramBean);
-        diagramBean.setReadOnly(isReadOnly());
-        diagramBean.prepareModel(getEditedItem());        
+    public void onOpenScheme(){       
         sessionBean.openDialogFrm(DictFrmName.FRM_DIAGRAMMA, getParamsMap());
     }
     
     public void onSchemeClose(SelectEvent event){
-        processBean.setDiagramBean(null);
         if (event.getObject() == null) return;
         String result = (String) event.getObject();
         if (result.equals(SysParams.EXIT_NOTHING_TODO)) return;                
@@ -280,7 +274,8 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     public void onRun(String option){
         Set<String> errors = new HashSet<>();
         Process process = getEditedItem();
-        validatePlanDate(process.getPlanExecDate(), errors);
+        calculateDeadline(errors);
+        validatePlanDate(process, errors);
         validateRemarks(process.getDocument(), errors);
         processFacade.validateCanRun(process, getCurrentUser(), errors);
         workflow.initScheme(process, getCurrentUser(), errors);
@@ -293,7 +288,7 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             Map<String, Object> params = new HashMap<>();
             params.put(option, true);
             process = processFacade.find(getEditedItem().getId());
-            Set<BaseDict> forShow = workflow.start(process, getCurrentUser(), params, errors);
+            forShow = new ArrayList<>(workflow.start(process, getCurrentUser(), params, errors));
             if (!errors.isEmpty()){
                 MsgUtils.showErrorsMsg(errors);
             } else {
@@ -304,6 +299,15 @@ public class ProcessCardBean extends BaseCardBean<Process>{
             }
             exitParam = SysParams.EXIT_EXECUTE;            
             PrimeFaces.current().ajax().update("mainFRM");
+            if (!forShow.isEmpty()){
+                if (forShow.size() == 1){
+                    Process subproc = (Process)forShow.get(0);
+                    processBean.prepEditItem(subproc, getParamsMap());
+                } else {
+                    PrimeFaces.current().ajax().update("initObjFRM");
+                    PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");
+                }
+            }
         }
     }
     
@@ -311,28 +315,25 @@ public class ProcessCardBean extends BaseCardBean<Process>{
      * Обработка события прерывания процесса
      */
     public void onStop(){
-        Set<String> errors = new HashSet<>();
-        workflow.stop(getEditedItem(), getCurrentUser(), errors);
-        if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
-        } else {
-            exitParam = SysParams.EXIT_EXECUTE;
-            MsgUtils.warnMsg("ProcessExecutionInterrupted");
-        }
+        workflow.stop(getEditedItem(), getCurrentUser());        
+        exitParam = SysParams.EXIT_EXECUTE;
+        MsgUtils.warnMsg("ProcessExecutionInterrupted");        
     }      
     
     /* *** ВАЛИДАЦИЯ ПРОЦЕССА *** */
     
     /**
      * Проверка срока исполнения
+     * @param process
      * @param planDate 
      * @param errors 
      */
-    public void validatePlanDate(Date planDate, Set<String> errors){
+    public void validatePlanDate(Process process, Set<String> errors){                
+        Date planDate = process.getPlanExecDate();
         Date today = new Date();
         if (today.after(planDate)){
             FacesContext context = FacesContext.getCurrentInstance();
-            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:dtPlanExecDate");
+            UIInput input = (UIInput) context.getViewRoot().findComponent("mainFRM:mainTabView:planEndDate");
             input.setValid(false);
             errors.add("DeadlineProcessInPastTime");            
             context.validationFailed();
@@ -421,26 +422,33 @@ public class ProcessCardBean extends BaseCardBean<Process>{
     /**
      * Вычисление планового срока исполнения
      */
-    public void calculateDeadline(){
-        Process process = getEditedItem();
+    public void calculateDeadline(){        
         Set<String> errors = new HashSet<>();
+        Date planDate = calculateDeadline(errors);
+        
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return;
+        }
+        
+        String strDate = DateUtils.dateToString(planDate,  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
+        MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
+    }
+      
+    public Date calculateDeadline(Set<String> errors ){
+        Process process = getEditedItem();
         if (deadLineDeltaDay == 0 && deadLineDeltaHour == 0){
             errors.add("DeadlineIncorrect");            
         }
         if (process.getCompany() == null){
             errors.add("CompanyNotSet");
         }
-        if (!errors.isEmpty()){
-            MsgUtils.showErrorsMsg(errors);
-            return;
-        }
         int deltasec = deadLineDeltaDay * 86400;
         deltasec = deltasec + deadLineDeltaHour * 3600;
         process.setDeltaDeadLine(deltasec);
         Date planDate = workTimeService.calcWorkDayByCompany(new Date(), deltasec, process.getCompany());
         process.setPlanExecDate(planDate);
-        String strDate = DateUtils.dateToString(planDate,  DateFormat.SHORT, DateFormat.MEDIUM, getLocale());
-        MsgUtils.succesFormatMsg("DeadlineCalcWorkingCalendar", new Object[]{strDate});
+        return planDate;
     }
     
     /* *** СООБЩЕНИЯ *** */
@@ -667,7 +675,16 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
         return result;
     }              
+
+    public String getUid() {
+        return uid.replaceAll("-", "").substring(0, 9);        
+    }
     
+    @Override
+    public BaseDict getSourceItem() {
+        return getEditedItem(); 
+    }
+        
     public Scheme getScheme(){
         return getEditedItem().getScheme();
     }
@@ -708,12 +725,12 @@ public class ProcessCardBean extends BaseCardBean<Process>{
         }
     }
 
-    public DiagramBean getDiagramBean() {
-        return diagramBean;
-    }
- 
     @Override
     protected BaseDictFacade getFacade() {
         return processFacade;
+    }
+    
+    public List<BaseDict> getForShow() {
+        return forShow;
     }
 }

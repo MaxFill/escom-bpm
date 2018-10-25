@@ -111,6 +111,7 @@
                     <p:menuitem icon="ui-icon-star" value="#{bundle.AddToFavorites}" 
                                 actionListener="#{_bean.onAddContentInFavorites()}"/>
                     <p:menuitem icon="ui-icon-extlink" value="#{bundle.UploadToFile}" 
+                                rendered="#{_canUploadToFile}"
                                 ajax="false"
                                 oncomplete="initDND();"
                                 action="#{_bean.onUploadToFile()}">

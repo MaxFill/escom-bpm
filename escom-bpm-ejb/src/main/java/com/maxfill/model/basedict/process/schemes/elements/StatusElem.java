@@ -44,6 +44,15 @@ public class StatusElem extends WFConnectedElem{
         return null;
     }
     
+    @Override
+    public String getStyle() {
+        StringBuilder sb = new StringBuilder("ui-diagram-" + styleType + "-state");
+        if (isDone()){
+            sb.append(" ").append("finished");
+        }
+        return sb.toString();
+    }
+    
     /* Gets & Sets */
 
     public Boolean getIsSaveInProc() {
@@ -65,16 +74,7 @@ public class StatusElem extends WFConnectedElem{
     }
     public void setDocStateId(Integer docStateId) {
         this.docStateId = docStateId;
-    }
-       
-    @Override
-    public String getStyle() {
-        StringBuilder sb = new StringBuilder("ui-diagram-" + styleType + "-state");
-        if (isDone()){
-            sb.append(" ").append("finished");
-        }
-        return sb.toString();
-    }
+    }       
 
     public void setStyleType(String styleType) {
         this.styleType = styleType;

@@ -34,7 +34,7 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
             
     private ExitElem editedItem = new ExitElem();
     private ExitElem sourceItem;
-    
+    private String style = "completed";
     private State seletedState;    
     
     @Override
@@ -53,6 +53,7 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
+            style = sourceItem.getStyleType();
         }
     }
         
@@ -61,6 +62,7 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
             if (seletedState != null){
                 editedItem.setFinishStateId(seletedState.getId());
             }
+            editedItem.setStyleType(style);
             BeanUtils.copyProperties(sourceItem, editedItem);
         } catch (IllegalAccessException | InvocationTargetException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
@@ -90,7 +92,14 @@ public class ExitCardBean extends BaseViewBean<BaseView>{
     public void setSeletedState(State seletedState) {
         this.seletedState = seletedState;
     }
-        
+
+    public String getStyle() {
+        return style;
+    }
+    public void setStyle(String style) {
+        this.style = style;
+    }
+          
     @Override
     public String getFormHeader() {
         return getLabelFromBundle("ElementExit");

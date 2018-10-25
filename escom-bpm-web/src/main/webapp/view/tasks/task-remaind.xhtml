@@ -81,17 +81,20 @@
         </h:panelGrid>
         
         <p:separator rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
-        <p:outputLabel value="#{''.concat(bundle.NextReminder).concat(' ').concat(bundle.AtTime)}" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
-        <p:calendar value="#{taskCardBean.editedItem.nextReminder}" disabledWeekends="true" 
-                    disabled="#{_bean.isReadOnly()}"
-                    rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"
-                    styleClass="without-spaces" 
-                    timeZone="#{TimeZone.getDefault()}"
-                    showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"                                
-                    locale="#{sessionBean.locale}"
-                    navigator="true" yearRange="c-0:c+20">
-            <p:ajax event="dateSelect" onstart="itemChange = 1;" />
-        </p:calendar>
+        
+        <h:panelGrid columns="2" styleClass="without-spaces">
+            <p:outputLabel value="#{''.concat(bundle.NextReminder).concat(' ').concat(bundle.AtTime)}:" rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"/>
+            <p:calendar value="#{taskCardBean.editedItem.nextReminder}" disabledWeekends="true" 
+                        disabled="#{_bean.isReadOnly()}"
+                        rendered="#{taskCardBean.editedItem.state.currentState.id eq DictStates.STATE_RUNNING}"
+                        styleClass="without-spaces" 
+                        timeZone="#{TimeZone.getDefault()}"
+                        showHour="true" showMinute="true" pattern="dd.MM.yyyy HH:mm"                                
+                        locale="#{sessionBean.locale}"
+                        navigator="true" yearRange="c-0:c+20">
+                <p:ajax event="dateSelect" onstart="itemChange = 1;" />
+            </p:calendar>
+        </h:panelGrid>
     </p:panelGrid>
 
 </ui:composition>

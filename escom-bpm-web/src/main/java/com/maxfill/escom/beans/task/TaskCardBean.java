@@ -101,6 +101,8 @@ public class TaskCardBean extends BaseCardBean<Task>{
     private boolean isNeedUpdateProcessReports; 
     private List<String> selectedDays;
     private List<Staff> executors;
+    private List<BaseDict> forShow;
+    private String resultName;
     
     private List<SelectItem> daysOfWeek = new ArrayList<>();
     {        
@@ -289,6 +291,9 @@ public class TaskCardBean extends BaseCardBean<Task>{
      * @return 
      */
     public String onExecute(String resultName){ 
+        return onExecute();
+    }
+    public String onExecute(){ 
         if (StringUtils.isEmpty(resultName)) return "";
         
         Task task = getEditedItem();
@@ -308,33 +313,38 @@ public class TaskCardBean extends BaseCardBean<Task>{
             return "";
         }
         doSaveItem();
-        if (task.getScheme() != null){
-            Process process = processFacade.find(task.getScheme().getProcess().getId());
-            Set<BaseDict> forShow = workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors);
-            if (!errors.isEmpty()){
-                MsgUtils.showErrorsMsg(errors);
-                return "";
-            }
-            if (!forShow.isEmpty()){
-                forShow.forEach(basedict -> {
-                    if (basedict instanceof Process){                        
-                        processBean.prepEditItem((Process)basedict, getParamsMap());
-                    }
-                });
-                return "";
-            }
-        } else {
+        
+        if (task.getScheme() == null){
             taskFacade.taskDone(task, result, getCurrentUser());
+            return closeTaskForm();
         }
-        return closeTaskForm();
+        
+        Process process = processFacade.find(task.getScheme().getProcess().getId());
+        forShow = new ArrayList<>(workflow.executeTask(process, task, result, getCurrentUser(), new HashMap<>(), errors));
+        if (!errors.isEmpty()){
+            MsgUtils.showErrorsMsg(errors);
+            return "";
+        }        
+        
+        if (!forShow.isEmpty()){
+            if (forShow.size() == 1){
+                Process subproc = (Process)forShow.get(0);
+                processBean.prepEditItem(subproc, getParamsMap());
+            } else {
+                PrimeFaces.current().ajax().update("initObjFRM");
+                PrimeFaces.current().executeScript("PF('InitObjectsWV').show();");                            
+            }
+        }
+        return "";
     }    
     
     /**
      * Закрытие карточки задачи после запуска из-неё подпроцесса
-     * @param exits
      * @return 
      */    
-    public String closeTaskForm() {        
+    public String closeTaskForm() {
+        //setEditedItem(taskFacade.find(getEditedItem().getId()));
+        //PrimeFaces.current().ajax().update("mainFRM");        
         return closeItemForm(SysParams.EXIT_EXECUTE);
     }
     
@@ -742,6 +752,16 @@ public class TaskCardBean extends BaseCardBean<Task>{
     public void setSelectedDays(List<String> selectedDays) {
         this.selectedDays = selectedDays;
     }
-    
-    
+
+    public List<BaseDict> getForShow() {
+        return forShow;
+    }
+
+    public String getResultName() {
+        return resultName;
+    }
+    public void setResultName(String resultName) {
+        this.resultName = resultName;
+    }
+     
 }

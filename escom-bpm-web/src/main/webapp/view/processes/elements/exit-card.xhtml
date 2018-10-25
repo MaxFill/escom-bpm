@@ -37,6 +37,15 @@
                              requiredMessage="#{bundle.Field} [#{bundle.State}] #{bundle.MustBeFilled}">
                         <f:selectItems value="#{exitCardBean.getProcessStates()}" var="state" itemLabel="#{stateBean.getBundleName(state)}" itemValue="#{state}" />                
                     </p:selectOneMenu>
+                    
+                    <p:outputLabel value="#{bundle.Color}:" />
+                    <p:selectOneMenu value="#{exitCardBean.style}" title="#{bundle.ColorSchemeOn}"
+                                     required="#{param['isRequired'] == 'true'}"
+                                     requiredMessage="#{bundle.Field} [#{bundle.Status}] #{bundle.MustBeFilled}">
+                        <f:selectItem itemValue="success" itemLabel="#{bundle.Green}"/>
+                        <f:selectItem itemValue="fail" itemLabel="#{bundle.Red}"/>
+                        <f:selectItem itemValue="completed" itemLabel="#{bundle.Black}"/>
+                    </p:selectOneMenu>
                 </p:panelGrid>
             </p:tab>
             

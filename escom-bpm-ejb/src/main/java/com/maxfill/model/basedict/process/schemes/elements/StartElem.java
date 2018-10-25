@@ -27,7 +27,7 @@ public class StartElem extends WFConnectedElem{
 
     @Override
     public String getImage() {
-        return null;
+        return "play-16";
     }
     
     @Override

@@ -39,8 +39,8 @@
             </h:outputText>
         </p:column>                                      
 
-        <p:column headerText="#{bundle.Commands}" > 
-            <p:commandButton value="#{bundle.Open}" actionListener="#{processBean.prepEditItem(proc)}" > 
+        <p:column headerText="#{bundle.Commands}" width="20" > 
+            <p:commandButton icon="ico_look" title="#{bundle.Open}" actionListener="#{processBean.prepEditItem(proc)}" > 
                 <p:ajax event="dialogReturn" update="tblProcess"/>
             </p:commandButton>
         </p:column>

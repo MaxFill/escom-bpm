@@ -24,6 +24,9 @@ public abstract class WFConnectedElem extends WFElement{
     @Transient
     protected String posY;
 
+    @XmlElement
+    private boolean enter;  //признак того, что процесс защёл в этот элемент
+    
     @XmlElement(name = "anchors")
     @Transient
     protected Set<AnchorElem> anchors = new HashSet<>();
@@ -51,6 +54,13 @@ public abstract class WFConnectedElem extends WFElement{
         this.posY = posY;
     }
 
+    public boolean isEnter() {
+        return enter;
+    }
+    public void setEnter(boolean enter) {
+        this.enter = enter;
+    }
+    
     public Set<String> validate(){
         Set <String> errors = new HashSet<>();
         return errors;

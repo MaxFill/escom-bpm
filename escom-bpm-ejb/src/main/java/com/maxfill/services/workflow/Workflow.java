@@ -49,10 +49,10 @@ public interface Workflow {
     void packScheme(Scheme scheme);
     void unpackScheme(Scheme scheme, User currentUser);
     void validateScheme(Scheme scheme, Boolean checkTasks, Set<String> errors);
-    void clearScheme(Scheme scheme);
+    void clearScheme(Scheme scheme, Map<String, Object> params);
     
     Set<BaseDict> run(Process process, WFConnectedElem startElement, Set<SubProcessElem> exeSubProc, User currentUser, Map<String, Object> params, Set<String> errors);
-    void stop(Process process, User user, Set<String> errors);
+    void stop(Process process, User user);
     Set<BaseDict> start(Process process, User user, Map<String, Object> params, Set<String> errors);
     
     Set<BaseDict> executeTask(Process process, Task task, Result result, User user, Map<String, Object> params, Set<String> errors);

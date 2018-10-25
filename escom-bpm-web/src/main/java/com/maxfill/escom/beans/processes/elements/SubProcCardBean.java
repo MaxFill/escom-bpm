@@ -14,7 +14,6 @@ import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.processType.ProcessType;
 import com.maxfill.model.basedict.processType.ProcessTypesFacade;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -148,7 +147,7 @@ public class SubProcCardBean extends BaseViewBean<BaseView>{
     public void onProcOpen(){
         if (selProcess == null){
             Process parent = ((DiagramBean)sourceBean).getProcess();
-            selProcess = procFacade.createSubProcess(selProcType, parent, getCurrentUser());                        
+            selProcess = procFacade.createSubProcess(selProcType, parent, getCurrentUser(), "");                        
             selProcess.setPlanExecDate(parent.getPlanExecDate());
             selProcess.setLinkUID(editedItem.getUid());            
             editedItem.setSubProcess(selProcess);      

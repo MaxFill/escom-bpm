@@ -89,6 +89,7 @@ public class SearcheModel implements Serializable {
         abcLocalSearche.add("ц");
         abcLocalSearche.add("ч");
         abcLocalSearche.add("ш");
+        abcLocalSearche.add("щ");
         abcLocalSearche.add("э");
         abcLocalSearche.add("ю");
         abcLocalSearche.add("я");

@@ -13,13 +13,19 @@
     <ui:define name="CardToolButtons" >        
     </ui:define>
     
+    <ui:define  name="form_scripts">
+        <p:commandButton id="btnExecute" actionListener="#{taskCardBean.onExecute()}" style="display: none;">
+            <p:ajax event="dialogReturn" listener="#{taskCardBean.closeTaskForm()}" update="mainFRM" />
+        </p:commandButton>
+    </ui:define>
+    
     <ui:define name="page_body">
         <p:tab title="#{bundle.Task}"  >            
             <h:panelGrid columns="2" rendered="#{taskCardBean.editedItem.scheme != null}" columnClasses="ui-grid-col-2, ui-grid-col-10" styleClass="ui-grid-col-12 without-spaces">
                 <p:outputLabel id="lbRole" value="#{bundle.Role}:" indicateRequired="#{!taskCardBean.isRequiredExecutor()}"/>
                 <p:selectOneMenu value="#{_bean.editedItem.roleInProc}" filter="true" filterMatchMode="startsWith" title="#{bundle.Roles}"
                                 styleClass="ui-grid-col-12"
-                                disabled="#{taskCardBean.readOnly}" 
+                                disabled="#{taskCardBean.isTaskReadOnly()}" 
                                 onchange="return itemChange = 1;"
                                 converter="groupsUserConvertor" placeholder="#{bundle.Select}">
                    <f:selectItems value="#{userGroupsBean.findOnlyRoles()}" var="r" itemLabel="#{r.name}" itemValue="#{r}"/>
@@ -159,17 +165,6 @@
                     <p:ajax process="@this" listener="#{taskCardBean.onConsidInProcReportChange()}" oncomplete="itemChange = 1;"/>
                 </p:selectBooleanCheckbox>                
                 
-                <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" >
-                    <p:commandLink  value="#{bundle.GoToProcess}"
-                                    rendered="#{taskCardBean.sourceBean == null}"
-                                    actionListener="#{taskCardBean.onOpenProcess()}"/>
-                    <p:commandLink  value="#{bundle.GoToDocument}"
-                                    rendered="#{taskCardBean.sourceBean == null}"
-                                    actionListener="#{taskCardBean.onOpenDocument()}"/>
-                    <p:commandLink  value="#{bundle.ViewDoc}"
-                                    actionListener="#{taskCardBean.onViewDocument()}"/>
-                </h:panelGrid>
-                
                 <p:separator rendered="#{taskCardBean.isShowExtTaskAtr()}"/>
                 <p:commandButton value="#{bundle.Delete}" 
                                  rendered="#{taskCardBean.isShowExtTaskAtr()}"
@@ -197,17 +192,28 @@
         <p:tab title="#{bundle.Execution}" rendered="#{taskCardBean.editedItem.state.currentState.id ne DictStates.STATE_DRAFT}">
             <p:panelGrid columns="1" columnClasses="ui-grid-col-12" styleClass="ui-grid-col-12 without-spaces"> 
                 <h:panelGroup id="btnTaskExe">
-                <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.isShowBtnResults()}" >
-                    <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
-                                     update="mainFRM"
-                                     icon="#{'ico_'.concat(result.getIconName())}"
-                                     disabled="#{!taskCardBean.haveRightExec}"  
-                                     actionListener="#{taskCardBean.onExecute(result.getName())}">
-                        <p:ajax event="dialogReturn" listener="#{taskCardBean.closeTaskForm()}" update="mainFRM" />
-                        <f:param name="isRequired" value="true"/>
-                    </p:commandButton>
-                </ui:repeat>
+                    <ui:repeat value="#{taskCardBean.taskResults}" var="result" rendered="#{taskCardBean.isShowBtnResults()}" >
+                        <p:commandButton value="#{resultBean.getLabelFromBundle(result.getName())}" 
+                                         update="mainFRM"
+                                         icon="#{'ico_'.concat(result.getIconName())}"
+                                         disabled="#{!taskCardBean.haveRightExec}" 
+                                         oncomplete="document.getElementById('mainFRM:btnExecute').click();"
+                                         actionListener="#{taskCardBean.setResultName(result.getName())}">                        
+                            <f:param name="isRequired" value="true"/>
+                        </p:commandButton>
+                    </ui:repeat>
                 </h:panelGroup>
+                
+                <h:panelGrid columns="1" rendered="#{taskCardBean.editedItem.id != null and taskCardBean.editedItem.scheme != null}" style="float: right;">
+                    <p:commandLink  value="#{bundle.GoToProcess}" style="float: right;"
+                                    rendered="#{taskCardBean.sourceBean == null}"
+                                    actionListener="#{taskCardBean.onOpenProcess()}"/>
+                    <p:commandLink  value="#{bundle.GoToDocument}" style="float: right;"
+                                    rendered="#{taskCardBean.sourceBean == null}"
+                                    actionListener="#{taskCardBean.onOpenDocument()}"/>
+                    <p:commandLink  value="#{bundle.ViewDoc}" style="float: right;"
+                                    actionListener="#{taskCardBean.onViewDocument()}"/>
+                </h:panelGrid>
                 
                 <p:outputLabel value="#{bundle.ReportExe}:" indicateRequired="true"/>                
                 <p:textEditor value="#{taskCardBean.editedItem.comment}" 
@@ -239,6 +245,7 @@
     </ui:define>
     
     <ui:define name="dialogs">
-        <ui:include src="/view/tasks/report.xhtml"/>
+        <ui:include src="/view/tasks/report.xhtml"/>            
+        <ui:include src="/view/processes/init-run-dlg.xhtml"/>    
     </ui:define>
 </ui:composition>

@@ -73,10 +73,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
     @Override
     public void remove(Process process){
         messagesFacade.removeMessageByProcess(process);
-        process.getScheme().getTasks().forEach(task->{
-                taskFacade.removeItemLogs(task);
-                messagesFacade.removeMessageByTask(task);
-            });
+        if (process.getScheme() != null){
+            process.getScheme().getTasks().forEach(task->{
+                    taskFacade.removeItemLogs(task);
+                    messagesFacade.removeMessageByTask(task);
+                });
+        }
         remarkFacade.removeRemarksByProcess(process);
         super.remove(process);
     } 
@@ -106,12 +108,13 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
      * @param owner
      * @param parent
      * @param author
+     * @param caption
      * @return 
      */
-    public Process createSubProcess(ProcessType owner, Process parent, User author){
+    public Process createSubProcess(ProcessType owner, Process parent, User author, String caption){
         StringBuilder sb = new StringBuilder();
         sb.append(ItemUtils.getBandleLabel("SubProcess", userFacade.getUserLocale(author)));
-        sb.append(": ").append(parent.getName());
+        sb.append(": ").append(caption);
         
         Process subProcess = createItem(author, parent, owner, new HashMap<>());
         subProcess.setDocs(parent.getDocs());
@@ -158,9 +161,10 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
             if (!docs.isEmpty()){
                 process.setDocs(docs);
                 process.setDocument(docs.get(0));
-            }
+            }            
             makeProcName(process);
         }
+        
         if (params.containsKey("author")) {
             User user = (User)params.get("author");
             if (user.getStaff() != null){
@@ -169,10 +173,12 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                     setRoleCurator(process, curator);            
                 }
             }
-        }
-        if (params.containsKey("curator")) {
-            setRoleCurator(process, (Staff)params.get("curator"));            
         }        
+        if (params.containsKey("curator")) {
+            setRoleCurator(process, (Staff)params.get("curator"));
+        } else {   
+            setRoleCurator(process, process.getAuthor().getStaff());
+        }
     }
 
     /* *** РОЛИ *** */    
@@ -219,19 +225,7 @@ public class ProcessFacade extends BaseDictWithRolesFacade<Process, ProcessType,
                 .filter(entry->Objects.equals(process.getLinkUID(), entry.getKey()))
                 .map(entry->entry.getValue())
                 .findFirst().orElse(null);
-        if (elem != null){
-            Set<AnchorElem> targetAnchors = elem.getAnchors().stream().filter(a->a.isTarget()).collect(Collectors.toSet()); //входы элемента
-            
-            Set<AnchorElem> anchorsDone = scheme.getElements().getConnectors().stream()
-                    .filter(c->c.isDone())
-                    .map(c->c.getTo()).collect(Collectors.toSet()); //все сработавшие входы
-            
-            //хотябы один из входов элемента должен быть среди сработавших входов
-            for (AnchorElem target : targetAnchors){
-                if (anchorsDone.contains(target)){
-                    return;
-                }
-            }
+        if (elem != null && !elem.isEnter()){            
             errors.add("SubprocessCannotBeStarted");
         }
     }

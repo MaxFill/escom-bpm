@@ -17,6 +17,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ExitElem extends WFConnectedElem{
     private static final long serialVersionUID = 8512962777531919513L;
     
+    @XmlElement(name = "styleType")
+    private String styleType = "completed";
+     
     @XmlElement(name = "finalize")
     private Boolean finalize = true;
     
@@ -34,6 +37,11 @@ public class ExitElem extends WFConnectedElem{
         this.uid = EscomUtils.generateGUID();
     }
 
+    @Override
+    public String getStyle() {
+        return "ui-diagram-" + styleType + "-exit";        
+    }
+    
     public Boolean getFinalize() {
         return finalize;
     }
@@ -44,18 +52,20 @@ public class ExitElem extends WFConnectedElem{
     @Override
     public String getImage() {
         return null;
-    }
-    
-    @Override
-    public String getStyle() {
-        return finalize ? DictWorkflowElem.STYLE_FINISH : DictWorkflowElem.STYLE_EXIT;        
-    }
+    }    
 
     @Override
     public String getBundleKey() {
         return "Exit";
     }
 
+    public String getStyleType() {
+        return styleType;
+    }
+    public void setStyleType(String styleType) {
+        this.styleType = styleType;
+    }
+    
     public Integer getFinishStateId() {
         return finishStateId;
     }

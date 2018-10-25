@@ -4,11 +4,10 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core">                
 
-    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{remarkCardBean.currentTab}" >
-        <p:ajax event="tabChange" listener="#{remarkCardBean.onTabChange}"/>
-
-        <p:tab id="tabMyRemarks" title="#{bundle.MyRemarks}">
-            <p:dataGrid id="dgMyRemarks" var="remark" value="#{remarkCardBean.myRemarks}" columns="1" layout="grid"
+    <p:accordionPanel id="accord" widgetVar="accordion" activeIndex="#{remarkCardBean.currentTab}" var="author" value="#{remarkCardBean.authors}" >
+        <p:ajax event="tabChange" listener="#{remarkCardBean.onTabChange}"/>        
+        <p:tab title="#{author.getShortFIO()}">
+            <p:dataGrid id="dgMyRemarks" var="remark" value="#{remarkCardBean.getAuthorRemarks(author)}" columns="1" layout="grid"
                         paginator="true" emptyMessage="#{bundle.EmptyTable}"
                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         paginatorPosition="bottom"
@@ -19,48 +18,45 @@
                     <f:facet name="header">
                         <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
                         <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
-                        <p:outputLabel value="#{remark.author.shortFIO}" title="#{bundle.Author}"/>
-                    </f:facet>
-                        
-                    <f:facet name="options">
-                        <p:menu>                        
-                            <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
-                                        disabled="#{!remarkCardBean.isCanCheckRemark()}"
-                                        rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
-                                        actionListener="#{remarkCardBean.onRemarkCheck(remark)}" update="eastFRM:accord:dgMyRemarks">                      
-                            </p:menuitem>
-                            <p:separator />
-                            <p:menuitem value="#{bundle.RemarkConfirmed}" icon="ui-icon-circle-check"
-                                        rendered="#{remark.state.currentState.id == 12}"
-                                        disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
-                                        actionListener="#{remarkCardBean.onChangeStateRemark(remark, 13)}" update="eastFRM:accord:dgMyRemarks">
-                            </p:menuitem>
-                            <p:menuitem value="#{bundle.RemarkIssued}" icon="ui-icon-notice"
-                                        disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
-                                        rendered="#{remark.state.currentState.id == 13}"
-                                        actionListener="#{remarkCardBean.onChangeStateRemark(remark, 12)}" update="eastFRM:accord:dgMyRemarks">
-                            </p:menuitem>
-                            <p:menuitem value="#{bundle.Delete}" icon="ui-icon-trash"
-                                        disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
-                                        update="eastFRM:accord:dgMyRemarks"
-                                        actionListener="#{remarkCardBean.onDeleteRemark(remark)}">
-                                <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
-                            </p:menuitem> 
-                            <p:separator />
-                            <p:menuitem value="#{bundle.Notify}" icon="ui-icon-mail-closed"
-                                        disabled="#{remark.author ne remarkCardBean.currentUser or empty(remark.author.email)}"
-                                        rendered="#{remark.state.currentState.id == 12}"                                        
-                                        actionListener="#{remarkCardBean.onNotifyRemark(remark)}">
-                            </p:menuitem>
-                        </p:menu>
+                        <p:outputLabel value="#{''.concat(stateBean.getBundleName(remark.state.currentState))}" />
                     </f:facet>
 
                     <f:facet name="actions">
+                        <p:commandLink type="button" title="#{bundle.RemarkChecked}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                        disabled="#{!remarkCardBean.isCanCheckRemark()}"
+                                        rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
+                                        actionListener="#{remarkCardBean.onRemarkCheck(remark)}" update="dgMyRemarks">   
+                            <h:outputText styleClass="ui-icon ui-icon-check" />
+                        </p:commandLink>
                         <p:commandLink type="button" title="#{bundle.Save}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
                                        disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"                                       
                                        actionListener="#{remarkCardBean.onSaveRemark(remark)}">
                             <h:outputText styleClass="ui-icon ui-icon-disk" />
                         </p:commandLink>
+                        <p:commandLink type="button" title="#{bundle.Delete}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                        disabled="#{!remarkCardBean.isCanModifyRemark(remark)}" 
+                                        actionListener="#{remarkCardBean.onDeleteRemark(remark)}" update="dgMyRemarks">
+                                <p:confirm header="#{bundle.ConfirmAction}" message="#{bundle.ConfirmDelete}" icon="ui-icon-alert" />
+                                <h:outputText styleClass="ui-icon ui-icon-trash" />
+                        </p:commandLink> 
+                        <p:commandLink type="button" title="#{bundle.Notify}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                        disabled="#{remark.author ne remarkCardBean.currentUser or empty(remark.author.email)}"                                      
+                                        actionListener="#{remarkCardBean.onNotifyRemark(remark)}">
+                            <h:outputText styleClass="ui-icon ui-icon-mail-closed" />
+                        </p:commandLink>
+                        <p:commandLink type="button" title="#{bundle.RemarkConfirmed}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default"
+                                    rendered="#{remark.state.currentState.id == 12}"
+                                    disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
+                                    actionListener="#{remarkCardBean.onChangeStateRemark(remark, 13)}" update="dgMyRemarks">
+                            <h:outputText styleClass="ui-icon ui-icon-circle-check" />
+                        </p:commandLink>
+                        <p:commandLink type="button" title="#{bundle.RemarkIssued}" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" 
+                                    disabled="#{!remarkCardBean.isCanModifyRemark(remark)}"
+                                    rendered="#{remark.state.currentState.id == 13}"
+                                    actionListener="#{remarkCardBean.onChangeStateRemark(remark, 12)}" update="dgMyRemarks">
+                            <h:outputText styleClass="ui-icon ui-icon-notice" />
+                        </p:commandLink>
+                        
                     </f:facet>
 
                     <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
@@ -70,52 +66,13 @@
                     </p:panelGrid>
                 </p:panel>
             </p:dataGrid>
+            <p:contextMenu for="dgMyRemarks">
+                <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" 
+                            disabled="#{!remarkCardBean.isCanCreateRemark()}"
+                            actionListener="#{remarkCardBean.onCreateRemark()}" update="dgMyRemarks">
+                </p:menuitem>
+            </p:contextMenu>
         </p:tab>
-
-        <p:tab title="#{bundle.Other}">
-            <p:dataGrid id="dgAllRemarks" var="remark" value="#{remarkCardBean.otherRemarks}" columns="1" layout="grid"
-                        paginator="true" emptyMessage="#{bundle.EmptyTable}"
-                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                        paginatorPosition="bottom"
-                        rowsPerPageTemplate="5,10,15" rows="5" 
-                        styleClass="ui-grid-col-12 without-spaces">
-
-                <p:panel menuTitle="#{bundle.Menu}" toggleable="true" toggleSpeed="100" styleClass="ui-grid-col-12 without-spaces">                    
-                    <f:facet name="header">
-                        <h:graphicImage value="#{remark.state.currentState.icon}" title="#{stateBean.getBundleName(remark.state.currentState)}"/>
-                        <h:graphicImage value="#{remark.iconName}" title="#{remark.checked ? bundle.RemarkChecked : bundle.RemarkNotTakenAccount}"/>
-                        <p:outputLabel value="#{remark.author.shortFIO}" title="#{bundle.Author}"/>
-                    </f:facet>
-                    <f:facet name="options">
-                        <p:menu>                        
-                            <p:menuitem value="#{bundle.RemarkChecked}" icon="ui-icon-check"
-                                        disabled="#{!remarkCardBean.isCanCheckRemark()}"
-                                        rendered="#{remark.state.currentState.id == 12 and !remark.checked}"
-                                        actionListener="#{remarkCardBean.onRemarkCheck(remark)}" update="eastFRM:accord:dgAllRemarks">                                
-                            </p:menuitem>
-                            <p:menuitem value="#{bundle.RemarkNotTakenAccount}" icon="ui-icon-notice"
-                                        disabled="#{!remarkCardBean.isCanCheckRemark()}"
-                                        rendered="#{remark.state.currentState.id == 12 and remark.checked}"
-                                        actionListener="#{remarkCardBean.onRemarkUnCheck(remark)}" update="eastFRM:accord:dgAllRemarks">                                
-                            </p:menuitem>
-                        </p:menu>
-                    </f:facet>                    
-
-                    <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
-                        <p:inputTextarea value="#{remark.content}" 
-                                         disabled="true"
-                                         rows="2" autoResize="true" styleClass="ui-grid-col-12" />
-                    </p:panelGrid>
-                </p:panel>
-            </p:dataGrid>
-        </p:tab>
-    </p:accordionPanel>
-
-    <p:contextMenu for="eastFRM:accord:tabMyRemarks">
-        <p:menuitem value="#{bundle.CreateRemark}" icon="ui-icon-plus" 
-                    disabled="#{!remarkCardBean.isCanCreateRemark()}"
-                    actionListener="#{remarkCardBean.onCreateRemark()}" update="eastFRM:accord:dgMyRemarks">
-        </p:menuitem>
-    </p:contextMenu>    
+    </p:accordionPanel> 
 
 </ui:composition>

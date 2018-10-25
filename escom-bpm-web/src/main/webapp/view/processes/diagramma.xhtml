@@ -7,7 +7,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
-    <ui:param name="_bean" value="#{processBean.diagramBean}"/>
+    <ui:param name="_bean" value="#{diagramBean}"/>
 
     <ui:define name="customStyleCSS">
         <h:outputStylesheet library="css" name="processes.css"/>
@@ -158,7 +158,7 @@
         </span>
     </ui:define>
         
-    <ui:define name="toolbarComponents" > 
+    <ui:define name="toolbarComponents" >       
         <p:commandButton  value="#{bundle.And}" title="#{bundle.AddLogicElement}"
                           disabled="#{_bean.isReadOnly()}"
                           actionListener="#{_bean.onAddLogicElement('And')}" >
@@ -210,7 +210,7 @@
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
         
-        <p:commandButton icon="ico_process" title="#{bundle.AddSubProcess}"
+        <p:commandButton icon="ico_subproc" title="#{bundle.AddSubProcess}"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddSubProcessElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
@@ -226,6 +226,7 @@
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />
         </p:commandButton>
         <p:commandButton icon="ico_enter16" title="#{bundle.AddEnter}"
+                         rendered="false"
                          disabled="#{_bean.isReadOnly()}"
                          actionListener="#{_bean.onAddEnterElement()}" >
             <p:ajax event="dialogReturn" listener="#{_bean.onElementClose}" />

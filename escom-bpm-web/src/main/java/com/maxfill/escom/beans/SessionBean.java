@@ -191,16 +191,6 @@ public class SessionBean implements Serializable{
     /* ITEM HELPER */           
     
     /**
-     * Определяет, просрочен ли объект
-     * @param item
-     * @return 
-     */
-    public boolean isItemDelay(WithDatesPlans item){
-        if (item == null || item.getBeginDate() == null || item.getPlanExecDate() == null) return false;        
-        return item.getBeginDate().after(item.getPlanExecDate());
-    }
-        
-    /**
      * Формирование статуса объекта в зависимости от его выполнения
      * @param item
      * @return 

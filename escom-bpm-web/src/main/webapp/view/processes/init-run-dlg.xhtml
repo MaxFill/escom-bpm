@@ -1,0 +1,19 @@
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+                 xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                 xmlns:p="http://primefaces.org/ui"
+                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                 xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:dialog header="#{bundle.ListSubProcessesToInitialize}" widgetVar="InitObjectsWV" closable="true" resizable="true" modal="true" width="6000" height="400">
+        <h:form id="initObjFRM" style="font-size: 90%;">
+            <p:outputPanel rendered="#{!_bean.forShow.isEmpty()}" styleClass="ui-grid-col-12 without-spaces">
+                <p:panelGrid columns="1" layout="grid" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces">
+                    <ui:include src="/view/processes/process-list.xhtml"> 
+                        <ui:param name="_processes" value="#{_bean.forShow}"/>
+                    </ui:include>
+                </p:panelGrid>
+            </p:outputPanel>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>

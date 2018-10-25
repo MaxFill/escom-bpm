@@ -36,8 +36,8 @@
                             actionListener="#{_bean.onShowMessages()}"/>                
             </p:menuButton>
             
-            <p:commandButton value="#{bundle.Scheme}" icon="ico_process"
-                             actionListener="#{processCardBean.onOpenScheme()}" >
+            <p:commandButton id="#{'os'.concat(_bean.uid)}" value="#{bundle.Scheme}" icon="ico_process"
+                             actionListener="#{_bean.onOpenScheme()}" >
                 <p:ajax event="dialogReturn" listener="#{_bean.onSchemeClose}" />
             </p:commandButton>
         </ui:define>
@@ -63,7 +63,7 @@
                 </p:menuButton>
 
                 <p:spacer width="2"/>
-                <p:commandButton id="btnStop" title="#{bundle.InterruptionProcess}" icon="ico-stop-16"
+                <p:commandButton title="#{bundle.InterruptionProcess}" icon="ico-stop-16"
                                  disabled="#{processCardBean.isDisableBtnStop()}"
                                  update="mainFRM" 
                                  actionListener="#{processCardBean.onStop()}"
@@ -75,9 +75,9 @@
 
         <ui:define name="page_body">                
             <p:tab title="#{bundle.Process}">
-                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >
-                    <p:outputLabel value="#{bundle.Organization}:" for="company" indicateRequired="true"/>                    
-                    <p:selectOneMenu value="#{_bean.editedItem.company}" id="company" converter="companyConvertor"
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-12 col-padding" styleClass="ui-grid-col-12 without-spaces" >                    
+                    <p:outputLabel value="#{bundle.Organization}:" indicateRequired="true"/>                    
+                    <p:selectOneMenu value="#{_bean.editedItem.company}" converter="companyConvertor"
                                      title="#{bundle.CompanyDocRegistred}"
                                      disabled="#{_bean.isReadOnly()}"
                                      styleClass="ui-grid-col-12"
@@ -136,7 +136,7 @@
                                  requiredMessage="#{bundle.Field} [#{bundle.ProcessCaption}] #{bundle.MustBeFilled}"/>                    
 
                     <p:outputLabel value="#{bundle.Term}:" indicateRequired="true"/> 
-                    <h:panelGrid columns="2" cellpadding="3" >
+                    <h:panelGrid columns="2" >
                         <p:selectOneRadio id="typeDatePlan" value="#{_bean.editedItem.deadLineType}" disabled="#{_bean.isReadOnly()}" layout="grid" columns="1" >
                             <f:selectItem itemLabel="" itemValue="delta"/>
                             <f:selectItem itemLabel="" itemValue="data" />
@@ -157,9 +157,9 @@
                                            disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}">
                                 </p:spinner>                                    
                                 <p:commandButton id="btnCalcPlan" icon="ui-icon-calculator" title="#{bundle.CalculateDeadline}" 
-                                     disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
-                                     update="planEndDate"
-                                     actionListener="#{_bean.calculateDeadline()}"/>
+                                        disabled="#{_bean.isReadOnly() or _bean.editedItem.deadLineType eq 'data'}"
+                                        update="planEndDate"
+                                        actionListener="#{_bean.calculateDeadline()}"/>
                                 </div>
                             </h:panelGroup>
                             <p:calendar id="planEndDate" value="#{_bean.editedItem.planExecDate}"  
@@ -271,13 +271,11 @@
         </ui:define>
 
         <ui:define  name="form_scripts">
-            <p:commandButton id="btnOpenTask" style="display: none;" actionListener="#{_bean.onOpenTask()}">
-                <p:ajax event="dialogReturn" listener="#{_bean.onAfterTaskClose}"/>
-            </p:commandButton>
         </ui:define>
         
         <ui:define name="dialogs">
             <ui:include src="/view/tasks/report.xhtml"/>
+            <ui:include src="/view/processes/init-run-dlg.xhtml"/>
         </ui:define>
     </ui:composition>
 </html>

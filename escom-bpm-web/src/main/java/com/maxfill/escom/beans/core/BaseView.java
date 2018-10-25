@@ -9,4 +9,8 @@ import java.util.Map;
 public interface BaseView   {
     void doBeforeOpenCard(Map<String, String> params);
     BaseDict getSourceItem();
+    
+    default boolean isReadOnly(){
+        return false;
+    }
 }

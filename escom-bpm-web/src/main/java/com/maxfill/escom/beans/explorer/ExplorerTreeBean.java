@@ -12,7 +12,6 @@ import com.maxfill.model.basedict.folder.Folder;
 import com.maxfill.services.attaches.AttacheService;
 import com.maxfill.utils.ItemUtils;
 import java.io.File;
-import java.net.HttpURLConnection;
 import org.primefaces.model.TreeNode;
 import javax.faces.context.FacesContext;
 import org.omnifaces.cdi.ViewScoped;

@@ -106,8 +106,29 @@ body{
 }
 
 .error-info {
-    color: red;
-    font-weight: bold;
+    color: red !important;    
+    background-color: yellow !important;
+}
+
+.subProcess{
+    font-weight: bold !important;
+    font-style: italic !important;
+}
+
+.process{
+    font-weight: bold !important;    
+}
+
+.Draft{
+   color: darkcyan !important;
+}
+
+.Сompleted{
+   color: #C7C6C4 !important;
+}
+
+.Cancelled{
+   text-decoration: line-through !important;
 }
 
 .colTblCenter{

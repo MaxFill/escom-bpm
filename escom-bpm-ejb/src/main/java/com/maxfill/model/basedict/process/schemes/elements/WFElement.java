@@ -5,7 +5,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Абстрактный класс элементов графической модели процесса

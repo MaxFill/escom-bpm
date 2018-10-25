@@ -4,6 +4,7 @@ import com.maxfill.dictionary.DictFrmName;
 import com.maxfill.dictionary.DictLogEvents;
 import com.maxfill.dictionary.DictWorkflowElem;
 import com.maxfill.dictionary.SysParams;
+import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.escom.beans.task.TaskBean;
@@ -30,7 +31,6 @@ import com.maxfill.model.basedict.process.schemes.elements.WFConnectedElem;
 import com.maxfill.model.basedict.process.schemes.elements.WorkflowElements;
 import com.maxfill.model.basedict.procTempl.ProcTempl;
 import com.maxfill.model.basedict.procTempl.ProcessTemplFacade;
-import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.basedict.process.schemes.elements.SubProcessElem;
 import com.maxfill.model.basedict.process.timers.ProcTimer;
 import com.maxfill.model.basedict.process.timers.ProcTimerFacade;
@@ -50,13 +50,13 @@ import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.logging.Level;
 import javax.ejb.EJB;
-import javax.enterprise.context.Dependent;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.diagram.ConnectEvent;
@@ -80,18 +80,16 @@ import org.primefaces.model.diagram.overlay.Overlay;
  * Бин для работы с моделью процесса
  */
 @Named
-@Dependent
-public class DiagramBean extends BaseViewBean<ProcessCardBean>{
+@ViewScoped
+public class DiagramBean extends BaseViewBean<BaseView>{
     private static final long serialVersionUID = -4403976059082444626L;
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.00"); 
-             
+       
     @Inject
     private TaskBean taskBean;
     
     @EJB
     private Workflow workflow;
-    @EJB
-    private ProcessFacade processFacade;
     @EJB
     private ProcessTemplFacade processTemplFacade;
     @EJB
@@ -113,15 +111,13 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
     private WFConnectedElem baseElement;
     private WFConnectedElem copiedElement;
     
+    private Process process; 
     private Task currentTask;        
-    private ProcTempl selectedTempl;
-      
+    private ProcTempl selectedTempl;      
     private Scheme scheme;
     private boolean readOnly;
     
-    private final DefaultDiagramModel model = new DefaultDiagramModel();  
-    
-    private Process process;    
+    private final DefaultDiagramModel model = new DefaultDiagramModel();
     
     @Override
     public String onCloseCard(Object param){
@@ -133,16 +129,16 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         }
         return super.onCloseCard(param);
     }
-
+    
     @Override
-    public void doBeforeOpenCard(Map params) {
-        if (!isReadOnly()){
-            addElementContextMenu();
-        }
+    public void doBeforeOpenCard(Map<String, String> params) {        
+        if (sourceBean == null) return;
+        process = (Process)sourceBean.getSourceItem();
+        readOnly = sourceBean.isReadOnly();
+        prepareModel();
     }
     
-    public void prepareModel(Process process){
-        this.process = process;
+    public void prepareModel(){
         model.setMaxConnections(-1);
         model.getDefaultConnectionOverlays().add(new ArrowOverlay(20, 20, 1, 1));
         FlowChartConnector connector = new FlowChartConnector();
@@ -152,6 +148,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         model.setDefaultConnector(connector);
         scheme = workflow.initScheme(process, getCurrentUser(), new HashSet<>());        
         loadModel(scheme);
+        if (!isReadOnly()){
+            addElementContextMenu();
+        }
     }
 
     /* МЕТОДЫ РАБОТЫ С МОДЕЛЬЮ */
@@ -1088,7 +1087,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         scheme.setElements(new WorkflowElements());  
         scheme.setPackElements(selectedTempl.getElements());        
         workflow.unpackScheme(scheme, getCurrentUser());
-        workflow.clearScheme(scheme);
+        workflow.clearScheme(scheme, new HashMap<>());
         restoreModel();
         PrimeFaces.current().ajax().update("mainFRM");        
         PrimeFaces.current().ajax().update("southFRM:diagramm");
@@ -1234,9 +1233,9 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
      */
     public String getElementImage(WFConnectedElem wfElement){
         String image = wfElement.getImage();
-        if (org.apache.commons.lang.StringUtils.isEmpty(image)) return "";
+        if (StringUtils.isEmpty(image)) return "";
         return "/resources/icon/" + image + ".png";
-    }    
+    }
     
     /**
      * Формирует имя элемента для вывода в заголовке формы
@@ -1248,6 +1247,7 @@ public class DiagramBean extends BaseViewBean<ProcessCardBean>{
         return getLabelFromBundle(key);
     }   
     
+    @Override
     public boolean isReadOnly(){        
         return readOnly;
     }

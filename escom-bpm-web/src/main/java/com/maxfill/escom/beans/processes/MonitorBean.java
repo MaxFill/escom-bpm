@@ -2,6 +2,7 @@ package com.maxfill.escom.beans.processes;
 
 import com.maxfill.model.basedict.process.Process;
 import com.maxfill.dictionary.DictFrmName;
+import com.maxfill.dictionary.DictStates;
 import com.maxfill.dictionary.SysParams;
 import com.maxfill.escom.beans.core.BaseView;
 import com.maxfill.escom.beans.core.BaseViewBean;
@@ -9,6 +10,7 @@ import com.maxfill.escom.beans.task.TaskBean;
 import com.maxfill.escom.utils.EscomBeanUtils;
 import com.maxfill.escom.utils.MsgUtils;
 import com.maxfill.model.Results;
+import com.maxfill.model.WithDatesPlans;
 import com.maxfill.model.basedict.process.ProcessFacade;
 import com.maxfill.model.core.states.StateFacade;
 import com.maxfill.model.basedict.BaseDict;
@@ -21,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
@@ -249,7 +252,28 @@ public class MonitorBean extends BaseViewBean<BaseView>{
             onRefreshData();
         }
     }
+    
+    /* *** ОФОРМЛЕНИЕ *** */
+    public String getItemStyle(BaseDict item){
+        if (item == null) return "";
+        StringBuilder sb = new StringBuilder();
             
+        sb.append(item.getState().getCurrentState().getName()).append(" ");
+        if (item.getBeginDate() != null && item.getPlanExecDate() != null){
+            if (item.getBeginDate().after(item.getPlanExecDate())){
+                sb.append("error-info");
+            }                
+        }
+        if (item instanceof Process){
+            if (item.getParent() == null){
+                sb.append("process");
+            } else {
+                sb.append("subProcess");
+            }
+        }
+        return sb.toString();
+    }
+    
     /* *** GETS & SETS *** */
 
     public List<State> getStates() {
